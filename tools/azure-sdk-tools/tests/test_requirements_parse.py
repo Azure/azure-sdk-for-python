@@ -45,7 +45,7 @@ def test_replace_dev_reqs_specifiers(tmp_directory_create):
     requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
 
     assert requirements_before == requirements_after
@@ -63,18 +63,18 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     expected_results = [
         os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
         os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_identity-1.16.0b3-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_identity-1.16.0b3-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, "azure_core-1.30.2-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_core-1.30.2-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.32.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.32.0-py3-none-any.whl"),
     ]
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
 
     assert requirements_before != requirements_after
@@ -93,7 +93,6 @@ def test_replace_dev_reqs_remote(tmp_directory_create):
     requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
     assert requirements_before == requirements_after
-

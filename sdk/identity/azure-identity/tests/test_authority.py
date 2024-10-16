@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import patch
 
 from azure.identity._constants import EnvironmentVariables, KnownAuthorities
 from azure.identity._internal import get_default_authority, normalize_authority

@@ -32,3 +32,4 @@ PERMA_REMOTE_VNET = 'sdk-python-tests-remote-perma-VNET'
 PERMA_SUBNET = 'sdk-python-tests-subnet'
 PERMA_REMOTE_SUBNET = 'sdk-python-tests-remote-subnet'
 LIVE = False
+SUBSID = '69a75bda-882e-44d5-8431-63421204132a'

@@ -15,12 +15,12 @@ except ImportError:
     from urllib.parse import urlparse
 
 
-def _decode_token(client, token):
+def _decode_token(client, token, path="/client/hubs/hub"):
     return jwt.decode(
         token,
         client._config.credential.key,
         algorithms=["HS256"],
-        audience="{}/client/hubs/hub".format(client._config.endpoint)
+        audience=client._config.endpoint + path
     )
 
 
@@ -117,3 +117,22 @@ def test_pass_in_jwt_headers(connection_string):
     kid = '1234567890'
     token = client.get_client_access_token(jwt_headers={"kid":kid })['token']
     assert jwt.get_unverified_header(token)['kid'] == kid
+
+test_cases = [
+    ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://localhost:8080/clients/mqtt/hubs/hub"),
+    ("Endpoint=https://a;AccessKey={};Version=1.0;".format(access_key), "hub", "wss://a/clients/mqtt/hubs/hub"),
+    ("Endpoint=http://a;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://a/clients/mqtt/hubs/hub")
+]
+@pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
+def test_generate_mqtt_token(connection_string, hub, expected_url):
+    client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+    url_1 = client.get_client_access_token(client_protocol="MQTT")['url']
+
+    assert url_1.split("?")[0] == expected_url
+
+    token_1 = urlparse(url_1).query[len("access_token="):]
+
+    decoded_token_1 = _decode_token(client, token_1, path="/clients/mqtt/hubs/hub")
+
+    assert len(decoded_token_1) == 3
+    assert decoded_token_1['aud'] == expected_url.replace('ws', 'http')

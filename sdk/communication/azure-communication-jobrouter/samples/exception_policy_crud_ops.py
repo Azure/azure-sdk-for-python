@@ -13,14 +13,14 @@ DESCRIPTION:
 USAGE:
     python exception_policy_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string 
 """
 
 import os
 
 
 class ExceptionPolicySamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _ep_policy_id = "sample_ep_policy"
     _cp_policy_ids = [
@@ -29,7 +29,7 @@ class ExceptionPolicySamples(object):
     ]
 
     def setup(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
@@ -71,7 +71,7 @@ class ExceptionPolicySamples(object):
             )
 
     def create_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
 
         # [START create_exception_policy]
@@ -140,7 +140,7 @@ class ExceptionPolicySamples(object):
         # [END create_exception_policy]
 
     def update_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
         # [START update_exception_policy]
         from azure.communication.jobrouter import (
@@ -203,7 +203,7 @@ class ExceptionPolicySamples(object):
         # [END update_exception_policy]
 
     def get_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
         # [START get_exception_policy]
         from azure.communication.jobrouter import JobRouterAdministrationClient
@@ -216,7 +216,7 @@ class ExceptionPolicySamples(object):
         # [END get_exception_policy]
 
     def list_exception_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_exception_policies]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -231,7 +231,7 @@ class ExceptionPolicySamples(object):
         # [END list_exception_policies]
 
     def list_exception_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_exception_policies_batched]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -250,7 +250,7 @@ class ExceptionPolicySamples(object):
         # [END list_exception_policies_batched]
 
     def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
 
         # [START delete_exception_policy]

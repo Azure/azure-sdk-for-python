@@ -8,7 +8,7 @@ import pytest
 
 import azure.cosmos
 import test_config
-from azure.cosmos import PartitionKey, cosmos_client
+from azure.cosmos import PartitionKey, cosmos_client, exceptions, http_constants
 
 
 @pytest.mark.cosmosEmulator
@@ -65,7 +65,7 @@ class TestResourceIds(unittest.TestCase):
         self.client.delete_database(resource_id1)
         self.client.delete_database(resource_id2)
 
-    def test_create_illegal_characters_async(self):
+    def test_create_illegal_characters(self):
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -86,7 +86,7 @@ class TestResourceIds(unittest.TestCase):
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
             "ID_with_newline\n2",
-            "ID_with_more_than_255" + "_" * 255,
+            "ID_with_more_than_255" + "_add" * 255,
             "ID_with_trailing_spaces   "
         ]
 
@@ -97,23 +97,37 @@ class TestResourceIds(unittest.TestCase):
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            # Let service throw size exception
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
 
             try:
                 created_database.create_container(id=resource_id, partition_key=partition_key)
                 self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
 
             try:
                 created_container.create_item({"id": resource_id})
                 self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
+
             try:
                 created_container.upsert_item({"id": resource_id})
                 self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
 
         self.client.delete_database(database_id)
 

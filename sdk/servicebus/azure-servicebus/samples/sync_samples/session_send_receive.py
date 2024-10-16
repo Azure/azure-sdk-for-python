@@ -11,8 +11,9 @@ Example to show sending message(s) to and receiving messages from a Service Bus 
 
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 SESSION_ID = os.environ['SERVICEBUS_SESSION_ID']
 
@@ -53,7 +54,8 @@ def receive_batch_message(receiver):
 
 
 if __name__ == '__main__':
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
     with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME)
         with sender:

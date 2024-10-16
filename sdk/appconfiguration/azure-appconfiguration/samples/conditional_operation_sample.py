@@ -10,7 +10,7 @@
 FILE: conditional_operation_sample.py
 
 DESCRIPTION:
-    This sample demos conditional set/get/delete operations for app configuration
+    This sample demos how to conditional set/get/delete configuration settings synchronously.
 
 USAGE: python conditional_operation_sample.py
 
@@ -21,13 +21,12 @@ import os
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
-from util import print_configuration_setting
 
 
 def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
-    # Create app config client
+    # Create an app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
     # Unconditional set
@@ -40,13 +39,13 @@ def main():
     first_get = client.get_configuration_setting(key="MyKey")
     if first_get is None:
         return print("Error, unconditional set failed.")
-    print_configuration_setting(first_get)
+    print(first_get)
 
     # Conditional get, expect to return None because it is not modified
     second_get = client.get_configuration_setting(
         key="MyKey", etag=first_get.etag, match_condition=MatchConditions.IfModified
     )
-    print_configuration_setting(second_get)
+    print(second_get)
 
     # Conditional set
     first_get.value = "new value"

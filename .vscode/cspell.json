@@ -61,6 +61,8 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
+    "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_vendor/**",
+    "sdk/evaluation/azure-ai-evaluation/tests/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -89,6 +91,7 @@
     "sdk/synapse/azure-synapse/**",
     "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
+    "sdk/translation/azure-ai-translation-document/doc/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/storage/azure-storage-extensions/**",
@@ -134,9 +137,11 @@
     "conda/conda-recipes/msal-extensions/meta.yaml",
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
-    "conda/conda-releaselogs/azure-mgmt.md"
+    "conda/conda-releaselogs/azure-mgmt.md",
+    ".github/workflows/azure-sdk-tools.yml"
   ],
   "words": [
+    "msedge",
     "spinup",
     "cibuildwheel",
     "aoai",
@@ -244,6 +249,7 @@
     "guids",
     "hanaonazure",
     "hdinsight",
+    "healthdataaiservices",
     "heapq",
     "hexlify",
     "himds",
@@ -259,6 +265,7 @@
     "iohttp",
     "IOHTTP",
     "IOLRO",
+    "incompat",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -348,6 +355,7 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pydantic",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
@@ -399,9 +407,13 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "uninstrument",
+    "uninstrumented",
+    "uninstrumenting",
     "unpad",
     "unpadder",
     "unpartial",
+    "uniquifier",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -440,6 +452,7 @@
     "BUILDID",
     "documentdb",
     "chdir",
+    "radiculopathy",
     "reqs",
     "rgpy",
     "swaggertosdk",
@@ -463,7 +476,8 @@
     "dicom",
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
-    "MACVMIMAGE"
+    "MACVMIMAGE",
+    "myuseragent"
   ],
   "overrides": [
     {
@@ -1302,7 +1316,32 @@
         "mros",
         "Nify",
         "ctxt",
-        "wday"
+        "wday",
+        "dtype"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/**",
+      "words": [
+        "raisvc",
+        "otel",
+        "otlp",
+        "aggr",
+        "mlflow",
+        "azureml",
+        "dcid",
+        "prompty",
+        "wsid",
+        "tkey",
+        "tparam",
+        "tqdm",
+        "ncols",
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia",
+        "xpia",
       ]
     },
     {
@@ -1815,7 +1854,12 @@
         "Nify",
         "loinc",
         "wday",
-        "SNOMED"
+        "SNOMED",
+        "lobulated",
+        "pericholecystic",
+        "craniocaudally",
+        "angiomyolipomas",
+        "Omnipaque"
       ]
     },
     {
@@ -1839,6 +1883,33 @@
       "filename": "sdk/face/azure-ai-vision-face/tests/**",
       "words": [
         "dcid"
+      ]
+    },
+    {
+      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
+      "words": [
+        "deid",
+        "deidservices",
+        "deidentification",
+        "healthdataaiservices",
+        "deidentify",
+        "deidentified"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/utils.py",
+      "words": [
+        "stringized"
+      ]
+    },
+    {
+      "filename": "sdk/maps/azure-maps-route/**",
+      "words": [
+        "uturn",
+        "Einsteinweg",
+        "Hundredkm",
+        "TPEG",
+        "Hundredkm"
       ]
     }
   ],

@@ -1,5 +1,11 @@
 # Microsoft Authentication Library (MSAL) for Python (conda)
 
+## 2024.09.01
+
+### Packages included
+
+- msal-1.30.0
+
 ## 2024.06.01
 
 ### Packages included

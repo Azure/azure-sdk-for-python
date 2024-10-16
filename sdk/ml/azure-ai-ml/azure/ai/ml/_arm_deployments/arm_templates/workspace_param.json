@@ -29,10 +29,16 @@
     "keyVaultResourceGroupName": {
         "value": ""
     },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
     "storageAccountOption": {
         "value": "new"
     },
     "storageAccountName": {
+        "value": ""
+    },
+    "storageAccountSubscriptionId": {
         "value": ""
     },
     "storageAccountResourceGroupName": {

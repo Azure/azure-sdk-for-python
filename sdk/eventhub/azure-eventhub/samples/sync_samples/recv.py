@@ -10,8 +10,9 @@ An example to show receiving events from an Event Hub.
 """
 import os
 from azure.eventhub import EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -46,10 +47,11 @@ def on_error(partition_context, error):
 
 
 if __name__ == '__main__':
-    consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        consumer_group='$Default',
+    consumer_client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+        consumer_group="$Default",
     )
 
     try:

@@ -12,37 +12,34 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelDetails, DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
 
 
 class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     def test_copy_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id=None, target={})
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     def test_copy_model_empty_model_id(self,**kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id="", target={})
         assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_copy_model_successful(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -66,9 +63,9 @@ class TestCopyModel(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_copy_model_with_model_id_and_desc(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -95,9 +92,9 @@ class TestCopyModel(FormRecognizerTest):
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_copy_model_fail_bad_model_id(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -111,9 +108,9 @@ class TestCopyModel(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_copy_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -139,10 +136,9 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-
+    def test_copy_authorization(self, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_dma_client()
         target = client.get_copy_authorization()
 
         assert target["targetResourceId"] == formrecognizer_resource_id
@@ -154,9 +150,9 @@ class TestCopyModel(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_copy_model_with_composed_model(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller_1 = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model_1 = poller_1.result()
@@ -187,9 +183,8 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     def test_copy_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -206,9 +201,9 @@ class TestCopyModel(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()

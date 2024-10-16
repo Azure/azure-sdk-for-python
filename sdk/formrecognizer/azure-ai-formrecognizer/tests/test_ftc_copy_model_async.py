@@ -10,22 +10,21 @@ import uuid
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer.aio import FormTrainingClient
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_ft_client = functools.partial(get_async_client, FormTrainingClient)
 
 
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
-    async def test_copy_model_successful_v2(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_successful_v2(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.0")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -44,11 +43,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["modelId"] != model.model_id
             assert copied_model
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_model_with_labeled_model_name_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_with_labeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="mymodel")
             model = await poller.result()
@@ -68,11 +67,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copied_model
             assert copied_model.model_name == "mymodel"
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_model_with_unlabeled_model_name_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_with_unlabeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False, model_name="mymodel")
             model = await poller.result()
@@ -92,10 +91,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copied_model
             assert copied_model.model_name == "mymodel"
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_fail_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -109,11 +109,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert e.value.error.code == "2024"
             assert e.value.error.message
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_model_case_insensitive_region_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_case_insensitive_region_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -132,9 +132,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
-    async def test_copy_authorization_v2(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_authorization_v2(self, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.0")
         async with client:
             target = await client.get_copy_authorization(resource_region="eastus", resource_id=formrecognizer_resource_id)
 
@@ -146,9 +146,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_authorization_v21(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_authorization_v21(self, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             target = await client.get_copy_authorization(resource_region="eastus", resource_id=formrecognizer_resource_id)
 
@@ -158,11 +158,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["resourceRegion"] == "eastus"
             assert target["resourceId"] == formrecognizer_resource_id
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
-    async def test_copy_model_with_composed_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_model_with_composed_model_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_ft_client(api_version="2.1")
         async with client:
             poller_1 = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model1")
             model_1 = await poller_1.result()

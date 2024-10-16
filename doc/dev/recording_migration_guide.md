@@ -65,20 +65,28 @@ This script -- [`generate-assets-json.ps1`][generate_assets_json] -- should be r
 In a PowerShell window:
 
 1. Add the test proxy executable to `PATH` if it's not already present. This can be done by adding the path to the
-  `.proxy` folder at the base of your Python repo. For example, if the Python repo is at `C:\azure-sdk-for-python`,
-  you can add the test proxy to `PATH` for the current session by running:
+  `.proxy` folder at the base of your Python repo. You can add the test proxy to `PATH` for the current session by
+  running the following:
 
+  - On Windows:
 ```PowerShell
-$env:Path += ';C:\azure-sdk-for-python\.proxy'
+$env:PATH += ';<path-to-repo>\azure-sdk-for-python\.proxy'
 ```
 
-2. Set your working directory to the root of the package you're migrating (`sdk/{service}/{package}`) -- for example:
-
+  - On Mac or Linux:
 ```PowerShell
-cd C:\azure-sdk-for-python\sdk\keyvault\azure-keyvault-keys
+$env:PATH += ':<path-to-repo>/azure-sdk-for-python/.proxy'
 ```
 
-3. Run the following command:
+2. Run `echo $env:PATH` to inspect `PATH` and confirm that the proxy path was correctly appended.
+
+3. Set your working directory to the root of the package you're migrating (`sdk/{service}/{package}`) -- for example:
+
+```PowerShell
+cd <path-to-repo>\azure-sdk-for-python\sdk\keyvault\azure-keyvault-keys
+```
+
+4. Run the following command:
 
 ```PowerShell
 ..\..\..\eng\common\testproxy\onboarding\generate-assets-json.ps1 -InitialPush

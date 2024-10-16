@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, TypeVar
-from azure.core.credentials import AccessToken
+from typing import Any, Optional, TypeVar, cast
+from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo, TokenCredential
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
@@ -11,9 +11,6 @@ from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AadClient, AadClientBase
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 T = TypeVar("T", bound="_SharedTokenCacheCredential")
@@ -39,7 +36,7 @@ class SharedTokenCacheCredential:
 
     def __init__(self, username: Optional[str] = None, **kwargs: Any) -> None:
         if "authentication_record" in kwargs:
-            self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
+            self._credential: SupportsTokenInfo = SilentAuthenticationCredential(**kwargs)
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
@@ -54,14 +51,14 @@ class SharedTokenCacheCredential:
         """Close the credential's transport session."""
         self.__exit__()
 
-    @log_get_token("SharedTokenCacheCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -85,7 +82,32 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
+        return cast(TokenCredential, self._credential).get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+        )
+
+    @log_get_token
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scope for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
+            information.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+            attribute gives a reason.
+        """
+        return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
 
     @staticmethod
     def supported() -> bool:
@@ -109,21 +131,48 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._client:
             self._client.__exit__(*args)
 
+    def close(self) -> None:
+        self.__exit__()
+
     def get_token(
         self,
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
+        options: TokenRequestOptions = {}
+        if claims:
+            options["claims"] = claims
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        options["enable_cae"] = enable_cae
+
+        token_info = self._get_token_base(*scopes, options=options, base_method_name="get_token", **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        return self._get_token_base(*scopes, options=options, base_method_name="get_token_info")
+
+    def _get_token_base(
+        self,
+        *scopes: str,
+        options: Optional[TokenRequestOptions] = None,
+        base_method_name: str = "get_token_info",
+        **kwargs: Any,
+    ) -> AccessTokenInfo:
         if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+            raise ValueError(f"'{base_method_name}' requires at least one scope")
 
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = enable_cae
+        options = options or {}
+        claims = options.get("claims")
+        tenant_id = options.get("tenant_id")
+        is_cae = options.get("enable_cae", False)
+
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.
@@ -142,8 +191,8 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = self._client.obtain_token_by_refresh_token(
-                scopes, refresh_token, claims=claims, tenant_id=tenant_id, **kwargs
+            token = cast(AadClient, self._client).obtain_token_by_refresh_token(
+                scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
             )
             return token
 

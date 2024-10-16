@@ -17,7 +17,7 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError, MessageLockLostError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
@@ -44,10 +44,12 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_subscription_by_subscription_client_conn_str_receive_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
+    def test_subscription_by_subscription_client_conn_str_receive_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
                 logging_enable=False,
                 uamqp_transport=uamqp_transport
         ) as sb_client:
@@ -147,10 +149,13 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_subscription_by_servicebus_client_receive_batch_with_deadletter(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+    def test_subscription_by_servicebus_client_receive_batch_with_deadletter(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
 
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
                 logging_enable=False,
                 uamqp_transport=uamqp_transport
         ) as sb_client:

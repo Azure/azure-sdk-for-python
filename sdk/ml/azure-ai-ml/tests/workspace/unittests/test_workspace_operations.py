@@ -6,11 +6,10 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
+    Workspace as RestWorkspace,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceUpdateParameters
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     CustomerManagedKey,

@@ -8,7 +8,7 @@ import subprocess
 import sys
 from typing import Any, List, Tuple, Optional
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
@@ -34,9 +34,24 @@ if (! $m) {{
     exit
 }}
 
-$token = Get-AzAccessToken -ResourceUrl '{}'{}
+$params = @{{ 'ResourceUrl' = '{}'; 'WarningAction' = 'Ignore' }}
 
-Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
+$tenantId = '{}'
+if ($tenantId.Length -gt 0) {{
+    $params['TenantId'] = $tenantId
+}}
+
+$useSecureString = $m.Version -ge [version]'2.17.0'
+if ($useSecureString) {{
+    $params['AsSecureString'] = $true
+}}
+
+$token = Get-AzAccessToken @params
+$tokenValue = $token.Token
+if ($useSecureString) {{
+    $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
+}}
+Write-Output "`nazsdk%$($tokenValue)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
 
 
@@ -83,7 +98,7 @@ class AzurePowerShellCredential:
     def close(self) -> None:
         """Calling this method is unnecessary."""
 
-    @log_get_token("AzurePowerShellCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,
@@ -110,6 +125,42 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
+
+        options: TokenRequestOptions = {}
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+
+        token_info = self._get_token_base(*scopes, options=options, **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    @log_get_token
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients. Applications calling this method
+        directly must also handle token caching because this credential doesn't cache the tokens it acquires.
+
+        :param str scopes: desired scopes for the access token. TThis credential allows only one scope per request.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
+          no account is authenticated
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
+          receive an access token
+        """
+        return self._get_token_base(*scopes, options=options)
+
+    def _get_token_base(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
+    ) -> AccessTokenInfo:
+
+        tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
             validate_tenant_id(tenant_id)
         for scope in scopes:
@@ -170,11 +221,11 @@ def start_process(args: List[str]) -> "subprocess.Popen":
     return proc
 
 
-def parse_token(output: str) -> AccessToken:
+def parse_token(output: str) -> AccessTokenInfo:
     for line in output.split():
         if line.startswith("azsdk%"):
             _, token, expires_on = line.split("%")
-            return AccessToken(token, int(expires_on))
+            return AccessTokenInfo(token, int(expires_on))
 
     if within_dac.get():
         raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
@@ -182,10 +233,7 @@ def parse_token(output: str) -> AccessToken:
 
 
 def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
-    if tenant_id:
-        tenant_argument = " -TenantId " + tenant_id
-    else:
-        tenant_argument = ""
+    tenant_argument = tenant_id if tenant_id else ""
     resource = _scopes_to_resource(*scopes)
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
@@ -212,4 +260,6 @@ def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
     if stderr:
         # stderr is too noisy to include with an exception but may be useful for debugging
         _LOGGER.debug('%s received an error from Azure PowerShell: "%s"', AzurePowerShellCredential.__name__, stderr)
-    raise CredentialUnavailableError(message="Failed to invoke PowerShell")
+    raise CredentialUnavailableError(
+        message="Failed to invoke PowerShell. Enable debug logging for additional information."
+    )

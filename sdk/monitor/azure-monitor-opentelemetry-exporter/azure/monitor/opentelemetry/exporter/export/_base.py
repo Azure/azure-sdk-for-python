@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
     ContentDecodePolicy,
     HttpLoggingPolicy,
     RedirectPolicy,
@@ -44,22 +43,21 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_MAP_LOCK,
-    _REQUESTS_MAP,
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map
 
 logger = logging.getLogger(__name__)
 
 _AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
-_APPLICATION_INSIGHTS_RESOURCE_SCOPE = "https://monitor.azure.com//.default"
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -197,7 +195,7 @@ class BaseExporter:
                         logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                     track_response.items_received, track_response.items_accepted)
                     if self._should_collect_stats():
-                        _update_requests_map(_REQ_SUCCESS_NAME[1])
+                        _update_requests_map(_REQ_SUCCESS_NAME[1], 1)
                     reach_ingestion = True
                     result = ExportResult.SUCCESS
                 else:  # 206
@@ -308,7 +306,7 @@ class BaseExporter:
             finally:
                 if self._should_collect_stats():
                     end_time = time.time()
-                    _update_requests_map('count')
+                    _update_requests_map('count', 1)
                     _update_requests_map(_REQ_DURATION_NAME[1], value=end_time-start_time)
                 if self._is_statsbeat_initializing_state():
                     # Update statsbeat initial success state if reached ingestion
@@ -345,19 +343,6 @@ class BaseExporter:
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
-
-
-def _get_auth_policy(credential, default_auth_policy):
-    if credential:
-        if hasattr(credential, 'get_token'):
-            return BearerTokenCredentialPolicy(
-                credential,
-                _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
-            )
-        raise ValueError(
-            'Must pass in valid TokenCredential.'
-        )
-    return default_auth_policy
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
@@ -408,22 +393,6 @@ def _reached_ingestion_code(response_code: Optional[int]) -> bool:
     :rtype: bool
     """
     return response_code in _REACHED_INGESTION_STATUS_CODES
-
-
-def _update_requests_map(type_name, value=None):
-    # value is either None, duration, status_code or exc_name
-    with _REQUESTS_MAP_LOCK:
-        if type_name in (_REQ_SUCCESS_NAME[1], "count"):  # success, count
-            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
-        elif type_name == _REQ_DURATION_NAME[1]:  # duration
-            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + value
-        else:  # exception, failure, retry, throttle
-            prev = 0
-            if _REQUESTS_MAP.get(type_name):
-                prev = _REQUESTS_MAP.get(type_name).get(value, 0)
-            else:
-                _REQUESTS_MAP[type_name] = {}
-            _REQUESTS_MAP[type_name][value] = prev + 1
 
 
 _MONITOR_DOMAIN_MAPPING = {

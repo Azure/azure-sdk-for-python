@@ -7,7 +7,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Literal,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -17,12 +33,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -30,7 +47,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._operations import (
     build_availability_sets_create_or_update_request,
     build_availability_sets_delete_request,
@@ -149,6 +165,10 @@ from ...operations._operations import (
     build_virtual_machines_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -189,7 +209,7 @@ class Operations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ComputeOperationListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -205,7 +225,6 @@ class Operations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -221,7 +240,6 @@ class Operations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -344,7 +362,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -378,7 +396,6 @@ class AvailabilitySetsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -392,7 +409,7 @@ class AvailabilitySetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AvailabilitySet", pipeline_response)
+        deserialized = self._deserialize("AvailabilitySet", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -472,7 +489,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -506,7 +523,6 @@ class AvailabilitySetsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -520,7 +536,7 @@ class AvailabilitySetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AvailabilitySet", pipeline_response)
+        deserialized = self._deserialize("AvailabilitySet", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -541,7 +557,7 @@ class AvailabilitySetsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -563,7 +579,6 @@ class AvailabilitySetsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -592,7 +607,7 @@ class AvailabilitySetsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -614,7 +629,6 @@ class AvailabilitySetsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -628,7 +642,7 @@ class AvailabilitySetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AvailabilitySet", pipeline_response)
+        deserialized = self._deserialize("AvailabilitySet", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -655,7 +669,7 @@ class AvailabilitySetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.AvailabilitySetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -673,7 +687,6 @@ class AvailabilitySetsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -689,7 +702,6 @@ class AvailabilitySetsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -735,7 +747,7 @@ class AvailabilitySetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.AvailabilitySetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -753,7 +765,6 @@ class AvailabilitySetsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -769,7 +780,6 @@ class AvailabilitySetsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -820,7 +830,7 @@ class AvailabilitySetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -839,7 +849,6 @@ class AvailabilitySetsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -855,7 +864,6 @@ class AvailabilitySetsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -980,7 +988,7 @@ class ProximityPlacementGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1014,7 +1022,6 @@ class ProximityPlacementGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1028,11 +1035,7 @@ class ProximityPlacementGroupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response)
+        deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1115,7 +1118,7 @@ class ProximityPlacementGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1149,7 +1152,6 @@ class ProximityPlacementGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1163,7 +1165,7 @@ class ProximityPlacementGroupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response)
+        deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1184,7 +1186,7 @@ class ProximityPlacementGroupsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1206,7 +1208,6 @@ class ProximityPlacementGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1237,7 +1238,7 @@ class ProximityPlacementGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1259,7 +1260,6 @@ class ProximityPlacementGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1273,7 +1273,7 @@ class ProximityPlacementGroupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response)
+        deserialized = self._deserialize("ProximityPlacementGroup", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1296,7 +1296,7 @@ class ProximityPlacementGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ProximityPlacementGroupListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1313,7 +1313,6 @@ class ProximityPlacementGroupsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1329,7 +1328,6 @@ class ProximityPlacementGroupsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1378,7 +1376,7 @@ class ProximityPlacementGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ProximityPlacementGroupListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1396,7 +1394,6 @@ class ProximityPlacementGroupsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1412,7 +1409,6 @@ class ProximityPlacementGroupsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1480,7 +1476,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtensionImage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1504,7 +1500,6 @@ class VirtualMachineExtensionImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1518,7 +1513,7 @@ class VirtualMachineExtensionImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineExtensionImage", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineExtensionImage", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1539,7 +1534,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtensionImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1561,7 +1556,6 @@ class VirtualMachineExtensionImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1575,7 +1569,7 @@ class VirtualMachineExtensionImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineExtensionImage]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineExtensionImage]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1612,7 +1606,7 @@ class VirtualMachineExtensionImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtensionImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1638,7 +1632,6 @@ class VirtualMachineExtensionImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1652,7 +1645,7 @@ class VirtualMachineExtensionImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineExtensionImage]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineExtensionImage]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1687,8 +1680,8 @@ class VirtualMachineExtensionsOperations:
         vm_extension_name: str,
         extension_parameters: Union[_models.VirtualMachineExtension, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineExtension:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1701,7 +1694,7 @@ class VirtualMachineExtensionsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineExtension] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1723,10 +1716,10 @@ class VirtualMachineExtensionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1734,14 +1727,14 @@ class VirtualMachineExtensionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1864,10 +1857,11 @@ class VirtualMachineExtensionsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -1896,8 +1890,8 @@ class VirtualMachineExtensionsOperations:
         vm_extension_name: str,
         extension_parameters: Union[_models.VirtualMachineExtensionUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineExtension:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1910,7 +1904,7 @@ class VirtualMachineExtensionsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineExtension] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1932,10 +1926,10 @@ class VirtualMachineExtensionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1943,10 +1937,14 @@ class VirtualMachineExtensionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2070,10 +2068,11 @@ class VirtualMachineExtensionsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineExtension", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -2095,10 +2094,10 @@ class VirtualMachineExtensionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, vm_name: str, vm_extension_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2110,7 +2109,7 @@ class VirtualMachineExtensionsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extensions_delete_request(
             resource_group_name=resource_group_name,
@@ -2121,10 +2120,10 @@ class VirtualMachineExtensionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2132,11 +2131,19 @@ class VirtualMachineExtensionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -2164,7 +2171,7 @@ class VirtualMachineExtensionsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 vm_extension_name=vm_extension_name,
@@ -2174,6 +2181,7 @@ class VirtualMachineExtensionsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -2219,7 +2227,7 @@ class VirtualMachineExtensionsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtension
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2243,7 +2251,6 @@ class VirtualMachineExtensionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2257,7 +2264,7 @@ class VirtualMachineExtensionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineExtension", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineExtension", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2280,7 +2287,7 @@ class VirtualMachineExtensionsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineExtensionsListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2303,7 +2310,6 @@ class VirtualMachineExtensionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2317,7 +2323,7 @@ class VirtualMachineExtensionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineExtensionsListResult", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineExtensionsListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2365,7 +2371,7 @@ class VirtualMachineImagesOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineImage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2390,7 +2396,6 @@ class VirtualMachineImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2404,7 +2409,7 @@ class VirtualMachineImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineImage", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineImage", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2445,7 +2450,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2472,7 +2477,6 @@ class VirtualMachineImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2486,7 +2490,7 @@ class VirtualMachineImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2507,7 +2511,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2529,7 +2533,6 @@ class VirtualMachineImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2543,7 +2546,7 @@ class VirtualMachineImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2560,7 +2563,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2581,7 +2584,6 @@ class VirtualMachineImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2595,7 +2597,7 @@ class VirtualMachineImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2618,7 +2620,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2018_04_01.models.VirtualMachineImageResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2641,7 +2643,6 @@ class VirtualMachineImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2655,7 +2656,7 @@ class VirtualMachineImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response)
+        deserialized = self._deserialize("[VirtualMachineImageResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2700,7 +2701,7 @@ class UsageOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ListUsagesResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2718,7 +2719,6 @@ class UsageOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2734,7 +2734,6 @@ class UsageOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2802,7 +2801,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2820,7 +2819,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2836,7 +2834,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2871,8 +2868,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         vm_name: str,
         parameters: Union[_models.VirtualMachineCaptureParameters, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.VirtualMachineCaptureResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2885,7 +2882,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.VirtualMachineCaptureResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2906,10 +2903,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2917,12 +2914,14 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachineCaptureResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3033,10 +3032,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineCaptureResult", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineCaptureResult", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -3066,8 +3066,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         vm_name: str,
         parameters: Union[_models.VirtualMachine, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachine:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3080,7 +3080,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3101,10 +3101,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3112,14 +3112,14 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3226,10 +3226,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
+            deserialized = self._deserialize("VirtualMachine", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -3257,8 +3258,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         vm_name: str,
         parameters: Union[_models.VirtualMachineUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachine:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3271,7 +3272,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3292,10 +3293,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3303,14 +3304,14 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3417,10 +3418,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachine", pipeline_response)
+            deserialized = self._deserialize("VirtualMachine", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -3442,10 +3444,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _delete_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3457,7 +3457,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_delete_request(
             resource_group_name=resource_group_name,
@@ -3467,10 +3467,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3478,11 +3478,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -3505,7 +3513,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -3514,6 +3522,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -3552,7 +3561,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachine
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3575,7 +3584,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3589,7 +3597,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachine", pipeline_response)
+        deserialized = self._deserialize("VirtualMachine", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3610,7 +3618,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3632,7 +3640,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3646,17 +3653,17 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineInstanceView", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineInstanceView", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _convert_to_managed_disks_initial(  # pylint: disable=inconsistent-return-statements
+    async def _convert_to_managed_disks_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3668,7 +3675,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_convert_to_managed_disks_request(
             resource_group_name=resource_group_name,
@@ -3678,10 +3685,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3689,11 +3696,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_convert_to_managed_disks(
@@ -3719,7 +3734,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._convert_to_managed_disks_initial(  # type: ignore
+            raw_result = await self._convert_to_managed_disks_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -3728,6 +3743,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -3749,10 +3765,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _deallocate_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3764,7 +3778,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_deallocate_request(
             resource_group_name=resource_group_name,
@@ -3774,10 +3788,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3785,11 +3799,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_deallocate(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -3813,7 +3835,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._deallocate_initial(  # type: ignore
+            raw_result = await self._deallocate_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -3822,6 +3844,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -3857,7 +3880,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3879,7 +3902,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3914,7 +3936,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3932,7 +3954,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3948,7 +3969,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3993,7 +4013,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4010,7 +4030,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4026,7 +4045,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4077,7 +4095,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4096,7 +4114,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4112,7 +4129,6 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4141,10 +4157,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _power_off_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _power_off_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4156,7 +4170,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_power_off_request(
             resource_group_name=resource_group_name,
@@ -4166,10 +4180,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4177,11 +4191,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_power_off(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -4205,7 +4227,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._power_off_initial(  # type: ignore
+            raw_result = await self._power_off_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -4214,6 +4236,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -4235,10 +4258,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restart_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _restart_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4250,7 +4271,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_restart_request(
             resource_group_name=resource_group_name,
@@ -4260,10 +4281,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4271,11 +4292,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_restart(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -4298,7 +4327,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restart_initial(  # type: ignore
+            raw_result = await self._restart_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -4307,6 +4336,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -4328,10 +4358,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _start_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _start_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4343,7 +4371,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_start_request(
             resource_group_name=resource_group_name,
@@ -4353,10 +4381,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4364,11 +4392,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_start(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -4391,7 +4427,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_initial(  # type: ignore
+            raw_result = await self._start_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -4400,6 +4436,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -4421,10 +4458,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _redeploy_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _redeploy_initial(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4436,7 +4471,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_redeploy_request(
             resource_group_name=resource_group_name,
@@ -4446,10 +4481,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4457,11 +4492,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_redeploy(self, resource_group_name: str, vm_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -4484,7 +4527,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._redeploy_initial(  # type: ignore
+            raw_result = await self._redeploy_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -4493,6 +4536,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -4514,10 +4558,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _perform_maintenance_initial(  # pylint: disable=inconsistent-return-statements
+    async def _perform_maintenance_initial(
         self, resource_group_name: str, vm_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4529,7 +4573,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_perform_maintenance_request(
             resource_group_name=resource_group_name,
@@ -4539,10 +4583,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4550,11 +4594,19 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_perform_maintenance(
@@ -4579,7 +4631,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._perform_maintenance_initial(  # type: ignore
+            raw_result = await self._perform_maintenance_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 api_version=api_version,
@@ -4588,6 +4640,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -4615,8 +4668,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         vm_name: str,
         parameters: Union[_models.RunCommandInput, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.RunCommandResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4629,7 +4682,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.RunCommandResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4650,10 +4703,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4661,12 +4714,14 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("RunCommandResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4773,10 +4828,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RunCommandResult", pipeline_response)
+            deserialized = self._deserialize("RunCommandResult", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -4838,7 +4894,7 @@ class VirtualMachineSizesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4856,7 +4912,6 @@ class VirtualMachineSizesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4872,7 +4927,6 @@ class VirtualMachineSizesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4924,8 +4978,8 @@ class ImagesOperations:
 
     async def _create_or_update_initial(
         self, resource_group_name: str, image_name: str, parameters: Union[_models.Image, IO[bytes]], **kwargs: Any
-    ) -> _models.Image:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4938,7 +4992,7 @@ class ImagesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Image] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4959,10 +5013,10 @@ class ImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4970,14 +5024,14 @@ class ImagesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Image", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("Image", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5074,10 +5128,11 @@ class ImagesOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Image", pipeline_response)
+            deserialized = self._deserialize("Image", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5105,8 +5160,8 @@ class ImagesOperations:
         image_name: str,
         parameters: Union[_models.ImageUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Image:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5119,7 +5174,7 @@ class ImagesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Image] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5140,10 +5195,10 @@ class ImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5151,14 +5206,14 @@ class ImagesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Image", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("Image", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5259,10 +5314,11 @@ class ImagesOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Image", pipeline_response)
+            deserialized = self._deserialize("Image", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5284,10 +5340,8 @@ class ImagesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, image_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _delete_initial(self, resource_group_name: str, image_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5299,7 +5353,7 @@ class ImagesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_images_delete_request(
             resource_group_name=resource_group_name,
@@ -5309,10 +5363,10 @@ class ImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5320,11 +5374,19 @@ class ImagesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, image_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -5347,7 +5409,7 @@ class ImagesOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 image_name=image_name,
                 api_version=api_version,
@@ -5356,6 +5418,7 @@ class ImagesOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -5393,7 +5456,7 @@ class ImagesOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.Image
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5416,7 +5479,6 @@ class ImagesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5430,7 +5492,7 @@ class ImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Image", pipeline_response)
+        deserialized = self._deserialize("Image", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5453,7 +5515,7 @@ class ImagesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ImageListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5471,7 +5533,6 @@ class ImagesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5487,7 +5548,6 @@ class ImagesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5531,7 +5591,7 @@ class ImagesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.ImageListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5548,7 +5608,6 @@ class ImagesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5564,7 +5623,6 @@ class ImagesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5620,8 +5678,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_scale_set_name: str,
         parameters: Union[_models.VirtualMachineScaleSet, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineScaleSet:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5634,7 +5692,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineScaleSet] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5655,10 +5713,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5666,14 +5724,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5780,10 +5838,11 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5811,8 +5870,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         vm_scale_set_name: str,
         parameters: Union[_models.VirtualMachineScaleSetUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineScaleSet:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5825,7 +5884,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineScaleSet] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5846,10 +5905,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5857,10 +5916,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5968,10 +6031,11 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5993,10 +6057,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, vm_scale_set_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6008,7 +6072,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_delete_request(
             resource_group_name=resource_group_name,
@@ -6018,10 +6082,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6029,11 +6093,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -6058,7 +6130,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 api_version=api_version,
@@ -6067,6 +6139,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -6102,7 +6175,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6124,7 +6197,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6138,21 +6210,21 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSet", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
+    async def _deallocate_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6165,7 +6237,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6189,10 +6261,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6200,11 +6272,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_deallocate(
@@ -6299,7 +6379,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._deallocate_initial(  # type: ignore
+            raw_result = await self._deallocate_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -6310,6 +6390,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -6331,14 +6412,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _delete_instances_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_instances_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, IO[bytes]],
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6351,7 +6432,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6372,10 +6453,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6383,11 +6464,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_delete_instances(
@@ -6476,7 +6565,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_instances_initial(  # type: ignore
+            raw_result = await self._delete_instances_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -6487,6 +6576,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -6522,7 +6612,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSetInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6544,7 +6634,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6558,7 +6647,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSetInstanceView", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetInstanceView", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6583,7 +6672,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6601,7 +6690,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6617,7 +6705,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6664,7 +6751,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetListWithLinkResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6681,7 +6768,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6697,7 +6783,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6749,7 +6834,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetListSkusResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6768,7 +6853,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6784,7 +6868,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6835,7 +6918,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetListOSUpgradeHistory] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6854,7 +6937,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6870,7 +6952,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6899,14 +6980,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _power_off_initial(  # pylint: disable=inconsistent-return-statements
+    async def _power_off_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6919,7 +7000,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6943,10 +7024,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6954,11 +7035,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_power_off(
@@ -7053,7 +7142,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._power_off_initial(  # type: ignore
+            raw_result = await self._power_off_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7064,6 +7153,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7085,14 +7175,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restart_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restart_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7105,7 +7195,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7129,10 +7219,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7140,11 +7230,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restart(
@@ -7233,7 +7331,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restart_initial(  # type: ignore
+            raw_result = await self._restart_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7244,6 +7342,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7265,14 +7364,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _start_initial(  # pylint: disable=inconsistent-return-statements
+    async def _start_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7285,7 +7384,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7309,10 +7408,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7320,11 +7419,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_start(
@@ -7413,7 +7520,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_initial(  # type: ignore
+            raw_result = await self._start_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7424,6 +7531,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7445,14 +7553,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _redeploy_initial(  # pylint: disable=inconsistent-return-statements
+    async def _redeploy_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7465,7 +7573,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7489,10 +7597,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7500,11 +7608,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_redeploy(
@@ -7596,7 +7712,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._redeploy_initial(  # type: ignore
+            raw_result = await self._redeploy_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7607,6 +7723,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7628,14 +7745,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _perform_maintenance_initial(  # pylint: disable=inconsistent-return-statements
+    async def _perform_maintenance_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7648,7 +7765,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7672,10 +7789,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7683,11 +7800,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_perform_maintenance(
@@ -7785,7 +7910,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._perform_maintenance_initial(  # type: ignore
+            raw_result = await self._perform_maintenance_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7796,6 +7921,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7817,14 +7943,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _update_instances_initial(  # pylint: disable=inconsistent-return-statements
+    async def _update_instances_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, IO[bytes]],
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7837,7 +7963,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7858,10 +7984,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7869,11 +7995,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_instances(
@@ -7962,7 +8096,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_instances_initial(  # type: ignore
+            raw_result = await self._update_instances_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -7973,6 +8107,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -7994,14 +8129,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _reimage_initial(  # pylint: disable=inconsistent-return-statements
+    async def _reimage_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8014,7 +8149,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -8038,10 +8173,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8049,11 +8184,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_reimage(
@@ -8142,7 +8285,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._reimage_initial(  # type: ignore
+            raw_result = await self._reimage_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -8153,6 +8296,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -8174,14 +8318,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _reimage_all_initial(  # pylint: disable=inconsistent-return-statements
+    async def _reimage_all_initial(
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional[Union[_models.VirtualMachineScaleSetVMInstanceIDs, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8194,7 +8338,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -8218,10 +8362,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8229,11 +8373,19 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_reimage_all(
@@ -8325,7 +8477,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._reimage_all_initial(  # type: ignore
+            raw_result = await self._reimage_all_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vm_instance_i_ds=vm_instance_i_ds,
@@ -8336,6 +8488,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -8375,7 +8528,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.RecoveryWalkResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8398,7 +8551,6 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8412,7 +8564,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RecoveryWalkResponse", pipeline_response)
+        deserialized = self._deserialize("RecoveryWalkResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8447,8 +8599,8 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         vmss_extension_name: str,
         extension_parameters: Union[_models.VirtualMachineScaleSetExtension, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineScaleSetExtension:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8461,7 +8613,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineScaleSetExtension] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -8483,10 +8635,10 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8494,14 +8646,14 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8625,10 +8777,11 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -8650,10 +8803,10 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, vm_scale_set_name: str, vmss_extension_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8665,7 +8818,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_extensions_delete_request(
             resource_group_name=resource_group_name,
@@ -8676,10 +8829,10 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8687,11 +8840,19 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -8719,7 +8880,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vmss_extension_name=vmss_extension_name,
@@ -8729,6 +8890,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -8774,7 +8936,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSetExtension
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8798,7 +8960,6 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8812,7 +8973,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetExtension", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8841,7 +9002,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetExtensionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8860,7 +9021,6 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -8876,7 +9036,6 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -8926,10 +9085,10 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
-    async def _cancel_initial(  # pylint: disable=inconsistent-return-statements
+    async def _cancel_initial(
         self, resource_group_name: str, vm_scale_set_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8941,7 +9100,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_cancel_request(
             resource_group_name=resource_group_name,
@@ -8951,10 +9110,10 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8962,11 +9121,19 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_cancel(
@@ -8991,7 +9158,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._cancel_initial(  # type: ignore
+            raw_result = await self._cancel_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 api_version=api_version,
@@ -9000,6 +9167,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9021,10 +9189,10 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _start_os_upgrade_initial(  # pylint: disable=inconsistent-return-statements
+    async def _start_os_upgrade_initial(
         self, resource_group_name: str, vm_scale_set_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9036,7 +9204,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_start_os_upgrade_request(
             resource_group_name=resource_group_name,
@@ -9046,10 +9214,10 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9057,11 +9225,19 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_start_os_upgrade(
@@ -9088,7 +9264,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_os_upgrade_initial(  # type: ignore
+            raw_result = await self._start_os_upgrade_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 api_version=api_version,
@@ -9097,6 +9273,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9132,7 +9309,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.RollingUpgradeStatusInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9154,7 +9331,6 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9168,7 +9344,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RollingUpgradeStatusInfo", pipeline_response)
+        deserialized = self._deserialize("RollingUpgradeStatusInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9196,10 +9372,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
-    async def _reimage_initial(  # pylint: disable=inconsistent-return-statements
+    async def _reimage_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9211,7 +9387,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_reimage_request(
             resource_group_name=resource_group_name,
@@ -9222,10 +9398,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9233,11 +9409,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_reimage(
@@ -9264,7 +9448,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._reimage_initial(  # type: ignore
+            raw_result = await self._reimage_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -9274,6 +9458,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9295,10 +9480,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _reimage_all_initial(  # pylint: disable=inconsistent-return-statements
+    async def _reimage_all_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9310,7 +9495,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_reimage_all_request(
             resource_group_name=resource_group_name,
@@ -9321,10 +9506,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9332,11 +9517,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_reimage_all(
@@ -9364,7 +9557,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._reimage_all_initial(  # type: ignore
+            raw_result = await self._reimage_all_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -9374,6 +9567,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9395,10 +9589,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
+    async def _deallocate_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9410,7 +9604,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_deallocate_request(
             resource_group_name=resource_group_name,
@@ -9421,10 +9615,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9432,11 +9626,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_deallocate(
@@ -9465,7 +9667,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._deallocate_initial(  # type: ignore
+            raw_result = await self._deallocate_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -9475,6 +9677,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9503,8 +9706,8 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         instance_id: str,
         parameters: Union[_models.VirtualMachineScaleSetVM, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualMachineScaleSetVM:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9517,7 +9720,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -9539,10 +9742,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9550,14 +9753,14 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9679,10 +9882,11 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response)
+            deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -9704,10 +9908,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9719,7 +9923,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_delete_request(
             resource_group_name=resource_group_name,
@@ -9730,10 +9934,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9741,11 +9945,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -9772,7 +9984,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -9782,6 +9994,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9819,7 +10032,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSetVM
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9842,7 +10055,6 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9856,7 +10068,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9879,7 +10091,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSetVMInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9902,7 +10114,6 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9916,7 +10127,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualMachineScaleSetVMInstanceView", pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetVMInstanceView", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9962,7 +10173,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9984,7 +10195,6 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10000,7 +10210,6 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10029,10 +10238,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _power_off_initial(  # pylint: disable=inconsistent-return-statements
+    async def _power_off_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10044,7 +10253,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_power_off_request(
             resource_group_name=resource_group_name,
@@ -10055,10 +10264,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10066,11 +10275,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_power_off(
@@ -10099,7 +10316,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._power_off_initial(  # type: ignore
+            raw_result = await self._power_off_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -10109,6 +10326,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10130,10 +10348,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restart_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restart_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10145,7 +10363,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_restart_request(
             resource_group_name=resource_group_name,
@@ -10156,10 +10374,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10167,11 +10385,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_restart(
@@ -10198,7 +10424,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restart_initial(  # type: ignore
+            raw_result = await self._restart_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -10208,6 +10434,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10229,10 +10456,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _start_initial(  # pylint: disable=inconsistent-return-statements
+    async def _start_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10244,7 +10471,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_start_request(
             resource_group_name=resource_group_name,
@@ -10255,10 +10482,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10266,11 +10493,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_start(
@@ -10297,7 +10532,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._start_initial(  # type: ignore
+            raw_result = await self._start_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -10307,6 +10542,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10328,10 +10564,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _redeploy_initial(  # pylint: disable=inconsistent-return-statements
+    async def _redeploy_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10343,7 +10579,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_redeploy_request(
             resource_group_name=resource_group_name,
@@ -10354,10 +10590,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10365,11 +10601,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_redeploy(
@@ -10397,7 +10641,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._redeploy_initial(  # type: ignore
+            raw_result = await self._redeploy_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -10407,6 +10651,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10428,10 +10673,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _perform_maintenance_initial(  # pylint: disable=inconsistent-return-statements
+    async def _perform_maintenance_initial(
         self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10443,7 +10688,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_perform_maintenance_request(
             resource_group_name=resource_group_name,
@@ -10454,10 +10699,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10465,11 +10710,19 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_perform_maintenance(
@@ -10496,7 +10749,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._perform_maintenance_initial(  # type: ignore
+            raw_result = await self._perform_maintenance_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
@@ -10506,6 +10759,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10534,8 +10788,8 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         instance_id: str,
         parameters: Union[_models.RunCommandInput, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.RunCommandResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10548,7 +10802,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.RunCommandResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10570,10 +10824,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10581,12 +10835,14 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("RunCommandResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10703,10 +10959,11 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RunCommandResult", pipeline_response)
+            deserialized = self._deserialize("RunCommandResult", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -10753,8 +11010,8 @@ class LogAnalyticsOperations:
 
     async def _export_request_rate_by_interval_initial(
         self, location: str, parameters: Union[_models.RequestRateByIntervalInput, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.LogAnalyticsOperationResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10767,7 +11024,7 @@ class LogAnalyticsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.LogAnalyticsOperationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10787,10 +11044,10 @@ class LogAnalyticsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10798,12 +11055,14 @@ class LogAnalyticsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10898,10 +11157,11 @@ class LogAnalyticsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response)
+            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -10928,8 +11188,8 @@ class LogAnalyticsOperations:
 
     async def _export_throttled_requests_initial(
         self, location: str, parameters: Union[_models.ThrottledRequestsInput, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.LogAnalyticsOperationResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10942,7 +11202,7 @@ class LogAnalyticsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.LogAnalyticsOperationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10962,10 +11222,10 @@ class LogAnalyticsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10973,12 +11233,14 @@ class LogAnalyticsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11070,10 +11332,11 @@ class LogAnalyticsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response)
+            deserialized = self._deserialize("LogAnalyticsOperationResult", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -11137,7 +11400,7 @@ class VirtualMachineRunCommandsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.RunCommandListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11155,7 +11418,6 @@ class VirtualMachineRunCommandsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11171,7 +11433,6 @@ class VirtualMachineRunCommandsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11212,7 +11473,7 @@ class VirtualMachineRunCommandsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.RunCommandDocument
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11234,7 +11495,6 @@ class VirtualMachineRunCommandsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11248,7 +11508,7 @@ class VirtualMachineRunCommandsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RunCommandDocument", pipeline_response)
+        deserialized = self._deserialize("RunCommandDocument", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11278,8 +11538,8 @@ class DisksOperations:
 
     async def _create_or_update_initial(
         self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, IO[bytes]], **kwargs: Any
-    ) -> _models.Disk:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11292,7 +11552,7 @@ class DisksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Disk] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -11313,10 +11573,10 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -11324,14 +11584,14 @@ class DisksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Disk", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Disk", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11434,10 +11694,11 @@ class DisksOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Disk", pipeline_response)
+            deserialized = self._deserialize("Disk", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -11461,8 +11722,8 @@ class DisksOperations:
 
     async def _update_initial(
         self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, IO[bytes]], **kwargs: Any
-    ) -> _models.Disk:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11475,7 +11736,7 @@ class DisksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Disk] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -11496,10 +11757,10 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -11507,14 +11768,14 @@ class DisksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Disk", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Disk", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11617,10 +11878,11 @@ class DisksOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Disk", pipeline_response)
+            deserialized = self._deserialize("Disk", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -11656,7 +11918,7 @@ class DisksOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.Disk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11678,7 +11940,6 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11692,17 +11953,15 @@ class DisksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Disk", pipeline_response)
+        deserialized = self._deserialize("Disk", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, disk_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    async def _delete_initial(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11714,7 +11973,7 @@ class DisksOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disks_delete_request(
             resource_group_name=resource_group_name,
@@ -11724,10 +11983,10 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -11735,11 +11994,19 @@ class DisksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -11764,7 +12031,7 @@ class DisksOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 disk_name=disk_name,
                 api_version=api_version,
@@ -11773,6 +12040,7 @@ class DisksOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -11810,7 +12078,7 @@ class DisksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.DiskList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11828,7 +12096,6 @@ class DisksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11844,7 +12111,6 @@ class DisksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11887,7 +12153,7 @@ class DisksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.DiskList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11904,7 +12170,6 @@ class DisksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11920,7 +12185,6 @@ class DisksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11955,8 +12219,8 @@ class DisksOperations:
         disk_name: str,
         grant_access_data: Union[_models.GrantAccessData, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.AccessUri]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -11969,7 +12233,7 @@ class DisksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.AccessUri]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -11990,10 +12254,10 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12001,12 +12265,14 @@ class DisksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("AccessUri", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12118,10 +12384,11 @@ class DisksOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AccessUri", pipeline_response)
+            deserialized = self._deserialize("AccessUri", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -12145,10 +12412,10 @@ class DisksOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _revoke_access_initial(  # pylint: disable=inconsistent-return-statements
+    async def _revoke_access_initial(
         self, resource_group_name: str, disk_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12160,7 +12427,7 @@ class DisksOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disks_revoke_access_request(
             resource_group_name=resource_group_name,
@@ -12170,10 +12437,10 @@ class DisksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12181,11 +12448,19 @@ class DisksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_revoke_access(
@@ -12212,7 +12487,7 @@ class DisksOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._revoke_access_initial(  # type: ignore
+            raw_result = await self._revoke_access_initial(
                 resource_group_name=resource_group_name,
                 disk_name=disk_name,
                 api_version=api_version,
@@ -12221,6 +12496,7 @@ class DisksOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -12267,8 +12543,8 @@ class SnapshotsOperations:
 
     async def _create_or_update_initial(
         self, resource_group_name: str, snapshot_name: str, snapshot: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
-    ) -> _models.Snapshot:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12281,7 +12557,7 @@ class SnapshotsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -12302,10 +12578,10 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12313,14 +12589,14 @@ class SnapshotsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Snapshot", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12426,10 +12702,11 @@ class SnapshotsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Snapshot", pipeline_response)
+            deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -12457,8 +12734,8 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: Union[_models.SnapshotUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Snapshot:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12471,7 +12748,7 @@ class SnapshotsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -12492,10 +12769,10 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12503,14 +12780,14 @@ class SnapshotsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Snapshot", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12622,10 +12899,11 @@ class SnapshotsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Snapshot", pipeline_response)
+            deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -12661,7 +12939,7 @@ class SnapshotsOperations:
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12683,7 +12961,6 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12697,17 +12974,17 @@ class SnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Snapshot", pipeline_response)
+        deserialized = self._deserialize("Snapshot", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, snapshot_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12719,7 +12996,7 @@ class SnapshotsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_snapshots_delete_request(
             resource_group_name=resource_group_name,
@@ -12729,10 +13006,10 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12740,11 +13017,19 @@ class SnapshotsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -12769,7 +13054,7 @@ class SnapshotsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 snapshot_name=snapshot_name,
                 api_version=api_version,
@@ -12778,6 +13063,7 @@ class SnapshotsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -12816,7 +13102,7 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.SnapshotList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12834,7 +13120,6 @@ class SnapshotsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -12850,7 +13135,6 @@ class SnapshotsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -12894,7 +13178,7 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         cls: ClsType[_models.SnapshotList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12911,7 +13195,6 @@ class SnapshotsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -12927,7 +13210,6 @@ class SnapshotsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -12962,8 +13244,8 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: Union[_models.GrantAccessData, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.AccessUri]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -12976,7 +13258,7 @@ class SnapshotsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.AccessUri]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -12997,10 +13279,10 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -13008,12 +13290,14 @@ class SnapshotsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("AccessUri", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13125,10 +13409,11 @@ class SnapshotsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AccessUri", pipeline_response)
+            deserialized = self._deserialize("AccessUri", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -13152,10 +13437,10 @@ class SnapshotsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _revoke_access_initial(  # pylint: disable=inconsistent-return-statements
+    async def _revoke_access_initial(
         self, resource_group_name: str, snapshot_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -13167,7 +13452,7 @@ class SnapshotsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_snapshots_revoke_access_request(
             resource_group_name=resource_group_name,
@@ -13177,10 +13462,10 @@ class SnapshotsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -13188,11 +13473,19 @@ class SnapshotsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_revoke_access(
@@ -13219,7 +13512,7 @@ class SnapshotsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._revoke_access_initial(  # type: ignore
+            raw_result = await self._revoke_access_initial(
                 resource_group_name=resource_group_name,
                 snapshot_name=snapshot_name,
                 api_version=api_version,
@@ -13228,6 +13521,7 @@ class SnapshotsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements

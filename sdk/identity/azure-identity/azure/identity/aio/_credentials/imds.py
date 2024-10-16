@@ -6,7 +6,7 @@ import os
 from typing import Optional, Any
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
@@ -34,10 +34,10 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_token(*scopes)
 
-    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:  # pylint:disable=unused-argument
 
         if within_credential_chain.get() and not self._endpoint_available:
             # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
@@ -56,7 +56,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
                 raise CredentialUnavailableError(message=error_message) from ex
 
         try:
-            token = await self._client.request_token(*scopes, headers={"Metadata": "true"})
+            token_info = await self._client.request_token(*scopes, headers={"Metadata": "true"})
         except CredentialUnavailableError:
             # Response is not json, skip the IMDS credential
             raise
@@ -82,4 +82,4 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
             # if anything else was raised, assume the endpoint is unavailable
             error_message = "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
             raise CredentialUnavailableError(error_message) from ex
-        return token
+        return token_info

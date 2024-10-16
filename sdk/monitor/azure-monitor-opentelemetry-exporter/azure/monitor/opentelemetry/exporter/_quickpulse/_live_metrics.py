@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 # cSpell:disable
 from datetime import datetime
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable
 
 import platform
 import psutil
@@ -70,21 +70,25 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
 
     :keyword str connection_string: The connection string used for your Application Insights resource.
     :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
+    :keyword TokenCredential credential: Token credential, such as ManagedIdentityCredential or
+        ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
     :rtype: None
     """
-    _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
+    _QuickpulseManager(**kwargs)
     set_statsbeat_live_metrics_feature_set()
 
 
 # pylint: disable=protected-access,too-many-instance-attributes
 class _QuickpulseManager(metaclass=Singleton):
 
-    def __init__(self, connection_string: Optional[str], resource: Optional[Resource]) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-        self._exporter = _QuickpulseExporter(connection_string)
+        self._exporter = _QuickpulseExporter(**kwargs)
         part_a_fields = {}
-        if resource:
-            part_a_fields = _populate_part_a_fields(resource)
+        resource = kwargs.get('resource')
+        if not resource:
+            resource = Resource.create({})
+        part_a_fields = _populate_part_a_fields(resource)
         id_generator = RandomIdGenerator()
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
@@ -97,7 +101,10 @@ class _QuickpulseManager(metaclass=Singleton):
             performance_collection_supported=True,
         )
         self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
-        self._meter_provider = MeterProvider([self._reader])
+        self._meter_provider = MeterProvider(
+            metric_readers=[self._reader],
+            resource=resource,
+        )
         self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
 
         self._request_duration = self._meter.create_histogram(

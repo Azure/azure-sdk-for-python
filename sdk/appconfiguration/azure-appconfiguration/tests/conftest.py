@@ -43,4 +43,5 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3447: $.key
     #  - AZSDK3490: $..etag
     #  - AZSDK3493: $..name
-    remove_batch_sanitizers(["AZSDK3447", "AZSDK3490", "AZSDK3493"])
+    #  - AZSDK4001: host name -> Sanitized
+    remove_batch_sanitizers(["AZSDK3447", "AZSDK3490", "AZSDK3493", "AZSDK4001"])

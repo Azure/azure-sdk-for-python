@@ -1175,6 +1175,8 @@ class SharePermission(_serialization.Model):
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
      Required.
     :vartype permission: str
+    :ivar format: Known values are: "Sddl" and "Binary".
+    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
     """
 
     _validation = {
@@ -1183,16 +1185,22 @@ class SharePermission(_serialization.Model):
 
     _attribute_map = {
         "permission": {"key": "permission", "type": "str"},
+        "format": {"key": "format", "type": "str"},
     }
 
-    def __init__(self, *, permission: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, permission: str, format: Optional[Union[str, "_models.FilePermissionFormat"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
          Required.
         :paramtype permission: str
+        :keyword format: Known values are: "Sddl" and "Binary".
+        :paramtype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         """
         super().__init__(**kwargs)
         self.permission = permission
+        self.format = format
 
 
 class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -1241,6 +1249,20 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
     :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
     :ivar enable_snapshot_virtual_directory_access:
     :vartype enable_snapshot_virtual_directory_access: bool
+    :ivar paid_bursting_enabled:
+    :vartype paid_bursting_enabled: bool
+    :ivar paid_bursting_max_iops:
+    :vartype paid_bursting_max_iops: int
+    :ivar paid_bursting_max_bandwidth_mibps:
+    :vartype paid_bursting_max_bandwidth_mibps: int
+    :ivar included_burst_iops:
+    :vartype included_burst_iops: int
+    :ivar max_burst_credits_for_iops:
+    :vartype max_burst_credits_for_iops: int
+    :ivar next_allowed_provisioned_iops_downgrade_time:
+    :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
+    :ivar next_allowed_provisioned_bandwidth_downgrade_time:
+    :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
     """
 
     _validation = {
@@ -1269,9 +1291,22 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         "enabled_protocols": {"key": "EnabledProtocols", "type": "str"},
         "root_squash": {"key": "RootSquash", "type": "str"},
         "enable_snapshot_virtual_directory_access": {"key": "EnableSnapshotVirtualDirectoryAccess", "type": "bool"},
+        "paid_bursting_enabled": {"key": "PaidBurstingEnabled", "type": "bool"},
+        "paid_bursting_max_iops": {"key": "PaidBurstingMaxIops", "type": "int"},
+        "paid_bursting_max_bandwidth_mibps": {"key": "PaidBurstingMaxBandwidthMibps", "type": "int"},
+        "included_burst_iops": {"key": "IncludedBurstIops", "type": "int"},
+        "max_burst_credits_for_iops": {"key": "MaxBurstCreditsForIops", "type": "int"},
+        "next_allowed_provisioned_iops_downgrade_time": {
+            "key": "NextAllowedProvisionedIopsDowngradeTime",
+            "type": "rfc-1123",
+        },
+        "next_allowed_provisioned_bandwidth_downgrade_time": {
+            "key": "NextAllowedProvisionedBandwidthDowngradeTime",
+            "type": "rfc-1123",
+        },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         last_modified: datetime.datetime,
@@ -1293,6 +1328,13 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
         enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_iops: Optional[int] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
+        included_burst_iops: Optional[int] = None,
+        max_burst_credits_for_iops: Optional[int] = None,
+        next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
+        next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1337,6 +1379,20 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :keyword enable_snapshot_virtual_directory_access:
         :paramtype enable_snapshot_virtual_directory_access: bool
+        :keyword paid_bursting_enabled:
+        :paramtype paid_bursting_enabled: bool
+        :keyword paid_bursting_max_iops:
+        :paramtype paid_bursting_max_iops: int
+        :keyword paid_bursting_max_bandwidth_mibps:
+        :paramtype paid_bursting_max_bandwidth_mibps: int
+        :keyword included_burst_iops:
+        :paramtype included_burst_iops: int
+        :keyword max_burst_credits_for_iops:
+        :paramtype max_burst_credits_for_iops: int
+        :keyword next_allowed_provisioned_iops_downgrade_time:
+        :paramtype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
+        :keyword next_allowed_provisioned_bandwidth_downgrade_time:
+        :paramtype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1358,6 +1414,13 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
         self.enable_snapshot_virtual_directory_access = enable_snapshot_virtual_directory_access
+        self.paid_bursting_enabled = paid_bursting_enabled
+        self.paid_bursting_max_iops = paid_bursting_max_iops
+        self.paid_bursting_max_bandwidth_mibps = paid_bursting_max_bandwidth_mibps
+        self.included_burst_iops = included_burst_iops
+        self.max_burst_credits_for_iops = max_burst_credits_for_iops
+        self.next_allowed_provisioned_iops_downgrade_time = next_allowed_provisioned_iops_downgrade_time
+        self.next_allowed_provisioned_bandwidth_downgrade_time = next_allowed_provisioned_bandwidth_downgrade_time
 
 
 class ShareProtocolSettings(_serialization.Model):

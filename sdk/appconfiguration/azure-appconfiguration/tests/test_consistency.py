@@ -125,3 +125,11 @@ class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         assert feature_flag.key.startswith(".appconfig.featureflag/")
+
+    def test_feature_flag_different_key_and_id(self):
+        key = f'.appconfig.featureflag/{self.get_resource_name("key")}'
+        feature_id = self.get_resource_name("id")
+        feature_flag = FeatureFlagConfigurationSetting(feature_id, enabled=True, key=key)
+
+        assert feature_flag.feature_id == feature_id
+        assert feature_flag.key == key

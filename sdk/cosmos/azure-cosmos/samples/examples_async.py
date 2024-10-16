@@ -122,10 +122,10 @@ async def examples_async():
         # for the request sent to Azure Cosmos DB. Based on the priority specified by the user,
         # if there are more requests than the configured RU/s in a second,
         # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
-        # Can be used for Read, Write, and Query operations. This is specified with the priority_level keyword.
+        # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
         # the value can either be low or high.
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority_level="High"
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
         ):
             print(json.dumps(item, indent=True))
         # [END priority_level option]
@@ -262,6 +262,29 @@ async def examples_async():
         ):
             await container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
         # [END delete_items]
+
+        # Get the feed ranges list from container.
+        # [START read_feed_ranges]
+        await container.read_feed_ranges()
+        # [END read_feed_ranges]
+
+        # Query a sorted list of items that were changed for one feed range.
+        # The asynchronous client returns asynchronous iterators for its query methods;
+        # as such, we iterate over it by using an async for loop
+        # [START query_items_change_feed]
+        feed_ranges = await container.read_feed_ranges()
+        async for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
+            print(json.dumps(item, indent=True))
+        # [END query_items_change_feed]
+
+        # Query a sorted list of items that were changed for one feed range from beginning.
+        # The asynchronous client returns asynchronous iterators for its query methods;
+        # as such, we iterate over it by using an async for loop
+        # [START query_items_change_feed_from_beginning]
+        feed_ranges = await container.read_feed_ranges()
+        async for item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
+            print(json.dumps(item, indent=True))
+        # [END query_items_change_feed_from_beginning]
 
         await client.delete_database(database_name)
         print("Sample done running!")

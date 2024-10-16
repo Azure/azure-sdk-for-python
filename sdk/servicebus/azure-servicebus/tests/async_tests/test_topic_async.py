@@ -12,7 +12,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
 
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
@@ -41,10 +41,12 @@ class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, **kwargs):
-
-        async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string,
+    async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        async with ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
             logging_enable=False,
             uamqp_transport=uamqp_transport
         ) as sb_client:

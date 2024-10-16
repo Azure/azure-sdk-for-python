@@ -42,12 +42,6 @@ USAGE:
 import os
 
 
-def format_polygon(polygon):
-    if not polygon:
-        return "N/A"
-    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
-
-
 def analyze_formulas():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -60,6 +54,11 @@ def analyze_formulas():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def _format_polygon(polygon):
+        if not polygon:
+            return "N/A"
+        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -88,13 +87,13 @@ def analyze_formulas():
             for formula_idx, formula in enumerate(inline_formulas):
                 print(f"- Inline #{formula_idx}: {formula.value}")
                 print(f"  Confidence: {formula.confidence}")
-                print(f"  Bounding regions: {format_polygon(formula.polygon)}")
+                print(f"  Bounding regions: {_format_polygon(formula.polygon)}")
 
             print(f"\nDetected {len(display_formulas)} display formulas.")
             for formula_idx, formula in enumerate(display_formulas):
                 print(f"- Display #{formula_idx}: {formula.value}")
                 print(f"  Confidence: {formula.confidence}")
-                print(f"  Bounding regions: {format_polygon(formula.polygon)}")
+                print(f"  Bounding regions: {_format_polygon(formula.polygon)}")
 
     print("----------------------------------------")
     # [END analyze_formulas]

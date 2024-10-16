@@ -19,7 +19,9 @@ class AzureMgmtAsyncTestCase(AzureMgmtRecordedTestCase):
 
             credential = DefaultAzureCredential()
         else:
-            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+            credential = Mock(
+                spec_set=["get_token"], get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0))
+            )
         return client(credential=credential, subscription_id=self.settings.SUBSCRIPTION_ID)
 
     def to_list(self, ait):

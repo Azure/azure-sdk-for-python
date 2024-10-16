@@ -13,20 +13,20 @@ DESCRIPTION:
 USAGE:
     python router_worker_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
 
 
 class RouterWorkerSamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _worker_id = "sample_worker"
     _distribution_policy_id = "sample_dp_policy"
 
     def setup_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter import JobRouterAdministrationClient
@@ -43,7 +43,7 @@ class RouterWorkerSamples(object):
         print(f"Sample setup completed: Created distribution policy")
 
     def setup_queues(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter import JobRouterAdministrationClient
@@ -74,7 +74,7 @@ class RouterWorkerSamples(object):
         print(f"Sample setup completed: Created queues")
 
     def create_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START create_worker]
         from azure.communication.jobrouter import (
@@ -145,7 +145,7 @@ class RouterWorkerSamples(object):
         # [END create_worker_w_limit_concurrent_offers]
 
     def update_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START update_worker]
         from azure.communication.jobrouter import (
@@ -178,7 +178,7 @@ class RouterWorkerSamples(object):
         # [END update_worker]
 
     def get_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START get_worker]
         from azure.communication.jobrouter import JobRouterClient
@@ -191,7 +191,7 @@ class RouterWorkerSamples(object):
         # [END get_worker]
 
     def register_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START register_worker]
         from azure.communication.jobrouter import JobRouterClient
@@ -204,7 +204,7 @@ class RouterWorkerSamples(object):
         # [END register_worker]
 
     def deregister_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START deregister_worker]
         from azure.communication.jobrouter import JobRouterClient
@@ -219,7 +219,7 @@ class RouterWorkerSamples(object):
         # [END deregister_worker]
 
     def list_workers(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_workers]
         from azure.communication.jobrouter import JobRouterClient
 
@@ -234,7 +234,7 @@ class RouterWorkerSamples(object):
         # [END list_workers]
 
     def list_workers_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_workers_batched]
         from azure.communication.jobrouter import JobRouterClient
 
@@ -253,7 +253,7 @@ class RouterWorkerSamples(object):
         # [END list_workers_batched]
 
     def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
 
         # [START delete_worker]

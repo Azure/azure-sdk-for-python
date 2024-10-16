@@ -13,21 +13,23 @@ from azure.identity.aio import AuthorizationCodeCredential
 import msal
 import pytest
 
-from helpers import build_aad_response, mock_response, Request
+from helpers import build_aad_response, mock_response, Request, GET_TOKEN_METHODS
 from helpers_async import async_validating_transport, AsyncMockTransport
 
 pytestmark = pytest.mark.asyncio
 
 
-async def test_no_scopes():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_no_scopes(get_token_method):
     """The credential should raise ValueError when get_token is called with no scopes"""
 
     credential = AuthorizationCodeCredential("tenant-id", "client-id", "auth-code", "http://localhost")
     with pytest.raises(ValueError):
-        await credential.get_token()
+        await getattr(credential, get_token_method)()
 
 
-async def test_policies_configurable():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_policies_configurable(get_token_method):
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
     async def send(*_, **kwargs):
@@ -40,7 +42,7 @@ async def test_policies_configurable():
         "tenant-id", "client-id", "auth-code", "http://localhost", policies=[policy], transport=Mock(send=send)
     )
 
-    await credential.get_token("scope")
+    await getattr(credential, get_token_method)("scope")
 
     assert policy.on_request.called
 
@@ -69,7 +71,8 @@ async def test_context_manager():
     assert transport.__aexit__.call_count == 1
 
 
-async def test_user_agent():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_user_agent(get_token_method):
     transport = async_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
@@ -79,10 +82,11 @@ async def test_user_agent():
         "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
     )
 
-    await credential.get_token("scope")
+    await getattr(credential, get_token_method)("scope")
 
 
-async def test_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_tenant_id(get_token_method):
     transport = async_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
@@ -97,10 +101,14 @@ async def test_tenant_id():
         additionally_allowed_tenants=["*"],
     )
 
-    await credential.get_token("scope", tenant_id="tenant_id")
+    kwargs = {"tenant_id": "tenant_id"}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    await getattr(credential, get_token_method)("scope", **kwargs)
 
 
-async def test_auth_code_credential():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_auth_code_credential(get_token_method):
     client_id = "client id"
     secret = "fake-client-secret"
     tenant_id = "tenant"
@@ -150,24 +158,25 @@ async def test_auth_code_credential():
     )
 
     # first call should redeem the auth code
-    token = await credential.get_token(expected_scope)
+    token = await getattr(credential, get_token_method)(expected_scope)
     assert token.token == expected_access_token
     assert transport.send.call_count == 1
 
     # no auth code -> credential should return cached token
-    token = await credential.get_token(expected_scope)
+    token = await getattr(credential, get_token_method)(expected_scope)
     assert token.token == expected_access_token
     assert transport.send.call_count == 1
 
     # no auth code, no cached token -> credential should redeem refresh token
-    cached_access_token = cache.find(cache.CredentialType.ACCESS_TOKEN)[0]
+    cached_access_token = list(cache.search(cache.CredentialType.ACCESS_TOKEN))[0]
     cache.remove_at(cached_access_token)
-    token = await credential.get_token(expected_scope)
+    token = await getattr(credential, get_token_method)(expected_scope)
     assert token.token == expected_access_token
     assert transport.send.call_count == 2
 
 
-async def test_multitenant_authentication():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_multitenant_authentication(get_token_method):
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -191,21 +200,28 @@ async def test_multitenant_authentication():
         transport=Mock(send=send),
         additionally_allowed_tenants=["*"],
     )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == first_token
 
-    token = await credential.get_token("scope", tenant_id=first_tenant)
+    kwargs = {"tenant_id": first_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == first_token
 
-    token = await credential.get_token("scope", tenant_id=second_tenant)
+    kwargs = {"tenant_id": second_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == second_token
 
     # should still default to the first tenant
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == first_token
 
 
-async def test_multitenant_authentication_not_allowed():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_multitenant_authentication_not_allowed(get_token_method):
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -227,15 +243,24 @@ async def test_multitenant_authentication_not_allowed():
         additionally_allowed_tenants=["*"],
     )
 
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_token
 
-    token = await credential.get_token("scope", tenant_id=expected_tenant)
+    kwargs = {"tenant_id": expected_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token
 
-    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    kwargs = {"tenant_id": "un" + expected_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token * 2
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-        token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        kwargs = {"tenant_id": "un" + expected_tenant}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token

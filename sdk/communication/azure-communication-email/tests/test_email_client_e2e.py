@@ -94,3 +94,37 @@ class TestEmailClient(AzureRecordedTestCase):
         response = poller.result()
         assert response['status'] == "Succeeded"
 
+    @email_decorator
+    @recorded_by_proxy
+    def test_send_email_inline_attachment(self):
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
+
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "<html>This is the body<br /><img src=\"cid:my-inline-image\" /></html>"
+            },
+            "recipients": {
+                "to": [
+                    {
+                        "address": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ]
+            },
+            "senderAddress": self.sender_address,
+            "attachments": [
+                {
+                    "name": "inline_image.bmp",
+                    "contentType": "image/bmp",
+                    "contentInBase64": "Qk06AAAAAAAAADYAAAAoAAAAAQAAAAEAAAABABgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAzFUzAA==", #cspell:disable-line
+                    "contentId": "my-inline-image"
+                }
+            ]
+        }
+
+        poller = email_client.begin_send(message)
+        response = poller.result()
+        assert response['status'] == "Succeeded"
+

@@ -35,8 +35,9 @@ async def get_copyright_for_tile_async():
         result = await maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
+    print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
     # [END get_copyright_for_tile_async]
+
 
 if __name__ == '__main__':
     asyncio.run(get_copyright_for_tile_async())

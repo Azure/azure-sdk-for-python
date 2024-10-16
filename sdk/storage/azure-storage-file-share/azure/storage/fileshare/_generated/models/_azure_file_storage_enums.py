@@ -41,6 +41,13 @@ class FileLastWrittenMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESERVE = "Preserve"
 
 
+class FilePermissionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FilePermissionFormat."""
+
+    SDDL = "Sddl"
+    BINARY = "Binary"
+
+
 class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FileRangeWriteType."""
 
@@ -102,6 +109,7 @@ class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSACTION_OPTIMIZED = "TransactionOptimized"
     HOT = "Hot"
     COOL = "Cool"
+    PREMIUM = "Premium"
 
 
 class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -129,6 +137,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONDITION_HEADERS_NOT_SUPPORTED = "ConditionHeadersNotSupported"
     CONDITION_NOT_MET = "ConditionNotMet"
     EMPTY_METADATA_KEY = "EmptyMetadataKey"
+    FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedBandwidthDowngradeNotAllowed"
+    FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedIopsDowngradeNotAllowed"
     INSUFFICIENT_ACCOUNT_PERMISSIONS = "InsufficientAccountPermissions"
     INTERNAL_ERROR = "InternalError"
     INVALID_AUTHENTICATION_INFO = "InvalidAuthenticationInfo"

@@ -14,6 +14,8 @@ from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
+    _DEFAULT_EU_STATS_CONNECTION_STRING,
+    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
     _FEATURE_METRIC_NAME,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -122,11 +124,11 @@ class TestStatsbeat(unittest.TestCase):
         stats_exporter = mr._exporter
         self.assertEqual(
             stats_exporter._instrumentation_key,
-            _statsbeat._DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
+            _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
         )
         self.assertEqual(
             stats_exporter._endpoint,
-            _statsbeat._DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
+            _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
 
     @mock.patch.object(MeterProvider, 'shutdown')
@@ -153,11 +155,11 @@ class TestStatsbeat(unittest.TestCase):
         stats_exporter = mr._exporter
         self.assertEqual(
             stats_exporter._instrumentation_key,
-            _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
+            _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
         )
         self.assertEqual(
             stats_exporter._endpoint,
-            _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
+            _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
 
 

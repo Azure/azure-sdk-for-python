@@ -18,4 +18,4 @@ conf:
   spark.dynamicAllocation.maxExecutors: 5
 resources:
   instance_type: standard_e2s_v3
-  runtime_version: 3.2
+  runtime_version: 3.3

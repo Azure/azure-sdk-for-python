@@ -70,12 +70,13 @@ def sample_copy_model_to(custom_model_id):
         print("Doc types the model can recognize:")
         for name, doc_type in copied_over_model.doc_types.items():
             print(f"Doc Type: '{name}' which has the following fields:")
-            for field_name, field in doc_type.field_schema.items():
-                if doc_type.field_confidence:
-                    print(
-                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                        f"{doc_type.field_confidence[field_name]}"
-                    )
+            if doc_type.field_schema:
+                for field_name, field in doc_type.field_schema.items():
+                    if doc_type.field_confidence:
+                        print(
+                            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                            f"{doc_type.field_confidence[field_name]}"
+                        )
     if copied_over_model.warnings:
         print("Warnings encountered while building the model:")
         for warning in copied_over_model.warnings:

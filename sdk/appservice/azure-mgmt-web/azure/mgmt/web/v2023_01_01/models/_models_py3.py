@@ -29432,7 +29432,7 @@ class WorkflowParameter(_serialization.Model):
     """The workflow parameters.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-     "Float", "Bool", "Array", "Object", and "SecureObject".
+     "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
     :vartype type: str or ~azure.mgmt.web.v2023_01_01.models.ParameterType
     :ivar value: The value.
     :vartype value: JSON
@@ -29460,7 +29460,7 @@ class WorkflowParameter(_serialization.Model):
     ) -> None:
         """
         :keyword type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-         "Float", "Bool", "Array", "Object", and "SecureObject".
+         "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
         :paramtype type: str or ~azure.mgmt.web.v2023_01_01.models.ParameterType
         :keyword value: The value.
         :paramtype value: JSON
@@ -29482,7 +29482,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-     "Float", "Bool", "Array", "Object", and "SecureObject".
+     "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
     :vartype type: str or ~azure.mgmt.web.v2023_01_01.models.ParameterType
     :ivar value: The value.
     :vartype value: JSON
@@ -29517,7 +29517,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     ) -> None:
         """
         :keyword type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-         "Float", "Bool", "Array", "Object", and "SecureObject".
+         "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
         :paramtype type: str or ~azure.mgmt.web.v2023_01_01.models.ParameterType
         :keyword value: The value.
         :paramtype value: JSON

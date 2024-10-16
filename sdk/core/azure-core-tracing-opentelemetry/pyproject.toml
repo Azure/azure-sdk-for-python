@@ -1,4 +1,3 @@
 [tool.azure-sdk-build]
 type_check_samples = false
-verifytypes = false
 pyright = false

@@ -127,16 +127,16 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=hosts, **kwargs),
             config.retry_policy,
+            config.headers_policy,
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
@@ -201,13 +201,13 @@ class AsyncStorageAccountHostsMixin(object):
                     )
                     raise error
                 return AsyncList(parts_list)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
     service: str
 ) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
@@ -276,5 +276,5 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     async def __aenter__(self):
         pass
 
-    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+    async def __aexit__(self, *args):
         pass

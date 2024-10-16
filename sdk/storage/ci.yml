@@ -36,7 +36,6 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
-    AdvancedBuild: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -51,7 +50,7 @@ extends:
     - name: azure-storage-extensions
       safeName: azurestorageextensions
       # Pure C-based storage extension package, not generating docs at this moment.
-      skipPublishDocs: true
+      skipPublishDocGithubIo: true
       skipPublishDocMs: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage

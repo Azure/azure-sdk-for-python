@@ -81,6 +81,16 @@ class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LINUX = "Linux"
 
 
+class OutboundDependenciesManagedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value to describe how the outbound dependencies of a HDInsight cluster are managed. 'Managed'
+    means that the outbound dependencies are managed by the HDInsight service. 'External' means
+    that the outbound dependencies are managed by a customer specific solution.
+    """
+
+    MANAGED = "Managed"
+    EXTERNAL = "External"
+
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state, which only appears in the response."""
 

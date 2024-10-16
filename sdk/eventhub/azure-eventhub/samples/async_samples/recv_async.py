@@ -12,8 +12,9 @@ An example to show receiving events from an Event Hub asynchronously.
 import asyncio
 import os
 from azure.eventhub.aio import EventHubConsumerClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -49,10 +50,11 @@ async def on_error(partition_context, error):
 
 
 async def main():
-    client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
         consumer_group="$default",
-        eventhub_name=EVENTHUB_NAME
     )
     async with client:
         await client.receive(

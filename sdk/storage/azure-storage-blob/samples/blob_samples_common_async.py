@@ -18,6 +18,7 @@ USAGE:
 """
 
 import os
+import sys
 import asyncio
 from azure.core.exceptions import ResourceExistsError
 
@@ -32,6 +33,10 @@ class CommonBlobSamplesAsync(object):
     #--Begin Blob Samples-----------------------------------------------------------------
 
     async def blob_snapshots_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_snapshots_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -68,6 +73,10 @@ class CommonBlobSamplesAsync(object):
             await blob_service_client.delete_container("containerformyblobsasync")
 
     async def soft_delete_and_undelete_blob_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: soft_delete_and_undelete_blob_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -110,6 +119,10 @@ class CommonBlobSamplesAsync(object):
             await blob_service_client.delete_container("containerfordeletedblobsasync")
 
     async def delete_multiple_blobs_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: delete_multiple_blobs_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -144,6 +157,10 @@ class CommonBlobSamplesAsync(object):
             await blob_service_client.delete_container("containerforbatchblobdeletesasync")
 
     async def acquire_lease_on_blob_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_lease_on_blob_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -176,7 +193,11 @@ class CommonBlobSamplesAsync(object):
             # Delete container
             await blob_service_client.delete_container("leasemyblobscontainerasync")
 
-    async def copy_blob_from_url_and_abort_copy_async(self):
+    async def start_copy_blob_from_url_and_abort_copy_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: start_copy_blob_from_url_and_abort_copy_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -207,7 +228,10 @@ class CommonBlobSamplesAsync(object):
                 # [START abort_copy_blob_from_url]
                 # Passing in copy id to abort copy operation
                 if props.copy.status != "success":
-                    await copied_blob.abort_copy(copy_id)
+                    if copy_id is not None:
+                        await copied_blob.abort_copy(copy_id)
+                    else:
+                        print("copy_id was unexpectedly None, check if the operation completed successfully.")
 
                 # check copy status
                 props = await copied_blob.get_blob_properties()
@@ -223,7 +247,7 @@ async def main():
     await sample.soft_delete_and_undelete_blob_async()
     await sample.delete_multiple_blobs_async()
     await sample.acquire_lease_on_blob_async()
-    await sample.copy_blob_from_url_and_abort_copy_async()
+    await sample.start_copy_blob_from_url_and_abort_copy_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

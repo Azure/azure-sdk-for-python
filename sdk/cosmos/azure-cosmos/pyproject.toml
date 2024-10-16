@@ -2,5 +2,4 @@
 mypy = true
 pyright = false
 type_check_samples = false
-verifytypes = false
 pylint = true

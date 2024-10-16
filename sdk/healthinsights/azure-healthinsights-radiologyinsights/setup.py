@@ -38,7 +38,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -63,8 +63,8 @@ setup(
         "azure.healthinsights.radiologyinsights": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.30.0",
+        "isodate>=0.6.1",
+        "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.8",

@@ -277,7 +277,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             assert all(x.label == LABEL_RESERVED_CHARS for x in items)
             await client.delete_configuration_setting(reserved_char_kv.key)
 
-    # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters
+    # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_aad_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):

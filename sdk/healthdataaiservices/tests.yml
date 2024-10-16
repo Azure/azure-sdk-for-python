@@ -1,0 +1,9 @@
+trigger: none
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  parameters:
+    ServiceDirectory: healthdataaiservices
+    EnvVars:
+      AZURE_SKIP_LIVE_RECORDING: 'True'
+      AZURE_TEST_RUN_LIVE: 'true'

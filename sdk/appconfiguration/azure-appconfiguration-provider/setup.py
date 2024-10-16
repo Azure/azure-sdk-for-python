@@ -57,7 +57,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -75,5 +75,6 @@ setup(
         "azure-core>=1.28.0",
         "azure-appconfiguration>=1.6.0",
         "azure-keyvault-secrets>=4.3.0",
+        "dnspython>=2.6.1",
     ],
 )

@@ -1,10 +1,16 @@
 # Release History
 
+## 0.7.1 (2024-08-15)
+
+### Other Changes
+
+- This package is no longer being maintained. Use the [azure-ai-language-conversations](https://pypi.org/project/azure-ai-language-conversations/) package instead.
+
 ## 0.7.0 (2020-06-15)
 
 *Authoring*
 
-**Features**
+### Features Added
 
   - Model JSONEntity has a new parameter children
   - Model EntityLabel has a new parameter children
@@ -12,7 +18,7 @@
   - Model EntityLabelObject has a new parameter children
   - Model ModelFeatureInformation has a new parameter is_required
 
-**Breaking changes**
+### Breaking Changes
 
   - Operation ExamplesOperations.add has a new signature
   - Operation ExamplesOperations.batch has a new signature
