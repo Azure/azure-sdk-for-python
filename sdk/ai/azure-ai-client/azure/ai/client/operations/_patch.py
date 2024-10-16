@@ -325,6 +325,64 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
+    def create_agent(
+        self,
+        *,
+        model: str,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        toolset: Optional[_models.ToolSet] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> _models.Agent:
+        """Creates a new agent.
+
+        :keyword model: The ID of the model to use. Required.
+        :paramtype model: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the new agent. Default value is None.
+        :paramtype name: str
+        :keyword description: The description of the new agent. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :paramtype instructions: str
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources` 
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.client.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
@@ -367,7 +425,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param instructions: System instructions for the agent.
         :param tools: List of tools definitions for the agent.
         :param tool_resources: Resources used by the agent's tools.
-        :param toolset: Collection of tools (alternative to `tools` and `tool_resources`).
+        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources` 
+         and adds automatic execution logic for functions).
         :param temperature: Sampling temperature for generating agent responses.
         :param top_p: Nucleus sampling parameter.
         :param response_format: Response format for tool calls.
@@ -1353,7 +1412,8 @@ class AgentsOperations(AgentsOperationsGenerated):
             if toolset:
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
             else:
-                raise ValueError("Toolset is not available in the client.")
+                logger.warning("Toolset is not available in the client.")
+                return
             
             logger.info(f"Tool outputs: {tool_outputs}")
             if tool_outputs:

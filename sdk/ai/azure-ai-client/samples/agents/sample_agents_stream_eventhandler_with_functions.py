@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_toolset.py
+FILE: sample_agents_stream_eventhandler_with_functions.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_eventhandler_with_toolset.py
+    python sample_agents_stream_eventhandler_with_functions.py
 
     Before running the sample:
 
@@ -23,14 +23,11 @@ USAGE:
 
 import os
 from azure.ai.client import AzureAIClient
-from azure.ai.client.models import Agent, MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
+from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
 from azure.ai.client.models import AgentEventHandler
-from azure.ai.client.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
-from azure.ai.client.models import FunctionTool, ToolSet
+from azure.ai.client.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction
 
-
-import os
 from typing import Any
 
 from user_functions import user_functions
@@ -57,9 +54,10 @@ ai_client = AzureAIClient(
 )
 """
 
-# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
-# method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
+
+    def __init__(self, functions: FunctionTool) -> None:
+        self.functions = functions
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -76,6 +74,35 @@ class MyEventHandler(AgentEventHandler):
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
+        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                print("No tool calls provided - cancelling run")
+                ai_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                return
+
+            tool_outputs = []
+            for tool_call in tool_calls:
+                if isinstance(tool_call, RequiredFunctionToolCall):
+                    try:
+                        output = functions.execute(tool_call)
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": output,
+                        })
+                    except Exception as e:
+                        print(f"Error executing tool_call {tool_call.id}: {e}")
+
+            print(f"Tool outputs: {tool_outputs}")
+            if tool_outputs:
+                with ai_client.agents.submit_tool_outputs_to_stream(
+                    thread_id=run.thread_id, 
+                    run_id=run.id, 
+                    tool_outputs=tool_outputs, 
+                    event_handler=self
+                ) as stream:
+                    stream.until_done()
+
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
@@ -91,24 +118,22 @@ class MyEventHandler(AgentEventHandler):
 
 with ai_client:
     functions = FunctionTool(user_functions)
-    toolset = ToolSet()
-    toolset.add(functions)
 
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
     )
     print(f"Created agent, ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York? Also let me know the details")
+    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.")
     print(f"Created message, message ID {message.id}")
 
     with ai_client.agents.create_stream(
         thread_id=thread.id, 
         assistant_id=agent.id,
-        event_handler=MyEventHandler()
+        event_handler=MyEventHandler(functions)
     ) as stream:
         stream.until_done()
 

@@ -52,7 +52,7 @@ ai_client = AzureAIClient(
 
 with ai_client:
     # upload a file and wait for it to be processed
-    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS, sleep_interval=4)
+    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
         
     code_interpreter = CodeInterpreterTool()
@@ -72,7 +72,7 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment])
     print(f"Created message, message ID: {message.id}")
 
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
+    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
     
     
