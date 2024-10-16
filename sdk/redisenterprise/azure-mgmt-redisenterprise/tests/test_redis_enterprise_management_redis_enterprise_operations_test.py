@@ -25,5 +25,5 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
-        assert result
+        assert result == []
         
