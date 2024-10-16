@@ -179,7 +179,6 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
                 assert i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size
                 assert i[1] == size
 
-
     def get_datetime_variable(self, variables, name, dt):
         dt_string = variables.setdefault(name, dt.isoformat())
         return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")

@@ -12,7 +12,7 @@ import subprocess
 import sys
 from typing import Any, Dict, List, Optional
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -118,10 +118,43 @@ class AzureDeveloperCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked
           the Azure Developer CLI but didn't receive an access token.
         """
+        options: TokenRequestOptions = {}
+        if tenant_id:
+            options["tenant_id"] = tenant_id
 
+        token_info = self._get_token_base(*scopes, options=options, **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    @log_get_token
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients. Applications calling this method
+        directly must also handle token caching because this credential doesn't cache the tokens it acquires.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke
+          the Azure Developer CLI.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked
+          the Azure Developer CLI but didn't receive an access token.
+        """
+        return self._get_token_base(*scopes, options=options)
+
+    def _get_token_base(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
+    ) -> AccessTokenInfo:
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
+        tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
             validate_tenant_id(tenant_id)
         for scope in scopes:
@@ -154,7 +187,7 @@ class AzureDeveloperCliCredential:
         return token
 
 
-def parse_token(output: str) -> Optional[AccessToken]:
+def parse_token(output: str) -> Optional[AccessTokenInfo]:
     """Parse to an AccessToken.
 
     In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
@@ -169,7 +202,7 @@ def parse_token(output: str) -> Optional[AccessToken]:
         dt = datetime.strptime(token["expiresOn"], "%Y-%m-%dT%H:%M:%SZ")
         expires_on = dt.timestamp()
 
-        return AccessToken(token["token"], int(expires_on))
+        return AccessTokenInfo(token["token"], int(expires_on))
     except (KeyError, ValueError):
         return None
 

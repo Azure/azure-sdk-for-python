@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch  # type: ignore
+from unittest.mock import patch
 
 from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables

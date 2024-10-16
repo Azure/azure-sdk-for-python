@@ -4,8 +4,8 @@ import pathlib
 import pandas as pd
 import pytest
 
-from azure.ai.evaluation.evaluate._evaluate import _aggregate_metrics
-from azure.ai.evaluation.evaluators import ContentSafetyEvaluator
+from azure.ai.evaluation._evaluate._evaluate import _aggregate_metrics
+from azure.ai.evaluation import ContentSafetyEvaluator
 
 
 def _get_file(name):

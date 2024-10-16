@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.identity._constants import EnvironmentVariables
@@ -14,11 +15,6 @@ from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response
 from test_certificate_credential import PEM_CERT_PATH
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
 
 
 BASE_CLASS_METHODS = [

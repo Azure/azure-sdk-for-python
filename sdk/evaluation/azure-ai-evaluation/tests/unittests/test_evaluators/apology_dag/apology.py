@@ -4,5 +4,5 @@ from promptflow.core import tool
 
 
 @tool
-def apology(answer):
-    return len(re.findall("(sorry)|(apology)|(apologies)", answer.lower()))
+def apology(response):
+    return len(re.findall("(sorry)|(apology)|(apologies)", response.lower()))

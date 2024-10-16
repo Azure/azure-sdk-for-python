@@ -1,10 +1,10 @@
 $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
 inputs:
-  answer:
+  response:
     type: string
     default: "fun"
 outputs:
-  answer:
+  response:
     type: string
     reference: ${apology.output}
 nodes:
@@ -14,4 +14,4 @@ nodes:
     type: code
     path: apology.py
   inputs:
-    answer: ${inputs.answer}
+    response: ${inputs.response}

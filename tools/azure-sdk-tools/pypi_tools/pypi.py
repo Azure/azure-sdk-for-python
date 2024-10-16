@@ -1,5 +1,5 @@
 import logging
-from packaging.version import InvalidVersion, parse as Version
+from packaging.version import InvalidVersion, Version, parse
 import sys
 import pdb
 from urllib3 import Retry, PoolManager
@@ -41,13 +41,13 @@ class PyPIClient:
         # only need the packaging.specifiers import if we're actually executing this filter.
         from packaging.specifiers import InvalidSpecifier, SpecifierSet
 
-        results = []
+        results: List[Version] = []
 
         for version in version_set:
             requires_python = self.project_release(package_name, version)["info"]["requires_python"]
             if requires_python:
                 try:
-                    if Version(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
+                    if parse(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
                         results.append(version)
                 except InvalidSpecifier:
                     logging.warn(f"Invalid python_requires {requires_python!r} for package {package_name}=={version}")
@@ -60,10 +60,10 @@ class PyPIClient:
     def get_ordered_versions(self, package_name, filter_by_compatibility=False) -> List[Version]:
         project = self.project(package_name)
 
-        versions = []
+        versions: List[Version] = []
         for package_version in project["releases"].keys():
             try:
-                versions.append(Version(package_version))
+                versions.append(parse(package_version))
             except InvalidVersion as e:
                 logging.warn(f"Invalid version {package_version} for package {package_name}")
                 continue

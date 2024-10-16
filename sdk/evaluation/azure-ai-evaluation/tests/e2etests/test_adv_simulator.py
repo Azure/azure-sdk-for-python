@@ -1,9 +1,11 @@
 import asyncio
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 from devtools_testutils import is_live
+
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
@@ -11,33 +13,31 @@ from devtools_testutils import is_live
 class TestAdvSimulator:
     def test_adv_sim_init_with_prod_url(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         assert callable(simulator)
 
     def test_incorrect_scenario_raises_error(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(x):
             return x
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
                     max_conversation_turns=1,
@@ -49,20 +49,22 @@ class TestAdvSimulator:
 
     def test_adv_qa_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
-            response_from_acs, temperature = question, 0.0
+            query = messages["messages"][0]["content"]
+            response_from_acs, temperature = query, 0.0
             formatted_response = {
                 "content": response_from_acs["result"],
                 "role": "assistant",
@@ -78,7 +80,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -100,21 +102,23 @@ class TestAdvSimulator:
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_adv_conversation_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -123,7 +127,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -142,21 +146,23 @@ class TestAdvSimulator:
 
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -165,7 +171,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -183,21 +189,23 @@ class TestAdvSimulator:
 
     def test_adv_summarization_jailbreak_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -206,7 +214,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -225,7 +233,7 @@ class TestAdvSimulator:
 
     def test_adv_rewrite_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -234,11 +242,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -267,7 +278,7 @@ class TestAdvSimulator:
     @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -276,11 +287,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -308,8 +322,8 @@ class TestAdvSimulator:
     @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_eci_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialSimulator
-        from azure.ai.evaluation.synthetic.adversarial_scenario import _UnstableAdversarialScenario
+        from azure.ai.evaluation.simulator import AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -318,11 +332,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -353,7 +370,7 @@ class TestAdvSimulator:
     )
     def test_adv_xpia_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, IndirectAttackSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, IndirectAttackSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -362,11 +379,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -392,7 +412,7 @@ class TestAdvSimulator:
     )
     def test_adv_sim_order_randomness_with_jailbreak(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -401,11 +421,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -469,7 +492,7 @@ class TestAdvSimulator:
     )
     def test_adv_sim_order_randomness(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -478,11 +501,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -543,7 +569,7 @@ class TestAdvSimulator:
     )
     def test_jailbreak_sim_order_randomness(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.synthetic import AdversarialScenario, DirectAttackSimulator
+        from azure.ai.evaluation.simulator import AdversarialScenario, DirectAttackSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -552,11 +578,14 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],

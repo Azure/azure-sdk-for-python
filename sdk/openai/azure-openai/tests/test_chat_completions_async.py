@@ -24,6 +24,7 @@ from conftest import (
 )
 
 
+@pytest.mark.live_test_only
 class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async

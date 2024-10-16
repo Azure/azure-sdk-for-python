@@ -67,7 +67,6 @@ class TestEmailClient(AzureRecordedTestCase):
             response = await poller.result()
             assert response['status'] == "Succeeded"
 
-
     @email_decorator_async
     @recorded_by_proxy_async
     async def test_send_email_attachment(self):
@@ -100,3 +99,39 @@ class TestEmailClient(AzureRecordedTestCase):
             poller = await email_client.begin_send(message)
             response = await poller.result()
             assert response['status'] == "Succeeded"
+
+    @email_decorator_async
+    @recorded_by_proxy_async
+    async def test_send_email_inline_attachment(self):
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
+
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "<html>This is the body<br /><img src=\"cid:my-inline-image\" /></html>"
+            },
+            "recipients": {
+                "to": [
+                    {
+                        "address": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ]
+            },
+            "senderAddress": self.sender_address,
+            "attachments": [
+                {
+                    "name": "inline_image.bmp",
+                    "contentType": "image/bmp",
+                    "contentInBase64": "Qk06AAAAAAAAADYAAAAoAAAAAQAAAAEAAAABABgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAzFUzAA==", #cspell:disable-line
+                    "contentId": "my-inline-image"
+                }
+            ]
+        }
+
+        async with email_client:
+            poller = await email_client.begin_send(message)
+            response = await poller.result()
+            assert response['status'] == "Succeeded"
+
