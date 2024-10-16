@@ -43,7 +43,7 @@ SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[SamplingAlgorit
 }
 
 
-class ParameterizedSweep: # pylint:disable=too-many-instance-attributes
+class ParameterizedSweep:  # pylint:disable=too-many-instance-attributes
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(
