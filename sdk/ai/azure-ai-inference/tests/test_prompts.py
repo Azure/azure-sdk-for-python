@@ -3,24 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import json
-import azure.ai.inference as sdk
-import azure.ai.inference.prompts as prompts
-
-from model_inference_test_base import (
-    ModelClientTestBase,
-    ServicePreparerChatCompletions,
-    ServicePreparerAOAIChatCompletions,
-    ServicePreparerEmbeddings,
-)
-from azure.core.pipeline.transport import RequestsTransport
-from devtools_testutils import recorded_by_proxy
-from azure.core.exceptions import AzureError, ServiceRequestError
-from azure.core.credentials import AzureKeyCredential
+from azure.ai.inference.prompts import PromptyTemplate
+from devtools_testutils import AzureRecordedTestCase
 
 
-
-class TestModelClient(ModelClientTestBase):
+class TestPrompts(AzureRecordedTestCase):
 
     # **********************************************************************************
     #
@@ -28,37 +15,36 @@ class TestModelClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
-    def test_prompty(self, **kwargs):
-        path = "/Users/weiwu/Workspace/1_Testing/TestAI/test-prompty/test.prompty"
-        p = prompts.load(path)
-
-        inputs = {
-            "input": "my first question",
+    def test_prompt_config_from_prompty(self, **kwargs):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        prompty_file_path = os.path.join(script_dir, "sample1.prompty")
+        prompt_config = PromptyTemplate.load(prompty_file_path)
+        assert prompt_config.model_name == "gpt-4o-mini"
+        assert prompt_config.config["temperature"] == 1
+        assert prompt_config.config["frequency_penalty"] == 0.5
+        assert prompt_config.config["presence_penalty"] == 0.5
+        input_variables = {
+            "input": "please tell me a joke about cats",
         }
+        messages = prompt_config.render(input_variables=input_variables)
+        assert len(messages) == 2
+        assert messages[0]["role"] == "system"
+        assert messages[1]["role"] == "user"
+        assert messages[1]["content"] == "please tell me a joke about cats"
 
-        print(p)
-
-        parsed = prompts.prepare(p, inputs)
-
-        lc_messages = [] # TODO: will be removed
-        for message in parsed:
-            message_class = prompts.RoleMap.get_message_class(message["role"])
-            lc_messages.append(message_class(content=message["content"]))
-
-        print(lc_messages)
-
-        assert True
-
-
-    def test_prompt_config(self, **kwargs):
-        path = "/Users/weiwu/Workspace/1_Testing/TestAI/test-prompty/test.prompty"
-        prompt_config = prompts.get_prompt_config(file_path=path)
-
-        inputs = {
-            "input": "my first question",
+    def test_prompt_config_from_message(self, **kwargs):
+        prompt_config = PromptyTemplate.from_message(
+            api = "chat",
+            model_name = "gpt-4o-mini",
+            prompt_template = "system prompt template {input}"
+        )
+        assert prompt_config.model_name == "gpt-4o-mini"
+        input_variables = {
+            "input": "please tell me a joke about cats",
         }
-
-        messages = prompt_config.render(inputs)
-        print(messages)
-
-        assert True
+        messages = prompt_config.render(input_variables=input_variables)
+        assert len(messages) == 1
+        assert messages[0]["role"] == "system"
+        # TODO: need to separate the system prompt from the user input
+        # assert messages[1]["role"] == "user"
+        # assert messages[1]["content"] == "please tell me a joke about cats"

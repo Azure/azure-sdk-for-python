@@ -43,8 +43,10 @@ def sample_chat_completions_from_input_prompt_string():
 
 
     prompt_template = """
+system:
 You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
 
+user:
 {input}
 """
     prompt_config = PromptyTemplate.from_message(
