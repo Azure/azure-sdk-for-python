@@ -7,7 +7,8 @@
 
 from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
-    TYPE_CHECKING)
+    TYPE_CHECKING
+)
 from urllib.parse import quote, unquote
 
 from azure.core.exceptions import HttpResponseError
@@ -58,7 +59,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -98,7 +99,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: Optional[dict[str, str]]
+        :type metadata: Optional[Dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -172,7 +173,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :returns: response dict (Etag and last modified).
-        :rtype: dict[str, str] or dict[~datetime.datetime]
+        :rtype: Dict[str, str] or Dict[~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -353,7 +354,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :paramtype metadata: dict[str, str] or None
+        :paramtype metadata: Dict[str, str] or None
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -412,7 +413,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :return: response dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         options = self._upload_options(
             data,
@@ -468,7 +469,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :returns: dict of the response header.
-        :rtype: dict[str, str], dict[str, ~datetime.datetime], or dict[str, int]
+        :rtype: Dict[str, str], Dict[str, ~datetime.datetime], or Dict[str, int]
 
         .. admonition:: Example:
 
@@ -563,8 +564,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response header in dict.
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :returns: response header in Dict.
+        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 

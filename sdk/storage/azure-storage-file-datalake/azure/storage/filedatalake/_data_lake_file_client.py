@@ -67,7 +67,7 @@ class DataLakeFileClient(PathClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -125,7 +125,7 @@ class DataLakeFileClient(PathClient):
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
-            str or dict[str, str] or None
+            str or Dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -223,7 +223,7 @@ class DataLakeFileClient(PathClient):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :returns: response dict (Etag and last modified).
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -499,7 +499,7 @@ class DataLakeFileClient(PathClient):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :returns: response dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         options = self._upload_options(
             data,
@@ -588,7 +588,7 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :returns: dict of the response header.
-        :rtype: dict[str, str], dict[str, ~datetime.datetime], or dict[str, int]
+        :rtype: Dict[str, str], Dict[str, ~datetime.datetime], or Dict[str, int]
 
         .. admonition:: Example:
 
@@ -716,7 +716,7 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :returns: response header in dict
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
