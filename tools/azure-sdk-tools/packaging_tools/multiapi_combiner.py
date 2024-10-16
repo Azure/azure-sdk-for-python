@@ -10,7 +10,7 @@ import inspect
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, Optional, List, Any, TypeVar, Callable, Set
+from typing import Dict, Optional, List, Any, TypeVar, Callable, Set, TYPE_CHECKING
 
 from jinja2 import PackageLoader, Environment
 
@@ -409,8 +409,9 @@ class CodeModel:
         for m in models_and_enums:
             if hasattr(m.generated_class, "from_dict"):
                 self.models[m.name] = m
-            else:
+            elif getattr(m, "__class__", None) == "azure.core._enum_meta.CaseInsensitiveEnumMeta":
                 self.enums.append(m)
+
         self._sort_models()
 
     def _sort_models(self) -> None:

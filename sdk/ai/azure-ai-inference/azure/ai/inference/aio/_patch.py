@@ -229,6 +229,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._model = model
         self._model_extras = model_extras
 
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
+
         super().__init__(endpoint, credential, **kwargs)
 
     @overload
@@ -707,6 +720,19 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._model = model
         self._model_extras = model_extras
 
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
+
         super().__init__(endpoint, credential, **kwargs)
 
     @overload
@@ -989,6 +1015,19 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
