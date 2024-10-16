@@ -58,7 +58,7 @@ class ViolenceMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: Dict, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncViolenceMultimodalEvaluator(azure_ai_project, credential)
     
     def __call__(self, *, messages, **kwargs):
@@ -75,7 +75,7 @@ class ViolenceMultimodalEvaluator:
         return self._async_evaluator
 
 class _AsyncViolenceMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: Dict, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.VIOLENCE,
             azure_ai_project=azure_ai_project,

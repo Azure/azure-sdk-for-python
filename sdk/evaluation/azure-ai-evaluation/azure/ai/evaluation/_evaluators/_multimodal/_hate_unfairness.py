@@ -58,7 +58,7 @@ class HateUnfairnessMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: Dict, credential=None) -> None:
+    def __init__(self, azure_ai_project: dict, credential=None) -> None:
         self._async_evaluator = _AsyncHateUnfairnessMultimodalEvaluator(azure_ai_project, credential)
     
     def __call__(self, *, messages, **kwargs):
@@ -76,7 +76,7 @@ class HateUnfairnessMultimodalEvaluator:
     
 
 class _AsyncHateUnfairnessMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: Dict, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.HATE_FAIRNESS,
             azure_ai_project=azure_ai_project,
