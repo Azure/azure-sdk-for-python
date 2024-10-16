@@ -104,7 +104,7 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
 
     # optionally load data into the index
     if index_batch and schema:
-        batch = IndexBatch.deserialize(index_batch)
+        batch = IndexBatch(index_batch)
         index_client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
         results = index_client.index_documents(batch)
         if not all(result.succeeded for result in results):

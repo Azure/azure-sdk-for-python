@@ -270,7 +270,7 @@ class DataSourcesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -400,7 +400,7 @@ class DataSourcesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -584,7 +584,7 @@ class DataSourcesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -887,7 +887,7 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1017,7 +1017,7 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1201,7 +1201,7 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1474,7 +1474,7 @@ class SkillsetsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1604,7 +1604,7 @@ class SkillsetsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1791,7 +1791,7 @@ class SkillsetsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1996,7 +1996,7 @@ class SynonymMapsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2126,7 +2126,7 @@ class SynonymMapsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2310,7 +2310,7 @@ class SynonymMapsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2447,7 +2447,7 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2532,7 +2532,7 @@ class IndexesOperationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SearchIndex], deserialized["indexes"])
+            list_of_elem = _deserialize(List[_models.SearchIndex], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -2755,7 +2755,7 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2888,7 +2888,7 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -3120,13 +3120,13 @@ class DocumentsOperationsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def count(self, index_name: str, **kwargs: Any) -> None:
+    async def count(self, index_name: str, **kwargs: Any) -> int:
         """Queries the number of documents in the index.
 
         :param index_name: The name of the index. Required.
         :type index_name: str
-        :return: None
-        :rtype: None
+        :return: int
+        :rtype: int
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3140,7 +3140,7 @@ class DocumentsOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[int] = kwargs.pop("cls", None)
 
         _request = build_documents_operations_count_request(
             index_name=index_name,
@@ -3153,20 +3153,32 @@ class DocumentsOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(int, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def search_get(
@@ -3553,7 +3565,7 @@ class DocumentsOperationsOperations:
     @distributed_trace_async
     async def get(
         self, key: str, index_name: str, *, selected_fields: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve. Required.
@@ -3564,8 +3576,8 @@ class DocumentsOperationsOperations:
          retrieved will
          be missing from the returned document. Default value is None.
         :paramtype selected_fields: list[str]
-        :return: None
-        :rtype: None
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3579,7 +3591,7 @@ class DocumentsOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_documents_operations_get_request(
             key=key,
@@ -3594,20 +3606,32 @@ class DocumentsOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(Dict[str, Any], response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def suggest_get(
@@ -3994,7 +4018,7 @@ class DocumentsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 207]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket

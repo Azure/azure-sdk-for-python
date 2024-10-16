@@ -195,6 +195,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(index, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         etag = None
         try:
             index_name = index.name  # type: ignore
@@ -403,6 +405,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(synonym_map, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         etag = None
         try:
             name = synonym_map.name  # type: ignore

@@ -208,6 +208,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(indexer, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         etag = None
         try:
             name = indexer.name  # type: ignore
@@ -358,6 +360,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(data_source_connection, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         etag = None
         try:
             name = data_source_connection.name  # type: ignore
@@ -497,6 +501,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype match_condition: ~azure.core.MatchConditions
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(skillset, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         etag = None
         try:
             name = skillset.name  # type: ignore
