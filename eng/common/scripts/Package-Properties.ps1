@@ -1,6 +1,6 @@
-# Helper functions for retireving useful information from azure-sdk-for-* repo
+# Helper functions for retrieving useful information from azure-sdk-for-* repo
 . "${PSScriptRoot}\logging.ps1"
-
+. "${PSScriptRoot}\Helpers\Package-Helpers.ps1"
 class PackageProps
 {
     [string]$Name
@@ -15,6 +15,11 @@ class PackageProps
     [boolean]$IsNewSdk
     [string]$ArtifactName
     [string]$ReleaseStatus
+    # was this package purely included because other packages included it as an AdditionalValidationPackage?
+    [boolean]$IncludedForValidation
+    # does this package include other packages that we should trigger validation for?
+    [string[]]$AdditionalValidationPackages
+    [HashTable]$ArtifactDetails
 
     PackageProps([string]$name, [string]$version, [string]$directoryPath, [string]$serviceDirectory)
     {
@@ -37,6 +42,7 @@ class PackageProps
         $this.Version = $version
         $this.DirectoryPath = $directoryPath
         $this.ServiceDirectory = $serviceDirectory
+        $this.IncludedForValidation = $false
 
         if (Test-Path (Join-Path $directoryPath "README.md"))
         {
@@ -55,12 +61,14 @@ class PackageProps
             if ($changeLogEntry -and $changeLogEntry.ReleaseStatus)
             {
               $this.ReleaseStatus = $changeLogEntry.ReleaseStatus.Trim().Trim("()")
-            } 
+            }
         }
         else
         {
             $this.ChangeLogPath = $null
         }
+
+        $this.InitializeCIArtifacts()
     }
 
     hidden [void]Initialize(
@@ -73,6 +81,59 @@ class PackageProps
     {
         $this.Initialize($name, $version, $directoryPath, $serviceDirectory)
         $this.Group = $group
+    }
+
+    hidden [object]GetValueSafely($hashtable, [string[]]$keys) {
+        $current = $hashtable
+        foreach ($key in $keys) {
+            if ($current.ContainsKey($key) -or $current[$key]) {
+                $current = $current[$key]
+            }
+            else {
+                return $null
+            }
+        }
+
+        return $current
+    }
+
+    hidden [HashTable]ParseYmlForArtifact([string]$ymlPath) {
+        if (Test-Path -Path $ymlPath) {
+            try {
+                $content = Get-Content -Raw -Path $ymlPath | CompatibleConvertFrom-Yaml
+                if ($content) {
+                    $artifacts = $this.GetValueSafely($content, @("extends", "parameters", "Artifacts"))
+
+                    $artifactForCurrentPackage = $artifacts | Where-Object { $_["name"] -eq $this.ArtifactName -or $_["name"] -eq $this.Name }
+
+                    if ($artifactForCurrentPackage) {
+                        return [HashTable]$artifactForCurrentPackage
+                    }
+                }
+            }
+            catch {
+              Write-Host "Exception while parsing yml file $($ymlPath): $_"
+            }
+        }
+
+        return $null
+    }
+
+    [void]InitializeCIArtifacts(){
+        $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot ".." ".." "..")
+
+        $ciFolderPath = Join-Path -Path $RepoRoot -ChildPath (Join-Path "sdk" $this.ServiceDirectory)
+        $ciFiles = Get-ChildItem -Path $ciFolderPath -Filter "ci*.yml" -File
+
+        if (-not $this.ArtifactDetails) {
+            foreach($ciFile in $ciFiles) {
+                $ciArtifactResult = $this.ParseYmlForArtifact($ciFile.FullName)
+                if ($ciArtifactResult) {
+                    $this.ArtifactDetails = [Hashtable]$ciArtifactResult
+                    break
+                }
+            }
+        }
     }
 }
 
@@ -101,7 +162,7 @@ function Get-PkgProperties
         return $pkgProps[0]
     }
 
-    LogError "Failed to retrive Properties for [$PackageName]"
+    LogError "Failed to retrieve Properties for [$PackageName]"
     return $null
 }
 
@@ -112,18 +173,44 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $diff = Get-Content $InputDiffJson | ConvertFrom-Json
     $targetedFiles = $diff.ChangedFiles
 
-    foreach($pkg in $allPackageProperties)
+    $additionalValidationPackages = @()
+    $lookup = @{}
+
+    foreach ($pkg in $allPackageProperties)
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
+        $lookupKey = ($pkg.DirectoryPath).Replace($RepoRoot, "").TrimStart('\/')
+        $lookup[$lookupKey] = $pkg
 
-        foreach($file in $targetedFiles)
+        foreach ($file in $targetedFiles)
         {
             $filePath = Resolve-Path (Join-Path $RepoRoot $file)
             $shouldInclude = $filePath -like "$pkgDirectory*"
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
+
+                if ($pkg.AdditionalValidationPackages) {
+                    $additionalValidationPackages += $pkg.AdditionalValidationPackages
+                }
+
+                # avoid adding the same package multiple times
+                break
             }
         }
+    }
+
+    foreach ($addition in $additionalValidationPackages) {
+        $key = $addition.Replace($RepoRoot, "").TrimStart('\/')
+
+        if ($lookup[$key]) {
+            $lookup[$key].IncludedForValidation = $true
+            $packagesWithChanges += $lookup[$key]
+        }
+    }
+
+    if ($AdditionalValidationPackagesFromPackageSetFn -and (Test-Path "Function:$AdditionalValidationPackagesFromPackageSetFn"))
+    {
+        $packagesWithChanges += &$AdditionalValidationPackagesFromPackageSetFn $packagesWithChanges $diff $allPackageProperties
     }
 
     return $packagesWithChanges

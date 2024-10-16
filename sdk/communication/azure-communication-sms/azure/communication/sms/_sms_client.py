@@ -83,7 +83,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def send(self, from_,  # type: str
              to,  # type: Union[str, List[str]]
-             message,  # type: str,
+             message,  # type: str
              *,
              enable_delivery_report: bool = False,
              tag: Optional[str] = None,

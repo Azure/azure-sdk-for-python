@@ -2,42 +2,21 @@ parameters:
   versionSpec: ''
 
 steps:
-  # use python 3.8 for tooling. packaging. platform.
+  # as of macos-14, pypy of all stripes is no longer available on the predefined MAC agents
+  # this script installs the newest version of pypy39 from the official pypy site into the hosted tool cache
+  - script: |
+      TOOL_LOCATION=$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64
+      curl -L -o pypy3.9-v7.3.16-macos_x86_64.tar.bz2 https://downloads.python.org/pypy/pypy3.9-v7.3.16-macos_x86_64.tar.bz2
+      mkdir -p $TOOL_LOCATION
+      tar -xvjf pypy3.9-v7.3.16-macos_x86_64.tar.bz2 -C $TOOL_LOCATION --strip-components=1
+      chmod -R 0755 $TOOL_LOCATION/bin
+      $TOOL_LOCATION/bin/python -m ensurepip
+      touch $TOOL_LOCATION/../x64.complete
+    displayName: Install pypy39 to hosted tool cache
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+
   - task: UsePythonVersion@0
-    displayName: "Use Python 3.8"
-    inputs:
-      versionSpec: 3.8
-
-  - pwsh: |
-      python -m pip install packaging==23.1
-    displayName: Prep Environment
-
-  # select the appropriate version from manifest if present
-  - task: PythonScript@0
-    displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
-    inputs:
-     scriptPath: 'scripts/devops_tasks/install_python_version.py'
-     arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
-
-  # set up bypass of standard use python version
-  - pwsh: |
-      $incoming = "${{ parameters.versionSpec }}"
-
-      if($incoming.Contains("pypy3")){
-        Write-Host "##vso[task.setvariable variable=ManualInstallNecessary]true"
-      } 
-    displayName: Check UsePythonVersion Necessity
-
-  - task: PythonScript@0
-    displayName: 'PyPy3 Specific Path Prepend'
-    condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
-    inputs:
-      scriptPath: 'scripts/devops_tasks/use_pypy_version.py'
-      arguments: '${{ parameters.versionSpec }}'
-
-  # use
-  - task: UsePythonVersion@0
-    displayName: "Use Python $(PythonVersion)"
-    condition: and(succeeded(), not(eq(variables.ManualInstallNecessary, 'true')))
+    displayName: "Use Python ${{ parameters.versionSpec }}"
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
+      allowUnstable: true

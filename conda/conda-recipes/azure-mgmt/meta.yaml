@@ -55,6 +55,9 @@ test:
     - azure.mgmt.apimanagement.aio.operations
     - azure.mgmt.apimanagement.models
     - azure.mgmt.apimanagement.operations
+    - azure.mgmt.appcomplianceautomation
+    - azure.mgmt.appcomplianceautomation.aio
+    - azure.mgmt.appcomplianceautomation.models
     - azure.mgmt.appconfiguration
     - azure.mgmt.appconfiguration.aio
     - azure.mgmt.appconfiguration.models
@@ -641,6 +644,11 @@ test:
     - azure.mgmt.operationsmanagement.aio.operations
     - azure.mgmt.operationsmanagement.models
     - azure.mgmt.operationsmanagement.operations
+    - azure.mgmt.oracledatabase
+    - azure.mgmt.oracledatabase.aio
+    - azure.mgmt.oracledatabase.aio.operations
+    - azure.mgmt.oracledatabase.models
+    - azure.mgmt.oracledatabase.operations
     - azure.mgmt.orbital
     - azure.mgmt.orbital.aio
     - azure.mgmt.orbital.aio.operations
@@ -834,6 +842,11 @@ test:
     - azure.mgmt.resourceconnector.aio.operations
     - azure.mgmt.resourceconnector.models
     - azure.mgmt.resourceconnector.operations
+    - azure.mgmt.scvmm
+    - azure.mgmt.scvmm.aio
+    - azure.mgmt.scvmm.aio.operations
+    - azure.mgmt.scvmm.models
+    - azure.mgmt.scvmm.operations
     - azure.mgmt.search
     - azure.mgmt.search.aio
     - azure.mgmt.search.aio.operations
@@ -862,6 +875,11 @@ test:
     - azure.mgmt.servicefabric.aio.operations
     - azure.mgmt.servicefabric.models
     - azure.mgmt.servicefabric.operations
+    - azure.mgmt.servicefabricmanagedclusters
+    - azure.mgmt.servicefabricmanagedclusters.aio
+    - azure.mgmt.servicefabricmanagedclusters.aio.operations
+    - azure.mgmt.servicefabricmanagedclusters.models
+    - azure.mgmt.servicefabricmanagedclusters.operations
     - azure.mgmt.servicebus
     - azure.mgmt.servicebus.aio
     - azure.mgmt.servicebus.models

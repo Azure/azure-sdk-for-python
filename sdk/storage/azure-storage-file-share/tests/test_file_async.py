@@ -156,8 +156,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             properties = await file_client.get_file_properties()
         assert properties.copy.status == 'success'
 
-    async def assertFileEqual(self, file_client, expected_data):
-        content = await file_client.download_file()
+    async def assertFileEqual(self, file_client, expected_data, **kwargs):
+        content = await file_client.download_file(**kwargs)
         actual_data = await content.readall()
         assert actual_data == expected_data
 
@@ -3878,3 +3878,85 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         await file_client.exists()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_file_permission_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        source_file = share_client.get_file_client('file1')
+        user_given_permission_sddl = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
+                                      "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
+                                      "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+        user_given_permission_binary = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                        "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                        "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
+
+        await source_file.create_file(
+            1024,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+
+        props = await source_file.get_file_properties()
+        assert props is not None
+        assert props.permission_key is not None
+
+        new_file = await source_file.rename_file(
+            'file2',
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        props = await new_file.get_file_properties()
+        assert props is not None
+        assert props.permission_key is not None
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == user_given_permission_binary
+
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline'
+        )
+        await new_file.set_http_headers(
+            content_settings=content_settings,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        props = await new_file.get_file_properties()
+        assert props is not None
+        assert props.permission_key is not None
+        assert props.content_settings.content_language == content_settings.content_language
+        assert props.content_settings.content_disposition == content_settings.content_disposition
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="sddl"
+        )
+        assert server_returned_permission == user_given_permission_sddl
+
+        # Copy file
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='filecopy',
+            credential=storage_account_key
+        )
+        copy = await file_client.start_copy_from_url(
+            new_file.url,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
+
+        await new_file.delete_file()
+        await file_client.delete_file()

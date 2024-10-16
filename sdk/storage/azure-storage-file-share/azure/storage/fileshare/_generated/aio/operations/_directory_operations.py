@@ -18,13 +18,11 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._directory_operations import (
     build_create_request,
     build_delete_request,
@@ -70,6 +68,7 @@ class DirectoryOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -77,6 +76,7 @@ class DirectoryOperations:
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Creates a new directory under the specified share or parent directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -93,6 +93,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -114,7 +121,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -133,6 +140,7 @@ class DirectoryOperations:
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -145,7 +153,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -194,6 +201,7 @@ class DirectoryOperations:
     async def get_properties(  # pylint: disable=inconsistent-return-statements
         self, sharesnapshot: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns all system properties for the specified directory, and can also be used to check the
         existence of a directory. The data returned does not include the files in the directory or any
         subdirectories.
@@ -210,7 +218,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -235,7 +243,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -285,6 +292,7 @@ class DirectoryOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
 
@@ -297,7 +305,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -321,7 +329,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -349,6 +356,7 @@ class DirectoryOperations:
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
@@ -356,6 +364,7 @@ class DirectoryOperations:
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties on the directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -369,6 +378,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -390,7 +406,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -409,6 +425,7 @@ class DirectoryOperations:
             url=self._config.url,
             timeout=timeout,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -422,7 +439,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -471,6 +487,7 @@ class DirectoryOperations:
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Updates user defined metadata for the specified directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -485,7 +502,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -512,7 +529,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -551,6 +567,7 @@ class DirectoryOperations:
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
+        # pylint: disable=line-too-long
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
 
@@ -583,7 +600,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -615,7 +632,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -636,7 +652,7 @@ class DirectoryOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("ListFilesAndDirectoriesSegmentResponse", pipeline_response)
+        deserialized = self._deserialize("ListFilesAndDirectoriesSegmentResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -653,6 +669,7 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListHandlesResponse:
+        # pylint: disable=line-too-long
         """Lists handles for directory.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -679,7 +696,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -707,7 +724,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -728,7 +744,7 @@ class DirectoryOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("ListHandlesResponse", pipeline_response)
+        deserialized = self._deserialize("ListHandlesResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -745,6 +761,7 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Closes all handles open for given directory.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
@@ -770,7 +787,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -798,7 +815,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -836,6 +852,7 @@ class DirectoryOperations:
         replace_if_exists: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
@@ -843,6 +860,7 @@ class DirectoryOperations:
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Renames a directory.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
@@ -871,6 +889,13 @@ class DirectoryOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -890,7 +915,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -934,6 +959,7 @@ class DirectoryOperations:
             file_last_write_time=_file_last_write_time,
             file_change_time=_file_change_time,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,
@@ -945,7 +971,6 @@ class DirectoryOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False

@@ -30,6 +30,7 @@ import pytest
 
 # module under test
 import azure.core.settings as m
+from azure.core import AzureClouds
 
 
 class TestPrioritizedSetting(object):
@@ -167,6 +168,10 @@ class TestConverters(object):
         with pytest.raises(ValueError):
             m.convert_logging("junk")
 
+    def test_convert_azure_cloud(self):
+        with pytest.raises(ValueError):
+            m.convert_azure_cloud(10)
+
 
 _standard_settings = ["log_level", "tracing_enabled"]
 
@@ -184,22 +189,25 @@ class TestStandardSettings(object):
         assert ps.env_var == "AZURE_" + name.upper()
 
     def test_init(self):
-        assert m.settings.defaults_only == False
+        assert m.settings.defaults_only is False
 
     def test_config(self):
         val = m.settings.config(log_level=30, tracing_enabled=True)
         assert isinstance(val, tuple)
-        assert val.tracing_enabled == True
+        assert val.tracing_enabled is True
         assert val.log_level == 30
         os.environ["AZURE_LOG_LEVEL"] = "debug"
         val = m.settings.config(tracing_enabled=False)
-        assert val.tracing_enabled == False
+        assert val.tracing_enabled is False
         assert val.log_level == 10
 
         val = m.settings.config(log_level=30, tracing_enabled=False)
-        assert val.tracing_enabled == False
+        assert val.tracing_enabled is False
         assert val.log_level == 30
         del os.environ["AZURE_LOG_LEVEL"]
+
+        val = m.settings.config(azure_cloud=AzureClouds.AZURE_US_GOVERNMENT)
+        assert val.azure_cloud == AzureClouds.AZURE_US_GOVERNMENT
 
     def test_defaults(self):
         val = m.settings.defaults
@@ -208,12 +216,17 @@ class TestStandardSettings(object):
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled
         assert val.tracing_implementation == defaults.tracing_implementation
+        assert val.azure_cloud == AzureClouds.AZURE_PUBLIC_CLOUD
         os.environ["AZURE_LOG_LEVEL"] = "debug"
         defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled
         assert val.tracing_implementation == defaults.tracing_implementation
         del os.environ["AZURE_LOG_LEVEL"]
+        os.environ["AZURE_CLOUD"] = "AZURE_PUBLIC_CLOUD"
+        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
+        assert val.azure_cloud == AzureClouds.AZURE_PUBLIC_CLOUD
+        del os.environ["AZURE_CLOUD"]
 
     def test_current(self):
         os.environ["AZURE_LOG_LEVEL"] = "debug"
@@ -221,3 +234,8 @@ class TestStandardSettings(object):
         assert isinstance(val, tuple)
         assert val.log_level == 10
         del os.environ["AZURE_LOG_LEVEL"]
+        os.environ["AZURE_CLOUD"] = "AZURE_CHINA_CLOUD"
+        val = m.settings.current
+        assert isinstance(val, tuple)
+        assert val.azure_cloud == AzureClouds.AZURE_CHINA_CLOUD
+        del os.environ["AZURE_CLOUD"]

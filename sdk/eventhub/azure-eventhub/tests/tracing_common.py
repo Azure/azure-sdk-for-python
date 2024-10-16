@@ -96,7 +96,7 @@ class FakeSpan(HttpSpanMixin, object):
         """Finish a span."""
         if exception_value:
             self.status = exception_value.args[0]
-        if self.CONTEXT:
+        if self.CONTEXT and len(self.CONTEXT) > 0:
             self.CONTEXT.pop()
 
     def start(self):

@@ -115,87 +115,23 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
 
     testing_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
     barcode_url_tif = _get_blob_url(testing_container_sas_url, "testingdata", "barcode2.tif")
-    formula_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "formula4.jpg")
     receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
-    receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
-    business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
-    business_card_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
-    business_card_multipage_url_pdf = _get_blob_url(
-        testing_container_sas_url, "testingdata", "business-card-multipage.pdf"
-    )
-    identity_document_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
-    identity_document_url_jpg_passport = _get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
-    invoice_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
-    invoice_url_tiff = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
-    invoice_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
-    multipage_vendor_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
-    form_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
-    multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
-    multipage_table_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
-    selection_mark_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
-    label_table_variable_row_url_pdf = _get_blob_url(
-        testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf"
-    )
-    label_table_fixed_row_url_pdf = _get_blob_url(
-        testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf"
-    )
-    multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
-    invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
     irs_classifier_document_url = _get_blob_url(testing_container_sas_url, "testingdata", "IRS-1040_2.pdf")
 
     # file stream samples
-    receipt_jpg = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg")
-    )
-    receipt_png = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png")
-    )
-    business_card_jpg = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg")
-    )
-    business_card_png = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png")
-    )
-    business_card_multipage_pdf = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf")
-    )
-    identity_document_license_jpg = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg")
-    )
-    identity_document_passport_jpg = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg")
-    )
     invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
-    invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
-    invoice_jpg = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg")
-    )
     form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
-    blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
     multipage_invoice_pdf = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf")
     )
-    unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
     multipage_table_pdf = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf")
     )
-    multipage_vendor_pdf = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf")
-    )
-    selection_form_pdf = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf")
-    )
-    multipage_receipt_pdf = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf")
-    )
-    invoice_docx = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/invoice.docx"))
-    w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
-    html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
-    spreadsheet = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx")
-    )
     irs_classifier_document = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf")
+    )
+    layout_sample = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/layout/layout-pageobject.pdf")
     )
 
     def get_oauth_endpoint(self):
@@ -231,19 +167,6 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         self.logger.propagate = False
         self.logger.disabled = True
         self.logger.handlers = []
-
-    def assertModelTransformCorrect(self, model, expected):
-        assert model.model_id == expected.model_id
-        assert model.created_on == expected.created_date_time
-        assert model.description == expected.description
-        assert model.expires_on == expected.expiration_date_time
-
-        for name, field in model.doc_types.items():
-            assert name in expected.doc_types
-            exp = expected.doc_types[name]
-            assert field.description == exp.description
-            assert field.field_confidence == exp.field_confidence
-            assert field.field_schema == {name: field.serialize() for name, field in exp.field_schema.items()}
 
     def assertBoundingBoxTransformCorrect(self, box, expected):
         if box is None and expected is None:

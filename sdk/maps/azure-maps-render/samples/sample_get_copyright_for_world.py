@@ -35,8 +35,9 @@ def get_copyright_for_world():
     result = maps_render_client.get_copyright_for_world()
 
     print("Get copyright for the world result:")
-    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
+    print(result["regions"][0].get("copyrights", []) if len(result["regions"]) > 0 else "empty result")
     # [END get_copyright_for_world]
+
 
 if __name__ == '__main__':
     get_copyright_for_world()

@@ -11,14 +11,11 @@ import json
 import sys
 import asyncio
 import functools
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from unittest import mock
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 
 
@@ -65,56 +62,8 @@ class AsyncMockTransport(mock.MagicMock):
 
 class TestLogging(AsyncFormRecognizerTest):
 
-    @pytest.mark.live_test_only
-    @FormRecognizerPreparer()
-    async def test_logging_info_dac_client(self, **kwargs):
-        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        mock_handler = MockHandler()
-
-        logger = logging.getLogger("azure")
-        logger.addHandler(mock_handler)
-        logger.setLevel(logging.INFO)
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
-            result = await poller.result()
-
-        for message in mock_handler.messages:
-            if message.levelname == "INFO":
-                # not able to use json.loads here. At INFO level only API key should be REDACTED
-                if message.message.find("Ocp-Apim-Subscription-Key") != -1:
-                    assert message.message.find("REDACTED") != -1
-                else:
-                    assert message.message.find("REDACTED") == -1
-
-    @pytest.mark.live_test_only
-    @FormRecognizerPreparer()
-    async def test_logging_info_dmac_client(self, **kwargs):
-        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        mock_handler = MockHandler()
-
-        logger = logging.getLogger("azure")
-        logger.addHandler(mock_handler)
-        logger.setLevel(logging.INFO)
-        async with client:
-            result = await client.get_resource_details()
-
-        for message in mock_handler.messages:
-            if message.levelname == "INFO":
-                # not able to use json.loads here. At INFO level only API key should be REDACTED
-                if message.message.find("Ocp-Apim-Subscription-Key") != -1:
-                    assert message.message.find("REDACTED") != -1
-                else:
-                    assert message.message.find("REDACTED") == -1
-
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_403(self, **kwargs):
-        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-
         response = mock.Mock(
             status_code=403,
             headers={"Retry-After": 186688, "Content-Type": "application/json"},
@@ -127,7 +76,7 @@ class TestLogging(AsyncFormRecognizerTest):
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = get_async_client(DocumentAnalysisClient, transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
@@ -136,8 +85,6 @@ class TestLogging(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_429(self, **kwargs):
-        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         response = mock.Mock(
             status_code=429,
             headers={"Retry-After": 186688, "Content-Type": "application/json"},
@@ -150,7 +97,7 @@ class TestLogging(AsyncFormRecognizerTest):
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = get_async_client(DocumentAnalysisClient, transport=transport)
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         assert e.value.status_code == 429

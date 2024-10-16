@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b28 (Unreleased)
+## 1.0.0b32 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,46 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Refactor trace mapping logic for target and data into trace utils
+    ([#37897](https://github.com/Azure/azure-sdk-for-python/pull/37897))
+
+## 1.0.0b31 (2024-10-08)
+
+### Features Added
+
+- Allow tracking of whether in a Azure Functions attach scenario
+    ([#37717](https://github.com/Azure/azure-sdk-for-python/pull/37717))
+
+## 1.0.0b30 (2024-09-20)
+
+### Bugs Fixed
+
+- Fix setting custom `TracerProvider` bug
+    ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
+
+## 1.0.0b29 (2024-09-10)
+
+### Features Added
+
+- Allow passing in of custom `TracerProvider` for `AzureMonitorTraceExporter`
+    ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
+- Support AAD Auth for live metrics
+    ([#37258](https://github.com/Azure/azure-sdk-for-python/pull/37258))
+
+### Other Changes
+
+- Update instrumentation constants info
+    ([#36696](https://github.com/Azure/azure-sdk-for-python/pull/36696))
+- Refactor statsbeat utils functions
+    ([#36824](https://github.com/Azure/azure-sdk-for-python/pull/36824))
+
+## 1.0.0b28 (2024-07-29)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36481](https://github.com/Azure/azure-sdk-for-python/pull/36481))
 
 ## 1.0.0b27 (2024-06-21)
 

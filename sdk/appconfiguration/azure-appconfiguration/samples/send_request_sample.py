@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_send_request.py
+FILE: send_request_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to make custom HTTP requests through a client pipeline.
+    This sample demonstrates how to make custom HTTP requests through a client pipeline synchronously.
 
 USAGE:
-    python sample_send_request.py
+    python send_request_sample.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.

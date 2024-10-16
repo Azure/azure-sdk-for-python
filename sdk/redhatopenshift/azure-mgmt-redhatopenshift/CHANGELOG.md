@@ -1,5 +1,11 @@
 # Release History
 
+## 1.5.0 (2024-07-22)
+
+### Features Added
+
+  - Model NetworkProfile has a new parameter load_balancer_profile
+
 ## 1.4.0 (2023-10-23)
 
 ### Features Added

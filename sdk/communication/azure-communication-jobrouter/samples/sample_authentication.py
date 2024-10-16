@@ -13,17 +13,17 @@ DESCRIPTION:
 USAGE:
     python sample_authentication.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
 
 
 class RouterClientAuthenticationSamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     def create_router_client(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         # [START auth_from_connection_string]
         from azure.communication.jobrouter import JobRouterClient
@@ -35,7 +35,7 @@ class RouterClientAuthenticationSamples(object):
         # [END auth_from_connection_string]
 
     def create_router_admin_client(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         # [START admin_auth_from_connection_string]
         from azure.communication.jobrouter import JobRouterAdministrationClient

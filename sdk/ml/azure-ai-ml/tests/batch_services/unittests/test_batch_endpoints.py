@@ -52,14 +52,14 @@ auth_mode: aad_token # required
 def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_07_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
+        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
     )
 
 

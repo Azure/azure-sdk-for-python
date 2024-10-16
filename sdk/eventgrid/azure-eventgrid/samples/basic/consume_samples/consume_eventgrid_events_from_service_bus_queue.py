@@ -19,14 +19,15 @@ USAGE:
 
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
+from azure.identity import DefaultAzureCredential
 import os
 import json
 
 # all types of EventGridEvents below produce same DeserializedEvent
-connection_str = os.environ["SERVICE_BUS_CONNECTION_STR"]
 queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
+fully_qualified_namespace = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 
-with ServiceBusClient.from_connection_string(connection_str) as sb_client:
+with ServiceBusClient(fully_qualified_namespace, DefaultAzureCredential()) as sb_client:
     payload = sb_client.get_queue_receiver(queue_name).receive_messages()
 
     ## deserialize payload into a list of typed Events

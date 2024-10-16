@@ -29,13 +29,16 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
-    3) DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL - a container SAS URL to your Azure Storage blob container.
+    3) CLASSIFIER_ID - the ID of your trained document classifier
+        -OR-
+       DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
+       with your training files. A document classifier will be built and used to run the sample.
 """
 
 import os
 
 
-def sample_compose_model():
+def sample_compose_model(classifier_id):
     # [START composed_model]
     import uuid
     from azure.core.credentials import AzureKeyCredential
@@ -44,14 +47,15 @@ def sample_compose_model():
         AzureBlobContentSource,
         BuildDocumentModelRequest,
         ComposeDocumentModelRequest,
-        ComponentDocumentModelDetails,
         DocumentBuildMode,
         DocumentModelDetails,
+        DocumentTypeDetails,
     )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
+    classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
     document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -96,12 +100,13 @@ def sample_compose_model():
     poller = document_intelligence_admin_client.begin_compose_model(
         ComposeDocumentModelRequest(
             model_id=str(uuid.uuid4()),
-            component_models=[
-                ComponentDocumentModelDetails(model_id=supplies_model.model_id),
-                ComponentDocumentModelDetails(model_id=equipment_model.model_id),
-                ComponentDocumentModelDetails(model_id=furniture_model.model_id),
-                ComponentDocumentModelDetails(model_id=cleaning_supplies_model.model_id),
-            ],
+            classifier_id=classifier_id,
+            doc_types={
+                "formA": DocumentTypeDetails(model_id=supplies_model.model_id),
+                "formB": DocumentTypeDetails(model_id=equipment_model.model_id),
+                "formC": DocumentTypeDetails(model_id=furniture_model.model_id),
+                "formD": DocumentTypeDetails(model_id=cleaning_supplies_model.model_id),
+            },
             description="Office Supplies Composed Model",
         ),
     )
@@ -116,7 +121,7 @@ def sample_compose_model():
         print("Doc types the model can recognize:")
         for name, doc_type in model.doc_types.items():
             print(f"Doc Type: '{name}' which has the following fields:")
-            if doc_type.field_confidence:
+            if doc_type.field_confidence and doc_type.field_schema:
                 for field_name, field in doc_type.field_schema.items():
                     print(
                         f"Field: '{field_name}' has type '{field['type']}' and confidence score "
@@ -130,12 +135,50 @@ def sample_compose_model():
 
 
 if __name__ == "__main__":
+    import uuid
     from azure.core.exceptions import HttpResponseError
     from dotenv import find_dotenv, load_dotenv
 
     try:
         load_dotenv(find_dotenv())
-        sample_compose_model()
+        classifier_id = None
+        if os.getenv("DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL") and not os.getenv("CLASSIFIER_ID"):
+            from azure.core.credentials import AzureKeyCredential
+            from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+            from azure.ai.documentintelligence.models import (
+                AzureBlobContentSource,
+                ClassifierDocumentTypeDetails,
+                BuildDocumentClassifierRequest,
+            )
+
+            endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+            key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+            blob_container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL"]
+
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
+                endpoint=endpoint, credential=AzureKeyCredential(key)
+            )
+
+            poller = document_intelligence_admin_client.begin_build_classifier(
+                BuildDocumentClassifierRequest(
+                    classifier_id=str(uuid.uuid4()),
+                    doc_types={
+                        "IRS-1040-A": ClassifierDocumentTypeDetails(
+                            azure_blob_source=AzureBlobContentSource(
+                                container_url=blob_container_sas_url, prefix="IRS-1040-A/train"
+                            )
+                        ),
+                        "IRS-1040-B": ClassifierDocumentTypeDetails(
+                            azure_blob_source=AzureBlobContentSource(
+                                container_url=blob_container_sas_url, prefix="IRS-1040-B/train"
+                            )
+                        ),
+                    },
+                )
+            )
+            classifier = poller.result()
+            classifier_id = classifier.classifier_id
+        sample_compose_model(classifier_id)
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:

@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## _Disclaimer_
 
-_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
+_The latest service API is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -195,6 +195,8 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
+* [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
+* [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
@@ -212,6 +214,17 @@ Extract text, selection marks, text styles, and table structures, along with the
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def _format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -234,21 +247,22 @@ for page in result.pages:
 
     if page.lines:
         for line_idx, line in enumerate(page.lines):
-            words = get_words(page, line)
+            words = []
+            if page.words:
+                for word in page.words:
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                    if _in_span(word, line.spans):
+                        words.append(word)
             print(
                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{format_polygon(line.polygon)}'"
+                f"within bounding polygon '{_format_polygon(line.polygon)}'"
             )
-
-    if page.words:
-        for word in page.words:
-            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
+                f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
 
 if result.paragraphs:
@@ -257,9 +271,16 @@ if result.paragraphs:
     result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
     print("-----Print sorted paragraphs-----")
     for paragraph in result.paragraphs:
-        print(
-            f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
-        )
+        if not paragraph.bounding_regions:
+            print(f"Found paragraph with role: '{paragraph.role}' within N/A bounding region")
+        else:
+            print(f"Found paragraph with role: '{paragraph.role}' within")
+            print(
+                ", ".join(
+                    f" Page #{region.page_number}: {_format_polygon(region.polygon)} bounding region"
+                    for region in paragraph.bounding_regions
+                )
+            )
         print(f"...with content: '{paragraph.content}'")
         print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
@@ -269,17 +290,92 @@ if result.tables:
         if table.bounding_regions:
             for region in table.bounding_regions:
                 print(
-                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                    f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
                 )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
                     print(
-                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                        f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'"
                     )
 
 print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+### Extract Figures from Documents
+
+Extract figures from the document as cropped images.
+
+<!-- SNIPPET:sample_analyze_result_figures.analyze_result_figures -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.FIGURES],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+if result.figures:
+    for figure in result.figures:
+        if figure.id:
+            response = document_intelligence_client.get_analyze_result_figure(
+                model_id=result.model_id, result_id=operation_id, figure_id=figure.id
+            )
+            with open(f"{figure.id}.png", "wb") as writer:
+                writer.writelines(response)
+else:
+    print("No figures found.")
+```
+
+<!-- END SNIPPET -->
+
+### Analyze Documents Result in PDF
+
+Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
+
+_Note: For now, this feature is only supported by `prebuilt-read`. All other models will return error._
+
+<!-- SNIPPET:sample_analyze_result_pdf.analyze_result_pdf -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-read",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.PDF],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+response = document_intelligence_client.get_analyze_result_pdf(model_id=result.model_id, result_id=operation_id)
+with open("analyze_result.pdf", "wb") as writer:
+    writer.writelines(response)
 ```
 
 <!-- END SNIPPET -->
@@ -295,6 +391,24 @@ Select the General Document Model by passing `model_id="prebuilt-document"` into
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def _format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(
+        f"Page #{region.page_number}: {_format_polygon(region.polygon)}" for region in bounding_regions
+    )
+
+def _format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -321,12 +435,12 @@ if result.key_value_pairs:
         if kv_pair.key:
             print(
                 f"Key '{kv_pair.key.content}' found within "
-                f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+                f"'{_format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
             )
         if kv_pair.value:
             print(
                 f"Value '{kv_pair.value.content}' found within "
-                f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
+                f"'{_format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
             )
 
 for page in result.pages:
@@ -335,21 +449,22 @@ for page in result.pages:
 
     if page.lines:
         for line_idx, line in enumerate(page.lines):
-            words = get_words(page.words, line)
+            words = []
+            if page.words:
+                for word in page.words:
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                    if _in_span(word, line.spans):
+                        words.append(word)
             print(
                 f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                f"bounding polygon '{format_polygon(line.polygon)}'"
+                f"bounding polygon '{_format_polygon(line.polygon)}'"
             )
-
-    if page.words:
-        for word in page.words:
-            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
+                f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of "
                 f"{selection_mark.confidence}"
             )
 
@@ -359,14 +474,14 @@ if result.tables:
         if table.bounding_regions:
             for region in table.bounding_regions:
                 print(
-                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                    f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
                 )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
                     print(
-                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
+                        f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'\n"
                     )
 print("----------------------------------------")
 ```
@@ -387,6 +502,9 @@ For example, to analyze fields from a sales receipt, use the prebuilt receipt mo
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def _format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -435,23 +553,23 @@ if receipts.documents:
                     item_total_price = item.get("valueObject").get("TotalPrice")
                     if item_total_price:
                         print(
-                            f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "
+                            f"......Total Item Price: {_format_price(item_total_price.get('valueCurrency'))} has confidence: "
                             f"{item_total_price.confidence}"
                         )
             subtotal = receipt.fields.get("Subtotal")
             if subtotal:
                 print(
-                    f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
+                    f"Subtotal: {_format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
                 )
             tax = receipt.fields.get("TotalTax")
             if tax:
-                print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
+                print(f"Total tax: {_format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
             tip = receipt.fields.get("Tip")
             if tip:
-                print(f"Tip: {format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
+                print(f"Tip: {_format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
             total = receipt.fields.get("Total")
             if total:
-                print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
+                print(f"Total: {_format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
 ```
 
@@ -503,12 +621,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -524,6 +643,20 @@ For best results, you should only analyze documents of the same document type th
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def _print_table(header_names, table_data):
+    # Print a two-dimensional array like a table.
+    max_len_list = []
+    for i in range(len(header_names)):
+        col_values = list(map(lambda row: len(str(row[i])), table_data))
+        col_values.append(len(str(header_names[i])))
+        max_len_list.append(max(col_values))
+
+    row_format_str = "".join(map(lambda len: f"{{:<{len + 4}}}", max_len_list))
+
+    print(row_format_str.format(*header_names))
+    for row in table_data:
+        print(row_format_str.format(*row))
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -561,10 +694,7 @@ if result.documents:
         if not doc.fields is None:
             for field_name, field_value in doc.fields.items():
                 # Dynamic Table cell information store as array in document field.
-                if (
-                    field_value.type == SYMBOL_OF_TABLE_TYPE
-                    and field_value.value_array
-                ):
+                if field_value.type == SYMBOL_OF_TABLE_TYPE and field_value.value_array:
                     col_names = []
                     sample_obj = field_value.value_array[0]
                     if KEY_OF_VALUE_OBJECT in sample_obj:
@@ -581,8 +711,8 @@ if result.documents:
                             )
                             row_data = list(map(extract_value_by_col_name, col_names))
                             table_rows.append(row_data)
-                    print_table(col_names, table_rows)
-                
+                    _print_table(col_names, table_rows)
+
                 elif (
                     field_value.type == SYMBOL_OF_OBJECT_TYPE
                     and KEY_OF_VALUE_OBJECT in field_value
@@ -592,9 +722,7 @@ if result.documents:
                     is_fixed_table = all(
                         (
                             rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
-                            and Counter(
-                                list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
-                            )
+                            and Counter(list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys()))
                             == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
                         )
                         for rows_of_column in rows_by_columns
@@ -609,9 +737,7 @@ if result.documents:
                             rows = rows_of_column[KEY_OF_VALUE_OBJECT]
                             for row_key in list(rows.keys()):
                                 if row_key in row_dict:
-                                    row_dict[row_key].append(
-                                        rows[row_key].get(KEY_OF_CELL_CONTENT)
-                                    )
+                                    row_dict[row_key].append(rows[row_key].get(KEY_OF_CELL_CONTENT))
                                 else:
                                     row_dict[row_key] = [
                                         row_key,
@@ -619,7 +745,7 @@ if result.documents:
                                     ]
 
                         col_names.insert(0, "")
-                        print_table(col_names, list(row_dict.values()))
+                        _print_table(col_names, list(row_dict.values()))
 
 print("------------------------------------")
 ```
@@ -689,12 +815,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -706,11 +833,6 @@ account_details = document_intelligence_admin_client.get_resource_info()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
-)
-neural_models = account_details.custom_neural_document_model_builds
-print(
-    f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
-    f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
 )
 ```
 

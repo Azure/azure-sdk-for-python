@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -42,6 +43,10 @@ from ...operations._node_types_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -77,7 +82,6 @@ class NodeTypesOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NodeType or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.NodeType]
@@ -89,7 +93,7 @@ class NodeTypesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.NodeTypeListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -100,17 +104,16 @@ class NodeTypesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_managed_clusters_request(
+                _request = build_list_by_managed_clusters_request(
                     resource_group_name=resource_group_name,
                     cluster_name=cluster_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_managed_clusters.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -122,13 +125,13 @@ class NodeTypesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("NodeTypeListResult", pipeline_response)
@@ -138,11 +141,11 @@ class NodeTypesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -155,19 +158,15 @@ class NodeTypesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_managed_clusters.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes"
-    }
-
     async def _restart_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -190,7 +189,7 @@ class NodeTypesOperations:
         else:
             _json = self._serialize.body(parameters, "NodeTypeActionParameters")
 
-        request = build_restart_request(
+        _request = build_restart_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
@@ -199,16 +198,15 @@ class NodeTypesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._restart_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -226,11 +224,7 @@ class NodeTypesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _restart_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/restart"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_restart(
@@ -259,14 +253,6 @@ class NodeTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -278,7 +264,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -295,18 +281,10 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for restart action. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -318,7 +296,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts one or more nodes on the node type.
@@ -333,20 +311,9 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for restart action. Is either a NodeTypeActionParameters type or
-         a IO type. Required.
+         a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -377,7 +344,7 @@ class NodeTypesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -388,27 +355,23 @@ class NodeTypesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_restart.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/restart"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _reimage_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -431,7 +394,7 @@ class NodeTypesOperations:
         else:
             _json = self._serialize.body(parameters, "NodeTypeActionParameters")
 
-        request = build_reimage_request(
+        _request = build_reimage_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
@@ -440,16 +403,15 @@ class NodeTypesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._reimage_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -467,11 +429,7 @@ class NodeTypesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _reimage_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/reimage"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_reimage(
@@ -500,14 +458,6 @@ class NodeTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -519,7 +469,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -536,18 +486,10 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for reimage action. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -559,7 +501,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Reimages one or more nodes on the node type.
@@ -574,20 +516,9 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for reimage action. Is either a NodeTypeActionParameters type or
-         a IO type. Required.
+         a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -618,7 +549,7 @@ class NodeTypesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -629,27 +560,23 @@ class NodeTypesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_reimage.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/reimage"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _delete_node_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -672,7 +599,7 @@ class NodeTypesOperations:
         else:
             _json = self._serialize.body(parameters, "NodeTypeActionParameters")
 
-        request = build_delete_node_request(
+        _request = build_delete_node_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
@@ -681,16 +608,15 @@ class NodeTypesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._delete_node_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -708,11 +634,7 @@ class NodeTypesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_node_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/deleteNode"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_delete_node(
@@ -741,14 +663,6 @@ class NodeTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -760,7 +674,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -777,18 +691,10 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for delete action. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -800,7 +706,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, IO],
+        parameters: Union[_models.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes one or more nodes on the node type.
@@ -815,20 +721,9 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for delete action. Is either a NodeTypeActionParameters type or a
-         IO type. Required.
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -859,7 +754,7 @@ class NodeTypesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -870,17 +765,13 @@ class NodeTypesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete_node.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/deleteNode"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -896,12 +787,11 @@ class NodeTypesOperations:
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NodeType or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -915,22 +805,21 @@ class NodeTypesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.NodeType] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -943,23 +832,19 @@ class NodeTypesOperations:
         deserialized = self._deserialize("NodeType", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeType, IO],
+        parameters: Union[_models.NodeType, IO[bytes]],
         **kwargs: Any
     ) -> _models.NodeType:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -982,7 +867,7 @@ class NodeTypesOperations:
         else:
             _json = self._serialize.body(parameters, "NodeType")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
@@ -991,16 +876,15 @@ class NodeTypesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1026,10 +910,6 @@ class NodeTypesOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -1057,14 +937,6 @@ class NodeTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NodeType or the result of
          cls(response)
         :rtype:
@@ -1078,7 +950,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1094,18 +966,10 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: The node type resource. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NodeType or the result of
          cls(response)
         :rtype:
@@ -1119,7 +983,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeType, IO],
+        parameters: Union[_models.NodeType, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NodeType]:
         """Creates or updates a Service Fabric node type.
@@ -1132,19 +996,9 @@ class NodeTypesOperations:
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: The node type resource. Is either a NodeType type or a IO type. Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: The node type resource. Is either a NodeType type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either NodeType or the result of
          cls(response)
         :rtype:
@@ -1178,7 +1032,7 @@ class NodeTypesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("NodeType", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1190,17 +1044,15 @@ class NodeTypesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.NodeType].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
+        return AsyncLROPoller[_models.NodeType](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     async def update(
@@ -1228,7 +1080,6 @@ class NodeTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NodeType or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1240,7 +1091,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1256,11 +1107,10 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: The parameters to update the node type configuration. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NodeType or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1272,7 +1122,7 @@ class NodeTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeUpdateParameters, IO],
+        parameters: Union[_models.NodeTypeUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.NodeType:
         """Update the tags of a node type resource of a given managed cluster.
@@ -1286,18 +1136,14 @@ class NodeTypesOperations:
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: The parameters to update the node type configuration. Is either a
-         NodeTypeUpdateParameters type or a IO type. Required.
+         NodeTypeUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeUpdateParameters or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: NodeType or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1320,7 +1166,7 @@ class NodeTypesOperations:
         else:
             _json = self._serialize.body(parameters, "NodeTypeUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
@@ -1329,16 +1175,15 @@ class NodeTypesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1351,18 +1196,14 @@ class NodeTypesOperations:
         deserialized = self._deserialize("NodeType", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cluster_name: str, node_type_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1376,22 +1217,21 @@ class NodeTypesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             node_type_name=node_type_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1409,11 +1249,7 @@ class NodeTypesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -1429,14 +1265,6 @@ class NodeTypesOperations:
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1464,7 +1292,7 @@ class NodeTypesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1475,14 +1303,10 @@ class NodeTypesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

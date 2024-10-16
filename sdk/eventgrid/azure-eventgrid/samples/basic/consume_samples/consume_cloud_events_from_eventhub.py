@@ -21,9 +21,10 @@ import os
 import json
 from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
+EVENTHUB_FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 
 
 def on_event(partition_context, event):
@@ -31,8 +32,9 @@ def on_event(partition_context, event):
     print("data: {}\n".format(dict_event.data))
 
 
-consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+consumer_client = EventHubConsumerClient(
+    fully_qualified_namespace=EVENTHUB_FULLY_QUALIFIED_NAMESPACE,
+    credential=DefaultAzureCredential(),
     consumer_group="$Default",
     eventhub_name=EVENTHUB_NAME,
 )

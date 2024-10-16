@@ -96,6 +96,7 @@ IGNORED_SAMPLES = {
     ],
     "azure-eventhub": [
         "client_identity_authentication.py",    # TODO: remove after fixing issue #29177
+        "client_identity_authentication_async.py",    # TODO: remove after fixing issue #29177
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "connection_to_custom_endpoint_address_async.py",

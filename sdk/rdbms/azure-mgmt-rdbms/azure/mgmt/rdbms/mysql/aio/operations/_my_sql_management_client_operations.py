@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Optional, Type, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Dict, Optional, Type, TypeVar, Union, cast
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,19 +15,19 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._my_sql_management_client_operations import (
     build_create_recommended_action_session_request,
     build_reset_query_performance_insight_data_request,
@@ -81,7 +81,6 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -95,16 +94,16 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("QueryPerformanceInsightResetDataResult", pipeline_response)
+        deserialized = self._deserialize("QueryPerformanceInsightResetDataResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def _create_recommended_action_session_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, server_name: str, advisor_name: str, database_name: str, **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -117,7 +116,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_create_recommended_action_session_request(
             resource_group_name=resource_group_name,
@@ -129,10 +128,10 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -140,11 +139,19 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_create_recommended_action_session(
@@ -174,7 +181,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_recommended_action_session_initial(  # type: ignore
+            raw_result = await self._create_recommended_action_session_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 advisor_name=advisor_name,
@@ -185,6 +192,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements

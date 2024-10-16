@@ -14,16 +14,20 @@ Tests:
   Arguments:
   - --size 1024 --parallel 64 --duration 60 --policies all
   - --size 1024 --parallel 64 --duration 60 --policies all --use-entra-id
+  - --size 1024 --parallel 64 --duration 60
   - --size 10240 --parallel 64 --duration 60
   - --size 10240 --parallel 64 --duration 60 --transport requests
+  - --size 10240 --parallel 1 --duration 60
 
 - Test: download-binary
   Class: DownloadBinaryDataTest
   Arguments:
   - --size 1024 --parallel 64 --duration 60
-  - --size 10240 --parallel 64 --duration 60 --transport requests
+  - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --use-entra-id
   - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
+  - --size 10240 --parallel 64 --duration 60 --transport requests
 
 - Test: update-entity
   Class: UpdateEntityJSONTest
@@ -32,6 +36,7 @@ Tests:
   - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --use-entra-id
   - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
 
 - Test: query-entities
   Class: QueryEntitiesJSONTest
@@ -40,6 +45,7 @@ Tests:
   - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --use-entra-id
   - --size 1024 --parallel 64 --duration 60 --policies all
+  - --size 1024 --parallel 1 --duration 60
 
 - Test: list-entities
   Class: ListEntitiesPageableTest
@@ -48,3 +54,4 @@ Tests:
   - --count 500 --parallel 32 --warmup 60 --duration 60 --transport requests
   - --count 500 --parallel 32 --warmup 60 --duration 60 --use-entra-id
   - --count 500 --parallel 32 --warmup 60 --duration 60 --policies all
+  - --count 500 --parallel 1 --warmup 60 --duration 60

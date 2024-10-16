@@ -67,7 +67,7 @@ def get_current_utc_time() -> str:
     return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
 
 
-def get_key_filter(*args, **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
+def get_key_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], Dict[str, Any]]:
     key_filter = None
     if len(args) > 0:
         key_filter = args[0]
@@ -79,7 +79,7 @@ def get_key_filter(*args, **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
     return key_filter or kwargs.pop("key_filter", None), kwargs
 
 
-def get_label_filter(*args, **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
+def get_label_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], Dict[str, Any]]:
     label_filter = None
     if len(args) > 1:
         label_filter = args[1]

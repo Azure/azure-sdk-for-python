@@ -26,8 +26,9 @@ from azure.servicebus.exceptions import (
     MessageLockLostError,
     MessageNotFoundError
 )
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 def send_batch_messages(sender):
@@ -113,7 +114,8 @@ def receive_messages(receiver):
 
 
 def send_and_receive_defensively():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 
     for _ in range(3): # Connection retries.
         try:

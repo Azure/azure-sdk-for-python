@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/ListClusterJobs.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/ListClusterJobs.json
 if __name__ == "__main__":
     main()

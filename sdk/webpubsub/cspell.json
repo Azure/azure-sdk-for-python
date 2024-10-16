@@ -1,0 +1,6 @@
+{
+    "ignoreWords": [
+        "MQTT",
+        "mqtt"
+    ]
+}

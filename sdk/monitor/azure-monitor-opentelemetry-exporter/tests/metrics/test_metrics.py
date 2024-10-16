@@ -11,8 +11,6 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
-    Gauge,
-    Histogram,
     HistogramDataPoint,
     Metric,
     MetricExportResult,

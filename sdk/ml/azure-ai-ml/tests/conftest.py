@@ -22,9 +22,9 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
     is_live,
+    remove_batch_sanitizers,
     set_bodiless_matcher,
     set_custom_default_matcher,
-    remove_batch_sanitizers,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
@@ -133,9 +133,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
+    #  - AZSDK3436: $..resourceGroup
     #  - AZSDK3493: $..name
     #  - AZSDK2003: Location
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003", "AZSDK3436"])
 
 
 def pytest_addoption(parser):
@@ -300,6 +301,11 @@ def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2024_07_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2024_07_01_preview")
 
 
 @pytest.fixture

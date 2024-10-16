@@ -1,3 +1,4 @@
+import sys
 import argparse
 import json
 import logging
@@ -7,6 +8,11 @@ from subprocess import check_call
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -22,13 +28,16 @@ def main(generate_input, generate_output):
         prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
-        if "azure-mgmt-" in package_name:
-            try:
-                md_output = change_log_generate(package_name, last_version, package["tagIsStable"])
-            except:
-                md_output = "change log generation failed!!!"
-        else:
-            md_output = "data-plan skip changelog generation temporarily"
+        try:
+            md_output = change_log_generate(
+                package_name,
+                last_version,
+                package["tagIsStable"],
+                prefolder=prefolder,
+                is_multiapi=package["isMultiapi"],
+            )
+        except:
+            md_output = "change log generation failed!!!"
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking Changes" in md_output,
@@ -47,9 +56,19 @@ def main(generate_input, generate_output):
         if "azure-mgmt-" not in package_name:
             try:
                 package_path = Path(sdk_folder, folder_name, package_name)
-                check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/"], cwd=package_path, timeout=300)
+                check_call(
+                    [
+                        "python",
+                        "-m" "pip",
+                        "install",
+                        "-r",
+                        "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/",
+                    ],
+                    cwd=package_path,
+                    timeout=300,
+                )
                 check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
                 for file in os.listdir(package_path):
                     if "_python.json" in file and package_name in file:

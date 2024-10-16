@@ -11,9 +11,10 @@ import uuid
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus import ServiceBusMessage, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import OperationTimeoutError
+from azure.identity.aio import DefaultAzureCredential
 
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 # Note: This must be a session-enabled queue.
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
@@ -47,11 +48,12 @@ async def message_processing(servicebus_client, queue_name):
             return
 
 
-async def sample_session_send_receive_with_pool_async(connection_string, queue_name):
+async def sample_session_send_receive_with_pool_async(fully_qualified_namespace, queue_name):
 
     concurrent_receivers = 5
     sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]
-    client = ServiceBusClient.from_connection_string(connection_string)
+    credential = DefaultAzureCredential()
+    client = ServiceBusClient(fully_qualified_namespace, credential)
 
     for session_id in sessions:
         async with client.get_queue_sender(queue_name) as sender:
@@ -63,4 +65,4 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
 
 if __name__ == '__main__':
-    asyncio.run(sample_session_send_receive_with_pool_async(CONNECTION_STR, SESSION_QUEUE_NAME))
+    asyncio.run(sample_session_send_receive_with_pool_async(FULLY_QUALIFIED_NAMESPACE, SESSION_QUEUE_NAME))

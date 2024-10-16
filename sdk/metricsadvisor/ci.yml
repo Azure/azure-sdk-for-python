@@ -29,7 +29,3 @@ extends:
   parameters:
     ServiceDirectory: metricsadvisor
     TestProxy: true
-    Artifacts:
-    - name: azure-ai-metricsadvisor
-      safeName: azureaimetricsadvisor
-

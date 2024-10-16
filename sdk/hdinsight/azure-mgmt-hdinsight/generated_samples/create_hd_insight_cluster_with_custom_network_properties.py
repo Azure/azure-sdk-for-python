@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hdinsight import HDInsightManagementClient
 
 """
@@ -81,7 +82,11 @@ def main():
                         },
                     ]
                 },
-                "networkProperties": {"privateLink": "Enabled", "resourceProviderConnection": "Outbound"},
+                "networkProperties": {
+                    "privateLink": "Enabled",
+                    "publicIpTag": {"ipTagType": "FirstPartyUsage", "tag": "/<TagName>"},
+                    "resourceProviderConnection": "Outbound",
+                },
                 "osType": "Linux",
                 "storageProfile": {
                     "storageaccounts": [
@@ -100,6 +105,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/CreateHDInsightClusterWithCustomNetworkProperties.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2024-08-01-preview/examples/CreateHDInsightClusterWithCustomNetworkProperties.json
 if __name__ == "__main__":
     main()

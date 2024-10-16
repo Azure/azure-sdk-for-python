@@ -3,6 +3,7 @@
 The Image Analysis service provides AI algorithms for processing images and returning information about their content. In a single service call, you can extract one or more visual features from the image simultaneously, including getting a caption for the image, extracting text shown in the image (OCR) and detecting objects. For more information on the service and the supported visual features, see [Image Analysis overview](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0), and the [Concepts](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-tag-images-40) page.
 
 Use the Image Analysis client library to:
+
 * Authenticate against the service
 * Set what features you would like to extract
 * Upload an image for analysis, or send an image URL
@@ -21,28 +22,28 @@ Use the Image Analysis client library to:
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
-* A [Computer Vision resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) in your Azure subscription.
-  * You will need the key and endpoint from this resource to authenticate against the service.
-  * Note that in order to run Image Analysis with the `CAPTION` or `DENSE_CAPTIONS` features, the Azure resource needs to be from a GPU-supported region. See the note [here](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-describe-images-40) for a list of supported regions.
+* A [Computer Vision resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) deployed to your Azure subscription. Note that in order to run Image Analysis with the `Caption` or `Dense Captions` features, the Computer Vision resource needs to be from a GPU-supported region. See this [document](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-describe-images-40) for a list of supported regions.
+* An endpoint URL. It can be found in the "overview" tab of your Computer Vision resource in the Azure portal, and has the form `https://your-resource-name.cognitiveservices.azure.com` where `your-resource-name` is your unique Computer Vision resource name. The samples below assume the environment variable `VISION_ENDPOINT` has been set to this value.
+* For API key authentication, you will need the key. It can be found in the "overview" tab of your Computer Vision resource in the Azure portal. It's a 32-character Hexadecimal number. The samples below assume the environment variable `VISION_KEY` has been set to this value.
+* For Entra ID authentication, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Samples below use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+  * The role `Cognitive Services User` assigned to you. Role assigned can be done via the "Access Control (IAM)" tab of your Computer Vision resource in the Azure portal.
+  * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
+  * You are logged into your Azure account by running `az login`.
+  * Note that if you have multiple Azure subscriptions, the subscription that contains your Computer Vision resource must be your default subscription. Run `az account list --output table` to list all you subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
+
+Also note that the client library does not directly read the `VISION_ENDPOINT` and `VISION_KEY`environment variables mentioned above at run time. The endpoint and key (for API key authentication) must be provided to the constructor of the `ImageAnalysisClient` in your code. The sample code below reads environment variables to promote the practice of not hard-coding secrets in your source code.
 
 ### Install the Image Analysis package
 
 ```bash
 pip install azure-ai-vision-imageanalysis
 ```
-### Set environment variables
-
-To authenticate the `ImageAnalysisClient`, you will need the endpoint and key from your Azure Computer Vision resource in the [Azure Portal](https://portal.azure.com). The code snippet below assumes these values are stored in environment variables:
-
-* Set the environment variable `VISION_ENDPOINT` to the endpoint URL. It has the form `https://your-resource-name.cognitiveservices.azure.com`, where `your-resource-name` is your unique Azure Computer Vision resource name.
-
-* Set the environment variable `VISION_KEY` to the key. The key is a 32-character Hexadecimal number.
-
-Note that the client library does not directly read these environment variable at run time. The endpoint and key must be provided to the constructor of `ImageAnalysisClient` in your code. The code snippet below reads environment variables to promote the practice of not hard-coding secrets in your source code.
 
 ### Create and authenticate the client
 
-Once you define the environment variables, this Python code will create and authenticate a synchronous `ImageAnalysisClient`:
+#### Using API key
+
+Once you defined the two environment variables, this Python code will create and authenticate a synchronous `ImageAnalysisClient` using key:
 
 <!-- SNIPPET:sample_caption_image_file.create_client -->
 
@@ -62,7 +63,8 @@ except KeyError:
     print("Set them before running this sample.")
     exit()
 
-# Create an Image Analysis client for synchronous operations
+# Create an Image Analysis client for synchronous operations,
+# using API key authentication
 client = ImageAnalysisClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(key)
@@ -71,15 +73,57 @@ client = ImageAnalysisClient(
 
 <!-- END SNIPPET -->
 
+#### Using Entra ID
+
+To use the [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) provider shown below, or other credential providers, install the `azure-identity` package:
+
+```bash
+pip install azure.identity
+```
+
+Assuming you defined the environment variable `VISION_ENDPOINT` mentioned above, this Python code will create and authenticate a synchronous `ImageAnalysisClient` using Entra ID:
+
+<!-- SNIPPET:sample_caption_image_file_entra_id_auth.create_client -->
+
+```python
+import os
+from azure.ai.vision.imageanalysis import ImageAnalysisClient
+from azure.ai.vision.imageanalysis.models import VisualFeatures
+from azure.identity import DefaultAzureCredential
+
+# Set the value of your computer vision endpoint as environment variable:
+try:
+    endpoint = os.environ["VISION_ENDPOINT"]
+except KeyError:
+    print("Missing environment variable 'VISION_ENDPOINT'.")
+    print("Set it before running this sample.")
+    exit()
+
+# Create an Image Analysis client for synchronous operations,
+# using Entra ID authentication
+client = ImageAnalysisClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
+)
+```
+
+<!-- END SNIPPET -->
+
+### Creating an asynchronous client
+
 A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
-    ```python
-    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-    ```
 * Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
     ```bash
     pip install aiohttp
+    ```
+* Update the above code to import `ImageAnalysisClient` from the `azure.ai.vision.imageanalysis.aio`:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* If you are using Entra ID authentication with `DefaultAzureCredential`, update the above code to import `DefaultAzureCredential` from `azure.identity.aio`:
+    ```python
+    from azure.identity.aio import DefaultAzureCredential
     ```
 
 ## Key concepts

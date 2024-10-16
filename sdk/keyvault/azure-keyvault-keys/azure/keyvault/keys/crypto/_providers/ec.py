@@ -9,7 +9,6 @@ from .._internal import EllipticCurveKey
 from ... import KeyOperation, KeyType
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
     from .local_provider import Algorithm
     from .._internal import Key
     from ... import JsonWebKey

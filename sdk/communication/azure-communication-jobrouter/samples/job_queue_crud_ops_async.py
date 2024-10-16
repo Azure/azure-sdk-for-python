@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python job_queue_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,13 +21,13 @@ import asyncio
 
 
 class JobQueueSamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _job_queue_id = "sample_q_policy"
     _distribution_policy_id = "sample_dp_policy"
 
     async def setup_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -45,7 +45,7 @@ class JobQueueSamplesAsync(object):
             print(f"Sample setup completed: Created distribution policy")
 
     async def create_queue(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_queue_id = self._job_queue_id
         distribution_policy_id = self._distribution_policy_id
         # [START create_queue_async]
@@ -69,7 +69,7 @@ class JobQueueSamplesAsync(object):
         # [END create_queue_async]
 
     async def update_queue(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_queue_id = self._job_queue_id
         # [START update_queue_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -90,7 +90,7 @@ class JobQueueSamplesAsync(object):
         # [END update_queue_async]
 
     async def get_queue(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_queue_id = self._job_queue_id
         # [START get_queue_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -104,7 +104,7 @@ class JobQueueSamplesAsync(object):
         # [END get_queue_async]
 
     async def get_queue_statistics(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_queue_id = self._job_queue_id
 
         # [START get_queue_statistics_async]
@@ -120,7 +120,7 @@ class JobQueueSamplesAsync(object):
         # [END get_queue_statistics_async]
 
     async def list_queues(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_queues_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -136,7 +136,7 @@ class JobQueueSamplesAsync(object):
         # [END list_queues_async]
 
     async def list_queues_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_queues_batched_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -156,7 +156,7 @@ class JobQueueSamplesAsync(object):
         # [END list_queues_batched_async]
 
     async def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_queue_id = self._job_queue_id
 
         # [START delete_queue_async]

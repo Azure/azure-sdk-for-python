@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
 )
 
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
@@ -72,7 +71,6 @@ CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoin
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
 # We avoid directly referencing it in the docs to avoid restclient references.
-@experimental
 class WorkspaceConnection(Resource):
     """Azure ML connection provides a secure way to store authentication and configuration information needed
     to connect and interact with the external resources.
@@ -424,10 +422,7 @@ class WorkspaceConnection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
-        if not rest_obj:
-            return None
-
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
 
         popped_metadata = conn_class._get_required_metadata_fields()
@@ -458,7 +453,7 @@ class WorkspaceConnection(Resource):
             # No default in pop, this should fail if we somehow don't get a resource ID
             rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         connection = conn_class(**rest_kwargs)
-        return cast(Optional["WorkspaceConnection"], connection)
+        return cast(WorkspaceConnection, connection)
 
     def _validate(self) -> str:
         return str(self.name)

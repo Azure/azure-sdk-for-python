@@ -17,7 +17,7 @@ from azure.servicebus._common.utils import utc_now
 
 # temporary - disable uamqp if China b/c of 8+ hr runtime
 uamqp_available = uamqp_available and os.environ.get('SERVICEBUS_ENDPOINT_SUFFIX') != '.servicebus.chinacloudapi.cn'
-
+test_pyamqp = os.environ.get('TEST_PYAMQP', 'true') == 'true'
 
 def _get_default_handler():
     handler = logging.StreamHandler(stream=sys.stdout)
@@ -60,7 +60,7 @@ def sleep_until_expired(entity):
     time.sleep(max(0,(entity.locked_until_utc - utc_now()).total_seconds()+1))
 
 
-def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=True):
+def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=test_pyamqp):
     uamqp_transport_params = []
     uamqp_transport_ids = []
     if use_uamqp:

@@ -62,7 +62,7 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "azure-identity<2.0.0,>=1.15.0",
-        "msal[broker]>=1.25,<2",
+        "azure-identity<2.0.0,>=1.18.0",
+        "msal[broker]>=1.31,<2",
     ],
 )

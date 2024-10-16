@@ -134,6 +134,16 @@ class AppConfigTestCase(AzureRecordedTestCase):
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
+    @staticmethod
+    def create_sdk_client(appconfiguration_connection_string):
+        return AzureAppConfigurationClient.from_connection_string(
+            appconfiguration_connection_string, user_agent="SDK/Integration"
+        )
+
+    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+        cred = self.get_credential(AzureAppConfigurationClient)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
+
 
 def setup_configs(client, keyvault_secret_url):
     for config in get_configs(keyvault_secret_url):
@@ -185,8 +195,15 @@ def create_feature_flag_config_setting(key, label, enabled):
     )
 
 
-def has_feature_flag(client, feature_id, enabled=False):
+def get_feature_flag(client, feature_id):
     for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
         if feature_flag["id"] == feature_id:
-            return feature_flag["enabled"] == enabled
+            return feature_flag
+    return None
+
+
+def has_feature_flag(client, feature_id, enabled=False):
+    feature_flag = get_feature_flag(client, feature_id)
+    if feature_flag:
+        return feature_flag["enabled"] == enabled
     return False

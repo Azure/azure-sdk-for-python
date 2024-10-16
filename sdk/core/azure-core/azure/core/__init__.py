@@ -30,6 +30,7 @@ __version__ = VERSION
 
 from ._pipeline_client import PipelineClient
 from ._match_conditions import MatchConditions
+from ._azure_clouds import AzureClouds
 from ._enum_meta import CaseInsensitiveEnumMeta
 from ._pipeline_client_async import AsyncPipelineClient
 
@@ -38,4 +39,5 @@ __all__ = [
     "MatchConditions",
     "CaseInsensitiveEnumMeta",
     "AsyncPipelineClient",
+    "AzureClouds",
 ]

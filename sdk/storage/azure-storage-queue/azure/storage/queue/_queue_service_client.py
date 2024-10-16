@@ -87,11 +87,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Creating the QueueServiceClient with an account url and credential.
 
         .. literalinclude:: ../samples/queue_samples_authentication.py
-            :start-after: [START create_queue_service_client_token]
-            :end-before: [END create_queue_service_client_token]
+            :start-after: [START create_queue_service_client_oauth]
+            :end-before: [END create_queue_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the QueueServiceClient with Azure Identity credentials.
+            :caption: Creating the QueueServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(
@@ -103,7 +103,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname: str) -> str:

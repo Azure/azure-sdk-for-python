@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.desktopvirtualization import DesktopVirtualizationMgmtClient
 
 """
@@ -38,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/UserSession_List.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2024-04-03/examples/UserSession_List.json
 if __name__ == "__main__":
     main()

@@ -4,7 +4,12 @@ import logging
 from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.semconv.attributes.exception_attributes import (
+    EXCEPTION_ESCAPED,
+    EXCEPTION_MESSAGE,
+    EXCEPTION_STACKTRACE,
+    EXCEPTION_TYPE,
+)
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
 
@@ -126,10 +131,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
-        exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-        exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+        exc_type = log_record.attributes.get(EXCEPTION_TYPE)
+        exc_message = log_record.attributes.get(EXCEPTION_MESSAGE)
         # pylint: disable=line-too-long
-        stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
+        stack_trace = log_record.attributes.get(EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
     # Event telemetry
@@ -206,10 +211,10 @@ def _is_ignored_attribute(key: str) -> bool:
 
 _IGNORED_ATTRS = frozenset(
     (
-        SpanAttributes.EXCEPTION_TYPE,
-        SpanAttributes.EXCEPTION_MESSAGE,
-        SpanAttributes.EXCEPTION_STACKTRACE,
-        SpanAttributes.EXCEPTION_ESCAPED,
+        EXCEPTION_TYPE,
+        EXCEPTION_MESSAGE,
+        EXCEPTION_STACKTRACE,
+        EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )

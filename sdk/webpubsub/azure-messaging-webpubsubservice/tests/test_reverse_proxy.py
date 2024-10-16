@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
+from azure.messaging.webpubsubservice._operations._operations import build_web_pub_sub_service_send_to_all_request
 from azure.core.credentials import AzureKeyCredential
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.identity import DefaultAzureCredential
@@ -24,7 +24,7 @@ class TestWebpubsubReverseProxy(WebpubsubTest):
         apim_endpoint = "https://apim.contoso.com/"
         credential = AzureKeyCredential("AzureKeyCredential")
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
-        request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_web_pub_sub_service_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 
         with pytest.raises(ValueError) as ex:
             client.send_request(request, raw_request_hook=_callback)
@@ -39,7 +39,7 @@ class TestWebpubsubReverseProxy(WebpubsubTest):
         apim_endpoint = "https://apim.contoso.com/"
         credential = self.get_credential(WebPubSubServiceClient)
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
-        request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
+        request = build_web_pub_sub_service_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 
         with pytest.raises(ValueError) as ex:
             client.send_request(request, raw_request_hook=_callback)

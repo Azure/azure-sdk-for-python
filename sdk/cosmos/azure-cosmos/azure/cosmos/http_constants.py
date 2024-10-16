@@ -34,7 +34,6 @@ class HttpMethods:
     Head = "HEAD"
     Options = "OPTIONS"
 
-
 class HttpHeaders:
     """Constants of http headers.
     """
@@ -134,6 +133,8 @@ class HttpHeaders:
     PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
+    IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
+    Prefer = "Prefer"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"
@@ -193,6 +194,7 @@ class HttpHeaders:
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
+    PhysicalPartitionId = "x-ms-cosmos-physical-partition-id"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
     StartEpkString = "x-ms-start-epk"
     EndEpkString = "x-ms-end-epk"
@@ -239,6 +241,8 @@ class HttpHeaders:
     GlobalCommittedLsn = "x-ms-global-committed-lsn"
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
+    ItemLsn = "x-ms-item-lsn"
+    CosmosItemLsn = "x-ms-cosmos-item-llsn"  # cspell:disable-line
     CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
@@ -399,6 +403,7 @@ class SubStatusCodes:
     # 400: Bad Request Substatus
     PARTITION_KEY_MISMATCH = 1001
     CROSS_PARTITION_QUERY_NOT_SERVABLE = 1004
+    COLLECTION_RID_MISMATCH = 1024
 
     # 410: StatusCodeType_Gone: substatus
     NAME_CACHE_IS_STALE = 1000
@@ -424,6 +429,9 @@ class SubStatusCodes:
 
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
+
+    # Client Side substatus codes
+    THROUGHPUT_OFFER_NOT_FOUND = 10004
 
 
 class ResourceType:

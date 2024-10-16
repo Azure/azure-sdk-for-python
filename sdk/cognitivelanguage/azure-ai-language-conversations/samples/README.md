@@ -23,7 +23,6 @@ These sample programs show common scenarios for the Conversational Language Unde
 |-|-|
 |[sample_analyze_conversation_app.py][sample_analyze_conversation_app] and [sample_analyze_conversation_app_async.py][sample_analyze_conversation_app_async] | Analyze intents and entities in your utterance using a conversation project. |
 | [sample_analyze_orchestration_app_conv_response.py][sample_analyze_orchestration_app_conv_response] and [sample_analyze_orchestration_app_conv_response_async.py][sample_analyze_orchestration_app_conv_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a conversation project. |
-| [sample_analyze_orchestration_app_luis_response.py][sample_analyze_orchestration_app_luis_response] and [sample_analyze_orchestration_app_luis_response_async.py][sample_analyze_orchestration_app_luis_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a Luis project. |
 | [sample_analyze_orchestration_app_qna_response.py][sample_analyze_orchestration_app_qna_response] and [sample_analyze_orchestration_app_qna_response_async.py][sample_analyze_orchestration_app_qna_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a Qna project. |
 | [sample_conv_summarization.py][sample_conv_summarization] and [sample_conv_summarization_async.py][sample_conv_summarization_async]| Summarize conversation in the form of issues and resolutions (ex: tech support conversation) |
 | [sample_manage_projects.py][sample_manage_projects] and [sample_manage_projects_async.py][sample_manage_projects_async]| Shows common authoring operations on projects. |
@@ -72,9 +71,6 @@ what you can do with the Azure Conversational Language Understanding client libr
 
 [sample_analyze_orchestration_app_conv_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_conv_response.py
 [sample_analyze_orchestration_app_conv_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_conv_response_async.py
-
-[sample_analyze_orchestration_app_luis_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_luis_response.py
-[sample_analyze_orchestration_app_luis_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_luis_response_async.py
 
 [sample_analyze_orchestration_app_qna_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_qna_response.py
 [sample_analyze_orchestration_app_qna_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_qna_response_async.py

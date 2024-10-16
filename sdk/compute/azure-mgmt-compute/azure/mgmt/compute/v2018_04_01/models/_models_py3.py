@@ -664,7 +664,7 @@ class CreationData(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
-     values are: "Empty", "Attach", "FromImage", "Import", "Copy", and "Restore".
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Import".
     :vartype create_option: str or ~azure.mgmt.compute.v2018_04_01.models.DiskCreateOption
     :ivar storage_account_id: If createOption is Import, the Azure Resource Manager identifier of
      the storage account containing the blob to import as a disk. Required only if the blob is in a
@@ -704,7 +704,7 @@ class CreationData(_serialization.Model):
     ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
-         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", and "Restore".
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Import".
         :paramtype create_option: str or ~azure.mgmt.compute.v2018_04_01.models.DiskCreateOption
         :keyword storage_account_id: If createOption is Import, the Azure Resource Manager identifier
          of the storage account containing the blob to import as a disk. Required only if the blob is in
@@ -753,9 +753,9 @@ class DataDisk(_serialization.Model):
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machine should be
-     created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
-     This value is used when you are using a specialized disk to create the virtual
-     machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
+     created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach**
+     \\u2013 This value is used when you are using a specialized disk to create the virtual
+     machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
      plan element previously described. Required. Known values are: "FromImage", "Empty", and
@@ -822,9 +822,9 @@ class DataDisk(_serialization.Model):
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword create_option: Specifies how the virtual machine should be
-         created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
-         This value is used when you are using a specialized disk to create the virtual
-         machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
+         created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach**
+         \\u2013 This value is used when you are using a specialized disk to create the virtual
+         machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
          plan element previously described. Required. Known values are: "FromImage", "Empty", and
@@ -2547,9 +2547,9 @@ class OSDisk(_serialization.Model):
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machine should be
-     created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
-     This value is used when you are using a specialized disk to create the virtual
-     machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
+     created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach**
+     \\u2013 This value is used when you are using a specialized disk to create the virtual
+     machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013 This value is used when you are using an
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
      plan element previously described. Required. Known values are: "FromImage", "Empty", and
@@ -2621,9 +2621,9 @@ class OSDisk(_serialization.Model):
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword create_option: Specifies how the virtual machine should be
-         created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
-         This value is used when you are using a specialized disk to create the virtual
-         machine.:code:`<br>`:code:`<br>` **FromImage** \u2013 This value is used when you are using an
+         created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach**
+         \\u2013 This value is used when you are using a specialized disk to create the virtual
+         machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013 This value is used when you are using an
          image to create the virtual machine. If you are using a platform image, you also use the
          imageReference element described above. If you are using a marketplace image, you  also use the
          plan element previously described. Required. Known values are: "FromImage", "Empty", and
@@ -2696,7 +2696,7 @@ class OSProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
      **Max-length (Windows):** 20 characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access
      to the Linux VM, see `Using root privileges on Linux virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\\  # pylint: disable=line-too-long
      :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
      in this field, see `Selecting User Names for Linux on Azure
      <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
@@ -2707,7 +2707,7 @@ class OSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -2778,7 +2778,7 @@ class OSProfile(_serialization.Model):
          **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
          characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access to the Linux VM, see `Using
          root privileges on Linux virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\\  # pylint: disable=line-too-long
          :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
          in this field, see `Selecting User Names for Linux on Azure
          <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
@@ -2789,7 +2789,7 @@ class OSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -3742,7 +3742,7 @@ class Sku(_serialization.Model):
     :ivar name: The sku name.
     :vartype name: str
     :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
      **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
@@ -3762,7 +3762,7 @@ class Sku(_serialization.Model):
         :keyword name: The sku name.
         :paramtype name: str
         :keyword tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br
-         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
          **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
@@ -6667,7 +6667,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machines in the scale set should be
-     created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
+     created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \\u2013 This value is
      used when you are using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are using a marketplace
      image, you  also use the plan element previously described. Required. Known values are:
@@ -6734,7 +6734,7 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword create_option: Specifies how the virtual machines in the scale set should be
-         created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \u2013 This value is
+         created.:code:`<br>`:code:`<br>` The only allowed value is: **FromImage** \\u2013 This value is
          used when you are using an image to create the virtual machine. If you are using a platform
          image, you also use the imageReference element described above. If you are using a marketplace
          image, you  also use the plan element previously described. Required. Known values are:
@@ -6785,7 +6785,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
      **Max-length (Windows):** 20 characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access
      to the Linux VM, see `Using root privileges on Linux virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\\  # pylint: disable=line-too-long
      :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
      in this field, see `Selecting User Names for Linux on Azure
      <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
@@ -6796,7 +6796,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -6864,7 +6864,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
          characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access to the Linux VM, see `Using
          root privileges on Linux virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\\  # pylint: disable=line-too-long
          :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
          in this field, see `Selecting User Names for Linux on Azure
          <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
@@ -6875,7 +6875,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -8627,7 +8627,7 @@ class WinRMListener(_serialization.Model):
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
     :ivar protocol: Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values
-     are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http" and
+     are: :code:`<br>`\\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http" and
      "Https".
     :vartype protocol: str or ~azure.mgmt.compute.v2018_04_01.models.ProtocolTypes
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
@@ -8654,7 +8654,7 @@ class WinRMListener(_serialization.Model):
     ) -> None:
         """
         :keyword protocol: Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values
-         are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http" and
+         are: :code:`<br>`\\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http" and
          "Https".
         :paramtype protocol: str or ~azure.mgmt.compute.v2018_04_01.models.ProtocolTypes
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault

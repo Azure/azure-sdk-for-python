@@ -44,7 +44,7 @@ def receive_fixed_time_interval(
     partition_id="0"
 ):
 
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client = EventHubConsumerClient(
         conn_str,
         consumer_group="$Default",
         eventhub_name=eventhub_name
@@ -129,7 +129,7 @@ def receive_fixed_amount(
     run_times=1,
     fixed_amount=100_000
 ):
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client = EventHubConsumerClient(
         conn_str,
         consumer_group="$Default",
         eventhub_name=eventhub_name,
