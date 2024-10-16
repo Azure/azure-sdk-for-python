@@ -363,10 +363,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_streaming_subscription: media_streaming_subscription for media streaming.
-    :paramtype media_streaming_subscription: ~azure.communication.callautomation.MediaStreamingSubscription
-    :keyword transcription_subscription: transcription_subscription for transcription.
-    :paramtype transcription_subscription: ~azure.communication.callautomation.TranscriptionSubscription
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
