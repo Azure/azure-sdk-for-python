@@ -36,6 +36,7 @@ from ._models import ContinuousDtmfRecognitionRequest
 from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
+from ._models import CreateCallFailed
 from ._models import CreateCallRequest
 from ._models import CustomCallingContext
 from ._models import DtmfOptions
@@ -164,6 +165,7 @@ __all__ = [
     "ContinuousDtmfRecognitionStopped",
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
+    "CreateCallFailed",
     "CreateCallRequest",
     "CustomCallingContext",
     "DtmfOptions",
@@ -257,5 +259,5 @@ __all__ = [
     "TranscriptionTransportType",
     "VoiceKind",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
