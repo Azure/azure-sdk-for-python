@@ -3,13 +3,17 @@
 # ---------------------------------------------------------
 
 import json
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
-    DiagnoseResponseResult as RestDiagnoseResponseResult,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
-    DiagnoseResult as RestDiagnoseResult,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
 

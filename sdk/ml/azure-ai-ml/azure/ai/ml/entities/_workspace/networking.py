@@ -5,15 +5,21 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
-    FqdnOutboundRule as RestFqdnOutboundRule,
+from azure.ai.ml._restclient.v2024_10_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
-    ManagedNetworkSettings as RestManagedNetwork,
-    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
-    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
-    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
-    ServiceTagOutboundRule as RestServiceTagOutboundRule,
 )
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 
@@ -253,6 +259,8 @@ class ManagedNetwork:
 
     :param isolation_mode: Isolation of the managed network, defaults to Disabled.
     :type isolation_mode: str
+    :param firewall_sku: Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound..
+    :type firewall_sku: str
     :param outbound_rules: List of outbound rules for the managed network.
     :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
     :param network_id: Network id for the managed network, not meant to be set by user.
@@ -271,10 +279,12 @@ class ManagedNetwork:
         *,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
+        firewall_sku: Optional[str] = None,
         network_id: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self.isolation_mode = isolation_mode
+        self.firewall_sku = firewall_sku
         self.network_id = network_id
         self.outbound_rules = outbound_rules
         self.status = kwargs.pop("status", None)
@@ -289,7 +299,9 @@ class ManagedNetwork:
             if self.outbound_rules
             else {}
         )
-        return RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
+        return RestManagedNetwork(
+            isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules, firewall_sku=self.firewall_sku
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
@@ -306,6 +318,7 @@ class ManagedNetwork:
             outbound_rules=from_rest_outbound_rules,  # type: ignore[arg-type]
             network_id=obj.network_id,
             status=obj.status,
+            firewall_sku=obj.firewall_sku,
         )
 
 
