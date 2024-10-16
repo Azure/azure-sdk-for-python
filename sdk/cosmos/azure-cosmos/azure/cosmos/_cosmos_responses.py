@@ -13,7 +13,7 @@ class CosmosDict(Dict[str, Any]):
         self._response_headers = response_headers
 
     def get_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers associated to this result
+        """Returns a copy of the response headers associated to this response
 
         :return: Dict of response headers
         :rtype: ~azure.core.CaseInsensitiveDict
@@ -30,7 +30,7 @@ class CosmosList(List[Dict[str, Any]]):
         self._response_headers = response_headers
 
     def get_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers associated to this result
+        """Returns a copy of the response headers associated to this response
 
         :return: Dict of response headers
         :rtype: ~azure.core.CaseInsensitiveDict
