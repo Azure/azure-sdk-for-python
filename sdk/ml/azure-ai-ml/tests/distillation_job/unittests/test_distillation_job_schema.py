@@ -5,6 +5,7 @@ import pytest
 
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningJob as RestFineTuningJob
+from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.distillation_types import (
@@ -78,8 +79,8 @@ def expected_distillation_job_as_rest_obj(
     prompt_settings,
 ) -> RestFineTuningJob:
     distillaton_job = DistillationJob(
-        data_generation_type="label_generation",
-        data_generation_task_type="math",
+        data_generation_type=DataGenerationType.LabelGeneration,
+        data_generation_task_type=DataGenerationTaskType.MATH,
         teacher_model_endpoint=teacher_model_endpoint,
         student_model=mlflow_model_llama,
         training_data=train_dataset,
@@ -103,15 +104,3 @@ class TestDistillationJobSchema:
         self, expected_distillation_job_as_rest_obj, loaded_distillation_job_as_rest_obj
     ):
         assert loaded_distillation_job_as_rest_obj == expected_distillation_job_as_rest_obj
-
-
-# def print_class_vars(obj, indent=0):
-#     """Recursively print attributes of the class instance."""
-#     if hasattr(obj, '__dict__'):
-#         for key, value in vars(obj).items():
-#             print(' ' * indent + f"{key}: {value}")
-#             if isinstance(value, object) and not isinstance(value, (str, int, float, bool)):
-#                 print_class_vars(value, indent + 2)
-# print_class_vars(loaded_distillation_job_as_rest_obj)
-# print("\n\n\n\n")
-# print_class_vars(expected_distillation_job_as_rest_obj)

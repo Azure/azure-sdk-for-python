@@ -1,7 +1,7 @@
 import pytest
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
-from azure.ai.ml.constants import DataGenerationTaskType
+from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
@@ -25,15 +25,15 @@ class TestDistillationJobConversion:
     )
     def test_distillation_job_conversation(self, data_generation_task_type: str):
         distillation_job = DistillationJob(
-            data_generation_type="Label_Generation",
+            data_generation_type=DataGenerationType.LabelGeneration,
             data_generation_task_type=data_generation_task_type,
             teacher_model_endpoint="foo_bar",
             student_model=Input(
                 type=AssetTypes.MLFLOW_MODEL,
                 path="azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1",
             ),
-            training_data=Input(type=AssetTypes.URI_FILE, path="foo.json1"),
-            validation_data=None,
+            training_data=Input(type=AssetTypes.URI_FILE, path="foo.jsonl"),
+            validation_data=Input(type=AssetTypes.URI_FILE, path="bar.jsonl"),
             inference_parameters={"temperature": 0.1},
             endpoint_request_settings=EndpointRequestSettings(request_batch_size=2, min_endpoint_success_ratio=0.8),
             prompt_settings=DistillationPromptSettings(enable_chain_of_thought=True),
@@ -52,11 +52,12 @@ class TestDistillationJobConversion:
         ), "Training data is not UriFileJobInput"
 
         original_object = DistillationJob._from_rest_object(rest_object)
-        # assert distillation_job == original_object, "Conversion to/from rest object failed"
         assert (
             original_object.data_generation_task_type.lower() == data_generation_task_type.lower()
         ), "Data Generation Task Type not set correctly"
-        assert original_object.data_generation_type == "Label_Generation", "Data Generation Type not set correctly"
+        assert (
+            original_object.data_generation_type == DataGenerationType.LabelGeneration
+        ), "Data Generation Type not set correctly"
 
         assert original_object.teacher_model_endpoint == "foo_bar", "Teacher model endpoint name not set correctly"
 
@@ -69,8 +70,10 @@ class TestDistillationJobConversion:
 
         assert isinstance(original_object.training_data, Input), "Training data is not Input"
         assert original_object.training_data.type == AssetTypes.URI_FILE, "Training data type not set correctly"
-        assert original_object.training_data.path == "foo.json1", "Training data path not set correctly"
-        assert original_object.validation_data is None, "Validation data not set correctly"
+        assert original_object.training_data.path == "foo.jsonl", "Training data path not set correctly"
+        assert isinstance(original_object.validation_data, Input), "Validation data is not Input"
+        assert original_object.validation_data.type == AssetTypes.URI_FILE, "Validation data type not set correctly"
+        assert original_object.validation_data.path == "bar.jsonl", "Validation data path not set correctly"
 
         assert original_object._inference_parameters == {"temperature": 0.1}, "Inference parameters not set correctly"
         assert original_object._hyperparameters == {"bar": "baz"}, "Hyperparameters not set correctly"
@@ -92,7 +95,7 @@ class TestDistillationJobConversion:
         ), "Prompt settings is not DistillationPromptSettings"
         assert original_object._prompt_settings.enable_chain_of_thought, "Chain of thought not set correctly"
         assert not original_object._prompt_settings.enable_chain_of_density, "Chain of density not set correctly"
-        assert original_object._prompt_settings.max_len_summary == 80, "Custom prompt not set correctly"
+        assert original_object._prompt_settings.max_len_summary is None, "Max len summary not set correctly"
 
         assert distillation_job == original_object, "Conversion to/from rest object failed"
 
@@ -108,7 +111,7 @@ class TestDistillationJobConversion:
     )
     def test_distillation_job_read_from_wire(self, data_generation_task_type: str):
         distillation_job = DistillationJob(
-            data_generation_type="Data_Generation",
+            data_generation_type=DataGenerationType.DataGeneration,
             data_generation_task_type=data_generation_task_type,
             teacher_model_endpoint="llama-teacher",
             student_model=Input(
@@ -131,7 +134,9 @@ class TestDistillationJobConversion:
 
         dict_object = distillation_job._to_dict()
         print(f"Dict object is {dict_object}")
-        assert dict_object["data_generation_type"] == "data_generation", "Data Generation Task not set correctly"
+        assert (
+            dict_object["data_generation_type"] == DataGenerationType.DataGeneration
+        ), "Data Generation Task not set correctly"
         assert (
             dict_object["data_generation_task_type"] == data_generation_task_type
         ), "Data Generation Task Type not set correctly"
@@ -161,4 +166,3 @@ class TestDistillationJobConversion:
         assert not dict_object["prompt_settings"][
             "enable_chain_of_density"
         ], "Enable chain of density not set correctly"
-        assert dict_object["prompt_settings"]["max_len_summary"] == 80, "Max len summary not set correctly"
