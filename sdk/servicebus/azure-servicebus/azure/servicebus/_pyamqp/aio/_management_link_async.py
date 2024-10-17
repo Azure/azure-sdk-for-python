@@ -29,7 +29,7 @@ from ..message import Properties, _MessageDelivery
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
+class ManagementLink:  # pylint:disable=too-many-instance-attributes
     """
     # TODO: Fill in docstring
     """
@@ -82,6 +82,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
+
         if self.state == ManagementLinkState.OPENING:
             if new_state == LinkState.ATTACHED:
                 self._sender_connected = True
@@ -112,6 +113,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
+
         if self.state == ManagementLinkState.OPENING:
             if new_state == LinkState.ATTACHED:
                 self._receiver_connected = True
@@ -169,7 +171,6 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
             #  or should there an error mapping which maps the condition to the error type
-
             # The callback is defined in management_operation.py
             await to_remove_operation.on_execute_operation_complete(
                 ManagementExecuteOperationResult.ERROR,
@@ -244,15 +245,15 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
     async def close(self):
         if self.state != ManagementLinkState.IDLE:
             self.state = ManagementLinkState.CLOSING
-            await self._response_link.detach(close=True)
-            await self._request_link.detach(close=True)
-            for pending_operation in self._pending_operations:
-                await pending_operation.on_execute_operation_complete(
-                    ManagementExecuteOperationResult.LINK_CLOSED,
-                    None,
-                    None,
-                    pending_operation.message,
-                    AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed."),
-                )
-            self._pending_operations = []
+        await self._response_link.detach(close=True)
+        await self._request_link.detach(close=True)
+        for pending_operation in self._pending_operations:
+            await pending_operation.on_execute_operation_complete(
+                ManagementExecuteOperationResult.LINK_CLOSED,
+                None,
+                None,
+                pending_operation.message,
+                AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed."),
+            )
+        self._pending_operations = []
         self.state = ManagementLinkState.IDLE

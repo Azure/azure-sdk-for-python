@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import threading
 import time
 import logging
 from functools import partial
@@ -31,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 PendingManagementOperation = namedtuple('PendingManagementOperation', ['message', 'on_execute_operation_complete'])
 
 
-class ManagementLink(object): # pylint:disable=too-many-instance-attributes
+class ManagementLink: # pylint:disable=too-many-instance-attributes
     """
        # TODO: Fill in docstring
     """
@@ -66,6 +67,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
 
         self._sender_connected = False
         self._receiver_connected = False
+        self._lock = threading.RLock()
 
     def __enter__(self):
         self.open()
@@ -83,26 +85,28 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
-        if self.state == ManagementLinkState.OPENING:
-            if new_state == LinkState.ATTACHED:
-                self._sender_connected = True
-                if self._receiver_connected:
-                    self.state = ManagementLinkState.OPEN
-                    self._on_amqp_management_open_complete(ManagementOpenResult.OK)
-            elif new_state in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD, LinkState.ERROR]:
-                self.state = ManagementLinkState.IDLE
-                self._on_amqp_management_open_complete(ManagementOpenResult.ERROR)
-        elif self.state == ManagementLinkState.OPEN:
-            if new_state is not LinkState.ATTACHED:
-                self.state = ManagementLinkState.ERROR
-                self._on_amqp_management_error()
-        elif self.state == ManagementLinkState.CLOSING:
-            if new_state not in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD]:
-                self.state = ManagementLinkState.ERROR
-                self._on_amqp_management_error()
-        elif self.state == ManagementLinkState.ERROR:
-            # All state transitions shall be ignored.
-            return
+        
+        with self._lock:
+            if self.state == ManagementLinkState.OPENING:
+                if new_state == LinkState.ATTACHED:
+                    self._sender_connected = True
+                    if self._receiver_connected:
+                        self.state = ManagementLinkState.OPEN
+                        self._on_amqp_management_open_complete(ManagementOpenResult.OK)
+                elif new_state in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD, LinkState.ERROR]:
+                    self.state = ManagementLinkState.IDLE
+                    self._on_amqp_management_open_complete(ManagementOpenResult.ERROR)
+            elif self.state == ManagementLinkState.OPEN:
+                if new_state is not LinkState.ATTACHED:
+                    self.state = ManagementLinkState.ERROR
+                    self._on_amqp_management_error()
+            elif self.state == ManagementLinkState.CLOSING:
+                if new_state not in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD]:
+                    self.state = ManagementLinkState.ERROR
+                    self._on_amqp_management_error()
+            elif self.state == ManagementLinkState.ERROR:
+                # All state transitions shall be ignored.
+                return
 
     def _on_receiver_state_change(self, previous_state, new_state):
         _LOGGER.info(
@@ -113,80 +117,83 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
-        if self.state == ManagementLinkState.OPENING:
-            if new_state == LinkState.ATTACHED:
-                self._receiver_connected = True
-                if self._sender_connected:
-                    self.state = ManagementLinkState.OPEN
-                    self._on_amqp_management_open_complete(ManagementOpenResult.OK)
-            elif new_state in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD, LinkState.ERROR]:
-                self.state = ManagementLinkState.IDLE
-                self._on_amqp_management_open_complete(ManagementOpenResult.ERROR)
-        elif self.state == ManagementLinkState.OPEN:
-            if new_state is not LinkState.ATTACHED:
-                self.state = ManagementLinkState.ERROR
-                self._on_amqp_management_error()
-        elif self.state == ManagementLinkState.CLOSING:
-            if new_state not in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD]:
-                self.state = ManagementLinkState.ERROR
-                self._on_amqp_management_error()
-        elif self.state == ManagementLinkState.ERROR:
-            # All state transitions shall be ignored.
-            return
+        with self._lock:
+            if self.state == ManagementLinkState.OPENING:
+                if new_state == LinkState.ATTACHED:
+                    self._receiver_connected = True
+                    if self._sender_connected:
+                        self.state = ManagementLinkState.OPEN
+                        self._on_amqp_management_open_complete(ManagementOpenResult.OK)
+                elif new_state in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD, LinkState.ERROR]:
+                    self.state = ManagementLinkState.IDLE
+                    self._on_amqp_management_open_complete(ManagementOpenResult.ERROR)
+            elif self.state == ManagementLinkState.OPEN:
+                if new_state is not LinkState.ATTACHED:
+                    self.state = ManagementLinkState.ERROR
+                    self._on_amqp_management_error()
+            elif self.state == ManagementLinkState.CLOSING:
+                if new_state not in [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.DETACH_RCVD]:
+                    self.state = ManagementLinkState.ERROR
+                    self._on_amqp_management_error()
+            elif self.state == ManagementLinkState.ERROR:
+                # All state transitions shall be ignored.
+                return
 
     def _on_message_received(self, _, message):
         message_properties = message.properties
         correlation_id = message_properties[5]
         response_detail = message.application_properties
-
         status_code = response_detail.get(self._status_code_field)
         status_description = response_detail.get(self._status_description_field)
-
-        to_remove_operation = None
-        for operation in self._pending_operations:
-            if operation.message.properties.message_id == correlation_id:
-                to_remove_operation = operation
-                break
-        if to_remove_operation:
-            mgmt_result = ManagementExecuteOperationResult.OK \
-                if 200 <= status_code <= 299 else ManagementExecuteOperationResult.FAILED_BAD_STATUS
-            to_remove_operation.on_execute_operation_complete(
-                mgmt_result,
-                status_code,
-                status_description,
-                message,
-                response_detail.get(b'error-condition')
-            )
-            self._pending_operations.remove(to_remove_operation)
+        with self._lock:
+            to_remove_operation = None
+            for operation in self._pending_operations:
+                if operation.message.properties.message_id == correlation_id:
+                    to_remove_operation = operation
+                    break
+            if to_remove_operation:
+                mgmt_result = ManagementExecuteOperationResult.OK \
+                    if 200 <= status_code <= 299 else ManagementExecuteOperationResult.FAILED_BAD_STATUS
+                to_remove_operation.on_execute_operation_complete(
+                    mgmt_result,
+                    status_code,
+                    status_description,
+                    message,
+                    response_detail.get(b'error-condition')
+                )
+                self._pending_operations.remove(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
-            to_remove_operation = None
-            for operation in self._pending_operations:
-                if message_delivery.message == operation.message:
-                    to_remove_operation = operation
-                    break
-            self._pending_operations.remove(to_remove_operation)
-            # TODO: better error handling
-            #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
-            #  or should there an error mapping which maps the condition to the error type
-            to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
-                ManagementExecuteOperationResult.ERROR,
-                None,
-                None,
-                message_delivery.message,
-                error=AMQPException(
-                    condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
-                    description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
-                    info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
+            with self._lock:
+                to_remove_operation = None
+                for operation in self._pending_operations:
+                    if message_delivery.message == operation.message:
+                        to_remove_operation = operation
+                        break
+                _LOGGER.debug("removing operation from pending operations in _on_send_complete", extra=self._network_trace_params)
+                self._pending_operations.remove(to_remove_operation)
+                # TODO: better error handling
+                #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
+                #  or should there an error mapping which maps the condition to the error type
+                to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
+                    ManagementExecuteOperationResult.ERROR,
+                    None,
+                    None,
+                    message_delivery.message,
+                    error=AMQPException(
+                        condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
+                        description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
+                        info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
+                    )
                 )
-            )
 
     def open(self):
-        if self.state != ManagementLinkState.IDLE:
-            raise ValueError("Management links are already open or opening.")
-        self.state = ManagementLinkState.OPENING
+        with self._lock:
+            if self.state != ManagementLinkState.IDLE:
+                raise ValueError("Management links are already open or opening.")
+            self.state = ManagementLinkState.OPENING
         self._response_link.attach()
         self._request_link.attach()
 
@@ -240,20 +247,22 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         )
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
-
-        self._request_link.send_transfer(
-            message,
-            on_send_complete=on_send_complete,
-            timeout=timeout
-        )
-        self.next_message_id += 1
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        with self._lock:
+            self._request_link.send_transfer(
+                message,
+                on_send_complete=on_send_complete,
+                timeout=timeout
+            )
+            self.next_message_id += 1
+            self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
 
     def close(self):
-        if self.state != ManagementLinkState.IDLE:
-            self.state = ManagementLinkState.CLOSING
+        with self._lock:
+            if self.state != ManagementLinkState.IDLE:
+                self.state = ManagementLinkState.CLOSING
             self._response_link.detach(close=True)
             self._request_link.detach(close=True)
+
             for pending_operation in self._pending_operations:
                 pending_operation.on_execute_operation_complete(
                     ManagementExecuteOperationResult.LINK_CLOSED,
@@ -263,4 +272,4 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                     AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed.")
                 )
             self._pending_operations = []
-        self.state = ManagementLinkState.IDLE
+            self.state = ManagementLinkState.IDLE
