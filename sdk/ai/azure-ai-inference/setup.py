@@ -35,7 +35,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference",
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -68,4 +68,7 @@ setup(
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.8",
+    extras_require={
+        'opentelemetry': ['azure-core-tracing-opentelemetry']  
+    }
 )

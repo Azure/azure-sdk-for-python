@@ -35,7 +35,9 @@ class AzureOpenAIModelConfiguration(TypedDict):
     type: NotRequired[Literal["azure_openai"]]
     azure_deployment: str
     azure_endpoint: str
-    api_key: str
+    """Endpoint of Azure OpenAI resource to make request to"""
+    api_key: NotRequired[str]
+    """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
 
 

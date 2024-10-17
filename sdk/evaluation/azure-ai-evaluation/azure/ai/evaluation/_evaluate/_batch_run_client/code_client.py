@@ -182,3 +182,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             LOGGER.debug("Error calculating metrics for evaluator %s, failed with error %s", run.evaluator_name, ex)
             return {}
         return aggregated_metrics
+
+    def get_run_summary(self, run: CodeRun) -> Any:  # pylint: disable=unused-argument
+        # Not implemented
+        return None
