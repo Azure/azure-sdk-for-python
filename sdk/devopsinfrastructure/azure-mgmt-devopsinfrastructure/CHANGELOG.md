@@ -1,5 +1,1184 @@
 # Release History
 
+## 1.0.0 (2024-11-18)
+
+### Features Added
+
+  - Model `AgentProfile` added parameter `kwargs` in method `as_dict`
+  - Model `AgentProfile` added method `deserialize`
+  - Model `AgentProfile` added method `enable_additional_properties_sending`
+  - Model `AgentProfile` added method `from_dict`
+  - Model `AgentProfile` added method `is_xml_model`
+  - Model `AgentProfile` added method `serialize`
+  - Model `AgentProfile` added property `additional_properties`
+  - Model `AutomaticResourcePredictionsProfile` added parameter `kwargs` in method `as_dict`
+  - Model `AutomaticResourcePredictionsProfile` added method `deserialize`
+  - Model `AutomaticResourcePredictionsProfile` added method `enable_additional_properties_sending`
+  - Model `AutomaticResourcePredictionsProfile` added method `from_dict`
+  - Model `AutomaticResourcePredictionsProfile` added method `is_xml_model`
+  - Model `AutomaticResourcePredictionsProfile` added method `serialize`
+  - Model `AutomaticResourcePredictionsProfile` added property `additional_properties`
+  - Model `AzureDevOpsOrganizationProfile` added parameter `kwargs` in method `as_dict`
+  - Model `AzureDevOpsOrganizationProfile` added method `deserialize`
+  - Model `AzureDevOpsOrganizationProfile` added method `enable_additional_properties_sending`
+  - Model `AzureDevOpsOrganizationProfile` added method `from_dict`
+  - Model `AzureDevOpsOrganizationProfile` added method `is_xml_model`
+  - Model `AzureDevOpsOrganizationProfile` added method `serialize`
+  - Model `AzureDevOpsOrganizationProfile` added property `additional_properties`
+  - Model `AzureDevOpsPermissionProfile` added parameter `kwargs` in method `as_dict`
+  - Model `AzureDevOpsPermissionProfile` added method `deserialize`
+  - Model `AzureDevOpsPermissionProfile` added method `enable_additional_properties_sending`
+  - Model `AzureDevOpsPermissionProfile` added method `from_dict`
+  - Model `AzureDevOpsPermissionProfile` added method `is_xml_model`
+  - Model `AzureDevOpsPermissionProfile` added method `serialize`
+  - Model `AzureDevOpsPermissionProfile` added property `additional_properties`
+  - Model `DataDisk` added parameter `kwargs` in method `as_dict`
+  - Model `DataDisk` added method `deserialize`
+  - Model `DataDisk` added method `enable_additional_properties_sending`
+  - Model `DataDisk` added method `from_dict`
+  - Model `DataDisk` added method `is_xml_model`
+  - Model `DataDisk` added method `serialize`
+  - Model `DataDisk` added property `additional_properties`
+  - Model `DevOpsAzureSku` added parameter `kwargs` in method `as_dict`
+  - Model `DevOpsAzureSku` added method `deserialize`
+  - Model `DevOpsAzureSku` added method `enable_additional_properties_sending`
+  - Model `DevOpsAzureSku` added method `from_dict`
+  - Model `DevOpsAzureSku` added method `is_xml_model`
+  - Model `DevOpsAzureSku` added method `serialize`
+  - Model `DevOpsAzureSku` added property `additional_properties`
+  - Model `ErrorAdditionalInfo` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorAdditionalInfo` added method `deserialize`
+  - Model `ErrorAdditionalInfo` added method `enable_additional_properties_sending`
+  - Model `ErrorAdditionalInfo` added method `from_dict`
+  - Model `ErrorAdditionalInfo` added method `is_xml_model`
+  - Model `ErrorAdditionalInfo` added method `serialize`
+  - Model `ErrorAdditionalInfo` added property `additional_properties`
+  - Model `ErrorDetail` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorDetail` added method `deserialize`
+  - Model `ErrorDetail` added method `enable_additional_properties_sending`
+  - Model `ErrorDetail` added method `from_dict`
+  - Model `ErrorDetail` added method `is_xml_model`
+  - Model `ErrorDetail` added method `serialize`
+  - Model `ErrorDetail` added property `additional_properties`
+  - Model `ErrorResponse` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorResponse` added method `deserialize`
+  - Model `ErrorResponse` added method `enable_additional_properties_sending`
+  - Model `ErrorResponse` added method `from_dict`
+  - Model `ErrorResponse` added method `is_xml_model`
+  - Model `ErrorResponse` added method `serialize`
+  - Model `ErrorResponse` added property `additional_properties`
+  - Model `FabricProfile` added parameter `kwargs` in method `as_dict`
+  - Model `FabricProfile` added method `deserialize`
+  - Model `FabricProfile` added method `enable_additional_properties_sending`
+  - Model `FabricProfile` added method `from_dict`
+  - Model `FabricProfile` added method `is_xml_model`
+  - Model `FabricProfile` added method `serialize`
+  - Model `FabricProfile` added property `additional_properties`
+  - Model `GitHubOrganization` added parameter `kwargs` in method `as_dict`
+  - Model `GitHubOrganization` added method `deserialize`
+  - Model `GitHubOrganization` added method `enable_additional_properties_sending`
+  - Model `GitHubOrganization` added method `from_dict`
+  - Model `GitHubOrganization` added method `is_xml_model`
+  - Model `GitHubOrganization` added method `serialize`
+  - Model `GitHubOrganization` added property `additional_properties`
+  - Model `GitHubOrganizationProfile` added parameter `kwargs` in method `as_dict`
+  - Model `GitHubOrganizationProfile` added method `deserialize`
+  - Model `GitHubOrganizationProfile` added method `enable_additional_properties_sending`
+  - Model `GitHubOrganizationProfile` added method `from_dict`
+  - Model `GitHubOrganizationProfile` added method `is_xml_model`
+  - Model `GitHubOrganizationProfile` added method `serialize`
+  - Model `GitHubOrganizationProfile` added property `additional_properties`
+  - Model `ImageVersion` added parameter `kwargs` in method `as_dict`
+  - Model `ImageVersion` added method `deserialize`
+  - Model `ImageVersion` added method `enable_additional_properties_sending`
+  - Model `ImageVersion` added method `from_dict`
+  - Model `ImageVersion` added method `is_xml_model`
+  - Model `ImageVersion` added method `serialize`
+  - Model `ImageVersion` added property `additional_properties`
+  - Model `ImageVersionProperties` added parameter `kwargs` in method `as_dict`
+  - Model `ImageVersionProperties` added method `deserialize`
+  - Model `ImageVersionProperties` added method `enable_additional_properties_sending`
+  - Model `ImageVersionProperties` added method `from_dict`
+  - Model `ImageVersionProperties` added method `is_xml_model`
+  - Model `ImageVersionProperties` added method `serialize`
+  - Model `ImageVersionProperties` added property `additional_properties`
+  - Model `ManagedServiceIdentity` added parameter `kwargs` in method `as_dict`
+  - Model `ManagedServiceIdentity` added method `deserialize`
+  - Model `ManagedServiceIdentity` added method `enable_additional_properties_sending`
+  - Model `ManagedServiceIdentity` added method `from_dict`
+  - Model `ManagedServiceIdentity` added method `is_xml_model`
+  - Model `ManagedServiceIdentity` added method `serialize`
+  - Model `ManagedServiceIdentity` added property `additional_properties`
+  - Enum `ManagedServiceIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Model `ManualResourcePredictionsProfile` added parameter `kwargs` in method `as_dict`
+  - Model `ManualResourcePredictionsProfile` added method `deserialize`
+  - Model `ManualResourcePredictionsProfile` added method `enable_additional_properties_sending`
+  - Model `ManualResourcePredictionsProfile` added method `from_dict`
+  - Model `ManualResourcePredictionsProfile` added method `is_xml_model`
+  - Model `ManualResourcePredictionsProfile` added method `serialize`
+  - Model `ManualResourcePredictionsProfile` added property `additional_properties`
+  - Model `NetworkProfile` added parameter `kwargs` in method `as_dict`
+  - Model `NetworkProfile` added method `deserialize`
+  - Model `NetworkProfile` added method `enable_additional_properties_sending`
+  - Model `NetworkProfile` added method `from_dict`
+  - Model `NetworkProfile` added method `is_xml_model`
+  - Model `NetworkProfile` added method `serialize`
+  - Model `NetworkProfile` added property `additional_properties`
+  - Model `Operation` added parameter `kwargs` in method `as_dict`
+  - Model `Operation` added method `deserialize`
+  - Model `Operation` added method `enable_additional_properties_sending`
+  - Model `Operation` added method `from_dict`
+  - Model `Operation` added method `is_xml_model`
+  - Model `Operation` added method `serialize`
+  - Model `Operation` added property `additional_properties`
+  - Model `OperationDisplay` added parameter `kwargs` in method `as_dict`
+  - Model `OperationDisplay` added method `deserialize`
+  - Model `OperationDisplay` added method `enable_additional_properties_sending`
+  - Model `OperationDisplay` added method `from_dict`
+  - Model `OperationDisplay` added method `is_xml_model`
+  - Model `OperationDisplay` added method `serialize`
+  - Model `OperationDisplay` added property `additional_properties`
+  - Model `Organization` added parameter `kwargs` in method `as_dict`
+  - Model `Organization` added method `deserialize`
+  - Model `Organization` added method `enable_additional_properties_sending`
+  - Model `Organization` added method `from_dict`
+  - Model `Organization` added method `is_xml_model`
+  - Model `Organization` added method `serialize`
+  - Model `Organization` added property `additional_properties`
+  - Model `OrganizationProfile` added parameter `kwargs` in method `as_dict`
+  - Model `OrganizationProfile` added method `deserialize`
+  - Model `OrganizationProfile` added method `enable_additional_properties_sending`
+  - Model `OrganizationProfile` added method `from_dict`
+  - Model `OrganizationProfile` added method `is_xml_model`
+  - Model `OrganizationProfile` added method `serialize`
+  - Model `OrganizationProfile` added property `additional_properties`
+  - Enum `OsDiskStorageAccountType` added member `STANDARD_SSD`
+  - Model `OsProfile` added parameter `kwargs` in method `as_dict`
+  - Model `OsProfile` added method `deserialize`
+  - Model `OsProfile` added method `enable_additional_properties_sending`
+  - Model `OsProfile` added method `from_dict`
+  - Model `OsProfile` added method `is_xml_model`
+  - Model `OsProfile` added method `serialize`
+  - Model `OsProfile` added property `additional_properties`
+  - Model `Pool` added parameter `kwargs` in method `as_dict`
+  - Model `Pool` added method `deserialize`
+  - Model `Pool` added method `enable_additional_properties_sending`
+  - Model `Pool` added method `from_dict`
+  - Model `Pool` added method `is_xml_model`
+  - Model `Pool` added method `serialize`
+  - Model `Pool` added property `additional_properties`
+  - Model `PoolImage` added parameter `kwargs` in method `as_dict`
+  - Model `PoolImage` added method `deserialize`
+  - Model `PoolImage` added method `enable_additional_properties_sending`
+  - Model `PoolImage` added method `from_dict`
+  - Model `PoolImage` added method `is_xml_model`
+  - Model `PoolImage` added method `serialize`
+  - Model `PoolImage` added property `additional_properties`
+  - Model `PoolProperties` added parameter `kwargs` in method `as_dict`
+  - Model `PoolProperties` added method `deserialize`
+  - Model `PoolProperties` added method `enable_additional_properties_sending`
+  - Model `PoolProperties` added method `from_dict`
+  - Model `PoolProperties` added method `is_xml_model`
+  - Model `PoolProperties` added method `serialize`
+  - Model `PoolProperties` added property `additional_properties`
+  - Model `PoolUpdate` added parameter `kwargs` in method `as_dict`
+  - Model `PoolUpdate` added method `deserialize`
+  - Model `PoolUpdate` added method `enable_additional_properties_sending`
+  - Model `PoolUpdate` added method `from_dict`
+  - Model `PoolUpdate` added method `is_xml_model`
+  - Model `PoolUpdate` added method `serialize`
+  - Model `PoolUpdate` added property `additional_properties`
+  - Model `PoolUpdateProperties` added parameter `kwargs` in method `as_dict`
+  - Model `PoolUpdateProperties` added method `deserialize`
+  - Model `PoolUpdateProperties` added method `enable_additional_properties_sending`
+  - Model `PoolUpdateProperties` added method `from_dict`
+  - Model `PoolUpdateProperties` added method `is_xml_model`
+  - Model `PoolUpdateProperties` added method `serialize`
+  - Model `PoolUpdateProperties` added property `additional_properties`
+  - Model `ProxyResource` added parameter `kwargs` in method `as_dict`
+  - Model `ProxyResource` added method `deserialize`
+  - Model `ProxyResource` added method `enable_additional_properties_sending`
+  - Model `ProxyResource` added method `from_dict`
+  - Model `ProxyResource` added method `is_xml_model`
+  - Model `ProxyResource` added method `serialize`
+  - Model `ProxyResource` added property `additional_properties`
+  - Model `Quota` added parameter `kwargs` in method `as_dict`
+  - Model `Quota` added method `deserialize`
+  - Model `Quota` added method `enable_additional_properties_sending`
+  - Model `Quota` added method `from_dict`
+  - Model `Quota` added method `is_xml_model`
+  - Model `Quota` added method `serialize`
+  - Model `Quota` added property `unit`
+  - Model `Quota` added property `current_value`
+  - Model `Quota` added property `limit`
+  - Model `Quota` added property `additional_properties`
+  - Model `QuotaName` added parameter `kwargs` in method `as_dict`
+  - Model `QuotaName` added method `deserialize`
+  - Model `QuotaName` added method `enable_additional_properties_sending`
+  - Model `QuotaName` added method `from_dict`
+  - Model `QuotaName` added method `is_xml_model`
+  - Model `QuotaName` added method `serialize`
+  - Model `QuotaName` added property `additional_properties`
+  - Model `Resource` added parameter `kwargs` in method `as_dict`
+  - Model `Resource` added method `deserialize`
+  - Model `Resource` added method `enable_additional_properties_sending`
+  - Model `Resource` added method `from_dict`
+  - Model `Resource` added method `is_xml_model`
+  - Model `Resource` added method `serialize`
+  - Model `Resource` added property `additional_properties`
+  - Model `ResourceDetailsObject` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceDetailsObject` added method `deserialize`
+  - Model `ResourceDetailsObject` added method `enable_additional_properties_sending`
+  - Model `ResourceDetailsObject` added method `from_dict`
+  - Model `ResourceDetailsObject` added method `is_xml_model`
+  - Model `ResourceDetailsObject` added method `serialize`
+  - Model `ResourceDetailsObject` added property `additional_properties`
+  - Model `ResourceDetailsObjectProperties` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceDetailsObjectProperties` added method `deserialize`
+  - Model `ResourceDetailsObjectProperties` added method `enable_additional_properties_sending`
+  - Model `ResourceDetailsObjectProperties` added method `from_dict`
+  - Model `ResourceDetailsObjectProperties` added method `is_xml_model`
+  - Model `ResourceDetailsObjectProperties` added method `serialize`
+  - Model `ResourceDetailsObjectProperties` added property `additional_properties`
+  - Model `ResourcePredictionsProfile` added parameter `kwargs` in method `as_dict`
+  - Model `ResourcePredictionsProfile` added method `deserialize`
+  - Model `ResourcePredictionsProfile` added method `enable_additional_properties_sending`
+  - Model `ResourcePredictionsProfile` added method `from_dict`
+  - Model `ResourcePredictionsProfile` added method `is_xml_model`
+  - Model `ResourcePredictionsProfile` added method `serialize`
+  - Model `ResourcePredictionsProfile` added property `additional_properties`
+  - Model `ResourceSku` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSku` added method `deserialize`
+  - Model `ResourceSku` added method `enable_additional_properties_sending`
+  - Model `ResourceSku` added method `from_dict`
+  - Model `ResourceSku` added method `is_xml_model`
+  - Model `ResourceSku` added method `serialize`
+  - Model `ResourceSku` added property `additional_properties`
+  - Model `ResourceSkuCapabilities` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuCapabilities` added method `deserialize`
+  - Model `ResourceSkuCapabilities` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuCapabilities` added method `from_dict`
+  - Model `ResourceSkuCapabilities` added method `is_xml_model`
+  - Model `ResourceSkuCapabilities` added method `serialize`
+  - Model `ResourceSkuCapabilities` added property `additional_properties`
+  - Model `ResourceSkuLocationInfo` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuLocationInfo` added method `deserialize`
+  - Model `ResourceSkuLocationInfo` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuLocationInfo` added method `from_dict`
+  - Model `ResourceSkuLocationInfo` added method `is_xml_model`
+  - Model `ResourceSkuLocationInfo` added method `serialize`
+  - Model `ResourceSkuLocationInfo` added property `additional_properties`
+  - Model `ResourceSkuProperties` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuProperties` added method `deserialize`
+  - Model `ResourceSkuProperties` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuProperties` added method `from_dict`
+  - Model `ResourceSkuProperties` added method `is_xml_model`
+  - Model `ResourceSkuProperties` added method `serialize`
+  - Model `ResourceSkuProperties` added property `additional_properties`
+  - Model `ResourceSkuRestrictionInfo` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuRestrictionInfo` added method `deserialize`
+  - Model `ResourceSkuRestrictionInfo` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuRestrictionInfo` added method `from_dict`
+  - Model `ResourceSkuRestrictionInfo` added method `is_xml_model`
+  - Model `ResourceSkuRestrictionInfo` added method `serialize`
+  - Model `ResourceSkuRestrictionInfo` added property `additional_properties`
+  - Model `ResourceSkuRestrictions` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuRestrictions` added method `deserialize`
+  - Model `ResourceSkuRestrictions` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuRestrictions` added method `from_dict`
+  - Model `ResourceSkuRestrictions` added method `is_xml_model`
+  - Model `ResourceSkuRestrictions` added method `serialize`
+  - Model `ResourceSkuRestrictions` added property `values`
+  - Model `ResourceSkuRestrictions` added property `additional_properties`
+  - Model `ResourceSkuZoneDetails` added parameter `kwargs` in method `as_dict`
+  - Model `ResourceSkuZoneDetails` added method `deserialize`
+  - Model `ResourceSkuZoneDetails` added method `enable_additional_properties_sending`
+  - Model `ResourceSkuZoneDetails` added method `from_dict`
+  - Model `ResourceSkuZoneDetails` added method `is_xml_model`
+  - Model `ResourceSkuZoneDetails` added method `serialize`
+  - Model `ResourceSkuZoneDetails` added property `additional_properties`
+  - Model `SecretsManagementSettings` added parameter `kwargs` in method `as_dict`
+  - Model `SecretsManagementSettings` added method `deserialize`
+  - Model `SecretsManagementSettings` added method `enable_additional_properties_sending`
+  - Model `SecretsManagementSettings` added method `from_dict`
+  - Model `SecretsManagementSettings` added method `is_xml_model`
+  - Model `SecretsManagementSettings` added method `serialize`
+  - Model `SecretsManagementSettings` added property `additional_properties`
+  - Model `Stateful` added parameter `kwargs` in method `as_dict`
+  - Model `Stateful` added method `deserialize`
+  - Model `Stateful` added method `enable_additional_properties_sending`
+  - Model `Stateful` added method `from_dict`
+  - Model `Stateful` added method `is_xml_model`
+  - Model `Stateful` added method `serialize`
+  - Model `Stateful` added property `additional_properties`
+  - Model `StatelessAgentProfile` added parameter `kwargs` in method `as_dict`
+  - Model `StatelessAgentProfile` added method `deserialize`
+  - Model `StatelessAgentProfile` added method `enable_additional_properties_sending`
+  - Model `StatelessAgentProfile` added method `from_dict`
+  - Model `StatelessAgentProfile` added method `is_xml_model`
+  - Model `StatelessAgentProfile` added method `serialize`
+  - Model `StatelessAgentProfile` added property `additional_properties`
+  - Model `StorageProfile` added parameter `kwargs` in method `as_dict`
+  - Model `StorageProfile` added method `deserialize`
+  - Model `StorageProfile` added method `enable_additional_properties_sending`
+  - Model `StorageProfile` added method `from_dict`
+  - Model `StorageProfile` added method `is_xml_model`
+  - Model `StorageProfile` added method `serialize`
+  - Model `StorageProfile` added property `additional_properties`
+  - Model `SystemData` added parameter `kwargs` in method `as_dict`
+  - Model `SystemData` added method `deserialize`
+  - Model `SystemData` added method `enable_additional_properties_sending`
+  - Model `SystemData` added method `from_dict`
+  - Model `SystemData` added method `is_xml_model`
+  - Model `SystemData` added method `serialize`
+  - Model `SystemData` added property `additional_properties`
+  - Model `TrackedResource` added parameter `kwargs` in method `as_dict`
+  - Model `TrackedResource` added method `deserialize`
+  - Model `TrackedResource` added method `enable_additional_properties_sending`
+  - Model `TrackedResource` added method `from_dict`
+  - Model `TrackedResource` added method `is_xml_model`
+  - Model `TrackedResource` added method `serialize`
+  - Model `TrackedResource` added property `additional_properties`
+  - Model `UserAssignedIdentity` added parameter `kwargs` in method `as_dict`
+  - Model `UserAssignedIdentity` added method `deserialize`
+  - Model `UserAssignedIdentity` added method `enable_additional_properties_sending`
+  - Model `UserAssignedIdentity` added method `from_dict`
+  - Model `UserAssignedIdentity` added method `is_xml_model`
+  - Model `UserAssignedIdentity` added method `serialize`
+  - Model `UserAssignedIdentity` added property `additional_properties`
+  - Model `VmssFabricProfile` added parameter `kwargs` in method `as_dict`
+  - Model `VmssFabricProfile` added method `deserialize`
+  - Model `VmssFabricProfile` added method `enable_additional_properties_sending`
+  - Model `VmssFabricProfile` added method `from_dict`
+  - Model `VmssFabricProfile` added method `is_xml_model`
+  - Model `VmssFabricProfile` added method `serialize`
+  - Model `VmssFabricProfile` added property `additional_properties`
+  - Added model `ImageVersionListResult`
+  - Added model `OperationListResult`
+  - Added model `PagedQuota`
+  - Added model `PoolListResult`
+  - Added model `ResourceDetailsObjectListResult`
+  - Added model `ResourceSkuListResult`
+  - Model `SubscriptionUsagesOperations` added method `usages`
+
+### Breaking Changes
+
+  - Deleted or renamed client method `DevOpsInfrastructureMgmtClient.send_request`
+  - Method `AgentProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AgentProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AgentProfile.clear`
+  - Deleted or renamed method `AgentProfile.copy`
+  - Deleted or renamed method `AgentProfile.get`
+  - Deleted or renamed method `AgentProfile.items`
+  - Deleted or renamed method `AgentProfile.keys`
+  - Deleted or renamed method `AgentProfile.kind`
+  - Deleted or renamed method `AgentProfile.pop`
+  - Deleted or renamed method `AgentProfile.popitem`
+  - Deleted or renamed method `AgentProfile.resource_predictions`
+  - Deleted or renamed method `AgentProfile.resource_predictions_profile`
+  - Deleted or renamed method `AgentProfile.setdefault`
+  - Deleted or renamed method `AgentProfile.update`
+  - Deleted or renamed method `AgentProfile.values`
+  - Method `AutomaticResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AutomaticResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.clear`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.copy`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.get`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.items`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.keys`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.kind`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.pop`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.popitem`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.prediction_preference`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.setdefault`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.update`
+  - Deleted or renamed method `AutomaticResourcePredictionsProfile.values`
+  - Method `AzureDevOpsOrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AzureDevOpsOrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.clear`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.copy`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.get`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.items`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.keys`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.kind`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.organizations`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.permission_profile`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.pop`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.popitem`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.setdefault`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.update`
+  - Deleted or renamed method `AzureDevOpsOrganizationProfile.values`
+  - Method `AzureDevOpsPermissionProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AzureDevOpsPermissionProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.clear`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.copy`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.get`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.groups`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.items`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.keys`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.kind`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.pop`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.popitem`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.setdefault`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.update`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.users`
+  - Deleted or renamed method `AzureDevOpsPermissionProfile.values`
+  - Method `DataDisk.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `DataDisk.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `DataDisk.caching`
+  - Deleted or renamed method `DataDisk.clear`
+  - Deleted or renamed method `DataDisk.copy`
+  - Deleted or renamed method `DataDisk.disk_size_gi_b`
+  - Deleted or renamed method `DataDisk.drive_letter`
+  - Deleted or renamed method `DataDisk.get`
+  - Deleted or renamed method `DataDisk.items`
+  - Deleted or renamed method `DataDisk.keys`
+  - Deleted or renamed method `DataDisk.pop`
+  - Deleted or renamed method `DataDisk.popitem`
+  - Deleted or renamed method `DataDisk.setdefault`
+  - Deleted or renamed method `DataDisk.storage_account_type`
+  - Deleted or renamed method `DataDisk.update`
+  - Deleted or renamed method `DataDisk.values`
+  - Method `DevOpsAzureSku.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `DevOpsAzureSku.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `DevOpsAzureSku.clear`
+  - Deleted or renamed method `DevOpsAzureSku.copy`
+  - Deleted or renamed method `DevOpsAzureSku.get`
+  - Deleted or renamed method `DevOpsAzureSku.items`
+  - Deleted or renamed method `DevOpsAzureSku.keys`
+  - Deleted or renamed method `DevOpsAzureSku.name`
+  - Deleted or renamed method `DevOpsAzureSku.pop`
+  - Deleted or renamed method `DevOpsAzureSku.popitem`
+  - Deleted or renamed method `DevOpsAzureSku.setdefault`
+  - Deleted or renamed method `DevOpsAzureSku.update`
+  - Deleted or renamed method `DevOpsAzureSku.values`
+  - Method `ErrorAdditionalInfo.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorAdditionalInfo.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorAdditionalInfo.clear`
+  - Deleted or renamed method `ErrorAdditionalInfo.copy`
+  - Deleted or renamed method `ErrorAdditionalInfo.get`
+  - Deleted or renamed method `ErrorAdditionalInfo.info`
+  - Deleted or renamed method `ErrorAdditionalInfo.items`
+  - Deleted or renamed method `ErrorAdditionalInfo.keys`
+  - Deleted or renamed method `ErrorAdditionalInfo.pop`
+  - Deleted or renamed method `ErrorAdditionalInfo.popitem`
+  - Deleted or renamed method `ErrorAdditionalInfo.setdefault`
+  - Deleted or renamed method `ErrorAdditionalInfo.type`
+  - Deleted or renamed method `ErrorAdditionalInfo.update`
+  - Deleted or renamed method `ErrorAdditionalInfo.values`
+  - Method `ErrorDetail.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorDetail.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorDetail.additional_info`
+  - Deleted or renamed method `ErrorDetail.clear`
+  - Deleted or renamed method `ErrorDetail.code`
+  - Deleted or renamed method `ErrorDetail.copy`
+  - Deleted or renamed method `ErrorDetail.details`
+  - Deleted or renamed method `ErrorDetail.get`
+  - Deleted or renamed method `ErrorDetail.items`
+  - Deleted or renamed method `ErrorDetail.keys`
+  - Deleted or renamed method `ErrorDetail.message`
+  - Deleted or renamed method `ErrorDetail.pop`
+  - Deleted or renamed method `ErrorDetail.popitem`
+  - Deleted or renamed method `ErrorDetail.setdefault`
+  - Deleted or renamed method `ErrorDetail.target`
+  - Deleted or renamed method `ErrorDetail.update`
+  - Deleted or renamed method `ErrorDetail.values`
+  - Method `ErrorResponse.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorResponse.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorResponse.clear`
+  - Deleted or renamed method `ErrorResponse.copy`
+  - Deleted or renamed method `ErrorResponse.error`
+  - Deleted or renamed method `ErrorResponse.get`
+  - Deleted or renamed method `ErrorResponse.items`
+  - Deleted or renamed method `ErrorResponse.keys`
+  - Deleted or renamed method `ErrorResponse.pop`
+  - Deleted or renamed method `ErrorResponse.popitem`
+  - Deleted or renamed method `ErrorResponse.setdefault`
+  - Deleted or renamed method `ErrorResponse.update`
+  - Deleted or renamed method `ErrorResponse.values`
+  - Method `FabricProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `FabricProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `FabricProfile.clear`
+  - Deleted or renamed method `FabricProfile.copy`
+  - Deleted or renamed method `FabricProfile.get`
+  - Deleted or renamed method `FabricProfile.items`
+  - Deleted or renamed method `FabricProfile.keys`
+  - Deleted or renamed method `FabricProfile.kind`
+  - Deleted or renamed method `FabricProfile.pop`
+  - Deleted or renamed method `FabricProfile.popitem`
+  - Deleted or renamed method `FabricProfile.setdefault`
+  - Deleted or renamed method `FabricProfile.update`
+  - Deleted or renamed method `FabricProfile.values`
+  - Method `GitHubOrganization.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `GitHubOrganization.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `GitHubOrganization.clear`
+  - Deleted or renamed method `GitHubOrganization.copy`
+  - Deleted or renamed method `GitHubOrganization.get`
+  - Deleted or renamed method `GitHubOrganization.items`
+  - Deleted or renamed method `GitHubOrganization.keys`
+  - Deleted or renamed method `GitHubOrganization.pop`
+  - Deleted or renamed method `GitHubOrganization.popitem`
+  - Deleted or renamed method `GitHubOrganization.repositories`
+  - Deleted or renamed method `GitHubOrganization.setdefault`
+  - Deleted or renamed method `GitHubOrganization.update`
+  - Deleted or renamed method `GitHubOrganization.url`
+  - Deleted or renamed method `GitHubOrganization.values`
+  - Method `GitHubOrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `GitHubOrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `GitHubOrganizationProfile.clear`
+  - Deleted or renamed method `GitHubOrganizationProfile.copy`
+  - Deleted or renamed method `GitHubOrganizationProfile.get`
+  - Deleted or renamed method `GitHubOrganizationProfile.items`
+  - Deleted or renamed method `GitHubOrganizationProfile.keys`
+  - Deleted or renamed method `GitHubOrganizationProfile.kind`
+  - Deleted or renamed method `GitHubOrganizationProfile.organizations`
+  - Deleted or renamed method `GitHubOrganizationProfile.pop`
+  - Deleted or renamed method `GitHubOrganizationProfile.popitem`
+  - Deleted or renamed method `GitHubOrganizationProfile.setdefault`
+  - Deleted or renamed method `GitHubOrganizationProfile.update`
+  - Deleted or renamed method `GitHubOrganizationProfile.values`
+  - Method `ImageVersion.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ImageVersion.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ImageVersion.clear`
+  - Deleted or renamed method `ImageVersion.copy`
+  - Deleted or renamed method `ImageVersion.get`
+  - Deleted or renamed method `ImageVersion.id`
+  - Deleted or renamed method `ImageVersion.items`
+  - Deleted or renamed method `ImageVersion.keys`
+  - Deleted or renamed method `ImageVersion.name`
+  - Deleted or renamed method `ImageVersion.pop`
+  - Deleted or renamed method `ImageVersion.popitem`
+  - Deleted or renamed method `ImageVersion.properties`
+  - Deleted or renamed method `ImageVersion.setdefault`
+  - Deleted or renamed method `ImageVersion.system_data`
+  - Deleted or renamed method `ImageVersion.type`
+  - Deleted or renamed method `ImageVersion.update`
+  - Deleted or renamed method `ImageVersion.values`
+  - Method `ImageVersionProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ImageVersionProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ImageVersionProperties.clear`
+  - Deleted or renamed method `ImageVersionProperties.copy`
+  - Deleted or renamed method `ImageVersionProperties.get`
+  - Deleted or renamed method `ImageVersionProperties.items`
+  - Deleted or renamed method `ImageVersionProperties.keys`
+  - Deleted or renamed method `ImageVersionProperties.pop`
+  - Deleted or renamed method `ImageVersionProperties.popitem`
+  - Deleted or renamed method `ImageVersionProperties.setdefault`
+  - Deleted or renamed method `ImageVersionProperties.update`
+  - Deleted or renamed method `ImageVersionProperties.values`
+  - Deleted or renamed method `ImageVersionProperties.version`
+  - Method `ManagedServiceIdentity.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ManagedServiceIdentity.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ManagedServiceIdentity.clear`
+  - Deleted or renamed method `ManagedServiceIdentity.copy`
+  - Deleted or renamed method `ManagedServiceIdentity.get`
+  - Deleted or renamed method `ManagedServiceIdentity.items`
+  - Deleted or renamed method `ManagedServiceIdentity.keys`
+  - Deleted or renamed method `ManagedServiceIdentity.pop`
+  - Deleted or renamed method `ManagedServiceIdentity.popitem`
+  - Deleted or renamed method `ManagedServiceIdentity.principal_id`
+  - Deleted or renamed method `ManagedServiceIdentity.setdefault`
+  - Deleted or renamed method `ManagedServiceIdentity.tenant_id`
+  - Deleted or renamed method `ManagedServiceIdentity.type`
+  - Deleted or renamed method `ManagedServiceIdentity.update`
+  - Deleted or renamed method `ManagedServiceIdentity.user_assigned_identities`
+  - Deleted or renamed method `ManagedServiceIdentity.values`
+  - Deleted or renamed enum value `ManagedServiceIdentityType.SYSTEM_AND_USER_ASSIGNED`
+  - Method `ManualResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ManualResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.clear`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.copy`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.get`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.items`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.keys`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.kind`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.pop`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.popitem`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.setdefault`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.update`
+  - Deleted or renamed method `ManualResourcePredictionsProfile.values`
+  - Method `NetworkProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `NetworkProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `NetworkProfile.clear`
+  - Deleted or renamed method `NetworkProfile.copy`
+  - Deleted or renamed method `NetworkProfile.get`
+  - Deleted or renamed method `NetworkProfile.items`
+  - Deleted or renamed method `NetworkProfile.keys`
+  - Deleted or renamed method `NetworkProfile.pop`
+  - Deleted or renamed method `NetworkProfile.popitem`
+  - Deleted or renamed method `NetworkProfile.setdefault`
+  - Deleted or renamed method `NetworkProfile.subnet_id`
+  - Deleted or renamed method `NetworkProfile.update`
+  - Deleted or renamed method `NetworkProfile.values`
+  - Method `Operation.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Operation.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Operation.action_type`
+  - Deleted or renamed method `Operation.clear`
+  - Deleted or renamed method `Operation.copy`
+  - Deleted or renamed method `Operation.display`
+  - Deleted or renamed method `Operation.get`
+  - Deleted or renamed method `Operation.is_data_action`
+  - Deleted or renamed method `Operation.items`
+  - Deleted or renamed method `Operation.keys`
+  - Deleted or renamed method `Operation.name`
+  - Deleted or renamed method `Operation.origin`
+  - Deleted or renamed method `Operation.pop`
+  - Deleted or renamed method `Operation.popitem`
+  - Deleted or renamed method `Operation.setdefault`
+  - Deleted or renamed method `Operation.update`
+  - Deleted or renamed method `Operation.values`
+  - Method `OperationDisplay.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `OperationDisplay.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `OperationDisplay.clear`
+  - Deleted or renamed method `OperationDisplay.copy`
+  - Deleted or renamed method `OperationDisplay.description`
+  - Deleted or renamed method `OperationDisplay.get`
+  - Deleted or renamed method `OperationDisplay.items`
+  - Deleted or renamed method `OperationDisplay.keys`
+  - Deleted or renamed method `OperationDisplay.operation`
+  - Deleted or renamed method `OperationDisplay.pop`
+  - Deleted or renamed method `OperationDisplay.popitem`
+  - Deleted or renamed method `OperationDisplay.provider`
+  - Deleted or renamed method `OperationDisplay.resource`
+  - Deleted or renamed method `OperationDisplay.setdefault`
+  - Deleted or renamed method `OperationDisplay.update`
+  - Deleted or renamed method `OperationDisplay.values`
+  - Method `Organization.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Organization.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Organization.clear`
+  - Deleted or renamed method `Organization.copy`
+  - Deleted or renamed method `Organization.get`
+  - Deleted or renamed method `Organization.items`
+  - Deleted or renamed method `Organization.keys`
+  - Deleted or renamed method `Organization.parallelism`
+  - Deleted or renamed method `Organization.pop`
+  - Deleted or renamed method `Organization.popitem`
+  - Deleted or renamed method `Organization.projects`
+  - Deleted or renamed method `Organization.setdefault`
+  - Deleted or renamed method `Organization.update`
+  - Deleted or renamed method `Organization.url`
+  - Deleted or renamed method `Organization.values`
+  - Method `OrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `OrganizationProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `OrganizationProfile.clear`
+  - Deleted or renamed method `OrganizationProfile.copy`
+  - Deleted or renamed method `OrganizationProfile.get`
+  - Deleted or renamed method `OrganizationProfile.items`
+  - Deleted or renamed method `OrganizationProfile.keys`
+  - Deleted or renamed method `OrganizationProfile.kind`
+  - Deleted or renamed method `OrganizationProfile.pop`
+  - Deleted or renamed method `OrganizationProfile.popitem`
+  - Deleted or renamed method `OrganizationProfile.setdefault`
+  - Deleted or renamed method `OrganizationProfile.update`
+  - Deleted or renamed method `OrganizationProfile.values`
+  - Deleted or renamed enum value `OsDiskStorageAccountType.STANDARD_S_S_D`
+  - Method `OsProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `OsProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `OsProfile.clear`
+  - Deleted or renamed method `OsProfile.copy`
+  - Deleted or renamed method `OsProfile.get`
+  - Deleted or renamed method `OsProfile.items`
+  - Deleted or renamed method `OsProfile.keys`
+  - Deleted or renamed method `OsProfile.logon_type`
+  - Deleted or renamed method `OsProfile.pop`
+  - Deleted or renamed method `OsProfile.popitem`
+  - Deleted or renamed method `OsProfile.secrets_management_settings`
+  - Deleted or renamed method `OsProfile.setdefault`
+  - Deleted or renamed method `OsProfile.update`
+  - Deleted or renamed method `OsProfile.values`
+  - Method `Pool.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Pool.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Pool.clear`
+  - Deleted or renamed method `Pool.copy`
+  - Deleted or renamed method `Pool.get`
+  - Deleted or renamed method `Pool.id`
+  - Deleted or renamed method `Pool.identity`
+  - Deleted or renamed method `Pool.items`
+  - Deleted or renamed method `Pool.keys`
+  - Deleted or renamed method `Pool.location`
+  - Deleted or renamed method `Pool.name`
+  - Deleted or renamed method `Pool.pop`
+  - Deleted or renamed method `Pool.popitem`
+  - Deleted or renamed method `Pool.properties`
+  - Deleted or renamed method `Pool.setdefault`
+  - Deleted or renamed method `Pool.system_data`
+  - Deleted or renamed method `Pool.tags`
+  - Deleted or renamed method `Pool.type`
+  - Deleted or renamed method `Pool.update`
+  - Deleted or renamed method `Pool.values`
+  - Method `PoolImage.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `PoolImage.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `PoolImage.aliases`
+  - Deleted or renamed method `PoolImage.buffer`
+  - Deleted or renamed method `PoolImage.clear`
+  - Deleted or renamed method `PoolImage.copy`
+  - Deleted or renamed method `PoolImage.get`
+  - Deleted or renamed method `PoolImage.items`
+  - Deleted or renamed method `PoolImage.keys`
+  - Deleted or renamed method `PoolImage.pop`
+  - Deleted or renamed method `PoolImage.popitem`
+  - Deleted or renamed method `PoolImage.resource_id`
+  - Deleted or renamed method `PoolImage.setdefault`
+  - Deleted or renamed method `PoolImage.update`
+  - Deleted or renamed method `PoolImage.values`
+  - Deleted or renamed method `PoolImage.well_known_image_name`
+  - Method `PoolProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `PoolProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `PoolProperties.agent_profile`
+  - Deleted or renamed method `PoolProperties.clear`
+  - Deleted or renamed method `PoolProperties.copy`
+  - Deleted or renamed method `PoolProperties.dev_center_project_resource_id`
+  - Deleted or renamed method `PoolProperties.fabric_profile`
+  - Deleted or renamed method `PoolProperties.get`
+  - Deleted or renamed method `PoolProperties.items`
+  - Deleted or renamed method `PoolProperties.keys`
+  - Deleted or renamed method `PoolProperties.maximum_concurrency`
+  - Deleted or renamed method `PoolProperties.organization_profile`
+  - Deleted or renamed method `PoolProperties.pop`
+  - Deleted or renamed method `PoolProperties.popitem`
+  - Deleted or renamed method `PoolProperties.provisioning_state`
+  - Deleted or renamed method `PoolProperties.setdefault`
+  - Deleted or renamed method `PoolProperties.update`
+  - Deleted or renamed method `PoolProperties.values`
+  - Method `PoolUpdate.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `PoolUpdate.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `PoolUpdate.clear`
+  - Deleted or renamed method `PoolUpdate.copy`
+  - Deleted or renamed method `PoolUpdate.get`
+  - Deleted or renamed method `PoolUpdate.identity`
+  - Deleted or renamed method `PoolUpdate.items`
+  - Deleted or renamed method `PoolUpdate.keys`
+  - Deleted or renamed method `PoolUpdate.pop`
+  - Deleted or renamed method `PoolUpdate.popitem`
+  - Deleted or renamed method `PoolUpdate.properties`
+  - Deleted or renamed method `PoolUpdate.setdefault`
+  - Deleted or renamed method `PoolUpdate.tags`
+  - Deleted or renamed method `PoolUpdate.update`
+  - Deleted or renamed method `PoolUpdate.values`
+  - Method `PoolUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `PoolUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `PoolUpdateProperties.agent_profile`
+  - Deleted or renamed method `PoolUpdateProperties.clear`
+  - Deleted or renamed method `PoolUpdateProperties.copy`
+  - Deleted or renamed method `PoolUpdateProperties.dev_center_project_resource_id`
+  - Deleted or renamed method `PoolUpdateProperties.fabric_profile`
+  - Deleted or renamed method `PoolUpdateProperties.get`
+  - Deleted or renamed method `PoolUpdateProperties.items`
+  - Deleted or renamed method `PoolUpdateProperties.keys`
+  - Deleted or renamed method `PoolUpdateProperties.maximum_concurrency`
+  - Deleted or renamed method `PoolUpdateProperties.organization_profile`
+  - Deleted or renamed method `PoolUpdateProperties.pop`
+  - Deleted or renamed method `PoolUpdateProperties.popitem`
+  - Deleted or renamed method `PoolUpdateProperties.provisioning_state`
+  - Deleted or renamed method `PoolUpdateProperties.setdefault`
+  - Deleted or renamed method `PoolUpdateProperties.update`
+  - Deleted or renamed method `PoolUpdateProperties.values`
+  - Method `ProxyResource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ProxyResource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ProxyResource.clear`
+  - Deleted or renamed method `ProxyResource.copy`
+  - Deleted or renamed method `ProxyResource.get`
+  - Deleted or renamed method `ProxyResource.id`
+  - Deleted or renamed method `ProxyResource.items`
+  - Deleted or renamed method `ProxyResource.keys`
+  - Deleted or renamed method `ProxyResource.name`
+  - Deleted or renamed method `ProxyResource.pop`
+  - Deleted or renamed method `ProxyResource.popitem`
+  - Deleted or renamed method `ProxyResource.setdefault`
+  - Deleted or renamed method `ProxyResource.system_data`
+  - Deleted or renamed method `ProxyResource.type`
+  - Deleted or renamed method `ProxyResource.update`
+  - Deleted or renamed method `ProxyResource.values`
+  - Model `Quota` deleted or renamed its instance variable `properties`
+  - Model `Quota` deleted or renamed its instance variable `type`
+  - Model `Quota` deleted or renamed its instance variable `system_data`
+  - Method `Quota.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Quota.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Quota.clear`
+  - Deleted or renamed method `Quota.copy`
+  - Deleted or renamed method `Quota.get`
+  - Deleted or renamed method `Quota.id`
+  - Deleted or renamed method `Quota.items`
+  - Deleted or renamed method `Quota.keys`
+  - Deleted or renamed method `Quota.name`
+  - Deleted or renamed method `Quota.pop`
+  - Deleted or renamed method `Quota.popitem`
+  - Deleted or renamed method `Quota.properties`
+  - Deleted or renamed method `Quota.setdefault`
+  - Deleted or renamed method `Quota.system_data`
+  - Deleted or renamed method `Quota.type`
+  - Deleted or renamed method `Quota.update`
+  - Deleted or renamed method `Quota.values`
+  - Method `QuotaName.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `QuotaName.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `QuotaName.clear`
+  - Deleted or renamed method `QuotaName.copy`
+  - Deleted or renamed method `QuotaName.get`
+  - Deleted or renamed method `QuotaName.items`
+  - Deleted or renamed method `QuotaName.keys`
+  - Deleted or renamed method `QuotaName.localized_value`
+  - Deleted or renamed method `QuotaName.pop`
+  - Deleted or renamed method `QuotaName.popitem`
+  - Deleted or renamed method `QuotaName.setdefault`
+  - Deleted or renamed method `QuotaName.update`
+  - Deleted or renamed method `QuotaName.value`
+  - Deleted or renamed method `QuotaName.values`
+  - Method `Resource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Resource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Resource.clear`
+  - Deleted or renamed method `Resource.copy`
+  - Deleted or renamed method `Resource.get`
+  - Deleted or renamed method `Resource.id`
+  - Deleted or renamed method `Resource.items`
+  - Deleted or renamed method `Resource.keys`
+  - Deleted or renamed method `Resource.name`
+  - Deleted or renamed method `Resource.pop`
+  - Deleted or renamed method `Resource.popitem`
+  - Deleted or renamed method `Resource.setdefault`
+  - Deleted or renamed method `Resource.system_data`
+  - Deleted or renamed method `Resource.type`
+  - Deleted or renamed method `Resource.update`
+  - Deleted or renamed method `Resource.values`
+  - Method `ResourceDetailsObject.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceDetailsObject.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceDetailsObject.clear`
+  - Deleted or renamed method `ResourceDetailsObject.copy`
+  - Deleted or renamed method `ResourceDetailsObject.get`
+  - Deleted or renamed method `ResourceDetailsObject.id`
+  - Deleted or renamed method `ResourceDetailsObject.items`
+  - Deleted or renamed method `ResourceDetailsObject.keys`
+  - Deleted or renamed method `ResourceDetailsObject.name`
+  - Deleted or renamed method `ResourceDetailsObject.pop`
+  - Deleted or renamed method `ResourceDetailsObject.popitem`
+  - Deleted or renamed method `ResourceDetailsObject.properties`
+  - Deleted or renamed method `ResourceDetailsObject.setdefault`
+  - Deleted or renamed method `ResourceDetailsObject.system_data`
+  - Deleted or renamed method `ResourceDetailsObject.type`
+  - Deleted or renamed method `ResourceDetailsObject.update`
+  - Deleted or renamed method `ResourceDetailsObject.values`
+  - Method `ResourceDetailsObjectProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceDetailsObjectProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.clear`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.copy`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.get`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.image`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.image_version`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.items`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.keys`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.pop`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.popitem`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.setdefault`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.status`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.update`
+  - Deleted or renamed method `ResourceDetailsObjectProperties.values`
+  - Method `ResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourcePredictionsProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourcePredictionsProfile.clear`
+  - Deleted or renamed method `ResourcePredictionsProfile.copy`
+  - Deleted or renamed method `ResourcePredictionsProfile.get`
+  - Deleted or renamed method `ResourcePredictionsProfile.items`
+  - Deleted or renamed method `ResourcePredictionsProfile.keys`
+  - Deleted or renamed method `ResourcePredictionsProfile.kind`
+  - Deleted or renamed method `ResourcePredictionsProfile.pop`
+  - Deleted or renamed method `ResourcePredictionsProfile.popitem`
+  - Deleted or renamed method `ResourcePredictionsProfile.setdefault`
+  - Deleted or renamed method `ResourcePredictionsProfile.update`
+  - Deleted or renamed method `ResourcePredictionsProfile.values`
+  - Method `ResourceSku.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSku.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSku.clear`
+  - Deleted or renamed method `ResourceSku.copy`
+  - Deleted or renamed method `ResourceSku.get`
+  - Deleted or renamed method `ResourceSku.id`
+  - Deleted or renamed method `ResourceSku.items`
+  - Deleted or renamed method `ResourceSku.keys`
+  - Deleted or renamed method `ResourceSku.name`
+  - Deleted or renamed method `ResourceSku.pop`
+  - Deleted or renamed method `ResourceSku.popitem`
+  - Deleted or renamed method `ResourceSku.properties`
+  - Deleted or renamed method `ResourceSku.setdefault`
+  - Deleted or renamed method `ResourceSku.system_data`
+  - Deleted or renamed method `ResourceSku.type`
+  - Deleted or renamed method `ResourceSku.update`
+  - Deleted or renamed method `ResourceSku.values`
+  - Method `ResourceSkuCapabilities.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuCapabilities.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuCapabilities.clear`
+  - Deleted or renamed method `ResourceSkuCapabilities.copy`
+  - Deleted or renamed method `ResourceSkuCapabilities.get`
+  - Deleted or renamed method `ResourceSkuCapabilities.items`
+  - Deleted or renamed method `ResourceSkuCapabilities.keys`
+  - Deleted or renamed method `ResourceSkuCapabilities.name`
+  - Deleted or renamed method `ResourceSkuCapabilities.pop`
+  - Deleted or renamed method `ResourceSkuCapabilities.popitem`
+  - Deleted or renamed method `ResourceSkuCapabilities.setdefault`
+  - Deleted or renamed method `ResourceSkuCapabilities.update`
+  - Deleted or renamed method `ResourceSkuCapabilities.value`
+  - Deleted or renamed method `ResourceSkuCapabilities.values`
+  - Method `ResourceSkuLocationInfo.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuLocationInfo.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuLocationInfo.clear`
+  - Deleted or renamed method `ResourceSkuLocationInfo.copy`
+  - Deleted or renamed method `ResourceSkuLocationInfo.get`
+  - Deleted or renamed method `ResourceSkuLocationInfo.items`
+  - Deleted or renamed method `ResourceSkuLocationInfo.keys`
+  - Deleted or renamed method `ResourceSkuLocationInfo.location`
+  - Deleted or renamed method `ResourceSkuLocationInfo.pop`
+  - Deleted or renamed method `ResourceSkuLocationInfo.popitem`
+  - Deleted or renamed method `ResourceSkuLocationInfo.setdefault`
+  - Deleted or renamed method `ResourceSkuLocationInfo.update`
+  - Deleted or renamed method `ResourceSkuLocationInfo.values`
+  - Deleted or renamed method `ResourceSkuLocationInfo.zone_details`
+  - Deleted or renamed method `ResourceSkuLocationInfo.zones`
+  - Method `ResourceSkuProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuProperties.capabilities`
+  - Deleted or renamed method `ResourceSkuProperties.clear`
+  - Deleted or renamed method `ResourceSkuProperties.copy`
+  - Deleted or renamed method `ResourceSkuProperties.family`
+  - Deleted or renamed method `ResourceSkuProperties.get`
+  - Deleted or renamed method `ResourceSkuProperties.items`
+  - Deleted or renamed method `ResourceSkuProperties.keys`
+  - Deleted or renamed method `ResourceSkuProperties.location_info`
+  - Deleted or renamed method `ResourceSkuProperties.locations`
+  - Deleted or renamed method `ResourceSkuProperties.pop`
+  - Deleted or renamed method `ResourceSkuProperties.popitem`
+  - Deleted or renamed method `ResourceSkuProperties.resource_type`
+  - Deleted or renamed method `ResourceSkuProperties.restrictions`
+  - Deleted or renamed method `ResourceSkuProperties.setdefault`
+  - Deleted or renamed method `ResourceSkuProperties.size`
+  - Deleted or renamed method `ResourceSkuProperties.tier`
+  - Deleted or renamed method `ResourceSkuProperties.update`
+  - Deleted or renamed method `ResourceSkuProperties.values`
+  - Method `ResourceSkuRestrictionInfo.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuRestrictionInfo.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.clear`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.copy`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.get`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.items`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.keys`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.locations`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.pop`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.popitem`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.setdefault`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.update`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.values`
+  - Deleted or renamed method `ResourceSkuRestrictionInfo.zones`
+  - Model `ResourceSkuRestrictions` deleted or renamed its instance variable `values_property`
+  - Method `ResourceSkuRestrictions.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuRestrictions.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuRestrictions.clear`
+  - Deleted or renamed method `ResourceSkuRestrictions.copy`
+  - Deleted or renamed method `ResourceSkuRestrictions.get`
+  - Deleted or renamed method `ResourceSkuRestrictions.items`
+  - Deleted or renamed method `ResourceSkuRestrictions.keys`
+  - Deleted or renamed method `ResourceSkuRestrictions.pop`
+  - Deleted or renamed method `ResourceSkuRestrictions.popitem`
+  - Deleted or renamed method `ResourceSkuRestrictions.reason_code`
+  - Deleted or renamed method `ResourceSkuRestrictions.restriction_info`
+  - Deleted or renamed method `ResourceSkuRestrictions.setdefault`
+  - Deleted or renamed method `ResourceSkuRestrictions.type`
+  - Deleted or renamed method `ResourceSkuRestrictions.update`
+  - Deleted or renamed method `ResourceSkuRestrictions.values`
+  - Deleted or renamed method `ResourceSkuRestrictions.values_property`
+  - Method `ResourceSkuZoneDetails.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ResourceSkuZoneDetails.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ResourceSkuZoneDetails.capabilities`
+  - Deleted or renamed method `ResourceSkuZoneDetails.clear`
+  - Deleted or renamed method `ResourceSkuZoneDetails.copy`
+  - Deleted or renamed method `ResourceSkuZoneDetails.get`
+  - Deleted or renamed method `ResourceSkuZoneDetails.items`
+  - Deleted or renamed method `ResourceSkuZoneDetails.keys`
+  - Deleted or renamed method `ResourceSkuZoneDetails.name`
+  - Deleted or renamed method `ResourceSkuZoneDetails.pop`
+  - Deleted or renamed method `ResourceSkuZoneDetails.popitem`
+  - Deleted or renamed method `ResourceSkuZoneDetails.setdefault`
+  - Deleted or renamed method `ResourceSkuZoneDetails.update`
+  - Deleted or renamed method `ResourceSkuZoneDetails.values`
+  - Method `SecretsManagementSettings.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `SecretsManagementSettings.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `SecretsManagementSettings.certificate_store_location`
+  - Deleted or renamed method `SecretsManagementSettings.clear`
+  - Deleted or renamed method `SecretsManagementSettings.copy`
+  - Deleted or renamed method `SecretsManagementSettings.get`
+  - Deleted or renamed method `SecretsManagementSettings.items`
+  - Deleted or renamed method `SecretsManagementSettings.key_exportable`
+  - Deleted or renamed method `SecretsManagementSettings.keys`
+  - Deleted or renamed method `SecretsManagementSettings.observed_certificates`
+  - Deleted or renamed method `SecretsManagementSettings.pop`
+  - Deleted or renamed method `SecretsManagementSettings.popitem`
+  - Deleted or renamed method `SecretsManagementSettings.setdefault`
+  - Deleted or renamed method `SecretsManagementSettings.update`
+  - Deleted or renamed method `SecretsManagementSettings.values`
+  - Method `Stateful.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Stateful.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Stateful.clear`
+  - Deleted or renamed method `Stateful.copy`
+  - Deleted or renamed method `Stateful.get`
+  - Deleted or renamed method `Stateful.grace_period_time_span`
+  - Deleted or renamed method `Stateful.items`
+  - Deleted or renamed method `Stateful.keys`
+  - Deleted or renamed method `Stateful.kind`
+  - Deleted or renamed method `Stateful.max_agent_lifetime`
+  - Deleted or renamed method `Stateful.pop`
+  - Deleted or renamed method `Stateful.popitem`
+  - Deleted or renamed method `Stateful.resource_predictions`
+  - Deleted or renamed method `Stateful.resource_predictions_profile`
+  - Deleted or renamed method `Stateful.setdefault`
+  - Deleted or renamed method `Stateful.update`
+  - Deleted or renamed method `Stateful.values`
+  - Method `StatelessAgentProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `StatelessAgentProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `StatelessAgentProfile.clear`
+  - Deleted or renamed method `StatelessAgentProfile.copy`
+  - Deleted or renamed method `StatelessAgentProfile.get`
+  - Deleted or renamed method `StatelessAgentProfile.items`
+  - Deleted or renamed method `StatelessAgentProfile.keys`
+  - Deleted or renamed method `StatelessAgentProfile.kind`
+  - Deleted or renamed method `StatelessAgentProfile.pop`
+  - Deleted or renamed method `StatelessAgentProfile.popitem`
+  - Deleted or renamed method `StatelessAgentProfile.resource_predictions`
+  - Deleted or renamed method `StatelessAgentProfile.resource_predictions_profile`
+  - Deleted or renamed method `StatelessAgentProfile.setdefault`
+  - Deleted or renamed method `StatelessAgentProfile.update`
+  - Deleted or renamed method `StatelessAgentProfile.values`
+  - Deleted or renamed enum value `StorageAccountType.PREMIUM_L_R_S`
+  - Deleted or renamed enum value `StorageAccountType.PREMIUM_Z_R_S`
+  - Deleted or renamed enum value `StorageAccountType.STANDARD_L_R_S`
+  - Deleted or renamed enum value `StorageAccountType.STANDARD_S_S_D_L_R_S`
+  - Deleted or renamed enum value `StorageAccountType.STANDARD_S_S_D_Z_R_S`
+  - Method `StorageProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `StorageProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `StorageProfile.clear`
+  - Deleted or renamed method `StorageProfile.copy`
+  - Deleted or renamed method `StorageProfile.data_disks`
+  - Deleted or renamed method `StorageProfile.get`
+  - Deleted or renamed method `StorageProfile.items`
+  - Deleted or renamed method `StorageProfile.keys`
+  - Deleted or renamed method `StorageProfile.os_disk_storage_account_type`
+  - Deleted or renamed method `StorageProfile.pop`
+  - Deleted or renamed method `StorageProfile.popitem`
+  - Deleted or renamed method `StorageProfile.setdefault`
+  - Deleted or renamed method `StorageProfile.update`
+  - Deleted or renamed method `StorageProfile.values`
+  - Method `SystemData.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `SystemData.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `SystemData.clear`
+  - Deleted or renamed method `SystemData.copy`
+  - Deleted or renamed method `SystemData.created_at`
+  - Deleted or renamed method `SystemData.created_by`
+  - Deleted or renamed method `SystemData.created_by_type`
+  - Deleted or renamed method `SystemData.get`
+  - Deleted or renamed method `SystemData.items`
+  - Deleted or renamed method `SystemData.keys`
+  - Deleted or renamed method `SystemData.last_modified_at`
+  - Deleted or renamed method `SystemData.last_modified_by`
+  - Deleted or renamed method `SystemData.last_modified_by_type`
+  - Deleted or renamed method `SystemData.pop`
+  - Deleted or renamed method `SystemData.popitem`
+  - Deleted or renamed method `SystemData.setdefault`
+  - Deleted or renamed method `SystemData.update`
+  - Deleted or renamed method `SystemData.values`
+  - Method `TrackedResource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `TrackedResource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `TrackedResource.clear`
+  - Deleted or renamed method `TrackedResource.copy`
+  - Deleted or renamed method `TrackedResource.get`
+  - Deleted or renamed method `TrackedResource.id`
+  - Deleted or renamed method `TrackedResource.items`
+  - Deleted or renamed method `TrackedResource.keys`
+  - Deleted or renamed method `TrackedResource.location`
+  - Deleted or renamed method `TrackedResource.name`
+  - Deleted or renamed method `TrackedResource.pop`
+  - Deleted or renamed method `TrackedResource.popitem`
+  - Deleted or renamed method `TrackedResource.setdefault`
+  - Deleted or renamed method `TrackedResource.system_data`
+  - Deleted or renamed method `TrackedResource.tags`
+  - Deleted or renamed method `TrackedResource.type`
+  - Deleted or renamed method `TrackedResource.update`
+  - Deleted or renamed method `TrackedResource.values`
+  - Method `UserAssignedIdentity.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `UserAssignedIdentity.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `UserAssignedIdentity.clear`
+  - Deleted or renamed method `UserAssignedIdentity.client_id`
+  - Deleted or renamed method `UserAssignedIdentity.copy`
+  - Deleted or renamed method `UserAssignedIdentity.get`
+  - Deleted or renamed method `UserAssignedIdentity.items`
+  - Deleted or renamed method `UserAssignedIdentity.keys`
+  - Deleted or renamed method `UserAssignedIdentity.pop`
+  - Deleted or renamed method `UserAssignedIdentity.popitem`
+  - Deleted or renamed method `UserAssignedIdentity.principal_id`
+  - Deleted or renamed method `UserAssignedIdentity.setdefault`
+  - Deleted or renamed method `UserAssignedIdentity.update`
+  - Deleted or renamed method `UserAssignedIdentity.values`
+  - Method `VmssFabricProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `VmssFabricProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `VmssFabricProfile.clear`
+  - Deleted or renamed method `VmssFabricProfile.copy`
+  - Deleted or renamed method `VmssFabricProfile.get`
+  - Deleted or renamed method `VmssFabricProfile.images`
+  - Deleted or renamed method `VmssFabricProfile.items`
+  - Deleted or renamed method `VmssFabricProfile.keys`
+  - Deleted or renamed method `VmssFabricProfile.kind`
+  - Deleted or renamed method `VmssFabricProfile.network_profile`
+  - Deleted or renamed method `VmssFabricProfile.os_profile`
+  - Deleted or renamed method `VmssFabricProfile.pop`
+  - Deleted or renamed method `VmssFabricProfile.popitem`
+  - Deleted or renamed method `VmssFabricProfile.setdefault`
+  - Deleted or renamed method `VmssFabricProfile.sku`
+  - Deleted or renamed method `VmssFabricProfile.storage_profile`
+  - Deleted or renamed method `VmssFabricProfile.update`
+  - Deleted or renamed method `VmssFabricProfile.values`
+  - Deleted or renamed model `QuotaProperties`
+  - Deleted or renamed model `ResourcePredictions`
+  - Deleted or renamed method `SubscriptionUsagesOperations.list_by_location`
+  - `AgentProfile.__init__` had all overloads removed
+  - `AutomaticResourcePredictionsProfile.__init__` had all overloads removed
+  - `AzureDevOpsOrganizationProfile.__init__` had all overloads removed
+  - `AzureDevOpsPermissionProfile.__init__` had all overloads removed
+  - `DataDisk.__init__` had all overloads removed
+  - `DevOpsAzureSku.__init__` had all overloads removed
+  - `ErrorResponse.__init__` had all overloads removed
+  - `FabricProfile.__init__` had all overloads removed
+  - `GitHubOrganization.__init__` had all overloads removed
+  - `GitHubOrganizationProfile.__init__` had all overloads removed
+  - `ImageVersion.__init__` had all overloads removed
+  - `ImageVersionProperties.__init__` had all overloads removed
+  - `ManagedServiceIdentity.__init__` had all overloads removed
+  - `ManualResourcePredictionsProfile.__init__` had all overloads removed
+  - `NetworkProfile.__init__` had all overloads removed
+  - `Operation.__init__` had all overloads removed
+  - `OperationDisplay.__init__` had all overloads removed
+  - `Organization.__init__` had all overloads removed
+  - `OrganizationProfile.__init__` had all overloads removed
+  - `OsProfile.__init__` had all overloads removed
+  - `Pool.__init__` had all overloads removed
+  - `PoolImage.__init__` had all overloads removed
+  - `PoolProperties.__init__` had all overloads removed
+  - `PoolUpdate.__init__` had all overloads removed
+  - `PoolUpdateProperties.__init__` had all overloads removed
+  - `Quota.__init__` had all overloads removed
+  - `QuotaName.__init__` had all overloads removed
+  - `ResourceDetailsObject.__init__` had all overloads removed
+  - `ResourceDetailsObjectProperties.__init__` had all overloads removed
+  - `ResourcePredictionsProfile.__init__` had all overloads removed
+  - `ResourceSku.__init__` had all overloads removed
+  - `ResourceSkuCapabilities.__init__` had all overloads removed
+  - `ResourceSkuLocationInfo.__init__` had all overloads removed
+  - `ResourceSkuProperties.__init__` had all overloads removed
+  - `ResourceSkuRestrictionInfo.__init__` had all overloads removed
+  - `ResourceSkuRestrictions.__init__` had all overloads removed
+  - `ResourceSkuZoneDetails.__init__` had all overloads removed
+  - `SecretsManagementSettings.__init__` had all overloads removed
+  - `Stateful.__init__` had all overloads removed
+  - `StatelessAgentProfile.__init__` had all overloads removed
+  - `StorageProfile.__init__` had all overloads removed
+  - `TrackedResource.__init__` had all overloads removed
+  - `UserAssignedIdentity.__init__` had all overloads removed
+  - `VmssFabricProfile.__init__` had all overloads removed
+  - `PoolsOperations.begin_create_or_update` had an overload `def begin_create_or_update(self: None, resource_group_name: str, pool_name: str, resource: JSON, content_type: str)` removed
+  - `PoolsOperations.begin_update` had an overload `def begin_update(self: None, resource_group_name: str, pool_name: str, properties: JSON, content_type: str)` removed
+
 ## 1.0.0b1 (2024-05-29)
 
 - Initial version
