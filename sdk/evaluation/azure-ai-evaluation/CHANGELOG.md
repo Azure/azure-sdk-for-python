@@ -1,5 +1,16 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+- Adding evaluator for multimodal use cases
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b4 (2024-10-16)
 
 ### Breaking Changes
