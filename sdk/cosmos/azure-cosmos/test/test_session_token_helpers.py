@@ -9,7 +9,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy
-from azure.cosmos._feed_range import FeedRangeEpk
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 
 COLLECTION = "created_collection"
@@ -90,7 +90,8 @@ class TestSessionTokenHelpers:
     TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     def test_get_session_token_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeInternalEpk(
+            Range("AA", "BB", True, False)).__str__()
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         session_token = "0:1#51#3=52"
@@ -99,7 +100,8 @@ class TestSessionTokenHelpers:
         assert session_token == "0:1#54#3=52"
 
     def test_many_session_tokens_update_same_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeInternalEpk(
+            Range("AA", "BB", True, False)).__str__()
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
@@ -111,15 +113,18 @@ class TestSessionTokenHelpers:
         assert updated_session_token == session_token
 
     def test_many_session_tokens_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeInternalEpk(
+            Range("AA", "BB", True, False)).__str__()
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             feed_ranges_and_session_tokens.append((feed_range, session_token))
 
         # adding irrelevant feed ranges
-        feed_range1 = FeedRangeEpk(Range("CC", "FF", True, False))
-        feed_range2 = FeedRangeEpk(Range("00", "55", True, False))
+        feed_range1 = FeedRangeInternalEpk(
+            Range("CC", "FF", True, False)).__str__()
+        feed_range2 = FeedRangeInternalEpk(
+            Range("00", "55", True, False)).__str__()
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             if i % 2 == 0:
@@ -136,24 +141,25 @@ class TestSessionTokenHelpers:
     def test_simulated_splits_merges(self, setup, split_ranges, target_feed_range, expected_session_token):
         actual_split_ranges = []
         for feed_range, session_token in split_ranges:
-            actual_split_ranges.append((FeedRangeEpk(Range(feed_range[0], feed_range[1],
-                                                True, False)), session_token))
-        target_feed_range = FeedRangeEpk(Range(target_feed_range[0], target_feed_range[1][1],
-                                               True, False))
+            actual_split_ranges.append((FeedRangeInternalEpk(Range(feed_range[0], feed_range[1],
+                                                True, False)).__str__(), session_token))
+        target_feed_range = FeedRangeInternalEpk(Range(target_feed_range[0], target_feed_range[1][1],
+                                               True, False)).__str__()
         updated_session_token = setup[COLLECTION].get_latest_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
     def test_invalid_feed_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeInternalEpk(
+            Range("AA", "BB", True, False)).__str__()
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
             setup["created_collection"].get_latest_session_token(feed_ranges_and_session_tokens,
-                                                                 FeedRangeEpk(Range(
+                                                                 FeedRangeInternalEpk(Range(
                                                                       "CC",
                                                                       "FF",
                                                                       True,
-                                                                      False)))
+                                                                      False)).__str__())
 
 if __name__ == '__main__':
     unittest.main()

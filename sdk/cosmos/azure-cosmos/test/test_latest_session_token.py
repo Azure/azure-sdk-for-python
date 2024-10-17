@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import base64
+import json
 import random
 import time
 import unittest
@@ -10,6 +11,7 @@ import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._session_token_helpers import is_compound_session_token, parse_session_token
 from azure.cosmos.http_constants import HttpHeaders
 
@@ -174,8 +176,14 @@ class TestLatestSessionToken(unittest.TestCase):
             session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
             pk = item['pk'] if not hpk else [item['state'], item['city'], item['zipcode']]
             pk_range = container.feed_range_from_partition_key(pk)
-            if (pk_range._feed_range_internal.get_normalized_range() ==
-                    target_pk_range._feed_range_internal.get_normalized_range()):
+            pk_feed_range_str = base64.b64decode(pk_range).decode('utf-8')
+            feed_range_json = json.loads(pk_feed_range_str)
+            pk_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+            target_feed_range_str = base64.b64decode(target_pk_range).decode('utf-8')
+            feed_range_json = json.loads(target_feed_range_str)
+            target_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+            if (pk_feed_range_epk.get_normalized_range() ==
+                    target_feed_range_epk.get_normalized_range()):
                 target_session_token = session_token
             previous_session_token = session_token
             feed_ranges_and_session_tokens.append((pk_range,
