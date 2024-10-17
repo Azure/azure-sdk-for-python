@@ -41,7 +41,7 @@ Studio.
   * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure OpenAI Studio.
   * The endpoint URL of your model, in the form `https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
-  * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs). At the time of writing, latest GA version was "2024-06-01".
+  * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions). At the time of writing, latest GA version was "2024-06-01".
 
 ### Install the package
 
@@ -60,10 +60,8 @@ pip install --upgrade azure-ai-inference
 If you want to install Azure AI Inferencing package with support for OpenTelemetry based tracing, use the following command:
 
 ```bash
-pip install azure-ai-inference[trace]
+pip install azure-ai-inference[opentelemetry]
 ```
-
-
 
 ## Key concepts
 
@@ -91,9 +89,8 @@ client = ChatCompletionsClient(
 # For Azure OpenAI endpoint
 client = ChatCompletionsClient(
     endpoint=endpoint,  # Of the form https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
-    credential=AzureKeyCredential(""),  # Pass in an empty value.
-    headers={"api-key": key},
-    api_version="2024-06-01",  # AOAI api-version. Update as needed.
+    credential=AzureKeyCredential(key),
+    api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 )
 ```
 
@@ -146,7 +143,7 @@ client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
     credential_scopes=["https://cognitiveservices.azure.com/.default"],
-    api_version="2024-06-01",  # AOAI api-version. Update as needed.
+    api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 )
 ```
 

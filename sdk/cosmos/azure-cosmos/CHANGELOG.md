@@ -4,11 +4,17 @@
 This version and all future versions will support Python 3.13.
 
 #### Features Added
+* Added response headers directly to SDK item point operation responses. See [PR 35791](https://github.com/Azure/azure-sdk-for-python/pull/35791).
 * SDK will now retry all ServiceRequestErrors (failing outgoing requests) before failing. Default number of retries is 3. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
 * Added Retry Policy for Container Recreate in the Python SDK. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 * Added option to disable write payload on writes. See [PR 37365](https://github.com/Azure/azure-sdk-for-python/pull/37365)
 * Added get feed ranges API. See [PR 37687](https://github.com/Azure/azure-sdk-for-python/pull/37687)
 * Added feed range support in `query_items_change_feed`. See [PR 37687](https://github.com/Azure/azure-sdk-for-python/pull/37687)
+
+#### Breaking Changes
+* Item-level point operations will now return `CosmosDict` and `CosmosList` response types. 
+Responses will still be able to be used directly as previously, but will now have access to their response headers without need for a response hook. See [PR 35791](https://github.com/Azure/azure-sdk-for-python/pull/35791).
+For more information on this, see our README section [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#using-item-operation-response-headers).
 
 #### Bugs Fixed
 * Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731).
