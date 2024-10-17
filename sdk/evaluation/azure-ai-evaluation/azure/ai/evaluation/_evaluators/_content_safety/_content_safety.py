@@ -23,8 +23,6 @@ class ContentSafetyEvaluator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
-    :return: A function that evaluates content-safety metrics for "question-answering" scenario.
-    :rtype: Callable
 
     **Usage**
 
@@ -61,7 +59,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
+    def __init__(self, credential, azure_ai_project, parallel: bool = True):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),

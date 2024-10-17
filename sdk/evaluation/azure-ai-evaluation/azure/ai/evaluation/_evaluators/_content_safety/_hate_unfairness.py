@@ -1,13 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Union
+
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
+class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
@@ -44,7 +46,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
     ):
         super().__init__(

@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import json
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
-import json
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
+from promptflow._sdk._errors import MissingAzurePackage
 from promptflow.client import PFClient
 from promptflow.entities import Run
-from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -23,11 +23,10 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
 )
-from .._model_configurations import AzureAIProject, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
-    EvaluateResult,
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
@@ -313,8 +312,8 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     if data is not None:
-        if not isinstance(data, str):
-            msg = "data parameter must be a string."
+        if not os.path.exists(data):
+            msg = "data must be a valid path pointing to a jsonl file"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -505,15 +504,15 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 # @log_evaluate_activity
 def evaluate(
     *,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
-):
+) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 
@@ -538,7 +537,7 @@ def evaluate(
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
     :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
-    :rtype: dict
+    :rtype: ~azure.ai.evaluation.EvaluationResult
 
     :Example:
 
@@ -635,12 +634,12 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
-) -> EvaluateResult:
+) -> EvaluationResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
 
     # Process evaluator config to replace ${target.} with ${data.}
@@ -674,7 +673,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
         )
 
-        raise EvaluationException(
+        raise EvaluationException(  # pylint: disable=raise-missing-from
             message=msg,
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.MISSING_PACKAGE,
@@ -809,7 +808,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         evaluation_name,
     )
 
-    result: EvaluateResult = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
+    result_df_dict = result_df.to_dict("records")
+    result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
     if output_path:
         _write_output(output_path, result)

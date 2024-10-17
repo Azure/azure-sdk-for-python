@@ -89,7 +89,7 @@ class RougeScoreEvaluator:
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The ROUGE score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return async_run_allowing_running_loop(
             self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs

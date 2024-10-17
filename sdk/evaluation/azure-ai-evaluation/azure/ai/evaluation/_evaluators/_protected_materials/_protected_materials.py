@@ -89,7 +89,7 @@ class ProtectedMaterialsEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict):
+    def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncProtectedMaterialsEvaluator(
             validate_azure_ai_project(azure_ai_project), cast(TokenCredential, credential)
         )

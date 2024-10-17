@@ -1,13 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Union
+
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class SelfHarmEvaluator(RaiServiceEvaluatorBase):
+class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
     Initialize a self harm evaluator for self harm score.
 
@@ -44,7 +46,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
     ):
         super().__init__(
