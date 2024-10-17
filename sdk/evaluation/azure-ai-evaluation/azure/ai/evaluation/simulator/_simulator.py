@@ -437,7 +437,7 @@ class Simulator:
                 if isinstance(query_responses, dict):
                     if len(query_responses.keys()) == 1:
                         return query_responses[list(query_responses.keys())[0]]
-                    return query_responses # type: ignore
+                    return query_responses  # type: ignore
                 if isinstance(query_responses, list):
                     return query_responses
             return json.loads(query_responses)
