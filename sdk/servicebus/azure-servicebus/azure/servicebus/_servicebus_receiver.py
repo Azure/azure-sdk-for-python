@@ -430,6 +430,7 @@ class ServiceBusReceiver(
                 else 0
             )
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
+
             while (
                 not received_messages_queue.empty() and len(batch) < max_message_count
             ):

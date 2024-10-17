@@ -132,7 +132,7 @@ def _generate_delete_blobs_options(
     for blob in blobs:
         if not isinstance(blob, str):
             blob_name = blob.get('name')
-            options = _generic_delete_blob_options(  # pylint: disable=protected-access
+            options = _generic_delete_blob_options(
                 snapshot=blob.get('snapshot'),
                 version_id=blob.get('version_id'),
                 delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
@@ -147,7 +147,7 @@ def _generate_delete_blobs_options(
             )
         else:
             blob_name = blob
-            options = _generic_delete_blob_options(  # pylint: disable=protected-access
+            options = _generic_delete_blob_options(
                 delete_snapshots=delete_snapshots,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -199,11 +199,11 @@ def _generate_set_tiers_subrequest_options(
         query_parameters['versionid'] = client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
     if timeout is not None:
         query_parameters['timeout'] = client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
-    query_parameters['comp'] = client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
+    query_parameters['comp'] = client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access
 
     # Construct headers
     header_parameters = {}
-    header_parameters['x-ms-access-tier'] = client._serialize.header("tier", tier, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
+    header_parameters['x-ms-access-tier'] = client._serialize.header("tier", tier, 'str')  # pylint: disable=protected-access
     if rehydrate_priority is not None:
         header_parameters['x-ms-rehydrate-priority'] = client._serialize.header(  # pylint: disable=protected-access
             "rehydrate_priority", rehydrate_priority, 'str')

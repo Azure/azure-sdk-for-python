@@ -30,13 +30,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.database_accounts.get_read_only_keys(
+    response = client.database_accounts.list_read_only_keys(
         resource_group_name="rg1",
         account_name="ddb1",
     )
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDatabaseAccountListReadOnlyKeys.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBDatabaseAccountListReadOnlyKeys.json
 if __name__ == "__main__":
     main()

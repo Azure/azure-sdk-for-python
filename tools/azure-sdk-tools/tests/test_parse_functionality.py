@@ -6,7 +6,10 @@ from unittest.mock import patch
 import pytest
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-test_folder = os.path.join(os.path.dirname(__file__), )
+test_folder = os.path.join(
+    os.path.dirname(__file__),
+)
+
 
 def test_parse_require():
     test_scenarios = [
@@ -19,17 +22,16 @@ def test_parse_require():
         ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
         ("azure-core[aio]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
         ("azure-core[aio,cool_extra]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
-        ("azure-core[]", "azure-core", None)
+        ("azure-core[]", "azure-core", None),
     ]
 
     for scenario in test_scenarios:
         result = parse_require(scenario[0])
-        assert result[0] is not None
+        assert result.key is not None
         if scenario[2] is not None:
-            assert result[1] is not None
-            assert isinstance(result[1], SpecifierSet)
-        assert result[0] == scenario[1]
-        assert result[1] == scenario[2]
+            assert len(result.specifier) != 0
+        assert result.key == scenario[1]
+        assert str(result.specifier) == (scenario[2] or "")
 
 
 def test_parse_require_with_no_spec():
@@ -38,8 +40,8 @@ def test_parse_require_with_no_spec():
     for scenario in spec_scenarios:
         result = parse_require(scenario)
 
-        assert result[0] == scenario.replace("_", "-")
-        assert result[1] is None
+        assert result.key == scenario.replace("_", "-")
+        assert len(result.specifier) == 0
 
 
 @patch("ci_tools.parsing.parse_functions.read_setup_py_content")
@@ -112,7 +114,6 @@ setup(
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     assert result.is_new_sdk == True
     assert result.setup_filename == os.path.join(package_root, "setup.py")
-    assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
     assert result.folder == package_root
@@ -121,6 +122,7 @@ setup(
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
     assert result.keywords[0] == "azure sdk"
     assert len(result.keywords) == 2
+
 
 @patch("ci_tools.parsing.parse_functions.read_setup_py_content")
 def test_parse_recognizes_extensions(test_patch):
@@ -192,7 +194,6 @@ setup(
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     # todo resolve this conflict assert result.is_new_sdk == True
     assert result.setup_filename == os.path.join(package_root, "setup.py")
-    assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
     assert result.folder == package_root

@@ -1,9 +1,19 @@
 # Release History
 
-## 12.17.0 (Unreleased)
+## 12.18.0 (Unreleased)
 
 ### Features Added
 
+## 12.18.0b1 (2024-10-10)
+
+### Features Added
+- Added support for service version 2025-01-05.
+- Added support for `get_paths()` on `DataLakeDirectoryClient`.
+
+## 12.17.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.17.0b1
 
 ## 12.17.0b1 (2024-08-07)
 
