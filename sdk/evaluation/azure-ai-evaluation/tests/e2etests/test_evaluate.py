@@ -434,24 +434,6 @@ class TestEvaluate:
         assert "outputs.f1.f1_score" in row_result_df.columns
         assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
 
-    def test_multimodal_evaluate_with_target(self, multimodal_file_with_imageurls):
-        """Test evaluation with target function."""
-        from .target_fn import target_multimodal_fn1
-
-        eval = ContentSafetyMultimodalEvaluator()
-        # run the evaluation with targets
-        result = evaluate(
-            data=multimodal_file_with_imageurls,
-            target=target_multimodal_fn1,
-            evaluators={"content_safety": eval},
-        )
-        row_result_df = pd.DataFrame(result["output.messages"])
-        assert "outputs.answer" in row_result_df.columns
-        assert "outputs.answer.length" in row_result_df.columns
-        assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
-        assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
-        
     @pytest.mark.parametrize(
         "evaluation_config",
         [

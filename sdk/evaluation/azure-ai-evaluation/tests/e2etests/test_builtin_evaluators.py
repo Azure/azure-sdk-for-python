@@ -40,7 +40,8 @@ from azure.ai.evaluation import (
     SexualMultimodalEvaluator,
     HateUnfairnessMultimodalEvaluator,
     SelfHarmMultimodalEvaluator,
-    ViolenceMultimodalEvaluator
+    ViolenceMultimodalEvaluator,
+    ProtectedMaterialMultimodalEvaluator
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -711,9 +712,9 @@ class TestBuiltInEvaluators:
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
         assert score["sexual_reason"], "sexual_reason must not be None or empty."
-        # assert score["self_harm"] == "Very low"
-        # assert score["self_harm_score"] < 1.0
-        # assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
@@ -749,9 +750,9 @@ class TestBuiltInEvaluators:
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
         assert score["sexual_reason"], "sexual_reason must not be None or empty."
-        # assert score["self_harm"] == "Very low"
-        # assert score["self_harm_score"] < 1.0
-        # assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
@@ -760,7 +761,7 @@ class TestBuiltInEvaluators:
         evaluator = ViolenceMultimodalEvaluator(
             project_scope, credential=azure_cred
         )
-        conversation = [
+        messages = [
             {
                 "role": "system",
                 "content": [
@@ -776,7 +777,7 @@ class TestBuiltInEvaluators:
             },
         ]
         
-        score = evaluator(messages=conversation)
+        score = evaluator(messages=messages)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -814,7 +815,7 @@ class TestBuiltInEvaluators:
         evaluator = HateUnfairnessMultimodalEvaluator(
             project_scope, credential=azure_cred
         )
-        conversation = [
+        messages = [
             {
                 "role": "system",
                 "content": [
@@ -830,7 +831,7 @@ class TestBuiltInEvaluators:
             },
         ]
         
-        score = evaluator(messages=conversation)
+        score = evaluator(messages=messages)
         
         assert score is not None
         assert score["hate_unfairness"] == "Very low"
@@ -841,7 +842,7 @@ class TestBuiltInEvaluators:
         evaluator = SelfHarmMultimodalEvaluator(
             project_scope, credential=azure_cred
         )
-        conversation = [
+        messages = [
             {
                 "role": "system",
                 "content": [
@@ -857,9 +858,36 @@ class TestBuiltInEvaluators:
             },
         ]
         
-        score = evaluator(messages=conversation)
+        score = evaluator(messages=messages)
         
         assert score is not None
         assert score["self_harm"] == "Very low"
         assert score["self_harm_score"] < 1.0
         assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        
+    def test_multimodal_evaluator_protected_material_json(self, project_scope, azure_cred):
+        evaluator = ProtectedMaterialMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Can you describe this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                ],
+            },
+        ]
+        
+        score = evaluator(messages=messages)
+        
+        assert score is not None
+        assert score["protected_material"] == "Very low"
+        assert score["protected_material_score"] < 1.0
+        assert score["protected_material_reason"], "protected_material_reason must not be None or empty."

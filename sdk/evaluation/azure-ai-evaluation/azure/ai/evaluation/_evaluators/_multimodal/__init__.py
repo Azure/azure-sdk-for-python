@@ -7,6 +7,8 @@ from ._hate_unfairness import HateUnfairnessMultimodalEvaluator
 from ._self_harm import SelfHarmMultimodalEvaluator
 from ._sexual import SexualMultimodalEvaluator
 from ._violence import ViolenceMultimodalEvaluator
+from ._protected_material import ProtectedMaterialMultimodalEvaluator
+
 __all__ = [
     "ContentSafetyMultimodalEvaluator",
     "ContentSafetyMultimodalEvaluatorBase",
@@ -14,4 +16,5 @@ __all__ = [
     "SexualMultimodalEvaluator",
     "SelfHarmMultimodalEvaluator",
     "HateUnfairnessMultimodalEvaluator",
+    "ProtectedMaterialMultimodalEvaluator",
 ]

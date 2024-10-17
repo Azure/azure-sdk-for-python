@@ -19,6 +19,7 @@ from ._evaluators._multimodal._content_safety_multimodal import (
     SexualMultimodalEvaluator,
     ViolenceMultimodalEvaluator,
 )
+from ._evaluators._multimodal._protected_material import ProtectedMaterialMultimodalEvaluator
 from ._evaluators._f1_score import F1ScoreEvaluator
 from ._evaluators._fluency import FluencyEvaluator
 from ._evaluators._gleu import GleuScoreEvaluator
@@ -69,4 +70,5 @@ __all__ = [
     "SelfHarmMultimodalEvaluator",
     "SexualMultimodalEvaluator",
     "ViolenceMultimodalEvaluator",
+    "ProtectedMaterialMultimodalEvaluator"
 ]
