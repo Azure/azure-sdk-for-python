@@ -123,15 +123,12 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
-        content_location_url = urlparse(content_location)
-        host_url = urlparse(TestGlobalDB.host)
-
-        # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client instance
-        self.assertEqual(str(content_location_url.hostname), str(host_url.hostname))
-        self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDB.host)
+        # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client
+        # instance
+        assert client.client_connection.ReadEndpoint == TestGlobalDB.host
 
         connection_policy.EnableEndpointDiscovery = True
         document_definition['id'] = 'doc2'
@@ -150,16 +147,16 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        container.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(TestGlobalDB.write_location_host)
 
         # If no preferred locations is set, we return the write endpoint as ReadEndpoint for better latency performance
         if is_not_default_host(TestGlobalDB.write_location_host):
-            self.assertEqual(str(content_location_url.hostname), str(write_location_url.hostname))
-            self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDB.write_location_host)
+            assert str(content_location_url.hostname) == str(write_location_url.hostname)
+            assert client.client_connection.ReadEndpoint == TestGlobalDB.write_location_host
 
     def test_global_db_endpoint_discovery(self):
         connection_policy = documents.ConnectionPolicy()
@@ -223,8 +220,8 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        item = container.read_item(item=created_document, partition_key=created_document['pk'])
-        content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
         write_location_url = urlparse(self.write_location_host)
@@ -249,8 +246,8 @@ class TestGlobalDB(unittest.TestCase):
             # Delay to get these resources replicated to read location due to Eventual consistency
             time.sleep(5)
 
-            container.read_item(item=created_document, partition_key=created_document['pk'])
-            content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
+            read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+            content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
             content_location_url = urlparse(content_location)
             read_location2_url = urlparse(self.read_location2_host)
