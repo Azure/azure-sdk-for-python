@@ -1,17 +1,5 @@
 # Release History
 
-
-## 1.0.0b5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-- Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
-
 ## 1.0.0b4 (2024-10-16)
 
 ### Breaking Changes
