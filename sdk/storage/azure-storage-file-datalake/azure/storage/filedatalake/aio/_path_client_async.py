@@ -129,8 +129,6 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
             service='dfs',
             credential=self._raw_credential,
             _hosts=datalake_hosts,
-            file_system_name=file_system_name,
-            file_path=path_name,
             **kwargs
         )
 
