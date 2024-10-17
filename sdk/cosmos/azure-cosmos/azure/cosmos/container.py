@@ -38,9 +38,9 @@ from ._base import (
     GenerateGuidId,
     _set_properties_cache
 )
+from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
-from ._feed_range import FeedRange, FeedRangeEpk
 from ._routing.routing_range import Range
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
@@ -354,7 +354,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items_change_feed(
             self,
             *,
-            feed_range: FeedRange,
+            feed_range: str,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -363,8 +363,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword feed_range: The feed range that is used to define the scope.
-        :type feed_range: ~azure.cosmos.FeedRange
+        :keyword str feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -441,8 +440,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
-        :keyword feed_range: The feed range that is used to define the scope.
-        :type feed_range: ~azure.cosmos.FeedRange
+        :keyword str feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
         :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
@@ -528,8 +526,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
-            feed_range: FeedRangeEpk = kwargs.pop('feed_range')
-            change_feed_state_context["feedRange"] = feed_range._feed_range_internal
+            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -1368,7 +1365,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *,
             force_refresh: Optional[bool] = False,
-            **kwargs: Any) -> List[FeedRange]:
+            **kwargs: Any) -> List[str]:
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
@@ -1387,5 +1384,5 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+        return [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).__str__()
                 for partitionKeyRange in partition_key_ranges]

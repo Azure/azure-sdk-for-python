@@ -164,5 +164,4 @@ __all__ = [
     "SplitMode",
     "StringIndexType",
 ]
-
 _patch_sdk()
