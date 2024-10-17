@@ -178,8 +178,10 @@ class EventHubConsumerClient(
             network_tracing=network_tracing,
             **kwargs
         )
+        # remove port (if present) from auth_uri
+        auth_uri_hostname = self._address.hostname.split(":")[0]
         # consumer auth URI additionally includes consumer group
-        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}/consumergroups/{self._consumer_group}"
+        self._auth_uri = f"sb://{auth_uri_hostname}{self._address.path}/consumergroups/{self._consumer_group}"
         self._lock = threading.Lock()
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 

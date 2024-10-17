@@ -74,7 +74,9 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin:
     def _create_attribute(self, **kwargs):
-        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
+        # remove port (if present) from auth_uri
+        auth_uri_hostname = self.fully_qualified_namespace.split(":")[0]
+        self._auth_uri = f"sb://{auth_uri_hostname}/{self._entity_name}"
         self._entity_uri = f"amqps://{self.fully_qualified_namespace}/{self._entity_name}"
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
