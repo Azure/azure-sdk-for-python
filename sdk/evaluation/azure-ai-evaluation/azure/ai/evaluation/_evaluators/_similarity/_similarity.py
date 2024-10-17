@@ -5,13 +5,11 @@
 import math
 import os
 import re
-from typing import Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
@@ -27,9 +25,9 @@ class _AsyncSimilarityEvaluator:
     _LLM_CALL_TIMEOUT = 600
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
+    def __init__(self, model_config: dict):
         prompty_model_config = construct_prompty_model_config(
-            model_config,
+            validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
@@ -108,7 +106,7 @@ class SimilarityEvaluator:
     """
 
     def __init__(self, model_config):
-        self._async_evaluator = _AsyncSimilarityEvaluator(validate_model_config(model_config))
+        self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """
