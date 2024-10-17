@@ -16,6 +16,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
         ~azure.ai.evalation.OpenAIModelConfiguration]
+    :keyword passing_grade: The minimum score required to pass the evaluation. Optional.
+    :paramtype passing_grade: Optional[float]
 
     **Usage**
 
@@ -40,10 +42,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_groundedness"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: dict, *, passing_grade: Optional[float] = None):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        self.passing_grade = passing_grade
 
     @override
     def __call__(
@@ -69,4 +72,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Dict[str, float]
         """
-        return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+        result = super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+
+        if self.passing_grade:
+            groundedness_label = float(result.get(self.RESULT_KEY)) >= self.passing_grade
+            result.update({f"{self.RESULT_KEY}_label": groundedness_label})
+        return result
