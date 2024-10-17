@@ -15,6 +15,7 @@ from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -296,11 +297,11 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    if not isinstance(data, str):
-        msg = "The 'data' parameter must be a string."
+    if not (isinstance(data, str) or isinstance(data, os.PathLike)):
+        msg = "The 'data' parameter must be a string or a path-like object."
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,
@@ -331,7 +332,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
     if not isinstance(evaluators, dict):
@@ -344,7 +345,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         )
 
     if output_path is not None:
-        if not isinstance(output_path, str):
+        if not (isinstance(output_path, str) or isinstance(output_path, os.PathLike)):
             msg = "The 'output_path' parameter must be a string or a path-like object."
             raise EvaluationException(
                 message=msg,
@@ -352,8 +353,10 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
-        if not os.path.exists(output_path):
-            msg = f"The output file path '{data}' does not exist."
+
+        output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
+        if not os.path.exists(output_dir):
+            msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
                 message=msg,
                 target=ErrorTarget.EVALUATE,
@@ -362,14 +365,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     if azure_ai_project is not None:
-        if not isinstance(azure_ai_project, dict):
-            msg = "The 'azure_ai_project' parameter must be a dictionary."
-            raise EvaluationException(
-                message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+        validate_azure_ai_project(azure_ai_project)
 
     if evaluation_name is not None:
         if not isinstance(evaluation_name, str) or not evaluation_name.strip():

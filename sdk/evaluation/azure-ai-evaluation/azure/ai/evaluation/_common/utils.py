@@ -122,24 +122,20 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
 
     if not isinstance(o, dict):
-        msg = "azure_ai_project must be a dictionary"
+        msg = "The 'azure_ai_project' parameter must be a dictionary."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
     missing_fields = set(fields.keys()) - o.keys()
 
     if missing_fields:
-        msg = "azure_ai_project must contain keys: " + ", ".join(f'"{field}"' for field in missing_fields)
+        msg = f"The 'azure_ai_project' dictionary is missing the following required field(s): {', '.join(f'{field}' for field in missing_fields)}. Please ensure all required fields are provided."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
@@ -147,13 +143,10 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
         if isinstance(o[field_name], expected_type):
             continue
 
-        msg = f"Expected azure_ai_project field {field_name!r} to be of type {expected_type}."
-
+        msg = f"Invalid type for field '{field_name}'. Expected {expected_type}, but got {type(o[field_name])}."
         raise EvaluationException(
-            message=f"{msg}. Got {type(o[field_name])}.",
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            message=msg,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 

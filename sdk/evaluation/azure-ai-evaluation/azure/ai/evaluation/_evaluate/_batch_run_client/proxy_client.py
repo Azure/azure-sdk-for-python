@@ -37,7 +37,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs
     ) -> ProxyRun:
         flow_to_run = flow
-        if hasattr(flow, "_to_async"):
+        if os.getenv("PF_EVALS_BATCH_USE_ASYNC", "true").lower() == "true" and hasattr(flow, "_to_async"):
             flow_to_run = flow._to_async()  # pylint: disable=protected-access
 
         batch_use_async = self._should_batch_use_async(flow_to_run)

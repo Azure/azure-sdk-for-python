@@ -220,8 +220,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Check that both conversation and other inputs aren't set
         if conversation is not None and any(singletons.values()):
             raise EvaluationException(
-                message="Invalid input",
-                internal_message=f"Both conversation and individual inputs were provided to {type(self).__name__}",
+                message=f"{type(self).__name__}: Cannot provide both 'conversation' and individual inputs at the same time.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
@@ -234,8 +233,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             return [singletons]  # TODO loosen requirements to allow for optional singletons?
         # Missing input
         raise EvaluationException(
-            message="Missing input",
-            internal_message=f"Neither conversation nor individual inputs provided to {type(self).__name__}.",
+            message=f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided.",
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.CONVERSATION,
