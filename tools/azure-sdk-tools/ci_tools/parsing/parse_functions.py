@@ -459,10 +459,11 @@ def parse_setup(
         <ext_modules>
     )
     """
-    resolved_filename = None
-    if not os.path.isfile(setup_filename_or_folder):
-        resolved_filename = get_pyproject(setup_filename_or_folder) or get_setup_py(setup_filename_or_folder)
+    targeted_path = setup_filename_or_folder
+    if os.path.isfile(setup_filename_or_folder):
+        targeted_path = os.path.dirname(setup_filename_or_folder)
 
+    resolved_filename = get_pyproject(targeted_path) or get_setup_py(targeted_path)
     if not resolved_filename:
         raise ValueError(f"Unable to find a setup.py or pyproject.toml in {setup_filename_or_folder}")
 
