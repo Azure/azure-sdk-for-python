@@ -30,6 +30,8 @@ from ._models import (
     ToolResources,
     FileSearchToolDefinition,
     FileSearchToolResource,
+    BingSearchToolDefinition,
+    ConnectionListResource,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
@@ -291,6 +293,38 @@ class AsyncFunctionTool(FunctionTool):
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
 
+
+class BingSearchTool(Tool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    def __init__(self):
+        self.connection_ids = []
+
+    def add_connection(self, connection_id: str):
+        """
+        Add a connection ID to the list of connections used to search.
+        """
+        # TODO
+        self.connection_ids.append(connection_id)
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Bing search tool definitions.
+        """
+        return [BingSearchToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the file search resources.
+        """
+        return ToolResources(bing_search=ConnectionListResource(connection_list=self.connection_ids))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
 
 class FileSearchTool(Tool):
     """
@@ -895,6 +929,7 @@ __all__: List[str] = [
     "AsyncToolSet",
     "CodeInterpreterTool",
     "FileSearchTool",
+    "BingSearchTool",
     "FunctionTool",
     "SASTokenCredential",
     "Tool",
