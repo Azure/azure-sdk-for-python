@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
-
-### Features Added
+## 1.0.0b4 (2024-10-16)
 
 ### Breaking Changes
 
@@ -12,9 +10,11 @@
 
 ### Bugs Fixed
 - Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrive RAI Service response.
+- Fixed an issue where the Evaluate API did not fail due to missing inputs when the target did not return columns required by the evaluators.
 
 ### Other Changes
 - Enhance the error message to provide clearer instruction when required packages for the remote tracking feature are missing.
+- Print the per-evaluator run summary at the end of the Evaluate API call to make troubleshooting row-level failures easier.
 
 ## 1.0.0b3 (2024-10-01)
 

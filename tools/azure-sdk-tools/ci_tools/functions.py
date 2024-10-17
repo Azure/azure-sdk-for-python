@@ -50,6 +50,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-file-datalake": "pypy",
     "azure-storage-file-share": "pypy",
     "azure-eventhub": "pypy",
+    "azure-servicebus": "pypy",
 }
 
 omit_regression = (
