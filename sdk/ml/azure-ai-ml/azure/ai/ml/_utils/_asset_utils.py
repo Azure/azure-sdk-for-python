@@ -966,20 +966,26 @@ def _archive_or_restore(
             )
         )
         container_resource.properties.is_archived = is_archived
-        (  # pylint: disable=expression-not-assigned
+        from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._model_containers_operations import ModelContainersOperations
+        if registry_name and type(container_operation) is ModelContainersOperations:
+            container_operation.begin_create_or_update(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=container_resource,
+            )
+        elif registry_name:
             container_operation.create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=container_resource,
             )
-            if registry_name
-            else container_operation.create_or_update(
-                name=name,
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-                body=container_resource,
-            )
+        else: container_operation.create_or_update(
+            name=name,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            body=container_resource,
         )
 
 
