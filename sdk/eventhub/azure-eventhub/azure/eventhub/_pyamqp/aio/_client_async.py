@@ -15,7 +15,6 @@ from typing_extensions import Literal
 import certifi
 
 from ._sender_async import SenderLink
-from ._receiver_async import ReceiverLink
 from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation

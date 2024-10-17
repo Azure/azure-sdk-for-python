@@ -20,7 +20,6 @@ import certifi
 from typing_extensions import Literal
 
 from .sender import SenderLink
-from .receiver import ReceiverLink
 
 from ._connection import Connection
 from .message import _MessageDelivery, Message
