@@ -202,7 +202,8 @@ The following section provides several code snippets covering some of the most c
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
-* [Add-on capabilities](#add-on-capabilities "Add-on Capabilities")
+* [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
+* [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
 
 ### Extract Layout
 
@@ -895,6 +896,42 @@ The following add-on capabilities are available in this SDK:
 - [query fields][query_fields_sample]
 
 Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
+
+### Get Raw JSON Result
+Use the `send_request` method to send custom HTTP requests and get raw JSON result from HTTP responses.
+
+<!-- SNIPPET:sample_send_request.send_request -->
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.rest import HttpRequest
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+client = DocumentIntelligenceAdministrationClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
+
+with client:
+    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+    # Now let's use the `send_request` method to make a resource details fetching request.
+    # The URL of the request should be absolute, and append the API version used for the request.
+    request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-07-31-preview")
+    response = client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(
+        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+    )
+```
+
+<!-- END SNIPPET -->
+
 
 ## Troubleshooting
 
