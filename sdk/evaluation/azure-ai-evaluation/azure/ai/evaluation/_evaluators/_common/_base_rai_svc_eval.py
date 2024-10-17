@@ -48,24 +48,24 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        messages: Optional[dict] = None,
         **kwargs,
     ):
-        """Evaluate either a query and response or a conversation. Must supply either a query AND response,
-        or a conversation, but not both.
+        """Evaluate either a query and response or a messages. Must supply either a query AND response,
+        or a messages, but not both.
 
         :keyword query: The query to evaluate.
         :paramtype query: Optional[str]
         :keyword response: The response to evaluate.
         :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+        :keyword messages: The list of messages (aka conversation) to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[Dict]
+        :paramtype messages: Optional[Dict]
         :return: The evaluation result.
         :rtype: Dict[str, Union[str, float]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(query=query, response=response, messages=messages, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:

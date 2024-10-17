@@ -51,23 +51,23 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        messages: Optional[dict] = None,
         **kwargs,
     ):
         """
         Evaluate fluency. Accepts either a query and response for a single evaluation,
-        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        or a messages for a multi-turn evaluation. If the messages or conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+        :keyword messages: The list of messages (aka conversation). Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[Dict]
+        :paramtype messages: Optional[Dict]
         :return: The fluency score.
         :rtype: Dict[str, float]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(query=query, response=response, messages=messages, **kwargs)

@@ -30,7 +30,7 @@ def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> 
             message=msg,
             internal_message=msg,
             error_category=ErrorCategory.INVALID_VALUE,
-            error_target=ErrorTarget.CONVERSATION,
+            error_target=ErrorTarget.MESSAGES,
             error_blame=ErrorBlame.USER_ERROR,
         )
 
