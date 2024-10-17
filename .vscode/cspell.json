@@ -963,9 +963,7 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte",
-        "myalias",
-        "mydomain"
+        "Thawte"
       ]
     },
     {
