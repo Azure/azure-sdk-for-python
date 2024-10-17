@@ -1720,7 +1720,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         sleep_interval: float = 1,
         **kwargs: Any,
     ) -> _models.VectorStore:
-        """Creates a vector store.
+        """Creates a vector store and poll.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -1771,6 +1771,118 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return vector_store
 
+    @overload
+    def create_vector_store_file_batch_and_poll(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        *,
+        file_ids: List[str],
+        content_type: str = "application/json",
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword file_ids: List of file identifiers. Required.
+        :paramtype file_ids: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_file_batch_and_poll(
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = None,
+        *,
+        file_ids: List[str] = _Unset,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_ids: List of file identifiers. Required.
+        :paramtype file_ids: list[str]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+        if body is None:
+            vector_store_file_batch = super().create_vector_store_file_batch(vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs)
+        else:
+            content_type = kwargs.get("content_type", "application/json")            
+            vector_store_file_batch = super().create_vector_store_file_batch(body=body, content_type=content_type, **kwargs)
+            
+        while vector_store_file_batch.status == "in_progress":
+            time.sleep(sleep_interval)
+            vector_store_file_batch = super().get_vector_store_file_batch(vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id)
+            
+        return vector_store_file_batch
+    
 
 __all__: List[str] = [
     "AgentsOperations",
