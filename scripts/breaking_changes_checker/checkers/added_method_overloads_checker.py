@@ -22,6 +22,7 @@ class AddedMethodOverloadChecker:
     is_breaking = False
     message = {
         "default": "Method `{}.{}` has a new overload `{}`",
+        "changed_signature": "Method `{}.{}` overload signature changed from `{}` to `{}`",
     }
 
     def run_check(self, diff, stable_nodes, current_nodes, **kwargs):
@@ -40,12 +41,15 @@ class AddedMethodOverloadChecker:
                             changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
                 elif isinstance(overload, int):
                     current_node_overload = current_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"][overload]
-                    parsed_overload_signature = f"def {method_name}(" + ", ".join([f"{name}: {data['type']}" for name,  data in current_node_overload["parameters"].items()]) + ")"
-                    if current_node_overload["return_type"] is not None:
-                        parsed_overload_signature += f" -> {current_node_overload['return_type']}"
+                    parsed_overload_signature = parse_overload_signature(method_name, current_node_overload)
                     changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
                 else:
+                    # if the overload is an int, the signature has changed
+                    if isinstance(overload, int):
+                        stable_overload = parse_overload_signature(method_name, stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"][overload])
+                        current_overload = parse_overload_signature(method_name, current_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"][overload])
+                        changes_list.append((self.message["changed_signature"], self.name, module_name, class_name, method_name, stable_overload, current_overload))
+                        continue
                     # this case is for when the overload is not a symbol and simply shows as a new overload in the diff
-                    parsed_overload_signature = parse_overload_signature(method_name, overload)
-                    changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
+                    changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parse_overload_signature(method_name, overload)))
         return changes_list
