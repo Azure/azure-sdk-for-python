@@ -219,8 +219,8 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     if data is not None:
-        if not isinstance(data, str):
-            msg = "data parameter must be a string."
+        if not os.path.exists(data):
+            msg = "data must be a valid path pointing to a jsonl file"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -455,13 +455,13 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 # @log_evaluate_activity
 def evaluate(
     *,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -585,10 +585,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
 ) -> EvaluationResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
