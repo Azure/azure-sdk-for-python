@@ -1469,11 +1469,11 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace
     def upload_file(
         self,
-        body: Union[JSON, None] = None,
+        body: Optional[JSON] = None,
         *,
-        file: Union[FileType, None] = None,
+        file: Optional[FileType] = None,
         file_path: Optional[str] = None,
-        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.OpenAIFile:
@@ -1582,11 +1582,11 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace
     def upload_file_and_poll(
         self,
-        body: Union[JSON, None] = None,
+        body: Optional[JSON] = None,
         *,
-        file: Union[FileType, None] = None,
+        file: Optional[FileType] = None,
         file_path: Optional[str] = None,
-        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
