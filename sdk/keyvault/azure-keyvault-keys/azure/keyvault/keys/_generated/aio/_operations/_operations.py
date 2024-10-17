@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -55,16 +54,11 @@ from ..._operations._operations import (
 )
 from .._vendor import KeyVaultClientMixinABC
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=too-many-public-methods
-
     @overload
     async def create_key(
         self,
@@ -89,12 +83,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Required.
         :type key_name: str
         :param parameters: The parameters to create a key. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyCreateParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -127,7 +121,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -154,12 +148,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_name: str
         :param parameters: The parameters to create a key. Is either a KeyCreateParameters type or a
          IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyCreateParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyCreateParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -230,10 +227,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          specified key. Required.
         :type key_name: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -302,12 +299,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          identifiable or sensitive information. Required.
         :type key_name: str
         :param parameters: The parameters to import a key. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyImportParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyImportParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -340,7 +337,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -367,12 +364,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_name: str
         :param parameters: The parameters to import a key. Is either a KeyImportParameters type or a
          IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyImportParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyImportParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -443,10 +443,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the key to delete. Required.
         :type key_name: str
         :return: DeletedKeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedKeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,12 +516,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key to update. Required.
         :type key_version: str
         :param parameters: The parameters of the key to update. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyUpdateParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -555,7 +555,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -583,12 +583,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters of the key to update. Is either a KeyUpdateParameters type or
          a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyUpdateParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyUpdateParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -662,10 +665,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Required.
         :type key_version: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -728,7 +731,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of KeyItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.KeyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.KeyItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -736,7 +739,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         cls: ClsType[_models._models.KeyListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -825,7 +828,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of KeyItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.KeyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.KeyItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -833,7 +836,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         cls: ClsType[_models._models.KeyListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -925,10 +928,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the key. Required.
         :type key_name: str
         :return: BackupKeyResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.BackupKeyResult
+        :rtype: ~azure.keyvault.v7_5.models.BackupKeyResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -998,12 +1001,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param parameters: The parameters to restore the key. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyRestoreParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1032,7 +1035,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1057,12 +1060,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param parameters: The parameters to restore the key. Is either a KeyRestoreParameters type or
          a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyRestoreParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyRestoreParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1147,12 +1153,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for the encryption operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1190,7 +1196,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1222,12 +1228,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for the encryption operation. Is either a
          KeyOperationsParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1315,12 +1324,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for the decryption operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1359,7 +1368,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1392,12 +1401,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for the decryption operation. Is either a
          KeyOperationsParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1479,12 +1491,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for the signing operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeySignParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeySignParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1517,7 +1529,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1544,12 +1556,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for the signing operation. Is either a KeySignParameters type
          or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeySignParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeySignParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1633,12 +1648,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for verify operations. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyVerifyParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyVerifyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyVerifyResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyVerifyResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1673,7 +1688,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyVerifyResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyVerifyResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1702,12 +1717,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for verify operations. Is either a KeyVerifyParameters type
          or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyVerifyParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyVerifyParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyVerifyResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyVerifyResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1792,12 +1810,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for wrap operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1833,7 +1851,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1863,12 +1881,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for wrap operation. Is either a KeyOperationsParameters type
          or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1951,12 +1972,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_version: The version of the key. Required.
         :type key_version: str
         :param parameters: The parameters for the key operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1990,7 +2011,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2018,12 +2039,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for the key operation. Is either a KeyOperationsParameters
          type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyOperationsParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyOperationsParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyOperationResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2105,12 +2129,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Required.
         :type key_version: str
         :param parameters: The parameters for the key release operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyReleaseParameters
+        :type parameters: ~azure.keyvault.v7_5.models.KeyReleaseParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyReleaseResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyReleaseResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2143,7 +2167,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyReleaseResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyReleaseResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2170,12 +2194,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_version: str
         :param parameters: The parameters for the key release operation. Is either a
          KeyReleaseParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.KeyReleaseParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.KeyReleaseParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyReleaseResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyReleaseResult
+        :rtype: ~azure.keyvault.v7_5.models.KeyReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2251,8 +2278,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of DeletedKeyItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.DeletedKeyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.DeletedKeyItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2260,7 +2286,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         cls: ClsType[_models._models.DeletedKeyListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2344,10 +2370,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the key. Required.
         :type key_name: str
         :return: DeletedKeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedKeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2410,7 +2436,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2465,10 +2491,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the deleted key. Required.
         :type key_name: str
         :return: KeyBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_5.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2527,10 +2553,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the key in a given key vault. Required.
         :type key_name: str
         :return: KeyRotationPolicy
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy
+        :rtype: ~azure.keyvault.v7_5.models.KeyRotationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2595,12 +2621,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param key_name: The name of the key in the given vault. Required.
         :type key_name: str
         :param key_rotation_policy: The policy for the key. Required.
-        :type key_rotation_policy: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy
+        :type key_rotation_policy: ~azure.keyvault.v7_5.models.KeyRotationPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyRotationPolicy
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy
+        :rtype: ~azure.keyvault.v7_5.models.KeyRotationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2629,7 +2655,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: KeyRotationPolicy
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy
+        :rtype: ~azure.keyvault.v7_5.models.KeyRotationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2652,12 +2678,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type key_name: str
         :param key_rotation_policy: The policy for the key. Is either a KeyRotationPolicy type or a
          IO[bytes] type. Required.
-        :type key_rotation_policy: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy or IO[bytes]
+        :type key_rotation_policy: ~azure.keyvault.v7_5.models.KeyRotationPolicy or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: KeyRotationPolicy
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.KeyRotationPolicy
+        :rtype: ~azure.keyvault.v7_5.models.KeyRotationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2730,12 +2759,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param parameters: The request object to get random bytes. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.GetRandomBytesRequest
+        :type parameters: ~azure.keyvault.v7_5.models.GetRandomBytesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RandomBytes
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.RandomBytes
+        :rtype: ~azure.keyvault.v7_5.models.RandomBytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2755,7 +2784,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: RandomBytes
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.RandomBytes
+        :rtype: ~azure.keyvault.v7_5.models.RandomBytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2771,12 +2800,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type vault_base_url: str
         :param parameters: The request object to get random bytes. Is either a GetRandomBytesRequest
          type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.GetRandomBytesRequest or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.GetRandomBytesRequest or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: RandomBytes
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.RandomBytes
+        :rtype: ~azure.keyvault.v7_5.models.RandomBytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
