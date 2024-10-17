@@ -3,7 +3,7 @@ from typing import Any, List
 
 # assignee dict which will be assigned to handle issues
 _GO_OWNER = {'ArcturusZhang', 'azure-sdk'}
-_GO_ASSIGNEE = {'Alancere'}
+_GO_ASSIGNEE = {'Mitse1n'}
 
 
 class IssueProcessGo(IssueProcess):

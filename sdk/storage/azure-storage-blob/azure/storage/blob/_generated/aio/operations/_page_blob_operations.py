@@ -84,6 +84,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request. Required.
@@ -140,7 +141,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -274,6 +275,8 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
@@ -281,6 +284,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param content_length: The length of the request. Required.
@@ -304,6 +308,13 @@ class PageBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
@@ -319,7 +330,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -391,6 +402,8 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             comp=comp,
             page_write=page_write,
             content_type=content_type,
@@ -438,6 +451,9 @@ class PageBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -456,6 +472,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request. Required.
@@ -486,7 +503,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -614,6 +631,7 @@ class PageBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
@@ -663,7 +681,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -808,6 +826,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
+        # pylint: disable=line-too-long
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -850,7 +869,7 @@ class PageBlobOperations:
         :rtype: ~azure.storage.blob.models.PageList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -947,6 +966,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
+        # pylint: disable=line-too-long
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -1001,7 +1021,7 @@ class PageBlobOperations:
         :rtype: ~azure.storage.blob.models.PageList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1097,6 +1117,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
@@ -1123,7 +1144,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1223,6 +1244,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Update the sequence number of the blob.
 
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
@@ -1251,7 +1273,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1336,6 +1358,7 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
         blob. The snapshot is copied such that only the differential changes between the previously
         copied snapshot are transferred to the destination. The copied snapshots are complete copies of
@@ -1362,7 +1385,7 @@ class PageBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

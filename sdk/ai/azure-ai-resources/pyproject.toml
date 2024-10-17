@@ -5,7 +5,6 @@ verifytypes = false
 pyright = false
 pylint = false
 black = false
-bandit = false
 sphinx = true
 breaking = false
 

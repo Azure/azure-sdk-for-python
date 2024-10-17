@@ -21,7 +21,7 @@ __all__ = [
     "WriteStream",
     "AsyncIteratorRandomStream",
     "AsyncRandomStream",
-    "get_random_bytes"
+    "get_random_bytes",
 ]
 
 

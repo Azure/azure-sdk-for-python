@@ -26,6 +26,7 @@ USAGE:
 """
 
 import os
+import sys
 from datetime import datetime, timedelta
 
 
@@ -38,6 +39,11 @@ class FileAuthSamples(object):
     access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
 
     def authentication_connection_string(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: authentication_connection_string")
+            sys.exit(1)
+
         # Instantiate the ShareServiceClient from a connection string
         # [START create_share_service_client_from_conn_string]
         from azure.storage.fileshare import ShareServiceClient
@@ -45,6 +51,16 @@ class FileAuthSamples(object):
         # [END create_share_service_client_from_conn_string]
 
     def authentication_shared_access_key(self):
+        if self.account_url is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_URL." + '\n' +
+                  "Test: authentication_shared_access_key")
+            sys.exit(1)
+
+        if self.access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: authentication_shared_access_key")
+            sys.exit(1)
+
         # Instantiate a ShareServiceClient using a shared access key
         # [START create_share_service_client]
         from azure.storage.fileshare import ShareServiceClient
@@ -55,6 +71,21 @@ class FileAuthSamples(object):
         # [END create_share_service_client]
 
     def authentication_shared_access_signature(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: authentication_shared_access_signature")
+            sys.exit(1)
+
+        if self.account_name is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_NAME." + '\n' +
+                  "Test: authentication_shared_access_signature")
+            sys.exit(1)
+
+        if self.access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: authentication_shared_access_signature")
+            sys.exit(1)
+
         # Instantiate a ShareServiceClient using a connection string
         # [START generate_sas_token]
         from azure.storage.fileshare import ShareServiceClient
@@ -73,6 +104,11 @@ class FileAuthSamples(object):
         # [END generate_sas_token]
 
     def authentication_default_azure_credential(self):
+        if self.account_url is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_URL." + '\n' +
+                  "Test: authentication_default_azure_credential")
+            sys.exit(1)
+
         # [START file_share_oauth]
         # Get a credential for authentication
         # DefaultAzureCredential attempts a chained set of authentication methods.

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.privatedns import PrivateDnsManagementClient
 
 """
@@ -29,14 +30,13 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.virtual_network_links.begin_delete(
+    client.virtual_network_links.begin_delete(
         resource_group_name="resourceGroup1",
         private_zone_name="privatezone1.com",
         virtual_network_link_name="virtualNetworkLink1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2020-06-01/examples/VirtualNetworkLinkDelete.json
+# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2024-06-01/examples/VirtualNetworkLinkDelete.json
 if __name__ == "__main__":
     main()

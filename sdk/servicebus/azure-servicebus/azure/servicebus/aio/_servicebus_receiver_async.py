@@ -425,6 +425,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
 
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
+
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()

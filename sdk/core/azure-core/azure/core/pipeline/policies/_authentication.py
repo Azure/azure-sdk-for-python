@@ -4,16 +4,26 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+import base64
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union, cast
-from azure.core.credentials import TokenCredential, SupportsTokenInfo, TokenRequestOptions, TokenProvider
+from azure.core.credentials import (
+    TokenCredential,
+    SupportsTokenInfo,
+    TokenRequestOptions,
+    TokenProvider,
+)
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
+from ._utils import get_challenge_parameter
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+
     from azure.core.credentials import (
         AccessToken,
         AccessTokenInfo,
@@ -74,13 +84,7 @@ class _BearerTokenCredentialPolicyBase:
         refresh_on = getattr(self._token, "refresh_on", None)
         return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> None:
-        """Request a new token from the credential.
-
-        This will call the credential's appropriate method to get a token and store it in the policy.
-
-        :param str scopes: The type of access needed.
-        """
+    def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:
             kwargs.setdefault("enable_cae", self._enable_cae)
 
@@ -88,12 +92,20 @@ class _BearerTokenCredentialPolicyBase:
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
-            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
-        else:
-            self._token = cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
+            return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
+        return cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
+
+    def _request_token(self, *scopes: str, **kwargs: Any) -> None:
+        """Request a new token from the credential.
+
+        This will call the credential's appropriate method to get a token and store it in the policy.
+
+        :param str scopes: The type of access needed.
+        """
+        self._token = self._get_token(*scopes, **kwargs)
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -145,7 +157,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self.on_request(request)
         try:
             response = self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             self.on_exception(request)
             raise
 
@@ -162,14 +174,16 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                     try:
                         response = self.next.send(request)
                         self.on_response(request, response)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         self.on_exception(request)
                         raise
 
         return response
 
     def on_challenge(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> bool:
         """Authorize request according to an authentication challenge
 
@@ -181,10 +195,28 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :rtype: bool
         """
         # pylint:disable=unused-argument
+        headers = response.http_response.headers
+        error = get_challenge_parameter(headers, "Bearer", "error")
+        if error == "insufficient_claims":
+            encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
+            if not encoded_claims:
+                return False
+            try:
+                padding_needed = -len(encoded_claims) % 4
+                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+                if claims:
+                    token = self._get_token(*self._scopes, claims=claims)
+                    bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
+                    request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+                    return True
+            except Exception:  # pylint:disable=broad-except
+                return False
         return False
 
     def on_response(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         """Executed after the request comes back from the next policy.
 
@@ -247,7 +279,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :raises: ValueError or TypeError
     """
 
-    def __init__(self, credential: "AzureSasCredential", **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self,  # pylint: disable=unused-argument
+        credential: "AzureSasCredential",
+        **kwargs: Any,
+    ) -> None:
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

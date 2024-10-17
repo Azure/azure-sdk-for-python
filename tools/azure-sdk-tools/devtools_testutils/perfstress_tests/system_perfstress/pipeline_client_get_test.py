@@ -55,6 +55,11 @@ class PipelineClientGetTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument("--first-run-extra-requests", type=int, default=0, help='Extra requests to send on first run. ' +
-            'Simulates SDKs which require extra requests (like authentication) on first API call.')
+        parser.add_argument(
+            "--first-run-extra-requests",
+            type=int,
+            default=0,
+            help="Extra requests to send on first run. "
+            + "Simulates SDKs which require extra requests (like authentication) on first API call.",
+        )
         parser.add_argument("-u", "--url", required=True)

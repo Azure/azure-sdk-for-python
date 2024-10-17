@@ -202,6 +202,13 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been Canceled"""
 
 
+class PatchStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate the patch strategy of a server."""
+
+    REGULAR = "Regular"
+    VIRTUAL_CANARY = "VirtualCanary"
+
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
