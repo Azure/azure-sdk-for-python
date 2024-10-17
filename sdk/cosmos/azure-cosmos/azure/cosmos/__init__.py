@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 from ._version import VERSION
+from ._cosmos_responses import CosmosDict, CosmosList
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
@@ -42,7 +43,6 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
-from ._feed_range import FeedRange
 
 __all__ = (
     "CosmosClient",
@@ -65,6 +65,7 @@ __all__ = (
     "TriggerType",
     "ConnectionRetryPolicy",
     "ThroughputProperties",
-    "FeedRange"
+    "CosmosDict",
+    "CosmosList"
 )
 __version__ = VERSION
