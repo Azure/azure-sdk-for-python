@@ -77,4 +77,5 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         if self.passing_grade:
             groundedness_label = float(result.get(self.RESULT_KEY)) >= self.passing_grade
             result.update({f"{self.RESULT_KEY}_label": groundedness_label})
+
         return result

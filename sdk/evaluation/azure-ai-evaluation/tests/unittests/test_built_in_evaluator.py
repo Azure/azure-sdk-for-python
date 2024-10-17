@@ -52,7 +52,29 @@ class TestBuiltInEvaluators:
         assert len(result.keys()) == 1
         assert "gpt_groundedness" in result
 
+        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=2.0)
+        groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
+        result = groundedness_eval_passing(
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
+        )
+        assert len(result.keys()) == 2
+        assert "gpt_groundedness" in result
+        assert "gpt_groundedness_label" in result
+        assert result["gpt_groundedness_label"] == True
+
         groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=3.0)
+        groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
+        result = groundedness_eval_passing(
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
+        )
+        assert len(result.keys()) == 2
+        assert "gpt_groundedness" in result
+        assert "gpt_groundedness_label" in result
+        assert result["gpt_groundedness_label"] == False
+
+        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=1.0)
         groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
         result = groundedness_eval_passing(
             response="The capital of Japan is Tokyo.",
