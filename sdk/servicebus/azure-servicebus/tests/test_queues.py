@@ -3408,3 +3408,21 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 messages_in_queue = receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_fully_qualified_port(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}:443/"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, uamqp_transport=uamqp_transport) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for i in range(10):
+                message = ServiceBusMessage("message no. {}".format(i))
+                sender.send_messages(message)
