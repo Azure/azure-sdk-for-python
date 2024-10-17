@@ -25,7 +25,9 @@ def start_proxy(test_proxy):
     add_general_string_sanitizer(target=connection_str, value=fake_connection_str)
 
     add_general_regex_sanitizer(regex="https://[^/]+", value="https://sanitized")
+    add_general_regex_sanitizer(regex="wss://[^/]+", value="wss://sanitized")
     add_body_key_sanitizer(json_path="callbackUri", value="https://sanitized/")
+    add_body_key_sanitizer(json_path="transportUrl", value="https://sanitized/")
     add_body_key_sanitizer(json_path="$..file.uri", value="https://REDACTED/prompt.wav")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")
     add_header_regex_sanitizer(key="Date", value="sanitized")
@@ -40,6 +42,7 @@ def start_proxy(test_proxy):
     add_header_regex_sanitizer(key="Content-Security-Policy-Report-Only", value="sanitized")
     add_header_regex_sanitizer(key="Repeatability-First-Sent", value="sanitized")
     add_header_regex_sanitizer(key="Repeatability-Request-ID", value="sanitized")
+    add_header_regex_sanitizer(key="x-ms-host", value="sanitized")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
