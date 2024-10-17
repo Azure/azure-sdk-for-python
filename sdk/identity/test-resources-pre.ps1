@@ -16,11 +16,12 @@ param (
     [string] $TestApplicationId,
 
     [Parameter()]
-    [string] $TestApplicationSecret,
-
-    [Parameter()]
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $SubscriptionId,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string] $Environment,
 
     [Parameter()]
     [hashtable] $AdditionalParameters = @{},
@@ -50,12 +51,19 @@ Start-Sleep -s 45
 
 $az_version = az version
 Write-Host "Azure CLI version: $az_version"
+az cloud set --name $Environment
 az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
 az account set --subscription $SubscriptionId
-$versions = az aks get-versions -l westus -o json | ConvertFrom-Json
+$versions = az aks get-versions -l $Location -o json | ConvertFrom-Json
 Write-Host "AKS versions: $($versions | ConvertTo-Json -Depth 100)"
 $patchVersions = $versions.values | Where-Object { $_.isPreview -eq $null } | Select-Object -ExpandProperty patchVersions
 Write-Host "AKS patch versions: $($patchVersions | ConvertTo-Json -Depth 100)"
 $latestAksVersion = $patchVersions | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Sort-Object -Descending | Select-Object -First 1
 Write-Host "Latest AKS version: $latestAksVersion"
 $templateFileParameters['latestAksVersion'] = $latestAksVersion
+
+$skus = az vm list-skus --location $Location --all --output json | ConvertFrom-Json
+Write-Host "VM SKUs: $($skus | ConvertTo-Json -Depth 100)"
+
+$skusTable = az vm list-skus --location $Location --all --output table
+Write-Host "VM SKUs table: $skusTable"
