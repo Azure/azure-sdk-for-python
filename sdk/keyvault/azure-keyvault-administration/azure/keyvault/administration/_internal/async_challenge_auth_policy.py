@@ -14,11 +14,15 @@ requirements can change. For example, a vault may move to a new tenant. In such 
 protocol again.
 """
 
-from collections.abc import Awaitable
 from copy import deepcopy
+import sys
 import time
 from typing import Any, Callable, cast, Optional, overload, TypeVar, Union
 from urllib.parse import urlparse
+if sys.version_info < (3, 9):
+    from typing import Awaitable
+else:
+    from collections.abc import Awaitable
 
 from typing_extensions import ParamSpec
 

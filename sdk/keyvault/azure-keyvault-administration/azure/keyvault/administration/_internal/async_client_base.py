@@ -2,8 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from collections.abc import Awaitable
+import sys
 from typing import Any
+if sys.version_info < (3, 9):
+    from typing import Awaitable
+else:
+    from collections.abc import Awaitable
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
