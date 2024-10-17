@@ -207,7 +207,7 @@ class TestEvaluate:
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "true"
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
 
         start_time = time.time()
@@ -231,7 +231,7 @@ class TestEvaluate:
         assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
         assert "fluency.gpt_fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
-        os.environ.pop("PF_EVALS_BATCH_USE_ASYNC")
+        os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
         "use_pf_client,function,column",

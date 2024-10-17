@@ -15,6 +15,7 @@ from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -292,76 +293,85 @@ def _validate_columns_for_evaluators(
 
 def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
     if data is None:
-        msg = "data parameter must be provided for evaluation."
+        msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
             target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not isinstance(data, (os.PathLike, str)):
+        msg = "The 'data' parameter must be a string or a path-like object."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not os.path.exists(data):
+        msg = f"The input data file path '{data}' does not exist."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
     if target is not None:
         if not callable(target):
-            msg = "target parameter must be a callable function."
+            msg = "The 'target' parameter must be a callable function."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    if data is not None:
-        if not isinstance(data, str):
-            msg = "data parameter must be a string."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
-
-    if evaluators is not None:
-        if not isinstance(evaluators, dict):
-            msg = "evaluators parameter must be a dictionary."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+    if not evaluators:
+        msg = "The 'evaluators' parameter is required and cannot be None or empty."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not isinstance(evaluators, dict):
+        msg = "The 'evaluators' parameter must be a dictionary."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
 
     if output_path is not None:
-        if not isinstance(output_path, str):
-            msg = "output_path parameter must be a string."
+        if not isinstance(output_path, (os.PathLike, str)):
+            msg = "The 'output_path' parameter must be a string or a path-like object."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
+        if not os.path.exists(output_dir):
+            msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
+            raise EvaluationException(
+                message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
     if azure_ai_project is not None:
-        if not isinstance(azure_ai_project, Dict):
-            msg = "azure_ai_project parameter must be a dictionary."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+        validate_azure_ai_project(azure_ai_project)
 
     if evaluation_name is not None:
-        if not isinstance(evaluation_name, str):
-            msg = "evaluation_name parameter must be a string."
+        if not isinstance(evaluation_name, str) or not evaluation_name.strip():
+            msg = "The 'evaluation_name' parameter must be a non-empty string."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
@@ -371,8 +381,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         initial_data_df = pd.read_json(data, lines=True)
     except Exception as e:
         raise EvaluationException(
-            message=f"Failed to load data from {data}. Confirm that it is valid jsonl data. Error: {str(e)}.",
-            internal_message="Failed to load data. Confirm that it is valid jsonl data.",
+            message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL format. Detailed error: {e}.",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
