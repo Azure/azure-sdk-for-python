@@ -1,3 +1,4 @@
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5,12 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.pipeline.transport import HttpRequest
-
-
-def _convert_request(request, files=None):
-    data = request.content if not files else None
-    request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)
-    if files:
-        request.set_formdata_body(files)
-    return request
+VERSION = "2.1.0"

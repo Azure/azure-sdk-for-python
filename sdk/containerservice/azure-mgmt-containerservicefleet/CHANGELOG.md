@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0 (2024-10-21)
+
+### Features Added
+
+  - Added operation group AutoUpgradeProfilesOperations
+  - Model NodeImageSelection has a new parameter custom_node_image_versions
+
 ## 2.0.0 (2024-05-20)
 
 ### Breaking Changes
