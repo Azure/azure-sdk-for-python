@@ -23,7 +23,7 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
 )
-from .._model_configurations import AzureAIProject, EvaluateResult, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
@@ -463,7 +463,7 @@ def evaluate(
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-) -> EvaluateResult:
+) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 
@@ -488,7 +488,7 @@ def evaluate(
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
     :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
-    :rtype: ~azure.ai.evaluation.EvaluateResult
+    :rtype: ~azure.ai.evaluation.EvaluationResult
 
     :Example:
 
@@ -590,7 +590,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-) -> EvaluateResult:
+) -> EvaluationResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
 
     # Process evaluator config to replace ${target.} with ${data.}
@@ -758,7 +758,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     )
 
     result_df_dict = result_df.to_dict("records")
-    result: EvaluateResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+    result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
     if output_path:
         _write_output(output_path, result)

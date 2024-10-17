@@ -92,9 +92,7 @@ class _AsyncRetrievalScoreEvaluator:
         return {
             "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
-                "gpt_retrieval": {
-                    "score": per_turn_scores,
-                }
+                "gpt_retrieval": per_turn_scores,
             },
         }
 
@@ -120,7 +118,7 @@ class RetrievalEvaluator:
                 {"role": "assistant", "content": "2 + 2 = 4", "context": {
                     "citations": [
                             {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                            ]
+                        ]
                     }
                 }
             ]
@@ -132,11 +130,9 @@ class RetrievalEvaluator:
     .. code-block:: python
 
         {
-            "gpt_retrieval": 3.0
+            "gpt_retrieval": 3.0,
             "evaluation_per_turn": {
-                "gpt_retrieval": {
-                    "score": [1.0, 2.0, 3.0]
-                }
+                "gpt_retrieval": [1.0, 2.0, 3.0],
             }
         }
     """

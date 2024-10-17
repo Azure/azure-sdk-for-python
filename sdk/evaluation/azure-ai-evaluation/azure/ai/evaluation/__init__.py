@@ -28,7 +28,7 @@ from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
     Conversation,
-    EvaluateResult,
+    EvaluationResult,
     EvaluatorConfig,
     Message,
     OpenAIModelConfiguration,
@@ -62,5 +62,5 @@ __all__ = [
     "EvaluatorConfig",
     "Conversation",
     "Message",
-    "EvaluateResult",
+    "EvaluationResult",
 ]

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, List, Literal, TypedDict
+from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
 
@@ -57,7 +57,7 @@ class EvaluatorConfig(TypedDict, total=False):
 
 class Message(TypedDict):
     role: str
-    content: str
+    content: Union[str, List[Dict]]
     context: NotRequired[Dict[str, Any]]
 
 
@@ -66,7 +66,7 @@ class Conversation(TypedDict):
     context: NotRequired[Dict[str, Any]]
 
 
-class EvaluateResult(TypedDict):
+class EvaluationResult(TypedDict):
     metrics: Dict
     studio_url: NotRequired[str]
     rows: List[Dict]
