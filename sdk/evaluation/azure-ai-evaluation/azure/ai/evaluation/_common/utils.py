@@ -286,4 +286,4 @@ def retrieve_content_type(messages) -> str:
                     if content.get("type") == "image_url":
                         return "image"  
         return "text"    
-    return "image" 
+    return "text" 
