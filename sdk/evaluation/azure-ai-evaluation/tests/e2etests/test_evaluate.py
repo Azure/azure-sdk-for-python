@@ -92,7 +92,7 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestEvaluate:
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
+    # @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
         # data
         input_data = pd.read_json(data_file, lines=True)
@@ -129,7 +129,7 @@ class TestEvaluate:
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
+    # @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_relative_data_path(self, model_config):
         original_working_dir = os.getcwd()
 
@@ -166,15 +166,16 @@ class TestEvaluate:
             os.chdir(original_working_dir)
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file):
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file, azure_cred):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        content_safety_eval = ContentSafetyEvaluator(project_scope, credential=None, parallel=False)
+        content_safety_eval = ContentSafetyEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+        )
 
         # run the evaluation
         result = evaluate(
