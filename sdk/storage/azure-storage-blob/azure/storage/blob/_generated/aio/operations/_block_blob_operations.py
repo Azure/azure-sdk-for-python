@@ -75,6 +75,8 @@ class BlockBlobOperations:
         immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         transactional_content_crc64: Optional[bytes] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -82,6 +84,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
         supported with Put Blob; the content of the existing blob is overwritten with the content of
@@ -130,6 +133,13 @@ class BlockBlobOperations:
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
         :type transactional_content_crc64: bytes
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -144,7 +154,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -227,6 +237,8 @@ class BlockBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             transactional_content_crc64=transactional_content_crc64,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             blob_type=blob_type,
             content_type=content_type,
             version=self._config.version,
@@ -268,6 +280,9 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -295,6 +310,7 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
         updates are not supported with Put Blob from URL; the content of an existing blob is
@@ -365,7 +381,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,11 +532,14 @@ class BlockBlobOperations:
         transactional_content_crc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
@@ -546,6 +565,13 @@ class BlockBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
@@ -556,7 +582,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -599,6 +625,8 @@ class BlockBlobOperations:
             encryption_algorithm=_encryption_algorithm,
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
@@ -640,6 +668,9 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -662,6 +693,7 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
@@ -706,7 +738,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -827,6 +859,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
         to the server in a prior Put Block operation. You can call Put Block List to update a blob by
@@ -889,7 +922,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1030,6 +1063,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlockList:
+        # pylint: disable=line-too-long
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
@@ -1060,7 +1094,7 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

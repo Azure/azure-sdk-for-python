@@ -219,4 +219,6 @@ class HttpXTransport(HttpTransport):
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err) from err
 
-        return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+        return HttpXTransportResponse(
+            request, response, stream_contextmanager=stream_ctx  # pylint: disable=used-before-assignment
+        )
