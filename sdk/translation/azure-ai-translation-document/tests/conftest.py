@@ -28,7 +28,7 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
         value="fakeendpoint",
     )
-    set_custom_default_matcher(ignored_headers="Accept-Encoding")  
+    set_custom_default_matcher(ignored_headers="Accept-Encoding")
     add_oauth_response_sanitizer()
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
