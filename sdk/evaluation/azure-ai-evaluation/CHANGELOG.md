@@ -1,5 +1,17 @@
 # Release History
 
+
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+
+### Other Changes
+
 ## 1.0.0b4 (2024-10-16)
 
 ### Breaking Changes
