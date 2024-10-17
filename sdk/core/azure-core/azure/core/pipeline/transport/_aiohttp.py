@@ -275,6 +275,9 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
+        # Handle if we manually override decompression to be off
+        decompress = config.pop("decompress", None)
+
         proxy = config.pop("proxy", None)
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
@@ -320,7 +323,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     request=request,
                     internal_response=result,
                     block_size=self.connection_config.data_block_size,
-                    decompress=not auto_decompress,
+                    decompress=decompress if decompress is not None else not auto_decompress,
                 )
                 if not stream_response:
                     await _handle_no_stream_rest_response(response)
@@ -332,7 +335,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     request,
                     result,
                     self.connection_config.data_block_size,
-                    decompress=not auto_decompress,
+                    decompress=decompress if decompress is not None else not auto_decompress,
                 )
                 if not stream_response:
                     await response.load_body()
