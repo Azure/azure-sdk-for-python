@@ -300,7 +300,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    if not (isinstance(data, str) or isinstance(data, os.PathLike)):
+    if not isinstance(data, (os.PathLike, str)):
         msg = "The 'data' parameter must be a string or a path-like object."
         raise EvaluationException(
             message=msg,
@@ -345,7 +345,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         )
 
     if output_path is not None:
-        if not (isinstance(output_path, str) or isinstance(output_path, os.PathLike)):
+        if not isinstance(output_path, (os.PathLike, str)):
             msg = "The 'output_path' parameter must be a string or a path-like object."
             raise EvaluationException(
                 message=msg,

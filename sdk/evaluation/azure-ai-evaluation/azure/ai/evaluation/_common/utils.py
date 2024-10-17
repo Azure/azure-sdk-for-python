@@ -10,7 +10,7 @@ import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
 
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -132,7 +132,10 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     missing_fields = set(fields.keys()) - o.keys()
 
     if missing_fields:
-        msg = f"The 'azure_ai_project' dictionary is missing the following required field(s): {', '.join(f'{field}' for field in missing_fields)}. Please ensure all required fields are provided."
+        msg = (
+            "The 'azure_ai_project' dictionary is missing the following required "
+            f"field(s): {', '.join(f'{field}' for field in missing_fields)}."
+        )
         raise EvaluationException(
             message=msg,
             category=ErrorCategory.INVALID_VALUE,
