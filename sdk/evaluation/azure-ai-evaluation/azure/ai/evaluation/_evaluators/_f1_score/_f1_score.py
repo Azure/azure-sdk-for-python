@@ -108,23 +108,14 @@ class F1ScoreEvaluator:
     """
     Initialize a f1 score evaluator for calculating F1 score.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = F1ScoreEvaluator()
-        result = eval_fn(
-            response="The capital of Japan is Tokyo.",
-            ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "f1_score": 0.42
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START f1_score_evaluator]
+        :end-before: [END f1_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call an F1ScoreEvaluator.
     """
 
     def __init__(self):

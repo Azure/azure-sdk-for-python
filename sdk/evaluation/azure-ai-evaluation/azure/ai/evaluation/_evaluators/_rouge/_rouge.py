@@ -57,24 +57,14 @@ class RougeScoreEvaluator:
     summarization and document comparison are among optimal use cases for ROUGE, particularly in scenarios where text
     coherence and relevance are critical.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = RougeScoreEvaluator(rouge_type=RougeType.ROUGE_1)
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "rouge_precision": 1.0,
-            "rouge_recall": 1.0,
-            "rouge_f1_score": 1.0
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START rouge_score_evaluator]
+        :end-before: [END rouge_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
     def __init__(self, rouge_type: RougeType):

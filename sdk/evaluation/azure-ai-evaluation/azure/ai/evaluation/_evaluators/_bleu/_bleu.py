@@ -33,22 +33,14 @@ class BleuScoreEvaluator:
     generated text matches the reference text. The BLEU score ranges from 0 to 1, with higher scores indicating
     better quality.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = BleuScoreEvaluator()
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "bleu_score": 0.22
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START bleu_score_evaluator]
+        :end-before: [END bleu_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call an BleuScoreEvaluator.
     """
 
     def __init__(self):
