@@ -4,8 +4,8 @@
 from enum import Enum
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
 
+from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
 from azure.core import CaseInsensitiveEnumMeta
 
 
