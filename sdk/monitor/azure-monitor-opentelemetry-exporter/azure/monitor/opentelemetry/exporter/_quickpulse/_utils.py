@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 from datetime import datetime, timedelta, timezone
 import json
+import sys
 from typing import Dict, List, Optional, Union
 
 from opentelemetry.sdk._logs import LogData
@@ -19,6 +20,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    AggregationType,
     DerivedMetricInfo,
     DocumentIngress,
     DocumentType,
@@ -31,8 +33,17 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     Trace as TraceDocument,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _get_quickpulse_derived_metric_infos,
+    _set_quickpulse_derived_metric_infos,
     _set_quickpulse_etag,
-    _set_quickpulse_metric_filters,
+    _set_quickpulse_projection_map,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DependencyData,
+    _ExceptionData,
+    _RequestData,
+    _TelemetryData,
+    _TraceData,
 )
 
 
@@ -157,27 +168,6 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
     return ""
 
 
-def _update_filter_configuration(etag: str, config_bytes: bytes):
-    seen_ids = set()
-    # config is a byte string that when decoded is a json
-    config = json.loads(config_bytes.decode("utf-8"))
-    metric_filters: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
-    for metric_filter in config.get("Metrics", []):
-        metric_info = DerivedMetricInfo.from_dict(metric_filter)
-        # Skip duplicate ids
-        if metric_info.id in seen_ids:
-            continue
-        telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
-        # TODO: Filter out invalid configs: telemetry type, operand
-        derived_metrics = metric_filters.get(telemetry_type, [])
-        derived_metrics.append(metric_info)
-        metric_filters[telemetry_type] = derived_metrics
-        seen_ids.add(metric_info.id)
-    _set_quickpulse_metric_filters(metric_filters)
-    # Update new etag
-    _set_quickpulse_etag(etag)
-
-
 def _ns_to_iso8601_string(nanoseconds: int) -> str:
     seconds, nanoseconds_remainder = divmod(nanoseconds, 1e9)
     microseconds = nanoseconds_remainder // 1000  # Convert nanoseconds to microseconds
@@ -185,3 +175,91 @@ def _ns_to_iso8601_string(nanoseconds: int) -> str:
     dt_microseconds = timedelta(microseconds=microseconds)
     dt_with_microseconds = dt + dt_microseconds
     return dt_with_microseconds.isoformat()
+
+
+# Filtering
+
+def _update_filter_configuration(etag: str, config_bytes: bytes):
+    seen_ids = set()
+    # config is a byte string that when decoded is a json
+    config = json.loads(config_bytes.decode("utf-8"))
+    metric_infos: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
+    for metric_info_dict in config.get("Metrics", []):
+        metric_info = DerivedMetricInfo.from_dict(metric_info_dict)
+        # Skip duplicate ids
+        if metric_info.id in seen_ids:
+            continue
+        telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
+        # TODO: Filter out invalid configs: telemetry type, operand
+        # TODO: Rename exception fields
+        metric_info_list = metric_infos.get(telemetry_type, [])
+        metric_info_list.append(metric_info)
+        metric_infos[telemetry_type] = metric_info_list
+        seen_ids.add(metric_info.id)
+        # Initialize projections from this derived metric info
+        _init_derived_metric_projection(metric_info)
+    _set_quickpulse_derived_metric_infos(metric_infos)
+    # Update new etag
+    _set_quickpulse_etag(etag)
+
+
+# Called by record_span/record_log when processing a span/log_record
+# Derives metrics from projections if applicable to current filters in config
+def _derive_metrics_from_telemetry_data(data: _TelemetryData):
+    metric_infos_dict = _get_quickpulse_derived_metric_infos()
+    metric_infos = []
+    if isinstance(data, _RequestData):
+        metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)
+    elif isinstance(data, _DependencyData):
+        metric_infos = metric_infos_dict.get(TelemetryType.DEPENDENCY)
+    elif isinstance(data, _ExceptionData):
+        metric_infos = metric_infos_dict.get(TelemetryType.EXCEPTION)
+    elif isinstance(data, _TraceData):
+        metric_infos = metric_infos_dict.get(TelemetryType.TRACE)
+    if metric_infos and _check_metric_filters(metric_infos, data):
+        # Since this data matches the filter, create projections used to
+        # generate filtered metrics
+        _create_projections(metric_infos, data)
+    # TODO: Configuration error handling
+
+
+def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _TelemetryData) -> bool:
+    match = False
+    for metric_info in metric_infos:
+        # Should only be a single `FilterConjunctionGroupInfo` in `filter_groups`
+        # but we use a logical OR to match if there is more than one
+        for group in metric_info.filter_groups:
+            match = match or _check_filters(group.filters, data)
+    return match
+
+
+def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
+    # All of the filters need to match for this to return true (and operation).
+    for filter in filters:
+        # TODO: apply filter logic
+        pass
+    return True
+
+
+# Projections
+
+# Initialize metric projections per DerivedMetricInfo
+def _init_derived_metric_projection(filter_info: DerivedMetricInfo):
+    derived_metric_agg_value = 0
+    if filter_info.aggregation == AggregationType.MIN:
+        derived_metric_agg_value = sys.maxsize
+    elif filter_info.aggregation == AggregationType.MAX:
+        derived_metric_agg_value = -sys.maxsize - 1
+    elif filter_info.aggregation == AggregationType.SUM:
+        derived_metric_agg_value = 0
+    else:
+        derived_metric_agg_value = 0
+    _set_quickpulse_projection_map(
+        filter_info.id,
+        filter_info.aggregation,
+        derived_metric_agg_value,
+    )
+
+# Create projections based off of DerivedMetricInfos and current data being processed
+def _create_projection(metric_infos: List[DerivedMetricInfo], data: _TelemetryData):
+    pass

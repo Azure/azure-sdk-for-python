@@ -33,8 +33,8 @@ _QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
 _QUICKPULSE_LAST_PROCESS_CPU = 0.0
 # Filtering
 _QUICKPULSE_ETAG = ""
-_QUICKPULSE_METRIC_FILTER_CONFIG: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
-_QUICKPULSE_DERIVED_METRICS: Dict[str, Tuple[AggregationType, Union[float, int]]] = {}
+_QUICKPULSE_DERIVED_METRIC_INFOS: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
+_QUICKPULSE_PROJECTION_MAP: Dict[str, Tuple[AggregationType, Union[float, int]]] = {}
 
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
@@ -111,7 +111,9 @@ def _get_and_clear_quickpulse_documents() -> List[DocumentIngress]:
     _QUICKPULSE_DOCUMENTS = []
     return documents
 
+# Filtering
 
+# Used for etag configuration
 def _set_quickpulse_etag(etag: str) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_ETAG
@@ -122,17 +124,20 @@ def _get_quickpulse_etag() -> str:
     return _QUICKPULSE_ETAG
 
 
-def _set_quickpulse_metric_filters(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
+# Used for updating filter configuration when etag has changed
+# Contains filter and projection to apply for each telemetry type if exists
+def _set_quickpulse_derived_metric_infos(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
     # pylint: disable=global-statement
-    global _QUICKPULSE_METRIC_FILTER_CONFIG
-    _QUICKPULSE_METRIC_FILTER_CONFIG = filters
+    global _QUICKPULSE_DERIVED_METRIC_INFOS
+    _QUICKPULSE_DERIVED_METRIC_INFOS = filters
 
 
-def _get_quickpulse_metric_filters() -> Dict[TelemetryType, List[DerivedMetricInfo]]:
-    return _QUICKPULSE_METRIC_FILTER_CONFIG
+def _get_quickpulse_derived_metric_infos() -> Dict[TelemetryType, List[DerivedMetricInfo]]:
+    return _QUICKPULSE_DERIVED_METRIC_INFOS
 
 
-def _set_quickpulse_derived_metric(metric_id: str, aggregation_type: AggregationType, value: Union[float, int]):
+# Used for initializing 
+def _set_quickpulse_projection_map(metric_id: str, aggregation_type: AggregationType, value: Union[float, int]):
     # pylint: disable=global-statement
-    global _QUICKPULSE_DERIVED_METRICS
-    _QUICKPULSE_DERIVED_METRICS[metric_id] = (aggregation_type, value)
+    global _QUICKPULSE_PROJECTION_MAP
+    _QUICKPULSE_PROJECTION_MAP[metric_id] = (aggregation_type, value)

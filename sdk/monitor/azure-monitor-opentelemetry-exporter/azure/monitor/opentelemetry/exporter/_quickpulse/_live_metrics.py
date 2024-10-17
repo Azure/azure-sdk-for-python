@@ -47,7 +47,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_quickpulse_last_process_time,
     _set_quickpulse_process_elapsed_time,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._types import  _TelemetryData
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _derive_metrics_from_telemetry_data,
     _get_log_record_document,
     _get_span_document,
 )
@@ -187,6 +189,11 @@ class _QuickpulseManager(metaclass=Singleton):
                     self._dependency_failure_rate_counter.add(1)
                 self._dependency_duration.record(duration_ms)
 
+            # Derive metrics for quickpulse filtering
+            data = _TelemetryData._from_span(span)
+            _derive_metrics_from_telemetry_data(data)
+            # TODO: derive exception metrics from span events
+
     def _record_log_record(self, log_data: LogData) -> None:
         # Only record if in post state
         if _is_post_state():
@@ -199,6 +206,10 @@ class _QuickpulseManager(metaclass=Singleton):
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
                     if exc_type is not None or exc_message is not None:
                         self._exception_rate_counter.add(1)
+
+                # Derive metrics for quickpulse filtering
+                data = _TelemetryData._from_log_record(log_record)
+                _derive_metrics_from_telemetry_data(data)
 
 
 # pylint: disable=unused-argument
