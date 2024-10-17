@@ -24,7 +24,7 @@ USAGE:
 import asyncio
 import os
 from azure.ai.client.aio import AzureAIClient
-from azure.ai.client.models import FileSearchToolResource, FileSearchToolDefinition, ToolResources, FilePurpose
+from azure.ai.client.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
 
 
@@ -65,18 +65,16 @@ async def main():
         vector_store_file_batch = await ai_client.agents.create_vector_store_file_batch_and_poll(vector_store_id=vector_store.id, file_ids=[file.id])    
         print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
         
-        # create a tool resources object with the file search tool
-        file_search_tool_resource = FileSearchToolResource(vector_store_ids=[vector_store.id])
-        tool_resources = ToolResources()
-        tool_resources.file_search = file_search_tool_resource
+        # create a file search tool
+        file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
         
         # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to search the file
         # also, you do not need to provide tool_resources if you did not create a vector store above
         agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", 
             instructions="You are helpful assistant",
-            tools=[FileSearchToolDefinition()],
-            tool_resources=tool_resources
+            tools=file_search_tool.definitions,
+            tool_resources=file_search_tool.resources
         )
         print(f"Created agent, agent ID: {agent.id}")
 
