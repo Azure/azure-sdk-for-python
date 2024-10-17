@@ -14,6 +14,8 @@ from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union,
 from typing_extensions import Literal
 import certifi
 
+from ._sender_async import SenderLink
+from ._receiver_async import ReceiverLink
 from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation
@@ -215,7 +217,29 @@ class AMQPClientAsync(AMQPClientSync):
                         break
                     await asyncio.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
+                        total_link_credit = self._link.total_link_credit
                         await self._close_link_async()  # if link level error, close and open a new link
+                        if isinstance(self._link, SenderLink):
+                            self._link = self._session.create_sender_link(
+                                target_address=self.target,
+                                link_credit=self._link_credit,
+                                send_settle_mode=self._send_settle_mode,
+                                rcv_settle_mode=self._receive_settle_mode,
+                                max_message_size=self._max_message_size,
+                                properties=self._link_properties,
+                            )
+                        else:
+                            self._link = self._session.create_receiver_link(
+                                source_address=self.target,
+                                link_credit=self._link_credit,
+                                send_settle_mode=self._send_settle_mode,
+                                rcv_settle_mode=self._receive_settle_mode,
+                                max_message_size=self._max_message_size,
+                                properties=self._link_properties,
+                            )
+                        self._link.total_link_credit = total_link_credit
+                        _logger.debug("Re-opening link for %r", self._name)
+                        await self._link.attach()
                     if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
                         # if connection detach or socket error, close and open a new connection
                         await self.close_async()
