@@ -45,10 +45,10 @@ class BatchRequest(_model_base.Model):
         source: "_models.SourceInput",
         targets: List["_models.TranslationTarget"],
         storage_type: Optional[Union[str, "_models.StorageInputType"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -88,10 +88,10 @@ class DocumentFilter(_model_base.Model):
         *,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -168,10 +168,10 @@ class DocumentStatus(_model_base.Model):
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -203,10 +203,10 @@ class DocumentTranslateContent(_model_base.Model):
         *,
         document: FileType,
         glossary: Optional[List[FileType]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -235,7 +235,7 @@ class DocumentTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -267,10 +267,10 @@ class DocumentTranslationError(_model_base.Model):
         code: Union[str, "_models.TranslationErrorCode"],
         message: str,
         inner_error: Optional["_models.InnerTranslationError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -321,10 +321,10 @@ class DocumentTranslationFileFormat(_model_base.Model):
         default_format_version: Optional[str] = None,
         format_versions: Optional[List[str]] = None,
         type: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -355,7 +355,7 @@ class InnerTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -385,10 +385,10 @@ class InnerTranslationError(_model_base.Model):
         code: str,
         message: str,
         inner_error: Optional["_models.InnerTranslationError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -433,10 +433,10 @@ class SourceInput(_model_base.Model):
         filter: Optional["_models.DocumentFilter"] = None,  # pylint: disable=redefined-builtin
         language: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -463,10 +463,10 @@ class StartTranslationDetails(_model_base.Model):
         self,
         *,
         inputs: List["_models.BatchRequest"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -522,10 +522,10 @@ class StatusSummary(_model_base.Model):
         not_yet_started: int,
         canceled: int,
         total_characters_charged: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -569,10 +569,10 @@ class TranslationErrorResponse(_model_base.Model):
         self,
         *,
         error: Optional["_models.DocumentTranslationError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -624,10 +624,10 @@ class TranslationGlossary(_model_base.Model):
         file_format: str,
         format_version: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -684,10 +684,10 @@ class TranslationStatus(_model_base.Model):
         status: Union[str, "_models.Status"],
         summary: "_models.StatusSummary",
         error: Optional["_models.DocumentTranslationError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -734,10 +734,10 @@ class TranslationTarget(_model_base.Model):
         category_id: Optional[str] = None,
         glossaries: Optional[List["_models.TranslationGlossary"]] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
