@@ -14,3 +14,9 @@ class DistillationPromptSettingsSchema(metaclass=PatchedSchemaMeta):
     enable_chain_of_density = fields.Bool()
     max_len_summary = fields.Number()
     # custom_prompt = fields.Str()
+
+
+@experimental
+class EndpointRequestSettingsSchema(metaclass=PatchedSchemaMeta):
+    request_batch_size = fields.Int()
+    min_endpoint_success_ratio = fields.Number()

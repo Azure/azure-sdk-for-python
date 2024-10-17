@@ -5,6 +5,6 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .distillation_job import DistillationJobSchema
-from .distillation_types import DistillationPromptSettingsSchema
+from .distillation_types import DistillationPromptSettingsSchema, EndpointRequestSettingsSchema
 
-__all__ = ["DistillationJobSchema", "DistillationPromptSettingsSchema"]
+__all__ = ["DistillationJobSchema", "DistillationPromptSettingsSchema", "EndpointRequestSettingsSchema"]

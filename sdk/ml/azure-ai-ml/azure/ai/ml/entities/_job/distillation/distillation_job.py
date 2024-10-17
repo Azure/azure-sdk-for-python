@@ -491,42 +491,6 @@ class DistillationJob(Job, JobIOMixin):
         """
         if not isinstance(other, DistillationJob):
             return False
-        a = super().__eq__(other)
-        b = self.data_generation_type == other.data_generation_type
-        c = self.data_generation_task_type == other.data_generation_task_type
-        d = self.teacher_model_endpoint == other.teacher_model_endpoint
-        e = self.student_model == other.student_model
-        f = self.training_data == other.training_data
-        g = self._inference_parameters == other._inference_parameters
-        print(f"self inference params are {self._inference_parameters}")
-        print(f"other inference params are {other._inference_parameters}")
-        h = self._endpoint_request_settings == other._endpoint_request_settings
-        i = self._prompt_settings == other._prompt_settings
-        j = self._hyperparameters == other._hyperparameters
-        l = self.resources == other.resources
-        if not a:
-            print("a is not equal")
-        if not b:
-            print("b is not equal")
-        if not c:
-            print("c is not equal")
-        if not d:
-            print("d is not equal")
-        if not e:
-            print("e is not equal")
-        if not f:
-            print("f is not equal")
-        if not g:
-            print("g is not equal")
-        if not h:
-            print("h is not equal")
-        if not i:
-            print("i is not equal")
-        if not j:
-            print("j is not equal")
-        if not l:
-            print("l is not equal")
-
         return (
             super().__eq__(other)
             and self.data_generation_type == other.data_generation_type

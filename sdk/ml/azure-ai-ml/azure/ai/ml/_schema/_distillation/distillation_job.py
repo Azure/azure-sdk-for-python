@@ -7,7 +7,10 @@ from typing import Dict
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema._distillation.constants import DistillationSchemaKeys
-from azure.ai.ml._schema._distillation.distillation_types import DistillationPromptSettingsSchema
+from azure.ai.ml._schema._distillation.distillation_types import (
+    DistillationPromptSettingsSchema,
+    EndpointRequestSettingsSchema,
+)
 from azure.ai.ml._schema._finetuning.finetuning_vertical import FineTuningVerticalSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.job import BaseJobSchema
@@ -42,7 +45,7 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
         casing_transform=str.upper,
         required=True,
     )
-    teacher_model_endpoint = fields.Str()
+    teacher_model_endpoint = fields.Str()  # Serverless Connection?
     student_model = UnionField(
         [
             NestedField(ModelInputSchema),
@@ -55,7 +58,7 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
     validation_data = NestedField(DataInputSchema)
     inference_parameters = fields.Dict(keys=fields.Str(), values=fields.Raw())
     prompt_settings = NestedField(DistillationPromptSettingsSchema)
-    endpoint_request_settings = fields.Dict(keys=fields.Str(), values=fields.Raw())
+    endpoint_request_settings = NestedField(EndpointRequestSettingsSchema)
     hyperparameters = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     resources = NestedField(JobResourceConfigurationSchema)
     outputs = OutputsField()
