@@ -6,11 +6,13 @@
 ### Features Added
 
 ### Breaking Changes
+- Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
 
 ### Other Changes
+- Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
 
 ## 1.0.0b4 (2024-10-16)
 
