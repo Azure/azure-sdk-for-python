@@ -23,8 +23,10 @@ class ContentSafetyEvaluator(EvaluatorBase):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
-        Default is True.
+    :param eval_last_turn: Whether to evaluate the last turn of a conversation. Default is False.
+    :type eval_last_turn: bool
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
     :rtype: Callable
 
@@ -63,9 +65,9 @@ class ContentSafetyEvaluator(EvaluatorBase):
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict, parallel: bool = True, eval_last_turn: bool = False):
+    def __init__(self, credential, azure_ai_project: dict, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
-        self._parallel = parallel
+        self._parallel = kwargs.pop("parallel", True)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
