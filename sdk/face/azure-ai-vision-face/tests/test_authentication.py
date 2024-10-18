@@ -27,8 +27,8 @@ class TestAuthentication(AzureRecordedTestCase):
         sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
         result = client.detect(
             helpers.read_file_content(sample_file_path),
-            detection_model=FaceDetectionModel.DETECTION_03,
-            recognition_model=FaceRecognitionModel.RECOGNITION_04,
+            detection_model=FaceDetectionModel.DETECTION03,
+            recognition_model=FaceRecognitionModel.RECOGNITION04,
             return_face_id=False,
             return_face_attributes=[
                 FaceAttributeTypeDetection03.HEAD_POSE,

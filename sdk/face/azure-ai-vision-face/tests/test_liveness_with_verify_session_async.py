@@ -34,9 +34,7 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_session(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault(
-            "deviceCorrelationId", str(uuid.uuid4())
-        )
+        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
 
         # Test `create session` operation
         created_session = await client.create_liveness_with_verify_session(
@@ -66,9 +64,7 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_session_with_verify_image(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault(
-            "deviceCorrelationId", str(uuid.uuid4())
-        )
+        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
 
         # verify_image
         sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_1)
@@ -124,10 +120,7 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
             created_session_dict[created_session.session_id] = dcid
 
         # Sort the dict by key because the `list sessions` operation returns sessions in ascending alphabetical order.
-        expected_dcid_queue = deque(
-            value
-            for _, value in sorted(created_session_dict.items(), key=lambda t: t[0])
-        )
+        expected_dcid_queue = deque(value for _, value in sorted(created_session_dict.items(), key=lambda t: t[0]))
 
         # Test `list sessions` operation
         result = await client.get_liveness_with_verify_sessions()
@@ -152,13 +145,9 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_session_result(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_session_id = variables.setdefault(
-            "sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854"
-        )
+        recorded_session_id = variables.setdefault("sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854")
 
-        session = await client.get_liveness_with_verify_session_result(
-            recorded_session_id
-        )
+        session = await client.get_liveness_with_verify_session_result(recorded_session_id)
         assert session.created_date_time is not None
         assert session.session_start_date_time is not None
         assert isinstance(session.session_expired, bool)
@@ -181,13 +170,9 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_session_audit_entries(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_session_id = variables.setdefault(
-            "sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854"
-        )
+        recorded_session_id = variables.setdefault("sessionId", "1b79f44d-d8e0-4652-8f2d-637c4205d854")
 
-        entries = await client.get_liveness_with_verify_session_audit_entries(
-            recorded_session_id
-        )
+        entries = await client.get_liveness_with_verify_session_audit_entries(recorded_session_id)
         assert len(entries) == 2
         for entry in entries:
             _assert_liveness_session_audit_entry_is_valid(
@@ -204,9 +189,7 @@ class TestLivenessWithVerifySessionAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_delete_session(self, client, **kwargs):
         variables = kwargs.pop("variables", {})
-        recorded_device_correlation_id = variables.setdefault(
-            "deviceCorrelationId", str(uuid.uuid4())
-        )
+        recorded_device_correlation_id = variables.setdefault("deviceCorrelationId", str(uuid.uuid4()))
 
         created_session = await client.create_liveness_with_verify_session(
             CreateLivenessSessionContent(

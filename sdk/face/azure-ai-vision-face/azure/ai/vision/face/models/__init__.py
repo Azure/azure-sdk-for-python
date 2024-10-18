@@ -7,12 +7,16 @@
 # --------------------------------------------------------------------------
 
 from ._models import AccessoryItem
+from ._models import AddFaceResult
 from ._models import AuditLivenessResponseInfo
 from ._models import AuditRequestInfo
 from ._models import BlurProperties
 from ._models import CreateLivenessSessionContent
 from ._models import CreateLivenessSessionResult
+from ._models import CreateLivenessWithVerifySessionContent
+from ._models import CreateLivenessWithVerifySessionMultipartContent
 from ._models import CreateLivenessWithVerifySessionResult
+from ._models import CreatePersonResult
 from ._models import ExposureProperties
 from ._models import FaceAttributes
 from ._models import FaceDetectionResult
@@ -20,14 +24,22 @@ from ._models import FaceError
 from ._models import FaceErrorResponse
 from ._models import FaceFindSimilarResult
 from ._models import FaceGroupingResult
+from ._models import FaceIdentificationCandidate
+from ._models import FaceIdentificationResult
 from ._models import FaceLandmarks
 from ._models import FaceRectangle
+from ._models import FaceTrainingResult
 from ._models import FaceVerificationResult
 from ._models import FacialHair
 from ._models import HairColor
 from ._models import HairProperties
 from ._models import HeadPose
 from ._models import LandmarkCoordinate
+from ._models import LargeFaceList
+from ._models import LargeFaceListFace
+from ._models import LargePersonGroup
+from ._models import LargePersonGroupPerson
+from ._models import LargePersonGroupPersonFace
 from ._models import LivenessOutputsTarget
 from ._models import LivenessResponseBody
 from ._models import LivenessSession
@@ -47,6 +59,7 @@ from ._enums import FaceAttributeType
 from ._enums import FaceDetectionModel
 from ._enums import FaceImageType
 from ._enums import FaceLivenessDecision
+from ._enums import FaceOperationStatus
 from ._enums import FaceRecognitionModel
 from ._enums import FaceSessionStatus
 from ._enums import FindSimilarMatchMode
@@ -71,12 +84,16 @@ __all__ = [
     "FaceAttributeTypeRecognition03",
     "FaceAttributeTypeRecognition04",
     "AccessoryItem",
+    "AddFaceResult",
     "AuditLivenessResponseInfo",
     "AuditRequestInfo",
     "BlurProperties",
     "CreateLivenessSessionContent",
     "CreateLivenessSessionResult",
+    "CreateLivenessWithVerifySessionContent",
+    "CreateLivenessWithVerifySessionMultipartContent",
     "CreateLivenessWithVerifySessionResult",
+    "CreatePersonResult",
     "ExposureProperties",
     "FaceAttributes",
     "FaceDetectionResult",
@@ -84,14 +101,22 @@ __all__ = [
     "FaceErrorResponse",
     "FaceFindSimilarResult",
     "FaceGroupingResult",
+    "FaceIdentificationCandidate",
+    "FaceIdentificationResult",
     "FaceLandmarks",
     "FaceRectangle",
+    "FaceTrainingResult",
     "FaceVerificationResult",
     "FacialHair",
     "HairColor",
     "HairProperties",
     "HeadPose",
     "LandmarkCoordinate",
+    "LargeFaceList",
+    "LargeFaceListFace",
+    "LargePersonGroup",
+    "LargePersonGroupPerson",
+    "LargePersonGroupPersonFace",
     "LivenessOutputsTarget",
     "LivenessResponseBody",
     "LivenessSession",
@@ -110,6 +135,7 @@ __all__ = [
     "FaceDetectionModel",
     "FaceImageType",
     "FaceLivenessDecision",
+    "FaceOperationStatus",
     "FaceRecognitionModel",
     "FaceSessionStatus",
     "FindSimilarMatchMode",
