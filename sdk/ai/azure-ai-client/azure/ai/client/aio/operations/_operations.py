@@ -73,8 +73,8 @@ from ...operations._operations import (
     build_agents_update_run_request,
     build_agents_update_thread_request,
     build_agents_upload_file_request,
-    build_endpoints_list_request,
-    build_endpoints_list_secrets_request,
+    build_connections_list_request,
+    build_connections_list_secrets_request,
     build_evaluations_create_or_replace_schedule_request,
     build_evaluations_create_request,
     build_evaluations_delete_schedule_request,
@@ -4946,14 +4946,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class EndpointsOperations:
+class ConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.client.aio.AzureAIClient`'s
-        :attr:`endpoints` attribute.
+        :attr:`connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -4984,7 +4984,7 @@ class EndpointsOperations:
 
         cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop("cls", None)
 
-        _request = build_endpoints_list_request(
+        _request = build_connections_list_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5124,7 +5124,7 @@ class EndpointsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_endpoints_list_secrets_request(
+        _request = build_connections_list_secrets_request(
             connection_name_in_url=connection_name_in_url,
             content_type=content_type,
             api_version=self._config.api_version,

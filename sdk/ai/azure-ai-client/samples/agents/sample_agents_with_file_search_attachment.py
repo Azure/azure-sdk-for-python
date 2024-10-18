@@ -34,55 +34,46 @@ from azure.identity import DefaultAzureCredential
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
 )
-
-# Or, you can create the Azure AI Client by giving all required parameters directly
-"""
-ai_client = AzureAIClient(
-    credential=DefaultAzureCredential(),
-    host_name=os.environ["AI_CLIENT_HOST_NAME"],
-    subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-)
-"""
 
 with ai_client:
-    
+
     # upload a file and wait for it to be processed
-    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)    
+    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with the file and wait for it to be processed
-    # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active 
+    # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active
     vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
-        
+
     file_search_tool = FileSearchTool()
     file_search_tool.add_vector_store(vector_store.id)
-    
+
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to search the file
     # also, you do not need to provide tool_resources if you did not create a vector store above
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
-        tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id]))
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are helpful assistant",
+        tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id])),
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID: {thread.id}")    
+    print(f"Created thread, thread ID: {thread.id}")
 
     # create a message with the attachment
     attachment = MessageAttachment(file_id=file.id, tools=file_search_tool.definitions)
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
+    message = ai_client.agents.create_message(
+        thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
+    )
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-        
+
     ai_client.agents.delete_file(file.id)
     print("Deleted file")
 
@@ -91,6 +82,6 @@ with ai_client:
 
     ai_client.agents.delete_agent(agent.id)
     print("Deleted agent")
-    
-    messages = ai_client.agents.list_messages(thread_id=thread.id)    
+
+    messages = ai_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
