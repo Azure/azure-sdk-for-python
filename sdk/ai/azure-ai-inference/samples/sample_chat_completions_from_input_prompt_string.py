@@ -51,7 +51,6 @@ def sample_chat_completions_from_input_prompt_string():
     """
     prompt_template = PromptTemplate.from_message(
         api = "chat",
-        model_name = "gpt-4o-mini",
         prompt_template = prompt_template_str
     )
 

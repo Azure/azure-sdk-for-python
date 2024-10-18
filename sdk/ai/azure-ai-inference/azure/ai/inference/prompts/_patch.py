@@ -13,6 +13,18 @@ from .utils import prepare
 
 
 class PromptTemplate:
+    """The helper class which takes varient of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
+
+    :param prompty: Prompty object which contains both model config and prompt template.
+    :type prompty: Prompty
+    :param prompt_template: The prompt template string.
+    :type prompt_template: str
+    :param api: The API type, e.g. "chat" or "completion".
+    :type api: str
+    :param model_name: The model name, e.g. "gpt-4o-mini".
+    :type model_name: str
+    """
+
     @staticmethod
     def from_prompty(file_path: str):
         if not file_path:
@@ -22,9 +34,9 @@ class PromptTemplate:
     
     @staticmethod
     def from_message(
-        model_name: str,
         prompt_template: str,
-        api: str = "chat"
+        api: str = "chat",
+        model_name: str | None = None
     ):
         return PromptTemplate(api=api, prompt_template=prompt_template, model_name=model_name, prompty=None)
 
@@ -40,7 +52,7 @@ class PromptTemplate:
             self.model_name = prompty.model.configuration["azure_deployment"]
             self.config = prompty.model.parameters
             self._parameters = {}
-        elif prompt_template is not None and model_name is not None:
+        elif prompt_template is not None:
             self.model_name = model_name
             self.config = {}
             # _parameters is a dict to hold the internal configuration
