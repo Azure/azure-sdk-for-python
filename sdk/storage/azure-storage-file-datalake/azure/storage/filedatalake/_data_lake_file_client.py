@@ -224,7 +224,7 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :returns: response dict (Etag and last modified).
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
@@ -270,7 +270,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: response dict.
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -451,7 +451,7 @@ class DataLakeFileClient(PathClient):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :returns: response dict (Etag and last modified).
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, Any]
         """
         options = _upload_options(
@@ -512,7 +512,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response dict.
+        :returns: A response dict (etag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -609,7 +609,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response dict.
+        :returns: A response dict (etag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -714,8 +714,7 @@ class DataLakeFileClient(PathClient):
         return self._exists(**kwargs)
 
     @distributed_trace
-    def rename_file(self, new_name, **kwargs):
-        # type: (str, **Any) -> DataLakeFileClient
+    def rename_file(self, new_name: str, **kwargs: Any) -> Self:
         """
         Rename the source file.
 
@@ -724,8 +723,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword source_lease: A lease ID for the source path. If specified,
-         the source path must have an active lease and the lease ID must
-         match.
+            the source path must have an active lease and the lease ID must match.
         :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
@@ -771,7 +769,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: the renamed file client
+        :return: The renamed file client.
         :rtype: DataLakeFileClient
 
         .. admonition:: Example:
@@ -796,8 +794,7 @@ class DataLakeFileClient(PathClient):
         return new_file_client
 
     @distributed_trace
-    def query_file(self, query_expression, **kwargs):
-        # type: (str, **Any) -> DataLakeFileQueryReader
+    def query_file(self, query_expression: str, **kwargs: Any) -> DataLakeFileQueryReader:
         """
         Enables users to select/project on datalake file data by providing simple query expressions.
         This operations returns a DataLakeFileQueryReader, users need to use readall() or readinto() to get query data.
@@ -855,7 +852,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A streaming object (DataLakeFileQueryReader)
+        :returns: A streaming object (DataLakeFileQueryReader).
         :rtype: ~azure.storage.filedatalake.DataLakeFileQueryReader
 
         .. admonition:: Example:
