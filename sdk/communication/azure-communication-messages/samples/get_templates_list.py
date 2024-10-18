@@ -25,25 +25,26 @@ import sys
 
 sys.path.append("..")
 
+
 class GetTemplatesSample(object):
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
-    
+
     def get_templates_list(self):
 
         from azure.communication.messages import MessageTemplateClient
-        from azure.communication.messages.models import ( TextNotificationContent )
+        from azure.communication.messages.models import TextNotificationContent
 
         message_template_client = MessageTemplateClient.from_connection_string(self.connection_string)
-        
+
         # calling send() with whatsapp message details
         template_list = message_template_client.list_templates(self.channel_id)
-        
-        count_templates = len(list(template_list))
-        print("Successfully retrieved {} templates from channel_id {}."
-            .format(count_templates, self.channel_id))
 
-if __name__ == '__main__':
+        count_templates = len(list(template_list))
+        print("Successfully retrieved {} templates from channel_id {}.".format(count_templates, self.channel_id))
+
+
+if __name__ == "__main__":
     sample = GetTemplatesSample()
     sample.get_templates_list()

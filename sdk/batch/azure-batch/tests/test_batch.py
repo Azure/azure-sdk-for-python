@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -63,6 +64,7 @@ def get_redacted_key(key):
     digest = hashlib.sha256(six.ensure_binary(key)).digest()
     redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
     return redacted_value
+
 
 class TestBatch(AzureMgmtRecordedTestCase):
     def fail(self, err):
@@ -150,11 +152,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher="Canonical", 
-                    offer="UbuntuServer", 
-                    sku="18.04-LTS"
-                ),
+                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
             ),
         )
@@ -188,11 +186,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher="Canonical", 
-                    offer="UbuntuServer", 
-                    sku="18.04-LTS"
-                ),
+                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
                 data_disks=[data_disk],
             ),
@@ -295,11 +289,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 node_agent_sku_id="batch.node.ubuntu 18.04",
-                image_reference=models.ImageReference(
-                    publisher="Canonical", 
-                    offer="UbuntuServer", 
-                    sku="18.04-LTS"
-                ),
+                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -514,11 +504,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
-            image_reference=models.ImageReference(
-                publisher="Canonical", 
-                offer="UbuntuServer", 
-                sku="18.04-LTS"
-            ),
+            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
         pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
@@ -584,8 +570,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Disable Scheduling
         response = await async_wrapper(
             client.disable_node_scheduling(
-                batch_pool.name, 
-                nodes[0].id, 
+                batch_pool.name,
+                nodes[0].id,
                 models.BatchNodeDisableSchedulingOption.terminate,
             )
         )
@@ -657,11 +643,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
             extensions=[extension],
-            image_reference=models.ImageReference(
-                publisher="Canonical", 
-                offer="UbuntuServer", 
-                sku="18.04-LTS"
-            ),
+            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
         batch_pool = models.BatchPoolCreateContent(
             id=self.get_resource_name("batch_network_"),
@@ -1074,8 +1056,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 vm_size=DEFAULT_VM_SIZE,
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
                     image_reference=models.ImageReference(
-                        publisher="Canonical", 
-                        offer="UbuntuServer", 
+                        publisher="Canonical",
+                        offer="UbuntuServer",
                         sku="18.04-LTS",
                         version="latest",
                     ),
