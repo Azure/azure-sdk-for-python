@@ -172,7 +172,7 @@ class Simulator:
             user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
             target=target,
             api_call_delay_sec=api_call_delay_sec,
-            text=text
+            text=text,
         )
 
     async def _simulate_with_predefined_turns(
@@ -517,7 +517,7 @@ class Simulator:
         :paramtype target: Callable
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
-        :keyword text: The initial input text for generating query responses. 
+        :keyword text: The initial input text for generating query responses.
         :paramtype text: str
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]

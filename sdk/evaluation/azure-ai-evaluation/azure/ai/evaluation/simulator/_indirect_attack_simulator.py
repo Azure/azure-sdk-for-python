@@ -190,17 +190,19 @@ class IndirectAttackSimulator(AdversarialSimulator):
             xpia_attack_type = template_parameters.get("xpia_attack_type", "")
             action = template_parameters.get("action", "")
             document_type = template_parameters.get("document_type", "")
-            sim_results.append({
-                "messages": completed_task["messages"],
-                "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
-                "template_parameters": {
-                    "metadata": {
-                        "xpia_attack_type": xpia_attack_type,
-                        "action": action,
-                        "document_type": document_type,
+            sim_results.append(
+                {
+                    "messages": completed_task["messages"],
+                    "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
+                    "template_parameters": {
+                        "metadata": {
+                            "xpia_attack_type": xpia_attack_type,
+                            "action": action,
+                            "document_type": document_type,
+                        },
                     },
-                },
-            })
+                }
+            )
             progress_bar.update(1)
         progress_bar.close()
         return JsonLineList(sim_results)
