@@ -64,7 +64,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """

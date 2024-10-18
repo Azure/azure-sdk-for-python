@@ -65,7 +65,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """
