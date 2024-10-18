@@ -43,7 +43,7 @@ class SendWhatsAppMessageSample(object):
         audio_options = AudioNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            media_uri= "https://filesamples.com/samples/audio/mp3/sample3.mp3"
+            media_uri="https://filesamples.com/samples/audio/mp3/sample3.mp3",
         )
 
         # calling send() with whatsapp message details
