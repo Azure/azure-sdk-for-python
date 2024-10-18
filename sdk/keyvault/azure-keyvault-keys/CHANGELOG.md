@@ -1,5 +1,15 @@
 # Release History
 
+## 4.10.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.10.0 (2024-10-17)
 
 ### Features Added
