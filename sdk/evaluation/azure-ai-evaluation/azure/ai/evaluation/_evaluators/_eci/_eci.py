@@ -4,10 +4,12 @@
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class ECIEvaluator(RaiServiceEvaluatorBase):
+@experimental
+class ECIEvaluator(RaiServiceEvaluatorBase[str]):
     """
     Initialize an ECI evaluator to evaluate ECI based on the following guidelines:
     Detects whether ECI is present without a disclaimer in the AI system’s response.
@@ -51,7 +53,7 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
     ):
         super().__init__(

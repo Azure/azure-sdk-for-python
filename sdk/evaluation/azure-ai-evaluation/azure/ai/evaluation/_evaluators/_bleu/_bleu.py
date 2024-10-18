@@ -63,7 +63,7 @@ class BleuScoreEvaluator:
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The BLEU score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return async_run_allowing_running_loop(
             self._async_evaluator, response=response, ground_truth=ground_truth, **kwargs

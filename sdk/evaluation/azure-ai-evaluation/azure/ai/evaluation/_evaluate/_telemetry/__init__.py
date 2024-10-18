@@ -16,10 +16,10 @@ from promptflow.client import PFClient
 from promptflow.core import Prompty as prompty_core
 from typing_extensions import ParamSpec
 
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 
 from ..._user_agent import USER_AGENT
-from .._utils import EvaluateResult, _trace_destination_from_project_scope
+from .._utils import _trace_destination_from_project_scope
 
 LOGGER = logging.getLogger(__name__)
 
@@ -97,17 +97,17 @@ def _get_evaluator_properties(evaluator, evaluator_name):
 
 
 # cspell:ignore isna
-def log_evaluate_activity(func: Callable[P, EvaluateResult]) -> Callable[P, EvaluateResult]:
+def log_evaluate_activity(func: Callable[P, EvaluationResult]) -> Callable[P, EvaluationResult]:
     """Decorator to log evaluate activity
 
     :param func: The function to be decorated
     :type func: Callable
     :returns: The decorated function
-    :rtype: Callable[P, EvaluateResult]
+    :rtype: Callable[P, EvaluationResult]
     """
 
     @functools.wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> EvaluateResult:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> EvaluationResult:
         from promptflow._sdk._telemetry import ActivityType, log_activity
         from promptflow._sdk._telemetry.telemetry import get_telemetry_logger
 

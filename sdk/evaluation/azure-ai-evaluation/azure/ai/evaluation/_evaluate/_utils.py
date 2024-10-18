@@ -7,7 +7,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict, Union
+from typing import Any, Dict, NamedTuple, Optional, Tuple, Union
 
 import pandas as pd
 from promptflow.client import PFClient
@@ -35,12 +35,6 @@ class AzureMLWorkspace(NamedTuple):
     subscription_id: str
     resource_group_name: str
     workspace_name: str
-
-
-class EvaluateResult(TypedDict):
-    metrics: Dict[str, float]
-    studio_url: Optional[str]
-    rows: List[Dict]
 
 
 def is_none(value) -> bool:

@@ -36,14 +36,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         }
     """
 
-    PROMPTY_FILE = "groundedness.prompty"
-    RESULT_KEY = "gpt_groundedness"
+    _PROMPTY_FILE = "groundedness.prompty"
+    _RESULT_KEY = "gpt_groundedness"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(
@@ -51,7 +51,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         *,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation=None,
         **kwargs,
     ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,
@@ -65,8 +65,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(response=response, context=context, conversation=conversation, **kwargs)

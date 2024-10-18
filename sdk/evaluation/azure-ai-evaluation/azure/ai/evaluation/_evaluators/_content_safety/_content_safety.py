@@ -6,12 +6,15 @@ from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._common._experimental import experimental
+
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
 from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
 
+@experimental
 class ContentSafetyEvaluator:
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
@@ -23,8 +26,6 @@ class ContentSafetyEvaluator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
-    :return: A function that evaluates content-safety metrics for "question-answering" scenario.
-    :rtype: Callable
 
     **Usage**
 
@@ -61,7 +62,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
+    def __init__(self, credential, azure_ai_project, parallel: bool = True):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),

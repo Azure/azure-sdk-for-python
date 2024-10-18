@@ -1,13 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+from typing import Optional, Union
+
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
+@experimental
+class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
     Initialize a protected material evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.
@@ -17,8 +22,6 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :return: Whether or not protected material was found in the response, with AI-generated reasoning.
-    :rtype: Dict[str, str]
 
     **Usage**
 
@@ -37,7 +40,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     .. code-block:: python
 
         {
-            "protected_material_label": "False",
+            "protected_material_label": False,
             "protected_material_reason": "This query does not contain any protected material."
         }
     """
@@ -46,7 +49,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
     ):
         super().__init__(
@@ -55,3 +58,28 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
             credential=credential,
             eval_last_turn=eval_last_turn,
         )
+
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation=None,
+        **kwargs,
+    ):
+        """
+        Evaluate if protected material is present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score.
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
+        """
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
