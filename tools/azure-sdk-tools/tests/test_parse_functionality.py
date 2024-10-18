@@ -211,7 +211,7 @@ setup(
 
 def test_parse_pyproject():
     # ensure that we can parse from a folder and a specific file
-    parsed_project = ParsedSetup.from_path(pyproject_extension_scenario)
+    parsed_project = ParsedSetup.from_path(pyproject_scenario)
 
     assert parsed_project.name == "azure-keyvault-keys"
     assert parsed_project.version == "0.0.1"
