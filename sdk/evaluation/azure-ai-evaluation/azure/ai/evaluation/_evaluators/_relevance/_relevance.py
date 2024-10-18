@@ -17,6 +17,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword passing_score: The minimum score required to pass the evaluation. Defaults to 3.0.
+    :paramtype passing_score: float
 
     **Usage**
 

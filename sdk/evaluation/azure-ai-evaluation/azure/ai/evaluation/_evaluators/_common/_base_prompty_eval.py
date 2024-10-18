@@ -9,7 +9,7 @@ from typing import Dict
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config, update_with_passing_label
 from azure.ai.evaluation._common.constants import DEFAULT_PASSING_SCORE
 from . import EvaluatorBase
 
@@ -35,6 +35,8 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     :param ignore_queries: If True, queries will be ignored in conversation evaluations. Default is False.
         Useful since some evaluators of this format are response-only.
     :type ignore_queries: bool
+    :keyword passing_score: The minimum score required to pass the evaluation. Defaults to 3.0.
+    :paramtype passing_score: float
     """
 
     LLM_CALL_TIMEOUT = 600
@@ -80,6 +82,5 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     @override
     def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
         result = super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
-        is_passing = float(result.get(self._result_key)) >= self._passing_score  # type: ignore[arg-type]
-        result.update({f"{self._result_key}_label": is_passing})
+        result = update_with_passing_label(result=result, passing_score=self._passing_score, metric_name=self._result_key)
         return result

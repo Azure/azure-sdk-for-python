@@ -270,3 +270,20 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         validate_annotation(v, annotations[k])
 
     return cast(T_TypedDict, o)
+
+
+def update_with_passing_label(result: dict, passing_score: float, metric_name: str) -> dict:
+    """Update the result with a passing label based on the passing score.
+
+    :param result: The result to update.
+    :type result: dict
+    :param passing_score: The minimum score required to pass the evaluation.
+    :type passing_score: float
+    :param metric_name: The name of the metric to evaluate.
+    :type metric_name: str
+    :return: The updated result.
+    :rtype: dict
+    """
+    is_passing = float(result.get(metric_name)) >= passing_score  # type: ignore[arg-type]
+    result.update({f"{metric_name}_label": is_passing})
+    return result

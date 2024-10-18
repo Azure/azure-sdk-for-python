@@ -13,7 +13,7 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config, update_with_passing_label
 
 try:
     from ..._user_agent import USER_AGENT
@@ -26,6 +26,7 @@ class _AsyncSimilarityEvaluator:
     PROMPTY_FILE = "similarity.prompty"
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    RESULT_KEY = "gpt_similarity"
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         prompty_model_config = construct_prompty_model_config(
@@ -77,7 +78,7 @@ class _AsyncSimilarityEvaluator:
             if match:
                 score = float(match.group())
 
-        return {"gpt_similarity": float(score)}
+        return {self.RESULT_KEY: float(score)}
 
 
 class SimilarityEvaluator:
@@ -87,6 +88,8 @@ class SimilarityEvaluator:
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword passing_score: The minimum score required to pass the evaluation. Defaults to 3.0.
+    :paramtype passing_score: float
 
     **Usage**
 
@@ -107,8 +110,9 @@ class SimilarityEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: dict, **kwargs):
         self._async_evaluator = _AsyncSimilarityEvaluator(validate_model_config(model_config))
+        self._passing_score = kwargs.get("passing_score", 3.0)
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """
@@ -123,9 +127,11 @@ class SimilarityEvaluator:
         :return: The similarity score.
         :rtype: Dict[str, float]
         """
-        return async_run_allowing_running_loop(
+        result = async_run_allowing_running_loop(
             self._async_evaluator, query=query, response=response, ground_truth=ground_truth, **kwargs
         )
+        result = update_with_passing_label(result=result, passing_score=self._passing_score, metric_name=self._async_evaluator.RESULT_KEY)
+        return result
 
     def _to_async(self):
         return self._async_evaluator
