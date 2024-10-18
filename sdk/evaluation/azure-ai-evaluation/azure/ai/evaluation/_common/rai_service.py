@@ -9,6 +9,7 @@ import time
 from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
+from string import Template
 
 import jwt
 
@@ -34,6 +35,10 @@ except importlib.metadata.PackageNotFoundError:
     version = "unknown"
 USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
+USER_TEXT_TEMPLATE_DICT = {
+    Tasks.CONTENT_HARM: Template("<Human>{$question}</><System>{$answer}</>"),
+    Tasks.GROUNDEDNESS: Template("{\"question\": \"\", \"answer\": \"$answer\", \"context\": \"$context\"}")
+}
 
 def get_common_headers(token: str) -> Dict:
     """Get common headers for the HTTP request
@@ -99,7 +104,7 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
         )
 
 
-def generate_payload(normalized_user_text: str, metric: str) -> Dict:
+def generate_payload(normalized_user_text: str, metric: str, annotation_task: Tasks=Tasks.CONTENT_HARM) -> Dict:
     """Generate the payload for the annotation request
 
     :param normalized_user_text: The normalized user text to be entered as the "UserTextList" in the payload.
@@ -107,11 +112,13 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     :param metric: The evaluation metric to use. This determines the task type, and whether a "MetricList" is needed
         in the payload.
     :type metric: str
+    :param annotation_task: The annotation task to be passed to service
+    :type annotation_task: str
     :return: The payload for the annotation request.
     :rtype: Dict
     """
     include_metric = True
-    task = Tasks.CONTENT_HARM
+    task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         task = Tasks.PROTECTED_MATERIAL
         include_metric = False
@@ -135,13 +142,11 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     )
 
 
-async def submit_request(query: str, response: str, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
-    :param query: The query to evaluate.
-    :type query: str
-    :param response: The response to evaluate.
-    :type response: str
+    :param data: The data to evaluate.
+    :type data: dict
     :param metric: The evaluation metric to use.
     :type metric: str
     :param rai_svc_url: The Responsible AI service URL.
@@ -151,9 +156,9 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     :return: The operation ID.
     :rtype: str
     """
-    user_text = f"<Human>{query}</><System>{response}</>"
+    user_text = USER_TEXT_TEMPLATE_DICT[annotation_task].substitute(**data)
     normalized_user_text = user_text.replace("'", '\\"')
-    payload = generate_payload(normalized_user_text, metric)
+    payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
@@ -208,7 +213,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
 
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
-    batch_response: List[Dict], metric_name: str
+    batch_response: List[Dict], metric_name: str, metric_display_name: str
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
@@ -216,6 +221,8 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     :type batch_response: List[Dict]
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
+    :param metric_display_name: The evaluation metric display name to use.
+    :type metric_display_name: str
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """
@@ -246,10 +253,10 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
         return result
-    return _parse_content_harm_response(batch_response, metric_name)
+    return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
 
-def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -> Dict[str, Union[str, float]]:
+def _parse_content_harm_response(batch_response: List[Dict], metric_name: str, metric_display_name: str=None) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
     :param batch_response: The annotation response from Responsible AI service.
@@ -261,7 +268,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     """
     # Fix the metric name if it's "hate_fairness"
     # Eventually we will remove this fix once the RAI service is updated
-    key = metric_name
+    key = metric_name if metric_display_name is None else metric_display_name
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
@@ -283,7 +290,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
 
         # get content harm metric_value
         if "label" in harm_response:
-            metric_value = harm_response["label"]
+            metric_value = int(harm_response["label"])
         elif "valid" in harm_response:
             metric_value = 0 if harm_response["valid"] else math.nan
         else:
@@ -412,14 +419,13 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
 
 
 async def evaluate_with_rai_service(
-    query: str, response: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
+    data: dict, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential,
+    annotation_task: Tasks=Tasks.CONTENT_HARM, metric_display_name=None
 ) -> Dict[str, Union[str, float]]:
     """ "Evaluate the content safety of the response using Responsible AI service
 
-       :param query: The query to evaluate.
-       :type query: str
-       :param response: The response to evaluate.
-       :type response: str
+       :param data: The data to evaluate.
+       :type data: dict
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
        :param project_scope: The Azure AI project scope details.
@@ -427,6 +433,10 @@ async def evaluate_with_rai_service(
        :param credential: The Azure authentication credential.
        :type credential:
     ~azure.core.credentials.TokenCredential
+       :param annotation_task: The annotation task to use.
+       :type annotation_task: str
+       :param metric_display_name: The display name of metric to use.
+       :type metric_display_name: str
        :return: The parsed annotation result.
        :rtype: Dict[str, Union[str, float]]
     """
@@ -434,11 +444,11 @@ async def evaluate_with_rai_service(
     # Get RAI service URL from discovery service and check service availability
     token = await fetch_or_reuse_token(credential)
     rai_svc_url = await get_rai_svc_url(project_scope, token)
-    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+    await ensure_service_availability(rai_svc_url, token, annotation_task)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
+    operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task)
     annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-    result = parse_response(annotation_response, metric_name)
+    result = parse_response(annotation_response, metric_name, metric_display_name)
 
     return result

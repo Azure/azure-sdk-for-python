@@ -5,7 +5,7 @@ from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
+from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics, Tasks
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -90,8 +90,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
             )
         return await evaluate_with_rai_service(
             metric_name=self._eval_metric,
-            query=query,
-            response=response,
+            data={
+                "query": query,
+                "response": response
+            },
             project_scope=self._azure_ai_project,
             credential=self._credential,
+            annotation_task=Tasks.CONTENT_HARM
         )
