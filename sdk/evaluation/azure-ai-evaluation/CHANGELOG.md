@@ -6,13 +6,20 @@
 ### Features Added
 
 ### Breaking Changes
-- Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- The following evaluators will now output a new metrics key `<metric_name>_label` indicating whether or not the score is greater than or equal to the `passing_score`. `passing_score` will be 3.0 by default, but can be set by the user by supplying it as a keyword argument to the evaluator upon initialization.
+  - `CoherenceEvaluator`
+  - `SimilarityEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `RetrievalEvaluator`
+  - `GroundednessEvaluator`
 
 ## 1.0.0b4 (2024-10-16)
 

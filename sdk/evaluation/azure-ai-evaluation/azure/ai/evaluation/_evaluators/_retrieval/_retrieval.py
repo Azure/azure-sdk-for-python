@@ -15,7 +15,7 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from ..._common.math import list_mean_nan_safe
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config, update_with_passing_label
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class _AsyncRetrievalScoreEvaluator:
     PROMPTY_FILE = "retrieval.prompty"
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    RESULT_KEY = "gpt_retrieval"
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         prompty_model_config = construct_prompty_model_config(
@@ -88,9 +89,9 @@ class _AsyncRetrievalScoreEvaluator:
                 per_turn_scores.append(math.nan)
 
         return {
-            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
+            self.RESULT_KEY: list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
-                "gpt_retrieval": {
+                self.RESULT_KEY: {
                     "score": per_turn_scores,
                 }
             },
@@ -104,6 +105,8 @@ class RetrievalEvaluator:
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword passing_score: The minimum score required to pass the evaluation. Defaults to 3.0.
+    :paramtype passing_score: float
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -137,8 +140,9 @@ class RetrievalEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: dict, **kwargs):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
+        self._passing_score = kwargs.get("passing_score", 3.0)
 
     def __call__(self, *, conversation, **kwargs):
         """Evaluates retrieval score chat scenario.
@@ -148,7 +152,9 @@ class RetrievalEvaluator:
         :return: The scores for Chat scenario.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
+        result = async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
+        result = update_with_passing_label(result=result, passing_score=self._passing_score, metric_name=self._async_evaluator.RESULT_KEY)
+        return result
 
     def _to_async(self):
         return self._async_evaluator

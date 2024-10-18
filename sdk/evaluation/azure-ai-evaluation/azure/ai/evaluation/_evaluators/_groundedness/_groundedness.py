@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Optional, Dict
 
 from typing_extensions import override
 
@@ -16,6 +16,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
         ~azure.ai.evalation.OpenAIModelConfiguration]
+    :keyword passing_score: The minimum score required to pass the evaluation. Defaults to 3.0.
+    :paramtype passing_score: float
 
     **Usage**
 
@@ -40,10 +42,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_groundedness"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: dict, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        passing_score = kwargs.get("passing_score")
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY, passing_score=passing_score)
 
     @override
     def __call__(
