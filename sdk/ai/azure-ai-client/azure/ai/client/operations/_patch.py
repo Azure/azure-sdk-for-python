@@ -1,7 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -203,14 +200,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Connection name cannot be empty")
         if populate_secrets:
-            connection: ConnectionsListSecretsResponse = self._list_secrets(
-                connection_name_in_url=connection_name,
-                connection_name=connection_name,
-                subscription_id=self._config.subscription_id,
-                resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.project_name,
-                api_version_in_body=self._config.api_version,
-            )
+            connection: ConnectionsListSecretsResponse = self._list_secrets(connection_name_in_url=connection_name)
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
@@ -234,21 +224,15 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                     return ConnectionProperties(connection=connection)
             return None
 
-    def list(
-        self, *, connection_type: ConnectionType | None = None, populate_secrets: bool = False
-    ) -> Iterable[ConnectionProperties]:
+    def list(self, *, connection_type: ConnectionType | None = None) -> Iterable[ConnectionProperties]:
 
         # First make a REST call to /list to get all the connections, without secrets
-        connections_list: ConnectionsListResponse = self._list()
-        connection_properties_list: List[ConnectionProperties] = []
+        connections_list: ConnectionsListResponse = self._list(include_all=True, category=connection_type)
 
-        # Filter by connection type
+        # Iterate to create the simplified result property
+        connection_properties_list: List[ConnectionProperties] = []
         for connection in connections_list.value:
-            if connection_type is None or connection.properties.category == connection_type:
-                if not populate_secrets:
-                    connection_properties_list.append(ConnectionProperties(connection=connection))
-                else:
-                    connection_properties_list.append(self.get(connection_name=connection.name, populate_secrets=True))
+            connection_properties_list.append(ConnectionProperties(connection=connection))
 
         return connection_properties_list
 
