@@ -34,13 +34,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_relevance": 3.0
+            "relevance": 3.0
         }
     """
 
     # Constants must be defined within eval's directory to be save/loadable
     PROMPTY_FILE = "relevance.prompty"
-    RESULT_KEY = "gpt_relevance"
+    RESULT_KEY = "relevance"
 
     @override
     def __init__(self, model_config: dict):

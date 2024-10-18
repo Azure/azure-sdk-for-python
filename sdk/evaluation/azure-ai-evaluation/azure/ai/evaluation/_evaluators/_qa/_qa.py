@@ -42,11 +42,11 @@ class QAEvaluator:
     .. code-block:: python
 
         {
-            "gpt_groundedness": 3.5,
-            "gpt_relevance": 4.0,
-            "gpt_coherence": 1.5,
-            "gpt_fluency": 4.0,
-            "gpt_similarity": 3.0,
+            "groundedness": 3.5,
+            "relevance": 4.0,
+            "coherence": 1.5,
+            "fluency": 4.0,
+            "similarity": 3.0,
             "f1_score": 0.42
         }
     """

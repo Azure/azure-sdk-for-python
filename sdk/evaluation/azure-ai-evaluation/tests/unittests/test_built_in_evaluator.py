@@ -20,7 +20,7 @@ class TestBuiltInEvaluators:
         score = fluency_eval(query="What is the capital of Japan?", response="The capital of Japan is Tokyo.")
 
         assert score is not None
-        assert score["gpt_fluency"] == 1
+        assert score["fluency"] == 1
 
     def test_fluency_evaluator_non_string_inputs(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
@@ -29,7 +29,7 @@ class TestBuiltInEvaluators:
         score = fluency_eval(query={"foo": 1}, response={"bar": "2"})
 
         assert score is not None
-        assert score["gpt_fluency"] == 1
+        assert score["fluency"] == 1
 
     def test_fluency_evaluator_empty_string(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)

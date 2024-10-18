@@ -31,12 +31,12 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_coherence": 1.0
+            "coherence": 1.0
         }
     """
 
     PROMPTY_FILE = "coherence.prompty"
-    RESULT_KEY = "gpt_coherence"
+    RESULT_KEY = "coherence"
 
     @override
     def __init__(self, model_config: dict):

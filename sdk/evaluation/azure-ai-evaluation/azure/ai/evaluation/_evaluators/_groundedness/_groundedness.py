@@ -32,12 +32,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_groundedness": 5
+            "groundedness": 5
         }
     """
 
     PROMPTY_FILE = "groundedness.prompty"
-    RESULT_KEY = "gpt_groundedness"
+    RESULT_KEY = "groundedness"
 
     @override
     def __init__(self, model_config: dict):

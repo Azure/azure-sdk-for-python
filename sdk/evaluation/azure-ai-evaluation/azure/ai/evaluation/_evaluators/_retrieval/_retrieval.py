@@ -88,9 +88,9 @@ class _AsyncRetrievalScoreEvaluator:
                 per_turn_scores.append(math.nan)
 
         return {
-            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
+            "retrieval": list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
-                "gpt_retrieval": {
+                "retrieval": {
                     "score": per_turn_scores,
                 }
             },
@@ -128,9 +128,9 @@ class RetrievalEvaluator:
     .. code-block:: python
 
         {
-            "gpt_retrieval": 3.0
+            "retrieval": 3.0
             "evaluation_per_turn": {
-                "gpt_retrieval": {
+                "retrieval": {
                     "score": [1.0, 2.0, 3.0]
                 }
             }

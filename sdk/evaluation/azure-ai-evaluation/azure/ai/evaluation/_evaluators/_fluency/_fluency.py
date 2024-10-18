@@ -32,12 +32,12 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_fluency": 4.0
+            "fluency": 4.0
         }
     """
 
     PROMPTY_FILE = "fluency.prompty"
-    RESULT_KEY = "gpt_fluency"
+    RESULT_KEY = "fluency"
 
     @override
     def __init__(self, model_config: dict):
