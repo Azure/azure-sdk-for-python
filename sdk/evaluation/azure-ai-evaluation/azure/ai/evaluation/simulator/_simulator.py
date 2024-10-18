@@ -15,12 +15,13 @@ from promptflow.core import AsyncPrompty
 from tqdm import tqdm
 
 from azure.ai.evaluation._common.utils import construct_prompty_model_config
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
-from ._helpers import ConversationHistory, Turn, experimental
+from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
 
 
