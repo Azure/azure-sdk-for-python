@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -66,7 +67,9 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
@@ -106,13 +109,17 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=connection.authentication_type, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(
+                endpoint=connection.authentication_type, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=connection.properties.token_credential)
+            client = EmbeddingsClient(
+                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -1453,7 +1460,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    def upload_file(self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any) -> _models.OpenAIFile:
+    def upload_file(
+        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
@@ -1773,7 +1782,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_file_batch_and_poll(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1801,7 +1816,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1825,7 +1840,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_file_batch_and_poll(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1853,7 +1874,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1870,19 +1891,25 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
         if body is None:
-            vector_store_file_batch = super().create_vector_store_file_batch(vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs)
+            vector_store_file_batch = super().create_vector_store_file_batch(
+                vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs
+            )
         else:
-            content_type = kwargs.get("content_type", "application/json")            
-            vector_store_file_batch = super().create_vector_store_file_batch(body=body, content_type=content_type, **kwargs)
-            
+            content_type = kwargs.get("content_type", "application/json")
+            vector_store_file_batch = super().create_vector_store_file_batch(
+                body=body, content_type=content_type, **kwargs
+            )
+
         while vector_store_file_batch.status == "in_progress":
             time.sleep(sleep_interval)
-            vector_store_file_batch = super().get_vector_store_file_batch(vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id)
-            
+            vector_store_file_batch = super().get_vector_store_file_batch(
+                vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id
+            )
+
         return vector_store_file_batch
-    
+
 
 __all__: List[str] = [
     "AgentsOperations",

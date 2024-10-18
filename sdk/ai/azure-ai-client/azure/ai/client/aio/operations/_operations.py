@@ -4964,9 +4964,19 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def _list(self, **kwargs: Any) -> _models._models.ConnectionsListResponse:  # pylint: disable=protected-access
+    async def _list(  # pylint: disable=protected-access
+        self, *, category: Union[str, _models.ConnectionType], include_all: bool, target: str, **kwargs: Any
+    ) -> _models._models.ConnectionsListResponse:
         """List the details of all the connections (not including their credentials).
 
+        :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
+         "Serverless", "AzureBlob", and "AIServices". Required.
+        :paramtype category: str or ~azure.ai.client.models.ConnectionType
+        :keyword include_all: Indicates whether to list datastores. Service default: do not lines
+         datastores. Required.
+        :paramtype include_all: bool
+        :keyword target: Target of the workspace connection. Required.
+        :paramtype target: str
         :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
         :rtype: ~azure.ai.client.models._models.ConnectionsListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4985,6 +4995,9 @@ class ConnectionsOperations:
         cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop("cls", None)
 
         _request = build_connections_list_request(
+            category=category,
+            include_all=include_all,
+            target=target,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5033,16 +5046,7 @@ class ConnectionsOperations:
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
     async def _list_secrets(  # pylint: disable=protected-access
-        self,
-        connection_name_in_url: str,
-        *,
-        connection_name: str,
-        subscription_id: str,
-        resource_group_name: str,
-        workspace_name: str,
-        api_version_in_body: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, connection_name_in_url: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
     async def _list_secrets(  # pylint: disable=protected-access
@@ -5055,11 +5059,7 @@ class ConnectionsOperations:
         connection_name_in_url: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        connection_name: str = _Unset,
-        subscription_id: str = _Unset,
-        resource_group_name: str = _Unset,
-        workspace_name: str = _Unset,
-        api_version_in_body: str = _Unset,
+        ignored: str = _Unset,
         **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credential (if available).
@@ -5068,17 +5068,8 @@ class ConnectionsOperations:
         :type connection_name_in_url: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword connection_name: Connection Name (should be the same as the connection name in the URL
-         path). Required.
-        :paramtype connection_name: str
-        :keyword subscription_id: The ID of the target subscription. Required.
-        :paramtype subscription_id: str
-        :keyword resource_group_name: The name of the Resource Group. Required.
-        :paramtype resource_group_name: str
-        :keyword workspace_name: The name of the workspace (Azure AI Studio hub). Required.
-        :paramtype workspace_name: str
-        :keyword api_version_in_body: The api version. Required.
-        :paramtype api_version_in_body: str
+        :keyword ignored: The body is ignored. Required.
+        :paramtype ignored: str
         :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
          MutableMapping
         :rtype: ~azure.ai.client.models._models.ConnectionsListSecretsResponse
@@ -5099,23 +5090,9 @@ class ConnectionsOperations:
         cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if connection_name is _Unset:
-                raise TypeError("missing required argument: connection_name")
-            if subscription_id is _Unset:
-                raise TypeError("missing required argument: subscription_id")
-            if resource_group_name is _Unset:
-                raise TypeError("missing required argument: resource_group_name")
-            if workspace_name is _Unset:
-                raise TypeError("missing required argument: workspace_name")
-            if api_version_in_body is _Unset:
-                raise TypeError("missing required argument: api_version_in_body")
-            body = {
-                "apiVersionInBody": api_version_in_body,
-                "connectionName": connection_name,
-                "resourceGroupName": resource_group_name,
-                "subscriptionId": subscription_id,
-                "workspaceName": workspace_name,
-            }
+            if ignored is _Unset:
+                raise TypeError("missing required argument: ignored")
+            body = {"ignored": ignored}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

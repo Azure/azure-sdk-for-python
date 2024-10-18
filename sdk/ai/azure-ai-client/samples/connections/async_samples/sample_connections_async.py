@@ -27,6 +27,7 @@ from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential
 
+
 async def sample_connections_async():
 
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -65,7 +66,6 @@ async def sample_connections_async():
         )
         print("====> Get connection by name:")
         print(connection)
-
 
     # Examples of how you would create Inference client
     if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
@@ -114,7 +114,9 @@ async def sample_connections_async():
             print("====> Creating ChatCompletionsClient using API key authentication")
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")

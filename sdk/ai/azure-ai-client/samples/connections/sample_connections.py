@@ -56,11 +56,12 @@ with ai_client:
 
     # Get the default connection of a particular "type":
     connection = ai_client.connections.get_default(
-        connection_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True  # Required.  # Optional. Defaults to "False"
+        connection_type=ConnectionType.AZURE_OPEN_AI,
+        populate_secrets=True,  # Required.  # Optional. Defaults to "False"
     )
     print("====> Get default Azure Open AI connection:")
     print(connection)
-    
+
     # Get a connection by name:
     connection = ai_client.connections.get(
         connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
@@ -111,7 +112,9 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
     elif connection.authentication_type == AuthenticationType.AAD:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
-        client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=connection.properties.token_credential)
+        client = ChatCompletionsClient(
+            endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+        )
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
