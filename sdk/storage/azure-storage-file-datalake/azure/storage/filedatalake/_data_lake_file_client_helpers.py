@@ -26,7 +26,6 @@ if TYPE_CHECKING:
     from ._shared.models import StorageConfiguration
 
 
-
 def _upload_options(
     data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
     scheme: str,
