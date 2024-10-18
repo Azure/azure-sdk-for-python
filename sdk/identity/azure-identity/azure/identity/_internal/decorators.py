@@ -33,7 +33,7 @@ def log_get_token(fn):
                     upn = json_dict.get("upn", "unavailableUpn")
                     log_string = (
                         "[Authenticated account] Client ID: {}. Tenant ID: {}. User Principal Name: {}. "
-                        "Object ID (user): {}".format(json_dict["appid"], json_dict["tid"], upn, json_dict["oid"])
+                        "Object ID (user): {}".format(json_dict.get("appid",""), json_dict.get("tid",""), upn, json_dict.get("oid",""))
                     )
                     _LOGGER.debug(log_string)
                 except Exception as ex:  # pylint: disable=broad-except
