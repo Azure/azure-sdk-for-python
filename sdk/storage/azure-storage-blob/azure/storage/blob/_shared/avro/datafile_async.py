@@ -53,7 +53,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
     async def init(self):
         # In case self._reader only has partial content(without header).
         # seek(0, 0) to make sure read the (partial)content from beginning.
-        await self._reader.seek(0, 0)
+        self._reader.seek(0, 0)
 
         # read the header: magic, meta, sync
         await self._read_header()
@@ -139,7 +139,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         header_decoder = self._header_decoder if self._header_decoder else self._raw_decoder
 
         # seek to the beginning of the file to get magic block
-        await header_reader.seek(0, 0)
+        header_reader.seek(0, 0)
 
         # read header into a dict
         header = await self.datum_reader.read_data(META_SCHEMA, header_decoder)
@@ -173,7 +173,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         if SYNC_SIZE > 0 and not proposed_sync_marker:
             raise StopAsyncIteration
         if proposed_sync_marker != self.sync_marker:
-            await self.reader.seek(-SYNC_SIZE, 1)
+            self.reader.seek(-SYNC_SIZE, 1)
 
     async def __anext__(self):
         """Return the next datum in the file."""
