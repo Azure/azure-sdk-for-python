@@ -32,7 +32,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "groundedness": 5
+            "groundedness": 5,
+            "gpt_groundedness": 5,
         }
     """
 

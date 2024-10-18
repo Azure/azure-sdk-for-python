@@ -89,10 +89,14 @@ class _AsyncRetrievalScoreEvaluator:
 
         return {
             "retrieval": list_mean_nan_safe(per_turn_scores),
+            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
                 "retrieval": {
                     "score": per_turn_scores,
-                }
+                },
+                "gpt_retrieval": {
+                    "score": per_turn_scores,
+                },
             },
         }
 
@@ -128,11 +132,15 @@ class RetrievalEvaluator:
     .. code-block:: python
 
         {
-            "retrieval": 3.0
+            "retrieval": 3.0,
+            "gpt_retrieval": 3.0,
             "evaluation_per_turn": {
                 "retrieval": {
                     "score": [1.0, 2.0, 3.0]
-                }
+                },
+                "gpt_retrieval": {
+                    "score": [1.0, 2.0, 3.0]
+                },
             }
         }
     """

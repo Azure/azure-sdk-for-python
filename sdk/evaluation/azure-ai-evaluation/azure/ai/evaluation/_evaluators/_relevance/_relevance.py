@@ -34,7 +34,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "relevance": 3.0
+            "relevance": 3.0,
+            "gpt_relevance": 3.0,
         }
     """
 

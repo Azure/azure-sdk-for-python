@@ -77,7 +77,7 @@ class _AsyncSimilarityEvaluator:
             if match:
                 score = float(match.group())
 
-        return {"similarity": float(score)}
+        return {"similarity": float(score), "gpt_similarity": float(score)}
 
 
 class SimilarityEvaluator:
@@ -103,7 +103,8 @@ class SimilarityEvaluator:
     .. code-block:: python
 
         {
-            "similarity": 3.0
+            "similarity": 3.0,
+            "gpt_similarity": 3.0,
         }
     """
 

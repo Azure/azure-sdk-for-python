@@ -31,7 +31,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "coherence": 1.0
+            "coherence": 1.0,
+            "gpt_coherence": 1.0,
         }
     """
 

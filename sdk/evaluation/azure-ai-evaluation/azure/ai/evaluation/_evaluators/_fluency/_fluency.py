@@ -32,7 +32,8 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "fluency": 4.0
+            "fluency": 4.0,
+            "gpt_fluency": 4.0,
         }
     """
 
