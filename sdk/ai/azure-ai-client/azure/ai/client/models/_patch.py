@@ -41,12 +41,12 @@ from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Op
 logger = logging.getLogger(__name__)
 
 
-class EndpointProperties:
+class ConnectionProperties:
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.endpoint_type = connection.properties.category
+        self.connection_type = connection.properties.category
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
@@ -62,7 +62,7 @@ class EndpointProperties:
         out = "{\n"
         out += f' "name": "{self.name}",\n'
         out += f' "authentication_type": "{self.authentication_type}",\n'
-        out += f' "endpoint_type": "{self.endpoint_type}",\n'
+        out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
         out += f' "key": "{self.key}",\n'
         if self.token_credential:
@@ -116,7 +116,7 @@ class SASTokenCredential(TokenCredential):
             project_name=self._project_name,
         )
 
-        connection = ai_client.endpoints.get(endpoint_name=self._connection_name, populate_secrets=True)
+        connection = ai_client.endpoints.get(connection_name=self._connection_name, populate_secrets=True)
 
         self._sas_token = connection.properties.credentials.sas
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
@@ -605,13 +605,13 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
         self,
         response_iterator: AsyncIterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, Optional[AsyncAgentEventHandler]], Awaitable[None]],
-        event_handler: Optional['AsyncAgentEventHandler'] = None,
+        event_handler: Optional["AsyncAgentEventHandler"] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
-        self.submit_tool_outputs = submit_tool_outputs        
+        self.submit_tool_outputs = submit_tool_outputs
 
     async def __aenter__(self):
         return self
@@ -706,8 +706,12 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
-        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
-            await self.submit_tool_outputs(event_data_obj, self.event_handler)  
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            await self.submit_tool_outputs(event_data_obj, self.event_handler)
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):
@@ -849,8 +853,12 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
-        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
-            self.submit_tool_outputs(event_data_obj, self.event_handler)  
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            self.submit_tool_outputs(event_data_obj, self.event_handler)
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):

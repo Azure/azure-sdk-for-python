@@ -152,8 +152,8 @@ from ._enums import AgentsApiToolChoiceOptionMode
 from ._enums import AgentsNamedToolChoiceType
 from ._enums import ApiResponseFormat
 from ._enums import AuthenticationType
+from ._enums import ConnectionType
 from ._enums import DoneEvent
-from ._enums import EndpointType
 from ._enums import ErrorEvent
 from ._enums import FilePurpose
 from ._enums import FileState
@@ -331,8 +331,8 @@ __all__ = [
     "AgentsNamedToolChoiceType",
     "ApiResponseFormat",
     "AuthenticationType",
+    "ConnectionType",
     "DoneEvent",
-    "EndpointType",
     "ErrorEvent",
     "FilePurpose",
     "FileState",

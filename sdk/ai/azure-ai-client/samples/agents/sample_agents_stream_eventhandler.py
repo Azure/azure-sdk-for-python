@@ -46,6 +46,7 @@ ai_client = AzureAIClient.from_connection_string(
     conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
 )
 
+
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:

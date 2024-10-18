@@ -39,18 +39,6 @@ async def main():
         credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
     )
 
-    # Or, you can create the Azure AI Client by giving all required parameters directly
-    """
-    ai_client = AzureAIClient(
-        credential=DefaultAzureCredential(),
-        host_name=os.environ["AI_CLIENT_HOST_NAME"],
-        subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-        resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-        workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-        logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-    )
-    """
-
     async with ai_client:
         agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"

@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -15,10 +16,10 @@ import time
 from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
-from ._operations import EndpointsOperations as EndpointsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ...models._patch import EndpointProperties
-from ...models._enums import AuthenticationType, EndpointType, FilePurpose
+from ...models._patch import ConnectionProperties
+from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
 from ...models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 from ... import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -35,11 +36,11 @@ class InferenceOperations:
         self.outer_instance = outer_instance
 
     async def get_chat_completions_client(self) -> "ChatCompletionsClient":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
-        if not endpoint:
-            raise ValueError("No serverless endpoint found")
+        if not connection:
+            raise ValueError("No serverless connection found")
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
@@ -48,38 +49,38 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
+                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
             )
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+        elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
+            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
     async def get_embeddings_client(self) -> "EmbeddingsClient":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
-        if not endpoint:
-            raise ValueError("No serverless endpoint found")
+        if not connection:
+            raise ValueError("No serverless connection found")
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
@@ -88,36 +89,36 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential)
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=connection.properties.token_credential)
+        elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
+            client = EmbeddingsClient(endpoint=connection.connection_url, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
     async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
         )
-        if not endpoint:
-            raise ValueError("No Azure OpenAI endpoint found.")
+        if not connection:
+            raise ValueError("No Azure OpenAI connection found.")
 
         try:
             from openai import AsyncAzureOpenAI
@@ -128,14 +129,14 @@ class InferenceOperations:
         # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
         AZURE_OPENAI_API_VERSION = "2024-06-01"
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AsyncAzureOpenAI(
-                api_key=endpoint.key, azure_endpoint=endpoint.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
+                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
             )
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.AAD:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
             )
@@ -148,18 +149,18 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
-                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
-                azure_endpoint=endpoint.endpoint_url,
+                azure_endpoint=connection.endpoint_url,
                 api_version=AZURE_OPENAI_API_VERSION,
             )
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+        elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
             client = AsyncAzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
-                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
-                azure_endpoint=endpoint.endpoint_url,
+                azure_endpoint=connection.endpoint_url,
                 api_version=AZURE_OPENAI_API_VERSION,
             )
         else:
@@ -168,30 +169,30 @@ class InferenceOperations:
         return client
 
 
-class EndpointsOperations(EndpointsOperationsGenerated):
+class ConnectionsOperations(ConnectionsOperationsGenerated):
 
-    async def get_default(self, *, endpoint_type: EndpointType, populate_secrets: bool = False) -> EndpointProperties:
-        if not endpoint_type:
-            raise ValueError("You must specify an endpoint type")
+    async def get_default(self, *, connection_type: ConnectionType, populate_secrets: bool = False) -> ConnectionProperties:
+        if not connection_type:
+            raise ValueError("You must specify an connection type")
         # Since there is no notion of service default at the moment, always return the first one
-        async for endpoint_properties in self.list(endpoint_type=endpoint_type, populate_secrets=populate_secrets):
-            return endpoint_properties
+        async for connection_properties in self.list(connection_type=connection_type, populate_secrets=populate_secrets):
+            return connection_properties
         return None
 
-    async def get(self, *, endpoint_name: str, populate_secrets: bool = False) -> EndpointProperties:
-        if not endpoint_name:
+    async def get(self, *, connection_name: str, populate_secrets: bool = False) -> ConnectionProperties:
+        if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if populate_secrets:
             connection: ConnectionsListSecretsResponse = await self._list_secrets(
-                connection_name_in_url=endpoint_name,
-                connection_name=endpoint_name,
+                connection_name_in_url=connection_name,
+                connection_name=connection_name,
                 subscription_id=self._config.subscription_id,
                 resource_group_name=self._config.resource_group_name,
                 workspace_name=self._config.project_name,
                 api_version_in_body=self._config.api_version,
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
-                return EndpointProperties(connection=connection, token_credential=self._config.credential)
+                return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
@@ -201,32 +202,32 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     project_name=self._config.project_name,
-                    connection_name=endpoint_name,
+                    connection_name=connection_name,
                 )
-                return EndpointProperties(connection=connection, token_credential=token_credential)
+                return ConnectionProperties(connection=connection, token_credential=token_credential)
 
-            return EndpointProperties(connection=connection)
+            return ConnectionProperties(connection=connection)
         else:
             internal_response: ConnectionsListResponse = await self._list()
             for connection in internal_response.value:
-                if endpoint_name == connection.name:
-                    return EndpointProperties(connection=connection)
+                if connection_name == connection.name:
+                    return ConnectionProperties(connection=connection)
             return None
 
     async def list(
-        self, *, endpoint_type: EndpointType | None = None, populate_secrets: bool = False
-    ) -> AsyncIterable[EndpointProperties]:
+        self, *, connection_type: ConnectionType | None = None, populate_secrets: bool = False
+    ) -> AsyncIterable[ConnectionProperties]:
 
         # First make a REST call to /list to get all the connections, without secrets
         connections_list: ConnectionsListResponse = await self._list()
 
         # Filter by connection type
         for connection in connections_list.value:
-            if endpoint_type is None or connection.properties.category == endpoint_type:
+            if connection_type is None or connection.properties.category == connection_type:
                 if not populate_secrets:
-                    yield EndpointProperties(connection=connection)
+                    yield ConnectionProperties(connection=connection)
                 else:
-                    yield await self.get(endpoint_name=connection.name, populate_secrets=True)
+                    yield await self.get(connection_name=connection.name, populate_secrets=True)
 
 
 class AgentsOperations(AgentsOperationsGenerated):
@@ -1129,7 +1130,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
-        
+
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
@@ -1385,8 +1386,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
-    
-    async def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: Optional[_models.AsyncAgentEventHandler] = None) -> None:
+
+    async def _handle_submit_tool_outputs(
+        self, run: _models.ThreadRun, event_handler: Optional[_models.AsyncAgentEventHandler] = None
+    ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
@@ -1403,12 +1406,9 @@ class AgentsOperations(AgentsOperationsGenerated):
             logger.info(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 async with await self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, 
-                    run_id=run.id, 
-                    tool_outputs=tool_outputs, 
-                    event_handler=event_handler
-            ) as stream:
-                    await stream.until_done()    
+                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
+                ) as stream:
+                    await stream.until_done()
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -1613,7 +1613,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             uploaded_file = await self.get_file(uploaded_file.id)
 
         return uploaded_file
-   
+
     @overload
     async def create_vector_store_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1705,7 +1705,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1733,7 +1733,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
         if body is not None:
             vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
         elif file_ids is not None or (name is not None and expires_after is not None):
@@ -1744,7 +1744,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
         else:
             raise ValueError(
@@ -1873,7 +1873,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "EndpointsOperations",
+    "ConnectionsOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
