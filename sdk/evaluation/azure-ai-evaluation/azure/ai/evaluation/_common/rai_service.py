@@ -498,7 +498,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
         filtered_messages = [message for message in messages if not isinstance(message, SystemMessage)]
         assistant_messages = [message for message in messages if isinstance(message, AssistantMessage)]
-        content_type = retrieve_content_type(assistant_messages)
+        content_type = retrieve_content_type(assistant_messages, metric)
         json_text = generate_payload_multimodal(content_type, filtered_messages, metric)
         messages_text = json.dumps(json_text, cls=SdkJSONEncoder, exclude_readonly=True)
         payload = json.loads(messages_text)
@@ -506,7 +506,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     else:
         filtered_messages = [message for message in messages if message["role"] != "system"]
         assistant_messages = [message for message in messages if message["role"] == "assistant"]
-        content_type = retrieve_content_type(assistant_messages)
+        content_type = retrieve_content_type(assistant_messages, metric)
         payload = generate_payload_multimodal(content_type, filtered_messages, metric)
     
     ## calling rai service for annotation
@@ -539,10 +539,6 @@ async def evaluate_with_rai_service_multimodal(
        :return: The parsed annotation result.
        :rtype: List[List[Dict]]
     """
-    # Use DefaultAzureCredential if no credential is provided
-    # This is for the for batch run scenario as the credential cannot be serialized by promoptflow
-    if credential is None or credential == {}:
-        credential = DefaultAzureCredential()
     # Get RAI service URL from discovery service and check service availability
     token = await fetch_or_reuse_token(credential)
     rai_svc_url = await get_rai_svc_url(project_scope, token)

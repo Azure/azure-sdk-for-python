@@ -24,7 +24,7 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         self, 
         metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
         azure_ai_project: Dict, 
-        credential=None
+        credential
     ):
         self._metric = metric
         self._azure_ai_project = azure_ai_project

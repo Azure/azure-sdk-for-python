@@ -864,7 +864,8 @@ class TestBuiltInEvaluators:
         assert score["self_harm"] == "Very low"
         assert score["self_harm_score"] < 1.0
         assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
-        
+    
+    @pytest.mark.skip(reason="Until backend adds protected_material key in result.")
     def test_multimodal_evaluator_protected_material_json(self, project_scope, azure_cred):
         evaluator = ProtectedMaterialMultimodalEvaluator(
             project_scope, credential=azure_cred
@@ -885,9 +886,8 @@ class TestBuiltInEvaluators:
             },
         ]
         
-        score = evaluator(messages=messages)
+        result = evaluator(messages=messages)
         
-        assert score is not None
-        assert score["protected_material"] == "Very low"
-        assert score["protected_material_score"] < 1.0
-        assert score["protected_material_reason"], "protected_material_reason must not be None or empty."
+        assert result is not None
+        assert not result["protected_material_label"]
+        assert "material was not found" in result["protected_material_reason"]
