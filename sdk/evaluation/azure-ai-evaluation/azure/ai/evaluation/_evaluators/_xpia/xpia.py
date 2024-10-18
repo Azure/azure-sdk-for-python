@@ -7,11 +7,13 @@ from typing import Optional, Union
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 logger = logging.getLogger(__name__)
 
 
+@experimental
 class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 

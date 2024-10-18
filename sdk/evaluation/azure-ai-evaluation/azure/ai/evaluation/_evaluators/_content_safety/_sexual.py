@@ -6,9 +6,11 @@ from typing import Union
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
+@experimental
 class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
     Initialize a sexual evaluator for sexual score.

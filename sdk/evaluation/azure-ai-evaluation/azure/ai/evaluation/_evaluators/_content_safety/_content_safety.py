@@ -6,12 +6,15 @@ from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._common._experimental import experimental
+
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
 from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
 
+@experimental
 class ContentSafetyEvaluator:
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
