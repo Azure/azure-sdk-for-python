@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from .._models import ContentSettings, DirectoryProperties, FileProperties
 
 
-class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
+class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     """A base client for interacting with a DataLake file/directory, even if the file/directory may not yet exist.
 
     :param str account_url:
