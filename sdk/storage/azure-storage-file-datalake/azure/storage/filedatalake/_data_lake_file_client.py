@@ -5,9 +5,8 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -16,6 +15,9 @@ from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
+from ._data_lake_file_client_helpers import (
+    _upload_options,
+)
 from ._deserialize import deserialize_file_properties, process_storage_error
 from ._download import StorageStreamDownloader
 from ._models import DataLakeFileQueryError, FileProperties
@@ -24,8 +26,6 @@ from ._quick_query_helper import DataLakeFileQueryReader
 from ._serialize import (
     get_mod_conditions,
     get_path_http_headers,
-    get_access_conditions,
-    add_metadata_headers,
     convert_datetime_to_rfc1123,
     get_cpk_info,
     get_lease_action_properties
@@ -33,8 +33,6 @@ from ._serialize import (
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
-from ._shared.uploads import IterStreamer
-from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
@@ -278,7 +276,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A response dict.
+        :returns: response dict.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -383,60 +381,13 @@ class DataLakeFileClient(PathClient):
             expires_on = str(expires_on)
         self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
 
-    def _upload_options(
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
-
-        encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, str):
-            data = data.encode(encoding)
-        if length is None:
-            length = get_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        if isinstance(data, bytes):
-            stream = BytesIO(data)
-        elif hasattr(data, 'read'):
-            stream = data
-        elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding)
-        elif hasattr(data, '__aiter__'):
-            stream = AsyncIterStreamer(data, encoding=encoding)
-        else:
-            raise TypeError(f"Unsupported data type: {type(data)}")
-
-        validate_content = kwargs.pop('validate_content', False)
-        content_settings = kwargs.pop('content_settings', None)
-        metadata = kwargs.pop('metadata', None)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
-
-        kwargs['properties'] = add_metadata_headers(metadata)
-        kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
-        kwargs['modified_access_conditions'] = get_mod_conditions(kwargs)
-        kwargs['cpk_info'] = get_cpk_info(self.scheme, kwargs)
-
-        if content_settings:
-            kwargs['path_http_headers'] = get_path_http_headers(content_settings)
-
-        kwargs['stream'] = stream
-        kwargs['length'] = length
-        kwargs['validate_content'] = validate_content
-        kwargs['max_concurrency'] = max_concurrency
-        kwargs['client'] = self._client.path
-        kwargs['file_settings'] = self._config
-
-        return kwargs
-
     @distributed_trace
     def upload_data(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            overwrite: Optional[bool] = False,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        overwrite: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
@@ -509,11 +460,15 @@ class DataLakeFileClient(PathClient):
         :returns: response dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        options = self._upload_options(
+        options = _upload_options(
             data,
+            self.scheme,
+            self._config,
+            self._client.path,
             length=length,
             overwrite=overwrite,
-            **kwargs)
+            **kwargs
+        )
         return upload_datalake_file(**options)
 
     @staticmethod

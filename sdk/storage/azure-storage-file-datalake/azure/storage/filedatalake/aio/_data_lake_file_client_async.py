@@ -15,6 +15,9 @@ from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._data_lake_file_client_helpers import (
+    _upload_options,
+)
 from .._deserialize import deserialize_file_properties, process_storage_error
 from .._models import FileProperties
 from .._serialize import convert_datetime_to_rfc1123
@@ -281,7 +284,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A response dict.
+        :returns: response dict.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -388,11 +391,11 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def upload_data(
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            overwrite: Optional[bool] = False,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        overwrite: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
@@ -465,11 +468,15 @@ class DataLakeFileClient(PathClient):
         :return: response dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        options = self._upload_options(
+        options = _upload_options(
             data,
+            self.scheme,
+            self._config,
+            self._client.path,
             length=length,
             overwrite=overwrite,
-            **kwargs)
+            **kwargs
+        )
         return await upload_datalake_file(**options)
 
     @distributed_trace_async
