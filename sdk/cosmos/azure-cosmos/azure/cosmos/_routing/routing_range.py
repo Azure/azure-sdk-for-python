@@ -186,7 +186,6 @@ class Range(object):
 
     @staticmethod
     def overlaps(range1, range2):
-
         if range1 is None or range2 is None:
             return False
         if range1.isEmpty() or range2.isEmpty():
@@ -195,10 +194,35 @@ class Range(object):
         cmp1 = Range._compare_helper(range1.min, range2.max)
         cmp2 = Range._compare_helper(range2.min, range1.max)
 
-        if cmp1 <= 0 or cmp2 <= 0:
+        if cmp1 <= 0 and cmp2 <= 0:
             if (cmp1 == 0 and not (range1.isMinInclusive and range2.isMaxInclusive)) or (
                 cmp2 == 0 and not (range2.isMinInclusive and range1.isMaxInclusive)
             ):
                 return False
             return True
         return False
+
+    def can_merge(self, other: 'Range') -> bool:
+        if self.isSingleValue() and other.isSingleValue():
+            return self.min == other.min
+        # if share the same boundary, they can merge
+        overlap_boundary1 = self.max == other.min and self.isMaxInclusive or other.isMinInclusive
+        overlap_boundary2 = other.max == self.min and other.isMaxInclusive or self.isMinInclusive
+        if overlap_boundary1 or overlap_boundary2:
+            return True
+        return self.overlaps(self, other)
+
+    def merge(self, other: 'Range') -> 'Range':
+        if not self.can_merge(other):
+            raise ValueError("Ranges do not overlap")
+        min_val = self.min if self.min < other.min else other.min
+        max_val = self.max if self.max > other.max else other.max
+        is_min_inclusive = self.isMinInclusive if self.min < other.min else other.isMinInclusive
+        is_max_inclusive = self.isMaxInclusive if self.max > other.max else other.isMaxInclusive
+        return Range(min_val, max_val, is_min_inclusive, is_max_inclusive)
+
+    def is_subset(self, parent_range: 'Range') -> bool:
+        normalized_parent_range = parent_range.to_normalized_range()
+        normalized_child_range = self.to_normalized_range()
+        return (normalized_parent_range.min <= normalized_child_range.min and
+                normalized_parent_range.max >= normalized_child_range.max)

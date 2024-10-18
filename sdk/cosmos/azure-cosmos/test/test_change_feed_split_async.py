@@ -88,7 +88,7 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
             actual_ids.append(item['id'])
 
         assert actual_ids == expected_ids
-        self.created_database.delete_container(created_collection.id)
+        await self.created_database.delete_container(created_collection.id)
 
 if __name__ == '__main__':
     unittest.main()
