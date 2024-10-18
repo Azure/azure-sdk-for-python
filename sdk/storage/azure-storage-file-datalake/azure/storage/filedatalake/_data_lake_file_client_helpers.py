@@ -25,6 +25,7 @@ from ._shared.uploads_async import AsyncIterStreamer
 
 if TYPE_CHECKING:
     from ._generated.operations import PathOperations
+    from ._models import ContentSettings
     from ._shared.models import StorageConfiguration
 
 
@@ -52,6 +53,37 @@ def _append_data_options(
         'position': offset,
         'content_length': length,
         'validate_content': kwargs.pop('validate_content', False),
+        'cpk_info': cpk_info,
+        'timeout': kwargs.pop('timeout', None),
+        'cls': return_response_headers
+    }
+    options.update(kwargs)
+    return options
+
+
+def _flush_data_options(
+    offset: int,
+    scheme: str,
+    content_settings: Optional["ContentSettings"] = None,
+    retain_uncommitted_data: Optional[bool] = False,
+    **kwargs
+) -> Dict[str, Any]:
+    mod_conditions = get_mod_conditions(kwargs)
+
+    path_http_headers = None
+    if content_settings:
+        path_http_headers = get_path_http_headers(content_settings)
+
+    cpk_info = get_cpk_info(scheme, kwargs)
+    kwargs.update(get_lease_action_properties(kwargs))
+
+    options = {
+        'position': offset,
+        'content_length': 0,
+        'path_http_headers': path_http_headers,
+        'retain_uncommitted_data': retain_uncommitted_data,
+        'close': kwargs.pop('close', False),
+        'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_response_headers

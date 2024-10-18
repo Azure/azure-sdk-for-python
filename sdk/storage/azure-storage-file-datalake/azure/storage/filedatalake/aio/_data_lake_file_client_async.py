@@ -17,6 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._data_lake_file_client_helpers import (
     _append_data_options,
+    _flush_data_options,
     _upload_options,
 )
 from .._deserialize import deserialize_file_properties, process_storage_error
@@ -551,10 +552,11 @@ class DataLakeFileClient(PathClient):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def flush_data(self, offset,  # type: int
-                         retain_uncommitted_data=False,  # type: Optional[bool]
-                         **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def flush_data(
+        self, offset: int,
+        retain_uncommitted_data: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """ Commit the previous appended data.
 
         :param int offset: offset is equal to the length of the file after commit the
@@ -623,8 +625,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response header in Dict.
-        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
+        :returns: response dict.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -635,10 +637,12 @@ class DataLakeFileClient(PathClient):
                 :dedent: 12
                 :caption: Commit the previous appended data.
         """
-        options = self._flush_data_options(
+        options = _flush_data_options(
             offset,
             self.scheme,
-            retain_uncommitted_data=retain_uncommitted_data, **kwargs)
+            retain_uncommitted_data=retain_uncommitted_data,
+            **kwargs
+        )
         try:
             return await self._client.path.flush_data(**options)
         except HttpResponseError as error:

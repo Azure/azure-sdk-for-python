@@ -17,6 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._data_lake_file_client_helpers import (
     _append_data_options,
+    _flush_data_options,
     _upload_options,
 )
 from ._deserialize import deserialize_file_properties, process_storage_error
@@ -24,15 +25,8 @@ from ._download import StorageStreamDownloader
 from ._models import DataLakeFileQueryError, FileProperties
 from ._path_client import PathClient
 from ._quick_query_helper import DataLakeFileQueryReader
-from ._serialize import (
-    get_mod_conditions,
-    get_path_http_headers,
-    convert_datetime_to_rfc1123,
-    get_cpk_info,
-    get_lease_action_properties
-)
+from ._serialize import convert_datetime_to_rfc1123
 from ._shared.base_client import parse_connection_str
-from ._shared.response_handlers import return_response_headers
 from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
@@ -541,43 +535,12 @@ class DataLakeFileClient(PathClient):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @staticmethod
-    def _flush_data_options(
-            offset, # type: int
-            scheme, # type: str
-            content_settings=None, # type: Optional[ContentSettings]
-            retain_uncommitted_data=False, # type: Optional[bool]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-
-        mod_conditions = get_mod_conditions(kwargs)
-
-        path_http_headers = None
-        if content_settings:
-            path_http_headers = get_path_http_headers(content_settings)
-
-        cpk_info = get_cpk_info(scheme, kwargs)
-        kwargs.update(get_lease_action_properties(kwargs))
-
-        options = {
-            'position': offset,
-            'content_length': 0,
-            'path_http_headers': path_http_headers,
-            'retain_uncommitted_data': retain_uncommitted_data,
-            'close': kwargs.pop('close', False),
-            'modified_access_conditions': mod_conditions,
-            'cpk_info': cpk_info,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def flush_data(self, offset,  # type: int
-                   retain_uncommitted_data=False,   # type: Optional[bool]
-                   **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def flush_data(
+        self, offset: int,
+        retain_uncommitted_data: Optional[bool] = False,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """ Commit the previous appended data.
 
         :param int offset: offset is equal to the length of the file after commit
@@ -646,8 +609,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: response header in dict
-        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
+        :returns: response dict.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -658,10 +621,12 @@ class DataLakeFileClient(PathClient):
                 :dedent: 8
                 :caption: Commit the previous appended data.
         """
-        options = self._flush_data_options(
+        options = _flush_data_options(
             offset,
             self.scheme,
-            retain_uncommitted_data=retain_uncommitted_data, **kwargs)
+            retain_uncommitted_data=retain_uncommitted_data,
+            **kwargs
+        )
         try:
             return self._client.path.flush_data(**options)
         except HttpResponseError as error:
