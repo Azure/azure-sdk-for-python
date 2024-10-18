@@ -13,7 +13,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from ._configuration import AzureAIClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
+from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations
 from ._client import AzureAIClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
@@ -146,7 +146,7 @@ class AzureAIClient(ClientGenerated):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        self.endpoints = EndpointsOperations(self._client1, self._config1, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)

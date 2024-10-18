@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureAIClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
+from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -27,8 +27,8 @@ class AzureAIClient:
 
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.client.operations.AgentsOperations
-    :ivar endpoints: EndpointsOperations operations
-    :vartype endpoints: azure.ai.client.operations.EndpointsOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.ai.client.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.client.operations.EvaluationsOperations
     :param endpoint: The Azure AI Studio project endpoint, in the form
@@ -92,7 +92,7 @@ class AzureAIClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

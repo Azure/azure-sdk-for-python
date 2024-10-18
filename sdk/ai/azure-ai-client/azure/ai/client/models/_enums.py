@@ -95,7 +95,7 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
     RunStep"""
     THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
-    """Event sent when a run stepis being streamed. The data of this event is of type
+    """Event sent when a run step is being streamed. The data of this event is of type
     RunStepDeltaChunk"""
     THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
     """Event sent when a run step is completed. The data of this event is of type RunStep"""
@@ -143,20 +143,20 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shared Access Signature (SAS) authentication"""
 
 
-class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal event indicating the successful end of a stream."""
-
-    DONE = "done"
-    """Event sent when the stream is done."""
-
-
-class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI service"""
     SERVERLESS = "Serverless"
     """Serverless API service"""
+
+
+class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Terminal event indicating the successful end of a stream."""
+
+    DONE = "done"
+    """Event sent when the stream is done."""
 
 
 class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -349,7 +349,7 @@ class RunStepStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
     RunStep"""
     THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
-    """Event sent when a run stepis being streamed. The data of this event is of type
+    """Event sent when a run step is being streamed. The data of this event is of type
     RunStepDeltaChunk"""
     THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
     """Event sent when a run step is completed. The data of this event is of type RunStep"""
