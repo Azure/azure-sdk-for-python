@@ -57,8 +57,7 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", 
         instructions="You are helpful assistant",
-        tools=file_search_tool.definitions,
-        tool_resources=file_search_tool.resources
+        tools=[file_search_tool]
     )
     print(f"Created agent, agent ID: {agent.id}")
 

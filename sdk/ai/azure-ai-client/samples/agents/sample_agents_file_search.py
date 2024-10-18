@@ -51,8 +51,7 @@ with ai_client:
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="Hello, you are helpful assistant and can search information from uploaded files",
-        tools=file_search.definitions,
-        tool_resources=file_search.resources,
+        tools=[file_search]
     )
     print(f"Created agent, agent ID: {agent.id}")
 
