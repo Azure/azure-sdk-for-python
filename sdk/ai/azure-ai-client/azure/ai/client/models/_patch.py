@@ -600,6 +600,29 @@ class AsyncAgentEventHandler:
         pass
 
 
+class ParamCorrector():
+    """The class, holding static method to orrect ThreadRun parameters."""
+    
+    @staticmethod
+    def filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Remove the parameters, non present in class public fields; return shallow copy of a dictionary.
+
+        **Note:** Classes inherited from the model check that the parameters are present
+        in the list of attributes and if they are not, the error is being raised. This check may not
+        be relevant for classes, not inherited from azure.ai.client._model_base.Model.
+        :param model_class: The class of model to be used.
+        :param parameters: The parsed dictionary with parameters. 
+        """
+        new_params = {}
+        valid_parameters = set(
+            filter(lambda x: not x.startswith('_') and hasattr(ThreadRun.__dict__[x], "_type"), ThreadRun.__dict__.keys())
+        )
+        for k in filter(lambda x: x in valid_parameters, parameters.keys()):
+            new_params[k] = parameters[k]
+        return new_params
+
+
 class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __init__(
         self,
@@ -677,7 +700,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            ParamCorrector
+            event_data_obj = ThreadRun(**ParamCorrector.filter_parameters(
+                ThreadRun, parsed_data)) if isinstance(parsed_data, dict) else parsed_data
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
@@ -824,7 +849,8 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = ThreadRun(**ParamCorrector.filter_parameters(
+                ThreadRun, parsed_data)) if isinstance(parsed_data, dict) else parsed_data
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
