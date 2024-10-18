@@ -391,7 +391,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 
 def _apply_target_to_data(
     target: Callable,
-    data: str,
+    data: Union[str, os.PathLike],
     pf_client: PFClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
@@ -403,7 +403,7 @@ def _apply_target_to_data(
     :param target: The function to be applied to data.
     :type target: Callable
     :param data: The path to input jsonl file.
-    :type data: str
+    :type data: Union[str, os.PathLike]
     :param pf_client: The promptflow client to be used.
     :type pf_client: PFClient
     :param initial_data: The data frame with the loaded data.
