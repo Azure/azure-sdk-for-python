@@ -64,7 +64,7 @@ class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Barcode kind."""
 
-    Q_R_CODE = "QRCode"
+    QR_CODE = "QRCode"
     """QR code, as defined in ISO/IEC 18004:2015."""
     PDF417 = "PDF417"
     """PDF417, as defined in ISO 15438."""
@@ -90,7 +90,7 @@ class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GS1 DataBar Expanded barcode."""
     ITF = "ITF"
     """Interleaved 2 of 5 barcode, as defined in ANSI/AIM BC2-1995."""
-    MICRO_Q_R_CODE = "MicroQRCode"
+    MICRO_QR_CODE = "MicroQRCode"
     """Micro QR code, as defined in ISO/IEC 23941:2022."""
     AZTEC = "Aztec"
     """Aztec code, as defined in ISO/IEC 24778:2008."""

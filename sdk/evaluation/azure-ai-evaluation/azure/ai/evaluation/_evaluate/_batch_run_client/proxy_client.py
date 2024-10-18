@@ -7,6 +7,7 @@ import math
 import os
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union
+from collections import OrderedDict
 
 import pandas as pd
 from promptflow.client import PFClient
@@ -59,6 +60,20 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
     def get_metrics(self, proxy_run: ProxyRun) -> Dict[str, Any]:
         run: Run = proxy_run.run.result()
         return self._pf_client.get_metrics(run)
+
+    def get_run_summary(self, proxy_run: ProxyRun) -> Dict[str, Any]:
+        run = proxy_run.run.result()
+
+        # pylint: disable=protected-access
+        return OrderedDict(
+            [
+                ("status", run.status),
+                ("duration", str(run._end_time - run._created_on)),
+                ("completed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")),
+                ("failed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.failed", "NA")),
+                ("log_path", str(run._output_path)),
+            ]
+        )
 
     @staticmethod
     def _should_batch_use_async(flow):

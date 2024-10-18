@@ -68,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-07-01/examples/AgentPoolsCreate_GPUMIG.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-08-01/examples/AgentPoolsCreate_GPUMIG.json
 if __name__ == "__main__":
     main()
