@@ -27,8 +27,10 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _CUSTOM_METRICS_KUSTO_ENABLED_ARG,
     _METRIC_ENVELOPE_NAME,
 )
 from azure.monitor.opentelemetry.exporter import _utils
@@ -68,6 +70,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
         )
+        default = os.getenv(_APPLICATIONINSIGHTS_CUSTOMMETRICS_KUSTO_ENABLED, "").lower() != "false"
+        self._custom_metrics_kusto_enabled = bool(kwargs.get(_CUSTOM_METRICS_KUSTO_ENABLED_ARG, default))
 
     # pylint: disable=R1702
     def export(
@@ -142,6 +146,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
+        elif not self._custom_metrics_kusto_enabled:
+            # Don't send manual custom metrics to Breeze and Kusto
+            envelope = None
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
@@ -269,6 +276,8 @@ def _handle_std_metric_envelope(
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
         properties["Request.Success"] = str(_is_status_code_success(status_code)) # type: ignore
     else:
+        # TODO: When enabling sending autocollected metrics to kusto, make sure to account for
+        # custom_metrics_kusto_enabled and to include the duration metric
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
         return None

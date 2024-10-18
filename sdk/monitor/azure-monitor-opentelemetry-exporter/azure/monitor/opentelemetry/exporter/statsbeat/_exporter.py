@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from typing import Optional
+from typing import Optional, Any
 from opentelemetry.sdk.metrics.export import DataPointT
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -11,6 +11,10 @@ from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NA
 
 
 class _StatsBeatExporter(AzureMonitorMetricExporter):
+
+    def __init__(self, **kwargs: Any) -> None:
+        AzureMonitorMetricExporter.__init__(self, **kwargs)
+        self._custom_metrics_kusto_enabled = True
 
     # pylint: disable=protected-access
     def _point_to_envelope(
