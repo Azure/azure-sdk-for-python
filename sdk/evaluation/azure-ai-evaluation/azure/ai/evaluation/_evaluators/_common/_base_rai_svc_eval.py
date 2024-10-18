@@ -50,7 +50,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation=None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,

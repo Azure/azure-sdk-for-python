@@ -51,7 +51,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         *,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation=None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,
@@ -67,6 +67,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(response=response, context=context, conversation=conversation, **kwargs)

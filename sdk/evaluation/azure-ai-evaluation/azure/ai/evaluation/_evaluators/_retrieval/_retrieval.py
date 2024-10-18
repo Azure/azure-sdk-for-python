@@ -146,7 +146,7 @@ class RetrievalEvaluator:
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The scores for Chat scenario.
-        :rtype: Dict[str, Union[float, Dict[str, Dict[str, List[float]]]]]
+        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
 

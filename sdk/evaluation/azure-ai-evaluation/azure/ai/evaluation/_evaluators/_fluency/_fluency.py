@@ -51,7 +51,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation=None,
+        conversation = None,
         **kwargs,
     ):
         """
@@ -68,6 +68,6 @@ class FluencyEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

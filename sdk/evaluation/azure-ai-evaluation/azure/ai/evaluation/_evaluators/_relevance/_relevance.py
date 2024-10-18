@@ -55,7 +55,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation=None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
@@ -73,6 +73,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
