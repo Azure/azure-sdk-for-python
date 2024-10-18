@@ -10,6 +10,7 @@ from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from ..._common.utils import construct_prompty_model_config, validate_model_config
+from azure.ai.evaluation._common.constants import DEFAULT_PASSING_SCORE
 from . import EvaluatorBase
 
 try:
@@ -39,9 +40,10 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False, passing_score: float):
         self._result_key = result_key
         self._prompty_file = prompty_file
+        self._passing_score = passing_score or DEFAULT_PASSING_SCORE
         super().__init__(eval_last_turn=eval_last_turn)
 
         prompty_model_config = construct_prompty_model_config(
@@ -74,3 +76,10 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
             if match:
                 score = float(match.group())
         return {self._result_key: float(score)}
+    
+    @override
+    def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
+        result = super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        is_passing = float(result.get(self._result_key)) >= self._passing_score  # type: ignore[arg-type]
+        result.update({f"{self._result_key}_label": is_passing})
+        return result

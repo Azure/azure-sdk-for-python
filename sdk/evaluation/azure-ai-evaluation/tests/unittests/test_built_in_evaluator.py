@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from random import uniform
 
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation import FluencyEvaluator, GroundednessEvaluator
@@ -9,8 +10,11 @@ from azure.ai.evaluation import FluencyEvaluator, GroundednessEvaluator
 async def fluency_async_mock():
     return "1"
 
-async def groundedness_async_mock():
-    return "2"
+async def quality_async_passing_score_mock():
+    return str(uniform(3,5))
+
+async def quality_async_failing_score_mock():
+    return str(uniform(1,2))
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
@@ -42,18 +46,21 @@ class TestBuiltInEvaluators:
 
         assert "Missing input" in exc_info.value.args[0]
     
-    def test_groundedness_evaluator_passing_grade(self, mock_model_config):
+    def test_quality_evaluator_passing_score_default(self, mock_model_config):
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_eval._flow = MagicMock(return_value=groundedness_async_mock())
+        groundedness_eval._flow = MagicMock(return_value=quality_async_passing_score_mock())
         result = groundedness_eval(
             response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
         )
-        assert len(result.keys()) == 1
+        assert len(result.keys()) == 2
         assert "gpt_groundedness" in result
+        assert "gpt_groundedness_label" in result
+        assert result["gpt_groundedness_label"] == True
 
-        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=2.0)
-        groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
+    def test_quality_evaluator_passing_score_input(self, mock_model_config):
+        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_score=2.0)
+        groundedness_eval_passing._flow = MagicMock(return_value=quality_async_passing_score_mock())
         result = groundedness_eval_passing(
             response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
@@ -63,8 +70,9 @@ class TestBuiltInEvaluators:
         assert "gpt_groundedness_label" in result
         assert result["gpt_groundedness_label"] == True
 
-        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=3.0)
-        groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
+    def test_quality_evaluator_failing_score(self, mock_model_config):
+        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_score=4.0)
+        groundedness_eval_passing._flow = MagicMock(return_value=quality_async_failing_score_mock())
         result = groundedness_eval_passing(
             response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
@@ -73,14 +81,3 @@ class TestBuiltInEvaluators:
         assert "gpt_groundedness" in result
         assert "gpt_groundedness_label" in result
         assert result["gpt_groundedness_label"] == False
-
-        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_grade=1.0)
-        groundedness_eval_passing._flow = MagicMock(return_value=groundedness_async_mock())
-        result = groundedness_eval_passing(
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
-        )
-        assert len(result.keys()) == 2
-        assert "gpt_groundedness" in result
-        assert "gpt_groundedness_label" in result
-        assert result["gpt_groundedness_label"] == True

@@ -65,3 +65,5 @@ class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ECI = "eci"
+
+DEFAULT_PASSING_SCORE = 3.0
