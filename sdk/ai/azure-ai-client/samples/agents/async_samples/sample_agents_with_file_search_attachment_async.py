@@ -24,7 +24,7 @@ import asyncio
 
 from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import FilePurpose
-from azure.ai.client.models import FileSearchToolDefinition, FileSearchToolResource, MessageAttachment, ToolResources
+from azure.ai.client.models import FileSearchTool, MessageAttachment, ToolResources
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -42,33 +42,23 @@ async def main():
     # upload a file and wait for it to be processed
     async with ai_client:
         file = await ai_client.agents.upload_file_and_poll(
-            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS, sleep_interval=4
+            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
         )
 
-        # create a vector store with the file and wait for it to be processed
-        # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active
-        vector_store = await ai_client.agents.create_vector_store_and_poll(
-            file_ids=[file.id], name="sample_vector_store", sleep_interval=4
-        )
-
-        file_search_tool = FileSearchToolDefinition()
-
-        # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to search the file
-        # also, you do not need to provide tool_resources if you did not create a vector store above
+        # Create agent with file search tool
         agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="You are helpful assistant",
-            tools=[file_search_tool],
-            tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id])),
         )
         print(f"Created agent, agent ID: {agent.id}")
 
         thread = await ai_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        # create a message with the attachment
-        attachment = MessageAttachment(file_id=file.id, tools=[file_search_tool])
+        # Create a message with the file search attachment
+        # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
+        attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
         message = await ai_client.agents.create_message(
             thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
         )
@@ -83,9 +73,6 @@ async def main():
 
         await ai_client.agents.delete_file(file.id)
         print("Deleted file")
-
-        await ai_client.agents.delete_vector_store(vector_store.id)
-        print("Deleted vectore store")
 
         await ai_client.agents.delete_agent(agent.id)
         print("Deleted agent")
