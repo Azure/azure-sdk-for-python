@@ -25,7 +25,7 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import CodeInterpreterTool
 from azure.ai.client.models import FilePurpose
-from azure.ai.client.models import CodeInterpreterToolDefinition, MessageAttachment
+from azure.ai.client.models import MessageAttachment
 from azure.identity import DefaultAzureCredential
 
 
@@ -43,14 +43,13 @@ with ai_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     code_interpreter = CodeInterpreterTool()
-    code_interpreter.add_file(file.id)
 
-    # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
+    # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="You are helpful assistant",
-        tools=[CodeInterpreterToolDefinition()],
+        tools=code_interpreter.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
@@ -65,7 +64,11 @@ with ai_client:
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Created run, run ID: {run.id}")
+    print(f"Run finished with status: {run.status}")
+
+    if run.status == "failed":
+        # Check if you got "Rate limit is exceeded.", then you want to get more quota
+        print(f"Run failed: {run.last_error}")
 
     ai_client.agents.delete_file(file.id)
     print("Deleted file")
