@@ -12,9 +12,9 @@ class TestDictionaryLookupAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_single_input_element(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "en"
@@ -32,9 +32,9 @@ class TestDictionaryLookupAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_multiple_input_elements(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         from_language = "en"

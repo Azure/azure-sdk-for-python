@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -43,16 +42,11 @@ from ..._operations._operations import (
 )
 from .._vendor import KeyVaultClientMixinABC
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
-
     @overload
     async def set_secret(
         self,
@@ -76,12 +70,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          identifiable or sensitive information. Required.
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -113,7 +107,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -139,12 +133,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Is either a SecretSetParameters type
          or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretSetParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretSetParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -213,10 +210,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -285,12 +282,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -323,7 +320,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -350,12 +347,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Is either a
          SecretUpdateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretUpdateParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretUpdateParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -430,10 +430,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          specified, the latest version of the secret is returned. Required.
         :type secret_version: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -495,8 +495,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.SecretItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -504,7 +503,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models._models.SecretListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -592,8 +591,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.SecretItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -601,7 +599,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models._models.SecretListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -688,8 +686,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of DeletedSecretItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_6_preview_1.models.DeletedSecretItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_5.models.DeletedSecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -699,7 +696,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             "cls", None
         )
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -784,10 +781,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -850,7 +847,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -905,10 +902,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the deleted secret. Required.
         :type secret_name: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -965,10 +962,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: BackupSecretResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_5.models.BackupSecretResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1030,12 +1027,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1056,7 +1053,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1073,12 +1070,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret. Is either a SecretRestoreParameters
          type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretRestoreParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretRestoreParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -139,6 +139,95 @@ Output with a string that continues the conversation, responding to the latest m
 {{ conversation_history }}
 
 ```
+
+Query Response generaing prompty for gpt-4o with `json_schema` support
+Use this file as an override.
+```yaml
+---
+name: TaskSimulatorQueryResponseGPT4o
+description: Gets queries and responses from a blob of text
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_schema
+      json_schema:
+        name: QRJsonSchema
+        schema: 
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  q:
+                    type: string
+                  r:
+                    type: string
+                required:
+                  - q
+                  - r
+
+inputs:
+  text:
+    type: string
+  num_queries:
+    type: integer
+
+
+---
+system:
+You're an AI that helps in preparing a Question/Answer quiz from Text for "Who wants to be a millionaire" tv show
+Both Questions and Answers MUST BE extracted from given Text
+Frame Question in a way so that Answer is RELEVANT SHORT BITE-SIZED info from Text
+RELEVANT info could be: NUMBER, DATE, STATISTIC, MONEY, NAME
+A sentence should contribute multiple QnAs if it has more info in it
+Answer must not be more than 5 words
+Answer must be picked from Text as is
+Question should be as descriptive as possible and must include as much context as possible from Text
+Output must always have the provided number of QnAs
+Output must be in JSON format.
+Output must have {{num_queries}} objects in the format specified below. Any other count is unacceptable.
+Text:
+<|text_start|>
+On January 24, 1984, former Apple CEO Steve Jobs introduced the first Macintosh. In late 2003, Apple had 2.06 percent of the desktop share in the United States.
+Some years later, research firms IDC and Gartner reported that Apple's market share in the U.S. had increased to about 6%.
+<|text_end|>
+Output with 5 QnAs:
+[
+  {
+    "q": "When did the former Apple CEO Steve Jobs introduced the first Macintosh?",
+    "r": "January 24, 1984"
+  },
+  {
+    "q": "Who was the former Apple CEO that introduced the first Macintosh on January 24, 1984?",
+    "r": "Steve Jobs"
+  },
+  {
+    "q": "What percent of the desktop share did Apple have in the United States in late 2003?",
+    "r": "2.06 percent"
+  },
+  {
+    "q": "What were the research firms that reported on Apple's market share in the U.S.?",
+    "r": "IDC and Gartner"
+  },
+  {
+    "q": "What was the percentage increase of Apple's market share in the U.S., as reported by research firms IDC and Gartner?",
+    "r": "6%"
+  }
+]
+Text:
+<|text_start|>
+{{ text }}
+<|text_end|>
+Output with {{ num_queries }} QnAs:
+```
+
 Application code:
 
 ```python
@@ -156,6 +245,7 @@ model_config = {
     "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
     # not providing key would make the SDK pick up `DefaultAzureCredential`
     # use "api_key": "<your API key>"
+    "api_version": "2024-08-01-preview" # keep this for gpt-4o
 }
 
 # Use Wikipedia to get some text for the simulation
@@ -208,11 +298,14 @@ async def callback(
 
 async def main():
     simulator = Simulator(model_config=model_config)
+    current_dir = os.path.dirname(__file__)
+    query_response_override_for_latest_gpt_4o = os.path.join(current_dir, "TaskSimulatorQueryResponseGPT4o.prompty")
     outputs = await simulator(
         target=callback,
         text=text,
+        query_response_generating_prompty=query_response_override_for_latest_gpt_4o, # use this only with latest gpt-4o
         num_queries=2,
-        max_conversation_turns=4,
+        max_conversation_turns=1,
         user_persona=[
             f"I am a student and I want to learn more about {wiki_search_term}",
             f"I am a teacher and I want to teach my students about {wiki_search_term}"
@@ -234,7 +327,7 @@ if __name__ == "__main__":
 #### Adversarial Simulator
 
 ```python
-from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
 from azure.identity import DefaultAzureCredential
 from typing import Any, Dict, List, Optional
 import asyncio

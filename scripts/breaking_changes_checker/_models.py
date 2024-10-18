@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 import re
+from enum import Enum
 from typing import List, Optional, NamedTuple, Protocol, runtime_checkable, Union
 
 class BreakingChange(NamedTuple):
@@ -23,6 +24,11 @@ class Suppression(NamedTuple):
     function_name: Optional[str] = None
     parameter_or_property_name: Optional[str] = None
 
+class CheckerType(str, Enum):
+    MODULE = "module"
+    CLASS = "class"
+    FUNCTION_OR_METHOD = "function_or_method"
+
 class RegexSuppression:
     value: str
 
@@ -34,8 +40,10 @@ class RegexSuppression:
 
 @runtime_checkable
 class ChangesChecker(Protocol):
+    node_type: CheckerType
     name: str
+    is_breaking: bool
     message: Union[str, dict]
 
-    def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict) -> List[BreakingChange]:
+    def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> List[BreakingChange]:
         ...
