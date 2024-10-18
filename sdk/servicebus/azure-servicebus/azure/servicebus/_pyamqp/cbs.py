@@ -17,6 +17,7 @@ from .error import (
     TokenAuthFailure,
     TokenExpired,
 )
+from .outcomes import Accepted
 from .constants import (
     CbsState,
     CbsAuthState,
@@ -178,6 +179,13 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         if execute_operation_result == ManagementExecuteOperationResult.OK:
             self.auth_state = CbsAuthState.OK
+            self._mgmt_link._response_link.send_disposition(
+                first_delivery_id=0,
+                last_delivery_id=0,
+                delivery_tag=b"$cbs",   # CBS auth sends disposition back on put token 202, set fake delivery tag
+                settled=True,
+                delivery_state=Accepted()
+            )
         elif execute_operation_result == ManagementExecuteOperationResult.ERROR:
             self.auth_state = CbsAuthState.ERROR
             # put-token-message sending failure, rejected
