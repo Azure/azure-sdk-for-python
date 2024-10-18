@@ -13,6 +13,7 @@ from azure.core.credentials import AccessToken, AccessTokenInfo
 
 FAKE_CLIENT_ID = "fake-client-id"
 INVALID_CHARACTERS = "|\\`;{&' "
+INVALID_SUBSCRIPTION_CHARACTERS = "|\\`;{&'"
 ACCESS_TOKEN_CLASSES = (AccessToken, AccessTokenInfo)
 GET_TOKEN_METHODS = ("get_token", "get_token_info")
 
