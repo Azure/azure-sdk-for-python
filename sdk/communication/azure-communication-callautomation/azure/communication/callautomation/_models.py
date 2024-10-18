@@ -1,14 +1,14 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
-    TranscriptionConfiguration as TranscriptionConfigurationRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -21,8 +21,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
-from ._generated.models._enums import PlaySourceType
-from ._generated.models._enums import RecordingStorageKind
+from ._generated.models._enums import PlaySourceType, RecordingStorageKind
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -31,10 +30,6 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
-        MediaStreamingTransportType,
-        MediaStreamingContentType,
-        MediaStreamingAudioChannelType,
-        TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
         RecordingKind,
@@ -87,6 +82,28 @@ class CallInvite:
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
 
+class RoomCallLocator:
+    """The locator to locate ongoing call, using room id.
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `room_id` directly.
+    :param room_id: The room id of ongoing call.
+    :type room_id: str
+    """
+    room_id: str
+    """The acs room id of ongoing call."""
+    kind: str = "roomCallLocator"
+    """This is for locating the call with acs room id."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        room_id: str,
+        **kwargs
+    ):
+        self.room_id = room_id
+        self.kind = "roomCallLocator"
+
+    def _to_generated(self):
+        return CallLocator(kind=self.kind, room_id=self.room_id)
 
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
@@ -139,39 +156,36 @@ class GroupCallLocator:
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
 
-    class RecordingStorage:
-        """Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: str
-        """
-        kind: str
-        """The recording storage kind"""
+class RecordingStorage:
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: str
+    """
+    kind: str
+    """The recording storage kind"""
 
-    class AzureCommunicationsRecordingStorage(RecordingStorage):
-        """
-        Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
-        """
-        kind: Literal[RecordingStorageKind
-                      .AZURE_COMMUNICATION_SERVICES
-                      ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
-        """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
+class AzureCommunicationsRecordingStorage(RecordingStorage):
+    """
+    Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    """
+    kind: Literal[RecordingStorageKind.AZURE_COMMUNICATION_SERVICES] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+    """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
 
-    class AzureBlobContainerRecordingStorage(RecordingStorage):
-        """Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
-        :param container_url: Defines the kind of external storage. Required.
-        :type container_url: str
-        """
-        kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
-        """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
-        container_url: str
-        """The container url for the AZURE_BLOB_STORAGE type"""
-        def __init__(self, container_url: str):
-            self.container_url = container_url
-
+class AzureBlobContainerRecordingStorage(RecordingStorage):
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    :param container_url: Defines the kind of external storage. Required.
+    :type container_url: str
+    """
+    kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
+    """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
+    container_url: str
+    """The container url for the AZURE_BLOB_STORAGE type"""
+    def __init__(self, container_url: str):
+        self.container_url = container_url
 
 class ChannelAffinity:
     """Channel affinity for a participant.
@@ -336,92 +350,6 @@ class SsmlSource:
             play_source_cache_id=self.play_source_cache_id
         )
 
-class MediaStreamingConfiguration:
-    """Configuration of Media streaming.
-
-    :param transport_url: Transport URL for media streaming.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-    :param content_type: Content type to stream, eg. audio, audio/video.
-    :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-    :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-    :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-    """
-
-    transport_url: str
-    """Transport URL for media streaming."""
-    transport_type: Union[str, 'MediaStreamingTransportType']
-    """The type of transport to be used for media streaming."""
-    content_type: Union[str, 'MediaStreamingContentType']
-    """Content type to stream, eg. audio, audio/video."""
-    audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    def __init__(
-        self,
-        transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    ):
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.content_type = content_type
-        self.audio_channel_type = audio_channel_type
-
-    def to_generated(self):
-        return MediaStreamingConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
-        )
-
-class TranscriptionConfiguration:
-    """Configuration of live transcription.
-
-    :param transport_url: Transport URL for live transcription. Required.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
-     Required. "websocket"
-    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
-    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
-    :type locale: str
-    :param start_transcription: Determines if the transcription should be started immediately after
-     call is answered or not. Required.
-    :type start_transcription: bool
-    """
-
-    transport_url: str
-    """Transport URL for live transcription."""
-    transport_type: Union[str, 'TranscriptionTransportType']
-    """The type of transport to be used for live transcription."""
-    locale: str
-    """Defines the locale for the data."""
-    start_transcription: bool
-    """Determines if the transcription should be started immediately after call is answered or not."""
-
-    def __init__(
-        self,
-        transport_url: str,
-        transport_type: Union[str, 'TranscriptionTransportType'],
-        locale: str,
-        start_transcription: bool
-    ):
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.locale = locale
-        self.start_transcription = start_transcription
-
-    def to_generated(self):
-        return TranscriptionConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            locale=self.locale,
-            start_transcription=self.start_transcription
-        )
-
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
@@ -435,8 +363,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_subscription_id: SubscriptionId for media streaming.
-    :paramtype media_subscription_id: str
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -450,6 +376,9 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype correlation_id: str
     :keyword answered_by: The identifier that answered the call
     :paramtype answered_by: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :keyword answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+     when the original target is a Pstn number.
+    :paramtype answered_for: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
 
     call_connection_id: Optional[str]
@@ -462,8 +391,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
-    media_subscription_id: Optional[str]
-    """SubscriptionId for media streaming."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -476,6 +403,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """Correlation ID of the call"""
     answered_by: Optional[CommunicationIdentifier]
     """The identifier that answered the call"""
+    answered_for: Optional[PhoneNumberIdentifier]
+    """The phone identifier that answered the call"""
 
     def __init__(
         self,
@@ -485,24 +414,24 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         targets: Optional[List[CommunicationIdentifier]] = None,
         call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None
+        answered_by: Optional[CommunicationUserIdentifier] = None,
+        answered_for: Optional[PhoneNumberIdentifier] = None,
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
+        self.answered_for = answered_for
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -516,7 +445,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
@@ -529,7 +457,11 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             answered_by=deserialize_comm_user_identifier(
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
-            else None
+            else None,
+            answered_for=deserialize_phone_identifier(
+            call_connection_properties_generated.answered_for)
+            if call_connection_properties_generated.answered_for
+            else None,
         )
 
 
@@ -540,27 +472,34 @@ class RecordingProperties:
     :paramtype recording_id: str
     :keyword recording_state: state of ongoing recording.
     :paramtype recording_state: str or ~azure.communication.callautomation.RecordingState
+    :keyword recording_kind: kind of the recording.
+    :paramtype recording_kind: str or ~azure.communication.callautomation.RecordingKind
     """
 
     recording_id: Optional[str]
     """Id of this recording operation."""
     recording_state: Optional[Union[str,'RecordingState']]
     """state of ongoing recording."""
+    recording_kind: Optional[Union[str, 'RecordingKind']]
+    """kind of the recording."""
 
     def __init__(
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None
+        recording_state: Optional[Union[str,'RecordingState']] = None,
+        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
     @classmethod
     def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
             recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state
+            recording_state=recording_state_result.recording_state,
+            recording_kind=recording_state_result.recording_kind,
         )
 
 
