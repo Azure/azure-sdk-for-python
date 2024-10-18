@@ -1440,14 +1440,14 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def upload_file(self, file_path: str, *, purpose: str, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file(self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1549,7 +1549,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: str, sleep_interval: float = 1, **kwargs: Any
+        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1557,7 +1557,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
