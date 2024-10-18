@@ -432,6 +432,14 @@ class Simulator:
             if isinstance(query_responses, dict):
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
+            if isinstance(query_responses, str):
+                query_responses = json.loads(query_responses)
+                if isinstance(query_responses, dict):
+                    if len(query_responses.keys()) == 1:
+                        return query_responses[list(query_responses.keys())[0]]
+                    return query_responses  # type: ignore
+                if isinstance(query_responses, list):
+                    return query_responses
             return json.loads(query_responses)
         except Exception as e:
             raise RuntimeError("Error generating query responses") from e

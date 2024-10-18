@@ -8,6 +8,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
 
 ### Other Changes
 
