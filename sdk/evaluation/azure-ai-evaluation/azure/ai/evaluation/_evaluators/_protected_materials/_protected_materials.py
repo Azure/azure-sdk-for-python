@@ -14,9 +14,9 @@ from azure.core.credentials import TokenCredential
 
 
 class _AsyncProtectedMaterialsEvaluator:
-    def __init__(self, azure_ai_project: AzureAIProject, credential: TokenCredential):
-        self._azure_ai_project = azure_ai_project
-        self._credential = credential
+    def __init__(self, azure_ai_project: dict, credential):
+        self._azure_ai_project: AzureAIProject = validate_azure_ai_project(azure_ai_project)
+        self._credential: TokenCredential = cast(TokenCredential, credential)
 
     async def __call__(self, *, query: str, response: str, **kwargs):
         """
@@ -90,9 +90,7 @@ class ProtectedMaterialsEvaluator:
     """
 
     def __init__(self, credential, azure_ai_project: dict):
-        self._async_evaluator = _AsyncProtectedMaterialsEvaluator(
-            validate_azure_ai_project(azure_ai_project), cast(TokenCredential, credential)
-        )
+        self._async_evaluator = _AsyncProtectedMaterialsEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):
         """

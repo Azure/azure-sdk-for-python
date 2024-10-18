@@ -5,9 +5,9 @@ import inspect
 import logging
 import math
 import os
+from collections import OrderedDict
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union
-from collections import OrderedDict
 
 import pandas as pd
 from promptflow.client import PFClient
