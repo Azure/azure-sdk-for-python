@@ -25,7 +25,7 @@ Output must be in JSON format
 Here's a sample output:
 {
   "content": "Here is my follow-up question.",
-  "user": "user"
+  "role": "user"
 }
 
 Output with a json object that continues the conversation, given the conversation history:
