@@ -297,8 +297,8 @@ class FileSearchTool(Tool):
     A tool that searches for uploaded file information from the created vector stores.
     """
 
-    def __init__(self):
-        self.vector_store_ids = []
+    def __init__(self, vector_store_ids: List[str] = []):
+        self.vector_store_ids = vector_store_ids
 
     def add_vector_store(self, store_id: str):
         """
