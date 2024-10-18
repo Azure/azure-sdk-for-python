@@ -231,6 +231,10 @@ class EndpointsOperations(EndpointsOperationsGenerated):
 
 class AgentsOperations(AgentsOperationsGenerated):
 
+    def __init__(self, *args, outer_instance=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.outer_instance = outer_instance
+
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -371,6 +375,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         if toolset is not None:
             self._toolset = toolset
             tools = toolset.definitions
+            connections = self.outer_instance.endpoints.list()
+            resource_list = zip([c.name for c in connections], [c.endpoint_type for c in connections])
+            toolset.updateResources(resource_list)
             tool_resources = toolset.resources
 
         return await super().create_agent(

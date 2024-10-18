@@ -191,6 +191,10 @@ class Tool(ABC):
         """
         pass
 
+    @abstractmethod
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+        pass
+
 
 class FunctionTool(Tool):
     """
@@ -259,6 +263,9 @@ class FunctionTool(Tool):
         except TypeError as e:
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
+        
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+        pass
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -326,6 +333,14 @@ class BingSearchTool(Tool):
     def execute(self, tool_call: Any) -> Any:
         pass
 
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+        """
+        use connection_list to auto-update connections for bing search tool if no pre-existing
+        """
+        if self.connection_ids.__len__() == 0:
+            for name, endpoint_type in connection_list:
+                pass
+
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
@@ -391,7 +406,9 @@ class CodeInterpreterTool(Tool):
 
     def execute(self, tool_call: Any) -> Any:
         pass
-
+        
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+        pass
 
 class ToolSet:
     """
@@ -439,6 +456,10 @@ class ToolSet:
                 logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+
+    def updateResources(self, connection_list: List[Tuple[str, str]]) -> None:
+        for tool in self._tools:
+            tool.updateConnections(connection_list)
 
     @property
     def definitions(self) -> List[ToolDefinition]:
