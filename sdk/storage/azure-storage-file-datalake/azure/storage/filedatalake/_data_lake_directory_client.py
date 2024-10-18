@@ -226,7 +226,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._create('directory', metadata=metadata, **kwargs)
 
     @distributed_trace
-    def delete_directory(self, **kwargs: Any) -> Dict[str, Any]:
+    def delete_directory(self, **kwargs: Any) -> Dict[str, Any]:  # pylint: disable=delete-operation-wrong-return-type
         """
         Marks the specified directory for deletion.
 

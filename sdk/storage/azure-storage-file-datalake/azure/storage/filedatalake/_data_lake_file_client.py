@@ -239,7 +239,7 @@ class DataLakeFileClient(PathClient):
         return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace
-    def delete_file(self, **kwargs: Any) -> Dict[str, Any]:
+    def delete_file(self, **kwargs: Any) -> Dict[str, Any]:  # pylint: disable=delete-operation-wrong-return-type
         """
         Marks the specified file for deletion.
 
