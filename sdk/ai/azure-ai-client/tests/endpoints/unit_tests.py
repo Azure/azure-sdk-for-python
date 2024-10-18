@@ -11,7 +11,7 @@ from azure.ai.client.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.ai.client.models._models import ThreadRun, RunStep, ThreadMessage
-from azure.ai.client.models._patch import ParamCorrector
+from azure.ai.client.models._patch import _safe_instantiate, _filter_parameters
 
 
 # import azure.ai.client as sdk
@@ -178,7 +178,7 @@ class TestUnit:
         # We should bot e able to create Thread Run with bad parameters.
         with pytest.raises(TypeError):
             model_cls(**params)
-        filtered_params = ParamCorrector.filter_parameters(model_cls, params)
+        filtered_params = _filter_parameters(model_cls, params)
         for k in valid_params:
             assert k in filtered_params
         for k in bad_params:
@@ -186,9 +186,9 @@ class TestUnit:
         # Implicitly check that we can create object with the filtered parameters.
         model_cls(**filtered_params)
         # Check safe initialization.
-        assert isinstance(ParamCorrector.safe_instantiate(model_cls, params), model_cls)
+        assert isinstance(_safe_instantiate(model_cls, params), model_cls)
         
 
     def test_safe_instantiate_non_dict(self):
         """Test that safe_instantiate method when user supplies not a dictionary."""
-        assert ParamCorrector.safe_instantiate(RunStep, 42) == 42
+        assert _safe_instantiate(RunStep, 42) == 42
