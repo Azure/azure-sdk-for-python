@@ -149,6 +149,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
                         **kwargs
                     )
                 )
+            else:
+                _LOGGER.info("WorkloadIdentityCredential authentication unavailable. Environment variables are not fully configured.")
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
