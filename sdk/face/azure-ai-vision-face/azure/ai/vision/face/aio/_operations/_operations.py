@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
