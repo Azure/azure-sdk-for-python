@@ -65,7 +65,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
       "azure-core-experimental",
       "azure-core-tracing-opentelemetry",
       "azure-core-tracing-opencensus",
-      "azure-cosmos",
+      # "azure-cosmos", leave removed until we resolve what to do with the emulator tests
       "azure-ai-documentintelligence",
       "azure-ai-ml",
       "azure-ai-inference",
