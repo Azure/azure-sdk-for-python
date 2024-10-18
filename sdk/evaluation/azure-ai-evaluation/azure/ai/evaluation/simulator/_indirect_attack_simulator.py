@@ -16,7 +16,6 @@ from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, Supporte
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
-from ._helpers import experimental
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 
