@@ -16,6 +16,7 @@ from typing_extensions import Self
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._data_lake_file_client_helpers import (
+    _append_data_options,
     _upload_options,
 )
 from ._deserialize import deserialize_file_properties, process_storage_error
@@ -31,7 +32,6 @@ from ._serialize import (
     get_lease_action_properties
 )
 from ._shared.base_client import parse_connection_str
-from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._upload_helper import upload_datalake_file
 
@@ -471,45 +471,13 @@ class DataLakeFileClient(PathClient):
         )
         return upload_datalake_file(**options)
 
-    @staticmethod
-    def _append_data_options(
-            data, # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            offset, # type: int
-            scheme, # type: str
-            length=None, # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-
-        if isinstance(data, str):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        cpk_info = get_cpk_info(scheme, kwargs)
-        kwargs.update(get_lease_action_properties(kwargs))
-
-        options = {
-            'body': data,
-            'position': offset,
-            'content_length': length,
-            'validate_content': kwargs.pop('validate_content', False),
-            'cpk_info': cpk_info,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                    offset,  # type: int
-                    length=None,  # type: Optional[int]
-                    **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_data(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        offset: int,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Append data to the file.
 
         :param data: Content to be appended to file
@@ -550,8 +518,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: dict of the response header.
-        :rtype: Dict[str, str], Dict[str, ~datetime.datetime], or Dict[str, int]
+        :returns: response dict.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -562,7 +530,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Append data to the file.
         """
-        options = self._append_data_options(
+        options = _append_data_options(
             data=data,
             offset=offset,
             scheme=self.scheme,

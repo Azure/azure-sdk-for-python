@@ -16,6 +16,7 @@ from typing_extensions import Self
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._data_lake_file_client_helpers import (
+    _append_data_options,
     _upload_options,
 )
 from .._deserialize import deserialize_file_properties, process_storage_error
@@ -480,11 +481,12 @@ class DataLakeFileClient(PathClient):
         return await upload_datalake_file(**options)
 
     @distributed_trace_async
-    async def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                          offset,  # type: int
-                          length=None,  # type: Optional[int]
-                          **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def append_data(
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        offset: int,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Append data to the file.
 
         :param data: Content to be appended to file
@@ -525,8 +527,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: dict of the response header.
-        :rtype: Dict[str, str], Dict[str, ~datetime.datetime], or Dict[str, int]
+        :returns: response dict.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -537,7 +539,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Append data to the file.
         """
-        options = self._append_data_options(
+        options = _append_data_options(
             data=data,
             offset=offset,
             scheme=self.scheme,

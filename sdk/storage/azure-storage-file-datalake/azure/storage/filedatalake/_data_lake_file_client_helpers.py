@@ -14,16 +14,50 @@ from ._serialize import (
     add_metadata_headers,
     get_access_conditions,
     get_cpk_info,
+    get_lease_action_properties,
     get_mod_conditions,
     get_path_http_headers
 )
-from ._shared.request_handlers import get_length
+from ._shared.request_handlers import get_length, read_length
+from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 
 if TYPE_CHECKING:
     from ._generated.operations import PathOperations
     from ._shared.models import StorageConfiguration
+
+
+def _append_data_options(
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+    offset: int,
+    scheme: str,
+    length: Optional[int] = None,
+    **kwargs: Any
+) -> Dict[str, Any]:
+    if isinstance(data, str):
+        data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
+    if length is None:
+        length = get_length(data)
+        if length is None:
+            length, data = read_length(data)
+    if isinstance(data, bytes):
+        data = data[:length]
+
+    cpk_info = get_cpk_info(scheme, kwargs)
+    kwargs.update(get_lease_action_properties(kwargs))
+
+    options = {
+        'body': data,
+        'position': offset,
+        'content_length': length,
+        'validate_content': kwargs.pop('validate_content', False),
+        'cpk_info': cpk_info,
+        'timeout': kwargs.pop('timeout', None),
+        'cls': return_response_headers
+    }
+    options.update(kwargs)
+    return options
 
 
 def _upload_options(
