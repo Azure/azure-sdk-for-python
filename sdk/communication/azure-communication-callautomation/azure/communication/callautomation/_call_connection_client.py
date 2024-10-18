@@ -53,7 +53,9 @@ from ._generated.models import (
     StopTranscriptionRequest,
     UpdateTranscriptionRequest,
     HoldRequest,
-    UnholdRequest
+    UnholdRequest,
+    StartMediaStreamingRequest,
+    StopMediaStreamingRequest
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -1078,4 +1080,61 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         self._call_media_client.unhold(self._call_connection_id, unhold_request)
+    @distributed_trace
+    def start_media_streaming(
+        self,
+        *,
+        operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts media streaming in the call.
         
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        start_media_streaming_request=StartMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
+        )
+        self._call_media_client.start_media_streaming(
+            self._call_connection_id,
+            start_media_streaming_request,
+            **kwargs)
+
+    @distributed_trace
+    def stop_media_streaming(
+        self,
+        *,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stops media streaming in the call.
+        
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        stop_media_streaming_request=StopMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url
+            )
+        self._call_media_client.stop_media_streaming(
+            self._call_connection_id,
+            stop_media_streaming_request,
+            **kwargs
+            )
+
+    

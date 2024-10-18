@@ -12,7 +12,11 @@ from devtools_testutils import recorded_by_proxy
 from azure.communication.callautomation import (
     FileSource,
     DtmfTone,
-    PhoneNumberIdentifier
+    PhoneNumberIdentifier,
+    MediaStreamingConfiguration,
+    MediaStreamingContentType,
+    MediaStreamingTransportType,
+    MediaStreamingAudioChannelType,
 )
 from callautomation_test_case import CallAutomationRecordedTestCase
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
@@ -177,5 +181,70 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if get_participant_result.is_on_hold is True:
             raise ValueError("Failed to unhold participant")
         
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy 
+    def test_start_stop_media_streaming_in_a_call(self):
+        
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+
+        media_streaming_options=MediaStreamingConfiguration(
+            transport_url=self.transport_url,
+            transport_type=MediaStreamingTransportType.WEBSOCKET,
+            content_type=MediaStreamingContentType.AUDIO,
+            audio_channel_type=MediaStreamingAudioChannelType.MIXED,
+            start_media_streaming=False
+            )        
+
+        unique_id, call_connection, _ = self.establish_callconnection_voip_with_streaming_options(caller, target, media_streaming_options, False)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        # start media streaming.
+        call_connection.start_media_streaming()
+        
+        # check for MediaStreamingStarted event
+        media_streaming_started = self.check_for_event('MediaStreamingStarted', call_connection._call_connection_id, timedelta(seconds=30))
+        if media_streaming_started is None:
+            raise ValueError("MediaStreamingStarted event is None")
+
+        time.sleep(3)
+        
+        # check for media streaming subscription from call connection properties for media streaming started event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.media_streaming_subscription is None:
+            raise ValueError("call_connection_properties.media_streaming_subscription is None")
+        if call_connection_properties.media_streaming_subscription.state!='active':
+            raise ValueError("media streaming state is invalid for MediaStreamingStarted event")
+
+        # stop media streaming.
+        call_connection.stop_media_streaming()
+
+        # check for MediaStreamingStopped event
+        media_streaming_stopped = self.check_for_event('MediaStreamingStopped', call_connection._call_connection_id, timedelta(seconds=30))
+        if media_streaming_stopped is None:
+            raise ValueError("MediaStreamingStopped event is None")
+        
+        # check for media streaming subscription from call connection properties for media streaming stopped event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.media_streaming_subscription is None:
+            raise ValueError("call_connection_properties.media_streaming_subscription is None")
+        if call_connection_properties.media_streaming_subscription.state!='inactive':
+            raise ValueError("media streaming state is invalid for MediaStreamingStopped event")
+
         self.terminate_call(unique_id)
         return

@@ -357,25 +357,32 @@ class MediaStreamingConfiguration:
     """Content type to stream, eg. audio, audio/video."""
     audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+    start_media_streaming: Optional[bool]
+    """Determines if the media streaming should be started immediately
+     after call is answered or not"""
+
 
     def __init__(
         self,
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
+        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        start_media_streaming: Optional[bool] = None
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
+        self.start_media_streaming = start_media_streaming
 
     def to_generated(self):
         return MediaStreamingConfigurationRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
+            audio_channel_type=self.audio_channel_type,
+            start_media_streaming= self.start_media_streaming
         )
 
 class TranscriptionConfiguration:
