@@ -30,7 +30,7 @@ USAGE:
 def sample_chat_completions_from_input_prompt_string():
     import os
     from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.prompts import PromptyTemplate
+    from azure.ai.inference.prompts import PromptTemplate
     from azure.core.credentials import AzureKeyCredential
 
     try:
@@ -42,35 +42,32 @@ def sample_chat_completions_from_input_prompt_string():
         exit()
 
 
-    prompt_template = """
-system:
-You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
+    prompt_template_str = """
+        system:
+        You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
 
-user:
-{input}
-"""
-    prompt_config = PromptyTemplate.from_message(
+        user:
+        {input}
+    """
+    prompt_template = PromptTemplate.from_message(
         api = "chat",
         model_name = "gpt-4o-mini",
-        prompt_template = prompt_template
+        prompt_template = prompt_template_str
     )
 
     input_variables = {
         "input": "please tell me a joke about cats",
     }
 
-    messages = prompt_config.render(input_variables=input_variables)
-    # messages = prompt_config.render(input_variables=input_variables, format="openai")
+    messages = prompt_template.render(input_variables=input_variables)
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # [START chat_completions]
     response = client.complete(
         {
             "messages": messages,
         }
     )
-    # [END chat_completions]
 
     print(response.choices[0].message.content)
 

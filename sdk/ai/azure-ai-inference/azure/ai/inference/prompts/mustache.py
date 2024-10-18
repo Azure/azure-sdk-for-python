@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 """
 Adapted from https://github.com/langchain-ai/langchain and https://github.com/noahmorrison/chevron
 MIT License

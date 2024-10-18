@@ -6,7 +6,7 @@
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
     the service using a synchronous client, and directly providing the 
-    input in Prompty format.
+    input in Prompty format from a Prompty file. Prompty website: https://prompty.ai
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -30,7 +30,7 @@ USAGE:
 def sample_chat_completions_from_input_prompty():
     import os
     from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.prompts import PromptyTemplate
+    from azure.ai.inference.prompts import PromptTemplate
     from azure.core.credentials import AzureKeyCredential
 
     try:
@@ -43,24 +43,24 @@ def sample_chat_completions_from_input_prompty():
 
 
     path = "./sample1.prompty"
-    prompt_config = PromptyTemplate.load(file_path=path)
+    prompt_template = PromptTemplate.from_prompty(file_path=path)
 
     input_variables = {
         "input": "please tell me a joke about cats",
     }
 
-    messages = prompt_config.render(input_variables=input_variables)
-    # messages = prompt_config.render(input_variables=input_variables, format="openai")
+    messages = prompt_template.render(input_variables=input_variables)
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
-    # [START chat_completions]
     response = client.complete(
         messages=messages,
-        model=prompt_config.model_name,
-        **prompt_config.config,
+        model=prompt_template.model_name,
+        **prompt_template.config,
     )
-    # [END chat_completions]
 
     print(response.choices[0].message.content)
 
