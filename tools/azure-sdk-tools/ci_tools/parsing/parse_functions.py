@@ -15,10 +15,7 @@ except:
 from typing import Dict, List, Tuple, Any, Optional
 
 # Assumes the presence of setuptools
-from pkg_resources import (
-    parse_requirements,
-    Requirement
-)
+from pkg_resources import parse_requirements, Requirement
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
@@ -208,6 +205,7 @@ def get_ci_config(package_path: str) -> Optional[Dict[str, Any]]:
 
     if os.path.exists(ci_file):
         import yaml
+
         try:
             with open(ci_file, "r") as f:
                 return yaml.safe_load(f)
@@ -224,6 +222,7 @@ def read_setup_py_content(setup_filename: str) -> str:
     with open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
         content = setup_file.read()
         return content
+
 
 def parse_setup_py(
     setup_filename: str,
@@ -327,33 +326,25 @@ def parse_setup_py(
     )
     # fmt: on
 
-def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
+
+def parse_pyproject(
+    pyproject_filename: str,
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
     toml_dict = get_pyproject_dict(pyproject_filename)
 
     project_config = toml_dict.get("project", None)
 
-    # This stilted file evaluation is necessary because the setuptools.configuration.read_configuration doesn't properly
-    # evaluate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
-    # of values. Using read_configuration is preferred because it will handle all of the setuptools dynamic evaluation for us.
-    # however, in my experience, I have been unable to make this happen.
-    #
-    # I have been able to successfully call build.ProjectBuilder.prepare() and get a valid result, but that actually partially builds
-    # the project metadata into a dist-info folder, which is more work than I want to do to get the values I need. (Including needing the package dependencies to
-    # be installed, as we actually import the __init__ to evaluate the VERSION value.)
-    #
-    # I really want this to be a straightforward "read from disk" without needing the package to actually be installed to build it, so we're just going to go after
-    # the version.py if the `version` attribute isn't set in the project config.
-    #
-    # As mentioned before build phase will need to install _dependencies_ of the package prior to building, that will be taken care of in
-    # build.py create_package()
-    # - scbedd 1/26/2024 - 2/2/2024.
+    # to pull a version from pyproject.toml, we need to get a dynamic version out. We can ask
+    # setuptools to give us the metadata for a package, but that will involve _partially building_ the package
+    # to create an egginfo folder. This is a very expensive operation goes against the entire point of
+    # "give me the package metadata for this folder."
+    # We can avoid this expensive operation if we parse the version out of the _version or version file directly.
     parsed_version = project_config.get("version", None)
     if not parsed_version:
-        # go after the value from _version.py or version.py
         parsed_version_py = get_version_py(pyproject_filename)
 
         if parsed_version_py:
-            with open(parsed_version_py, 'r') as f:
+            with open(parsed_version_py, "r") as f:
                 parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
 
                 if parsed_version:
@@ -372,17 +363,10 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     classifiers = project_config.get("classifiers", [])
     keywords = project_config.get("keywords", [])
 
-    setuptools_config = toml_dict.get("tool.setuptools", {})
     # as of setuptools 74.1 ext_packages and ext_modules are now present in tool.setuptools config namespace
-    ext_package = get_value_from_dict(setuptools_config, "ext_package", None)
-    ext_modules = get_value_from_dict(setuptools_config, "ext_modules", [])
-    ext_modules = [
-        Extension(
-            name=module['name'],
-            sources=module['sources'],
-        )
-        for module in ext_modules
-    ]
+    ext_package = get_value_from_dict(toml_dict, "tool.setuptools.ext-package", None)
+    ext_modules = get_value_from_dict(toml_dict, "tool.setuptools.ext-modules", [])
+    ext_modules = [Extension(**moduleArgDict) for moduleArgDict in ext_modules]
 
     # fmt: off
     return (
@@ -402,6 +386,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     )
     # fmt: on
 
+
 def get_version_py(setup_path: str):
     file_path, _ = os.path.split(setup_path)
     # Find path to _version.py recursively in azure folder of package
@@ -413,6 +398,7 @@ def get_version_py(setup_path: str):
             return os.path.join(root, OLD_VERSION_PY)
 
     return None
+
 
 def get_pyproject(folder: str) -> Optional[str]:
     """
@@ -427,6 +413,7 @@ def get_pyproject(folder: str) -> Optional[str]:
 
     return None
 
+
 def get_setup_py(folder: str) -> Optional[str]:
     """
     Given a folder, attempts to find a setup.py file and return its location.
@@ -437,6 +424,7 @@ def get_setup_py(folder: str) -> Optional[str]:
         return setup_filename
 
     return None
+
 
 def parse_setup(
     setup_filename_or_folder: str,
@@ -471,6 +459,7 @@ def parse_setup(
         return parse_pyproject(resolved_filename)
     else:
         return parse_setup_py(resolved_filename)
+
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
     """

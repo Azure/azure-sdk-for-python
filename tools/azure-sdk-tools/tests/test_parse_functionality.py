@@ -211,7 +211,7 @@ setup(
 
 def test_parse_pyproject():
     # ensure that we can parse from a folder and a specific file
-    parsed_project = ParsedSetup.from_path(pyproject_scenario)
+    parsed_project = ParsedSetup.from_path(pyproject_extension_scenario)
 
     assert parsed_project.name == "azure-keyvault-keys"
     assert parsed_project.version == "0.0.1"
@@ -227,17 +227,17 @@ def test_parse_pyproject():
 
 def test_parse_pyproject_extensions():
     # ensure that we can parse from a folder and a specific file
-    parsed_project = ParsedSetup.from_path(pyproject_scenario)
+    parsed_project = ParsedSetup.from_path(pyproject_extension_scenario)
 
     assert parsed_project.name == "azure-keyvault-keys"
-    assert parsed_project.version == "0.0.1"
+    assert parsed_project.version == "0.0.1b1"
     assert parsed_project.requires == ["azure-common~=1.1", "azure-core<2.0.0,>=1.24.0", "cryptography>=2.1.4", "isodate>=0.6.1", "typing-extensions>=4.0.1"]
     assert parsed_project.python_requires == ">=3.7"
     assert parsed_project.is_new_sdk == True
     assert parsed_project.is_pyproject == True
     assert parsed_project.package_data == { "py.typed": ["py.typed"] }
     assert parsed_project.include_package_data == True
-    assert parsed_project.folder == pyproject_scenario
+    assert parsed_project.folder == pyproject_extension_scenario
     assert parsed_project.namespace == "azure.keyvault.keys"
     assert parsed_project.ext_package == "azure.keyvault.keys"
     assert parsed_project.ext_modules is not None
