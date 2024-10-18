@@ -18,7 +18,7 @@ USAGE:
     pip install azure.ai.client aiohttp azure-identity
 
     Set this environment variables with your own values:
-    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import os
 import asyncio
@@ -31,7 +31,7 @@ async def sample_get_chat_completions_client_async():
 
     async with AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
+        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
     ) as ai_client:
 
         # Get an authenticated async ChatCompletionsClient (from azure.ai.inference) for your default Serverless connection:

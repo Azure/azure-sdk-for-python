@@ -18,7 +18,7 @@ USAGE:
     pip install azure.ai.client azure-identity
 
     Set the environment variables with your own values:
-    1) AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
 import os
@@ -34,7 +34,7 @@ from azure.core.credentials import AzureKeyCredential
 # It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 with ai_client:

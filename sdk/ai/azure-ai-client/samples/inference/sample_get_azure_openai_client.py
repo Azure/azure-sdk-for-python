@@ -18,7 +18,7 @@ USAGE:
     pip install azure.ai.client openai
 
     Set this environment variable with your own values:
-    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import os
 from azure.ai.client import AzureAIClient
@@ -26,7 +26,7 @@ from azure.identity import DefaultAzureCredential
 
 with AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 ) as ai_client:
 
     # Get an authenticated OpenAI client for your default Azure OpenAI connection:
