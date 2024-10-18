@@ -30,25 +30,47 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer, add_header_regex_sanitizer
+from devtools_testutils import (
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    test_proxy,
+)
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    subscription_id = os.environ.get("LOADTESTING_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    tenant_id = os.environ.get("LOADTESTING_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    client_id = os.environ.get("LOADTESTING_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    client_secret = os.environ.get("LOADTESTING_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    subscription_id = os.environ.get(
+        "LOADTESTING_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    tenant_id = os.environ.get(
+        "LOADTESTING_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    client_id = os.environ.get(
+        "LOADTESTING_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    client_secret = os.environ.get(
+        "LOADTESTING_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
     test_id = os.environ.get("TEST_ID", "000")
     file_id = os.environ.get("FILE_ID", "000")
     test_run_id = os.environ.get("TEST_RUN_ID", "000")
     resource_id = os.environ.get("RESOURCE_ID", "000")
     app_component = os.environ.get("APP_COMPONENT", "000")
-    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(
+        regex=subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=tenant_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=client_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=client_secret, value="00000000-0000-0000-0000-000000000000"
+    )
     add_general_regex_sanitizer(regex=test_id, value="000")
     add_general_regex_sanitizer(regex=file_id, value="000")
     add_general_regex_sanitizer(regex=test_run_id, value="000")
