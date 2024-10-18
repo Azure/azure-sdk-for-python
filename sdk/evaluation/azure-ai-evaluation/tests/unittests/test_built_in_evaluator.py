@@ -44,8 +44,11 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(query="What is the capital of Japan?", response=None)
 
-        assert "Missing input" in exc_info.value.args[0]
-    
+        assert (
+            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+        )
+
+
     # passing_score behavior tested here is defined by PromptyEvaluatorBase - all children have different call
     # signatures, so instead of parametrizing this call, testing GroundednessEvaluator as an example
     def test_quality_evaluator_passing_score(self, mock_model_config):
@@ -121,6 +124,8 @@ class TestBuiltInEvaluators:
         assert "gpt_similarity_label" in result
         assert result["gpt_similarity_label"] == False
 
+    # This test can be removed once RetrievalEvaluator is refactored to inherit from PromptyEvaluatorBase
+    # ADO Task #3563786
     def test_retrieval_evaluator_passing_score(self, mock_model_config):
         conversation = [
             {"role": "user", "content": "What is the value of 2 + 2?"},

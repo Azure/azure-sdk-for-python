@@ -106,7 +106,7 @@ class SecretBundle(_serialization.Model):
     :ivar content_type: The content type of the secret.
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
@@ -150,7 +150,7 @@ class SecretBundle(_serialization.Model):
         :keyword content_type: The content type of the secret.
         :paramtype content_type: str
         :keyword attributes: The secret management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -177,7 +177,7 @@ class DeletedSecretBundle(SecretBundle):
     :ivar content_type: The content type of the secret.
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
@@ -234,7 +234,7 @@ class DeletedSecretBundle(SecretBundle):
         :keyword content_type: The content type of the secret.
         :paramtype content_type: str
         :keyword attributes: The secret management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
@@ -255,7 +255,7 @@ class SecretItem(_serialization.Model):
     :ivar id: Secret identifier.
     :vartype id: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
@@ -290,7 +290,7 @@ class SecretItem(_serialization.Model):
         :keyword id: Secret identifier.
         :paramtype id: str
         :keyword attributes: The secret management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword content_type: Type of the secret value such as a password.
@@ -312,7 +312,7 @@ class DeletedSecretItem(SecretItem):
     :ivar id: Secret identifier.
     :vartype id: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
@@ -360,7 +360,7 @@ class DeletedSecretItem(SecretItem):
         :keyword id: Secret identifier.
         :paramtype id: str
         :keyword attributes: The secret management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword content_type: Type of the secret value such as a password.
@@ -382,7 +382,7 @@ class DeletedSecretListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of the deleted secrets in the vault along
      with a link to the next page of deleted secrets.
-    :vartype value: list[~azure.keyvault.v7_6_preview_1.models.DeletedSecretItem]
+    :vartype value: list[~azure.keyvault.v7_5.models.DeletedSecretItem]
     :ivar next_link: The URL to get the next set of deleted secrets.
     :vartype next_link: str
     """
@@ -414,7 +414,7 @@ class Error(_serialization.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.v7_6_preview_1.models.Error
+    :vartype inner_error: ~azure.keyvault.v7_5.models.Error
     """
 
     _validation = {
@@ -443,7 +443,7 @@ class KeyVaultError(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.v7_6_preview_1.models.Error
+    :vartype error: ~azure.keyvault.v7_5.models.Error
     """
 
     _validation = {
@@ -484,7 +484,7 @@ class SecretAttributes(Attributes):
      interval. Known values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.v7_6_preview_1.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.v7_5.models.DeletionRecoveryLevel
     """
 
     _validation = {
@@ -532,7 +532,7 @@ class SecretListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of secrets in the key vault along with a link
      to the next page of secrets.
-    :vartype value: list[~azure.keyvault.v7_6_preview_1.models.SecretItem]
+    :vartype value: list[~azure.keyvault.v7_5.models.SecretItem]
     :ivar next_link: The URL to get the next set of secrets.
     :vartype next_link: str
     """
@@ -612,7 +612,7 @@ class SecretSetParameters(_serialization.Model):
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
     :ivar secret_attributes: The secret management attributes.
-    :vartype secret_attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype secret_attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     """
 
     _validation = {
@@ -643,7 +643,7 @@ class SecretSetParameters(_serialization.Model):
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
         :keyword secret_attributes: The secret management attributes.
-        :paramtype secret_attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype secret_attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         """
         super().__init__(**kwargs)
         self.value = value
@@ -658,7 +658,7 @@ class SecretUpdateParameters(_serialization.Model):
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
     :ivar secret_attributes: The secret management attributes.
-    :vartype secret_attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+    :vartype secret_attributes: ~azure.keyvault.v7_5.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -681,7 +681,7 @@ class SecretUpdateParameters(_serialization.Model):
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
         :keyword secret_attributes: The secret management attributes.
-        :paramtype secret_attributes: ~azure.keyvault.v7_6_preview_1.models.SecretAttributes
+        :paramtype secret_attributes: ~azure.keyvault.v7_5.models.SecretAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
