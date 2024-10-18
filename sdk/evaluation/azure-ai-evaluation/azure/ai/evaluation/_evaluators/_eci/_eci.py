@@ -4,9 +4,11 @@
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
+@experimental
 class ECIEvaluator(RaiServiceEvaluatorBase[str]):
     """
     Initialize an ECI evaluator to evaluate ECI based on the following guidelines:
