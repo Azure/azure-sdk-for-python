@@ -12,7 +12,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation.simulator import AdversarialScenario, SupportedLanguages
+from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
@@ -140,7 +140,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
             }
         """
         # values that cannot be changed:
-        scenario = AdversarialScenario.ADVERSARIAL_INDIRECT_JAILBREAK
+        scenario = AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK
         max_conversation_turns = 2
         language = SupportedLanguages.English
         self._ensure_service_dependencies()
