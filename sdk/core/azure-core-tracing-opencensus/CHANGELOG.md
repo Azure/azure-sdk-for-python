@@ -2,13 +2,9 @@
 
 ## 1.0.0b10 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+
+- This package is no longer being maintained. Use the [azure-core-tracing-opentelemetry](https://pypi.org/project/azure-core-tracing-opentelemetry/) package for tracing support in Azure SDK libraries.
 
 ## 1.0.0b9 (2023-05-09)
 
