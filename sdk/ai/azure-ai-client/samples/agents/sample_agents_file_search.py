@@ -21,14 +21,9 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-
 import os
 from azure.ai.client import AzureAIClient
-from azure.ai.client.models._patch import FileSearchTool, ToolSet
+from azure.ai.client.models._patch import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
 
@@ -41,25 +36,23 @@ ai_client = AzureAIClient.from_connection_string(
 )
 
 with ai_client:
-    # Create file search tool
-    file_search = FileSearchTool()
+
     openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {openai_file.id}")
 
     openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
     print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
-    file_search.add_vector_store(openai_vectorstore.id)
+    # Create file search tool with resources
+    file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
 
-    toolset = ToolSet()
-    toolset.add(file_search)
-
-    # Create agent with toolset and process assistant run
+    # Create agent with file search tool and process assistant run
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="Hello, you are helpful assistant and can search information from uploaded files",
-        toolset=toolset,
+        tools=file_search.definitions,
+        tool_resources=file_search.resources,
     )
     print(f"Created agent, agent ID: {agent.id}")
 

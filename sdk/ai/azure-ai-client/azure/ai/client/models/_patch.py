@@ -304,7 +304,6 @@ class FileSearchTool(Tool):
         """
         Add a vector store ID to the list of vector stores to search for files.
         """
-        # TODO
         self.vector_store_ids.append(store_id)
 
     @property
