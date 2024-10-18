@@ -88,23 +88,14 @@ class SimilarityEvaluator:
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = SimilarityEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            ground_truth="Tokyo is Japan's capital.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_similarity": 3.0
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START rouge_score_evaluator]
+        :end-before: [END rouge_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
     def __init__(self, model_config: dict):

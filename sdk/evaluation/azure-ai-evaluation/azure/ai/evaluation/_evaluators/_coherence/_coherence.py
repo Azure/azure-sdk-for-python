@@ -17,22 +17,14 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = CoherenceEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_coherence": 1.0
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START coherence_evaluator]
+        :end-before: [END coherence_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a CoherenceEvaluator with a query and response.
     """
 
     PROMPTY_FILE = "coherence.prompty"

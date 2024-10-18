@@ -53,26 +53,14 @@ class MeteorScoreEvaluator:
     :param gamma: The METEOR score gamma parameter. Default is 0.5.
     :type gamma: float
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = MeteorScoreEvaluator(
-            alpha=0.9,
-            beta=3.0,
-            gamma=0.5
-        )
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "meteor_score": 0.62
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START meteor_score_evaluator]
+        :end-before: [END meteor_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
     """
 
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
