@@ -22,8 +22,7 @@ class QAEvaluator:
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :return: A function that evaluates and generates metrics for "question-answering" scenario.
-    :rtype: Callable
+    :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
 
     **Usage**
 
@@ -51,7 +50,7 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict, parallel: bool = True):
+    def __init__(self, model_config, parallel: bool = True):
         self._parallel = parallel
 
         self._evaluators: List[Callable[..., Dict[str, float]]] = [
