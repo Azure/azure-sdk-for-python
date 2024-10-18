@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="c80fb759-c965-4c6a-9110-9b2b2d038882",
     )
 
-    response = client.configuration_stores.begin_purge_deleted(
+    client.configuration_stores.begin_purge_deleted(
         location="westus",
         config_store_name="contoso",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2023-03-01/examples/DeletedConfigurationStoresPurge.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2024-05-01/examples/DeletedConfigurationStoresPurge.json
 if __name__ == "__main__":
     main()
