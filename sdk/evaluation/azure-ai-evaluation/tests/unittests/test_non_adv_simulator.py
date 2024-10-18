@@ -353,6 +353,7 @@ class TestSimulator:
             api_call_delay_sec=1,
             user_simulator_prompty=None,
             user_simulator_prompty_kwargs={},
+            text="some text",
         )
 
         assert len(result) == 1
