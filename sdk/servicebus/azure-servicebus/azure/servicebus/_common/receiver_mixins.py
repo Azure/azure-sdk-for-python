@@ -30,8 +30,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         else:
             self.entity_path = self._entity_name
 
+        # remove port (if present) from auth_uri
+        auth_uri_hostname = self.fully_qualified_namespace.split(":")[0]
         self._auth_uri = "sb://{}/{}".format(
-            self.fully_qualified_namespace, self.entity_path
+            auth_uri_hostname, self.entity_path
         )
         self._entity_uri = "amqps://{}/{}".format(
             self.fully_qualified_namespace, self.entity_path

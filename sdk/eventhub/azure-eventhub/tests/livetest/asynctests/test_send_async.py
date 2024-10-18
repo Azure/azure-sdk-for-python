@@ -741,3 +741,19 @@ async def test_send_long_wait_idle_timeout(
             else:
                 with pytest.raises(AMQPConnectionError):
                     await sender._send_event_data()
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_with_port_async(
+    auth_credentials_async, uamqp_transport
+):
+    fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
+    client = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace+":443/",
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        uamqp_transport=uamqp_transport,
+    )
+
+    async with client:
+        await client.send_event(EventData("A single event"))
