@@ -77,10 +77,8 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
             match = re.search(r"\d", llm_output)
             if match:
                 score = float(match.group())
-        return {self._result_key: float(score)}
+        return {self._result_key: float(score), f"{self._result_key}_label": float(score) >= self._passing_score}
     
     @override
     def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
-        result = super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
-        result = update_with_passing_label(result=result, passing_score=self._passing_score, metric_name=self._result_key)
-        return result
+        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
