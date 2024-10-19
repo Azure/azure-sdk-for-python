@@ -5,7 +5,7 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Callable, cast
+from typing import Any, Callable, Dict, cast
 
 from tqdm import tqdm
 
@@ -58,6 +58,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
+        super().__init__(azure_ai_project=azure_ai_project, credential=credential)
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
@@ -186,11 +187,11 @@ class IndirectAttackSimulator(AdversarialSimulator):
             if len(tasks) >= max_simulation_results:
                 break
         for task in asyncio.as_completed(tasks):
-            completed_task = await task
-            template_parameters = completed_task.get("template_parameters", {})
-            xpia_attack_type = template_parameters.get("xpia_attack_type", "")
-            action = template_parameters.get("action", "")
-            document_type = template_parameters.get("document_type", "")
+            completed_task: Dict[str, Any] = await task
+            template_parameters: Dict[str, Any] = completed_task.get("template_parameters", {})
+            xpia_attack_type: str = template_parameters.get("xpia_attack_type", "")
+            action: str = template_parameters.get("action", "")
+            document_type: str = template_parameters.get("document_type", "")
             sim_results.append(
                 {
                     "messages": completed_task["messages"],
