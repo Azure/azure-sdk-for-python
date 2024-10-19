@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta, timezone
 import json
 import sys
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics._internal.point import (
@@ -18,6 +18,11 @@ from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
+    _QUICKPULSE_PROJECTION_COUNT,
+    _QUICKPULSE_PROJECTION_CUSTOM,
+    _QUICKPULSE_PROJECTION_DURATION,
+    _QUICKPULSE_PROJECTION_MAX_VALUE,
+    _QUICKPULSE_PROJECTION_MIN_VALUE,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     AggregationType,
@@ -25,6 +30,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DocumentIngress,
     DocumentType,
     Exception as ExceptionDocument,
+    FilterInfo,
     MetricPoint,
     MonitoringDataPoint,
     RemoteDependency as RemoteDependencyDocument,
@@ -33,7 +39,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     Trace as TraceDocument,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _clear_quickpulse_projection_map,
     _get_quickpulse_derived_metric_infos,
+    _get_quickpulse_projection_map,
+    _reset_quickpulse_projection_map,
     _set_quickpulse_derived_metric_infos,
     _set_quickpulse_etag,
     _set_quickpulse_projection_map,
@@ -65,11 +74,24 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
                         elif isinstance(point, NumberDataPoint):
                             value = point.value
                         metric_point = MetricPoint(
-                            name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],
+                            name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],  # type: ignore
                             weight=1,
                             value=value
                         )
                         metric_points.append(metric_point)
+    # Process filtered metrics
+    for metric in _get_metrics_from_projections():
+        metric_point = MetricPoint(
+            name=metric[0],
+            weight=1,
+            value=metric[1],
+        )
+        metric_points.append(metric_point)
+
+    # Reset projection map for next collection cycle
+    _reset_quickpulse_projection_map()
+    
+
     return [
         MonitoringDataPoint(
             version=base_monitoring_data_point.version,
@@ -180,6 +202,8 @@ def _ns_to_iso8601_string(nanoseconds: int) -> str:
 # Filtering
 
 def _update_filter_configuration(etag: str, config_bytes: bytes):
+    # Clear projection map
+    _clear_quickpulse_projection_map()
     seen_ids = set()
     # config is a byte string that when decoded is a json
     config = json.loads(config_bytes.decode("utf-8"))
@@ -247,19 +271,84 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
 def _init_derived_metric_projection(filter_info: DerivedMetricInfo):
     derived_metric_agg_value = 0
     if filter_info.aggregation == AggregationType.MIN:
-        derived_metric_agg_value = sys.maxsize
+        derived_metric_agg_value = _QUICKPULSE_PROJECTION_MAX_VALUE
     elif filter_info.aggregation == AggregationType.MAX:
-        derived_metric_agg_value = -sys.maxsize - 1
+        derived_metric_agg_value = _QUICKPULSE_PROJECTION_MIN_VALUE
     elif filter_info.aggregation == AggregationType.SUM:
         derived_metric_agg_value = 0
-    else:
+    elif filter_info.aggregation == AggregationType.AVG:
         derived_metric_agg_value = 0
     _set_quickpulse_projection_map(
         filter_info.id,
-        filter_info.aggregation,
+        AggregationType(filter_info.aggregation),
         derived_metric_agg_value,
+        0,
     )
 
 # Create projections based off of DerivedMetricInfos and current data being processed
-def _create_projection(metric_infos: List[DerivedMetricInfo], data: _TelemetryData):
-    pass
+def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryData):
+    for metric_info in metric_infos:
+        value = 0
+        if metric_info.projection == _QUICKPULSE_PROJECTION_COUNT:
+            value = 1
+        elif metric_info.projection == _QUICKPULSE_PROJECTION_DURATION:
+            if isinstance(data, _RequestData) or isinstance(data, _DependencyData):
+                value = data.duration
+        elif metric_info.projection.startswith(_QUICKPULSE_PROJECTION_CUSTOM):
+            key = metric_info.projection.split(_QUICKPULSE_PROJECTION_CUSTOM, 1)[1].strip()
+            dim_value = data.custom_dimensions.get(key, 0)
+            try:
+                value = float(dim_value)
+            except ValueError:
+                pass
+            
+        aggregate: Optional[Tuple[float, int]] = _calculate_aggregation(
+            AggregationType(metric_info.aggregation),
+            metric_info.id,
+            value,
+        )
+        if aggregate:
+            _set_quickpulse_projection_map(
+                metric_info.id,
+                AggregationType(metric_info.aggregation),
+                aggregate[0],
+                aggregate[1],
+            )
+
+
+# Calculate aggregation based off of previous projection value, aggregation type of a specific metric filter
+# Return type is a Tuple of (value, count)
+def _calculate_aggregation(aggregation: AggregationType, id: str, value: float) -> Optional[Tuple[float, int]]:
+    projection: Optional[Tuple[AggregationType, float, int]] = _get_quickpulse_projection_map().get(id)
+    if projection:
+        prev_value = projection[1]
+        prev_count = projection[2]
+        if aggregation == AggregationType.SUM:
+            return (prev_value + value, prev_count + 1)
+        elif aggregation == AggregationType.MIN:
+            return (min(prev_value, value), prev_count + 1)
+        elif aggregation == AggregationType.MAX:
+            return (max(prev_value, value), prev_count + 1)
+        elif aggregation == AggregationType.AVG:
+            return (prev_value + value, prev_count + 1)
+    return None
+
+
+# Gets filtered metrics from projections to be exported
+# Called every second on export
+def _get_metrics_from_projections() -> List[Tuple[str, float]]:
+    metrics = []
+    projection_map = _get_quickpulse_projection_map()
+    for id, projection in projection_map.items():
+        metric_value = 0
+        aggregation_type = projection[0]
+        if aggregation_type == AggregationType.MIN:
+            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MAX_VALUE else projection[1]
+        elif aggregation_type == AggregationType.MAX:
+            metric_value = 0 if projection[1] == _QUICKPULSE_PROJECTION_MIN_VALUE else projection[1]
+        elif aggregation_type == AggregationType.AVG:
+            metric_value = 0 if projection[2] == 0 else projection[1] / float(projection[2])
+        elif aggregation_type == AggregationType.SUM:
+            metric_value = projection[1]
+        metrics.append((id, metric_value))
+    return metrics
