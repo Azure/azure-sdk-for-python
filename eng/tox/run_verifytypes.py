@@ -22,6 +22,7 @@ import tempfile
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
+from ci_tools.scenario.generation import replace_dev_reqs
 
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -42,7 +43,7 @@ def install_from_main(setup_path: str) -> None:
             )
             os.chdir("azure-sdk-for-python")
             subprocess.check_call(['git', 'sparse-checkout', 'init', '--cone'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            subprocess.check_call(['git', 'sparse-checkout', 'set', subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(['git', 'sparse-checkout', 'set', "sdk", "tools"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
             subprocess.check_call(['git', 'checkout', 'main'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
@@ -50,13 +51,16 @@ def install_from_main(setup_path: str) -> None:
                 exit(0)
 
             os.chdir(subdirectory)
-
+            package_path = os.path.join(temp_dir_name, "azure-sdk-for-python", subdirectory)
+            replace_dev_reqs(os.path.join(package_path, "dev_requirements.txt"), package_path, temp_dir_name)
             command = [
                 sys.executable,
                 "-m",
                 "pip",
                 "install",
                 ".",
+                "-r",
+                "dev_requirements.txt",
                 "--force-reinstall"
             ]
 
