@@ -8,11 +8,9 @@ from opentelemetry.sdk.metrics.export import HistogramDataPoint, NumberDataPoint
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
-    _COMMITTED_BYTES_NAME,
-    _DocumentIngressDocumentType,
-)
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models._models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import _COMMITTED_BYTES_NAME
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DocumentType,
     Exception,
     MetricPoint,
     MonitoringDataPoint,
@@ -132,7 +130,7 @@ class TestUtils(unittest.TestCase):
         iso_mock.return_value = "1000"
         doc = _get_span_document(span_mock)
         self.assertTrue(isinstance(doc, RemoteDependency))
-        self.assertEqual(doc.document_type, _DocumentIngressDocumentType.RemoteDependency.value)
+        self.assertEqual(doc.document_type, DocumentType.REMOTE_DEPENDENCY)
         self.assertEqual(doc.name, "test_span")
         self.assertEqual(doc.command_name, "test_url")
         self.assertEqual(doc.result_code, "200")
@@ -154,7 +152,7 @@ class TestUtils(unittest.TestCase):
         iso_mock.return_value = "1000"
         doc = _get_span_document(span_mock)
         self.assertTrue(isinstance(doc, Request))
-        self.assertEqual(doc.document_type, _DocumentIngressDocumentType.Request.value)
+        self.assertEqual(doc.document_type, DocumentType.REQUEST)
         self.assertEqual(doc.name, "test_span")
         self.assertEqual(doc.url, "test_url")
         self.assertEqual(doc.response_code, "200")
@@ -175,7 +173,7 @@ class TestUtils(unittest.TestCase):
         iso_mock.return_value = "1000"
         doc = _get_span_document(span_mock)
         self.assertTrue(isinstance(doc, Request))
-        self.assertEqual(doc.document_type, _DocumentIngressDocumentType.Request.value)
+        self.assertEqual(doc.document_type, DocumentType.REQUEST)
         self.assertEqual(doc.name, "test_span")
         self.assertEqual(doc.url, "test_url")
         self.assertEqual(doc.response_code, "400")
@@ -191,7 +189,7 @@ class TestUtils(unittest.TestCase):
         log_data.log_record = log_record
         doc = _get_log_record_document(log_data)
         self.assertTrue(isinstance(doc, Exception))
-        self.assertEqual(doc.document_type, _DocumentIngressDocumentType.Exception.value)
+        self.assertEqual(doc.document_type, DocumentType.EXCEPTION)
         self.assertEqual(doc.exception_type, "exc_type")
         self.assertEqual(doc.exception_message, "exc_message")
 
@@ -203,5 +201,5 @@ class TestUtils(unittest.TestCase):
         log_data.log_record = log_record
         doc = _get_log_record_document(log_data)
         self.assertTrue(isinstance(doc, Trace))
-        self.assertEqual(doc.document_type, _DocumentIngressDocumentType.Trace.value)
+        self.assertEqual(doc.document_type, DocumentType.TRACE)
         self.assertEqual(doc.message, "body")
