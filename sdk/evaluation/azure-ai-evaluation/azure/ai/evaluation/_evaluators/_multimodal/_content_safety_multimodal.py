@@ -154,52 +154,41 @@ class ContentSafetyMultimodalEvaluator:
                     blame=ErrorBlame.USER_ERROR,
                 )
             if isinstance(message, dict):
-                if "role" not in message or "content" not in message:
-                    msg = (
-                        "Each message in list must have 'role' and 'content' keys. "
-                        + f"Message number: {msg_num}"
-                    )
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-                if message["role"] not in expected_roles:
-                    msg = f"Invalid role provided: {message['role']}. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-                if not isinstance(message["content"], str) and not isinstance(message["content"], list):
-                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-                if isinstance(message["content"], list):
-                    for content in message["content"]:
-                        if content.get("type") == "image_url":
-                            image_url = content.get("image_url")
-                            if image_url and 'url' in image_url:
-                                image_found = True
-                                
-                if isinstance(message["content"], dict):
-                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )         
+                if "role" in message or "content" in message:
+                    if message["role"] not in expected_roles:
+                        msg = f"Invalid role provided: {message['role']}. Message number: {msg_num}"
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )
+                    if not isinstance(message["content"], str) and not isinstance(message["content"], list):
+                        msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )
+                    if isinstance(message["content"], list):
+                        for content in message["content"]:
+                            if content.get("type") == "image_url":
+                                image_url = content.get("image_url")
+                                if image_url and 'url' in image_url:
+                                    image_found = True
+                                    
+                    if isinstance(message["content"], dict):
+                        msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )         
             if isinstance(message, ChatRequestMessage):
                 if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage) and not isinstance(message, ToolMessage):
                     msg = f"Messsage in array must be a strongly typed class of ChatRequestMessage [UserMessage, SystemMessage, AssistantMessage, ToolMessage]. Message number: {msg_num}"
