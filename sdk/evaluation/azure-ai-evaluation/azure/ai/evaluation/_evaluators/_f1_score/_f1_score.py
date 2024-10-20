@@ -105,6 +105,7 @@ class _AsyncF1ScoreEvaluator:
 
 
 class F1ScoreEvaluator:
+    evaluator_id = "azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/1"
     """
     Initialize a f1 score evaluator for calculating F1 score.
 
