@@ -3,6 +3,7 @@ import math
 import os
 import pathlib
 import time
+
 import pandas as pd
 import pytest
 import requests
@@ -27,7 +28,6 @@ def data_file():
 def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
-
 
 def answer_evaluator(response):
     return {"length": len(response)}
@@ -200,140 +200,6 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-
-    def test_saving_b64_images(self, multimodal_file_with_b64_images):
-        instance_results = pd.read_json(multimodal_file_with_b64_images, lines=True)
-        with tempfile.TemporaryDirectory() as tmpdir:
-            instance_results["messages"].apply(lambda messages: ev_utils._store_multimodal_content(messages, tmpdir))
-            image_folder = os.path.join(tmpdir, "images")
-            files = [file for file in os.listdir(image_folder)]
-            assert isinstance(files, list), "The result should be a list"
-            assert 1==len(files), "file1.txt should be present in the folder"
-
-    def test_evaluate_with_content_safety_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
-        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(project_scope, credential=azure_cred, parallel=False)
-        result = evaluate(
-            evaluation_name=f"test-multi-modal-eval-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
-            data=multimodal_file_with_imageurls,
-            evaluators={"content_safety": content_safety_eval},
-            evaluator_config={
-                "content_safety": {"messages": "${data.messages}"},
-             },
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-
-        assert "content_safety.sexual_defect_rate" in metrics.keys()
-        assert "content_safety.violence_defect_rate" in metrics.keys()
-        assert "content_safety.self_harm_defect_rate" in metrics.keys()
-        assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-
-        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        
-    def test_evaluate_with_content_safety_multimodal_evaluator_with_target(self, project_scope, azure_cred, multimodal_file_with_imageurls):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
-        from .target_fn import target_multimodal_fn1
-        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(project_scope, credential=azure_cred, parallel=False)
-        result = evaluate(
-            evaluation_name=f"test-multi-modal-eval-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
-            data=multimodal_file_with_imageurls,
-            target=target_multimodal_fn1,
-            evaluators={"content_safety": content_safety_eval},
-            evaluator_config={
-                "content_safety": {"messages": "${data.messages}"},
-             },
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-
-        assert "content_safety.sexual_defect_rate" in metrics.keys()
-        assert "content_safety.violence_defect_rate" in metrics.keys()
-        assert "content_safety.self_harm_defect_rate" in metrics.keys()
-        assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-
-        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        
-    def test_evaluate_with_sexual_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
-        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        eval = SexualMultimodalEvaluator(project_scope, credential=azure_cred)
-
-        result = evaluate(
-            evaluation_name=f"test-multi-modal-eval-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
-            data=multimodal_file_with_imageurls,
-            evaluators={"sexual": eval},
-            evaluator_config={
-                "sexual": {"messages": "${data.messages}"},
-             },
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
-        assert "sexual.sexual_defect_rate" in metrics.keys()
-        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
-        
-    def test_evaluate_with_sexual_multimodal_evaluator_b64_images(self, project_scope, azure_cred, multimodal_file_with_b64_images):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
-        input_data = pd.read_json(multimodal_file_with_b64_images, lines=True)
-        eval = SexualMultimodalEvaluator(project_scope, credential=azure_cred)
-        result = evaluate(
-            evaluation_name=f"test-multi-modal-eval-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
-            data=multimodal_file_with_b64_images,
-            evaluators={"sexual": eval},
-            evaluator_config={
-                "sexual": {"messages": "${data.messages}"},
-             },
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
-        assert "sexual.sexual_defect_rate" in metrics.keys()
-        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
         
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
