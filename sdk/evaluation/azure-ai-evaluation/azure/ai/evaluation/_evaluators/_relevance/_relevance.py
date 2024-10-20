@@ -11,6 +11,7 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
+    evaluator_id = "azureml://registries/jamahaja-evals-registry/models/Relevance-Evaluator-AI-Evaluation/versions/2"
     """
     Initialize a relevance evaluator configured for a specific Azure OpenAI model.
 
