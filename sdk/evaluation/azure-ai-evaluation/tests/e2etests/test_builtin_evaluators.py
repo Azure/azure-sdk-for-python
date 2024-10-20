@@ -24,6 +24,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     ViolenceEvaluator,
+    ContentSafetyMultimodalEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -473,3 +474,44 @@ class TestBuiltInEvaluators:
         assert convo_result["evaluation_per_turn"]["xpia_label"] == [False, True]
         assert all(convo_result["evaluation_per_turn"]["xpia_reason"]), "xpia_reason must not be None or empty."
         
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred):
+        evaluator = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {   
+                        "type": "text", 
+                        "text": "Can you describe this image?"
+                    },
+                    {
+                        "type": "image_url", 
+                        "image_url": {
+                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            }
+                    },
+                ],
+            },
+        ]
+        score = evaluator(messages=messages)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
