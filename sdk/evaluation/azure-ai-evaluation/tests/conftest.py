@@ -35,9 +35,9 @@ RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests
 
 
 class SanitizedValues(str, Enum):
-    SUBSCRIPTION_ID = "b17253fa-f327-42d6-9686-f3e553e24763"
-    RESOURCE_GROUP_NAME = "hanchi-test"
-    WORKSPACE_NAME = "hancwang-eus2-0339"
+    SUBSCRIPTION_ID = "2d385bf4-0756-4a76-aa95-28bf9ed3b625"
+    RESOURCE_GROUP_NAME = "rg-multimodal-eval"
+    WORKSPACE_NAME = "ml-multimodal-eval"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
 
