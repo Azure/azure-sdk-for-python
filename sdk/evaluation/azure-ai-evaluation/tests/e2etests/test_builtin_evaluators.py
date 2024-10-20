@@ -23,7 +23,7 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     SexualEvaluator,
     SimilarityEvaluator,
-    ViolenceEvaluator
+    ViolenceEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -472,3 +472,4 @@ class TestBuiltInEvaluators:
         assert convo_result["xpia_label"] == 0.5
         assert convo_result["evaluation_per_turn"]["xpia_label"] == [False, True]
         assert all(convo_result["evaluation_per_turn"]["xpia_reason"]), "xpia_reason must not be None or empty."
+        
