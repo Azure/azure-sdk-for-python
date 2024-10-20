@@ -540,10 +540,6 @@ async def evaluate_with_rai_service_multimodal(
        :rtype: List[List[Dict]]
     """
     
-    # Use DefaultAzureCredential if no credential is provided
-    # This is for the for batch run scenario as the credential cannot be serialized by promoptflow
-    if credential is None or credential == {}:
-        credential = DefaultAzureCredential()
     # Get RAI service URL from discovery service and check service availability
     token = await fetch_or_reuse_token(credential)
     rai_svc_url = await get_rai_svc_url(project_scope, token)

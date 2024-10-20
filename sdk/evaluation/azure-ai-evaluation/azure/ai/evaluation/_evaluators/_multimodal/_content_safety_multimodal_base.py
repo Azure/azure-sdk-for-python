@@ -6,6 +6,7 @@ from typing import Dict, List, Union
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
+from azure.core.credentials import TokenCredential
 
 class ContentSafetyMultimodalEvaluatorBase(ABC):
     """
@@ -24,7 +25,7 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         self, 
         metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
         azure_ai_project: Dict, 
-        credential
+        credential: TokenCredential
     ):
         self._metric = metric
         self._azure_ai_project = azure_ai_project
@@ -38,8 +39,6 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
-        # Validate inputs
-        
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,
