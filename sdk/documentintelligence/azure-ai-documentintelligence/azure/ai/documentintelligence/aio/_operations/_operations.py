@@ -176,7 +176,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -228,7 +228,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -280,7 +280,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -333,7 +333,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
          IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -531,7 +531,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -584,7 +584,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -637,7 +637,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -691,7 +691,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
         :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
          or JSON or IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -1014,7 +1014,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1050,7 +1050,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1086,7 +1086,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1123,7 +1123,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,13 +20,10 @@ from ._operations import EventGridConsumerClientOperationsMixin, EventGridPublis
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class EventGridPublisherClient(
-    EventGridPublisherClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
     """EventGridPublisherClient.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -95,7 +93,7 @@ class EventGridPublisherClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "EventGridPublisherClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -103,9 +101,7 @@ class EventGridPublisherClient(
         self._client.__exit__(*exc_details)
 
 
-class EventGridConsumerClient(
-    EventGridConsumerClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridConsumerClient(EventGridConsumerClientOperationsMixin):
     """EventGridConsumerClient.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -175,7 +171,7 @@ class EventGridConsumerClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "EventGridConsumerClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for NotificationMessagesClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -75,7 +74,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for MessageTemplateClient.
 
     Note that all parameters used to create this instance are saved as instance
