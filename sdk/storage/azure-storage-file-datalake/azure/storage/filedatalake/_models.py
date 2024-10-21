@@ -621,10 +621,6 @@ class AccessPolicy(BlobAccessPolicy):
     :paramtype start: ~datetime.datetime or str
     """
 
-    permission: Optional[Union[FileSystemSasPermissions, str]] = None  # type: ignore [assignment]
-    """The permissions associated with the shared access signature. The user is restricted to
-        operations allowed by the permissions."""
-
     def __init__(
         self, permission: Optional[Union[FileSystemSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
