@@ -54,7 +54,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     """
     new_params = {}
     valid_parameters = set(
-        filter(lambda x: not x.startswith('_') and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys())
+        filter(
+            lambda x: not x.startswith("_") and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys()
+        )
     )
     for k in filter(lambda x: x in valid_parameters, parameters.keys()):
         new_params[k] = parameters[k]
@@ -732,7 +734,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
             event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj =_safe_instantiate(RunStepDeltaChunk, parsed_data)
+            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 

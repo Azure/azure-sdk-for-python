@@ -62,11 +62,10 @@ async def sample_connections_async():
         # Get the properties of a connection by connection name:
         connection = await ai_client.connections.get(
             connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"],
-            with_credentials=True  # Optional. Defaults to "False"
+            with_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get connection by name:")
         print(connection)
-
 
     # Examples of how you would create Inference client
     if connection.connection_type == ConnectionType.AZURE_OPEN_AI:

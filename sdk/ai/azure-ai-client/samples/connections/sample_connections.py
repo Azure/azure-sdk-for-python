@@ -60,8 +60,7 @@ with ai_client:
 
     # Get the properties of a connection by connection name:
     connection = ai_client.connections.get(
-        connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"],
-        with_credentials=True  # Optional. Defaults to "False"
+        connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"], with_credentials=True  # Optional. Defaults to "False"
     )
     print("====> Get connection by name:")
     print(connection)

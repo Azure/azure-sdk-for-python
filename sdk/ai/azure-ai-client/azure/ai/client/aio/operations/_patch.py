@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -36,7 +37,7 @@ class InferenceOperations:
 
     @distributed_trace_async
     async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
-        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default 
+        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
         The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
@@ -44,7 +45,7 @@ class InferenceOperations:
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         connection = await self.outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
@@ -88,7 +89,7 @@ class InferenceOperations:
 
     @distributed_trace_async
     async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default 
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
         The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
@@ -96,7 +97,7 @@ class InferenceOperations:
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         connection = await self.outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
@@ -138,14 +139,14 @@ class InferenceOperations:
 
     @distributed_trace_async
     async def get_azure_openai_client(self, **kwargs) -> "AsyncAzureOpenAI":
-        """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default 
+        """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         connection = await self.outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
@@ -218,7 +219,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: ~azure.ai.client.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         if not connection_type:
             raise ValueError("You must specify an connection type")
         # Since there is no notion of default connection at the moment, list all connections in the category
@@ -247,7 +248,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: ~azure.ai.client.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
@@ -272,7 +273,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return ConnectionProperties(connection=connection)
         else:
             return ConnectionProperties(connection=await self._get(connection_name=connection_name, **kwargs))
- 
+
     @distributed_trace_async
     async def list(
         self, *, connection_type: ConnectionType | None = None, **kwargs: Any
@@ -286,8 +287,10 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: Iterable[~azure.ai.client.models._models.ConnectionProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        kwargs.setdefault('merge_span', True)
-        connections_list: ConnectionsListResponse = await self._list(include_all=True, category=connection_type, **kwargs)
+        kwargs.setdefault("merge_span", True)
+        connections_list: ConnectionsListResponse = await self._list(
+            include_all=True, category=connection_type, **kwargs
+        )
 
         # Iterate to create the simplified result property
         connection_properties_list: List[ConnectionProperties] = []

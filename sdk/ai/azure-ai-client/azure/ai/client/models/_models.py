@@ -804,12 +804,16 @@ class ConnectionsListSecretsResponse(_model_base.Model):
     """Response from the listSecrets operation.
 
 
+    :ivar id: A unique identifier for the connection. Required.
+    :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
     :vartype properties: ~azure.ai.client.models._models.ConnectionProperties
     """
 
+    id: str = rest_field()
+    """A unique identifier for the connection. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
     properties: "_models._models.ConnectionProperties" = rest_field()

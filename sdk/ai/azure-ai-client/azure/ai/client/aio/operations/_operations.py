@@ -5139,7 +5139,7 @@ class ConnectionsOperations:
         :type connection_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword ignored: The body is ignored. Required.
+        :keyword ignored: The body is ignored. TODO: Can we remove this?. Required.
         :paramtype ignored: str
         :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
          MutableMapping
