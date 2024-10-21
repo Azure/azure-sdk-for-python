@@ -330,6 +330,25 @@ def parse_setup_py(
 def parse_pyproject(
     pyproject_filename: str,
 ) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
+    """
+    Used to evaluate a pyproject (or a directory containing a pyproject.toml) with a [project] configuration within.
+    Returns a tuple containing:
+    (
+        <package-name>,
+        <package_version>,
+        <python_requires>,
+        <requires>,
+        <boolean indicating track1 vs track2>,
+        <parsed setup.py location>,
+        <namespace>,
+        <package_data dict>,
+        <include_package_data bool>,
+        <classifiers>,
+        <keywords>,
+        <ext_packages>,
+        <ext_modules>
+    )
+    """
     toml_dict = get_pyproject_dict(pyproject_filename)
 
     project_config = toml_dict.get("project", None)
@@ -351,6 +370,8 @@ def parse_pyproject(
                     parsed_version = parsed_version.group(1)
                 else:
                     parsed_version = "0.0.0"
+        else:
+            raise ValueError(f"Unable to find a version value directly set in \"{pyproject_filename}\", nor is it available in a \"version.py\" or \"_version.py.\"")
 
     name = project_config.get("name")
     version = parsed_version
@@ -449,6 +470,8 @@ def parse_setup(
         <ext_packages>,
         <ext_modules>
     )
+
+    If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
     """
     targeted_path = setup_filename_or_folder
     if os.path.isfile(setup_filename_or_folder):
