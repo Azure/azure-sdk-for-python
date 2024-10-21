@@ -8,7 +8,7 @@ from typing import Callable, Dict, List, Union
 from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ToolMessage, ContentItem, ImageContentItem
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -26,6 +26,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+@experimental
 class ContentSafetyMultimodalEvaluator:
     """
     Initialize a content safety multimodal evaluator configured to evaluate content safety metrics for multimodal scenario.
@@ -90,7 +91,7 @@ class ContentSafetyMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, parallel: bool = False, credential=None):
+    def __init__(self, credential, azure_ai_project: dict, parallel: bool = False):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceMultimodalEvaluator(azure_ai_project, credential),

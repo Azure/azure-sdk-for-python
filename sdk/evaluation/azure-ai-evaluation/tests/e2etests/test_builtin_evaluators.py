@@ -516,7 +516,7 @@ class TestBuiltInEvaluators:
         
     def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(
-            project_scope, credential=azure_cred
+            credential=azure_cred, azure_ai_project=project_scope
         )
         messages = [
             {
