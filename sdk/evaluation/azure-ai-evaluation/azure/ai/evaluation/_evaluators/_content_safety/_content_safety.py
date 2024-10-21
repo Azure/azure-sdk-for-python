@@ -7,18 +7,15 @@ from typing_extensions import override
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-<<<<<<< HEAD
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-=======
 from azure.ai.evaluation._common._experimental import experimental
 
->>>>>>> main
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
 from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
-
+@experimental
 class ContentSafetyEvaluator(EvaluatorBase):
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
@@ -70,7 +67,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict, eval_last_turn: bool = False, **kwargs):
+    def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
         self._parallel = kwargs.pop("parallel", True)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
