@@ -12,6 +12,7 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 @experimental
 class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+    evaluator_id = "azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/2"
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
