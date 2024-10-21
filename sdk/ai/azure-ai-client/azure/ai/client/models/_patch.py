@@ -36,7 +36,7 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +234,7 @@ class FunctionTool(Tool):
 
         :param functions: A set of function objects.
         """
-        self._functions = self.create_function_dict(functions)
+        self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(functions)
 
     def _create_function_dict(self, funcs: Set[Callable[[], Any]]) -> Dict[str, Callable[[], Any]]:
