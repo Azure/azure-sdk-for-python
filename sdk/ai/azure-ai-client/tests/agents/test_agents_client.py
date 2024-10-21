@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -20,13 +21,13 @@ from azure.identity import DefaultAzureCredential
 
 # TODO clean this up / get rid of anything not in use
 
-'''
+"""
 issues I've noticed with the code: 
     delete_thread(thread.id) fails
     cancel_thread(thread.id) expires/times out occasionally
     added time.sleep() to the beginning of my last few tests to avoid limits
     when using the endpoint from Howie, delete_agent(agent.id) did not work but would not cause an error
-'''
+"""
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
@@ -44,7 +45,7 @@ if LOGGING_ENABLED:
 
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'azure_ai_client',
+    "azure_ai_client",
     azure_ai_client_agents_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
@@ -58,28 +59,30 @@ agentClientPreparer = functools.partial(
 )
 """
 
+
 # create tool for agent use
 def fetch_current_datetime_live():
-        """
-        Get the current time as a JSON string.
+    """
+    Get the current time as a JSON string.
 
-        :return: Static time string so that test recordings work.
-        :rtype: str
-        """
-        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        time_json = json.dumps({"current_time": current_datetime})
-        return time_json
+    :return: Static time string so that test recordings work.
+    :rtype: str
+    """
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    time_json = json.dumps({"current_time": current_datetime})
+    return time_json
+
 
 # create tool for agent use
 def fetch_current_datetime_recordings():
-        """
-        Get the current time as a JSON string.
+    """
+    Get the current time as a JSON string.
 
-        :return: Static time string so that test recordings work.
-        :rtype: str
-        """
-        time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
-        return time_json
+    :return: Static time string so that test recordings work.
+    :rtype: str
+    """
+    time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
+    return time_json
 
 
 # Statically defined user functions for fast reference
@@ -103,7 +106,7 @@ class TestagentClient(AzureRecordedTestCase):
         )
 
         return client
-    
+
     # for debugging purposes: if a test fails and its agent has not been deleted, it will continue to show up in the agents list
     """
     # NOTE: this test should not be run against a shared resource, as it will delete all agents
@@ -124,21 +127,18 @@ class TestagentClient(AzureRecordedTestCase):
         client.close()
     """
 
-
-#     # **********************************************************************************
-#     #
-#     #                               UNIT TESTS
-#     #
-#     # **********************************************************************************
-
-    
+    #     # **********************************************************************************
+    #     #
+    #     #                               UNIT TESTS
+    #     #
+    #     # **********************************************************************************
 
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - agent APIs
     # #
     # # **********************************************************************************
-    
+
     # test client creation
     @agentClientPreparer()
     @recorded_by_proxy
@@ -163,7 +163,7 @@ class TestagentClient(AzureRecordedTestCase):
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         assert agent.id
         print("Created agent, agent ID", agent.id)
-        
+
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
@@ -181,12 +181,14 @@ class TestagentClient(AzureRecordedTestCase):
         functions = FunctionTool(functions=user_functions_recording)
 
         # create agent with tools
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions)
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+        )
         assert agent.id
         print("Created agent, agent ID", agent.id)
         assert agent.tools
-        assert agent.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
-        print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
+        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
         # delete agent and close client
         client.agents.delete_agent(agent.id)
@@ -252,7 +254,7 @@ class TestagentClient(AzureRecordedTestCase):
     #
     # **********************************************************************************
 
-    # test creating thread  
+    # test creating thread
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread(self, **kwargs):
@@ -300,13 +302,12 @@ class TestagentClient(AzureRecordedTestCase):
         assert thread.id == thread2.id
         print("Got thread, thread ID", thread2.id)
 
-
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
 
-    '''
+    """
     TODO what  can I update a thread with? 
     # test updating thread  
     @agentClientPreparer()
@@ -334,9 +335,9 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    '''
+    """
 
-    '''
+    """
     # TODO this test is failing?  client.agents.delete_thread(thread.id) isn't working
     # status_code = 404, response = <HttpResponse: 404 Resource Not Found, Content-Type: application/json>
     # error_map = {304: <class 'azure.core.exceptions.ResourceNotModifiedError'>, 401: <class 'azure.core.exceptions.ClientAuthenticatio..., 404: <class 'azure.core.exceptions.ResourceNotFoundError'>, 409: <class 'azure.core.exceptions.ResourceExistsError'>}
@@ -368,15 +369,14 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    '''
-
+    """
 
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - Message APIs
     # #
     # # **********************************************************************************
-    
+
     # test creating message in a thread
     @agentClientPreparer()
     @recorded_by_proxy
@@ -468,7 +468,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message1.id)
         messages1 = client.agents.list_messages(thread_id=thread.id)
         assert messages1.data.__len__() == 1
-        assert messages1.data[0].id == message1.id 
+        assert messages1.data[0].id == message1.id
 
         message2 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
         assert message2.id
@@ -482,7 +482,11 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message3.id)
         messages3 = client.agents.list_messages(thread_id=thread.id)
         assert messages3.data.__len__() == 3
-        assert messages3.data[0].id == message3.id or messages3.data[1].id == message2.id or messages3.data[2].id == message2.id
+        assert (
+            messages3.data[0].id == message3.id
+            or messages3.data[1].id == message2.id
+            or messages3.data[2].id == message2.id
+        )
 
         # delete agent and close client
         client.agents.delete_agent(agent.id)
@@ -523,7 +527,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
-    '''
+    """
     TODO format the updated body
     # test updating message in a thread
     @agentClientPreparer()
@@ -556,7 +560,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    '''
+    """
 
     # # **********************************************************************************
     # #
@@ -626,7 +630,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
-    # TODO fix bc sometimes it works? and sometimes it doesnt? 
+    # TODO fix bc sometimes it works? and sometimes it doesnt?
     # test sucessful run status     TODO test for cancelled/unsucessful runs
     @agentClientPreparer()
     @recorded_by_proxy
@@ -656,7 +660,16 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created run, run ID", run.id)
 
         # check status
-        assert run.status in ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+        assert run.status in [
+            "queued",
+            "in_progress",
+            "requires_action",
+            "cancelling",
+            "cancelled",
+            "failed",
+            "completed",
+            "expired",
+        ]
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
@@ -671,7 +684,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
-    '''
+    """
     # TODO another, but check that the number of runs decreases after cancelling runs
     # TODO can each thread only support one run? 
     # test listing runs
@@ -716,9 +729,9 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    '''
+    """
 
-    '''
+    """
     # TODO figure out what to update the run with
     # test updating run
     @agentClientPreparer()
@@ -751,7 +764,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    '''
+    """
 
     # test submitting tool outputs to run
     @agentClientPreparer()
@@ -770,7 +783,9 @@ class TestagentClient(AzureRecordedTestCase):
         toolset.add(code_interpreter)
 
         # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+        )
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
@@ -791,11 +806,20 @@ class TestagentClient(AzureRecordedTestCase):
 
         # check that tools are uploaded
         assert run.tools
-        assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
-        print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
+        assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
         # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+        assert run.status in [
+            "queued",
+            "in_progress",
+            "requires_action",
+            "cancelling",
+            "cancelled",
+            "failed",
+            "completed",
+            "expired",
+        ]
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(1)
             run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
@@ -805,12 +829,14 @@ class TestagentClient(AzureRecordedTestCase):
                 print("Requires action: submit tool outputs")
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
-                    print("No tool calls provided - cancelling run") # TODO how can i make sure that it wants tools? should i have some kind of error message?
+                    print(
+                        "No tool calls provided - cancelling run"
+                    )  # TODO how can i make sure that it wants tools? should i have some kind of error message?
                     client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
                     break
 
                 # submit tool outputs to run
-                tool_outputs = toolset.execute_tool_calls(tool_calls) # TODO issue somewhere here
+                tool_outputs = toolset.execute_tool_calls(tool_calls)  # TODO issue somewhere here
                 print("Tool outputs:", tool_outputs)
                 if tool_outputs:
                     client.agents.submit_tool_outputs_to_run(
@@ -821,10 +847,9 @@ class TestagentClient(AzureRecordedTestCase):
 
         print("Run completed with status:", run.status)
 
-        
         # check that messages used the tool
         messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-        tool_message = messages['data'][0]['content'][0]['text']['value']
+        tool_message = messages["data"][0]["content"][0]["text"]["value"]
         hour12 = time.strftime("%H")
         hour24 = time.strftime("%I")
         minute = time.strftime("%M")
@@ -909,7 +934,16 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+        assert run.status in [
+            "queued",
+            "in_progress",
+            "requires_action",
+            "cancelling",
+            "cancelled",
+            "failed",
+            "completed",
+            "expired",
+        ]
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
@@ -929,7 +963,7 @@ class TestagentClient(AzureRecordedTestCase):
     @agentClientPreparer()
     @recorded_by_proxy
     def test_list_run_step(self, **kwargs):
-        
+
         time.sleep(50)
         # create client
         client = self.create_client(**kwargs)
@@ -968,7 +1002,7 @@ class TestagentClient(AzureRecordedTestCase):
             assert run.status in ["queued", "in_progress", "requires_action", "completed"]
             print("Run status:", run.status)
             steps = client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
-            assert steps['data'].__len__() > 0 # TODO what else should we look at? 
+            assert steps["data"].__len__() > 0  # TODO what else should we look at?
 
         assert run.status == "completed"
         print("Run completed")
@@ -998,7 +1032,9 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
+        message = client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
+        )
         assert message.id
         print("Created message, message ID", message.id)
 
@@ -1007,10 +1043,10 @@ class TestagentClient(AzureRecordedTestCase):
         assert run.id
         print("Created run, run ID", run.id)
 
-        if (run.status == "failed"):
-                assert run.last_error
-                print(run.last_error)
-                print("FAILED HERE")
+        if run.status == "failed":
+            assert run.last_error
+            print(run.last_error)
+            print("FAILED HERE")
 
         # check status
         assert run.status in ["queued", "in_progress", "requires_action", "completed"]
@@ -1018,7 +1054,7 @@ class TestagentClient(AzureRecordedTestCase):
             # wait for a second
             time.sleep(1)
             run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            if (run.status == "failed"):
+            if run.status == "failed":
                 assert run.last_error
                 print(run.last_error)
                 print("FAILED HERE")
@@ -1027,8 +1063,8 @@ class TestagentClient(AzureRecordedTestCase):
 
         # list steps, check that get_run_step works with first step_id
         steps = client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
-        assert steps['data'].__len__() > 0
-        step = steps['data'][0]
+        assert steps["data"].__len__() > 0
+        step = steps["data"][0]
         get_step = client.agents.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
         assert step == get_step
 
@@ -1036,14 +1072,13 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    
+
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - Streaming APIs
     # #
     # # **********************************************************************************
 
-    
     # # **********************************************************************************
     # #
     # #         NEGATIVE TESTS - TODO idk what goes here
@@ -1082,4 +1117,3 @@ class TestagentClient(AzureRecordedTestCase):
         client.close()
         assert exception_caught
     """
-

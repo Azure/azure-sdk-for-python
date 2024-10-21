@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -357,7 +358,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype description: str
         :keyword instructions: The system instructions for the new agent to use. Default value is None.
         :paramtype instructions: str
-        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources` 
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
         :paramtype toolset: ~azure.ai.client.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
@@ -429,7 +430,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param instructions: System instructions for the agent.
         :param tools: List of tools definitions for the agent.
         :param tool_resources: Resources used by the agent's tools.
-        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources` 
+        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions).
         :param temperature: Sampling temperature for generating agent responses.
         :param top_p: Nucleus sampling parameter.
@@ -1406,8 +1407,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
-    
-    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None) -> None:
+
+    def _handle_submit_tool_outputs(
+        self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None
+    ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
@@ -1420,16 +1423,13 @@ class AgentsOperations(AgentsOperationsGenerated):
             else:
                 logger.warning("Toolset is not available in the client.")
                 return
-            
+
             logger.info(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 with self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, 
-                    run_id=run.id, 
-                    tool_outputs=tool_outputs, 
-                    event_handler=event_handler
-            ) as stream:
-                    stream.until_done()    
+                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
+                ) as stream:
+                    stream.until_done()
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

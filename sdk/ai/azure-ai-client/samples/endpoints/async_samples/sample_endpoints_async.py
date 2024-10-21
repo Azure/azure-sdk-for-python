@@ -27,6 +27,7 @@ from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import EndpointType, AuthenticationType
 from azure.identity import DefaultAzureCredential
 
+
 async def sample_endpoints_async():
 
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -70,21 +71,22 @@ async def sample_endpoints_async():
             client = AsyncAzureOpenAI(
                 api_key=endpoint.key,
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-06-01" # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             )
         elif endpoint.authentication_type == AuthenticationType.AAD:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
             from azure.identity import get_bearer_token_provider
+
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-06-01" # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             )
         else:
-                raise ValueError(f"Authentication type {endpoint.authentication_type} not supported.")
+            raise ValueError(f"Authentication type {endpoint.authentication_type} not supported.")
 
         response = await client.chat.completions.create(
             model="gpt-4o",
@@ -105,9 +107,8 @@ async def sample_endpoints_async():
         if endpoint.authentication_type == AuthenticationType.API_KEY:
             print("====> Creating ChatCompletionsClient using API key authentication")
             from azure.core.credentials import AzureKeyCredential
-            client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key)
-            )
+
+            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
         elif endpoint.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
@@ -128,4 +129,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

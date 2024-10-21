@@ -34,8 +34,7 @@ from azure.identity import DefaultAzureCredential
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -54,30 +53,32 @@ with ai_client:
     # upload a file and wait for it to be processed
     file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
-        
+
     code_interpreter = CodeInterpreterTool()
     code_interpreter.add_file(file.id)
-    
+
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", 
-        name="my-assistant", 
-        instructions="You are helpful assistant", 
-        tools=[CodeInterpreterToolDefinition()]
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are helpful assistant",
+        tools=[CodeInterpreterToolDefinition()],
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID: {thread.id}")    
+    print(f"Created thread, thread ID: {thread.id}")
 
     # create a message with the attachment
     attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment])
+    message = ai_client.agents.create_message(
+        thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+    )
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-    
+
     ai_client.agents.delete_file(file.id)
     print("Deleted file")
 
@@ -86,4 +87,3 @@ with ai_client:
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
-

@@ -37,8 +37,7 @@ from azure.identity import DefaultAzureCredential
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -58,10 +57,10 @@ with ai_client:
     file_search = FileSearchTool()
     openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {openai_file.id}")
-    
+
     openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
     print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
-    
+
     file_search.add_vector_store(openai_vectorstore.id)
 
     toolset = ToolSet()
@@ -69,7 +68,10 @@ with ai_client:
 
     # Create agent with toolset and process assistant run
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="Hello, you are helpful assistant and can search information from uploaded files",
+        toolset=toolset,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
@@ -78,7 +80,9 @@ with ai_client:
     print(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
+    message = ai_client.agents.create_message(
+        thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
+    )
     print(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools

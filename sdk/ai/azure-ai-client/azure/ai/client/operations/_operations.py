@@ -1164,7 +1164,7 @@ def build_agents_list_vector_store_file_batch_files_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_endpoints_list_request(**kwargs: Any) -> HttpRequest:
+def build_connections_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1183,7 +1183,7 @@ def build_endpoints_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_endpoints_list_secrets_request(connection_name_in_url: str, **kwargs: Any) -> HttpRequest:
+def build_connections_list_secrets_request(connection_name_in_url: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -6260,14 +6260,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class EndpointsOperations:
+class ConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.client.AzureAIClient`'s
-        :attr:`endpoints` attribute.
+        :attr:`connections` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -6298,7 +6298,7 @@ class EndpointsOperations:
 
         cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop("cls", None)
 
-        _request = build_endpoints_list_request(
+        _request = build_connections_list_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6438,7 +6438,7 @@ class EndpointsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_endpoints_list_secrets_request(
+        _request = build_connections_list_secrets_request(
             connection_name_in_url=connection_name_in_url,
             content_type=content_type,
             api_version=self._config.api_version,

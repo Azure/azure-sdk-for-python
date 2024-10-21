@@ -15,7 +15,7 @@ from ._models import AgentsNamedToolChoice
 from ._models import AppInsightsConfiguration
 from ._models import AzureAISearchResource
 from ._models import AzureAISearchToolDefinition
-from ._models import BingSearchToolDefinition
+from ._models import BingGroundingToolDefinition
 from ._models import CodeInterpreterToolDefinition
 from ._models import CodeInterpreterToolResource
 from ._models import ConnectionListResource
@@ -78,7 +78,7 @@ from ._models import RunCompletionUsage
 from ._models import RunError
 from ._models import RunStep
 from ._models import RunStepAzureAISearchToolCall
-from ._models import RunStepBingSearchToolCall
+from ._models import RunStepBingGroundingToolCall
 from ._models import RunStepCodeInterpreterImageOutput
 from ._models import RunStepCodeInterpreterImageReference
 from ._models import RunStepCodeInterpreterLogOutput
@@ -152,8 +152,8 @@ from ._enums import AgentsApiToolChoiceOptionMode
 from ._enums import AgentsNamedToolChoiceType
 from ._enums import ApiResponseFormat
 from ._enums import AuthenticationType
+from ._enums import ConnectionType
 from ._enums import DoneEvent
-from ._enums import EndpointType
 from ._enums import ErrorEvent
 from ._enums import FilePurpose
 from ._enums import FileState
@@ -195,7 +195,7 @@ __all__ = [
     "AppInsightsConfiguration",
     "AzureAISearchResource",
     "AzureAISearchToolDefinition",
-    "BingSearchToolDefinition",
+    "BingGroundingToolDefinition",
     "CodeInterpreterToolDefinition",
     "CodeInterpreterToolResource",
     "ConnectionListResource",
@@ -258,7 +258,7 @@ __all__ = [
     "RunError",
     "RunStep",
     "RunStepAzureAISearchToolCall",
-    "RunStepBingSearchToolCall",
+    "RunStepBingGroundingToolCall",
     "RunStepCodeInterpreterImageOutput",
     "RunStepCodeInterpreterImageReference",
     "RunStepCodeInterpreterLogOutput",
@@ -331,8 +331,8 @@ __all__ = [
     "AgentsNamedToolChoiceType",
     "ApiResponseFormat",
     "AuthenticationType",
+    "ConnectionType",
     "DoneEvent",
-    "EndpointType",
     "ErrorEvent",
     "FilePurpose",
     "FileState",

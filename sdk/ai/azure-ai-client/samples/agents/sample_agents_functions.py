@@ -32,8 +32,7 @@ from user_functions import user_functions
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
 )
 
 # Initialize function tool with user functions
@@ -78,16 +77,20 @@ with ai_client:
                 if isinstance(tool_call, RequiredFunctionToolCall):
                     try:
                         output = functions.execute(tool_call)
-                        tool_outputs.append({
-                            "tool_call_id": tool_call.id,
-                            "output": output,
-                        })
+                        tool_outputs.append(
+                            {
+                                "tool_call_id": tool_call.id,
+                                "output": output,
+                            }
+                        )
                     except Exception as e:
                         print(f"Error executing tool_call {tool_call.id}: {e}")
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                ai_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+                ai_client.agents.submit_tool_outputs_to_run(
+                    thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                )
 
         print(f"Current run status: {run.status}")
 

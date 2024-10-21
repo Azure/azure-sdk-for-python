@@ -30,7 +30,7 @@ from ._models import (
     ToolResources,
     FileSearchToolDefinition,
     FileSearchToolResource,
-    BingSearchToolDefinition,
+    BingGroundingToolDefinition,
     ConnectionListResource,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -263,7 +263,7 @@ class FunctionTool(Tool):
         except TypeError as e:
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
-        
+
     def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
         pass
 
@@ -301,7 +301,7 @@ class AsyncFunctionTool(FunctionTool):
             raise
 
 
-class BingSearchTool(Tool):
+class BingGroundingTool(Tool):
     """
     A tool that searches for information using Bing.
     """
@@ -321,7 +321,7 @@ class BingSearchTool(Tool):
         """
         Get the Bing search tool definitions.
         """
-        return [BingSearchToolDefinition()]
+        return [BingGroundingToolDefinition()]
 
     @property
     def resources(self) -> ToolResources:
@@ -340,6 +340,7 @@ class BingSearchTool(Tool):
         if self.connection_ids.__len__() == 0:
             for name, endpoint_type in connection_list:
                 pass
+
 
 class FileSearchTool(Tool):
     """
@@ -406,9 +407,10 @@ class CodeInterpreterTool(Tool):
 
     def execute(self, tool_call: Any) -> Any:
         pass
-        
+
     def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
         pass
+
 
 class ToolSet:
     """
@@ -660,13 +662,13 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
         self,
         response_iterator: AsyncIterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, Optional[AsyncAgentEventHandler]], Awaitable[None]],
-        event_handler: Optional['AsyncAgentEventHandler'] = None,
+        event_handler: Optional["AsyncAgentEventHandler"] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
-        self.submit_tool_outputs = submit_tool_outputs        
+        self.submit_tool_outputs = submit_tool_outputs
 
     async def __aenter__(self):
         return self
@@ -761,8 +763,12 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
-        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
-            await self.submit_tool_outputs(event_data_obj, self.event_handler)  
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            await self.submit_tool_outputs(event_data_obj, self.event_handler)
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):
@@ -904,8 +910,12 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
-        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
-            self.submit_tool_outputs(event_data_obj, self.event_handler)  
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            self.submit_tool_outputs(event_data_obj, self.event_handler)
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):
@@ -950,7 +960,7 @@ __all__: List[str] = [
     "AsyncToolSet",
     "CodeInterpreterTool",
     "FileSearchTool",
-    "BingSearchTool",
+    "BingGroundingTool",
     "FunctionTool",
     "SASTokenCredential",
     "Tool",

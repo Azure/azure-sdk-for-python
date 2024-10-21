@@ -63,8 +63,7 @@ async def main():
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     ai_client = AzureAIClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+        credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
     )
 
     # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -77,9 +76,9 @@ async def main():
         workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
         logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
     )
-    """    
-        
-    async with ai_client:    
+    """
+
+    async with ai_client:
         agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
         )
@@ -88,13 +87,13 @@ async def main():
         thread = await ai_client.agents.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a joke"
+        )
         print(f"Created message, message ID {message.id}")
 
         async with await ai_client.agents.create_stream(
-            thread_id=thread.id, 
-            assistant_id=agent.id,
-            event_handler=MyEventHandler()
+            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             await stream.until_done()
 

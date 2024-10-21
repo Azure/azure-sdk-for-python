@@ -36,8 +36,7 @@ from user_functions import user_functions
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -51,6 +50,7 @@ ai_client = AzureAIClient(
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 """
+
 
 # Function to handle tool stream iteration
 def handle_submit_tool_outputs(operations: AgentsOperations, thread_id, run_id, tool_outputs):
@@ -110,10 +110,10 @@ with ai_client:
 
             elif isinstance(event_data, ThreadRun):
                 print(f"ThreadRun status: {event_data.status}")
-                
+
                 if event_data.status == "failed":
                     print(f"Run failed. Error: {event_data.last_error}")
-                           
+
             elif isinstance(event_data, RunStep):
                 print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
 

@@ -70,7 +70,7 @@ if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
         client = AzureOpenAI(
             api_key=endpoint.key,
             azure_endpoint=endpoint.endpoint_url,
-            api_version="2024-06-01" # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+            api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
         )
     elif endpoint.authentication_type == AuthenticationType.AAD:
         print("====> Creating AzureOpenAI client using Entra ID authentication")
@@ -80,7 +80,7 @@ if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
                 endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
             ),
             azure_endpoint=endpoint.endpoint_url,
-            api_version="2024-06-01" # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+            api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
         )
     else:
         raise ValueError(f"Authentication type {endpoint.authentication_type} not supported.")
