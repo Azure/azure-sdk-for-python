@@ -22,13 +22,6 @@
   - Added model `StandbyPoolProfileDefinition`
   - Added model `ContainerGroupProfileOperations`
   - Added model `ContainerGroupProfilesOperations`
-  - Method `ContainerGroupsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, container_group_name: str, container_group: IO[bytes], content_type: str)`
-  - Method `ContainerGroupsOperations.update` has a new overload `def update(self: None, resource_group_name: str, container_group_name: str, resource: IO[bytes], content_type: str)`
-  - Method `ContainersOperations.execute_command` has a new overload `def execute_command(self: None, resource_group_name: str, container_group_name: str, container_name: str, container_exec_request: IO[bytes], content_type: str)`
-  - Method `ContainerGroupProfilesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, container_group_profile_name: str, container_group_profile: ContainerGroupProfile, content_type: str)`
-  - Method `ContainerGroupProfilesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, container_group_profile_name: str, container_group_profile: IO[bytes], content_type: str)`
-  - Method `ContainerGroupProfilesOperations.patch` has a new overload `def patch(self: None, resource_group_name: str, container_group_profile_name: str, properties: ContainerGroupProfilePatch, content_type: str)`
-  - Method `ContainerGroupProfilesOperations.patch` has a new overload `def patch(self: None, resource_group_name: str, container_group_profile_name: str, properties: IO[bytes], content_type: str)`
 
 ## 10.1.0 (2023-04-21)
 
