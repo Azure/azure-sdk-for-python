@@ -31,8 +31,7 @@ class ClientPreparer(AzureMgmtPreparer):
         self._client = self._client_cls(endpoint, AzureKeyCredential(account_key))
         env_name = (
             self._client_kwargs["client_env_name"]
-            if self._client_kwargs is not None
-            and "client_env_name" in self._client_kwargs
+            if self._client_kwargs is not None and "client_env_name" in self._client_kwargs
             else "client"
         )
 
@@ -58,6 +57,4 @@ FaceSessionClientPreparer = functools.partial(ClientPreparer, Client.FaceSession
 
 # Async client
 AsyncFaceClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceClient)
-AsyncFaceSessionClientPreparer = functools.partial(
-    ClientPreparer, AsyncClient.FaceSessionClient
-)
+AsyncFaceSessionClientPreparer = functools.partial(ClientPreparer, AsyncClient.FaceSessionClient)

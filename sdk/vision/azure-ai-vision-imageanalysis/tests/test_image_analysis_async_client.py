@@ -79,7 +79,9 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
 
         self._create_client_for_standard_analysis_with_entra_id_auth(sync=False, **kwargs)
 
-        await self._do_async_analysis(image_source=self.IMAGE_FILE,visual_features=[sdk.models.VisualFeatures.SMART_CROPS], **kwargs)
+        await self._do_async_analysis(
+            image_source=self.IMAGE_FILE, visual_features=[sdk.models.VisualFeatures.SMART_CROPS], **kwargs
+        )
 
         await self.async_client.close()
 

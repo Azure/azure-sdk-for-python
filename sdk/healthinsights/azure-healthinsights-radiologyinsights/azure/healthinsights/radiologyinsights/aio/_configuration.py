@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for RadiologyInsightsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -31,15 +30,16 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-04-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-08-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-04-01")
+        api_version: str = kwargs.pop("api_version", "2024-08-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

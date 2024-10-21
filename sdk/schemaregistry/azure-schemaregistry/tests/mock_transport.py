@@ -26,17 +26,10 @@
 
 from azure.core.pipeline.transport import HttpTransport
 
+
 class MockResponse:
     def __init__(
-        self,
-        schema_id,
-        schema_name,
-        schema_group_name,
-        schema_version,
-        content_type,
-        *,
-        content=b"",
-        status_code=200
+        self, schema_id, schema_name, schema_group_name, schema_version, content_type, *, content=b"", status_code=200
     ) -> None:
         self._schema_id = schema_id
         self._schema_name = schema_name
@@ -65,13 +58,13 @@ class MockResponse:
     @property
     def content(self):
         return self._content
-    
+
     def iter_bytes(self):
         pass
 
     def raise_for_status(self):
         pass
-    
+
     def read(self):
         pass
 
@@ -81,19 +74,20 @@ class MockResponse:
     def reason(self):
         pass
 
+
 class MockTransport(HttpTransport):
-        def __init__(self, response):
-            self._response = response
+    def __init__(self, response):
+        self._response = response
 
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            pass
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
-        def close(self):
-            pass
+    def close(self):
+        pass
 
-        def open(self):
-            pass
+    def open(self):
+        pass
 
-        def send(self, request, **kwargs):
-            response = self._response
-            return response
+    def send(self, request, **kwargs):
+        response = self._response
+        return response

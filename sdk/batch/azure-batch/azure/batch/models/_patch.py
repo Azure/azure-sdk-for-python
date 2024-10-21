@@ -18,6 +18,7 @@ __all__: List[str] = [
     "CreateTasksError",
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
     certificate_references: List[str] = rest_field(name="certificateReferences")
 

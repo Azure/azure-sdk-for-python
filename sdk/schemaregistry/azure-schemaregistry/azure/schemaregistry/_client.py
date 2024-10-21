@@ -19,11 +19,10 @@ from ._operations import SchemaRegistryClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):
     """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
     Registry service.
 
@@ -32,13 +31,12 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     :type fully_qualified_namespace: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2022-10".
+    :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, fully_qualified_namespace: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        super().__init__()
         _endpoint = "https://{fullyQualifiedNamespace}"
         self._config = SchemaRegistryClientConfiguration(
             fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs

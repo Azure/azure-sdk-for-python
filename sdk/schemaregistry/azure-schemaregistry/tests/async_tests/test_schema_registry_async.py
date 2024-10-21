@@ -472,13 +472,15 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         avro_group_name = "avro_group"
         avro_schema_version = "1"
         avro_content_type = "application/json; serialization=Avro"
-        transport = AsyncMockTransport(response=AsyncMockResponse(
-            schema_id=avro_schema_id,
-            schema_name=avro_schema_name,
-            schema_group_name=avro_group_name,
-            schema_version=avro_schema_version,
-            content_type=avro_content_type,
-        ))
+        transport = AsyncMockTransport(
+            response=AsyncMockResponse(
+                schema_id=avro_schema_id,
+                schema_name=avro_schema_name,
+                schema_group_name=avro_group_name,
+                schema_version=avro_schema_version,
+                content_type=avro_content_type,
+            )
+        )
         mock_fqn = f"schemaregistry_fqn"
         credential = self.get_credential(SchemaRegistryClient)
         mock_client = SchemaRegistryClient(
@@ -508,7 +510,9 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             schema = await mock_client.get_schema(foo_schema_id)
             assert schema.properties.format == foo_content_type
             # get unknown schema by version should return format of the content type string
-            schema = await mock_client.get_schema(group_name=foo_group_name, name=foo_schema_name, version=foo_schema_version)
+            schema = await mock_client.get_schema(
+                group_name=foo_group_name, name=foo_schema_name, version=foo_schema_version
+            )
             assert schema.properties.format == foo_content_type
 
             # get unknown schema with content type of format "contenttype/<unknown>"
@@ -530,5 +534,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             schema = await mock_client.get_schema(bar_schema_id)
             assert schema.properties.format == bar_content_type
             # get unknown schema by version should return format of the content type string
-            schema = await mock_client.get_schema(group_name=bar_group_name, name=bar_schema_name, version=bar_schema_version)
+            schema = await mock_client.get_schema(
+                group_name=bar_group_name, name=bar_schema_name, version=bar_schema_version
+            )
             assert schema.properties.format == bar_content_type

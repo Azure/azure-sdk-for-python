@@ -38,12 +38,7 @@ class BatchClient(GenerateBatchClient):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureNamedKeyCredential, TokenCredential],
-        **kwargs
-    ):
+    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
             endpoint=endpoint,
             credential=credential,

@@ -5,6 +5,7 @@ import pytest
 AZURE_LOCATION = "westus2"
 Mongo_Cluster_Name = "pythonmongoclustertest"
 
+
 @pytest.mark.live_test_only
 class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
 

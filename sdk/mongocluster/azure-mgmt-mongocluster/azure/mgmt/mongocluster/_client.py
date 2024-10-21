@@ -27,11 +27,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class MongoClusterMgmtClient:
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure Cosmos DB for MongoDB vCore resources including clusters and firewall rules.
 
