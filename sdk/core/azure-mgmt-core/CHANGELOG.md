@@ -1,5 +1,11 @@
 # Release History
 
+## 1.5.0 (Unreleased)
+
+### Features
+
+- Added helper function `get_arm_info` to get the ARM endpoint and authentication scopes from the cloud setting.
+
 ## 1.4.0 (2023-04-06)
 
 ### Features

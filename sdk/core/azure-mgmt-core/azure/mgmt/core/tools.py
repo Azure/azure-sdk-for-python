@@ -26,6 +26,7 @@
 from typing import Mapping, MutableMapping, Optional, Type, Union, cast
 import re
 import logging
+from azure.core import AzureClouds
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -217,3 +218,29 @@ def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseExcepti
     if exception_type:
         raise exception_type()
     return False
+
+
+def get_arm_info(cloud_setting: AzureClouds) -> dict[str, str]:
+    """Get the ARM endpoint and ARM authentication endpoint for the given cloud setting.
+
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint.
+    :type cloud_setting: AzureClouds
+    :return: The ARM endpoint and ARM authentication scopes.
+    :rtype: dict[str, str]
+    """
+    if cloud_setting == AzureClouds.AZURE_CHINA_CLOUD:
+        return {
+            "resource_manager": "https://management.chinacloudapi.cn",
+            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+        }
+    if cloud_setting == AzureClouds.AZURE_US_GOVERNMENT:
+        return {
+            "resource_manager": "https://management.usgovcloudapi.net/",
+            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+        }
+    if cloud_setting == AzureClouds.AZURE_PUBLIC_CLOUD:
+        return {
+            "resource_manager": "https://management.azure.com/",
+            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+        }
+    raise ValueError("Unknown cloud setting: {}".format(cloud_setting))
