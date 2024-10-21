@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +13,9 @@ from devtools_testutils import (
     AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy,
     AzureMgmtPreparer, FakeResource
 )
+import pytest
 
+@pytest.mark.live_test_only
 class VirtualNetworkPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='pvtzonevnet'):
         super(VirtualNetworkPreparer, self).__init__(name_prefix, 24)
@@ -68,7 +70,8 @@ class VirtualNetworkPreparer(AzureMgmtPreparer):
             'registration_virtual_network': registration_network,
             'resolution_virtual_network': resolution_network
         }
-
+        
+@pytest.mark.live_test_only
 class TestMgmtDns(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
