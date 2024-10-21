@@ -23,6 +23,9 @@ USAGE:
 
 import uuid
 
+from azure.health.deidentification.models._enums import DocumentDataType, OperationType
+from azure.health.deidentification.models._models import JobCustomizationOptions
+
 
 def sample_create_and_wait_job():
     # [START sample_create_and_wait_job]
@@ -49,14 +52,19 @@ def sample_create_and_wait_job():
 
     jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
 
+    options = JobCustomizationOptions()
+    options.operation = OperationType.SURROGATE
+
     job = DeidentificationJob(
         source_location=SourceStorageLocation(
             location=storage_location,
             prefix=inputPrefix,
+            data_type=DocumentDataType.PLAINTEXT,
         ),
         target_location=TargetStorageLocation(
             location=storage_location, prefix=outputPrefix
         ),
+        customizations=options,
     )
 
     lro: LROPoller = client.begin_create_job(jobname, job)

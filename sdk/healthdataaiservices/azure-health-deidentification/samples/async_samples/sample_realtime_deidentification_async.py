@@ -18,6 +18,9 @@ USAGE:
 """
 import asyncio
 
+from azure.health.deidentification.models._enums import OperationType
+from azure.health.deidentification.models._models import CustomizationOptions
+
 
 async def sample_realtime_deidentification_async():
     # [START realtime_deidentification_async]
@@ -36,7 +39,13 @@ async def sample_realtime_deidentification_async():
 
     client = DeidentificationClient(endpoint, credential)
 
-    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
+    options = CustomizationOptions()
+    options.operation = OperationType.REDACT
+    options.redaction_format = r"*{len}"
+
+    body = DeidentificationContent(
+        input_text="Hello, my name is John Smith.", customizations=options
+    )
 
     async with client:
         result: DeidentificationResult = await client.deidentify(body)

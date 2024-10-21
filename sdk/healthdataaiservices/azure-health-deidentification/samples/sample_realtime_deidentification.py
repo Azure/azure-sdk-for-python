@@ -18,6 +18,9 @@ USAGE:
 """
 
 
+from azure.health.deidentification.models._models import CustomizationOptions
+
+
 def sample_realtime_deidentification():
     # [START realtime_deidentification]
     import os
@@ -37,7 +40,13 @@ def sample_realtime_deidentification():
 
     client = DeidentificationClient(endpoint, credential)
 
-    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
+    options = CustomizationOptions()
+    options.operation = OperationType.REDACT
+    options.redaction_format = r"*{len}"
+
+    body = DeidentificationContent(
+        input_text="Hello, my name is John Smith.", customizations=options
+    )
 
     result: DeidentificationResult = client.deidentify(body)
     print(f'Original Text:     "{body.input_text}"')

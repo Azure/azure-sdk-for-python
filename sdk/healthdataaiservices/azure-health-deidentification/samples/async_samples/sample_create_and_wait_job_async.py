@@ -23,6 +23,9 @@ import asyncio
 
 import uuid
 
+from azure.health.deidentification.models._enums import DocumentDataType, OperationType
+from azure.health.deidentification.models._models import JobCustomizationOptions
+
 
 async def sample_create_and_wait_job_async():
     # [START sample_create_and_wait_job_async]
@@ -49,14 +52,19 @@ async def sample_create_and_wait_job_async():
 
     jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
 
+    options = JobCustomizationOptions()
+    options.operation = OperationType.SURROGATE
+
     job = DeidentificationJob(
         source_location=SourceStorageLocation(
             location=storage_location,
             prefix=inputPrefix,
+            data_type=DocumentDataType.PLAINTEXT,
         ),
         target_location=TargetStorageLocation(
             location=storage_location, prefix=outputPrefix
         ),
+        customizations=options,
     )
 
     async with client:
