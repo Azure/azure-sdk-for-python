@@ -13,6 +13,10 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 @experimental
 class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
+    Evaluator Id is experimental and to be used for evaluation in cloud.
+    """
+    evaluator_id = "azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/2"
+    """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
     :param credential: The credential for connecting to Azure AI project. Required
