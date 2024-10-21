@@ -92,6 +92,8 @@ class EvaluationException(AzureError):
     :type category: ~azure.ai.evaluation._exceptions.ErrorCategory
     :param blame: The source of blame for the error, defaults to Unknown.
     :type balance: ~azure.ai.evaluation._exceptions.ErrorBlame
+    :param tsg_link: A link to the TSG page for troubleshooting the error.
+    :type tsg_link: str
     """
 
     def __init__(
@@ -102,10 +104,19 @@ class EvaluationException(AzureError):
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         category: ErrorCategory = ErrorCategory.UNKNOWN,
         blame: ErrorBlame = ErrorBlame.UNKNOWN,
+        tsg_link: Optional[str] = None,
         **kwargs,
     ) -> None:
         self.category = category
         self.target = target
         self.blame = blame
         self.internal_message = internal_message
+        self.tsg_link = tsg_link
         super().__init__(message, *args, **kwargs)
+
+    def __str__(self):
+        msg = f"({self.blame.value}) {super().__str__()}"
+        if self.tsg_link:
+            msg += f"\nVisit {self.tsg_link} to troubleshoot this issue."
+
+        return msg

@@ -430,14 +430,14 @@ def _apply_target_to_data(
     except (UserAuthenticationError, UploadInternalError) as ex:
         if "Failed to upload run" in ex.message:
             msg = (
-                "Failed to upload target run to the cloud due to insufficient permission to access the storage. "
-                "Please ensure that the necessary access rights are granted."
+                "Failed to upload target run to the cloud due to insufficient permission to access the storage."
             )
             raise EvaluationException(
                 message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.FAILED_REMOTE_TRACKING,
                 blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/runupload/troubleshoot",
             ) from ex
 
         raise ex
