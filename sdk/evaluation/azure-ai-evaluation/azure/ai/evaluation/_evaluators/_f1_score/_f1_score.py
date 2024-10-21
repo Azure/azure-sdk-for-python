@@ -106,6 +106,10 @@ class _AsyncF1ScoreEvaluator:
 
 class F1ScoreEvaluator:
     """
+    Evaluator Id is experimental and to be used for evaluation in cloud.
+    """
+    evaluator_id = "azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/1"
+    """
     Initialize a f1 score evaluator for calculating F1 score.
 
     **Usage**
