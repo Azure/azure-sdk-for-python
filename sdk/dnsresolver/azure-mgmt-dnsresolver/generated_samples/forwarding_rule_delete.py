@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 """
@@ -29,14 +30,13 @@ def main():
         subscription_id="abdd4249-9f34-4cc6-8e42-c2e32110603e",
     )
 
-    response = client.forwarding_rules.delete(
+    client.forwarding_rules.delete(
         resource_group_name="sampleResourceGroup",
         dns_forwarding_ruleset_name="sampleDnsForwardingRuleset",
         forwarding_rule_name="sampleForwardingRule",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/ForwardingRule_Delete.json
+# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/preview/2023-07-01-preview/examples/ForwardingRule_Delete.json
 if __name__ == "__main__":
     main()
