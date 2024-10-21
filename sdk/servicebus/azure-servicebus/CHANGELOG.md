@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed a broken f-string present in a `ValueError` when using the async client ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+- Fixed an issue where if a port was specified as a part of the fully qualified namespace, negotation failed ([37547]https://github.com/Azure/azure-sdk-for-python/issues/37547)
 
 ### Other Changes
 
