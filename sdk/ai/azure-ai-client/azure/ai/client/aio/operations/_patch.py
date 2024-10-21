@@ -16,7 +16,7 @@ import time
 from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
-from ._operations import ConnectionsOperations as EndpointsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ...models._patch import EndpointProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
@@ -169,7 +169,7 @@ class InferenceOperations:
         return client
 
 
-class EndpointsOperations(EndpointsOperationsGenerated):
+class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     async def get_default(self, *, endpoint_type: ConnectionType, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_type:
@@ -1708,7 +1708,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "EndpointsOperations",
+    "ConnectionsOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

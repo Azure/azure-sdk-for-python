@@ -14,7 +14,7 @@ from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 
 # from zoneinfo import ZoneInfo
-from ._operations import ConnectionsOperations as EndpointsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
@@ -180,7 +180,7 @@ class InferenceOperations:
         return client
 
 
-class EndpointsOperations(EndpointsOperationsGenerated):
+class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     def get_default(self, *, endpoint_type: ConnectionType, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_type:
@@ -1782,7 +1782,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "EndpointsOperations",
+    "ConnectionsOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
