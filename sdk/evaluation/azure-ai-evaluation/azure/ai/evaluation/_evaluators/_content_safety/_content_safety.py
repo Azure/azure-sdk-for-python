@@ -84,7 +84,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
@@ -99,7 +99,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[Dict]
         :return: The evaluation result.
-        :rtype: Dict[str, Union[str, float]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
