@@ -6,9 +6,6 @@
 
   - Enum `ManagedServiceIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
   - Enum `OsDiskStorageAccountType` added member `STANDARD_SSD`
-  - Model `Quota` added method `current_value`
-  - Model `Quota` added method `limit`
-  - Model `Quota` added method `unit`
   - Model `Quota` added property `unit`
   - Model `Quota` added property `current_value`
   - Model `Quota` added property `limit`
@@ -21,9 +18,6 @@
   - Model `Quota` deleted or renamed its instance variable `properties`
   - Model `Quota` deleted or renamed its instance variable `type`
   - Model `Quota` deleted or renamed its instance variable `system_data`
-  - Deleted or renamed method `Quota.properties`
-  - Deleted or renamed method `Quota.system_data`
-  - Deleted or renamed method `Quota.type`
   - Deleted or renamed enum value `StorageAccountType.PREMIUM_L_R_S`
   - Deleted or renamed enum value `StorageAccountType.PREMIUM_Z_R_S`
   - Deleted or renamed enum value `StorageAccountType.STANDARD_L_R_S`
