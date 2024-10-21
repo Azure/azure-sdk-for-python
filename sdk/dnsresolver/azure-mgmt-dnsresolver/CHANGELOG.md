@@ -33,15 +33,6 @@
   - Added model `DnsResolverPolicyVirtualNetworkLinksOperations`
   - Added model `DnsSecurityRulesOperations`
 
-### Breaking Changes
-
-  - Model `DnsForwardingRuleset` deleted or renamed its instance variable `system_data`
-  - Model `DnsResolver` deleted or renamed its instance variable `system_data`
-  - Model `ForwardingRule` deleted or renamed its instance variable `system_data`
-  - Model `InboundEndpoint` deleted or renamed its instance variable `system_data`
-  - Model `OutboundEndpoint` deleted or renamed its instance variable `system_data`
-  - Model `VirtualNetworkLink` deleted or renamed its instance variable `system_data`
-
 ## 1.1.0b1 (2022-12-27)
 
 ### Other Changes
