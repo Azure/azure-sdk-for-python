@@ -257,7 +257,7 @@ class DataLakeDirectoryClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A response dict.
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:

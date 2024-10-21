@@ -512,7 +512,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: A response dict (etag and last modified).
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -609,7 +609,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: A response dict (etag and last modified).
+        :returns: A response dict (ETag and last modified).
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:

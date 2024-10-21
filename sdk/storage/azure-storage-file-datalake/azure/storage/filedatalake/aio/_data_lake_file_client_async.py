@@ -225,7 +225,7 @@ class DataLakeFileClient(PathClient):
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :returns: A response dict (ETag and last modified).
-        :rtype: Dict[str, str] or Dict[~datetime.datetime]
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
