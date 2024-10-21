@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
+import re
 from typing import NoReturn
 from xml.etree.ElementTree import Element
 
@@ -59,10 +60,11 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
+    pattern = re.compile(r'x-ms-meta-', re.IGNORECASE)
     try:
-        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if pattern.match(k)}
     except AttributeError:
-        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+        raw_metadata = {k: v for k, v in response.headers.items() if pattern.match(k)}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
