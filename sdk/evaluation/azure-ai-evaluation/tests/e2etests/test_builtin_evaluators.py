@@ -88,10 +88,12 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
+        print(f"score: {score}")
         assert score["fluency"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
+        print(f"score2: {score2}")
         assert score2["fluency"] > 0
         assert score2["evaluation_per_turn"]["fluency"][0] > 0
         assert score2["evaluation_per_turn"]["fluency"][1] > 0
@@ -103,10 +105,12 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
+        print(f"score: {score}")
         assert score["coherence"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
+        print(f"score2: {score2}")
         assert score2["coherence"] > 0
         assert score2["evaluation_per_turn"]["coherence"][0] > 0
         assert score2["evaluation_per_turn"]["coherence"][1] > 0
@@ -119,6 +123,7 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital.",
         )
         assert score is not None
+        print(f"score: {score}")
         assert score["similarity"] > 1.0
 
     def test_quality_evaluator_groundedness(self, model_config, simple_conversation):
@@ -128,10 +133,12 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
+        print(f"score: {score}")
         assert score["groundedness"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
+        print(f"score2: {score2}")
         assert score2["groundedness"] > 0
         assert score2["evaluation_per_turn"]["groundedness"][0] > 0
         assert score2["evaluation_per_turn"]["groundedness"][1] > 0
@@ -144,10 +151,12 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
+        print(f"score: {score}")
         assert score["relevance"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
+        print(f"score2: {score2}")
         assert score2["relevance"] > 0
         assert score2["evaluation_per_turn"]["relevance"][0] > 0
         assert score2["evaluation_per_turn"]["relevance"][1] > 0
