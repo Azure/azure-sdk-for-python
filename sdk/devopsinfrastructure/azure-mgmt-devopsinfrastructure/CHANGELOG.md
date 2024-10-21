@@ -9,7 +9,7 @@
   - Model `Quota` added property `unit`
   - Model `Quota` added property `current_value`
   - Model `Quota` added property `limit`
-  - Model `SubscriptionUsagesOperations` added method `usages`
+  - Operation group `SubscriptionUsagesOperations` added method `usages`
 
 ### Breaking Changes
 
