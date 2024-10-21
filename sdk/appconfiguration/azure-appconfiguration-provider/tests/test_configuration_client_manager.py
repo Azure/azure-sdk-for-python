@@ -29,7 +29,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # No connection string or credential was provided
         with self.assertRaises(ValueError) as ex:
-            ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
+            ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0, False)
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
@@ -43,7 +43,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
         assert manager is not None
         assert len(manager._replica_clients) == 1
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
@@ -54,7 +54,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
-        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
         assert manager is not None
         assert len(manager._replica_clients) == 2
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
@@ -74,7 +74,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # No connection string or credential was provided
         with self.assertRaises(ValueError) as ex:
-            ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
+            ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0, False)
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
@@ -86,7 +86,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
         assert manager is not None
         assert len(manager._replica_clients) == 1
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
@@ -97,7 +97,7 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
         assert manager is not None
         assert len(manager._replica_clients) == 2
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
@@ -116,8 +116,10 @@ class TestConfigurationClientManager(unittest.TestCase):
 
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
         mock_find_auto_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0)
-        manager_disabled_refresh = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+        manager_disabled_refresh = ConfigurationClientManager(
+            None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False
+        )
 
         # Reset the mocks as they are called during initialization
         mock_find_auto_failover_endpoints.reset_mock()
@@ -202,10 +204,19 @@ class TestConfigurationClientManager(unittest.TestCase):
         )
         mock_find_auto_failover_endpoints.return_value = []
         manager = ConfigurationClientManager(
-            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0, False
         )
         manager_disabled_refresh = ConfigurationClientManager(
-            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, False, 0, 0
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret",
+            endpoint,
+            None,
+            "",
+            0,
+            0,
+            False,
+            0,
+            0,
+            False,
         )
 
         # Reset the mocks as they are called during initialization
@@ -294,8 +305,8 @@ class TestConfigurationClientManager(unittest.TestCase):
     def test_calculate_backoff(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_find_auto_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600)
-        manager_invalid = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 600, 30)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600, False)
+        manager_invalid = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 600, 30, False)
 
         assert manager._calculate_backoff(0) == 30000.0
         assert 30000.0 <= manager._calculate_backoff(1) <= 60000.0
