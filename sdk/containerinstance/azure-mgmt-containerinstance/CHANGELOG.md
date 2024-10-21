@@ -1,5 +1,28 @@
 # Release History
 
+## 10.2.0b1 (2024-10-21)
+
+### Features Added
+
+  - Client `ContainerInstanceManagementClient` added operation group `container_group_profiles`
+  - Client `ContainerInstanceManagementClient` added operation group `container_group_profile`
+  - Model `Container` added property `config_map`
+  - Model `ContainerGroup` added property `container_group_profile`
+  - Model `ContainerGroup` added property `standby_pool_profile`
+  - Model `ContainerGroup` added property `is_created_from_standby_pool`
+  - Model `ContainerGroupProperties` added property `container_group_profile`
+  - Model `ContainerGroupProperties` added property `standby_pool_profile`
+  - Model `ContainerGroupProperties` added property `is_created_from_standby_pool`
+  - Added model `ConfigMap`
+  - Added model `ContainerGroupProfile`
+  - Added model `ContainerGroupProfileListResult`
+  - Added model `ContainerGroupProfilePatch`
+  - Added model `ContainerGroupProfileProperties`
+  - Added model `ContainerGroupProfileReferenceDefinition`
+  - Added model `StandbyPoolProfileDefinition`
+  - Added model `ContainerGroupProfileOperations`
+  - Added model `ContainerGroupProfilesOperations`
+
 ## 10.1.0 (2023-04-21)
 
 ### Features Added
