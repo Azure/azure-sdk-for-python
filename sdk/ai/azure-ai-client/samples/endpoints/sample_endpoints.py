@@ -23,7 +23,7 @@ USAGE:
 
 import os
 from azure.ai.client import AzureAIClient
-from azure.ai.client.models import EndpointType, AuthenticationType
+from azure.ai.client.models import ConnectionType, AuthenticationType
 from openai import AzureOpenAI
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
@@ -39,7 +39,7 @@ with AzureAIClient.from_connection_string(
 
     # List all endpoints of a particular "type", with or without their credentials:
     endpoints = ai_client.endpoints.list(
-        endpoint_type=EndpointType.AZURE_OPEN_AI,  # Optional. Defaults to all types.
+        endpoint_type=ConnectionType.AZURE_OPEN_AI,  # Optional. Defaults to all types.
         populate_secrets=True,  # Optional. Defaults to "False"
     )
     print("====> Listing of all Azure Open AI endpoints:")
@@ -49,7 +49,7 @@ with AzureAIClient.from_connection_string(
     # Get the default endpoint of a particular "type" (note that since at the moment the service
     # does not have a notion of a default endpoint, this will return the first endpoint of that type):
     endpoint = ai_client.endpoints.get_default(
-        endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True  # Required.  # Optional. Defaults to "False"
+        endpoint_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True  # Required.  # Optional. Defaults to "False"
     )
     print("====> Get default Azure Open AI endpoint:")
     print(endpoint)
@@ -63,7 +63,7 @@ with AzureAIClient.from_connection_string(
 
 
 # Examples of how you would create Inference client
-if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
+if endpoint.endpoint_type == ConnectionType.AZURE_OPEN_AI:
 
     if endpoint.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating AzureOpenAI client using API key authentication")
@@ -97,7 +97,7 @@ if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
     client.close()
     print(response.choices[0].message.content)
 
-elif endpoint.endpoint_type == EndpointType.SERVERLESS:
+elif endpoint.endpoint_type == ConnectionType.SERVERLESS:
 
     if endpoint.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating ChatCompletionsClient using API key authentication")

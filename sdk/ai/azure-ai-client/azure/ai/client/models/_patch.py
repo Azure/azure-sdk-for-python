@@ -328,7 +328,7 @@ class BingGroundingTool(Tool):
         """
         Get the file search resources.
         """
-        return ToolResources(bing_search=ConnectionListResource(connection_list=self.connection_ids))
+        return ToolResources(bing_grounding=ConnectionListResource(connection_list=self.connection_ids))
 
     def execute(self, tool_call: Any) -> Any:
         pass

@@ -14,9 +14,9 @@ from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 
 # from zoneinfo import ZoneInfo
-from ._operations import EndpointsOperations as EndpointsOperationsGenerated
+from ._operations import ConnectionsOperations as EndpointsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ..models._enums import AuthenticationType, EndpointType
+from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 from .._types import AgentsApiResponseFormatOption
 from ..models._patch import EndpointProperties
@@ -48,7 +48,7 @@ class InferenceOperations:
 
     def get_chat_completions_client(self) -> "ChatCompletionsClient":
         endpoint = self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No serverless endpoint found")
@@ -88,7 +88,7 @@ class InferenceOperations:
 
     def get_embeddings_client(self) -> "EmbeddingsClient":
         endpoint = self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No serverless endpoint found")
@@ -126,7 +126,7 @@ class InferenceOperations:
 
     def get_azure_openai_client(self) -> "AzureOpenAI":
         endpoint = self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
+            endpoint_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No Azure OpenAI endpoint found")
@@ -182,7 +182,7 @@ class InferenceOperations:
 
 class EndpointsOperations(EndpointsOperationsGenerated):
 
-    def get_default(self, *, endpoint_type: EndpointType, populate_secrets: bool = False) -> EndpointProperties:
+    def get_default(self, *, endpoint_type: ConnectionType, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_type:
             raise ValueError("You must specify an endpoint type")
         endpoint_properties_list = self.list(endpoint_type=endpoint_type, populate_secrets=populate_secrets)
@@ -228,7 +228,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
             return None
 
     def list(
-        self, *, endpoint_type: EndpointType | None = None, populate_secrets: bool = False
+        self, *, endpoint_type: ConnectionType | None = None, populate_secrets: bool = False
     ) -> Iterable[EndpointProperties]:
 
         # First make a REST call to /list to get all the connections, without secrets

@@ -16,10 +16,10 @@ import time
 from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
-from ._operations import EndpointsOperations as EndpointsOperationsGenerated
+from ._operations import ConnectionsOperations as EndpointsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ...models._patch import EndpointProperties
-from ...models._enums import AuthenticationType, EndpointType, FilePurpose
+from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
 from ...models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 from ... import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -37,7 +37,7 @@ class InferenceOperations:
 
     async def get_chat_completions_client(self) -> "ChatCompletionsClient":
         endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No serverless endpoint found")
@@ -77,7 +77,7 @@ class InferenceOperations:
 
     async def get_embeddings_client(self) -> "EmbeddingsClient":
         endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
+            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No serverless endpoint found")
@@ -115,7 +115,7 @@ class InferenceOperations:
 
     async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
         endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
+            endpoint_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No Azure OpenAI endpoint found.")
@@ -171,7 +171,7 @@ class InferenceOperations:
 
 class EndpointsOperations(EndpointsOperationsGenerated):
 
-    async def get_default(self, *, endpoint_type: EndpointType, populate_secrets: bool = False) -> EndpointProperties:
+    async def get_default(self, *, endpoint_type: ConnectionType, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_type:
             raise ValueError("You must specify an endpoint type")
         # Since there is no notion of service default at the moment, always return the first one
@@ -215,7 +215,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
             return None
 
     async def list(
-        self, *, endpoint_type: EndpointType | None = None, populate_secrets: bool = False
+        self, *, endpoint_type: ConnectionType | None = None, populate_secrets: bool = False
     ) -> AsyncIterable[EndpointProperties]:
 
         # First make a REST call to /list to get all the connections, without secrets
