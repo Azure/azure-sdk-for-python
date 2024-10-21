@@ -42,13 +42,13 @@
   - Added model `ResubscribeProperties`
   - Added enum `Status`
   - Added model `SubscriptionList`
-  - Model `MonitorsOperations` added method `begin_update`
-  - Model `OrganizationsOperations` added method `begin_resubscribe`
-  - Model `OrganizationsOperations` added method `get_elastic_to_azure_subscription_mapping`
-  - Added model `BillingInfoOperations`
-  - Added model `ConnectedPartnerResourcesOperations`
-  - Added model `MonitoredSubscriptionsOperations`
-  - Added model `OpenAIOperations`
+  - Operation group `MonitorsOperations` added method `begin_update`
+  - Operation group `OrganizationsOperations` added method `begin_resubscribe`
+  - Operation group `OrganizationsOperations` added method `get_elastic_to_azure_subscription_mapping`
+  - Added operation group `BillingInfoOperations`
+  - Added operation group `ConnectedPartnerResourcesOperations`
+  - Added operation group `MonitoredSubscriptionsOperations`
+  - Added operation group `OpenAIOperations`
 
 ### Breaking Changes
 
