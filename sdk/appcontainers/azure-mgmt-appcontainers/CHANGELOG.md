@@ -206,25 +206,25 @@
   - Added model `WorkflowHealth`
   - Added enum `WorkflowHealthState`
   - Added enum `WorkflowState`
-  - Model `JobsOperations` added method `begin_resume`
-  - Model `JobsOperations` added method `begin_suspend`
-  - Added model `AppResiliencyOperations`
-  - Added model `BuildAuthTokenOperations`
-  - Added model `BuildersOperations`
-  - Added model `BuildsByBuilderResourceOperations`
-  - Added model `BuildsOperations`
-  - Added model `ContainerAppsBuildsByContainerAppOperations`
-  - Added model `ContainerAppsBuildsOperations`
-  - Added model `ContainerAppsPatchesOperations`
-  - Added model `ContainerAppsSessionPoolsOperations`
-  - Added model `DaprComponentResiliencyPoliciesOperations`
-  - Added model `DaprSubscriptionsOperations`
-  - Added model `DotNetComponentsOperations`
-  - Added model `FunctionsExtensionOperations`
-  - Added model `JavaComponentsOperations`
-  - Added model `LogicAppsOperations`
-  - Added model `ManagedEnvironmentPrivateEndpointConnectionsOperations`
-  - Added model `ManagedEnvironmentPrivateLinkResourcesOperations`
+  - Operation group `JobsOperations` added method `begin_resume`
+  - Operation group `JobsOperations` added method `begin_suspend`
+  - Added operation group `AppResiliencyOperations`
+  - Added operation group `BuildAuthTokenOperations`
+  - Added operation group `BuildersOperations`
+  - Added operation group `BuildsByBuilderResourceOperations`
+  - Added operation group `BuildsOperations`
+  - Added operation group `ContainerAppsBuildsByContainerAppOperations`
+  - Added operation group `ContainerAppsBuildsOperations`
+  - Added operation group `ContainerAppsPatchesOperations`
+  - Added operation group `ContainerAppsSessionPoolsOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DaprSubscriptionsOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `JavaComponentsOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
 
 ## 3.1.0 (2024-08-06)
 
