@@ -64,12 +64,15 @@ class ConnectionProperties:
         out += f' "authentication_type": "{self.authentication_type}",\n'
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
-        out += f' "key": "{self.key}",\n'
+        if self.key:
+            out += f' "key": "{self.key}",\n'
+        else:
+            out += f' "key": null,\n'
         if self.token_credential:
             access_token = self.token_credential.get_token("https://cognitiveservices.azure.com/.default")
             out += f' "token_credential": "{access_token.token}", expires on {access_token.expires_on} ({datetime.datetime.fromtimestamp(access_token.expires_on, datetime.timezone.utc)})\n'
         else:
-            out += f' "token_credential": "null"\n'
+            out += f' "token_credential": null\n'
         out += "}\n"
         return out
 

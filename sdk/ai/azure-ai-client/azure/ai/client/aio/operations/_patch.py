@@ -1,6 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -37,8 +35,16 @@ class InferenceOperations:
         self.outer_instance = outer_instance
 
     async def get_chat_completions_client(self) -> "ChatCompletionsClient":
+        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default 
+        Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
+        The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -79,8 +85,17 @@ class InferenceOperations:
         return client
 
     async def get_embeddings_client(self) -> "EmbeddingsClient":
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default 
+        Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
+        The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -119,8 +134,15 @@ class InferenceOperations:
         return client
 
     async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
+        """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default 
+        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
+
+        :return: An authenticated AsyncAzureOpenAI client
+        :rtype: ~openai.AsyncAzureOpenAI
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
+            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True
         )
         if not connection:
             raise ValueError("No Azure OpenAI connection found.")
@@ -177,28 +199,49 @@ class InferenceOperations:
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     async def get_default(
-        self, *, connection_type: ConnectionType, populate_secrets: bool = False
+        self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
+        """Get the properties of the default connection of a certain connection type, with or without
+        populating authentication credentials.
+
+        :param connection_type: The connection type. Required.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         if not connection_type:
             raise ValueError("You must specify an connection type")
-        # Since there is no notion of service default at the moment, always return the first one
-        async for connection_properties in self.list(
-            connection_type=connection_type, populate_secrets=populate_secrets
-        ):
-            return connection_properties
+        # Since there is no notion of default connection at the moment, list all connections in the category
+        # and return the first one
+        async for connection_properties in self.list(connection_type=connection_type, **kwargs):
+            if with_credentials:
+                return await self.get(
+                    connection_name=connection_properties.name, with_credentials=with_credentials, **kwargs
+                )
+            else:
+                return connection_properties
         return None
 
-    async def get(self, *, connection_name: str, populate_secrets: bool = False) -> ConnectionProperties:
+    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+        """Get the properties of a single connection, given its connection name, with or without
+        populating authentication credentials.
+
+        :param connection_name: Connection Name. Required.
+        :type connection_name: str
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
-        if populate_secrets:
+        if with_credentials:
             connection: ConnectionsListSecretsResponse = await self._list_secrets(
-                connection_name_in_url=connection_name,
-                connection_name=connection_name,
-                subscription_id=self._config.subscription_id,
-                resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.project_name,
-                api_version_in_body=self._config.api_version,
+                connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
@@ -217,27 +260,24 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            internal_response: ConnectionsListResponse = await self._list()
-            for connection in internal_response.value:
-                if connection_name == connection.name:
-                    return ConnectionProperties(connection=connection)
-            return None
-
+            return ConnectionProperties(connection=await self._get(connection_name=connection_name, **kwargs))
+ 
     async def list(
-        self, *, connection_type: ConnectionType | None = None, populate_secrets: bool = False
+        self, *, connection_type: ConnectionType | None = None, **kwargs: Any
     ) -> AsyncIterable[ConnectionProperties]:
+        """List the properties of all connections, or all connections of a certain connection type.
 
-        # First make a REST call to /list to get all the connections, without secrets
-        connections_list: ConnectionsListResponse = await self._list()
-
-        # Filter by connection type
-        for connection in connections_list.value:
-            if connection_type is None or connection.properties.category == connection_type:
-                if not populate_secrets:
-                    yield ConnectionProperties(connection=connection)
-                else:
-                    yield await self.get(connection_name=connection.name, populate_secrets=True)
-
+        :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
+        If not provided, all connections are listed.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :return: A list of connection properties
+        :rtype: AsyncIterable[~azure.ai.client.models._models.ConnectionProperties]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        connections_list_response = await self._list(include_all=True, category=connection_type, **kwargs)
+        for connection in connections_list_response.value:
+            yield ConnectionProperties(connection=connection)
+ 
 
 class AgentsOperations(AgentsOperationsGenerated):
 

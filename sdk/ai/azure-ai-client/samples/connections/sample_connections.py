@@ -30,44 +30,42 @@ from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.core.credentials import AzureKeyCredential
 
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 with ai_client:
-
-    # List all connections
+    # List the properties of all connections
     connections = ai_client.connections.list()
     print(f"====> Listing of all connections (found {len(connections)}):")
     for connection in connections:
         print(connection)
 
-    # List all connections of a particular "type", with or without their credentials:
+    # List the properties of all connections of a particular "type" (In this sample, Azure OpenAI connections)
     connections = ai_client.connections.list(
-        connection_type=ConnectionType.AZURE_OPEN_AI,  # Optional. Defaults to all types.
-        populate_secrets=True,  # Optional. Defaults to "False"
+        connection_type=ConnectionType.AZURE_OPEN_AI,
     )
     print("====> Listing of all Azure Open AI connections (found {len(connections)}):")
     for connection in connections:
         print(connection)
 
-    # Get the default connection of a particular "type":
+    # Get the properties of the default connection of a particular "type", with credentials
     connection = ai_client.connections.get_default(
         connection_type=ConnectionType.AZURE_OPEN_AI,
-        populate_secrets=True,  # Required.  # Optional. Defaults to "False"
+        with_credentials=True,  # Optional. Defaults to "False"
     )
     print("====> Get default Azure Open AI connection:")
     print(connection)
 
-    # Get a connection by name:
+    # Get the properties of a connection by connection name:
     connection = ai_client.connections.get(
-        connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
+        connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"],
+        with_credentials=True  # Optional. Defaults to "False"
     )
     print("====> Get connection by name:")
     print(connection)
+
 
 # Examples of how you would create Inference client
 if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
@@ -93,7 +91,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4-0613",
         messages=[
             {
                 "role": "user",

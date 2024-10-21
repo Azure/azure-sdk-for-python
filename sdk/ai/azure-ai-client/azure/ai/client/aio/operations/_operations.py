@@ -73,6 +73,7 @@ from ...operations._operations import (
     build_agents_update_run_request,
     build_agents_update_thread_request,
     build_agents_upload_file_request,
+    build_connections_get_request,
     build_connections_list_request,
     build_connections_list_secrets_request,
     build_evaluations_create_or_replace_schedule_request,
@@ -4965,17 +4966,22 @@ class ConnectionsOperations:
 
     @distributed_trace_async
     async def _list(  # pylint: disable=protected-access
-        self, *, category: Union[str, _models.ConnectionType], include_all: bool, target: str, **kwargs: Any
+        self,
+        *,
+        category: Optional[Union[str, _models.ConnectionType]] = None,
+        include_all: Optional[bool] = None,
+        target: Optional[str] = None,
+        **kwargs: Any
     ) -> _models._models.ConnectionsListResponse:
         """List the details of all the connections (not including their credentials).
 
         :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", and "AIServices". Required.
+         "Serverless", "AzureBlob", and "AIServices". Default value is None.
         :paramtype category: str or ~azure.ai.client.models.ConnectionType
-        :keyword include_all: Indicates whether to list datastores. Service default: do not lines
-         datastores. Required.
+        :keyword include_all: Indicates whether to list datastores. Service default: do not list
+         datastores. Default value is None.
         :paramtype include_all: bool
-        :keyword target: Target of the workspace connection. Required.
+        :keyword target: Target of the workspace connection. Default value is None.
         :paramtype target: str
         :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
         :rtype: ~azure.ai.client.models._models.ConnectionsListResponse
@@ -5040,32 +5046,97 @@ class ConnectionsOperations:
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def _get(  # pylint: disable=protected-access
+        self, connection_name: str, **kwargs: Any
+    ) -> _models._models.ConnectionsListSecretsResponse:
+        """Get the details of a single connection, without credentials.
+
+        :param connection_name: Connection Name. Required.
+        :type connection_name: str
+        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.client.models._models.ConnectionsListSecretsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
+
+        _request = build_connections_get_request(
+            connection_name=connection_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.ConnectionsListSecretsResponse, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @overload
     async def _list_secrets(  # pylint: disable=protected-access
-        self, connection_name_in_url: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
     async def _list_secrets(  # pylint: disable=protected-access
-        self, connection_name_in_url: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
+        self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
     async def _list_secrets(  # pylint: disable=protected-access
-        self, connection_name_in_url: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, connection_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
 
     @distributed_trace_async
     async def _list_secrets(  # pylint: disable=protected-access
-        self,
-        connection_name_in_url: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        ignored: str = _Unset,
-        **kwargs: Any
+        self, connection_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, ignored: str = _Unset, **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse:
-        """Get the details of a single connection, including credential (if available).
+        """Get the details of a single connection, including credentials (if available).
 
-        :param connection_name_in_url: Connection Name. Required.
-        :type connection_name_in_url: str
+        :param connection_name: Connection Name. Required.
+        :type connection_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword ignored: The body is ignored. Required.
@@ -5102,7 +5173,7 @@ class ConnectionsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_connections_list_secrets_request(
-            connection_name_in_url=connection_name_in_url,
+            connection_name=connection_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
