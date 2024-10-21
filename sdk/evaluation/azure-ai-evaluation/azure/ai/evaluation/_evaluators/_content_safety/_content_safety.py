@@ -15,6 +15,7 @@ from ._self_harm import SelfHarmEvaluator
 from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
+
 @experimental
 class ContentSafetyEvaluator(EvaluatorBase):
     """
@@ -83,7 +84,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: None,
         **kwargs,
     ):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
