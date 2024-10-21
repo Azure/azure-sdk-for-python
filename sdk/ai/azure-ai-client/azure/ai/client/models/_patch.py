@@ -77,8 +77,26 @@ def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
 
 
 class ConnectionProperties:
+    """The properties of a single connection.
+
+    :ivar id: A unique identifier for the connection.
+    :vartype id: str
+    :ivar name: The friendly name of the connection.
+    :vartype name: str
+    :ivar authentication_type: The authentication type used by the connection.
+    :vartype authentication_type: ~azure.ai.client.models._models.AuthenticationType
+    :ivar connection_type: The connection type .
+    :vartype connection_type: ~azure.ai.client.models._models.ConnectionType
+    :ivar endpoint_url: The endpoint URL associated with this connection
+    :vartype endpoint_url: str
+    :ivar key: The api-key to be used when accessing the connection.
+    :vartype key: str
+    :ivar token_credential: The TokenCredential to be used when accessing the connection.
+    :vartype token_credential: ~azure.core.credentials.TokenCredential
+    """
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+        self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
         self.connection_type = connection.properties.category
@@ -96,6 +114,7 @@ class ConnectionProperties:
     def __str__(self):
         out = "{\n"
         out += f' "name": "{self.name}",\n'
+        out += f' "id": "{self.id}",\n'
         out += f' "authentication_type": "{self.authentication_type}",\n'
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
