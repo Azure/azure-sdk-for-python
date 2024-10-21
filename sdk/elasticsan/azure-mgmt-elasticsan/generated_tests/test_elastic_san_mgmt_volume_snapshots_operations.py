@@ -25,7 +25,7 @@ class TestElasticSanMgmtVolumeSnapshotsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             elastic_san_name="str",
             volume_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestElasticSanMgmtVolumeSnapshotsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestElasticSanMgmtVolumeSnapshotsOperations(AzureMgmtRecordedTestCase):
             elastic_san_name="str",
             volume_group_name="str",
             snapshot_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestElasticSanMgmtVolumeSnapshotsOperations(AzureMgmtRecordedTestCase):
             elastic_san_name="str",
             volume_group_name="str",
             snapshot_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
 
         # please add some check logic here by yourself
