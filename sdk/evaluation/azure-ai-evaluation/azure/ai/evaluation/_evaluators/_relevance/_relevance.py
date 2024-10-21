@@ -12,6 +12,10 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
     """
+    Experimental, to be used only for remote evaluation.
+    """
+    evaluator_id = ""azureml://registries/jamahaja-evals-registry/models/Relevance-Evaluator-AI-Evaluation/versions/2""
+    """
     Initialize a relevance evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
