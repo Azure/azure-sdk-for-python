@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 """
@@ -29,14 +30,13 @@ def main():
         subscription_id="c80fb759-c965-4c6a-9110-9b2b2d038882",
     )
 
-    response = client.key_values.begin_delete(
+    client.key_values.begin_delete(
         resource_group_name="myResourceGroup",
         config_store_name="contoso",
         key_value_name="myKey$myLabel",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2023-03-01/examples/ConfigurationStoresDeleteKeyValue.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2024-05-01/examples/ConfigurationStoresDeleteKeyValue.json
 if __name__ == "__main__":
     main()
