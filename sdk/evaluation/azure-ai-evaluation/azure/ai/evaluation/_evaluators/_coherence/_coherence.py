@@ -7,6 +7,7 @@ from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._common.constants import DEFAULT_PASSING_SCORE
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase):
@@ -41,10 +42,16 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     _RESULT_KEY = "gpt_coherence"
 
     @override
-    def __init__(self, model_config):
+    def __init__(self, model_config, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        passing_score = kwargs.get("passing_score", DEFAULT_PASSING_SCORE)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            passing_score=passing_score,
+        )
 
     @override
     def __call__(

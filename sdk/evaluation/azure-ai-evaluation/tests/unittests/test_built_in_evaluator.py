@@ -16,6 +16,7 @@ async def quality_async_passing_score_mock():
 async def quality_async_failing_score_mock():
     return str(uniform(1,2))
 
+
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestBuiltInEvaluators:
@@ -56,7 +57,7 @@ class TestBuiltInEvaluators:
         groundedness_eval._flow = MagicMock(return_value=quality_async_passing_score_mock())
         result = groundedness_eval(
             response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
+            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert len(result.keys()) == 2
         assert "gpt_groundedness" in result
@@ -67,18 +68,18 @@ class TestBuiltInEvaluators:
         groundedness_eval_passing._flow = MagicMock(return_value=quality_async_passing_score_mock())
         result = groundedness_eval_passing(
             response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
+            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert len(result.keys()) == 2
         assert "gpt_groundedness" in result
         assert "gpt_groundedness_label" in result
         assert result["gpt_groundedness_label"] == True
 
-        groundedness_eval_passing = GroundednessEvaluator(model_config=mock_model_config, passing_score=4.0)
-        groundedness_eval_passing._flow = MagicMock(return_value=quality_async_failing_score_mock())
-        result = groundedness_eval_passing(
+        groundedness_eval_failing = GroundednessEvaluator(model_config=mock_model_config, passing_score=4.0)
+        groundedness_eval_failing._flow = MagicMock(return_value=quality_async_failing_score_mock())
+        result = groundedness_eval_failing(
             response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements."
+            context="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert len(result.keys()) == 2
         assert "gpt_groundedness" in result
@@ -127,15 +128,17 @@ class TestBuiltInEvaluators:
     # This test can be removed once RetrievalEvaluator is refactored to inherit from PromptyEvaluatorBase
     # ADO Task #3563786
     def test_retrieval_evaluator_passing_score(self, mock_model_config):
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
+        conversation = {
+            "messages": [
+                {"role": "user", "content": "What is the value of 2 + 2?"},
+                {"role": "assistant", "content": "2 + 2 = 4", "context": {
+                    "citations": [
+                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
                         ]
+                    }
                 }
-            }
-        ]
+            ]
+        }
 
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
         retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_async_passing_score_mock())

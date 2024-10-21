@@ -155,7 +155,9 @@ class RetrievalEvaluator:
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
         result = async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
-        result = update_with_passing_label(result=result, passing_score=self._passing_score, metric_name=self._async_evaluator._RESULT_KEY)
+        result = update_with_passing_label(
+            result=result, passing_score=self._passing_score, metric_name=self._async_evaluator._RESULT_KEY
+        )
         return result
 
     def _to_async(self):
