@@ -5,7 +5,7 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Any, Callable, Dict, cast
+from typing import Callable, cast
 
 from tqdm import tqdm
 
@@ -187,14 +187,14 @@ class IndirectAttackSimulator(AdversarialSimulator):
             if len(tasks) >= max_simulation_results:
                 break
         for task in asyncio.as_completed(tasks):
-            completed_task: Dict[str, Any] = await task
-            template_parameters: Dict[str, Any] = completed_task.get("template_parameters", {})
-            xpia_attack_type: str = template_parameters.get("xpia_attack_type", "")
-            action: str = template_parameters.get("action", "")
-            document_type: str = template_parameters.get("document_type", "")
+            completed_task = await task  # type: ignore
+            template_parameters = completed_task.get("template_parameters", {})  # type: ignore
+            xpia_attack_type = template_parameters.get("xpia_attack_type", "")  # type: ignore
+            action = template_parameters.get("action", "")  # type: ignore
+            document_type = template_parameters.get("document_type", "")    # type: ignore
             sim_results.append(
                 {
-                    "messages": completed_task["messages"],
+                    "messages": completed_task["messages"],  # type: ignore
                     "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
                     "template_parameters": {
                         "metadata": {
