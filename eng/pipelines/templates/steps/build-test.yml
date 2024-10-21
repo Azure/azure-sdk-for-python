@@ -149,6 +149,8 @@ steps:
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        # Enable samples tests that use DefaultAzureCredential to load the federated pipeline credential
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
         ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
         azureSubscription: ${{ parameters.ServiceConnection }}
