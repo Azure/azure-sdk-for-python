@@ -236,7 +236,7 @@ class AccountSasPermissions(BlobAccountSasPermissions):
         )
 
 
-class FileSystemSasPermissions(object):
+class FileSystemSasPermissions:
     """FileSystemSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_system_sas` function.
 
@@ -353,7 +353,7 @@ class FileSystemSasPermissions(object):
         return parsed
 
 
-class DirectorySasPermissions(object):
+class DirectorySasPermissions:
     """DirectorySasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_directory_sas` function.
 
@@ -469,7 +469,7 @@ class DirectorySasPermissions(object):
         return parsed
 
 
-class FileSasPermissions(object):
+class FileSasPermissions:
     """FileSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_sas` function.
 
@@ -766,9 +766,6 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     :param str continuation_token: An opaque continuation token.
     """
 
-    current_page: List[FileSystemProperties]  # type: ignore [assignment]
-    """The current page of listed results."""
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(FileSystemPropertiesPaged, self).__init__(*args, **kwargs)
 
@@ -1042,7 +1039,7 @@ class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         return None
 
 
-class LocationMode(object):
+class LocationMode:
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
@@ -1130,7 +1127,7 @@ class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DECIMAL = 'decimal'
 
 
-class DataLakeFileQueryError(object):
+class DataLakeFileQueryError:
     """The error happened during quick query operation."""
 
     error: Optional[str] = None
