@@ -302,7 +302,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         self._validate_translation_metadata(poller=poller)
 
         return poller
-    
+
     def _prepare_and_validate_start_translation_details(self, client, docs_count, **kwargs):
         # get input params
         wait_for_operation = kwargs.pop("wait", False)
@@ -311,20 +311,10 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
         # prepare test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
-        source_input = SourceInput(
-            source_url=self.create_source_container(data=blob_data, variables=variables)
-        )        
-        target = TranslationTarget(
-            target_url=self.create_target_container(variables=variables),
-            language=language
-        )        
-        batch_request = BatchRequest(
-            source=source_input,
-            targets=[target]
-        )        
-        start_translation_details = StartTranslationDetails(
-            inputs=[batch_request]
-        )
+        source_input = SourceInput(source_url=self.create_source_container(data=blob_data, variables=variables))
+        target = TranslationTarget(target_url=self.create_target_container(variables=variables), language=language)
+        batch_request = BatchRequest(source=source_input, targets=[target])
+        start_translation_details = StartTranslationDetails(inputs=[batch_request])
 
         # submit job
         poller = client.begin_translation(start_translation_details)

@@ -105,7 +105,7 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERIFY = "verify"
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     EXPORT = "export"
 
 

@@ -7,7 +7,12 @@ from typing_extensions import override
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+<<<<<<< HEAD
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+=======
+from azure.ai.evaluation._common._experimental import experimental
+
+>>>>>>> main
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
 from ._sexual import SexualEvaluator
