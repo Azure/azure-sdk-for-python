@@ -10,6 +10,7 @@
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+- Fixed an issue where the `evaluate` API would fail with "[WinError 32] The process cannot access the file because it is being used by another process" when venv folder and target function file are in the same directory.
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
