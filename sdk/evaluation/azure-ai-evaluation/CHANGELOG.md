@@ -13,6 +13,7 @@
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- Improved the error message for storage access permission issues to provide clearer guidance for users.
 
 ## 1.0.0b4 (2024-10-16)
 

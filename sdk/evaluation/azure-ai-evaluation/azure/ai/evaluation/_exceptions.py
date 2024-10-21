@@ -22,6 +22,7 @@ class ErrorCategory(Enum):
     * FAILED_EXECUTION -> Execution failed
     * SERVICE_UNAVAILABLE -> Service is unavailable
     * MISSING_PACKAGE -> Required package is missing
+    * FAILED_REMOTE_TRACKING -> Remote tracking failed
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -33,6 +34,7 @@ class ErrorCategory(Enum):
     FAILED_EXECUTION = "FAILED_EXECUTION"
     SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
     MISSING_PACKAGE = "MISSING PACKAGE"
+    FAILED_REMOTE_TRACKING = "FAILED REMOTE TRACKING"
     UNKNOWN = "UNKNOWN"
 
 

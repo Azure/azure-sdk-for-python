@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, T
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import MissingAzurePackage
+from promptflow._sdk._errors import MissingAzurePackage, UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
@@ -418,14 +418,30 @@ def _apply_target_to_data(
     # We are manually creating the temporary directory for the flow
     # because the way tempdir remove temporary directories will
     # hang the debugger, because promptflow will keep flow directory.
-    run: Run = pf_client.run(
-        flow=target,
-        display_name=evaluation_name,
-        data=data,
-        properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-        stream=True,
-        name=_run_name,
-    )
+    try:
+        run: Run = pf_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
+            stream=True,
+            name=_run_name,
+        )
+    except (UserAuthenticationError, UploadInternalError) as ex:
+        if "Failed to upload run" in ex.message:
+            msg = (
+                "Failed to upload target run to the cloud due to insufficient permission to access the storage. "
+                "Please ensure that the necessary access rights are granted."
+            )
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.FAILED_REMOTE_TRACKING,
+                blame=ErrorBlame.USER_ERROR,
+            ) from ex
+
+        raise ex
+
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
     generated_columns = {
