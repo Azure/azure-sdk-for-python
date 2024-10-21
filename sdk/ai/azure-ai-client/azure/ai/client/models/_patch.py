@@ -41,6 +41,39 @@ from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Op
 logger = logging.getLogger(__name__)
 
 
+def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Remove the parameters, non present in class public fields; return shallow copy of a dictionary.
+
+    **Note:** Classes inherited from the model check that the parameters are present
+    in the list of attributes and if they are not, the error is being raised. This check may not
+    be relevant for classes, not inherited from azure.ai.client._model_base.Model.
+    :param model_class: The class of model to be used.
+    :param parameters: The parsed dictionary with parameters.
+    :return: The dictionary with all invalid parameters removed.
+    """
+    new_params = {}
+    valid_parameters = set(
+        filter(lambda x: not x.startswith('_') and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys())
+    )
+    for k in filter(lambda x: x in valid_parameters, parameters.keys()):
+        new_params[k] = parameters[k]
+    return new_params
+
+
+def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+    """
+    Instantiate class with the set of parameters from the server.
+
+    :param model_class: The class of model to be used.
+    :param parameters: The parsed dictionary with parameters.
+    :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
+    """
+    if not isinstance(parameters, dict):
+        return parameters
+    return model_class(**_filter_parameters(model_class, parameters))
+
+
 class ConnectionProperties:
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
@@ -679,7 +712,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
@@ -688,18 +721,18 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
             AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
         }:
-            event_data_obj = RunStep(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_MESSAGE_CREATED,
             AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
             AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
             AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
         }:
-            event_data_obj = ThreadMessage(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
-            event_data_obj = MessageDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj = RunStepDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj =_safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 
@@ -826,7 +859,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
@@ -835,18 +868,18 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
             AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
         }:
-            event_data_obj = RunStep(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_MESSAGE_CREATED,
             AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
             AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
             AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
         }:
-            event_data_obj = ThreadMessage(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
-            event_data_obj = MessageDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj = RunStepDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 

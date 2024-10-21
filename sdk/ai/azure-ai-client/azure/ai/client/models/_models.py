@@ -480,7 +480,7 @@ class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureAISearchToolDefinition, BingSearchToolDefinition, CodeInterpreterToolDefinition,
+    AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
     FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
     SharepointToolDefinition
 
@@ -540,17 +540,19 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
-class BingSearchToolDefinition(ToolDefinition, discriminator="bing_search"):
-    """The input definition information for a bing search tool as used to configure an agent.
+class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
+    """The input definition information for a bing grounding search tool as used to configure an
+    agent.
 
 
-    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
-     "bing_search".
+    :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
+     "bing_grounding".
     :vartype type: str
     """
 
-    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
+    type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_grounding'. Required. Default value is
+     \"bing_grounding\"."""
 
     @overload
     def __init__(
@@ -565,7 +567,7 @@ class BingSearchToolDefinition(ToolDefinition, discriminator="bing_search"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="bing_search", **kwargs)
+        super().__init__(*args, type="bing_grounding", **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -630,7 +632,7 @@ class CodeInterpreterToolResource(_model_base.Model):
 
 
 class ConnectionListResource(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_search``\\ ,
+    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
     ``microsoft_fabric``\\ , or ``sharepoint`` tools.
 
     :ivar connection_list: The connections attached to this agent. There can be a maximum of 1
@@ -920,7 +922,7 @@ class Dataset(InputData, discriminator="dataset"):
 
     type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"dataset\"."""
-    id: str = rest_field(name="Uri")
+    id: str = rest_field()
     """Evaluation input data. Required."""
 
     @overload
@@ -3245,7 +3247,7 @@ class RunStepToolCall(_model_base.Model):
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepBingSearchToolCall, RunStepCodeInterpreterToolCall,
+    RunStepAzureAISearchToolCall, RunStepBingGroundingToolCall, RunStepCodeInterpreterToolCall,
     RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMicrosoftFabricToolCall,
     RunStepSharepointToolCall
 
@@ -3323,25 +3325,26 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
-class RunStepBingSearchToolCall(RunStepToolCall, discriminator="bing_search"):
-    """A record of a call to a bing search tool, issued by the model in evaluation of a defined tool,
-    that represents
-    executed bing search.
+class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
+    """A record of a call to a bing grounding tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed search with bing grounding.
 
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
-     "bing_search".
+    :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
+     "bing_grounding".
     :vartype type: str
-    :ivar bing_search: Reserved for future use. Required.
-    :vartype bing_search: dict[str, str]
+    :ivar bing_grounding: Reserved for future use. Required.
+    :vartype bing_grounding: dict[str, str]
     """
 
-    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
-    bing_search: Dict[str, str] = rest_field()
+    type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_grounding'. Required. Default value is
+     \"bing_grounding\"."""
+    bing_grounding: Dict[str, str] = rest_field()
     """Reserved for future use. Required."""
 
     @overload
@@ -3349,7 +3352,7 @@ class RunStepBingSearchToolCall(RunStepToolCall, discriminator="bing_search"):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        bing_search: Dict[str, str],
+        bing_grounding: Dict[str, str],
     ) -> None: ...
 
     @overload
@@ -3360,7 +3363,7 @@ class RunStepBingSearchToolCall(RunStepToolCall, discriminator="bing_search"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="bing_search", **kwargs)
+        super().__init__(*args, type="bing_grounding", **kwargs)
 
 
 class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
@@ -5198,9 +5201,9 @@ class ToolResources(_model_base.Model):
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
     :vartype file_search: ~azure.ai.client.models.FileSearchToolResource
-    :ivar bing_search: Resources to be used by the ``bing_search`` tool consisting of connection
-     IDs.
-    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar bing_grounding: Resources to be used by the ``bing_grounding`` tool consisting of
+     connection IDs.
+    :vartype bing_grounding: ~azure.ai.client.models.ConnectionListResource
     :ivar microsoft_fabric: Resources to be used by the ``microsoft_fabric`` tool consisting of
      connection IDs.
     :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
@@ -5216,8 +5219,8 @@ class ToolResources(_model_base.Model):
     """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
-    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
-    """Resources to be used by the ``bing_search`` tool consisting of connection IDs."""
+    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
+    """Resources to be used by the ``bing_grounding`` tool consisting of connection IDs."""
     microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
     """Resources to be used by the ``microsoft_fabric`` tool consisting of connection IDs."""
     share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
@@ -5231,7 +5234,7 @@ class ToolResources(_model_base.Model):
         *,
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
-        bing_search: Optional["_models.ConnectionListResource"] = None,
+        bing_grounding: Optional["_models.ConnectionListResource"] = None,
         microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
         share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
@@ -5364,9 +5367,9 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
     :vartype file_search: ~azure.ai.client.models.UpdateFileSearchToolResourceOptions
-    :ivar bing_search: Overrides the list of connections to be used by the ``bing_search`` tool
-     consisting of connection IDs.
-    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar bing_grounding: Overrides the list of connections to be used by the ``bing_grounding``
+     tool consisting of connection IDs.
+    :vartype bing_grounding: ~azure.ai.client.models.ConnectionListResource
     :ivar microsoft_fabric: Overrides the list of connections to be used by the
      ``microsoft_fabric`` tool consisting of connection IDs.
     :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
@@ -5385,8 +5388,8 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
-    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
-    """Overrides the list of connections to be used by the ``bing_search`` tool consisting of
+    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
+    """Overrides the list of connections to be used by the ``bing_grounding`` tool consisting of
      connection IDs."""
     microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
     """Overrides the list of connections to be used by the ``microsoft_fabric`` tool consisting of
@@ -5404,7 +5407,7 @@ class UpdateToolResourcesOptions(_model_base.Model):
         *,
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
-        bing_search: Optional["_models.ConnectionListResource"] = None,
+        bing_grounding: Optional["_models.ConnectionListResource"] = None,
         microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
         share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
