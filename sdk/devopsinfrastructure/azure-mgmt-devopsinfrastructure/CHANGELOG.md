@@ -13,11 +13,6 @@
   - Model `Quota` added property `current_value`
   - Model `Quota` added property `limit`
   - Model `SubscriptionUsagesOperations` added method `usages`
-  - Method `ManualResourcePredictionsProfile.__init__` has a new overload `def __init__(self: None)`
-  - Method `ManualResourcePredictionsProfile.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Quota.__init__` has a new overload `def __init__(self: None, id: str, unit: str, current_value: int, limit: int)`
-  - Method `SystemData.__init__` has a new overload `def __init__(self: None, created_by: Optional[str], created_by_type: Optional[Union[str, _models.CreatedByType]], created_at: Optional[datetime], last_modified_by: Optional[str], last_modified_by_type: Optional[Union[str, _models.CreatedByType]], last_modified_at: Optional[datetime])`
-  - Method `SystemData.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
 
 ### Breaking Changes
 
@@ -40,7 +35,6 @@
   - Deleted or renamed model `Origin`
   - Deleted or renamed model `QuotaProperties`
   - Deleted or renamed method `SubscriptionUsagesOperations.list_by_location`
-  - `UserAssignedIdentity.__init__` had all overloads removed
 
 ## 1.0.0b1 (2024-05-29)
 
