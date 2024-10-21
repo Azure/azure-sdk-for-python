@@ -95,7 +95,7 @@ class Metrics(GenMetrics):
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the Datalake service."""
-    include_apis: bool
+    include_apis: Optional[bool] = None
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
@@ -103,7 +103,7 @@ class Metrics(GenMetrics):
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')  # type: ignore [assignment]
+        self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
