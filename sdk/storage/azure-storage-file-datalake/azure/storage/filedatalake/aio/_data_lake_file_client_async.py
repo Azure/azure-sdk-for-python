@@ -483,7 +483,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
