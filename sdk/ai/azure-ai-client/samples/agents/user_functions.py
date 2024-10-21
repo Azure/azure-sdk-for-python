@@ -5,6 +5,7 @@
 
 import json
 import datetime
+from typing import Any, Callable, Set
 
 # These are the user-defined functions that can be called by the agent.
 
@@ -58,8 +59,8 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 
 
 # Statically defined user functions for fast reference
-user_functions = {
-    "fetch_current_datetime": fetch_current_datetime,
-    "fetch_weather": fetch_weather,
-    "send_email": send_email,
+user_functions: Set[Callable[[], Any]] = {
+    fetch_current_datetime,
+    fetch_weather,
+    send_email,
 }
