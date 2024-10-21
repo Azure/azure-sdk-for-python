@@ -210,13 +210,14 @@ class AzureAIClient(ClientGenerated):
             type=AssetTypes.URI_FILE,
             name=str(uuid.uuid4()),  # generating random name
             is_anonymous=True,
+            version="1",
         )
 
         ml_client = MLClient(
-            self._config.credential,
-            self._config.subscription_id,
-            self._config.resource_group_name,
-            self._config.project_name,
+            self._config3.credential,
+            self._config3.subscription_id,
+            self._config3.resource_group_name,
+            self._config3.project_name,
         )
 
         data_asset = ml_client.data.create_or_update(data)
