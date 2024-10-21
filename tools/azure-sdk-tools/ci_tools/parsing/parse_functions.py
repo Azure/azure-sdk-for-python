@@ -387,7 +387,10 @@ def parse_pyproject(
     # fmt: on
 
 
-def get_version_py(setup_path: str):
+def get_version_py(setup_path: str) -> Optional[str]:
+    """
+    Given the path to pyproject.toml or setup.py, attempts to find a (_)version.py file and return its location.
+    """
     file_path, _ = os.path.split(setup_path)
     # Find path to _version.py recursively in azure folder of package
     azure_root_path = os.path.join(file_path, "azure")
@@ -430,7 +433,7 @@ def parse_setup(
     setup_filename_or_folder: str,
 ):
     """
-    Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
+    Used to evaluate a pyproject.toml or setup.py (or a directory containing either) and return a tuple containing:
     (
         <package-name>,
         <package_version>,
