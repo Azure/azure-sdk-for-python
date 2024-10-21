@@ -63,12 +63,6 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
 
         self._blob_lease_client = BlobLeaseClient(_client, lease_id=lease_id)
 
-    def __enter__(self) -> None:
-        raise TypeError("Async lease must use 'async with'.")
-
-    def __exit__(self, *args: Any) -> None:
-        self.release()
-
     async def __aenter__(self) -> Self:
         return self
 
