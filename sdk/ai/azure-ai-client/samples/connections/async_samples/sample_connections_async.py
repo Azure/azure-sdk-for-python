@@ -38,13 +38,17 @@ async def sample_connections_async():
     async with ai_client:
 
         # List the properties of all connections
-        print("====> Listing of all connections:")
-        async for connection in ai_client.connections.list():
+        connections = await ai_client.connections.list()
+        print(f"====> Listing of all connections (found {len(connections)}):")
+        for connection in connections:
             print(connection)
 
         # List the properties of all connections of a particular "type" (In this sample, Azure OpenAI connections)
-        print("====> Listing of all Azure Open AI connections:")
-        async for connection in ai_client.connections.list(connection_type=ConnectionType.AZURE_OPEN_AI):
+        connections = await ai_client.connections.list(
+            connection_type=ConnectionType.AZURE_OPEN_AI,
+        )
+        print("====> Listing of all Azure Open AI connections (found {len(connections)}):")
+        for connection in connections:
             print(connection)
 
         # Get the properties of the default connection of a particular "type", with credentials

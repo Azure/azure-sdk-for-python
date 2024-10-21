@@ -12,7 +12,7 @@ import io
 import logging
 import os
 import time
-from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
+from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -34,7 +34,8 @@ class InferenceOperations:
     def __init__(self, outer_instance):
         self.outer_instance = outer_instance
 
-    async def get_chat_completions_client(self) -> "ChatCompletionsClient":
+    @distributed_trace_async
+    async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default 
         Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
         The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
@@ -43,8 +44,9 @@ class InferenceOperations:
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        kwargs.setdefault('merge_span', True)
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, with_credentials=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -84,7 +86,8 @@ class InferenceOperations:
 
         return client
 
-    async def get_embeddings_client(self) -> "EmbeddingsClient":
+    @distributed_trace_async
+    async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default 
         Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
         The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
@@ -93,9 +96,9 @@ class InferenceOperations:
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
+        kwargs.setdefault('merge_span', True)
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, with_credentials=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -133,7 +136,8 @@ class InferenceOperations:
 
         return client
 
-    async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
+    @distributed_trace_async
+    async def get_azure_openai_client(self, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default 
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
@@ -141,8 +145,9 @@ class InferenceOperations:
         :rtype: ~openai.AsyncAzureOpenAI
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        kwargs.setdefault('merge_span', True)
         connection = await self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True
+            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No Azure OpenAI connection found.")
@@ -198,6 +203,7 @@ class InferenceOperations:
 
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
+    @distributed_trace_async
     async def get_default(
         self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
@@ -212,19 +218,23 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: ~azure.ai.client.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        kwargs.setdefault('merge_span', True)
         if not connection_type:
             raise ValueError("You must specify an connection type")
         # Since there is no notion of default connection at the moment, list all connections in the category
         # and return the first one
-        async for connection_properties in self.list(connection_type=connection_type, **kwargs):
+        connection_properties_list = await self.list(connection_type=connection_type, **kwargs)
+        if len(connection_properties_list) > 0:
             if with_credentials:
                 return await self.get(
-                    connection_name=connection_properties.name, with_credentials=with_credentials, **kwargs
+                    connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
                 )
             else:
-                return connection_properties
-        return None
+                return connection_properties_list[0]
+        else:
+            return None
 
+    @distributed_trace_async
     async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials.
@@ -237,6 +247,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: ~azure.ai.client.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        kwargs.setdefault('merge_span', True)
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
@@ -262,22 +273,29 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         else:
             return ConnectionProperties(connection=await self._get(connection_name=connection_name, **kwargs))
  
+    @distributed_trace_async
     async def list(
         self, *, connection_type: ConnectionType | None = None, **kwargs: Any
-    ) -> AsyncIterable[ConnectionProperties]:
+    ) -> Iterable[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
         If not provided, all connections are listed.
         :type connection_type: ~azure.ai.client.models._models.ConnectionType
         :return: A list of connection properties
-        :rtype: AsyncIterable[~azure.ai.client.models._models.ConnectionProperties]
+        :rtype: Iterable[~azure.ai.client.models._models.ConnectionProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        connections_list_response = await self._list(include_all=True, category=connection_type, **kwargs)
-        for connection in connections_list_response.value:
-            yield ConnectionProperties(connection=connection)
- 
+        kwargs.setdefault('merge_span', True)
+        connections_list: ConnectionsListResponse = await self._list(include_all=True, category=connection_type, **kwargs)
+
+        # Iterate to create the simplified result property
+        connection_properties_list: List[ConnectionProperties] = []
+        for connection in connections_list.value:
+            connection_properties_list.append(ConnectionProperties(connection=connection))
+
+        return connection_properties_list
+
 
 class AgentsOperations(AgentsOperationsGenerated):
 
