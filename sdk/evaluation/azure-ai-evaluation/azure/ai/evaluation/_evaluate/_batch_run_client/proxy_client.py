@@ -1,13 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import inspect
 import logging
 import math
 import os
+from collections import OrderedDict
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union
-from collections import OrderedDict
 
 import pandas as pd
 from promptflow.client import PFClient
@@ -37,7 +40,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs
     ) -> ProxyRun:
         flow_to_run = flow
-        if hasattr(flow, "_to_async"):
+        if os.getenv("AI_EVALS_BATCH_USE_ASYNC", "true").lower() == "true" and hasattr(flow, "_to_async"):
             flow_to_run = flow._to_async()  # pylint: disable=protected-access
 
         batch_use_async = self._should_batch_use_async(flow_to_run)
@@ -77,7 +80,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @staticmethod
     def _should_batch_use_async(flow):
-        if os.getenv("PF_EVALS_BATCH_USE_ASYNC", "true").lower() == "true":
+        if os.getenv("AI_EVALS_BATCH_USE_ASYNC", "true").lower() == "true":
             if hasattr(flow, "__call__") and inspect.iscoroutinefunction(flow.__call__):
                 return True
             if inspect.iscoroutinefunction(flow):
