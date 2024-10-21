@@ -4,6 +4,6 @@
 
 """Contains distillation classes for Azure Machine Learning SDKv2."""
 
-from azure.ai.ml.entities._job.distillation import DistillationPromptSettings, EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation import EndpointRequestSettings, PromptSettings, TeacherModelSettings
 
-__all__ = ["DistillationPromptSettings", "EndpointRequestSettings"]
+__all__ = ["PromptSettings", "EndpointRequestSettings", "TeacherModelSettings"]

@@ -13,21 +13,24 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInp
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationType, JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE, AssetTypes
+from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.distillation.constants import (
     AzureMLDistillationProperties,
     EndpointSettings,
-    PromptSettings,
+    PromptSettingKeys,
 )
 from azure.ai.ml.entities._job.distillation.distillation_types import (
-    DistillationPromptSettings,
     EndpointRequestSettings,
+    PromptSettings,
+    TeacherModelSettings,
 )
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
 # pylint: disable=too-many-instance-attributes
@@ -37,25 +40,23 @@ class DistillationJob(Job, JobIOMixin):
         self,
         data_generation_type: str,
         data_generation_task_type: str,
-        teacher_model_endpoint: str,
+        teacher_model_endpoint_connection: WorkspaceConnection,
         student_model: Input,
         training_data: Optional[Input] = None,
         validation_data: Optional[Input] = None,
-        inference_parameters: Optional[Dict] = None,
-        endpoint_request_settings: Optional[EndpointRequestSettings] = None,
-        prompt_settings: Optional[DistillationPromptSettings] = None,
+        teacher_model_settings: Optional[TeacherModelSettings] = None,
+        prompt_settings: Optional[PromptSettings] = None,
         hyperparameters: Optional[Dict] = None,
         resources: Optional[ResourceConfiguration] = None,
         **kwargs: Any,
     ) -> None:
         self._data_generation_type = data_generation_type
         self._data_generation_task_type = data_generation_task_type
-        self._teacher_model_endpoint = teacher_model_endpoint
+        self._teacher_model_endpoint_connection = teacher_model_endpoint_connection
         self._student_model = student_model
         self._training_data = training_data
         self._validation_data = validation_data
-        self._inference_parameters = inference_parameters
-        self._endpoint_request_settings = endpoint_request_settings
+        self._teacher_model_settings = teacher_model_settings
         self._prompt_settings = prompt_settings
         self._hyperparameters = hyperparameters
         self._resources = resources
@@ -106,21 +107,21 @@ class DistillationJob(Job, JobIOMixin):
         self._data_generation_task_type = task
 
     @property
-    def teacher_model_endpoint(self) -> str:
-        """Get the endpoint information of the teacher model to use for data generation.
-        :return: Endpoint name
-        :rtype: str
+    def teacher_model_endpoint_connection(self) -> WorkspaceConnection:
+        """Get the endpoint connection of the teacher model to use for data generation.
+        :return: Endpoint connection
+        :rtype: WorkspaceConnection
         """
-        return self._teacher_model_endpoint
+        return self._teacher_model_endpoint_connection
 
-    @teacher_model_endpoint.setter
-    def teacher_model_endpoint(self, endpoint: str) -> None:
+    @teacher_model_endpoint_connection.setter
+    def teacher_model_endpoint_connection(self, connection: WorkspaceConnection) -> None:
         """Set the endpoint information of the teacher model.
 
-        :param endpoint: Serverless MaaS connection
-        :type endpoint: str
+        :param connection: Workspace connection
+        :type connection: WorkspaceConnection
         """
-        self._teacher_model_endpoint = endpoint
+        self._teacher_model_endpoint_connection = connection
 
     @property
     def student_model(self) -> Input:
@@ -176,25 +177,16 @@ class DistillationJob(Job, JobIOMixin):
         self._validation_data = validation_data
 
     @property
-    def inference_parameters(self) -> Optional[Dict]:
-        """Get the parameters for endpoint inferencing.
+    def teacher_model_settings(self) -> Optional[TeacherModelSettings]:
+        """Get the teacher model settings.
 
-        :return: The params for endpoint inferencing.
-        :rtype: Dict
+        :return: The settings for the teacher model to use.
+        :rtype: Optional[TeacherModelSettings]
         """
-        return self._inference_parameters
+        return self._teacher_model_settings
 
     @property
-    def endpoint_request_settings(self) -> Optional[EndpointRequestSettings]:
-        """Get the endpoint request settings.
-
-        :return: The settings for the requests sent to the endpoint
-        :rtype: Optional[EndpointRequestSettings]
-        """
-        return self._endpoint_request_settings
-
-    @property
-    def prompt_settings(self) -> Optional[DistillationPromptSettings]:
+    def prompt_settings(self) -> Optional[PromptSettings]:
         """Get the settings for the prompt.
 
         :return: The settings for the prompt.
@@ -240,14 +232,11 @@ class DistillationJob(Job, JobIOMixin):
         :param endpoint_request_settings: Settings for inference requests to the endpoint
         :type endpoint_request_settings: Optional[EndpointRequestSettings]
         """
-        self._inference_parameters = (
-            inference_parameters if inference_parameters is not None else self._inference_parameters
-        )
-        self._endpoint_request_settings = (
-            endpoint_request_settings if endpoint_request_settings is not None else self._endpoint_request_settings
+        self._teacher_model_settings = TeacherModelSettings(
+            inference_parameters=inference_parameters, endpoint_request_settings=endpoint_request_settings
         )
 
-    def set_prompt_settings(self, prompt_settings: Optional[DistillationPromptSettings]):
+    def set_prompt_settings(self, prompt_settings: Optional[PromptSettings]):
         """Set settings related to the system prompt used for generating data.
 
         :param prompt_settings: Settings related to the system prompt used for generating data.
@@ -306,6 +295,10 @@ class DistillationJob(Job, JobIOMixin):
         validation_data = loaded_data.get("validation_data", None)
         if isinstance(validation_data, str):
             loaded_data["validation_data"] = Input(type="uri_file", path=validation_data)
+
+        student_model = loaded_data.get("student_model", None)
+        if isinstance(student_model, str):
+            loaded_data["student_model"] = Input(type=AssetTypes.URI_FILE, path=student_model)
 
         job_instance = DistillationJob(**loaded_data)
         return job_instance
@@ -371,8 +364,6 @@ class DistillationJob(Job, JobIOMixin):
             distillation.validation_data = UriFileJobInput(uri=distillation.validation_data.path)
         if isinstance(distillation.model, Input):
             distillation.model = MLFlowModelJobInput(uri=distillation.model.path)
-        if isinstance(distillation.model, str):
-            distillation.model = MLFlowModelJobInput(uri=distillation.model)
 
         self._add_distillation_properties(self.properties)
 
@@ -410,22 +401,28 @@ class DistillationJob(Job, JobIOMixin):
 
         # Not needed for FT Overloaded API but needed to store data gen type
         properties[AzureMLDistillationProperties.DataGenerationType] = self._data_generation_type
-        properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = self._teacher_model_endpoint
+        properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = (
+            self._teacher_model_endpoint_connection.name
+        )
 
         if self._prompt_settings:
             for setting, value in self._prompt_settings.items():
                 if value is not None:
                     properties[f"azureml.{setting.strip('_')}"] = value
 
-        if self._inference_parameters:
-            for inference_key, value in self._inference_parameters.items():
-                if value is not None:
-                    properties[f"{AzureMLDistillationProperties.TeacherModel}.{inference_key}"] = value
+        if self._teacher_model_settings:
+            inference_settings = self._teacher_model_settings.inference_parameters
+            endpoint_settings = self._teacher_model_settings.endpoint_request_settings
 
-        if self._endpoint_request_settings:
-            for setting, value in self._endpoint_request_settings.items():
-                if value is not None:
-                    properties[f"azureml.{setting.strip('_')}"] = value
+            if inference_settings:
+                for inference_key, value in inference_settings.items():
+                    if value is not None:
+                        properties[f"{AzureMLDistillationProperties.TeacherModel}.{inference_key}"] = value
+
+            if endpoint_settings:
+                for setting, value in endpoint_settings.items():
+                    if value is not None:
+                        properties[f"azureml.{setting.strip('_')}"] = value
 
         if self._resources and self._resources.instance_type:
             properties[f"{AzureMLDistillationProperties.InstanceType}.data_generation"] = self._resources.instance_type
@@ -437,6 +434,7 @@ class DistillationJob(Job, JobIOMixin):
         endpoint_settings = {}
         prompt_settings = {}
         resources = {}
+        teacher_settings = {}
         teacher_model = ""
         for key, val in properties.items():
             param = key.split(".")[-1]
@@ -450,16 +448,22 @@ class DistillationJob(Job, JobIOMixin):
             else:
                 if param in EndpointSettings.valid_settings:
                     endpoint_settings[param] = val
-                elif param in PromptSettings.valid_settings:
+                elif param in PromptSettingKeys.valid_settings:
                     prompt_settings[param] = val
+
+        if inference_parameters:
+            teacher_settings["inference_parameters"] = inference_parameters
+        if endpoint_settings:
+            teacher_settings["endpoint_request_settings"] = EndpointRequestSettings(**endpoint_settings)
 
         return {
             "data_generation_task_type": properties.get(AzureMLDistillationProperties.DataGenerationTaskType),
             "data_generation_type": properties.get(AzureMLDistillationProperties.DataGenerationType),
-            "teacher_model_endpoint": teacher_model,
-            "inference_parameters": inference_parameters if inference_parameters else None,
-            "endpoint_request_settings": EndpointRequestSettings(**endpoint_settings) if endpoint_settings else None,
-            "prompt_settings": DistillationPromptSettings(**prompt_settings) if prompt_settings else None,
+            "teacher_model_endpoint_connection": WorkspaceConnection(
+                type="custom", credentials=NoneCredentialConfiguration(), name=teacher_model, target="None"
+            ),
+            "teacher_model_settings": TeacherModelSettings(**teacher_settings) if teacher_settings else None,
+            "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
             "resources": ResourceConfiguration(**resources) if resources else None,
         }
 
@@ -495,13 +499,12 @@ class DistillationJob(Job, JobIOMixin):
             super().__eq__(other)
             and self.data_generation_type == other.data_generation_type
             and self.data_generation_task_type == other.data_generation_task_type
-            and self.teacher_model_endpoint == other.teacher_model_endpoint
+            and self.teacher_model_endpoint_connection.name == other.teacher_model_endpoint_connection.name
             and self.student_model == other.student_model
             and self.training_data == other.training_data
-            and self._inference_parameters == other._inference_parameters
-            and self._endpoint_request_settings == other._endpoint_request_settings
-            and self._prompt_settings == other._prompt_settings
-            and self._hyperparameters == other._hyperparameters
+            and self.teacher_model_settings == other.teacher_model_settings
+            and self.prompt_settings == other.prompt_settings
+            and self.hyperparameters == other.hyperparameters
             and self.resources == other.resources
         )
 

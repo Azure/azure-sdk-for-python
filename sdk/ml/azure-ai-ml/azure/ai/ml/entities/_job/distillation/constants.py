@@ -15,5 +15,5 @@ class EndpointSettings:
     valid_settings = {"request_batch_size", "min_endpoint_success_ratio"}
 
 
-class PromptSettings:
+class PromptSettingKeys:
     valid_settings = {"enable_chain_of_thought", "enable_chain_of_density", "max_len_summary"}

@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional
+from typing import Dict, Optional
 
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class DistillationPromptSettings:
+class PromptSettings:
     def __init__(
         self,
         enable_chain_of_thought: bool = False,
@@ -117,7 +117,7 @@ class DistillationPromptSettings:
         :return: True or False
         :rtype: bool
         """
-        if not isinstance(other, DistillationPromptSettings):
+        if not isinstance(other, PromptSettings):
             return False
         return (
             self.enable_chain_of_thought == other.enable_chain_of_thought
@@ -206,6 +206,62 @@ class EndpointRequestSettings:
         return (
             self.request_batch_size == other.request_batch_size
             and self.min_endpoint_success_ratio == other.min_endpoint_success_ratio
+        )
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between two EndpointRequestSettings objects.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+
+@experimental
+class TeacherModelSettings:
+    def __init__(
+        self, inference_parameters: Optional[Dict], endpoint_request_settings: Optional[EndpointRequestSettings]
+    ):
+        self._inference_parameters = inference_parameters
+        self._endpoint_request_settings = endpoint_request_settings
+
+    @property
+    def inference_parameters(self) -> Optional[Dict]:
+        return self._inference_parameters
+
+    @inference_parameters.setter
+    def inference_parameters(self, params: Optional[Dict]) -> None:
+        self._inference_parameters = params
+
+    @property
+    def endpoint_request_settings(self) -> Optional[EndpointRequestSettings]:
+        return self._endpoint_request_settings
+
+    @endpoint_request_settings.setter
+    def endpoint_request_settings(self, endpoint_settings: Optional[EndpointRequestSettings]) -> None:
+        self._endpoint_request_settings = endpoint_settings
+
+    def items(self):
+        return self.__dict__.items()
+
+    def __eq__(self, other: object) -> bool:
+        """Returns True if both instances have the same values.
+
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        if not isinstance(other, TeacherModelSettings):
+            return False
+        return (
+            self.inference_parameters == other.inference_parameters
+            and self.endpoint_request_settings == other.endpoint_request_settings
         )
 
     def __ne__(self, other: object) -> bool:

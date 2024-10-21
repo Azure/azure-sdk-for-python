@@ -9,24 +9,21 @@ from azure.ai.ml.constants import DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import (
-    DistillationPromptSettings,
-    EndpointRequestSettings,
-)
+from azure.ai.ml.entities._job.distillation.distillation_types import PromptSettings, TeacherModelSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
 def distillation(
     experiment_name: str,
     data_generation_type: str,
     data_generation_task_type: str,
-    teacher_model_endpoint: str,
+    teacher_model_endpoint_connection: WorkspaceConnection,
     student_model: Union[Input, str],
-    training_data: Optional[Input] = None,
-    validation_data: Optional[Input] = None,
-    inference_parameters: Optional[Dict] = None,
-    endpoint_request_settings: Optional[EndpointRequestSettings] = None,
-    prompt_settings: Optional[DistillationPromptSettings] = None,
+    training_data: Optional[Union[Input, str]] = None,
+    validation_data: Optional[Union[Input, str]] = None,
+    teacher_model_settings: Optional[TeacherModelSettings] = None,
+    prompt_settings: Optional[PromptSettings] = None,
     hyperparameters: Optional[Dict] = None,
     resources: Optional[ResourceConfiguration] = None,
     **kwargs: Any,
@@ -58,12 +55,13 @@ def distillation(
             partitioning the training_data. If validation data is not None, it should contain the questions but not
             the labels.
     :paramtype validation_data: Optional[Input]
-    :keyword inference_parameters: The parameters that each inference request will use when generating synthetic data.
+    :keyword teacher_model_settings: The settings for the teacher model. Accepts both the inference parameters and
+            endpoint settings.
 
-            Acceptable keys: temperature, max_tokens, top_p, frequency_penalty, presence_penalty, stop
-    :paramtype inference_parameters: Optional[Dict]
-    :keyword endpoint_request_settings: The settings to use for sending requests to the teacher model endpoint.
-    :paramtype endpoint_request_settings: Optional[EndpointRequestSettings]
+            Acceptable keys for inference parameters: temperature, max_tokens, top_p, frequency_penalty,
+            presence_penalty, stop
+
+    :paramtype teacher_model_settings: Optional[TeacherModelSettings]
     :keyword prompt_settings: The settings for the prompt that affect the system prompt used for data generation.
     :paramtype prompt_settings: Optional[DistillationPromptSettings]
     :keyword hyperparameters: The hyperparameters to use for finetuning.
@@ -73,6 +71,10 @@ def distillation(
     """
     if isinstance(student_model, str):
         student_model = Input(type=AssetTypes.URI_FILE, path=student_model)
+    if isinstance(training_data, str):
+        training_data = Input(type=AssetTypes.URI_FILE, path=training_data)
+    if isinstance(validation_data, str):
+        validation_data = Input(type=AssetTypes.URI_FILE, path=validation_data)
 
     if training_data is None and data_generation_type == DataGenerationType.LabelGeneration:
         raise ValueError(
@@ -83,12 +85,11 @@ def distillation(
     return DistillationJob(
         data_generation_type=data_generation_type,
         data_generation_task_type=data_generation_task_type,
-        teacher_model_endpoint=teacher_model_endpoint,
+        teacher_model_endpoint_connection=teacher_model_endpoint_connection,
         student_model=student_model,
         training_data=training_data,
         validation_data=validation_data,
-        inference_parameters=inference_parameters,
-        endpoint_request_settings=endpoint_request_settings,
+        teacher_model_settings=teacher_model_settings,
         prompt_settings=prompt_settings,
         hyperparameters=hyperparameters,
         resources=resources,

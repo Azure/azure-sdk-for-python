@@ -6,14 +6,13 @@ import pytest
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningJob as RestFineTuningJob
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
+from azure.ai.ml.entities import ManagedIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import (
-    DistillationPromptSettings,
-    EndpointRequestSettings,
-)
+from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
 @pytest.fixture
@@ -58,13 +57,15 @@ def endpoint_request_settings() -> EndpointRequestSettings:
 
 
 @pytest.fixture
-def prompt_settings() -> DistillationPromptSettings:
-    return DistillationPromptSettings(enable_chain_of_thought=False, enable_chain_of_density=False)
+def prompt_settings() -> PromptSettings:
+    return PromptSettings(enable_chain_of_thought=False, enable_chain_of_density=False)
 
 
 @pytest.fixture
-def teacher_model_endpoint() -> str:
-    return "Llama-3-1-405B-Instruct-BASE"
+def teacher_model_endpoint() -> WorkspaceConnection:
+    return WorkspaceConnection(
+        type="custom", credentials=ManagedIdentityConfiguration(), name="Llama-3-1-405B-Instruct-BASE", target="None"
+    )
 
 
 @pytest.fixture
@@ -74,19 +75,16 @@ def expected_distillation_job_as_rest_obj(
     validation_dataset,
     mlflow_model_llama,
     hyperparameters,
-    inference_parameters,
-    endpoint_request_settings,
     prompt_settings,
 ) -> RestFineTuningJob:
     distillaton_job = DistillationJob(
         data_generation_type=DataGenerationType.LabelGeneration,
         data_generation_task_type=DataGenerationTaskType.MATH,
-        teacher_model_endpoint=teacher_model_endpoint,
+        teacher_model_endpoint_connection=teacher_model_endpoint,
         student_model=mlflow_model_llama,
         training_data=train_dataset,
         validation_data=validation_dataset,
-        inference_parameters=inference_parameters,
-        endpoint_request_settings=endpoint_request_settings,
+        teacher_model_settings=None,
         prompt_settings=prompt_settings,
         hyperparameters=hyperparameters,
         experiment_name="Distillation-Math-Test-1234",
