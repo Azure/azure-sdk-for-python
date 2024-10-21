@@ -25,4 +25,3 @@ class TestTrustedSigningMgmtOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.operations.list()
         result = [r async for r in response]
         assert result
-        

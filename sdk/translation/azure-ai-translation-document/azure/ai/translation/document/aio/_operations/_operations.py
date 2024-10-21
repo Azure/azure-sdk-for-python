@@ -906,7 +906,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def _get_supported_formats(  # pylint: disable=protected-access
+    async def _get_supported_formats(
         self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
     ) -> _models._models.SupportedFileFormats:
         """Returns a list of supported document formats.

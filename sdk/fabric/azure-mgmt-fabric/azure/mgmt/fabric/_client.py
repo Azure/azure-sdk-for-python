@@ -20,11 +20,10 @@ from ._serialization import Deserializer, Serializer
 from .operations import FabricCapacitiesOperations, Operations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class FabricMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class FabricMgmtClient:
     """FabricMgmtClient.
 
     :ivar fabric_capacities: FabricCapacitiesOperations operations

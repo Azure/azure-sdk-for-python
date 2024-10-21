@@ -24,6 +24,7 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
     """Represents a custom schema format."""
 
+
 # Normalizing the schema content type strings for whitespace and case insensitive comparison.
 class NormalizedSchemaContentTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes closed list of normalized schema content type values."""
