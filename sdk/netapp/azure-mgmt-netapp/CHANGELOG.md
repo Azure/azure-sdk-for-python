@@ -12,10 +12,10 @@
   - Added model `PeerClusterForVolumeMigrationRequest`
   - Added model `RemotePath`
   - Added model `SvmPeerCommandResponse`
-  - Model `VolumesOperations` added method `begin_authorize_external_replication`
-  - Model `VolumesOperations` added method `begin_finalize_external_replication`
-  - Model `VolumesOperations` added method `begin_peer_external_cluster`
-  - Model `VolumesOperations` added method `begin_perform_replication_transfer`
+  - Operation group `VolumesOperations` added method `begin_authorize_external_replication`
+  - Operation group `VolumesOperations` added method `begin_finalize_external_replication`
+  - Operation group `VolumesOperations` added method `begin_peer_external_cluster`
+  - Operation group `VolumesOperations` added method `begin_perform_replication_transfer`
 
 ## 13.2.0 (2024-08-19)
 
