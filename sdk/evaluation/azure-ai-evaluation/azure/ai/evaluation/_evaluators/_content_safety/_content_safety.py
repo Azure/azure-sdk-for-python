@@ -84,7 +84,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
