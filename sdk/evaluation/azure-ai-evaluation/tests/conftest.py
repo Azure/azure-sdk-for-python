@@ -114,11 +114,11 @@ def add_sanitizers(
         project_scope = connection_file["azure_ai_project_scope"]["value"]
         model_config = connection_file["azure_openai_model_config"]["value"]
 
-        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
+        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID.value)
         add_general_regex_sanitizer(
-            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME
+            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME.value
         )
-        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
+        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME.value)
         add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
 
     azure_workspace_triad_sanitizer()
@@ -440,8 +440,7 @@ def user_object_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
-        return SanitizedValues.USER_OBJECT_ID
+        return SanitizedValues.USER_OBJECT_ID.value
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
@@ -453,7 +452,6 @@ def tenant_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
         return SanitizedValues.TENANT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")
