@@ -67,7 +67,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     return None
 
 
-def _get_scheme_for_http_dependency(attributes: Attributes) -> Optional[str]:
+def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
         scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
@@ -75,9 +75,11 @@ def _get_scheme_for_http_dependency(attributes: Attributes) -> Optional[str]:
     return None
 
 
-def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) -> Optional[str]:
+def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
     url = None
     if attributes:
+        if not scheme:
+            scheme = _get_http_scheme(attributes)
         if SpanAttributes.HTTP_URL in attributes:
             url = attributes[SpanAttributes.HTTP_URL]
         elif scheme and SpanAttributes.HTTP_TARGET in attributes:
@@ -106,7 +108,7 @@ def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) 
                         peer_port,
                         http_target,
                     )
-    return str(url)
+    return url
 
 
 def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str]:
@@ -128,18 +130,20 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                     str(attributes.get(SpanAttributes.HTTP_SCHEME))) and \
                     port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
-    return str(target)
+    return target
 
 
 def _get_target_and_path_for_http_dependency(
+    attributes: Attributes,
     target: Optional[str],
     url: Optional[str],
-    scheme: Optional[str],
-    attributes: Attributes,
+    scheme: Optional[str]=None,
 ) -> Tuple[Optional[str], str]:
     target_from_url = None
     path = ""
     if attributes:
+        if not scheme:
+            scheme = _get_http_scheme(attributes)
         if url:
             try:
                 parse_url = urlparse(url)

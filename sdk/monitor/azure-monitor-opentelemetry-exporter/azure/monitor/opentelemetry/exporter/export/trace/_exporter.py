@@ -346,16 +346,14 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
-                scheme = trace_utils._get_scheme_for_http_dependency(span.attributes)
-                url = trace_utils._get_url_for_http_dependency(scheme, span.attributes)
+                url = trace_utils._get_url_for_http_dependency(span.attributes)
                 # data
                 if url:
                     data.data = url
                 target, path = trace_utils._get_target_and_path_for_http_dependency(
+                    span.attributes,
                     target,  # type: ignore
                     url,
-                    scheme,
-                    span.attributes,
                 )
                 # http specific logic for name
                 if path:

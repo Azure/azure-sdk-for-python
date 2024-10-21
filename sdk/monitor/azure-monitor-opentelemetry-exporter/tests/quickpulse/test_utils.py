@@ -114,6 +114,16 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.metrics, [metric_point])
         self.assertEqual(mdp.documents, documents)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_metrics_from_projections")
+    def test_metric_to_qp_data_point_process_filtered_metrics(self, projection_mock):
+        metric_data = mock.Mock()
+        metric_data.resource_metrics = []
+        projections = [("ID:1234", 5.0)]
+        projection_mock.return_value = projections
+        mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, [])[0]
+        self.assertEqual(mdp.metrics[0].name, "ID:1234")
+        self.assertEqual(mdp.metrics[0].value, 5.0)
+
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url")
     def test_get_span_document_client(self, url_mock, iso_mock):

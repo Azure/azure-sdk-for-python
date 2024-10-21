@@ -95,13 +95,11 @@ class _DependencyData(_TelemetryData):
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if SpanAttributes.HTTP_METHOD in span.attributes:
             dependency_type = "HTTP"
-            scheme = trace_utils._get_scheme_for_http_dependency(span.attributes)
-            url = trace_utils._get_url_for_http_dependency(scheme, span.attributes)
+            url = trace_utils._get_url_for_http_dependency(span.attributes)
             target, _ = trace_utils._get_target_and_path_for_http_dependency(
+                span.attributes,
                 target,
                 url,
-                scheme,
-                span.attributes,
             )
             data = url
         elif SpanAttributes.DB_SYSTEM in span.attributes:
