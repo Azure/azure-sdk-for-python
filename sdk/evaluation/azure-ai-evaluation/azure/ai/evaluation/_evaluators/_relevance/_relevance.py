@@ -25,9 +25,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         eval_fn = RelevanceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
+            response="The capital of Japan is Tokyo.")
 
     **Output format**
 

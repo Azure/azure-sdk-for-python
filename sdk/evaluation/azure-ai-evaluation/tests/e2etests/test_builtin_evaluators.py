@@ -141,7 +141,6 @@ class TestBuiltInEvaluators:
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital.",
         )
         assert score is not None
         assert score["gpt_relevance"] > 1.0
