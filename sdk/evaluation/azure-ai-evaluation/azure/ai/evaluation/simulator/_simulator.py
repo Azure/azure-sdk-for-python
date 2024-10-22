@@ -611,8 +611,6 @@ class Simulator:
         :rtype: List[Dict[str, Optional[str]]]
         """
         conversation_history = ConversationHistory()
-        # user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)
-        # conversation_history.add_to_history(user_turn)
 
         while len(conversation_history) < max_conversation_turns:
             user_flow = self._load_user_simulation_flow(
@@ -620,16 +618,23 @@ class Simulator:
                 prompty_model_config=self.model_config,  # type: ignore
                 user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
             )
-            conversation_starter_from_simulated_user = await user_flow(
-                task=task,
-                conversation_history=[
-                    {
-                        "role": "assistant",
-                        "content": conversation_starter,
-                        "your_task": "Act as the user and translate the content into a user query.",
-                    }
-                ],
-            )
+            if len(conversation_history) == 0:
+                conversation_starter_from_simulated_user = await user_flow(
+                    task=task,
+                    conversation_history=[
+                        {
+                            "role": "assistant",
+                            "content": conversation_starter,
+                        }
+                    ],
+                    action="rewrite the assitant's message as you have to accomplish the task by asking the right questions. Make sure the original question is not lost in your rewrite.",
+                )
+            else:
+                conversation_starter_from_simulated_user = await user_flow(
+                    task=task,
+                    conversation_history=conversation_history.to_list(),
+                    action="Your goal is to make sure the task is completed by asking the right questions. Do not ask the same questions again.",
+                )
             if isinstance(conversation_starter_from_simulated_user, dict):
                 conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]
             user_turn = Turn(role=ConversationRole.USER, content=conversation_starter_from_simulated_user)

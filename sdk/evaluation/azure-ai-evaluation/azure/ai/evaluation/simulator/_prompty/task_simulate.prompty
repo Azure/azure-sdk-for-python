@@ -16,6 +16,9 @@ inputs:
     type: string
   conversation_history:
     type: dict
+  action:
+    type: string
+    default: "continue the converasation and make sure the task is completed by asking relevant questions"
 
 ---
 system:
@@ -30,3 +33,5 @@ Here's a sample output:
 
 Output with a json object that continues the conversation, given the conversation history:
 {{ conversation_history }}
+
+{{ action }}
