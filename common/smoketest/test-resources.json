@@ -22,10 +22,12 @@
             "type": "string"
         },
         "storageEndpointSuffix": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "core.windows.net"
         },
         "azureCloud": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "AzureCloud"
         }
     },
     "variables": {
