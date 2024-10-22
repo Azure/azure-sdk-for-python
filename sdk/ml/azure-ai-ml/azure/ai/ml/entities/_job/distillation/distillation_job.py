@@ -74,6 +74,7 @@ class DistillationJob(Job, JobIOMixin):
     @property
     def data_generation_type(self) -> str:
         """Get the type of synthetic data generation to perform.
+
         :return: str representing the type of synthetic data generation to perform.
         :rtype: str
         """
@@ -91,6 +92,7 @@ class DistillationJob(Job, JobIOMixin):
     @property
     def data_generation_task_type(self) -> str:
         """Get the type of synthetic data to generate.
+
         :return: str representing the type of synthetic data to generate.
         :rtype: str
         """
@@ -109,6 +111,7 @@ class DistillationJob(Job, JobIOMixin):
     @property
     def teacher_model_endpoint_connection(self) -> WorkspaceConnection:
         """Get the endpoint connection of the teacher model to use for data generation.
+
         :return: Endpoint connection
         :rtype: WorkspaceConnection
         """
@@ -126,6 +129,7 @@ class DistillationJob(Job, JobIOMixin):
     @property
     def student_model(self) -> Input:
         """Get the student model to be trained with synthetic data
+
         :return: The student model to be finetuned
         :rtype: Input
         """
@@ -145,7 +149,7 @@ class DistillationJob(Job, JobIOMixin):
         """Get the training data.
 
         :return: Training data input
-        :rtype: Input
+        :rtype: typing.Optional[Input]
         """
         return self._training_data
 
@@ -154,7 +158,7 @@ class DistillationJob(Job, JobIOMixin):
         """Set the training data.
 
         :param training_data: Training data input
-        :type training_data: Input
+        :type training_data: typing.Optional[Input]
         """
         self._training_data = training_data
 
@@ -163,7 +167,7 @@ class DistillationJob(Job, JobIOMixin):
         """Get the validation data.
 
         :return: Validation data input
-        :rtype: Input
+        :rtype: typing.Optional[Input]
         """
         return self._validation_data
 
@@ -172,7 +176,7 @@ class DistillationJob(Job, JobIOMixin):
         """Set the validation data.
 
         :param validation_data: Validation data input
-        :type validation_data: Input
+        :type validation_data: typing.Optional[Input]
         """
         self._validation_data = validation_data
 
@@ -181,7 +185,7 @@ class DistillationJob(Job, JobIOMixin):
         """Get the teacher model settings.
 
         :return: The settings for the teacher model to use.
-        :rtype: Optional[TeacherModelSettings]
+        :rtype: typing.Optional[TeacherModelSettings]
         """
         return self._teacher_model_settings
 
@@ -190,7 +194,7 @@ class DistillationJob(Job, JobIOMixin):
         """Get the settings for the prompt.
 
         :return: The settings for the prompt.
-        :rtype: Optional[DistillationPromptSettings]
+        :rtype: typing.Optional[PromptSettings]
         """
         return self._prompt_settings
 
@@ -199,15 +203,16 @@ class DistillationJob(Job, JobIOMixin):
         """Get the finetuning hyperparameters.
 
         :return: The finetuning hyperparameters.
-        :rtype: Dict
+        :rtype: typing.Optional[typing.Dict]
         """
         return self._hyperparameters
 
     @property
     def resources(self) -> Optional[ResourceConfiguration]:
         """Get the resources for data generation.
+
         :return: The resources for data generation.
-        :rtype: Optional[ResourceConfiguration]
+        :rtype: typing.Optional[ResourceConfiguration]
         """
         return self._resources
 
@@ -216,7 +221,7 @@ class DistillationJob(Job, JobIOMixin):
         """Set the resources for data generation.
 
         :param resource: The resources for data generation.
-        :type resource: Optional[ResourceConfiguration]
+        :type resource: typing.Optional[ResourceConfiguration]
         """
         self._resources = resource
 
@@ -228,9 +233,9 @@ class DistillationJob(Job, JobIOMixin):
         """Set settings related to the teacher model.
 
         :param inference_parameters: Settings the teacher model uses during inferencing.
-        :type inference_parameters: Optional[Dict]
+        :type inference_parameters: typing.Optional[typing.Dict]
         :param endpoint_request_settings: Settings for inference requests to the endpoint
-        :type endpoint_request_settings: Optional[EndpointRequestSettings]
+        :type endpoint_request_settings: typing.Optional[EndpointRequestSettings]
         """
         self._teacher_model_settings = TeacherModelSettings(
             inference_parameters=inference_parameters, endpoint_request_settings=endpoint_request_settings
@@ -240,7 +245,7 @@ class DistillationJob(Job, JobIOMixin):
         """Set settings related to the system prompt used for generating data.
 
         :param prompt_settings: Settings related to the system prompt used for generating data.
-        :type prompt_settings: Optional[DistillationPromptSettings]
+        :type prompt_settings: typing.Optional[PromptSettings]
         """
         self._prompt_settings = prompt_settings if prompt_settings is not None else self._prompt_settings
 
@@ -248,7 +253,7 @@ class DistillationJob(Job, JobIOMixin):
         """Set the hyperparamters for finetuning.
 
         :param hyperparameters: The hyperparameters for finetuning.
-        :type hyperparameters: Optional[Dict]
+        :type hyperparameters: typing.Optional[typing.Dict]
         """
         self._hyperparameters = hyperparameters if hyperparameters is not None else self._hyperparameters
 
@@ -396,6 +401,11 @@ class DistillationJob(Job, JobIOMixin):
 
     # TODO: Remove once Distillation is added to MFE
     def _add_distillation_properties(self, properties: Dict) -> None:
+        """Adds DistillationJob attributes to properties to pass into the FT Overloaded API property bag
+
+        :param properties: Current distillation properties
+        :type properties: typing.Dict
+        """
         properties[AzureMLDistillationProperties.EnableDistillation] = True
         properties[AzureMLDistillationProperties.DataGenerationTaskType] = self._data_generation_task_type.upper()
         properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = (
@@ -433,6 +443,13 @@ class DistillationJob(Job, JobIOMixin):
     # TODO: Remove once Distillation is added to MFE
     @classmethod
     def _filter_properties(cls, properties: Dict) -> Dict:
+        """Convert properties from REST object back to their original states.
+
+        :param properties: Properties from a REST object
+        :type properties: typing.Dict
+        :return: A dict that can be used to create a DistillationJob
+        :rtype: typing.Dict
+        """
         inference_parameters = {}
         endpoint_settings = {}
         prompt_settings = {}

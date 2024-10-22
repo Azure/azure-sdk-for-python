@@ -18,6 +18,13 @@ class PromptSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
+        """Post-load processing of the schema data
+
+        :param data: Dictionary of parsed values from the yaml.
+        :type data: typing.Dict
+        :return: PromptSettings made from the yaml
+        :rtype: PromptSettings
+        """
         from azure.ai.ml.entities._job.distillation.distillation_types import PromptSettings
 
         return PromptSettings(**data)
@@ -30,6 +37,13 @@ class EndpointRequestSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
+        """Post-load processing of the schema data
+
+        :param data: Dictionary of parsed values from the yaml.
+        :type data: typing.Dict
+        :return: EndpointRequestSettings made from the yaml
+        :rtype: EndpointRequestSettings
+        """
         from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings
 
         return EndpointRequestSettings(**data)
@@ -42,6 +56,13 @@ class TeacherModelSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
+        """Post-load processing of the schema data
+
+        :param data: Dictionary of parsed values from the yaml.
+        :type data: typing.Dict
+        :return: TeacherModelSettings made from the yaml
+        :rtype: TeacherModelSettings
+        """
         from azure.ai.ml.entities._job.distillation.distillation_types import TeacherModelSettings
 
         return TeacherModelSettings(**data)

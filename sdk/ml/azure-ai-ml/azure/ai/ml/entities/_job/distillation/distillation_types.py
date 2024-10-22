@@ -16,18 +16,19 @@ class PromptSettings:
         max_len_summary: Optional[int] = None,
         # custom_prompt: Optional[str] = None
     ):
-        """Initialize DistillationPromptSettings.
+        """Initialize PromptSettings.
 
-        param enable_chain_of_thought: Whether or not to enable chain of thought which modifies the system prompt
+        :param enable_chain_of_thought: Whether or not to enable chain of thought which modifies the system prompt
                                        used. Can be used for all `data_generation_task_type` values except
-                                       `SUMMARIZATION`.
-        type enable_chain_of_thought: bool
-        param enable_chain_of_density: Whether or not to enable chain of density which modifies the system prompt
-                                       used. Can only be used for `data_generation_task_type` of `SUMMARIZATION`.
-        type enable_chain_of_density: bool
-        param max_len_summary: The maximum length of the summary generated for data_generation_task_type` of
-                               `SUMMARIZATION`.
-        type max_len_summary: Optional[int]
+                                       `SUMMARIZATION`, defaults to False
+        :type enable_chain_of_thought: bool, optional
+        :param enable_chain_of_density: Whether or not to enable chain of density which modifies the system prompt
+                                       used. Can only be used for `data_generation_task_type` of `SUMMARIZATION`,
+                                       defaults to False
+        :type enable_chain_of_density: bool, optional
+        :param max_len_summary: The maximum length of the summary generated for data_generation_task_type` of
+                               `SUMMARIZATION`, defaults to None
+        :type max_len_summary: typing.Optional[int]
         """
         self._enable_chain_of_thought = enable_chain_of_thought
         self._enable_chain_of_density = enable_chain_of_density
@@ -37,6 +38,7 @@ class PromptSettings:
     @property
     def enable_chain_of_thought(self) -> bool:
         """Get whether or not chain of thought is enabled.
+
         :return: Whether or not chain of thought is enabled.
         :rtype: bool
         """
@@ -74,7 +76,7 @@ class PromptSettings:
         """The number of tokens to use for summarization.
 
         :return: The number of tokens to use for summarization
-        :rtype: int
+        :rtype: typing.Optional[int]
         """
         return self._max_len_summary
 
@@ -83,7 +85,7 @@ class PromptSettings:
         """Set the number of tokens to use for summarization.
 
         :param length: The number of tokens to use for summarization.
-        :type length: int
+        :type length: typing.Optional[int]
         """
         self._max_len_summary = length
 
@@ -128,7 +130,7 @@ class PromptSettings:
         )
 
     def __ne__(self, other: object) -> bool:
-        """Check inequality between two TeacherModelEndpoint objects.
+        """Check inequality between two PromptSettings objects.
 
         :param other: Any object
         :type other: object
@@ -143,12 +145,13 @@ class EndpointRequestSettings:
     def __init__(self, *, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
         """Initialize EndpointRequestSettings.
 
-        param request_batch_size: The number of requests to send to the teacher model endpoint as a batch.
-        type request_batch_size: Optional[int]
-        param min_endpoint_success_ratio: The ratio of (successful requests / total requests) needed for the
+        :param request_batch_size: The number of requests to send to the teacher model endpoint as a batch, defaults
+                                   to None
+        :type request_batch_size: typing.Optional[int], optional
+        :param min_endpoint_success_ratio: The ratio of (successful requests / total requests) needed for the
                                           data generation step to be considered successful. Must be a value between
-                                          0 and 1 inclusive.
-        type min_endpoint_success_ratio: Optional[float]
+                                          0 and 1 inclusive, defaults to None
+        :type min_endpoint_success_ratio: typing.Optional[float], optional
         """
         self._request_batch_size = request_batch_size
         self._min_endpoint_success_ratio = min_endpoint_success_ratio
@@ -158,7 +161,7 @@ class EndpointRequestSettings:
         """Get the number of inference requests to send to the teacher model as a batch.
 
         :return: The number of inference requests to send to the teacher model as a batch.
-        :rtype: int
+        :rtype: typing.Optional[int]
         """
         return self._request_batch_size
 
@@ -167,15 +170,16 @@ class EndpointRequestSettings:
         """Set the number of inference requests to send to the teacher model as a batch.
 
         :param value: The number of inference requests to send to the teacher model as a batch.
-        :type value: int
+        :type value: typing.Optional[int]
         """
         self._request_batch_size = value
 
     @property
     def min_endpoint_success_ratio(self) -> Optional[float]:
         """Get the minimum ratio of successful inferencing requests.
+
         :return: The minimum ratio of successful inferencing requests.
-        :rtype: float
+        :rtype: typing.Optional[float]
         """
         return self._min_endpoint_success_ratio
 
@@ -184,7 +188,7 @@ class EndpointRequestSettings:
         """Set the minimum ratio of successful inferencing requests.
 
         :param ratio: The minimum ratio of successful inferencing requests.
-        :type ratio: float
+        :type ratio: typing.Optional[float]
         """
         self._min_endpoint_success_ratio = ratio
 
@@ -228,23 +232,50 @@ class TeacherModelSettings:
         inference_parameters: Optional[Dict] = None,
         endpoint_request_settings: Optional[EndpointRequestSettings] = None,
     ):
+        """Initialize TeacherModelSettings
+
+        :param inference_parameters: The inference parameters inferencing requests will use, defaults to None
+        :type inference_parameters: typing.Optional[typing.Dict], optional
+        :param endpoint_request_settings: The settings to use for the endpoint, defaults to None
+        :type endpoint_request_settings: typing.Optional[EndpointRequestSettings], optional
+        """
         self._inference_parameters = inference_parameters
         self._endpoint_request_settings = endpoint_request_settings
 
     @property
     def inference_parameters(self) -> Optional[Dict]:
+        """Get the inference parameters.
+
+        :return: The inference parameters.
+        :rtype: typing.Optional[typing.Dict]
+        """
         return self._inference_parameters
 
     @inference_parameters.setter
     def inference_parameters(self, params: Optional[Dict]) -> None:
+        """Set the inference parameters.
+
+        :param params: Inference parameters.
+        :type params: typing.Optional[typing.Dict]
+        """
         self._inference_parameters = params
 
     @property
     def endpoint_request_settings(self) -> Optional[EndpointRequestSettings]:
+        """Get the endpoint request settings.
+
+        :return: The endpoint request settings.
+        :rtype: typing.Optional[EndpointRequestSettings]
+        """
         return self._endpoint_request_settings
 
     @endpoint_request_settings.setter
     def endpoint_request_settings(self, endpoint_settings: Optional[EndpointRequestSettings]) -> None:
+        """Set the endpoint request settings.
+
+        :param endpoint_settings: Endpoint request settings
+        :type endpoint_settings: typing.Optional[EndpointRequestSettings]
+        """
         self._endpoint_request_settings = endpoint_settings
 
     def items(self):
@@ -269,7 +300,7 @@ class TeacherModelSettings:
         )
 
     def __ne__(self, other: object) -> bool:
-        """Check inequality between two EndpointRequestSettings objects.
+        """Check inequality between two TeacherModelSettings objects.
 
         :param other: Any object
         :type other: object
