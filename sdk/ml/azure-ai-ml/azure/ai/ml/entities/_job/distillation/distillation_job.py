@@ -456,7 +456,7 @@ class DistillationJob(Job, JobIOMixin):
         if inference_parameters:
             teacher_settings["inference_parameters"] = inference_parameters
         if endpoint_settings:
-            teacher_settings["endpoint_request_settings"] = EndpointRequestSettings(**endpoint_settings)
+            teacher_settings["endpoint_request_settings"] = EndpointRequestSettings(**endpoint_settings)  # type: ignore
 
         return {
             "data_generation_task_type": properties.get(AzureMLDistillationProperties.DataGenerationTaskType),
@@ -465,7 +465,7 @@ class DistillationJob(Job, JobIOMixin):
                 data=json.loads(teacher_model_info)
             ),
             "teacher_model_settings": (
-                TeacherModelSettings(**teacher_settings) if teacher_settings else None  # pylint: disable=missing-kwoa
+                TeacherModelSettings(**teacher_settings) if teacher_settings else None  # type: ignore
             ),
             "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
             "resources": ResourceConfiguration(**resources) if resources else None,

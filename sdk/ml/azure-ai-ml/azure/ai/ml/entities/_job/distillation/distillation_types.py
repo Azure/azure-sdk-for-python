@@ -223,7 +223,10 @@ class EndpointRequestSettings:
 @experimental
 class TeacherModelSettings:
     def __init__(
-        self, *, inference_parameters: Optional[Dict], endpoint_request_settings: Optional[EndpointRequestSettings]
+        self,
+        *,
+        inference_parameters: Optional[Dict] = None,
+        endpoint_request_settings: Optional[EndpointRequestSettings] = None,
     ):
         self._inference_parameters = inference_parameters
         self._endpoint_request_settings = endpoint_request_settings
