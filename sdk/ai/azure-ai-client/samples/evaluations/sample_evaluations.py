@@ -11,7 +11,7 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_basics.py
+    python sample_evaluations.py
 
     Before running the sample:
 
