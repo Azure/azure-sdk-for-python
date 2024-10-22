@@ -140,7 +140,7 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, query: str, context: str, conversation, **kwargs):
+    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation = None, **kwargs):
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
