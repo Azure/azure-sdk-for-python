@@ -148,7 +148,7 @@ class RetrievalEvaluator:
         :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
         :paramtype query: Optional[str]
         :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype context: str
+        :paramtype context: Optional[str]
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The scores for Chat scenario.
