@@ -689,8 +689,8 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :ivar auth_type: Authentication type of the connection target. Required. Entra ID
      authentication
     :vartype auth_type: str or ~azure.ai.client.models.AAD
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", and "AIServices".
     :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -699,7 +699,8 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
+     \"AzureBlob\", and \"AIServices\"."""
     target: str = rest_field()
     """The connection URL to be used for this service. Required."""
 
@@ -710,8 +711,8 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
 
     :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
     :vartype auth_type: str or ~azure.ai.client.models.API_KEY
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", and "AIServices".
     :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
@@ -722,7 +723,8 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
     auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. API Key authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
+     \"AzureBlob\", and \"AIServices\"."""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
@@ -736,8 +738,8 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     :ivar auth_type: Authentication type of the connection target. Required. Shared Access
      Signature (SAS) authentication
     :vartype auth_type: str or ~azure.ai.client.models.SAS
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", and "AIServices".
     :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
@@ -749,7 +751,8 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     """Authentication type of the connection target. Required. Shared Access Signature (SAS)
      authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
+     \"AzureBlob\", and \"AIServices\"."""
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
@@ -801,12 +804,16 @@ class ConnectionsListSecretsResponse(_model_base.Model):
     """Response from the listSecrets operation.
 
 
+    :ivar id: A unique identifier for the connection. Required.
+    :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
     :vartype properties: ~azure.ai.client.models._models.ConnectionProperties
     """
 
+    id: str = rest_field()
+    """A unique identifier for the connection. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
     properties: "_models._models.ConnectionProperties" = rest_field()

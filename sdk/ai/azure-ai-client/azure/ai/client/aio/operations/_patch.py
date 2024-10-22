@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,12 +14,12 @@ import io
 import logging
 import os
 import time
-from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
+from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ...models._patch import EndpointProperties
+from ...models._patch import ConnectionProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
 from ...models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 from ... import models as _models
@@ -35,12 +36,22 @@ class InferenceOperations:
     def __init__(self, outer_instance):
         self.outer_instance = outer_instance
 
-    async def get_chat_completions_client(self) -> "ChatCompletionsClient":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
+    @distributed_trace_async
+    async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
+        Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
+        The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
-        if not endpoint:
-            raise ValueError("No serverless endpoint found")
+        if not connection:
+            raise ValueError("No serverless connection found")
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
@@ -49,38 +60,50 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+            client = ChatCompletionsClient(
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+            )
+        elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
+                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
             )
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+        elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
+            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
-    async def get_embeddings_client(self) -> "EmbeddingsClient":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=ConnectionType.SERVERLESS, populate_secrets=True
+    @distributed_trace_async
+    async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
+        Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
+        The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
-        if not endpoint:
-            raise ValueError("No serverless endpoint found")
+        if not connection:
+            raise ValueError("No serverless connection found")
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
@@ -89,36 +112,47 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential)
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+            client = EmbeddingsClient(
+                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
+            client = EmbeddingsClient(endpoint=connection.connection_url, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
-    async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
-        endpoint = await self.outer_instance.endpoints.get_default(
-            endpoint_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
+    @distributed_trace_async
+    async def get_azure_openai_client(self, **kwargs) -> "AsyncAzureOpenAI":
+        """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
+        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
+
+        :return: An authenticated AsyncAzureOpenAI client
+        :rtype: ~openai.AsyncAzureOpenAI
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        connection = await self.outer_instance.connections.get_default(
+            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
-        if not endpoint:
-            raise ValueError("No Azure OpenAI endpoint found.")
+        if not connection:
+            raise ValueError("No Azure OpenAI connection found.")
 
         try:
             from openai import AsyncAzureOpenAI
@@ -129,14 +163,14 @@ class InferenceOperations:
         # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
         AZURE_OPENAI_API_VERSION = "2024-06-01"
 
-        if endpoint.authentication_type == AuthenticationType.API_KEY:
+        if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AsyncAzureOpenAI(
-                api_key=endpoint.key, azure_endpoint=endpoint.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
+                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
             )
-        elif endpoint.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.AAD:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
             )
@@ -149,18 +183,18 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
-                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
-                azure_endpoint=endpoint.endpoint_url,
+                azure_endpoint=connection.endpoint_url,
                 api_version=AZURE_OPENAI_API_VERSION,
             )
-        elif endpoint.authentication_type == AuthenticationType.SAS:
+        elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
             client = AsyncAzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
-                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
-                azure_endpoint=endpoint.endpoint_url,
+                azure_endpoint=connection.endpoint_url,
                 api_version=AZURE_OPENAI_API_VERSION,
             )
         else:
@@ -171,28 +205,59 @@ class InferenceOperations:
 
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
-    async def get_default(self, *, endpoint_type: ConnectionType, populate_secrets: bool = False) -> EndpointProperties:
-        if not endpoint_type:
-            raise ValueError("You must specify an endpoint type")
-        # Since there is no notion of service default at the moment, always return the first one
-        async for endpoint_properties in self.list(endpoint_type=endpoint_type, populate_secrets=populate_secrets):
-            return endpoint_properties
-        return None
+    @distributed_trace_async
+    async def get_default(
+        self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
+    ) -> ConnectionProperties:
+        """Get the properties of the default connection of a certain connection type, with or without
+        populating authentication credentials.
 
-    async def get(self, *, endpoint_name: str, populate_secrets: bool = False) -> EndpointProperties:
-        if not endpoint_name:
+        :param connection_type: The connection type. Required.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        if not connection_type:
+            raise ValueError("You must specify an connection type")
+        # Since there is no notion of default connection at the moment, list all connections in the category
+        # and return the first one
+        connection_properties_list = await self.list(connection_type=connection_type, **kwargs)
+        if len(connection_properties_list) > 0:
+            if with_credentials:
+                return await self.get(
+                    connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
+                )
+            else:
+                return connection_properties_list[0]
+        else:
+            return None
+
+    @distributed_trace_async
+    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+        """Get the properties of a single connection, given its connection name, with or without
+        populating authentication credentials.
+
+        :param connection_name: Connection Name. Required.
+        :type connection_name: str
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
-        if populate_secrets:
+        if with_credentials:
             connection: ConnectionsListSecretsResponse = await self._list_secrets(
-                connection_name_in_url=endpoint_name,
-                connection_name=endpoint_name,
-                subscription_id=self._config.subscription_id,
-                resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.project_name,
-                api_version_in_body=self._config.api_version,
+                connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
-                return EndpointProperties(connection=connection, token_credential=self._config.credential)
+                return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
@@ -202,32 +267,38 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     project_name=self._config.project_name,
-                    connection_name=endpoint_name,
+                    connection_name=connection_name,
                 )
-                return EndpointProperties(connection=connection, token_credential=token_credential)
+                return ConnectionProperties(connection=connection, token_credential=token_credential)
 
-            return EndpointProperties(connection=connection)
+            return ConnectionProperties(connection=connection)
         else:
-            internal_response: ConnectionsListResponse = await self._list()
-            for connection in internal_response.value:
-                if endpoint_name == connection.name:
-                    return EndpointProperties(connection=connection)
-            return None
+            return ConnectionProperties(connection=await self._get(connection_name=connection_name, **kwargs))
 
+    @distributed_trace_async
     async def list(
-        self, *, endpoint_type: ConnectionType | None = None, populate_secrets: bool = False
-    ) -> AsyncIterable[EndpointProperties]:
+        self, *, connection_type: ConnectionType | None = None, **kwargs: Any
+    ) -> Iterable[ConnectionProperties]:
+        """List the properties of all connections, or all connections of a certain connection type.
 
-        # First make a REST call to /list to get all the connections, without secrets
-        connections_list: ConnectionsListResponse = await self._list()
+        :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
+        If not provided, all connections are listed.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :return: A list of connection properties
+        :rtype: Iterable[~azure.ai.client.models._models.ConnectionProperties]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        connections_list: ConnectionsListResponse = await self._list(
+            include_all=True, category=connection_type, **kwargs
+        )
 
-        # Filter by connection type
+        # Iterate to create the simplified result property
+        connection_properties_list: List[ConnectionProperties] = []
         for connection in connections_list.value:
-            if endpoint_type is None or connection.properties.category == endpoint_type:
-                if not populate_secrets:
-                    yield EndpointProperties(connection=connection)
-                else:
-                    yield await self.get(endpoint_name=connection.name, populate_secrets=True)
+            connection_properties_list.append(ConnectionProperties(connection=connection))
+
+        return connection_properties_list
 
 
 class AgentsOperations(AgentsOperationsGenerated):
@@ -315,6 +386,64 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_agent(
+        self,
+        *,
+        model: str,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        toolset: Optional[_models.ToolSet] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> _models.Agent:
+        """Creates a new agent.
+
+        :keyword model: The ID of the model to use. Required.
+        :paramtype model: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the new agent. Default value is None.
+        :paramtype name: str
+        :keyword description: The description of the new agent. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :paramtype instructions: str
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.client.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Creates a new agent.
@@ -358,7 +487,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param instructions: System instructions for the agent.
         :param tools: List of tools definitions for the agent.
         :param tool_resources: Resources used by the agent's tools.
-        :param toolset: Collection of tools (alternative to `tools` and `tool_resources`).
+        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions).
         :param temperature: Sampling temperature for generating agent responses.
         :param top_p: Nucleus sampling parameter.
         :param response_format: Response format for tool calls.
@@ -1348,7 +1478,8 @@ class AgentsOperations(AgentsOperationsGenerated):
             if toolset:
                 tool_outputs = await toolset.execute_tool_calls(tool_calls)
             else:
-                raise ValueError("Toolset is not available in the client.")
+                logger.warning("Toolset is not available in the client.")
+                return
 
             logger.info(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
@@ -1387,14 +1518,16 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def upload_file(self, file_path: str, *, purpose: str, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file(
+        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1403,11 +1536,11 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def upload_file(
         self,
-        body: Union[JSON, None] = None,
+        body: Optional[JSON] = None,
         *,
-        file: Union[FileType, None] = None,
+        file: Optional[FileType] = None,
         file_path: Optional[str] = None,
-        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.OpenAIFile:
@@ -1496,7 +1629,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: str, sleep_interval: float = 1, **kwargs: Any
+        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1504,7 +1637,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
@@ -1516,11 +1649,11 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def upload_file_and_poll(
         self,
-        body: Union[JSON, None] = None,
+        body: Optional[JSON] = None,
         *,
-        file: Union[FileType, None] = None,
+        file: Optional[FileType] = None,
         file_path: Optional[str] = None,
-        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        purpose: Union[str, _models.FilePurpose, None] = None,
         filename: Optional[str] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -1654,7 +1787,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         sleep_interval: float = 1,
         **kwargs: Any,
     ) -> _models.VectorStore:
-        """Creates a vector store.
+        """Creates a vector store and poll.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -1704,6 +1837,136 @@ class AgentsOperations(AgentsOperationsGenerated):
             vector_store = await self.get_vector_store(vector_store.id)
 
         return vector_store
+
+    @overload
+    async def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        *,
+        file_ids: List[str],
+        content_type: str = "application/json",
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword file_ids: List of file identifiers. Required.
+        :paramtype file_ids: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_vector_store_file_batch_and_poll(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = None,
+        *,
+        file_ids: List[str] = _Unset,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch and poll.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_ids: List of file identifiers. Required.
+        :paramtype file_ids: list[str]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if body is None:
+            vector_store_file_batch = await super().create_vector_store_file_batch(
+                vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs
+            )
+        else:
+            content_type = kwargs.get("content_type", "application/json")
+            vector_store_file_batch = await super().create_vector_store_file_batch(
+                body=body, content_type=content_type, **kwargs
+            )
+
+        while vector_store_file_batch.status == "in_progress":
+            time.sleep(sleep_interval)
+            vector_store_file_batch = await super().get_vector_store_file_batch(
+                vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id
+            )
+
+        return vector_store_file_batch
 
 
 __all__: List[str] = [

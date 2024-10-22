@@ -167,14 +167,16 @@ class TestEvaluate:
 
     @pytest.mark.azuretest
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file):
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file, azure_cred):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        content_safety_eval = ContentSafetyEvaluator(project_scope, credential=None, parallel=False)
+        content_safety_eval = ContentSafetyEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+        )
 
         # run the evaluation
         result = evaluate(
@@ -207,7 +209,7 @@ class TestEvaluate:
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "true"
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
 
         start_time = time.time()
@@ -231,7 +233,7 @@ class TestEvaluate:
         assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
         assert "fluency.gpt_fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
-        os.environ.pop("PF_EVALS_BATCH_USE_ASYNC")
+        os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
         "use_pf_client,function,column",

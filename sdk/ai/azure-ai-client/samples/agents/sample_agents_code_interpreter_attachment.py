@@ -18,14 +18,14 @@ USAGE:
     pip install azure.ai.client azure-identity
 
     Set this environment variables with your own values:
-    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import CodeInterpreterTool
 from azure.ai.client.models import FilePurpose
-from azure.ai.client.models import CodeInterpreterToolDefinition, MessageAttachment
+from azure.ai.client.models import MessageAttachment
 from azure.identity import DefaultAzureCredential
 
 
@@ -34,20 +34,8 @@ from azure.identity import DefaultAzureCredential
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
-
-# Or, you can create the Azure AI Client by giving all required parameters directly
-"""
-ai_client = AzureAIClient(
-    credential=DefaultAzureCredential(),
-    host_name=os.environ["AI_CLIENT_HOST_NAME"],
-    subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-)
-"""
 
 with ai_client:
     # upload a file and wait for it to be processed
@@ -55,14 +43,13 @@ with ai_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     code_interpreter = CodeInterpreterTool()
-    code_interpreter.add_file(file.id)
 
-    # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
+    # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="You are helpful assistant",
-        tools=[CodeInterpreterToolDefinition()],
+        tools=code_interpreter.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
@@ -77,7 +64,11 @@ with ai_client:
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Created run, run ID: {run.id}")
+    print(f"Run finished with status: {run.status}")
+
+    if run.status == "failed":
+        # Check if you got "Rate limit is exceeded.", then you want to get more quota
+        print(f"Run failed: {run.last_error}")
 
     ai_client.agents.delete_file(file.id)
     print("Deleted file")

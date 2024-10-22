@@ -15,7 +15,7 @@ import asyncio
 
 from azure.core.credentials import TokenCredential, AccessToken
 
-from ._enums import AgentStreamEvent
+from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     ConnectionsListSecretsResponse,
     MessageDeltaChunk,
@@ -37,6 +37,7 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
+    ConnectionType,
 )
 
 from abc import ABC, abstractmethod
@@ -45,12 +46,65 @@ from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Op
 logger = logging.getLogger(__name__)
 
 
-class EndpointProperties:
+def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Remove the parameters, non present in class public fields; return shallow copy of a dictionary.
+
+    **Note:** Classes inherited from the model check that the parameters are present
+    in the list of attributes and if they are not, the error is being raised. This check may not
+    be relevant for classes, not inherited from azure.ai.client._model_base.Model.
+    :param model_class: The class of model to be used.
+    :param parameters: The parsed dictionary with parameters.
+    :return: The dictionary with all invalid parameters removed.
+    """
+    new_params = {}
+    valid_parameters = set(
+        filter(
+            lambda x: not x.startswith("_") and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys()
+        )
+    )
+    for k in filter(lambda x: x in valid_parameters, parameters.keys()):
+        new_params[k] = parameters[k]
+    return new_params
+
+
+def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+    """
+    Instantiate class with the set of parameters from the server.
+
+    :param model_class: The class of model to be used.
+    :param parameters: The parsed dictionary with parameters.
+    :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
+    """
+    if not isinstance(parameters, dict):
+        return parameters
+    return model_class(**_filter_parameters(model_class, parameters))
+
+
+class ConnectionProperties:
+    """The properties of a single connection.
+
+    :ivar id: A unique identifier for the connection.
+    :vartype id: str
+    :ivar name: The friendly name of the connection.
+    :vartype name: str
+    :ivar authentication_type: The authentication type used by the connection.
+    :vartype authentication_type: ~azure.ai.client.models._models.AuthenticationType
+    :ivar connection_type: The connection type .
+    :vartype connection_type: ~azure.ai.client.models._models.ConnectionType
+    :ivar endpoint_url: The endpoint URL associated with this connection
+    :vartype endpoint_url: str
+    :ivar key: The api-key to be used when accessing the connection.
+    :vartype key: str
+    :ivar token_credential: The TokenCredential to be used when accessing the connection.
+    :vartype token_credential: ~azure.core.credentials.TokenCredential
+    """
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+        self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.endpoint_type = connection.properties.category
+        self.connection_type = connection.properties.category
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
@@ -62,18 +116,44 @@ class EndpointProperties:
                 self.key = connection.properties.credentials.key
         self.token_credential = token_credential
 
+    def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
+        connection_type = self.connection_type.value
+        if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
+            connection_type = "azure_openai"
+
+        if self.authentication_type == "ApiKey":
+            model_config = {
+                "azure_deployment": deployment_name,
+                "azure_endpoint": self.endpoint_url,
+                "type": connection_type,
+                "api_version": api_version,
+                "api_key": f"{self.id}/credentials/key",
+            }
+        else:
+            model_config = {
+                "azure_deployment": deployment_name,
+                "azure_endpoint": self.endpoint_url,
+                "type": self.connection_type,
+                "api_version": api_version,
+            }
+        return model_config
+
     def __str__(self):
         out = "{\n"
         out += f' "name": "{self.name}",\n'
+        out += f' "id": "{self.id}",\n'
         out += f' "authentication_type": "{self.authentication_type}",\n'
-        out += f' "endpoint_type": "{self.endpoint_type}",\n'
+        out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
-        out += f' "key": "{self.key}",\n'
+        if self.key:
+            out += f' "key": "{self.key}",\n'
+        else:
+            out += f' "key": null,\n'
         if self.token_credential:
             access_token = self.token_credential.get_token("https://cognitiveservices.azure.com/.default")
             out += f' "token_credential": "{access_token.token}", expires on {access_token.expires_on} ({datetime.datetime.fromtimestamp(access_token.expires_on, datetime.timezone.utc)})\n'
         else:
-            out += f' "token_credential": "null"\n'
+            out += f' "token_credential": null\n'
         out += "}\n"
         return out
 
@@ -120,7 +200,7 @@ class SASTokenCredential(TokenCredential):
             project_name=self._project_name,
         )
 
-        connection = ai_client.endpoints.get(endpoint_name=self._connection_name, populate_secrets=True)
+        connection = ai_client.endpoints.get(connection_name=self._connection_name, populate_secrets=True)
 
         self._sas_token = connection.properties.credentials.sas
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
@@ -387,14 +467,13 @@ class FileSearchTool(Tool):
     A tool that searches for uploaded file information from the created vector stores.
     """
 
-    def __init__(self):
-        self.vector_store_ids = []
+    def __init__(self, vector_store_ids: List[str] = []):
+        self.vector_store_ids = vector_store_ids
 
     def add_vector_store(self, store_id: str):
         """
         Add a vector store ID to the list of vector stores to search for files.
         """
-        # TODO
         self.vector_store_ids.append(store_id)
 
     @property
@@ -774,7 +853,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
@@ -783,18 +862,18 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
             AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
         }:
-            event_data_obj = RunStep(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_MESSAGE_CREATED,
             AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
             AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
             AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
         }:
-            event_data_obj = ThreadMessage(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
-            event_data_obj = MessageDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj = RunStepDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 
@@ -921,7 +1000,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_CANCELLED,
             AgentStreamEvent.THREAD_RUN_EXPIRED,
         }:
-            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_RUN_STEP_CREATED,
             AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
@@ -930,18 +1009,18 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
             AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
         }:
-            event_data_obj = RunStep(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
             AgentStreamEvent.THREAD_MESSAGE_CREATED,
             AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
             AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
             AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
         }:
-            event_data_obj = ThreadMessage(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
-            event_data_obj = MessageDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj = RunStepDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 

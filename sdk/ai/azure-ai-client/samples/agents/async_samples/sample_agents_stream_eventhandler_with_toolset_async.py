@@ -18,7 +18,7 @@ USAGE:
     pip install azure.ai.client azure-identity
 
     Set this environment variables with your own values:
-    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
 from typing import Any
@@ -70,20 +70,8 @@ async def main():
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     ai_client = AzureAIClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
     )
-
-    # Or, you can create the Azure AI Client by giving all required parameters directly
-    """
-    ai_client = AzureAIClient(
-        credential=DefaultAzureCredential(),
-        host_name=os.environ["AI_CLIENT_HOST_NAME"],
-        subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-        resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-        workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-        logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-    )
-    """
 
     # Initialize toolset with user functions
     functions = AsyncFunctionTool(user_async_functions)
