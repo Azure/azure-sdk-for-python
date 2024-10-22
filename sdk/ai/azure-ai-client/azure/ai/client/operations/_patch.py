@@ -237,7 +237,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         # Filter by connection type
         for connection in connections_list.value:
-            if connection_type is None or (hasattr(connection.properties, 'category') and connection.properties.category == connection_type):
+            if connection_type is None or connection.properties.category == connection_type:
                 if not populate_secrets:
                     connection_properties_list.append(ConnectionProperties(connection=connection))
                 else:

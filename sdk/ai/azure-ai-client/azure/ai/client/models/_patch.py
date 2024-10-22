@@ -90,7 +90,6 @@ class ConnectionProperties:
             if hasattr(connection.properties.credentials, "key"):
                 self.key = connection.properties.credentials.key
         self.token_credential = token_credential
-        self.connection_id = connection.get("id")
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
         connection_type = self.connection_type.value
@@ -103,7 +102,7 @@ class ConnectionProperties:
                 "azure_endpoint": self.endpoint_url,
                 "type": connection_type,
                 "api_version": api_version,
-                "api_key": f"{self.connection_id}/credentials/key",
+                "api_key": f"{self.id}/credentials/key",
             }
         else:
             model_config = {
