@@ -195,7 +195,7 @@ class DistillationJob(Job, JobIOMixin):
         return self._prompt_settings
 
     @property
-    def hyperparameters(self) -> Dict:
+    def hyperparameters(self) -> Optional[Dict]:
         """Get the finetuning hyperparameters.
 
         :return: The finetuning hyperparameters.
@@ -464,7 +464,9 @@ class DistillationJob(Job, JobIOMixin):
             "teacher_model_endpoint_connection": WorkspaceConnection._load(  # pylint: disable=protected-access
                 data=json.loads(teacher_model_info)
             ),
-            "teacher_model_settings": TeacherModelSettings(**teacher_settings) if teacher_settings else None,
+            "teacher_model_settings": (
+                TeacherModelSettings(**teacher_settings) if teacher_settings else None  # pylint: disable=missing-kwoa
+            ),
             "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
             "resources": ResourceConfiguration(**resources) if resources else None,
         }
