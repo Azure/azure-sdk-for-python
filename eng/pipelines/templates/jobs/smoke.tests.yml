@@ -46,11 +46,6 @@ jobs:
           Pool: "azsdk-pool-mms-ubuntu-2004-general"
           OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
         ${{ if eq(parameters.Daily, true) }}:
-          Python_27_Linux (AzureCloud):
-            PythonVersion: '2.7'
-            SkipAsyncInstall: true
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
           Python_37_Linux (AzureCloud):
             PythonVersion: '3.7'
             Pool: azsdk-pool-mms-ubuntu-2004-general
