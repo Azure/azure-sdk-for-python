@@ -16,8 +16,8 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 
 
 @pytest.mark.finetuning_job_test
-# @pytest.mark.usefixtures("recorded_test")
-# @pytest.mark.skipif(condition=not is_live(), reason="This test requires a live endpoint")
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(condition=not is_live(), reason="This test requires a live endpoint")
 class TestCustomModelFineTuningJob(AzureRecordedTestCase):
     def test_custom_model_finetuning_job(
         self, text_completion_dataset: Tuple[Input, Input], mlflow_model_llama: Input, client: MLClient
