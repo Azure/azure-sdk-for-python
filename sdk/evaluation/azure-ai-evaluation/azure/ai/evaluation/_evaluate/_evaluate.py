@@ -690,6 +690,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
 
     trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
+
+    # Handle the case where the customer manually run "pf config set trace.destination=none"
+    if trace_destination and trace_destination.lower() == "none":
+        trace_destination = None
+
     target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
