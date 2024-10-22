@@ -14,6 +14,7 @@ from ._models_py3 import CapabilitiesCapabilities
 from ._models_py3 import CapabilitiesListResult
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import ConfidentialComputeProperties
+from ._models_py3 import ConfigMap
 from ._models_py3 import Container
 from ._models_py3 import ContainerAttachResponse
 from ._models_py3 import ContainerExec
@@ -24,6 +25,11 @@ from ._models_py3 import ContainerGroup
 from ._models_py3 import ContainerGroupDiagnostics
 from ._models_py3 import ContainerGroupIdentity
 from ._models_py3 import ContainerGroupListResult
+from ._models_py3 import ContainerGroupProfile
+from ._models_py3 import ContainerGroupProfileListResult
+from ._models_py3 import ContainerGroupProfilePatch
+from ._models_py3 import ContainerGroupProfileProperties
+from ._models_py3 import ContainerGroupProfileReferenceDefinition
 from ._models_py3 import ContainerGroupProperties
 from ._models_py3 import ContainerGroupPropertiesInstanceView
 from ._models_py3 import ContainerGroupSubnetId
@@ -56,6 +62,7 @@ from ._models_py3 import ResourceRequests
 from ._models_py3 import ResourceRequirements
 from ._models_py3 import SecurityContextCapabilitiesDefinition
 from ._models_py3 import SecurityContextDefinition
+from ._models_py3 import StandbyPoolProfileDefinition
 from ._models_py3 import Usage
 from ._models_py3 import UsageListResult
 from ._models_py3 import UsageName
@@ -89,6 +96,7 @@ __all__ = [
     "CapabilitiesListResult",
     "CloudErrorBody",
     "ConfidentialComputeProperties",
+    "ConfigMap",
     "Container",
     "ContainerAttachResponse",
     "ContainerExec",
@@ -99,6 +107,11 @@ __all__ = [
     "ContainerGroupDiagnostics",
     "ContainerGroupIdentity",
     "ContainerGroupListResult",
+    "ContainerGroupProfile",
+    "ContainerGroupProfileListResult",
+    "ContainerGroupProfilePatch",
+    "ContainerGroupProfileProperties",
+    "ContainerGroupProfileReferenceDefinition",
     "ContainerGroupProperties",
     "ContainerGroupPropertiesInstanceView",
     "ContainerGroupSubnetId",
@@ -131,6 +144,7 @@ __all__ = [
     "ResourceRequirements",
     "SecurityContextCapabilitiesDefinition",
     "SecurityContextDefinition",
+    "StandbyPoolProfileDefinition",
     "Usage",
     "UsageListResult",
     "UsageName",
