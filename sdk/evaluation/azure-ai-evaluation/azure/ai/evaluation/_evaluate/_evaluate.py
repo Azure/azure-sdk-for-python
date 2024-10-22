@@ -14,8 +14,8 @@ from promptflow.client import PFClient
 from promptflow.entities import Run
 
 from azure.ai.evaluation._common.math import list_sum
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
