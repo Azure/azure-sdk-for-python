@@ -55,37 +55,37 @@ class _ConfigurationClientWrapperBase:
 
         allocation: Optional[JSON] = feature_flag_value.get("allocation")
 
-        if allocation:
-            # Seed
-            allocation_id = f"seed={allocation.get('seed', '')}"
+        if not allocation:
+            return None
 
-            # DefaultWhenEnabled
-            if "default_when_enabled" in allocation:
-                allocated_variants.append(allocation.get("default_when_enabled"))
+        # Seed
+        allocation_id = f"seed={allocation.get('seed', '')}"
 
-            allocation_id += f"\ndefault_when_enabled={allocation.get('default_when_enabled', '')}"
+        # DefaultWhenEnabled
+        if "default_when_enabled" in allocation:
+            allocated_variants.append(allocation.get("default_when_enabled"))
 
-            # Percentile
-            allocation_id += "\npercentiles="
+        allocation_id += f"\ndefault_when_enabled={allocation.get('default_when_enabled', '')}"
 
-            percentile = allocation.get("percentile")
+        # Percentile
+        allocation_id += "\npercentiles="
 
-            if percentile:
-                percentile_allocations = sorted(
-                    (x for x in percentile if x.get("from") != x.get("to")),
-                    key=lambda x: x.get("from"),
-                )
+        percentile = allocation.get("percentile")
 
-                for percentile_allocation in percentile_allocations:
-                    if "variant" in percentile_allocation:
-                        allocated_variants.append(percentile_allocation.get("variant"))
+        if percentile:
+            percentile_allocations = sorted(
+                (x for x in percentile if x.get("from") != x.get("to")),
+                key=lambda x: x.get("from"),
+            )
 
-                allocation_id += ";".join(
-                    f"{pa.get('from')}," f"{base64.b64encode(pa.get('variant').encode()).decode()}," f"{pa.get('to')}"
-                    for pa in percentile_allocations
-                )
-        else:
-            allocation_id = "seed=\ndefault_when_enabled=\npercentiles="
+            for percentile_allocation in percentile_allocations:
+                if "variant" in percentile_allocation:
+                    allocated_variants.append(percentile_allocation.get("variant"))
+
+            allocation_id += ";".join(
+                f"{pa.get('from')}," f"{base64.b64encode(pa.get('variant').encode()).decode()}," f"{pa.get('to')}"
+                for pa in percentile_allocations
+            )
 
         if not allocated_variants and (not allocation or not allocation.get("seed")):
             return None
@@ -95,18 +95,22 @@ class _ConfigurationClientWrapperBase:
 
         variants_value = feature_flag_value.get("variants")
         if variants_value and (isinstance(variants_value, list) or all(isinstance(v, dict) for v in variants_value)):
-            if allocated_variants:
-                if isinstance(variants_value, list) and all(isinstance(v, dict) for v in variants_value):
-                    sorted_variants: List[Dict[str, Any]] = sorted(
-                        (v for v in variants_value if v.get("name") in allocated_variants),
-                        key=lambda v: v.get("name"),
-                    )
+            if (
+                allocated_variants
+                and isinstance(variants_value, list)
+                and all(isinstance(v, dict) for v in variants_value)
+            ):
+                sorted_variants: List[Dict[str, Any]] = sorted(
+                    (v for v in variants_value if v.get("name") in allocated_variants),
+                    key=lambda v: v.get("name"),
+                )
 
-                    for v in sorted_variants:
-                        allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
-                        if "configuration_value" in v:
-                            allocation_id += f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'))}"
-                        allocation_id += ";"
+                for v in sorted_variants:
+                    allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
+                    if "configuration_value" in v:
+                        allocation_id += f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'))}"
+                    allocation_id += ";"
+                if sorted_variants:
                     allocation_id = allocation_id[:-1]
 
         # Create a sha256 hash of the allocation_id
