@@ -15,7 +15,7 @@ import asyncio
 
 from azure.core.credentials import TokenCredential, AccessToken
 
-from ._enums import AgentStreamEvent
+from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     ConnectionsListSecretsResponse,
     MessageDeltaChunk,
@@ -33,6 +33,7 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
+    ConnectionType,
 )
 
 from abc import ABC, abstractmethod
@@ -93,7 +94,7 @@ class ConnectionProperties:
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
         connection_type = self.connection_type.value
-        if self.connection_type.value == "AzureOpenAI":
+        if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
             connection_type = "azure_openai"
 
         if self.authentication_type == "ApiKey":
