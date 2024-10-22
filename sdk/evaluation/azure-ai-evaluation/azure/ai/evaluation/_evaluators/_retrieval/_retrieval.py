@@ -7,7 +7,7 @@ import logging
 import math
 import os
 import re
-from typing import Union
+from typing import Optional, Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
@@ -140,17 +140,17 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, query: str, context: str, conversation, **kwargs):
+    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation = None, **kwargs):
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
         :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype query: str
+        :paramtype query: Optional[str]
         :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype context: str
+        :paramtype context: Optional[str]
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: ~azure.ai.evaluation.Conversation
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
