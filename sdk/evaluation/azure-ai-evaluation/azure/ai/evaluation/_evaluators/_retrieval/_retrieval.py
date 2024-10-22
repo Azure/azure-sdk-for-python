@@ -150,7 +150,7 @@ class RetrievalEvaluator:
         :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
         :paramtype context: Optional[str]
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: ~azure.ai.evaluation.Conversation
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
