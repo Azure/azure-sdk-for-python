@@ -39,6 +39,7 @@ ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
+
 # Function to handle tool stream iteration
 def handle_submit_tool_outputs(operations: AgentsOperations, thread_id, run_id, tool_outputs):
     try:

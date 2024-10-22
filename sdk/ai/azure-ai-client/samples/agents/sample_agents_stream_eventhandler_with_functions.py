@@ -41,6 +41,7 @@ ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
+
 class MyEventHandler(AgentEventHandler):
 
     def __init__(self, functions: FunctionTool) -> None:

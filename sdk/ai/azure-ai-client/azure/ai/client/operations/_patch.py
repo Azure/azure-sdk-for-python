@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -46,9 +45,19 @@ class InferenceOperations:
     def __init__(self, outer_instance):
         self.outer_instance = outer_instance
 
-    def get_chat_completions_client(self) -> "ChatCompletionsClient":
+    @distributed_trace
+    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
+        Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
+        The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
         connection = self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -66,7 +75,9 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
@@ -86,9 +97,19 @@ class InferenceOperations:
 
         return client
 
-    def get_embeddings_client(self) -> "EmbeddingsClient":
+    @distributed_trace
+    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
+        Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
+        The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client
+        :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
         connection = self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, populate_secrets=True
+            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No serverless connection found")
@@ -106,13 +127,17 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=connection.authentication_type, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(
+                endpoint=connection.authentication_type, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=connection.properties.token_credential)
+            client = EmbeddingsClient(
+                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -124,9 +149,18 @@ class InferenceOperations:
 
         return client
 
-    def get_azure_openai_client(self) -> "AzureOpenAI":
+    @distributed_trace
+    def get_azure_openai_client(self, **kwargs) -> "AzureOpenAI":
+        """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
+        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
+
+        :return: An authenticated AzureOpenAI client
+        :rtype: ~openai.AzureOpenAI
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
         connection = self.outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, populate_secrets=True
+            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
         if not connection:
             raise ValueError("No Azure OpenAI connection found")
@@ -182,27 +216,56 @@ class InferenceOperations:
 
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
-    def get_default(self, *, connection_type: ConnectionType, populate_secrets: bool = False) -> ConnectionProperties:
+    @distributed_trace
+    def get_default(
+        self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
+    ) -> ConnectionProperties:
+        """Get the properties of the default connection of a certain connection type, with or without
+        populating authentication credentials.
+
+        :param connection_type: The connection type. Required.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
         if not connection_type:
             raise ValueError("You must specify an connection type")
-        connection_properties_list = self.list(connection_type=connection_type, populate_secrets=populate_secrets)
-        # Since there is no notion of service default at the moment, always return the first one
+        # Since there is no notion of default connection at the moment, list all connections in the category
+        # and return the first one
+        connection_properties_list = self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
-            return connection_properties_list[0]
+            if with_credentials:
+                return self.get(
+                    connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
+                )
+            else:
+                return connection_properties_list[0]
         else:
             return None
 
-    def get(self, *, connection_name: str, populate_secrets: bool = False) -> ConnectionProperties:
+    @distributed_trace
+    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+        """Get the properties of a single connection, given its connection name, with or without
+        populating authentication credentials.
+
+        :param connection_name: Connection Name. Required.
+        :type connection_name: str
+        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :type with_credentials: bool
+        :return: The connection properties
+        :rtype: ~azure.ai.client.models._models.ConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Connection name cannot be empty")
-        if populate_secrets:
+        if with_credentials:
             connection: ConnectionsListSecretsResponse = self._list_secrets(
-                connection_name_in_url=connection_name,
-                connection_name=connection_name,
-                subscription_id=self._config.subscription_id,
-                resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.project_name,
-                api_version_in_body=self._config.api_version,
+                connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
@@ -221,27 +284,26 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            internal_response: ConnectionsListResponse = self._list()
-            for connection in internal_response.value:
-                if connection_name == connection.name:
-                    return ConnectionProperties(connection=connection)
-            return None
+            return ConnectionProperties(connection=self._get(connection_name=connection_name, **kwargs))
 
-    def list(
-        self, *, connection_type: ConnectionType | None = None, populate_secrets: bool = False
-    ) -> Iterable[ConnectionProperties]:
+    @distributed_trace
+    def list(self, *, connection_type: ConnectionType | None = None, **kwargs: Any) -> Iterable[ConnectionProperties]:
+        """List the properties of all connections, or all connections of a certain connection type.
 
-        # First make a REST call to /list to get all the connections, without secrets
-        connections_list: ConnectionsListResponse = self._list()
+        :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
+        If not provided, all connections are listed.
+        :type connection_type: ~azure.ai.client.models._models.ConnectionType
+        :return: A list of connection properties
+        :rtype: Iterable[~azure.ai.client.models._models.ConnectionProperties]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+        connections_list: ConnectionsListResponse = self._list(include_all=True, category=connection_type, **kwargs)
+
+        # Iterate to create the simplified result property
         connection_properties_list: List[ConnectionProperties] = []
-
-        # Filter by connection type
         for connection in connections_list.value:
-            if connection_type is None or connection.properties.category == connection_type:
-                if not populate_secrets:
-                    connection_properties_list.append(ConnectionProperties(connection=connection))
-                else:
-                    connection_properties_list.append(self.get(connection_name=connection.name, populate_secrets=True))
+            connection_properties_list.append(ConnectionProperties(connection=connection))
 
         return connection_properties_list
 
@@ -1453,7 +1515,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    def upload_file(self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any) -> _models.OpenAIFile:
+    def upload_file(
+        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
@@ -1773,7 +1837,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_file_batch_and_poll(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1801,7 +1871,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1825,7 +1895,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_file_batch_and_poll(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1853,7 +1929,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
@@ -1870,19 +1946,25 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
         if body is None:
-            vector_store_file_batch = super().create_vector_store_file_batch(vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs)
+            vector_store_file_batch = super().create_vector_store_file_batch(
+                vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs
+            )
         else:
-            content_type = kwargs.get("content_type", "application/json")            
-            vector_store_file_batch = super().create_vector_store_file_batch(body=body, content_type=content_type, **kwargs)
-            
+            content_type = kwargs.get("content_type", "application/json")
+            vector_store_file_batch = super().create_vector_store_file_batch(
+                body=body, content_type=content_type, **kwargs
+            )
+
         while vector_store_file_batch.status == "in_progress":
             time.sleep(sleep_interval)
-            vector_store_file_batch = super().get_vector_store_file_batch(vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id)
-            
+            vector_store_file_batch = super().get_vector_store_file_batch(
+                vector_store_id=vector_store_id, batch_id=vector_store_file_batch.id
+            )
+
         return vector_store_file_batch
-    
+
 
 __all__: List[str] = [
     "AgentsOperations",

@@ -27,10 +27,9 @@ from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential
 
+
 async def sample_connections_async():
 
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
     ai_client = AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
         conn_str=os.environ["PROJECT_CONNECTION_STRING"],
@@ -38,34 +37,35 @@ async def sample_connections_async():
 
     async with ai_client:
 
-        # List all connections:
-        print("====> Listing of all connections:")
-        async for connection in ai_client.connections.list():
+        # List the properties of all connections
+        connections = await ai_client.connections.list()
+        print(f"====> Listing of all connections (found {len(connections)}):")
+        for connection in connections:
             print(connection)
 
-        # List all connections of a particular "type", with or without their credentials:
-        print("====> Listing of all Azure Open AI connections:")
-        async for connection in ai_client.connections.list(
-            connection_type=ConnectionType.AZURE_OPEN_AI,  # Optional. Defaults to all types.
-            populate_secrets=True,  # Optional. Defaults to "False"
-        ):
+        # List the properties of all connections of a particular "type" (In this sample, Azure OpenAI connections)
+        connections = await ai_client.connections.list(
+            connection_type=ConnectionType.AZURE_OPEN_AI,
+        )
+        print("====> Listing of all Azure Open AI connections (found {len(connections)}):")
+        for connection in connections:
             print(connection)
 
-        # Get the default connection of a particular "type":
+        # Get the properties of the default connection of a particular "type", with credentials
         connection = await ai_client.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI,
-            populate_secrets=True,  # Required.  # Optional. Defaults to "False"
+            with_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get default Azure Open AI connection:")
         print(connection)
 
-        # Get a connection by its name:
+        # Get the properties of a connection by connection name:
         connection = await ai_client.connections.get(
-            connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
+            connection_name=os.environ["AI_CLIENT_CONNECTION_NAME"],
+            with_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get connection by name:")
         print(connection)
-
 
     # Examples of how you would create Inference client
     if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
@@ -95,7 +95,7 @@ async def sample_connections_async():
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
         response = await client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4-0613",
             messages=[
                 {
                     "role": "user",
@@ -114,7 +114,9 @@ async def sample_connections_async():
             print("====> Creating ChatCompletionsClient using API key authentication")
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+            )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
