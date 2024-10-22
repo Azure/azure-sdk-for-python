@@ -1,7 +1,7 @@
 trigger: none
 
 extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-textanalytics
       ServiceDirectory: textanalytics
@@ -17,10 +17,6 @@ extends:
           Location: chinanorth3
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(TEXTANALYTICS_SUBSCRIPTION_ID)
-        AZURE_TENANT_ID: $(TEXTANALYTICS_TENANT_ID)
-        AZURE_CLIENT_SECRET: $(TEXTANALYTICS_CLIENT_SECRET)
-        AZURE_CLIENT_ID: $(TEXTANALYTICS_CLIENT_ID)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
