@@ -7,7 +7,7 @@ import math
 import re
 import time
 from ast import literal_eval
-from typing import Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 
