@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from pathlib import Path
+import json
 from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
@@ -404,7 +404,7 @@ class DistillationJob(Job, JobIOMixin):
 
         # Not needed for FT Overload API but additional info needed to convert from REST object to Distillation object
         properties[AzureMLDistillationProperties.DataGenerationType] = self._data_generation_type
-        properties[AzureMLDistillationProperties.ConnectionInformation] = (
+        properties[AzureMLDistillationProperties.ConnectionInformation] = json.dumps(
             self._teacher_model_endpoint_connection._to_dict()  # pylint: disable=protected-access
         )
 
@@ -438,7 +438,7 @@ class DistillationJob(Job, JobIOMixin):
         prompt_settings = {}
         resources = {}
         teacher_settings = {}
-        teacher_model_info = {}
+        teacher_model_info = ""
         for key, val in properties.items():
             param = key.split(".")[-1]
             if AzureMLDistillationProperties.TeacherModel in key and param != "endpoint_name":
@@ -461,8 +461,8 @@ class DistillationJob(Job, JobIOMixin):
         return {
             "data_generation_task_type": properties.get(AzureMLDistillationProperties.DataGenerationTaskType),
             "data_generation_type": properties.get(AzureMLDistillationProperties.DataGenerationType),
-            "teacher_model_endpoint_connection": WorkspaceConnection._load_from_dict(  # pylint: disable=protected-access
-                data=teacher_model_info, context={BASE_PATH_CONTEXT_KEY: Path("./")}
+            "teacher_model_endpoint_connection": WorkspaceConnection._load(  # pylint: disable=protected-access
+                data=json.loads(teacher_model_info)
             ),
             "teacher_model_settings": TeacherModelSettings(**teacher_settings) if teacher_settings else None,
             "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
@@ -501,7 +501,7 @@ class DistillationJob(Job, JobIOMixin):
             super().__eq__(other)
             and self.data_generation_type == other.data_generation_type
             and self.data_generation_task_type == other.data_generation_task_type
-            and self.teacher_model_endpoint_connection == other.teacher_model_endpoint_connection
+            and self.teacher_model_endpoint_connection.name == other.teacher_model_endpoint_connection.name
             and self.student_model == other.student_model
             and self.training_data == other.training_data
             and self.validation_data == other.validation_data
