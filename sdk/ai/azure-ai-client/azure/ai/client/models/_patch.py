@@ -383,6 +383,14 @@ class CodeInterpreterTool(Tool):
         """
         self.file_ids.append(file_id)
 
+    def remove_file(self, file_id: str):
+        """
+        Remove a file ID to the list of files to interpret.
+
+        :param file_id: The ID of the file to remove.
+        """
+        self.file_ids.remove(file_id)
+
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
