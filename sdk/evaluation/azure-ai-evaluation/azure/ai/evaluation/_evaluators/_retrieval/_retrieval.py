@@ -146,7 +146,7 @@ class RetrievalEvaluator:
         the evaluator will aggregate the results of each turn.
 
         :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype query: str
+        :paramtype query: Optional[str]
         :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
         :paramtype context: str
         :keyword conversation: The conversation to be evaluated.
