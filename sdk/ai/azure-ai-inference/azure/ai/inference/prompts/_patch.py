@@ -51,11 +51,11 @@ class PromptTemplate:
         self.prompty = prompty
         if self.prompty is not None:
             self.model_name = prompty.model.configuration["azure_deployment"] if "azure_deployment" in prompty.model.configuration else None
-            self.config = prompty.model.parameters
+            self.parameters = prompty.model.parameters
             self._parameters = {}
         elif prompt_template is not None:
             self.model_name = model_name
-            self.config = {}
+            self.parameters = {}
             # _parameters is a dict to hold the internal configuration
             self._parameters = {
                 "api": api if api is not None else "chat",
@@ -64,12 +64,15 @@ class PromptTemplate:
         else:
             raise ValueError("Please invalid arguments for PromptConfig")
 
-    def render(self, input_variables: dict[str, any]):
+    def render(self, data: dict[str, any] | None = None, **kwargs):
+        if data is None:
+            data = kwargs
+
         if self.prompty is not None:
-            parsed = prepare(self.prompty, input_variables)
+            parsed = prepare(self.prompty, data)
             return parsed
         elif "prompt_template" in self._parameters:
-            system_prompt = render(self._parameters["prompt_template"], input_variables)
+            system_prompt = render(self._parameters["prompt_template"], data)
             return [{"role": "system", "content": system_prompt}]
 
 

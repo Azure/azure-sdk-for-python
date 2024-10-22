@@ -41,20 +41,16 @@ def sample_chat_completions_from_input_prompty():
         print("Set them before running this sample.")
         exit()
 
-
     path = "./sample1.prompty"
     prompt_template = PromptTemplate.from_prompty(file_path=path)
 
-    input_variables = {
-        "input": "What's the checkin and checkout time?",
-        "rules": [
-            { "rule": "The checkin time is 3pm" },
-            { "rule": "The checkout time is 11am" },
-            { "rule": "Breakfast is served from 7am to 10am" },
-        ],
-    }
-
-    messages = prompt_template.render(input_variables=input_variables)
+    input = "What's the checkin and checkout time?"
+    rules = [
+        { "rule": "The checkin time is 3pm" },
+        { "rule": "The checkout time is 11am" },
+        { "rule": "Breakfast is served from 7am to 10am" },
+    ]
+    messages = prompt_template.render(input=input, rules=rules)
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
@@ -64,7 +60,7 @@ def sample_chat_completions_from_input_prompty():
     response = client.complete(
         messages=messages,
         model=prompt_template.model_name,
-        **prompt_template.config,
+        **prompt_template.parameters,
     )
 
     print(response.choices[0].message.content)
