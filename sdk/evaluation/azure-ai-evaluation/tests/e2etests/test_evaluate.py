@@ -19,18 +19,15 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 
-
 @pytest.fixture
 def data_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data.jsonl")
 
-
 @pytest.fixture
 def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
-
 
 def answer_evaluator(response):
     return {"length": len(response)}
@@ -205,7 +202,7 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-
+        
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
