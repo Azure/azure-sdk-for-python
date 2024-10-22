@@ -23,14 +23,14 @@ teacher_model_endpoint_connection:
   type: custom
   name: Llama-3-1-405B-Instruct-BASE
   target:  None
-# teacher_model_settings:
-#   inference_parameters:
-#     temperature: 0.1
-#     max_tokens: 100
-#     top_p: 0.95
-#   endpoint_request_settings:
-#     request_batch_size: 5
-#     min_endpoint_success_ratio: 0.7
+teacher_model_settings:
+  inference_parameters:
+    temperature: 0.1
+    max_tokens: 100
+    top_p: 0.95
+  endpoint_request_settings:
+    request_batch_size: 5
+    min_endpoint_success_ratio: 0.7
 
 # For Finetuning
 student_model: "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"

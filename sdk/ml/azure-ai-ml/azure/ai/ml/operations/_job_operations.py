@@ -1134,7 +1134,8 @@ class JobOperations(_ScopeDependentOperations):
         :type job: DistillationJob
         """
         if isinstance(job, DistillationJob):
-            self._resolve_job_input(job.training_data, job._base_path)
+            if job.training_data:
+                self._resolve_job_input(job.training_data, job._base_path)
             if job.validation_data is not None:
                 self._resolve_job_input(job.validation_data, job._base_path)
 

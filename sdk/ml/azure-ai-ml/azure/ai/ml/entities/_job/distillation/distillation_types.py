@@ -10,6 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 class PromptSettings:
     def __init__(
         self,
+        *,
         enable_chain_of_thought: bool = False,
         enable_chain_of_density: bool = False,
         max_len_summary: Optional[int] = None,
@@ -139,7 +140,7 @@ class PromptSettings:
 
 @experimental
 class EndpointRequestSettings:
-    def __init__(self, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
+    def __init__(self, *, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
         """Initialize EndpointRequestSettings.
 
         param request_batch_size: The number of requests to send to the teacher model endpoint as a batch.
@@ -222,7 +223,7 @@ class EndpointRequestSettings:
 @experimental
 class TeacherModelSettings:
     def __init__(
-        self, inference_parameters: Optional[Dict], endpoint_request_settings: Optional[EndpointRequestSettings]
+        self, *, inference_parameters: Optional[Dict], endpoint_request_settings: Optional[EndpointRequestSettings]
     ):
         self._inference_parameters = inference_parameters
         self._endpoint_request_settings = endpoint_request_settings

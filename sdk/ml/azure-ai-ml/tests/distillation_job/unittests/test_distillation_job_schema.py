@@ -9,7 +9,11 @@ from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings
+from azure.ai.ml.entities._job.distillation.distillation_types import (
+    EndpointRequestSettings,
+    PromptSettings,
+    TeacherModelSettings,
+)
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
@@ -69,6 +73,14 @@ def teacher_model_endpoint() -> WorkspaceConnection:
 
 
 @pytest.fixture
+def teacher_model_settings() -> TeacherModelSettings:
+    return TeacherModelSettings(
+        inference_parameters={"temperature": 0.1, "max_tokens": 100, "top_p": 0.95},
+        endpoint_request_settings=EndpointRequestSettings(request_batch_size=5, min_endpoint_success_ratio=0.7),
+    )
+
+
+@pytest.fixture
 def expected_distillation_job_as_rest_obj(
     teacher_model_endpoint,
     train_dataset,
@@ -76,6 +88,7 @@ def expected_distillation_job_as_rest_obj(
     mlflow_model_llama,
     hyperparameters,
     prompt_settings,
+    teacher_model_settings,
 ) -> RestFineTuningJob:
     distillaton_job = DistillationJob(
         data_generation_type=DataGenerationType.LabelGeneration,
@@ -84,7 +97,7 @@ def expected_distillation_job_as_rest_obj(
         student_model=mlflow_model_llama,
         training_data=train_dataset,
         validation_data=validation_dataset,
-        teacher_model_settings=None,
+        teacher_model_settings=teacher_model_settings,
         prompt_settings=prompt_settings,
         hyperparameters=hyperparameters,
         experiment_name="Distillation-Math-Test-1234",
