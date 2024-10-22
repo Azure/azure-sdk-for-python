@@ -26,7 +26,7 @@ from .._constants import (
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
-from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
+from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
@@ -395,7 +395,7 @@ def _apply_target_to_data(
     pf_client: PFClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
-    _run_name: Optional[str] = None,
+    **kwargs,
 ) -> Tuple[pd.DataFrame, Set[str], Run]:
     """
     Apply the target function to the data set and return updated data and generated columns.
@@ -410,22 +410,22 @@ def _apply_target_to_data(
     :type initial_data: pd.DataFrame
     :param evaluation_name: The name of the evaluation.
     :type evaluation_name: Optional[str]
-    :param _run_name: The name of target run. Used for testing only.
-    :type _run_name: Optional[str]
     :return: The tuple, containing data frame and the list of added columns.
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
-    # We are manually creating the temporary directory for the flow
-    # because the way tempdir remove temporary directories will
-    # hang the debugger, because promptflow will keep flow directory.
-    run: Run = pf_client.run(
-        flow=target,
-        display_name=evaluation_name,
-        data=data,
-        properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-        stream=True,
-        name=_run_name,
-    )
+    _run_name = kwargs.get("_run_name")
+    upload_target_snaphot = kwargs.get("_upload_target_snapshot", False)
+
+    with TargetRunContext(upload_target_snaphot):
+        run: Run = pf_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
+            stream=True,
+            name=_run_name,
+        )
+
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
     generated_columns = {
@@ -706,7 +706,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     target_generated_columns: Set[str] = set()
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
+            target, data, pf_client, input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():
@@ -738,7 +738,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     def eval_batch_run(
         batch_run_client: TClient, *, data=Union[str, os.PathLike, pd.DataFrame]
     ) -> Dict[str, __EvaluatorInfo]:
-        with BatchRunContext(batch_run_client):
+        with EvalRunContext(batch_run_client):
             runs = {
                 evaluator_name: batch_run_client.run(
                     flow=evaluator,
@@ -752,7 +752,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 for evaluator_name, evaluator in evaluators.items()
             }
 
-            # get_details needs to be called within BatchRunContext scope in order to have user agent populated
+            # get_details needs to be called within EvalRunContext scope in order to have user agent populated
             return {
                 evaluator_name: {
                     "result": batch_run_client.get_details(run, all_results=True),
