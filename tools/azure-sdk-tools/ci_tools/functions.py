@@ -10,7 +10,7 @@ from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
-from ci_tools.parsing import ParsedSetup, get_config_setting
+from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
 
 import os, sys, platform, glob, re, logging
@@ -166,6 +166,15 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
+    # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
+    for glob_string in individual_globs:
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml")) + glob.glob(
+            os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
+        )
+        for p in globbed:
+            if get_pyproject(os.path.dirname(p)):
+                collected_top_level_directories.append(os.path.dirname(p))
+
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
@@ -249,10 +258,10 @@ def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
     return packages
 
 
-def update_requires(setup_py_path, requires_dict):
+def update_requires(setup_path, requires_dict):
     # This method changes package requirement by overriding the specifier
     contents = []
-    with open(setup_py_path, "r") as setup_file:
+    with open(setup_path, "r") as setup_file:
         contents = setup_file.readlines()
 
     # find and replace all existing package requirement with new requirement
@@ -261,7 +270,7 @@ def update_requires(setup_py_path, requires_dict):
         for key in keys:
             contents[i] = contents[i].replace(key, requires_dict[key])
 
-    with open(setup_py_path, "w") as setup_file:
+    with open(setup_path, "w") as setup_file:
         setup_file.writelines(contents)
 
 

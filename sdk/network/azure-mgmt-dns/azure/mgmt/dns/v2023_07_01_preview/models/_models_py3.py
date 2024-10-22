@@ -623,6 +623,9 @@ class RecordSet(_serialization.Model):  # pylint: disable=too-many-instance-attr
     :ivar target_resource: A reference to an azure resource from where the dns resource value is
      taken.
     :vartype target_resource: ~azure.mgmt.dns.v2023_07_01_preview.models.SubResource
+    :ivar traffic_management_profile: A reference to an azure traffic manager profile resource from
+     where the dns resource value is taken.
+    :vartype traffic_management_profile: ~azure.mgmt.dns.v2023_07_01_preview.models.SubResource
     :ivar a_records: The list of A records in the record set.
     :vartype a_records: list[~azure.mgmt.dns.v2023_07_01_preview.models.ARecord]
     :ivar aaaa_records: The list of AAAA records in the record set.
@@ -669,6 +672,7 @@ class RecordSet(_serialization.Model):  # pylint: disable=too-many-instance-attr
         "fqdn": {"key": "properties.fqdn", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "target_resource": {"key": "properties.targetResource", "type": "SubResource"},
+        "traffic_management_profile": {"key": "properties.trafficManagementProfile", "type": "SubResource"},
         "a_records": {"key": "properties.ARecords", "type": "[ARecord]"},
         "aaaa_records": {"key": "properties.AAAARecords", "type": "[AaaaRecord]"},
         "mx_records": {"key": "properties.MXRecords", "type": "[MxRecord]"},
@@ -691,6 +695,7 @@ class RecordSet(_serialization.Model):  # pylint: disable=too-many-instance-attr
         metadata: Optional[Dict[str, str]] = None,
         ttl: Optional[int] = None,
         target_resource: Optional["_models.SubResource"] = None,
+        traffic_management_profile: Optional["_models.SubResource"] = None,
         a_records: Optional[List["_models.ARecord"]] = None,
         aaaa_records: Optional[List["_models.AaaaRecord"]] = None,
         mx_records: Optional[List["_models.MxRecord"]] = None,
@@ -716,6 +721,9 @@ class RecordSet(_serialization.Model):  # pylint: disable=too-many-instance-attr
         :keyword target_resource: A reference to an azure resource from where the dns resource value is
          taken.
         :paramtype target_resource: ~azure.mgmt.dns.v2023_07_01_preview.models.SubResource
+        :keyword traffic_management_profile: A reference to an azure traffic manager profile resource
+         from where the dns resource value is taken.
+        :paramtype traffic_management_profile: ~azure.mgmt.dns.v2023_07_01_preview.models.SubResource
         :keyword a_records: The list of A records in the record set.
         :paramtype a_records: list[~azure.mgmt.dns.v2023_07_01_preview.models.ARecord]
         :keyword aaaa_records: The list of AAAA records in the record set.
@@ -753,6 +761,7 @@ class RecordSet(_serialization.Model):  # pylint: disable=too-many-instance-attr
         self.fqdn = None
         self.provisioning_state = None
         self.target_resource = target_resource
+        self.traffic_management_profile = traffic_management_profile
         self.a_records = a_records
         self.aaaa_records = aaaa_records
         self.mx_records = mx_records
@@ -823,7 +832,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1195,7 +1204,7 @@ class Zone(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str

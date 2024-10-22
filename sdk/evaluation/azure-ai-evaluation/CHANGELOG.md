@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+- Fix evaluate API failure when `trace.destination` is set to `none`
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
