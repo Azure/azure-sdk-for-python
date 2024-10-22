@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import azure.ai.inference.prompts as prompts
 from .core import Prompty
 from .utils import prepare
+from .mustache import render
 
 
 class PromptTemplate:
@@ -49,7 +50,7 @@ class PromptTemplate:
     ) -> None:
         self.prompty = prompty
         if self.prompty is not None:
-            self.model_name = prompty.model.configuration["azure_deployment"]
+            self.model_name = prompty.model.configuration["azure_deployment"] if "azure_deployment" in prompty.model.configuration else None
             self.config = prompty.model.parameters
             self._parameters = {}
         elif prompt_template is not None:
@@ -68,7 +69,7 @@ class PromptTemplate:
             parsed = prepare(self.prompty, input_variables)
             return parsed
         elif "prompt_template" in self._parameters:
-            system_prompt = self._parameters["prompt_template"].format(**input_variables)
+            system_prompt = render(self._parameters["prompt_template"], input_variables)
             return [{"role": "system", "content": system_prompt}]
 
 

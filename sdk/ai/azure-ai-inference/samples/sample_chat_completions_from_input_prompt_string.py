@@ -46,8 +46,18 @@ def sample_chat_completions_from_input_prompt_string():
         system:
         You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
 
+        # context
+        {{#rules}}
+        {{rule}}
+        {{/rules}}
+
+        {{#chat_history}}
+        {{role}}:
+        {{content}}
+        {{/chat_history}}
+
         user:
-        {input}
+        {{input}}
     """
     prompt_template = PromptTemplate.from_message(
         api = "chat",
@@ -55,7 +65,12 @@ def sample_chat_completions_from_input_prompt_string():
     )
 
     input_variables = {
-        "input": "please tell me a joke about cats",
+        "input": "What's the checkin and checkout time?",
+        "rules": [
+            { "rule": "The checkin time is 3pm" },
+            { "rule": "The checkout time is 11am" },
+            { "rule": "Breakfast is served from 7am to 10am" },
+        ],
     }
 
     messages = prompt_template.render(input_variables=input_variables)

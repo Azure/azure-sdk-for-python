@@ -46,7 +46,12 @@ def sample_chat_completions_from_input_prompty():
     prompt_template = PromptTemplate.from_prompty(file_path=path)
 
     input_variables = {
-        "input": "please tell me a joke about cats",
+        "input": "What's the checkin and checkout time?",
+        "rules": [
+            { "rule": "The checkin time is 3pm" },
+            { "rule": "The checkout time is 11am" },
+            { "rule": "Breakfast is served from 7am to 10am" },
+        ],
     }
 
     messages = prompt_template.render(input_variables=input_variables)
