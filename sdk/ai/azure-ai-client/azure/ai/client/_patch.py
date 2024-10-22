@@ -6,7 +6,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+import uuid
+from os import PathLike
+from pathlib import Path
+from typing import List, Any, Union, Dict
 from typing_extensions import Self
 from azure.core.credentials import TokenCredential
 from azure.core import PipelineClient
@@ -185,6 +188,49 @@ class AzureAIClient(ClientGenerated):
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> str:
+        """Upload a file to the Azure AI Studio project.
+           This method required *azure-ai-ml* to be installed.
+
+        :param file_path: The path to the file to upload.
+        :type file_path: Union[str, Path, PathLike]
+        :return: The asset id of uploaded file.
+        :rtype: str
+        """
+        try:
+            from azure.ai.ml import MLClient
+            from azure.ai.ml.entities import Data
+            from azure.ai.ml.constants import AssetTypes
+        except ImportError:
+            raise ImportError(
+                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`")
+
+        data = Data(
+            path=file_path,
+            type=AssetTypes.URI_FILE,
+            name=str(uuid.uuid4()),  # generating random name
+            is_anonymous=True,
+            version="1",
+        )
+
+        ml_client = MLClient(
+            self._config3.credential,
+            self._config3.subscription_id,
+            self._config3.resource_group_name,
+            self._config3.project_name,
+        )
+
+        data_asset = ml_client.data.create_or_update(data)
+
+        return data_asset.id
+
+    @property
+    def scope(self) -> Dict[str, str]:
+        return {
+            "subscription_id": self._config3.subscription_id,
+            "resource_group_name": self._config3.resource_group_name,
+            "project_name": self._config3.project_name,
+        }
 
 __all__: List[str] = [
     "AzureAIClient",

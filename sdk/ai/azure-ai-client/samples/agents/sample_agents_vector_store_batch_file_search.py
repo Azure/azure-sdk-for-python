@@ -32,40 +32,44 @@ from azure.identity import DefaultAzureCredential
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 ai_client = AzureAIClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with ai_client:
-    
+
     # upload a file and wait for it to be processed
-    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)    
+    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
     vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
-    
+
     # add the file to the vector store or you can supply file ids in the vector store creation
-    vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(vector_store_id=vector_store.id, file_ids=[file.id])    
+    vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(
+        vector_store_id=vector_store.id, file_ids=[file.id]
+    )
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
-    
+
     # create a file search tool
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-    
+
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", 
+        model="gpt-4-1106-preview",
+        name="my-assistant",
         instructions="You are helpful assistant",
         tools=file_search_tool.definitions,
-        tool_resources=file_search_tool.resources
+        tool_resources=file_search_tool.resources,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
+    message = ai_client.agents.create_message(
+        thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+    )
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
@@ -94,6 +98,6 @@ with ai_client:
 
     ai_client.agents.delete_agent(agent.id)
     print("Deleted agent")
-    
-    messages = ai_client.agents.list_messages(thread_id=thread.id)    
+
+    messages = ai_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")

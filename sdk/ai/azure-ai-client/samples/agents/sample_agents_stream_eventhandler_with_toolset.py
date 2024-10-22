@@ -44,6 +44,7 @@ ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
+
 # When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
 # method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):

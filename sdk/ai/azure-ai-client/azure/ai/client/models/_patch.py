@@ -15,7 +15,7 @@ import asyncio
 
 from azure.core.credentials import TokenCredential, AccessToken
 
-from ._enums import AgentStreamEvent
+from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     ConnectionsListSecretsResponse,
     MessageDeltaChunk,
@@ -33,6 +33,7 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
+    ConnectionType,
 )
 
 from abc import ABC, abstractmethod
@@ -54,7 +55,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     """
     new_params = {}
     valid_parameters = set(
-        filter(lambda x: not x.startswith('_') and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys())
+        filter(
+            lambda x: not x.startswith("_") and hasattr(model_class.__dict__[x], "_type"), model_class.__dict__.keys()
+        )
     )
     for k in filter(lambda x: x in valid_parameters, parameters.keys()):
         new_params[k] = parameters[k]
@@ -75,8 +78,26 @@ def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
 
 
 class ConnectionProperties:
+    """The properties of a single connection.
+
+    :ivar id: A unique identifier for the connection.
+    :vartype id: str
+    :ivar name: The friendly name of the connection.
+    :vartype name: str
+    :ivar authentication_type: The authentication type used by the connection.
+    :vartype authentication_type: ~azure.ai.client.models._models.AuthenticationType
+    :ivar connection_type: The connection type .
+    :vartype connection_type: ~azure.ai.client.models._models.ConnectionType
+    :ivar endpoint_url: The endpoint URL associated with this connection
+    :vartype endpoint_url: str
+    :ivar key: The api-key to be used when accessing the connection.
+    :vartype key: str
+    :ivar token_credential: The TokenCredential to be used when accessing the connection.
+    :vartype token_credential: ~azure.core.credentials.TokenCredential
+    """
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+        self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
         self.connection_type = connection.properties.category
@@ -91,18 +112,44 @@ class ConnectionProperties:
                 self.key = connection.properties.credentials.key
         self.token_credential = token_credential
 
+    def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
+        connection_type = self.connection_type.value
+        if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
+            connection_type = "azure_openai"
+
+        if self.authentication_type == "ApiKey":
+            model_config = {
+                "azure_deployment": deployment_name,
+                "azure_endpoint": self.endpoint_url,
+                "type": connection_type,
+                "api_version": api_version,
+                "api_key": f"{self.id}/credentials/key",
+            }
+        else:
+            model_config = {
+                "azure_deployment": deployment_name,
+                "azure_endpoint": self.endpoint_url,
+                "type": self.connection_type,
+                "api_version": api_version,
+            }
+        return model_config
+
     def __str__(self):
         out = "{\n"
         out += f' "name": "{self.name}",\n'
+        out += f' "id": "{self.id}",\n'
         out += f' "authentication_type": "{self.authentication_type}",\n'
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
-        out += f' "key": "{self.key}",\n'
+        if self.key:
+            out += f' "key": "{self.key}",\n'
+        else:
+            out += f' "key": null,\n'
         if self.token_credential:
             access_token = self.token_credential.get_token("https://cognitiveservices.azure.com/.default")
             out += f' "token_credential": "{access_token.token}", expires on {access_token.expires_on} ({datetime.datetime.fromtimestamp(access_token.expires_on, datetime.timezone.utc)})\n'
         else:
-            out += f' "token_credential": "null"\n'
+            out += f' "token_credential": null\n'
         out += "}\n"
         return out
 
@@ -747,7 +794,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
             event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
-            event_data_obj =_safe_instantiate(RunStepDeltaChunk, parsed_data)
+            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
 
