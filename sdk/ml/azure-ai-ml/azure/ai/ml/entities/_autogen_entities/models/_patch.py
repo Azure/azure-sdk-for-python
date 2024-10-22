@@ -12,29 +12,29 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2024_01_01_preview.models import MarketplaceSubscription as RestMarketplaceSubscription
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
+)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelSettings as RestModelSettings
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ServerlessEndpoint as RestServerlessEndpoint
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    ServerlessEndpointProperties as RestServerlessEndpointProperties,
+)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import Sku as RestSku
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     EndpointDeploymentResourcePropertiesBasicResource,
     OpenAIEndpointDeploymentResourceProperties,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    ServerlessEndpoint as RestServerlessEndpoint,
-    ServerlessEndpointProperties as RestServerlessEndpointProperties,
-    ModelSettings as RestModelSettings,
-    Sku as RestSku,
-    MarketplaceSubscription as RestMarketplaceSubscription,
-    MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
-)
+from azure.ai.ml.entities._system_data import SystemData
 
-from ._models import (
-    AzureOpenAIDeployment as _AzureOpenAIDeployment,
-    ServerlessEndpoint as _ServerlessEndpoint,
-    MarketplaceSubscription as _MarketplaceSubscription,
-    MarketplacePlan as _MarketplacePlan,
-)
 from .._model_base import rest_field
+from ._models import AzureOpenAIDeployment as _AzureOpenAIDeployment
+from ._models import MarketplacePlan as _MarketplacePlan
+from ._models import MarketplaceSubscription as _MarketplaceSubscription
+from ._models import ServerlessEndpoint as _ServerlessEndpoint
 
 __all__: List[str] = [
     "AzureOpenAIDeployment",
@@ -151,10 +151,10 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             location=obj.location,
             auth_mode=obj.properties.auth_mode,
             provisioning_state=camel_to_snake(obj.properties.provisioning_state),
-            model_id=obj.properties.model_settings.model_id,
-            scoring_uri=obj.properties.inference_endpoint.uri,
-            system_data=SystemData._from_rest_object(obj.system_data),
-            headers=obj.properties.inference_endpoint.headers,
+            model_id=obj.properties.model_settings.model_id if obj.properties.model_settings else None,
+            scoring_uri=obj.properties.inference_endpoint.uri if obj.properties.inference_endpoint else None,
+            system_data=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
+            headers=obj.properties.inference_endpoint.headers if obj.properties.inference_endpoint else None,
         )
 
     def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
