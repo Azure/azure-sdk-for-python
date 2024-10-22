@@ -84,7 +84,6 @@ class TestBuiltInEvaluators:
     def test_quality_evaluator_fluency(self, model_config, simple_conversation):
         eval_fn = FluencyEvaluator(model_config)
         score = eval_fn(
-            query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
@@ -163,7 +162,6 @@ class TestBuiltInEvaluators:
     def test_quality_evaluator_prompt_based_with_dict_input(self, model_config):
         eval_fn = FluencyEvaluator(model_config)
         score = eval_fn(
-            query={"foo": "1"},
             response={"bar": 2},
         )
         assert score is not None

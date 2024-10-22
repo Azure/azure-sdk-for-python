@@ -23,9 +23,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         eval_fn = FluencyEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.")
+        result = eval_fn(response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -67,4 +65,4 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(response=response, conversation=conversation, **kwargs)
