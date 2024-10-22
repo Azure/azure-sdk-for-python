@@ -5,8 +5,15 @@ import os
 from typing import Optional
 
 from typing_extensions import override
+from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from ..._common.utils import construct_prompty_model_config, validate_model_config
+
+try:
+    from ..._user_agent import USER_AGENT
+except ImportError:
+    USER_AGENT = "None"
 
 
 class GroundednessEvaluator(PromptyEvaluatorBase):
@@ -36,14 +43,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         }
     """
 
-    _PROMPTY_FILE = "groundedness.prompty"
+    _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
+    _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "gpt_groundedness"
 
     @override
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
+
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        self._model_config = model_config  # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @override
     def __call__(
@@ -78,5 +88,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             raise ValueError("Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided.")
         elif query and response and context and conversation:
             raise ValueError("If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided.")
+        
+        if query:
+            self._prompty_file = self._PROMPTY_FILE_WITH_QUERY
+            prompty_model_config = construct_prompty_model_config(
+                validate_model_config(self._model_config),
+                self._DEFAULT_OPEN_API_VERSION,
+                USER_AGENT,
+            )
+            self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
 
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)

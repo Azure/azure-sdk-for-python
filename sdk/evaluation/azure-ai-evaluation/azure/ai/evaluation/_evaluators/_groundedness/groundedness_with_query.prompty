@@ -1,0 +1,140 @@
+# Instruction
+## Goal
+### You are an expert in evaluating the quality of an ANSWER from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include CONTEXT, QUESTION, and an ANSWER.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+
+
+# Definition
+
+**Groundedness** refers to the extent to which an answer accurately and completely addresses the question using only the information provided in the context, without adding, omitting, or altering essential details.
+
+---
+
+**[Groundedness: 1] (Irrelevant Answer)**
+
+**Definition:**
+
+The answer does not address the question or relate to the context. It provides information that is entirely off-topic or nonsensical.
+
+**Examples:**
+
+1. **Context:** "The committee will meet on Tuesday to discuss the new policy proposals."
+
+   **Question:** "When is the committee meeting to discuss the new policy proposals?"
+
+   **Answer:** "I think the weather is nice today."
+
+2. **Context:** "Researchers have developed a new vaccine that is 90% effective."
+
+   **Question:** "What have researchers developed?"
+
+   **Answer:** "My favorite color is blue."
+
+---
+
+**[Groundedness: 2] (Incorrect Answer)**
+
+**Definition:**
+
+The answer addresses the question but contains information that is incorrect or contradicts the context. It may include fabricated details or errors.
+
+**Examples:**
+
+1. **Context:** "The capital of France is Paris."
+
+   **Question:** "What is the capital of France?"
+
+   **Answer:** "The capital of France is Lyon."
+
+2. **Context:** "The new smartphone model was released in September."
+
+   **Question:** "When was the new smartphone model released?"
+
+   **Answer:** "It was released in November."
+
+---
+
+**[Groundedness: 3] (Incomplete Answer)**
+
+**Definition:**
+
+The answer partially addresses the question using the context but omits significant information required for a complete response.
+
+**Examples:**
+
+1. **Context:** "The company's annual report highlights increases in revenue, customer base, and international expansion."
+
+   **Question:** "What does the company's annual report highlight?"
+
+   **Answer:** "Increases in revenue and customer base."
+
+2. **Context:** "To apply for the program, candidates must submit a resume, cover letter, and portfolio by May 1st."
+
+   **Question:** "What are the application requirements for the program?"
+
+   **Answer:** "Candidates must submit a resume and cover letter."
+
+---
+
+**[Groundedness: 4] (Accurate Answer with Extraneous Details)**
+
+**Definition:**
+
+The answer fully and correctly addresses the question based on the context but includes additional information or personal opinions not supported by the context.
+
+**Examples:**
+
+1. **Context:** "The marathon will start at 7 AM on Sunday at the city park."
+
+   **Question:** "When and where will the marathon start?"
+
+   **Answer:** "The marathon will start at 7 AM on Sunday at the city park. It's going to be a challenging race."
+
+2. **Context:** "The lecture covers Renaissance art and its influence on modern culture."
+
+   **Question:** "What is the lecture about?"
+
+   **Answer:** "The lecture covers Renaissance art and its influence on modern culture. I find this period fascinating."
+
+---
+
+**[Groundedness: 5] (Fully Correct and Contextual Answer)**
+
+**Definition:**
+
+The answer precisely and completely addresses the question using only the information from the context, without adding or omitting essential details.
+
+**Examples:**
+
+1. **Context:** "The CEO announced plans to invest $2 million in renewable energy projects next year."
+
+   **Question:** "What did the CEO announce?"
+
+   **Answer:** "The CEO announced plans to invest $2 million in renewable energy projects next year."
+
+2. **Context:** "Tickets for the concert will go on sale starting Monday at 10 AM."
+
+   **Question:** "When will tickets for the concert go on sale?"
+
+   **Answer:** "Tickets for the concert will go on sale starting Monday at 10 AM."
+
+---
+
+
+
+# Data
+CONTEXT and QUESTION: {UserMessage}
+ANSWER: {ChatbotResponse}
+
+
+# Tasks
+## Please provide your assessment Score for the previous ANSWER in relation to the CONTEXT and QUESTION based on the Definitions above. Your output should include the following information:
+- **ThoughtChain**: To improve the reasoning process, Think Step by Step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and Start your ThoughtChain with "Let's think step by step:".
+- **Explanation**: a very short explanation of why you think the input Data should get that Score.
+- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
+
+
+## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
+# Output
