@@ -12,9 +12,6 @@
         "testApplicationId": {
             "type": "string"
         },
-        "testApplicationSecret": {
-            "type": "string"
-        },
         "testApplicationOid": {
             "type": "string"
         },
@@ -246,10 +243,6 @@
         "AZURE_CLIENT_ID": {
             "type": "string",
             "value": "[parameters('testApplicationId')]"
-        },
-        "AZURE_CLIENT_SECRET": {
-            "type": "string",
-            "value": "[parameters('testApplicationSecret')]"
         },
         "AZURE_CLOUD": {
             "type": "string",
