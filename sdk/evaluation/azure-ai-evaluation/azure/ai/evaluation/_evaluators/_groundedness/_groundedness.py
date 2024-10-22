@@ -59,7 +59,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated. Mutually exclusive with `conversation`.
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation`. Optional parameter for use
+            with the `response` and `context` parameters. If provided, a different prompt template will be used for
+            evaluation.
         :paramtype query: Optional[str]
         :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
@@ -72,4 +74,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+        if any(val is None for val in [query, response, context]) and conversation is None:
+            raise ValueError("Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided.")
+        elif query and response and context and conversation:
+            raise ValueError("If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided.")
+
+        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)

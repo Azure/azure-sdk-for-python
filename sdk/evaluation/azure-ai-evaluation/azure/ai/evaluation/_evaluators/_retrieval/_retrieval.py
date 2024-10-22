@@ -154,7 +154,12 @@ class RetrievalEvaluator:
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
+        if any(val is None for val in [query, context]) and conversation is None:
+            raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided.")
+        elif query and context and conversation:
+            raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided, but not both.")
+    
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, context=context, conversation=conversation, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

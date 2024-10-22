@@ -65,4 +65,9 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
+        if response is None and conversation is None:
+            raise ValueError("Either 'response' or 'conversation' must be provided.")
+        elif response and conversation:
+            raise ValueError("Either 'response' or 'conversation' must be provided, but not both.")
+
         return super().__call__(response=response, conversation=conversation, **kwargs)
