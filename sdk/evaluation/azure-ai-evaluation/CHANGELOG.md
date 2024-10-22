@@ -1,8 +1,20 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+
+## 1.0.0b5 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+- Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+
+### Bugs Fixed
+- Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+
+### Other Changes
+- Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+
+## 1.0.0b4 (2024-10-16)
 
 ### Breaking Changes
 
@@ -12,9 +24,11 @@
 
 ### Bugs Fixed
 - Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrive RAI Service response.
+- Fixed an issue where the Evaluate API did not fail due to missing inputs when the target did not return columns required by the evaluators.
 
 ### Other Changes
 - Enhance the error message to provide clearer instruction when required packages for the remote tracking feature are missing.
+- Print the per-evaluator run summary at the end of the Evaluate API call to make troubleshooting row-level failures easier.
 
 ## 1.0.0b3 (2024-10-01)
 

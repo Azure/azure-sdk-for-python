@@ -111,14 +111,14 @@ def _question_answer_override_target(query, response):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestEvaluate:
-    def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
+    def test_evaluate_evaluators_not_a_dict(self, mock_model_config, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
-                data="data",
+                data=questions_file,
                 evaluators=[GroundednessEvaluator(model_config=mock_model_config)],
             )
 
-        assert "evaluators parameter must be a dictionary." in exc_info.value.args[0]
+        assert "The 'evaluators' parameter must be a dictionary." in exc_info.value.args[0]
 
     def test_evaluate_invalid_data(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -127,7 +127,26 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "data parameter must be a string." in exc_info.value.args[0]
+        assert "The 'data' parameter must be a string or a path-like object." in exc_info.value.args[0]
+
+    def test_evaluate_data_not_exist(self, mock_model_config):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data="not_exist.jsonl",
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            )
+
+        assert "The input data file path 'not_exist.jsonl' does not exist." in exc_info.value.args[0]
+
+    def test_target_not_callable(self, mock_model_config, questions_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+                target="not_callable",
+            )
+
+        assert "The 'target' parameter must be a callable function." in exc_info.value.args[0]
 
     def test_evaluate_invalid_jsonl_data(self, mock_model_config, invalid_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -136,27 +155,33 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "Failed to load data from " in exc_info.value.args[0]
-        assert "Confirm that it is valid jsonl data." in exc_info.value.args[0]
+        assert "Unable to load data from " in exc_info.value.args[0]
+        assert "Please ensure the input is valid JSONL format." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
-        assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
+        assert expected_message in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
-        assert "Missing required inputs for target : ['query']." in exc_info.value.args[0]
+        assert "Missing required inputs for target: ['query']." in exc_info.value.args[0]
 
-    def test_wrong_target(self, questions_file):
-        """Test error, when target function does not generate required column."""
+    def test_target_not_generate_required_columns(self, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
-            # target_fn will generate the "response", but not ground truth.
+            # target_fn will generate the "response", but not "ground_truth".
             evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
-        assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
+
+        expected_message2 = "Verify that the target is generating the necessary columns for the evaluators. "
+        expected_message2 += "Currently generated columns: {'response'}"
+
+        assert expected_message in exc_info.value.args[0]
+        assert expected_message2 in exc_info.value.args[0]
 
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
@@ -361,6 +386,16 @@ class TestEvaluate:
         df_actuals = _rename_columns_conditionally(df)
         assert_frame_equal(df_actuals.sort_index(axis=1), df_expected.sort_index(axis=1))
 
+    def test_evaluate_output_dir_not_exist(self, mock_model_config, questions_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+                output_path="./not_exist_dir/output.jsonl",
+            )
+
+        assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
+
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
         output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
@@ -553,7 +588,9 @@ class TestEvaluate:
                 },
                 _use_pf_client=use_pf_client,
             )  # type: ignore
-        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['response']."  # type: ignore
+
+        expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
+        assert expected_message in exc_info.value.args[0]
 
         # Variants with default answer work when only question is inputted
         only_question_results = evaluate(

@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 def main():
     client = RedisEnterpriseManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f",
     )
 
     response = client.databases.begin_update(
@@ -38,6 +36,7 @@ def main():
         database_name="default",
         parameters={
             "properties": {
+                "accessKeysAuthentication": "Enabled",
                 "clientProtocol": "Encrypted",
                 "evictionPolicy": "AllKeysLRU",
                 "persistence": {"rdbEnabled": True, "rdbFrequency": "12h"},
@@ -47,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesUpdate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-09-01-preview/examples/RedisEnterpriseDatabasesUpdate.json
 if __name__ == "__main__":
     main()
