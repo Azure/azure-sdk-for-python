@@ -16,7 +16,6 @@ import os
 import logging
 from common_tasks import (
     run_check_call,
-    parse_require,
     install_package_from_whl,
     filter_dev_requirements,
     find_packages_missing_on_pypi,
@@ -32,8 +31,9 @@ from git_helper import (
     clone_repo,
 )
 
-from ci_tools.functions import discover_targeted_packages, str_to_bool, find_whl
-from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import discover_targeted_packages, find_whl
+from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.variables import str_to_bool
 
 AZURE_GLOB_STRING = "azure*"
 
@@ -328,7 +328,7 @@ def find_package_dependency(glob_string, repo_root_dir, dependent_service):
             parsed = ParsedSetup.from_path(pkg_root)
 
             # Get a list of package names from install requires
-            required_pkgs = [parse_require(r)[0] for r in parsed.requires]
+            required_pkgs = [parse_require(r).key for r in parsed.requires]
             required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
             for req_pkg in required_pkgs:
@@ -407,7 +407,7 @@ if __name__ == "__main__":
         "--service",
         help=("Name of service directory (under sdk/) to test." "Example: --service applicationinsights"),
     )
-    
+
     parser.add_argument(
         "--dependent-service",
         dest="dependent_service",

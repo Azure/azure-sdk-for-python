@@ -11,8 +11,11 @@ import msal
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._credentials.azure_arc import AzureArcCredential
 
+from helpers import GET_TOKEN_METHODS
 
-def test_msal_managed_identity_error():
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_msal_managed_identity_error(get_token_method):
     scopes = ["scope1"]
 
     def mock_request_token(*args, **kwargs):
@@ -22,4 +25,4 @@ def test_msal_managed_identity_error():
     cred._msal_client.acquire_token_for_client = mock_request_token
 
     with pytest.raises(ClientAuthenticationError):
-        cred.get_token(*scopes)
+        getattr(cred, get_token_method)(*scopes)

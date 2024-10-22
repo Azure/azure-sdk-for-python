@@ -9806,7 +9806,6 @@ class ScaleProfile(_serialization.Model):
     """Specifications on how to scale a VirtualMachines agent pool.
 
     :ivar manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
-     Currently, at most one ManualScaleProfile is allowed.
     :vartype manual:
      list[~azure.mgmt.containerservice.v2024_04_02_preview.models.ManualScaleProfile]
     :ivar autoscale: Specifications on how to auto-scale the VirtualMachines agent pool within a
@@ -9829,7 +9828,6 @@ class ScaleProfile(_serialization.Model):
     ) -> None:
         """
         :keyword manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
-         Currently, at most one ManualScaleProfile is allowed.
         :paramtype manual:
          list[~azure.mgmt.containerservice.v2024_04_02_preview.models.ManualScaleProfile]
         :keyword autoscale: Specifications on how to auto-scale the VirtualMachines agent pool within a

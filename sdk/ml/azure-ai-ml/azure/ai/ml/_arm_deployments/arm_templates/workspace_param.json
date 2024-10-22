@@ -38,6 +38,9 @@
     "storageAccountName": {
         "value": ""
     },
+    "storageAccountSubscriptionId": {
+        "value": ""
+    },
     "storageAccountResourceGroupName": {
         "value": ""
     },

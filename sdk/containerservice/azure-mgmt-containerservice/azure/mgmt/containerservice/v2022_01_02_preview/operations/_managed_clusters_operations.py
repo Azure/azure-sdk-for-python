@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -1484,6 +1486,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1492,15 +1495,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 201:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1687,6 +1689,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1695,11 +1698,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1868,6 +1874,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1876,15 +1883,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 204:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1992,6 +1998,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2000,15 +2007,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2187,6 +2193,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2195,15 +2202,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2365,6 +2371,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2373,15 +2380,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 204:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2474,6 +2480,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2482,15 +2489,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 204:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2584,6 +2590,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2592,15 +2599,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 204:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2709,6 +2715,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2717,15 +2724,14 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
-        if response.status_code == 202:
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

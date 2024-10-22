@@ -37,6 +37,10 @@ extends:
     settings:
       skipBuildTagsForGitHubPullRequests: true
     sdl:
+      ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
+        autobaseline:
+          isMainPipeline: true
+          enableForGitHub: true
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt

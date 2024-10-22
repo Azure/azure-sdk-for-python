@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.elasticsan import ElasticSanMgmtClient
 
 """
@@ -34,25 +35,19 @@ def main():
         elastic_san_name="elasticsanname",
         volume_group_name="volumegroupname",
         parameters={
-            "identity": {"type": "None", "userAssignedIdentities": {"key7482": {}}},
+            "identity": {"type": "None", "userAssignedIdentities": {"key1006": {}}},
             "properties": {
-                "encryption": "EncryptionAtRestWithCustomerManagedKey",
+                "encryption": "EncryptionAtRestWithPlatformKey",
                 "encryptionProperties": {
-                    "identity": {"userAssignedIdentity": "im"},
+                    "identity": {"userAssignedIdentity": "gfhkfbozahmmwluqndfgxunssafa"},
                     "keyVaultProperties": {
-                        "keyName": "sftaiernmrzypnrkpakrrawxcbsqzc",
-                        "keyVaultUri": "https://microsoft.com/axmblwp",
-                        "keyVersion": "c",
+                        "keyName": "lunpapamzeimppgobraxjt",
+                        "keyVaultUri": "https://microsoft.com/a",
+                        "keyVersion": "oemygbnfmqhijmonkqfqmy",
                     },
                 },
-                "networkAcls": {
-                    "virtualNetworkRules": [
-                        {
-                            "action": "Allow",
-                            "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}",
-                        }
-                    ]
-                },
+                "enforceDataIntegrityCheckForIscsi": True,
+                "networkAcls": {"virtualNetworkRules": [{"action": "Allow", "id": "bkhwaiqvvaguymsmnzzbzz"}]},
                 "protocolType": "Iscsi",
             },
         },
@@ -60,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeGroups_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/VolumeGroups_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

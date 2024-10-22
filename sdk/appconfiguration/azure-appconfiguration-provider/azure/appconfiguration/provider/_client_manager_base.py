@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 import time
 import random
+import hashlib
+import base64
 from dataclasses import dataclass
 from typing import Dict, List
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -28,7 +30,19 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 class _ConfigurationClientWrapperBase:
     endpoint: str
 
-    def _feature_flag_telemetry(self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]):
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label and not label.isspace():
+            basic_value += f"{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
+    def _feature_flag_appconfig_telemetry(
+        self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
+    ):
         if feature_flag.filters:
             for filter in feature_flag.filters:
                 if filter.get("name") in PERCENTAGE_FILTER_NAMES:
@@ -51,7 +65,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        **kwargs
+        **kwargs,
     ):
         self._replica_clients: List[_ConfigurationClientWrapperBase] = []
         self._original_endpoint = endpoint
@@ -90,7 +104,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
             calculated_milliseconds = max_backoff_milliseconds
 
         return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
 
     def __eq__(self, other):

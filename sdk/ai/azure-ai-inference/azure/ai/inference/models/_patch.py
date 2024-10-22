@@ -316,7 +316,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
         self._response = response
         self._bytes_iterator: Iterator[bytes] = response.iter_bytes()
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         return self
 
     def __next__(self) -> "_models.StreamingChatCompletionsUpdate":
@@ -336,7 +336,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
             return True
         return self._deserialize_and_add_to_queue(element)
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
         self.close()
 
     def close(self) -> None:
@@ -355,7 +355,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         self._response = response
         self._bytes_iterator: AsyncIterator[bytes] = response.iter_bytes()
 
-    def __aiter__(self):
+    def __aiter__(self) -> Any:
         return self
 
     async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
@@ -375,7 +375,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
             return True
         return self._deserialize_and_add_to_queue(element)
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
         asyncio.run(self.aclose())
 
     async def aclose(self) -> None:

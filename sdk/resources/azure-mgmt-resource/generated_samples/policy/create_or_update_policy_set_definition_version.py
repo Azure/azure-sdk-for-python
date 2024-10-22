@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.resource import PolicyClient
@@ -29,13 +27,12 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="POLICY_DEFINITION_NAME",
-        policy_definition_version="1.2.1",
-        policy_set_definition_name="CostManagement",
         subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
     )
 
     response = client.policy_set_definition_versions.create_or_update(
+        policy_set_definition_name="CostManagement",
+        policy_definition_version="1.2.1",
         parameters={
             "properties": {
                 "description": "Policies to enforce low cost storage SKUs",

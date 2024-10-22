@@ -169,15 +169,19 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
                     # mistake, so we should ignore it.
                     continue
 
+                feature_flag_value = json.loads(feature_flag.value)
+
+                self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
+
+                loaded_feature_flags.append(feature_flag_value)
+
                 if feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-                self._feature_flag_telemetry(feature_flag, filters_used)
         return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
 
     @distributed_trace

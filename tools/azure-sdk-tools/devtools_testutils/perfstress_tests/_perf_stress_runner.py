@@ -81,7 +81,11 @@ class _PerfStressRunner:
             "-p", "--parallel", nargs="?", type=int, help="Degree of parallelism to run with.  Default is 1.", default=1
         )
         per_test_arg_parser.add_argument(
-            "--processes", nargs="?", type=int, help="Number of concurrent processes over which to distribute the parallel runs.  Default is the number of cores.", default=multiprocessing.cpu_count()
+            "--processes",
+            nargs="?",
+            type=int,
+            help="Number of concurrent processes over which to distribute the parallel runs.  Default is the number of cores.",
+            default=multiprocessing.cpu_count(),
         )
         per_test_arg_parser.add_argument(
             "-d", "--duration", nargs="?", type=int, help="Duration of the test in seconds.  Default is 10.", default=10
@@ -99,11 +103,13 @@ class _PerfStressRunner:
             "--profile", action="store_true", help="Run tests with profiler.  Default is False.", default=False
         )
         per_test_arg_parser.add_argument(
-            "--profile-path", nargs="?", type=str, help="File path to store profiler results. If not specified, results will be stored in the current directory."
+            "--profile-path",
+            nargs="?",
+            type=str,
+            help="File path to store profiler results. If not specified, results will be stored in the current directory.",
         )
         per_test_arg_parser.add_argument(
-            "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')",
-            type=lambda s: s.split(';')
+            "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')", type=lambda s: s.split(";")
         )
         per_test_arg_parser.add_argument(
             "--insecure", action="store_true", help="Disable SSL validation. Default is False.", default=False
@@ -127,8 +133,8 @@ class _PerfStressRunner:
     def _discover_tests(self, test_folder_path):
         base_classes = [PerfStressTest, BatchPerfTest, EventPerfTest]
         self._test_classes = {}
-        if os.path.isdir(os.path.join(test_folder_path, 'tests')):
-            test_folder_path = os.path.join(test_folder_path, 'tests')
+        if os.path.isdir(os.path.join(test_folder_path, "tests")):
+            test_folder_path = os.path.join(test_folder_path, "tests")
         sys.path.append(test_folder_path)
         self.logger.debug("Searching for tests in {}".format(test_folder_path))
 
@@ -177,9 +183,9 @@ class _PerfStressRunner:
         # of threads that will be run by each process.
         # E.g. if parallel=10, processes=4: mapping=[(0, 3), (3, 3), (6, 2), (8, 2)]
         k, m = divmod(self.per_test_args.parallel, processes)
-        mapping = [(i*k+min(i, m), ((i+1)*k+min(i+1, m)) - (i*k+min(i, m))) for i in range(processes)]
+        mapping = [(i * k + min(i, m), ((i + 1) * k + min(i + 1, m)) - (i * k + min(i, m))) for i in range(processes)]
 
-        ctx = multiprocessing.get_context('spawn')
+        ctx = multiprocessing.get_context("spawn")
         self.results = ctx.Queue()
         self.status = ctx.JoinableQueue()
         self.status_thread = RepeatedTimer(1, self._print_status, self.per_test_args.parallel, start_now=False)
@@ -194,22 +200,27 @@ class _PerfStressRunner:
             "Tests": ctx.Barrier(processes + 1),
             "Pre Cleanup": ctx.Barrier(processes + 1),
             "Cleanup": ctx.Barrier(processes + 1),
-            "Finished": ctx.Barrier(processes + 1)
+            "Finished": ctx.Barrier(processes + 1),
         }
 
         try:
-            futures = [ctx.Process(
-                        target=run_process,
-                        args=(
-                            index,
-                            self.per_test_args,
-                            self._test_classes[self._test_name][1],
-                            self._test_name,
-                            threads,
-                            self.test_stages,
-                            self.results,
-                            self.status),
-                        daemon=True) for index, threads in mapping]
+            futures = [
+                ctx.Process(
+                    target=run_process,
+                    args=(
+                        index,
+                        self.per_test_args,
+                        self._test_classes[self._test_name][1],
+                        self._test_name,
+                        threads,
+                        self.test_stages,
+                        self.results,
+                        self.status,
+                    ),
+                    daemon=True,
+                )
+                for index, threads in mapping
+            ]
             [f.start() for f in futures]
 
             # All tests wait to start "Setup".
@@ -251,7 +262,6 @@ class _PerfStressRunner:
             except Exception as e:
                 self.logger.warn("Error closing processes: " + str(e))
 
-
     def _report_results(self):
         """Calculate and log the test run results across all child processes"""
         operations = []
@@ -269,7 +279,7 @@ class _PerfStressRunner:
                     total_operations,
                     self._format_number(weighted_average_seconds, 4),
                     self._format_number(operations_per_second, 4),
-                    self._format_number(seconds_per_operation, 4)
+                    self._format_number(seconds_per_operation, 4),
                 )
             )
         else:

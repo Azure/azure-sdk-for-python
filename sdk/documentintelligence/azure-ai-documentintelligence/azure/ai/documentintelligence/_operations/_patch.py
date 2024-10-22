@@ -27,7 +27,7 @@ from .._model_base import _deserialize
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -98,7 +98,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._build_classifier_initial(  # type: ignore
+            raw_result = self._build_classifier_initial(
                 build_request=build_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -106,11 +106,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -156,7 +158,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._build_document_model_initial(  # type: ignore
+            raw_result = self._build_document_model_initial(
                 build_request=build_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -164,11 +166,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -214,7 +218,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._compose_model_initial(  # type: ignore
+            raw_result = self._compose_model_initial(
                 compose_request=compose_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -222,11 +226,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -272,7 +278,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._copy_model_to_initial(  # type: ignore
+            raw_result = self._copy_model_to_initial(
                 model_id=model_id,
                 copy_to_request=copy_to_request,
                 content_type=content_type,
@@ -281,11 +287,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )

@@ -581,7 +581,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
     etag: str
     """The etag of current page."""
 
-    def __init__(self, command: Callable, **kwargs):
+    def __init__(self, command: Callable, **kwargs: Any):
         super(ConfigurationSettingPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -620,7 +620,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
     etag: str
     """The etag of current page."""
 
-    def __init__(self, command: Callable, **kwargs):
+    def __init__(self, command: Callable, **kwargs: Any):
         super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
