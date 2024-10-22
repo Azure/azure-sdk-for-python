@@ -72,7 +72,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         """
         if any(val is None for val in [query, response]) and conversation is None:
             raise ValueError("Either a pair of 'query'/'response' or 'conversation' must be provided.")
-        elif query and response and conversation:
+        if query and response and conversation:
             raise ValueError("Either a pair of 'query'/'response' or 'conversation' must be provided, but not both.")
 
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

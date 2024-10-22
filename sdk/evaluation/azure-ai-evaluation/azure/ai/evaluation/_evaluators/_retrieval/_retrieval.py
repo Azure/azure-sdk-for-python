@@ -159,7 +159,13 @@ class RetrievalEvaluator:
         elif query and context and conversation:
             raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided, but not both.")
     
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, context=context, conversation=conversation, **kwargs)
+        return async_run_allowing_running_loop(
+            self._async_evaluator,
+            query=query,
+            context=context,
+            conversation=conversation,
+            **kwargs
+        )
 
     def _to_async(self):
         return self._async_evaluator

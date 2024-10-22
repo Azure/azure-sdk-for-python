@@ -59,15 +59,14 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
         :paramtype response: str
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
+            key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         if response is None and conversation is None:
             raise ValueError("Either 'response' or 'conversation' must be provided.")
-        elif response and conversation:
+        if response and conversation:
             raise ValueError("Either 'response' or 'conversation' must be provided, but not both.")
 
         return super().__call__(response=response, conversation=conversation, **kwargs)

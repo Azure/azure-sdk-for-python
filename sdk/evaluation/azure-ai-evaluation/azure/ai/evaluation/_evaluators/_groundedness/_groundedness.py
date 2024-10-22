@@ -86,7 +86,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         """
         if any(val is None for val in [query, response, context]) and conversation is None:
             raise ValueError("Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided.")
-        elif query and response and context and conversation:
+        if query and response and context and conversation:
             raise ValueError("If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided.")
         
         if query:
