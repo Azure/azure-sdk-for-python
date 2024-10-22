@@ -12,7 +12,7 @@ from ._models import AgentThread
 from ._models import AgentThreadCreationOptions
 from ._models import AgentsApiResponseFormat
 from ._models import AgentsNamedToolChoice
-from ._models import AppInsightsConfiguration
+from ._models import ApplicationInsightsConfiguration
 from ._models import AzureAISearchResource
 from ._models import AzureAISearchToolDefinition
 from ._models import BingGroundingToolDefinition
@@ -192,7 +192,7 @@ __all__ = [
     "AgentThreadCreationOptions",
     "AgentsApiResponseFormat",
     "AgentsNamedToolChoice",
-    "AppInsightsConfiguration",
+    "ApplicationInsightsConfiguration",
     "AzureAISearchResource",
     "AzureAISearchToolDefinition",
     "BingGroundingToolDefinition",

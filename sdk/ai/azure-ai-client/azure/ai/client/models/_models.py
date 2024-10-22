@@ -372,7 +372,7 @@ class InputData(_model_base.Model):
     """Abstract data class for input data configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AppInsightsConfiguration, Dataset
+    ApplicationInsightsConfiguration, Dataset
 
 
     :ivar type: Type of the data. Required. Default value is None.
@@ -401,30 +401,35 @@ class InputData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AppInsightsConfiguration(InputData, discriminator="app_insights"):
-    """Data Source for Application Insight.
+class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
+    """Data Source for Application Insights.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar type: Required. Default value is "app_insights".
     :vartype type: str
-    :ivar resource_id: LogAnalytic Workspace resourceID associated with AppInsights. Required.
+    :ivar resource_id: LogAnalytic Workspace resourceID associated with ApplicationInsights.
+     Required.
     :vartype resource_id: str
     :ivar query: Query to fetch the data. Required.
     :vartype query: str
     :ivar service_name: Service name. Required.
     :vartype service_name: str
+    :ivar connection_string: Connection String to connect to ApplicationInsights.
+    :vartype connection_string: str
     """
 
     type: Literal["app_insights"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"app_insights\"."""
     resource_id: str = rest_field(name="resourceId")
-    """LogAnalytic Workspace resourceID associated with AppInsights. Required."""
+    """LogAnalytic Workspace resourceID associated with ApplicationInsights. Required."""
     query: str = rest_field()
     """Query to fetch the data. Required."""
     service_name: str = rest_field(name="serviceName")
     """Service name. Required."""
+    connection_string: Optional[str] = rest_field(name="connectionString")
+    """Connection String to connect to ApplicationInsights."""
 
     @overload
     def __init__(
@@ -433,6 +438,7 @@ class AppInsightsConfiguration(InputData, discriminator="app_insights"):
         resource_id: str,
         query: str,
         service_name: str,
+        connection_string: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1021,19 +1027,17 @@ class Evaluation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+class EvaluationSchedule(_model_base.Model):
     """Evaluation Schedule Definition.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Identifier of the evaluation. Required.
-    :vartype id: str
+    :ivar name: Name of the schedule, which also serves as the unique identifier for the
+     evaluation. Required.
+    :vartype name: str
     :ivar data: Data for evaluation. Required.
-    :vartype data: ~azure.ai.client.models.InputData
-    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
-     Studio. It does not need to be unique.
-    :vartype display_name: str
+    :vartype data: ~azure.ai.client.models.ApplicationInsightsConfiguration
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
     :vartype description: str
@@ -1054,13 +1058,10 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype sampling_strategy: ~azure.ai.client.models.SamplingStrategy
     """
 
-    id: str = rest_field(visibility=["read"])
-    """Identifier of the evaluation. Required."""
-    data: "_models.InputData" = rest_field(visibility=["read", "create"])
+    name: str = rest_field(visibility=["read"])
+    """Name of the schedule, which also serves as the unique identifier for the evaluation. Required."""
+    data: "_models.ApplicationInsightsConfiguration" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
-     to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -1084,11 +1085,10 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
     def __init__(
         self,
         *,
-        data: "_models.InputData",
+        data: "_models.ApplicationInsightsConfiguration",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         trigger: "_models.Trigger",
         sampling_strategy: "_models.SamplingStrategy",
-        display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -2815,9 +2815,9 @@ class RecurrenceSchedule(_model_base.Model):
     :vartype hours: list[int]
     :ivar minutes: List of minutes for the schedule. Required.
     :vartype minutes: list[int]
-    :ivar week_days: List of days for the schedule. Required.
+    :ivar week_days: List of days for the schedule.
     :vartype week_days: list[str or ~azure.ai.client.models.WeekDays]
-    :ivar month_days: List of month days for the schedule. Required.
+    :ivar month_days: List of month days for the schedule.
     :vartype month_days: list[int]
     """
 
@@ -2825,10 +2825,10 @@ class RecurrenceSchedule(_model_base.Model):
     """List of hours for the schedule. Required."""
     minutes: List[int] = rest_field()
     """List of minutes for the schedule. Required."""
-    week_days: List[Union[str, "_models.WeekDays"]] = rest_field(name="weekDays")
-    """List of days for the schedule. Required."""
-    month_days: List[int] = rest_field(name="monthDays")
-    """List of month days for the schedule. Required."""
+    week_days: Optional[List[Union[str, "_models.WeekDays"]]] = rest_field(name="weekDays")
+    """List of days for the schedule."""
+    month_days: Optional[List[int]] = rest_field(name="monthDays")
+    """List of month days for the schedule."""
 
     @overload
     def __init__(
@@ -2836,8 +2836,8 @@ class RecurrenceSchedule(_model_base.Model):
         *,
         hours: List[int],
         minutes: List[int],
-        week_days: List[Union[str, "_models.WeekDays"]],
-        month_days: List[int],
+        week_days: Optional[List[Union[str, "_models.WeekDays"]]] = None,
+        month_days: Optional[List[int]] = None,
     ) -> None: ...
 
     @overload
