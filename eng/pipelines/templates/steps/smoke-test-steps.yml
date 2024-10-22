@@ -101,10 +101,7 @@ steps:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-      SubscriptionConfiguration: $(SubscriptionConfiguration)
-      Location: $(Location)
-      ArmTemplateParameters: $(ArmTemplateParameters)
-      UseFederatedAuth: false
+      ServiceConnection: azure-sdk-tests-public
 
   - script: python $(Build.SourcesDirectory)/common/smoketest/program.py
     displayName: Run Smoke Test
@@ -112,6 +109,4 @@ steps:
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:
       ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-      SubscriptionConfiguration: $(SubscriptionConfiguration)
-      UseFederatedAuth: false
-
+      ServiceConnection: azure-sdk-tests-public
