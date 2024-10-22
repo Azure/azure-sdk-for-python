@@ -59,7 +59,7 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 
 
 # Statically defined user functions for fast reference
-user_functions: Set[Callable[[], Any]] = {
+user_functions: Set[Callable[..., Any]] = {
     fetch_current_datetime,
     fetch_weather,
     send_email,
