@@ -140,9 +140,15 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, conversation, **kwargs):
-        """Evaluates retrieval score chat scenario.
+    def __call__(self, *, query: str, context: str, conversation, **kwargs):
+        """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
+        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
 
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: str
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: str
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The scores for Chat scenario.

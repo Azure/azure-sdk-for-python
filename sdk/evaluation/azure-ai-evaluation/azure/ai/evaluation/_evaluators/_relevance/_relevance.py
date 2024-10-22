@@ -54,20 +54,17 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        context: Optional[str] = None,
         conversation=None,
         **kwargs,
     ):
-        """Evaluate relevance. Accepts either a response and context a single evaluation,
+        """Evaluate relevance. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
+        :keyword query: The query to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
@@ -75,4 +72,4 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

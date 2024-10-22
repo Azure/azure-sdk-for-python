@@ -49,18 +49,21 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     def __call__(
         self,
         *,
+        query: Optional[str] = None,
         response: Optional[str] = None,
         context: Optional[str] = None,
         conversation=None,
         **kwargs,
     ):
-        """Evaluate groundedless. Accepts either a response and context a single evaluation,
+        """Evaluate groundedless. Accepts either a query, response, and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword response: The response to be evaluated.
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation`.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
+        :keyword context: The context to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
