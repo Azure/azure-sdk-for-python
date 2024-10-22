@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models import AdditionalCapabilities
+from ._models import AdditionalLocationsProfile
 from ._models import AdditionalUnattendContent
 from ._models import ApiEntityReference
 from ._models import ApiError
@@ -31,6 +33,7 @@ from ._models import KeyVaultSecretReference
 from ._models import LinuxConfiguration
 from ._models import LinuxPatchSettings
 from ._models import LinuxVMGuestPatchAutomaticByPlatformSettings
+from ._models import LocationProfile
 from ._models import ManagedServiceIdentity
 from ._models import ManagedServiceIdentityUpdate
 from ._models import OSImageNotificationProfile
@@ -56,6 +59,9 @@ from ._models import TerminateNotificationProfile
 from ._models import TrackedResource
 from ._models import UefiSettings
 from ._models import UserAssignedIdentity
+from ._models import VMAttributeMinMaxDouble
+from ._models import VMAttributeMinMaxInteger
+from ._models import VMAttributes
 from ._models import VMDiskSecurityProfile
 from ._models import VMGalleryApplication
 from ._models import VMSizeProperties
@@ -88,8 +94,12 @@ from ._models import WinRMListener
 from ._models import WindowsConfiguration
 from ._models import WindowsVMGuestPatchAutomaticByPlatformSettings
 
+from ._enums import AcceleratorManufacturer
+from ._enums import AcceleratorType
 from ._enums import ActionType
+from ._enums import ArchitectureType
 from ._enums import CachingTypes
+from ._enums import CpuManufacturer
 from ._enums import CreatedByType
 from ._enums import DeleteOptions
 from ._enums import DiffDiskOptions
@@ -103,6 +113,7 @@ from ._enums import IPVersion
 from ._enums import LinuxPatchAssessmentMode
 from ._enums import LinuxVMGuestPatchAutomaticByPlatformRebootSetting
 from ._enums import LinuxVMGuestPatchMode
+from ._enums import LocalStorageDiskType
 from ._enums import ManagedServiceIdentityType
 from ._enums import Mode
 from ._enums import NetworkApiVersion
@@ -120,6 +131,8 @@ from ._enums import SecurityTypes
 from ._enums import SettingNames
 from ._enums import SpotAllocationStrategy
 from ._enums import StorageAccountTypes
+from ._enums import VMAttributeSupport
+from ._enums import VMCategory
 from ._enums import WindowsPatchAssessmentMode
 from ._enums import WindowsVMGuestPatchAutomaticByPlatformRebootSetting
 from ._enums import WindowsVMGuestPatchMode
@@ -128,6 +141,8 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AdditionalCapabilities",
+    "AdditionalLocationsProfile",
     "AdditionalUnattendContent",
     "ApiEntityReference",
     "ApiError",
@@ -153,6 +168,7 @@ __all__ = [
     "LinuxConfiguration",
     "LinuxPatchSettings",
     "LinuxVMGuestPatchAutomaticByPlatformSettings",
+    "LocationProfile",
     "ManagedServiceIdentity",
     "ManagedServiceIdentityUpdate",
     "OSImageNotificationProfile",
@@ -178,6 +194,9 @@ __all__ = [
     "TrackedResource",
     "UefiSettings",
     "UserAssignedIdentity",
+    "VMAttributeMinMaxDouble",
+    "VMAttributeMinMaxInteger",
+    "VMAttributes",
     "VMDiskSecurityProfile",
     "VMGalleryApplication",
     "VMSizeProperties",
@@ -209,8 +228,12 @@ __all__ = [
     "WinRMListener",
     "WindowsConfiguration",
     "WindowsVMGuestPatchAutomaticByPlatformSettings",
+    "AcceleratorManufacturer",
+    "AcceleratorType",
     "ActionType",
+    "ArchitectureType",
     "CachingTypes",
+    "CpuManufacturer",
     "CreatedByType",
     "DeleteOptions",
     "DiffDiskOptions",
@@ -224,6 +247,7 @@ __all__ = [
     "LinuxPatchAssessmentMode",
     "LinuxVMGuestPatchAutomaticByPlatformRebootSetting",
     "LinuxVMGuestPatchMode",
+    "LocalStorageDiskType",
     "ManagedServiceIdentityType",
     "Mode",
     "NetworkApiVersion",
@@ -241,6 +265,8 @@ __all__ = [
     "SettingNames",
     "SpotAllocationStrategy",
     "StorageAccountTypes",
+    "VMAttributeSupport",
+    "VMCategory",
     "WindowsPatchAssessmentMode",
     "WindowsVMGuestPatchAutomaticByPlatformRebootSetting",
     "WindowsVMGuestPatchMode",

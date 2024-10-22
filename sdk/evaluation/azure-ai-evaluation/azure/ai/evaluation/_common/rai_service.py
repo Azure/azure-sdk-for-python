@@ -7,7 +7,7 @@ import math
 import re
 import time
 from ast import literal_eval
-from typing import Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 
 import jwt
@@ -413,7 +413,7 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
 
 async def evaluate_with_rai_service(
     query: str, response: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
-) -> Dict[str, Union[str, float]]:
+) -> Dict[str, Any]:
     """ "Evaluate the content safety of the response using Responsible AI service
 
        :param query: The query to evaluate.

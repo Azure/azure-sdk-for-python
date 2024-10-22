@@ -36,14 +36,14 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         }
     """
 
-    PROMPTY_FILE = "fluency.prompty"
-    RESULT_KEY = "gpt_fluency"
+    _PROMPTY_FILE = "fluency.prompty"
+    _RESULT_KEY = "gpt_fluency"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(
@@ -51,7 +51,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation=None,
         **kwargs,
     ):
         """
@@ -66,8 +66,8 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

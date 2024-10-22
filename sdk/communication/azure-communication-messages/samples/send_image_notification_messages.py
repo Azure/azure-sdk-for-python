@@ -26,12 +26,13 @@ import sys
 
 sys.path.append("..")
 
+
 class SendWhatsAppMessageSample(object):
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
     channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
-    
+
     def send_image_send_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
@@ -41,17 +42,17 @@ class SendWhatsAppMessageSample(object):
 
         image_options = ImageNotificationContent(
             channel_registration_id=self.channel_id,
-            to=[self.phone_number], 
+            to=[self.phone_number],
             content="Hello World via Notification Messaging SDK.",
-            media_uri="https://aka.ms/acsicon1"
+            media_uri="https://aka.ms/acsicon1",
         )
-        
+
         # calling send() with whatsapp message details
         message_responses = messaging_client.send(image_options)
         response = message_responses.receipts[0]
-        print("Message with message id {} was successful sent to {}"
-            .format(response.message_id, response.to))
+        print("Message with message id {} was successful sent to {}".format(response.message_id, response.to))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = SendWhatsAppMessageSample()
     sample.send_image_send_message()
