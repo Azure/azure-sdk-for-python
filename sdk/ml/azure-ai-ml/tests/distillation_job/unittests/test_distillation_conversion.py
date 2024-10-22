@@ -12,6 +12,7 @@ from azure.ai.ml.entities._job.distillation.distillation_types import (
     TeacherModelSettings,
 )
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._workspace.connections.connection_subtypes import ServerlessConnection
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
@@ -30,11 +31,8 @@ class TestDistillationJobConversion:
         distillation_job = DistillationJob(
             data_generation_type=DataGenerationType.LabelGeneration,
             data_generation_task_type=data_generation_task_type,
-            teacher_model_endpoint_connection=WorkspaceConnection(
-                type="custom",
-                credentials=NoneCredentialConfiguration(),
-                name="Llama-3-1-405B-Instruct-BASE",
-                target="None",
+            teacher_model_endpoint_connection=ServerlessConnection(
+                name="Llama-3-1-405B-Instruct-BASE", endpoint="http://foo.com", api_key="TESTKEY"
             ),
             student_model=Input(
                 type=AssetTypes.MLFLOW_MODEL,
@@ -69,9 +67,21 @@ class TestDistillationJobConversion:
             original_object.data_generation_type == DataGenerationType.LabelGeneration
         ), "Data Generation Type not set correctly"
 
+        assert isinstance(
+            original_object.teacher_model_endpoint_connection, WorkspaceConnection
+        ), "Teacher model endpoint connection is not WorkspaceConnection"
+        assert isinstance(
+            original_object.teacher_model_endpoint_connection, ServerlessConnection
+        ), "Teacher model endpoint connection is not ServerlessConnection"
         assert (
             original_object.teacher_model_endpoint_connection.name == "Llama-3-1-405B-Instruct-BASE"
-        ), "Teacher model endpoint name not set correctly"
+        ), "Teacher model endpoint connection name not set correctly"
+        assert (
+            original_object.teacher_model_endpoint_connection.endpoint == "http://foo.com"
+        ), "Teacher model endpoint connection endpoint url not set correctly"
+        assert (
+            original_object.teacher_model_endpoint_connection.api_key == "TESTKEY"
+        ), "Teacher model endpoint connection api_key not set correctly"
 
         assert isinstance(original_object.student_model, Input), "Student model is not Input"
         assert original_object.student_model.type == AssetTypes.MLFLOW_MODEL, "Student model type is not mlflow_model"
@@ -130,8 +140,8 @@ class TestDistillationJobConversion:
         distillation_job = DistillationJob(
             data_generation_type=DataGenerationType.DataGeneration,
             data_generation_task_type=data_generation_task_type,
-            teacher_model_endpoint_connection=WorkspaceConnection(
-                type="custom", credentials=NoneCredentialConfiguration(), name="llama-teacher", target="None"
+            teacher_model_endpoint_connection=ServerlessConnection(
+                name="llama-teacher", endpoint="http://bar.com", api_key="TESTKEY"
             ),
             student_model=Input(
                 type=AssetTypes.MLFLOW_MODEL,
@@ -167,7 +177,13 @@ class TestDistillationJobConversion:
 
         assert (
             dict_object["teacher_model_endpoint_connection"]["name"] == "llama-teacher"
-        ), "Teacher model endpoint name not set correctly"
+        ), "Teacher model endpoint connection name not set correctly"
+        assert (
+            dict_object["teacher_model_endpoint_connection"]["endpoint"] == "http://bar.com"
+        ), "Teacher model endpoint connection endpoint url not set correctly"
+        assert (
+            dict_object["teacher_model_endpoint_connection"]["api_key"] == "TESTKEY"
+        ), "Teacher model endpoint connection api_key not set correctly"
         assert dict_object["student_model"]["type"] == "mlflow_model", "Student model type not set correctly"
         assert (
             dict_object["student_model"]["path"]

@@ -18,7 +18,7 @@ from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_entry import DataInputSchema, ModelInputSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import OutputsField
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._schema.workspace.connections import ServerlessConnectionSchema, WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType, JobType
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -42,7 +42,9 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
         casing_transform=str.upper,
         required=True,
     )
-    teacher_model_endpoint_connection = NestedField(WorkspaceConnectionSchema)
+    teacher_model_endpoint_connection = UnionField(
+        [NestedField(WorkspaceConnectionSchema), NestedField(ServerlessConnectionSchema)], required=True
+    )
     student_model = UnionField(
         [
             NestedField(ModelInputSchema),

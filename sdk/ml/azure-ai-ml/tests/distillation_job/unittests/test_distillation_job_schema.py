@@ -6,7 +6,7 @@ import pytest
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningJob as RestFineTuningJob
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
-from azure.ai.ml.entities import ManagedIdentityConfiguration
+from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings
@@ -64,7 +64,7 @@ def prompt_settings() -> PromptSettings:
 @pytest.fixture
 def teacher_model_endpoint() -> WorkspaceConnection:
     return WorkspaceConnection(
-        type="custom", credentials=ManagedIdentityConfiguration(), name="Llama-3-1-405B-Instruct-BASE", target="None"
+        type="custom", credentials=NoneCredentialConfiguration(), name="Llama-3-1-405B-Instruct-BASE", target="None"
     )
 
 

@@ -9,6 +9,7 @@ class AzureMLDistillationProperties:
     DataGenerationTaskType = "azureml.data_generation_task_type"
     TeacherModel = "azureml.teacher_model"
     InstanceType = "azureml.instance_type"
+    ConnectionInformation = "azureml.connection_information"
 
 
 class EndpointSettings:

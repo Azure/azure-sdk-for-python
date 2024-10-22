@@ -22,7 +22,7 @@ validation_data:
 teacher_model_endpoint_connection: 
   type: custom
   name: Llama-3-1-405B-Instruct-BASE
-  target: fake_target
+  target:  None
 # teacher_model_settings:
 #   inference_parameters:
 #     temperature: 0.1

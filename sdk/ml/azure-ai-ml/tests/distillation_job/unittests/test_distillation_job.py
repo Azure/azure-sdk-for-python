@@ -3,9 +3,8 @@ import pytest
 from azure.ai.ml import Input, distillation
 from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.distillation import EndpointRequestSettings, PromptSettings
-from azure.ai.ml.entities import NoneCredentialConfiguration
+from azure.ai.ml.entities import NoneCredentialConfiguration, ServerlessConnection, WorkspaceConnection
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
 class TestDistillationJob:
@@ -14,9 +13,7 @@ class TestDistillationJob:
             experiment_name="llama-test",
             data_generation_type=DataGenerationType.DataGeneration,
             data_generation_task_type=DataGenerationTaskType.SUMMARIZATION,
-            teacher_model_endpoint_connection=WorkspaceConnection(
-                type="custom", credentials=NoneCredentialConfiguration(), name="llama", target="None"
-            ),
+            teacher_model_endpoint_connection=ServerlessConnection(name="llama", endpoint="None", api_key="TESTKEY"),
             student_model="llama-student",
             training_data="azureml:something:1",
         )
@@ -30,6 +27,7 @@ class TestDistillationJob:
             endpoint_request_settings=EndpointRequestSettings(request_batch_size=2),
         )
         distillation_job.set_finetuning_settings(hyperparameters={"num_epochs": 2, "learning_rate": 0.00002})
+
         assert distillation_job.prompt_settings == PromptSettings(
             enable_chain_of_density=True
         ), "Prompt settings not set correctly"
@@ -46,7 +44,7 @@ class TestDistillationJob:
         }, "Hyperparameters not set correctly"
 
     def test_distillation_function_fails(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as exception:
             _ = distillation(
                 experiment_name="llama-test",
                 data_generation_type=DataGenerationType.LabelGeneration,
@@ -56,3 +54,7 @@ class TestDistillationJob:
                 ),
                 student_model="llama-student",
             )
+        error_msg = (
+            f"Training data can only be None when data generation type is set to {DataGenerationType.DataGeneration}."
+        )
+        assert str(exception.value) == error_msg

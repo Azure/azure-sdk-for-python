@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
@@ -13,7 +14,6 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInp
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationType, JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE, AssetTypes
-from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.distillation.constants import (
@@ -398,11 +398,14 @@ class DistillationJob(Job, JobIOMixin):
     def _add_distillation_properties(self, properties: Dict) -> None:
         properties[AzureMLDistillationProperties.EnableDistillation] = True
         properties[AzureMLDistillationProperties.DataGenerationTaskType] = self._data_generation_task_type.upper()
-
-        # Not needed for FT Overloaded API but needed to store data gen type
-        properties[AzureMLDistillationProperties.DataGenerationType] = self._data_generation_type
         properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = (
             self._teacher_model_endpoint_connection.name
+        )
+
+        # Not needed for FT Overload API but additional info needed to convert from REST object to Distillation object
+        properties[AzureMLDistillationProperties.DataGenerationType] = self._data_generation_type
+        properties[AzureMLDistillationProperties.ConnectionInformation] = (
+            self._teacher_model_endpoint_connection._to_dict()  # pylint: disable=protected-access
         )
 
         if self._prompt_settings:
@@ -435,16 +438,15 @@ class DistillationJob(Job, JobIOMixin):
         prompt_settings = {}
         resources = {}
         teacher_settings = {}
-        teacher_model = ""
+        teacher_model_info = {}
         for key, val in properties.items():
             param = key.split(".")[-1]
-            if AzureMLDistillationProperties.TeacherModel in key:
-                if param == "endpoint_name":
-                    teacher_model = val
-                else:
-                    inference_parameters[param] = val
+            if AzureMLDistillationProperties.TeacherModel in key and param != "endpoint_name":
+                inference_parameters[param] = val
             elif AzureMLDistillationProperties.InstanceType in key:
                 resources[key.split(".")[1]] = val
+            elif AzureMLDistillationProperties.ConnectionInformation in key:
+                teacher_model_info = val
             else:
                 if param in EndpointSettings.valid_settings:
                     endpoint_settings[param] = val
@@ -459,8 +461,8 @@ class DistillationJob(Job, JobIOMixin):
         return {
             "data_generation_task_type": properties.get(AzureMLDistillationProperties.DataGenerationTaskType),
             "data_generation_type": properties.get(AzureMLDistillationProperties.DataGenerationType),
-            "teacher_model_endpoint_connection": WorkspaceConnection(
-                type="custom", credentials=NoneCredentialConfiguration(), name=teacher_model, target="None"
+            "teacher_model_endpoint_connection": WorkspaceConnection._load_from_dict(  # pylint: disable=protected-access
+                data=teacher_model_info, context={BASE_PATH_CONTEXT_KEY: Path("./")}
             ),
             "teacher_model_settings": TeacherModelSettings(**teacher_settings) if teacher_settings else None,
             "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
@@ -499,9 +501,10 @@ class DistillationJob(Job, JobIOMixin):
             super().__eq__(other)
             and self.data_generation_type == other.data_generation_type
             and self.data_generation_task_type == other.data_generation_task_type
-            and self.teacher_model_endpoint_connection.name == other.teacher_model_endpoint_connection.name
+            and self.teacher_model_endpoint_connection == other.teacher_model_endpoint_connection
             and self.student_model == other.student_model
             and self.training_data == other.training_data
+            and self.validation_data == other.validation_data
             and self.teacher_model_settings == other.teacher_model_settings
             and self.prompt_settings == other.prompt_settings
             and self.hyperparameters == other.hyperparameters
