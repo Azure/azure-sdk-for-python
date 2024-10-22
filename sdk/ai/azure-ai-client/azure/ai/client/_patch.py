@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import List, Any, Union
+from typing import List, Any, Union, Dict
 from typing_extensions import Self
 from azure.core.credentials import TokenCredential
 from azure.core import PipelineClient
@@ -224,6 +224,13 @@ class AzureAIClient(ClientGenerated):
 
         return data_asset.id
 
+    @property
+    def scope(self) -> Dict[str, str]:
+        return {
+            "subscription_id": self._config3.subscription_id,
+            "resource_group_name": self._config3.resource_group_name,
+            "project_name": self._config3.project_name,
+        }
 
 __all__: List[str] = [
     "AzureAIClient",

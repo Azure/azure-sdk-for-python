@@ -15,7 +15,8 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.client azure-identity
+    pip install azure-identity
+    pip install "git+https://github.com/Azure/azure-sdk-for-python.git@users/singankit/demo_evaluators_id#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation"
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -24,7 +25,8 @@ USAGE:
 import os, time
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.client.models import Evaluation, Dataset, EvaluatorConfiguration
+from azure.ai.client.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -40,6 +42,10 @@ ai_client = AzureAIClient.from_connection_string(
 # data_id = ai_client.upload_file("./evaluate_test_data.jsonl")
 data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
 
+default_connection = ai_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+
+
+
 # Create an evaluation
 evaluation = Evaluation(
     display_name="Remote Evaluation",
@@ -47,21 +53,19 @@ evaluation = Evaluation(
     data=Dataset(id=data_id),
     evaluators={
         "f1_score": EvaluatorConfiguration(
-            id="azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/1"
+            id=F1ScoreEvaluator.evaluator_id,
         ),
         "relevance": EvaluatorConfiguration(
-            id="azureml://registries/jamahaja-evals-registry/models/Relevance-Evaluator-AI-Evaluation/versions/2",
+            id=RelevanceEvaluator.evaluator_id,
             init_params={
-                "model_config": {
-                    "api_key": "/subscriptions/e0fd569c-e34a-4249-8c24-e8d723c7f054/resourceGroups/rg-qunsongai/providers/Microsoft.MachineLearningServices/workspaces/qunsong-0951/connections/AOAIRAIEastus2/credentials/key",
-                    "azure_deployment": "GPT-4-Prod",
-                    "api_version": "2024-08-01-preview",
-                    "azure_endpoint": "https://AOAI-RAI-Eastus2.openai.azure.com/",
-                }
+                "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
             },
-            # data_mapping= {
-            #     "response": "${data.answer}", "query": "${data.question}"
-            # }
+        ),
+        "hate_unfairness": EvaluatorConfiguration(
+            id=HateUnfairnessEvaluator.evaluator_id,
+            init_params={
+                "azure_ai_project": ai_client.scope
+            },
         ),
     },
     # This is needed as a workaround until environment gets published to registry
@@ -76,40 +80,8 @@ evaluation_response = ai_client.evaluations.create(
 # Get evaluation
 get_evaluation_response = ai_client.evaluations.get(evaluation_response.id)
 
-print(get_evaluation_response.as_dict())
-
-
-# evaluation_json = {
-#     "Data": {"Uri": DataUri},
-#     "DisplayName": "Remote Evaluation",
-#     "Description": "Testing",
-#     # "Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-env/versions/2",
-#     "Evaluators": {
-#         "f1_score": {"Id": "azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/1"},
-#         "relevance": {
-#             "Id": "azureml://registries/jamahaja-evals-registry/models/Relevance-Evaluator-AI-Evaluation/versions/1",
-#             "initParams": {
-#                 "model_config": {
-#                     "api_key": "/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/rg-anksingai/providers/Microsoft.MachineLearningServices/workspaces/anksing-canary/connections/ai-anksingaicanary931822963616_aoai/credentials/key",
-#                     "azure_deployment": "gpt-4",
-#                     "api_version": "2023-07-01-preview",
-#                     "azure_endpoint": "https://ai-anksingaicanary931822963616.openai.azure.com/",
-#                 }
-#             },
-#         },
-#         "hate_unfairness": {
-#             "Id": "azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/2",
-#             "initParams": {
-#                 "azure_ai_project": {
-#                     "subscription_id": "2d385bf4-0756-4a76-aa95-28bf9ed3b625",
-#                     "resource_group_name": "rg-anksingai",
-#                     "workspace_name": "anksing-canary",
-#                 }
-#             },
-#         },
-#     },
-#     "properties": {
-#         "Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-env/versions/6",
-#         # "_azureml.evaluation_run": "promptflow.BatchRun"
-#     },
-# }
+print("----------------------------------------------------------------")
+print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
+print("Evaluation status: ", get_evaluation_response.status)
+print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+print("----------------------------------------------------------------")
