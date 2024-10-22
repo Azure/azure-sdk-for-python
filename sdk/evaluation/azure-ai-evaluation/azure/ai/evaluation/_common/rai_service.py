@@ -36,8 +36,8 @@ except importlib.metadata.PackageNotFoundError:
 USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT = {
-    Tasks.CONTENT_HARM: Template("<Human>{$question}</><System>{$answer}</>"),
-    Tasks.GROUNDEDNESS: Template("{\"question\": \"\", \"answer\": \"$answer\", \"context\": \"$context\"}")
+    "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
+    Tasks.GROUNDEDNESS: Template("{\"question\": \"$query\", \"answer\": \"$response\", \"context\": \"$context\"}")
 }
 
 def get_common_headers(token: str) -> Dict:
@@ -104,7 +104,7 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
         )
 
 
-def generate_payload(normalized_user_text: str, metric: str, annotation_task: Tasks=Tasks.CONTENT_HARM) -> Dict:
+def generate_payload(normalized_user_text: str, metric: str, annotation_task: Tasks) -> Dict:
     """Generate the payload for the annotation request
 
     :param normalized_user_text: The normalized user text to be entered as the "UserTextList" in the payload.
@@ -120,13 +120,10 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: Ta
     include_metric = True
     task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
-        task = Tasks.PROTECTED_MATERIAL
         include_metric = False
     elif metric == _InternalEvaluationMetrics.ECI:
-        task = _InternalAnnotationTasks.ECI
         include_metric = False
     elif metric == EvaluationMetrics.XPIA:
-        task = Tasks.XPIA
         include_metric = False
     return (
         {
@@ -156,7 +153,7 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :return: The operation ID.
     :rtype: str
     """
-    user_text = USER_TEXT_TEMPLATE_DICT[annotation_task].substitute(**data)
+    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**data)
     normalized_user_text = user_text.replace("'", '\\"')
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
@@ -169,7 +166,6 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     if http_response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
         http_response.raise_for_status()
-
     result = http_response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
@@ -227,7 +223,11 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     :rtype: Dict[str, Union[str, float]]
     """
     # non-numeric metrics
-    if metric_name in {EvaluationMetrics.PROTECTED_MATERIAL, _InternalEvaluationMetrics.ECI, EvaluationMetrics.XPIA}:
+    if metric_name in {
+        EvaluationMetrics.PROTECTED_MATERIAL,
+        _InternalEvaluationMetrics.ECI,
+        EvaluationMetrics.XPIA,
+    }:
         if not batch_response or len(batch_response[0]) == 0 or metric_name not in batch_response[0]:
             return {}
         response = batch_response[0][metric_name]
