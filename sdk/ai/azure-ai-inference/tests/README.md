@@ -27,11 +27,11 @@ In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, 
         ```bash
         pip install wheel
         pip install -r dev_requirements.txt
-        python setup.py bdist_whee
+        python setup.py bdist_wheel
         ```
-    - Then install the resulting local wheel (update version `1.0.0b2` to the current one):
+    - Then install the resulting local wheel (update version `1.0.0b5` to the current one):
         ```bash
-        pip install dist\azure_ai_inference-1.0.0b2-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_inference-1.0.0b5-py3-none-any.whl --user --force-reinstall
         ```
 
 ## Set environment variables

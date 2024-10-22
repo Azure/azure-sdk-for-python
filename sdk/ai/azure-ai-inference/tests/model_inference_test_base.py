@@ -149,14 +149,15 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
     def _load_aoai_chat_credentials(self, *, key_auth: bool, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_openai_chat_endpoint")
+        credential_scopes: list[str]
         if key_auth:
             key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
             headers = {"api-key": key}
             credential = AzureKeyCredential("")
-            credential_scopes: list[str] = []
+            credential_scopes = []
         else:
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
-            credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
             headers = {}
         api_version = "2024-08-01-preview"
         return endpoint, credential, credential_scopes, headers, api_version

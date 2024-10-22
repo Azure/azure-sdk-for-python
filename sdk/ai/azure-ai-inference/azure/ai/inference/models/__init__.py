@@ -15,7 +15,7 @@ from ._models import ChatCompletionsResponseFormat
 from ._models import ChatCompletionsResponseFormatJSON
 from ._models import ChatCompletionsResponseFormatText
 from ._models import ChatCompletionsToolCall
-from ._models import ChatCompletionsToolDefinition
+from ._patch import ChatCompletionsToolDefinition
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
