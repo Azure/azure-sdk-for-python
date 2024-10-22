@@ -430,7 +430,8 @@ def _apply_target_to_data(
     except (UserAuthenticationError, UploadInternalError) as ex:
         if "Failed to upload run" in ex.message:
             msg = (
-                "Failed to upload target run to the cloud due to insufficient permission to access the storage."
+                "Failed to upload the target run to the cloud. "
+                "This may be caused by insufficient permission to access storage or other errors."
             )
             raise EvaluationException(
                 message=msg,
@@ -636,7 +637,17 @@ def evaluate(
                 internal_message=error_message,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.FAILED_EXECUTION,
-                blame=ErrorBlame.UNKNOWN,
+                blame=ErrorBlame.USER_ERROR,
+            ) from e
+
+        # Ensure a consistent user experience when encountering errors by converting
+        # all other exceptions to EvaluationException.
+        if not isinstance(e, EvaluationException):
+            raise EvaluationException(
+                message=str(e),
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.SYSTEM_ERROR,
             ) from e
 
         raise e
@@ -677,9 +688,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             for evaluator_name, evaluator_configuration in evaluator_config.items()
         }
     )
-
-    if target is not None:
-        _validate_columns_for_target(input_data_df, target)
 
     # Target Run
     try:
