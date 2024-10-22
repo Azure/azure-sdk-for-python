@@ -63,14 +63,29 @@ with ai_client:
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID: {thread.id}")    
+    print(f"Created thread, thread ID: {thread.id}")
 
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
     print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-        
+
+    file_search_tool.remove_vector_store(vector_store.id)
+    print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
+
+    ai_client.agents.update_agent(assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources)
+    print(f"Updated agent, agent ID: {agent.id}")
+
+    thread = ai_client.agents.create_thread()
+    print(f"Created thread, thread ID: {thread.id}")
+
+    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
+    print(f"Created message, message ID: {message.id}")
+
+    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    print(f"Created run, run ID: {run.id}")    
+
     ai_client.agents.delete_file(file.id)
     print("Deleted file")
 

@@ -343,6 +343,12 @@ class FileSearchTool(Tool):
         """
         self.vector_store_ids.append(store_id)
 
+    def remove_vector_store(self, store_id: str):
+        """
+        Remove a vector store ID from the list of vector stores to search for files.
+        """
+        self.vector_store_ids.remove(store_id)
+
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
