@@ -1346,7 +1346,7 @@ def build_evaluations_update_request(id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_get_schedule_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_evaluations_get_schedule_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1354,9 +1354,9 @@ def build_evaluations_get_schedule_request(id: str, **kwargs: Any) -> HttpReques
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{id}"
+    _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1371,7 +1371,7 @@ def build_evaluations_get_schedule_request(id: str, **kwargs: Any) -> HttpReques
 
 
 def build_evaluations_create_or_replace_schedule_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1381,9 +1381,9 @@ def build_evaluations_create_or_replace_schedule_request(  # pylint: disable=nam
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{id}"
+    _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1426,7 +1426,7 @@ def build_evaluations_list_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_delete_schedule_request(id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1434,9 +1434,9 @@ def build_evaluations_delete_schedule_request(id: str, **kwargs: Any) -> HttpReq
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{id}"
+    _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -5042,7 +5042,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
-        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -5058,9 +5057,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
-        :paramtype store_configuration: ~azure.ai.client.models.VectorStorageConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -5099,7 +5095,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
-        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -5114,9 +5109,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
-        :paramtype store_configuration: ~azure.ai.client.models.VectorStorageConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -5148,7 +5140,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if body is _Unset:
             body = {
                 "chunking_strategy": chunking_strategy,
-                "configuration": store_configuration,
                 "expires_after": expires_after,
                 "file_ids": file_ids,
                 "metadata": metadata,
@@ -5625,9 +5616,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
+        file_id: str,
         content_type: str = "application/json",
-        file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5635,13 +5625,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
+        :keyword file_id: Identifier of the file. Required.
+        :paramtype file_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword file_id: Identifier of the file. Default value is None.
-        :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
@@ -5674,8 +5662,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        file_id: str = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5685,10 +5672,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_id: Identifier of the file. Default value is None.
+        :keyword file_id: Identifier of the file. Required.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
@@ -5711,7 +5696,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_id": file_id}
+            if file_id is _Unset:
+                raise TypeError("missing required argument: file_id")
+            body = {"chunking_strategy": chunking_strategy, "file_id": file_id}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -5928,9 +5915,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
+        file_ids: List[str],
         content_type: str = "application/json",
-        file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -5938,13 +5924,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
+        :keyword file_ids: List of file identifiers. Required.
+        :paramtype file_ids: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword file_ids: List of file identifiers. Default value is None.
-        :paramtype file_ids: list[str]
-        :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
@@ -5977,8 +5961,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -5988,10 +5971,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_ids: List of file identifiers. Default value is None.
+        :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
-        :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
@@ -6014,7 +5995,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_ids": file_ids}
+            if file_ids is _Unset:
+                raise TypeError("missing required argument: file_ids")
+            body = {"chunking_strategy": chunking_strategy, "file_ids": file_ids}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -6331,7 +6314,7 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _list(  # pylint: disable=protected-access
+    def _list(
         self,
         *,
         category: Optional[Union[str, _models.ConnectionType]] = None,
@@ -6413,9 +6396,7 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get(  # pylint: disable=protected-access
-        self, connection_name: str, **kwargs: Any
-    ) -> _models._models.ConnectionsListSecretsResponse:
+    def _get(self, connection_name: str, **kwargs: Any) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, without credentials.
 
         :param connection_name: Connection Name. Required.
@@ -6483,20 +6464,20 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _list_secrets(
         self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _list_secrets(
         self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _list_secrets(
         self, connection_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
 
     @distributed_trace
-    def _list_secrets(  # pylint: disable=protected-access
+    def _list_secrets(
         self, connection_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, ignored: str = _Unset, **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credentials (if available).
@@ -7040,11 +7021,12 @@ class EvaluationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_schedule(self, id: str, **kwargs: Any) -> _models.EvaluationSchedule:
+    def get_schedule(self, name: str, **kwargs: Any) -> _models.EvaluationSchedule:
         """Resource read operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.EvaluationSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7063,7 +7045,7 @@ class EvaluationsOperations:
         cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
 
         _request = build_evaluations_get_schedule_request(
-            id=id,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7111,12 +7093,13 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, id: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7129,12 +7112,13 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7147,12 +7131,13 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, id: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7165,12 +7150,13 @@ class EvaluationsOperations:
 
     @distributed_trace
     def create_or_replace_schedule(
-        self, id: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Is one of the following types: EvaluationSchedule,
          JSON, IO[bytes] Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule or JSON or IO[bytes]
@@ -7200,7 +7186,7 @@ class EvaluationsOperations:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluations_create_or_replace_schedule_request(
-            id=id,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7351,11 +7337,12 @@ class EvaluationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_schedule(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resource delete operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7374,7 +7361,7 @@ class EvaluationsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_evaluations_delete_schedule_request(
-            id=id,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
