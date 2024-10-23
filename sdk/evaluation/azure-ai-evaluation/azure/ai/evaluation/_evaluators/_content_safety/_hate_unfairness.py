@@ -44,6 +44,11 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/4"
+
     @override
     def __init__(
         self,

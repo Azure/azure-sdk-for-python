@@ -38,6 +38,11 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3"
+
     # Constants must be defined within eval's directory to be save/loadable
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "gpt_relevance"

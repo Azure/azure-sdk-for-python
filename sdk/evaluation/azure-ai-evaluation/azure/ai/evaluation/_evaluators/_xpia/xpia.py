@@ -51,6 +51,11 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Indirect-Attack-Evaluator/versions/3"
+
     @override
     def __init__(
         self,

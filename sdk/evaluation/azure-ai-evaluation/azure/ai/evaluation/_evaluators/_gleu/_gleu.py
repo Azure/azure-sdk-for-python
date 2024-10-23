@@ -49,6 +49,11 @@ class GleuScoreEvaluator:
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Gleu-Score-Evaluator/versions/3"
+
     def __init__(self):
         self._async_evaluator = _AsyncGleuScoreEvaluator()
 

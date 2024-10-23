@@ -44,6 +44,11 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3"
+
     @override
     def __init__(
         self,

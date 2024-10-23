@@ -45,6 +45,11 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Protected-Material-Evaluator/versions/3"
+
     @override
     def __init__(
         self,

@@ -77,6 +77,11 @@ class RougeScoreEvaluator:
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Rouge-Score-Evaluator/versions/3"
+
     def __init__(self, rouge_type: RougeType):
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
 

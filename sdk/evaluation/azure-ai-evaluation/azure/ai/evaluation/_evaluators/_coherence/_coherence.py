@@ -35,6 +35,10 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Coherence-Evaluator/versions/3"
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "gpt_coherence"
 

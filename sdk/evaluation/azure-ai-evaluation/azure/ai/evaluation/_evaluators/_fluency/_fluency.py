@@ -36,6 +36,11 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Fluency-Evaluator/versions/3"
+
     _PROMPTY_FILE = "fluency.prompty"
     _RESULT_KEY = "gpt_fluency"
 

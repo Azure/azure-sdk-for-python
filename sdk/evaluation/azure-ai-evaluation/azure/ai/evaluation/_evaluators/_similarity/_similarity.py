@@ -105,6 +105,11 @@ class SimilarityEvaluator:
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Similarity-Evaluator/versions/3"
+
     def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 

@@ -36,6 +36,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         }
     """
 
+    """
+    Id is experimental, to be used for evaluation in cloud.
+    """
+    id = "azureml://registries/azureml-staging/models/Groundedness-Evaluator/versions/3"
+
     _PROMPTY_FILE = "groundedness.prompty"
     _RESULT_KEY = "gpt_groundedness"
 
