@@ -460,7 +460,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     target=ErrorTarget.EVAL_RUN,
                     category=ErrorCategory.FAILED_REMOTE_TRACKING,
                     blame=ErrorBlame.USER_ERROR,
-                    tsg_link="https://aka.ms/azsdk/python/evaluation/runupload/troubleshoot",
+                    tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
                 ) from ex
 
             raise ex
