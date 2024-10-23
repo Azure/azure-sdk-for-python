@@ -3693,6 +3693,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -3708,6 +3709,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset ID. Default value is None.
+        :paramtype store_configuration: ~azure.ai.project.models.VectorStorageConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.project.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -3746,6 +3750,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -3760,6 +3765,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset ID. Default value is None.
+        :paramtype store_configuration: ~azure.ai.project.models.VectorStorageConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.project.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -3791,6 +3799,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if body is _Unset:
             body = {
                 "chunking_strategy": chunking_strategy,
+                "configuration": store_configuration,
                 "expires_after": expires_after,
                 "file_ids": file_ids,
                 "metadata": metadata,
@@ -4267,8 +4276,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
-        file_id: str,
         content_type: str = "application/json",
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -4276,11 +4286,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_id: Identifier of the file. Required.
-        :paramtype file_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.project.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.project.models.VectorStoreChunkingStrategyRequest
@@ -4313,7 +4325,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_id: str = _Unset,
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -4323,8 +4336,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_id: Identifier of the file. Required.
+        :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.project.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.project.models.VectorStoreChunkingStrategyRequest
@@ -4347,9 +4362,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if file_id is _Unset:
-                raise TypeError("missing required argument: file_id")
-            body = {"chunking_strategy": chunking_strategy, "file_id": file_id}
+            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_id": file_id}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -4566,8 +4579,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
-        file_ids: List[str],
         content_type: str = "application/json",
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -4575,11 +4589,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_ids: List of file identifiers. Required.
-        :paramtype file_ids: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword file_ids: List of file identifiers. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.project.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.project.models.VectorStoreChunkingStrategyRequest
@@ -4612,7 +4628,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_ids: List[str] = _Unset,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -4622,8 +4639,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_ids: List of file identifiers. Required.
+        :keyword file_ids: List of file identifiers. Default value is None.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.project.models.VectorStorageDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.project.models.VectorStoreChunkingStrategyRequest
@@ -4646,9 +4665,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if file_ids is _Unset:
-                raise TypeError("missing required argument: file_ids")
-            body = {"chunking_strategy": chunking_strategy, "file_ids": file_ids}
+            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_ids": file_ids}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

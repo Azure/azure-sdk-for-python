@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.ai.project.models._models import VectorStorageDataSource
 
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
@@ -42,13 +43,8 @@ with project_client:
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
-    ds = [
-        VectorStorageDataSource(
-            storage_uri="azureml:sample"
-        )
-    ]
-    vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, file_ids=[file.id]
+    ds = [VectorStorageDataSource(storage_uri="azureml:sample")]
+    vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
         vector_store_id=vector_store.id,
         data_sources=ds,
         file_ids=[],
@@ -78,9 +74,6 @@ with project_client:
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-
-    project_client.agents.delete_file(file.id)
-    print("Deleted file")
 
     project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vectore store")

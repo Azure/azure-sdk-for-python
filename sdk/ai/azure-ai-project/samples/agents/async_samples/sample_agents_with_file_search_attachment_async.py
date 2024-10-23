@@ -41,7 +41,9 @@ async def main():
 
     # upload a file and wait for it to be processed
     async with project_client:
-        file = await project_client.agents.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.AGENTS)
+        file = await project_client.agents.upload_file_and_poll(
+            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
+        )
 
         # Create agent with file search tool
         agent = await project_client.agents.create_agent(

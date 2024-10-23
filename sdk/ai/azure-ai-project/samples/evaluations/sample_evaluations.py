@@ -41,10 +41,11 @@ project_client = AIProjectClient.from_connection_string(
 # Upload data for evaluation
 # Service side fix needed to make this work
 # data_id = project_client.upload_file("./evaluate_test_data.jsonl")
-data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
+data_id = (
+    "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
+)
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-
 
 
 # Create an evaluation
@@ -59,14 +60,14 @@ evaluation = Evaluation(
         "relevance": EvaluatorConfiguration(
             id=RelevanceEvaluator.evaluator_id,
             init_params={
-                "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
+                "model_config": default_connection.to_evaluator_model_config(
+                    deployment_name="GPT-4-Prod", api_version="2024-08-01-preview"
+                )
             },
         ),
         "hate_unfairness": EvaluatorConfiguration(
             id=HateUnfairnessEvaluator.evaluator_id,
-            init_params={
-                "azure_ai_project": project_client.scope
-            },
+            init_params={"azure_ai_project": project_client.scope},
         ),
     },
     # This is needed as a workaround until environment gets published to registry
