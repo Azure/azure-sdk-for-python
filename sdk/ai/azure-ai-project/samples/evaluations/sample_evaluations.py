@@ -45,9 +45,6 @@ data_id = project_client.upload_file("./evaluate_test_data.jsonl")
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
 
-PROJECT_CONNECTION_STRING="eastus2.api.azureml.ms;e0fd569c-e34a-4249-8c24-e8d723c7f054;rg-qunsongai;qunsong-0951"
-
-
 # Create an evaluation
 evaluation = Evaluation(
     display_name="Remote Evaluation",
