@@ -57,6 +57,7 @@ class _GlobalEndpointManager(object):
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
+        self._database_account_cache = None
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -125,6 +126,7 @@ class _GlobalEndpointManager(object):
         """
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
+            self._database_account_cache = database_account
             return database_account
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -137,6 +139,7 @@ class _GlobalEndpointManager(object):
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
+                    self._database_account_cache = database_account
                     return database_account
                 except exceptions.CosmosHttpResponseError:
                     pass

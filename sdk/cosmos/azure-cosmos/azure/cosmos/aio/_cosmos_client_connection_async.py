@@ -213,8 +213,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            CosmosHttpLoggingPolicy(enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
-                                    **kwargs),
+            CosmosHttpLoggingPolicy(
+                enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
+                global_endpoint_manager=self._global_endpoint_manager,
+                **kwargs
+            ),
         ]
 
         transport = kwargs.pop("transport", None)

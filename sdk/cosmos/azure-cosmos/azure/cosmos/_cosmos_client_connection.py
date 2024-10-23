@@ -210,6 +210,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
                 enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
+                global_endpoint_manager=self._global_endpoint_manager,
                 **kwargs
             ),
         ]

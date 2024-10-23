@@ -26,12 +26,17 @@
 import json
 import logging
 import time
-from typing import Optional, Union, TYPE_CHECKING, Callable
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable
+import os
+import platform
+
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
 from .http_constants import HttpHeaders
+from ._global_endpoint_manager import _GlobalEndpointManager
+from .documents import DatabaseAccount
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -40,6 +45,7 @@ if TYPE_CHECKING:
         HttpResponse as LegacyHttpResponse,
         AsyncHttpResponse as LegacyAsyncHttpResponse
     )
+
 
 HTTPRequestType = Union["LegacyHttpRequest", "HttpRequest"]
 HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse", "AsyncHttpResponse"]
@@ -55,6 +61,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def __init__(
         self,
         logger: Optional[logging.Logger] = None,
+        global_endpoint_manager: Optional[_GlobalEndpointManager] = None,
+        database_account: Optional[DatabaseAccount] = None,
         *,
         enable_diagnostics_logging: bool = False,
         diagnostics_handler: Optional[Union[Callable, dict]] = None,
@@ -64,6 +72,12 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         self.diagnostics_handler = diagnostics_handler
         if callable(self.diagnostics_handler):
             self.should_log = self.diagnostics_handler
+        self.__global_endpoint_manager = global_endpoint_manager
+        self.__client_settings = self.__get_client_settings()
+        if database_account:
+            self.__database_account_settings = database_account
+        else:
+            self.__database_account_settings = self.__get_database_account_settings()
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
@@ -75,9 +89,12 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         verb = request.http_request.method
         if self.should_log(verb=verb, isRequest=True):
-            super().on_request(request)
             if self._enable_diagnostics_logging:
                 request.context["start_time"] = time.time()
+                # We will only log settings once upon initializing.
+                self._log_client_settings()
+                self._log_database_account_settings()
+                super().on_request(request)
 
     def on_response(
         self,
@@ -104,6 +121,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         logger.info("Response error message: %r", _format_error(http_response.text()))
                 except Exception as err:  # pylint: disable=broad-except
                     logger.warning("Failed to log request: %s", repr(err))
+
 
     def should_log(
             self,
@@ -134,3 +152,96 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 if self.diagnostics_handler[key](param):
                     return True
         return False
+
+    def __get_client_settings(self) -> Optional[Dict[str, Any]]:
+        # Place any client settings we want to log here
+        return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
+
+    def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
+        # if self.__global_endpoint_manager._database_account_cache:
+        return self.__global_endpoint_manager._database_account_cache
+        # return self.__global_endpoint_manager._GetDatabaseAccount()
+
+    def _log_client_settings(self)-> None:
+        self.logger.info("Client Settings:", exc_info=False)
+        self.logger.info("\tClient Preferred Regions: {}".format(self.__client_settings["Client Preferred Regions"])
+                         , exc_info=False) # connection retry policy stuff values that configure timeouts etc
+
+    def _log_database_account_settings(self)-> None:
+        self.logger.info("Database Account Settings:", exc_info=False)
+        self.__database_account_settings = self.__get_database_account_settings()
+        if self.__database_account_settings:
+            self.logger.info("\tConsistency Level: {}".format(self.__database_account_settings.
+                                                              ConsistencyPolicy.get("defaultConsistencyLevel"))
+                             , exc_info=False)
+            self.logger.info("\tWritable Locations: {}".format(self.__database_account_settings.WritableLocations)
+                             , exc_info=False)
+            self.logger.info("\tReadable Locations: {}".format(self.__database_account_settings.ReadableLocations)
+                             , exc_info=False)
+            self.logger.info("\tMulti-Region Writes: {}".format(self.__database_account_settings.
+                                                                _EnableMultipleWritableLocations), exc_info=False)
+
+
+    def __get_system_info(self):
+        try:
+            system = platform.system()
+
+            if system == "Windows":
+                # Get CPU info
+
+                cpu_info = os.popen("wmic cpu get loadpercentage").read().strip().split("\n")[2]
+
+                # Get memory info
+                memory_info = os.popen(
+                    "wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value").read().strip().split("\n")
+                free_memory = int(memory_info[0].split("=")[1])
+                total_memory = int(memory_info[2].split("=")[1])
+                used_memory = total_memory - free_memory
+
+                return {
+                    "CPU Load (%)": cpu_info,
+                    "Total Memory (KB)": total_memory,
+                    "Used Memory (KB)": used_memory,
+                    "Free Memory (KB)": free_memory
+                }
+
+            elif system == "Linux":
+                # Get CPU info
+                cpu_info = os.popen("top -bn1 | grep 'Cpu(s)'").read().strip().split()[1]
+
+                # Get memory info
+                memory_info = os.popen("free -k").read().strip().split("\n")[1].split()
+                total_memory = int(memory_info[1])
+                used_memory = int(memory_info[2])
+                free_memory = int(memory_info[3])
+
+                return {
+                    "CPU Load (%)": cpu_info,
+                    "Total Memory (KB)": total_memory,
+                    "Used Memory (KB)": used_memory,
+                    "Free Memory (KB)": free_memory
+                }
+
+            elif system == "Darwin":  # macOS
+                # Get CPU info
+                cpu_info = os.popen("ps -A -o %cpu | awk '{s+=$1} END {print s}'").read().strip()
+
+                # Get memory info
+                memory_info = os.popen("vm_stat | grep 'Pages free'").read().strip().split(":")[1].strip().split()[0]
+                page_size = int(os.popen("vm_stat | grep 'page size of'").read().strip().split()[3])
+                free_memory = int(memory_info) * page_size // 1024
+                total_memory = int(os.popen("sysctl -n hw.memsize").read().strip()) // 1024
+                used_memory = total_memory - free_memory
+
+                return {
+                    "CPU Load (%)": cpu_info,
+                    "Total Memory (KB)": total_memory,
+                    "Used Memory (KB)": used_memory,
+                    "Free Memory (KB)": free_memory
+                }
+
+            else:
+                return {}
+
+        except Exception as e:
+            return {}
