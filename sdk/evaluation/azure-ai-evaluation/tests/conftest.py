@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import pytest
+from filelock import FileLock
 from azure.core.credentials import TokenCredential
 from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
@@ -20,6 +21,8 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfig
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
+from ci_tools.variables import in_ci
+from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
 
 # Import of optional packages
 AZURE_INSTALLED = True
@@ -40,6 +43,21 @@ class SanitizedValues(str, Enum):
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_nltk_data() -> None:
+    """Ensures that nltk data has been downloaded."""
+
+    def try_download_nltk():
+        for _ in range(3):
+            ensure_nltk_data_downloaded()
+
+    if in_ci():
+        with FileLock(Path.home() / "azure_ai_evaluation_nltk_data.txt"):
+            try_download_nltk()
+    else:
+        try_download_nltk()
 
 
 @pytest.fixture(scope="session", autouse=True)
