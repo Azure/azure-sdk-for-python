@@ -101,17 +101,22 @@ steps:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-      SubscriptionConfiguration: $(SubscriptionConfiguration)
-      Location: $(Location)
-      ArmTemplateParameters: $(ArmTemplateParameters)
-      UseFederatedAuth: false
+      ServiceConnection: azure-sdk-tests-public
 
-  - script: python $(Build.SourcesDirectory)/common/smoketest/program.py
-    displayName: Run Smoke Test
+  - task: AzurePowerShell@5
+    displayName: Run Smoke Tests
+    env:
+      # Enable samples tests that use DefaultAzureCredential to load the federated pipeline credential
+      AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
+    inputs:
+      azureSubscription: azure-sdk-tests-public
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
+      ScriptType: InlineScript
+      Inline: >-
+        python $(Build.SourcesDirectory)/common/smoketest/program.py
 
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:
       ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-      SubscriptionConfiguration: $(SubscriptionConfiguration)
-      UseFederatedAuth: false
-
+      ServiceConnection: azure-sdk-tests-public
