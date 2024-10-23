@@ -5,8 +5,8 @@ import pytest
 from promptflow.client import PFClient
 
 from azure.ai.evaluation._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
+from azure.ai.evaluation._evaluate._batch_run import CodeClient, EvalRunContext, ProxyClient
 from azure.ai.evaluation._user_agent import USER_AGENT
-from azure.ai.evaluation._evaluate._batch_run import EvalRunContext, CodeClient, ProxyClient
 
 
 @pytest.fixture
