@@ -13,7 +13,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import TimezoneClient as TimezoneClientGenerated
 
-__all__: List[str] = ["MapsTimezoneClient"]
+__all__: List[str] = ["MapsTimeZoneClient"]
 
 
 def patch_sdk():
@@ -43,7 +43,7 @@ def _authentication_policy(credential):
 
 
 # pylint: disable=C4748
-class MapsTimezoneClient(TimezoneClientGenerated):
+class MapsTimeZoneClient(TimezoneClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
