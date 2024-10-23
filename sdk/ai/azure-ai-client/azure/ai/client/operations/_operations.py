@@ -1346,7 +1346,7 @@ def build_evaluations_update_request(id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_get_schedule_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_evaluations_get_schedule_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1354,9 +1354,9 @@ def build_evaluations_get_schedule_request(name: str, **kwargs: Any) -> HttpRequ
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{name}"
+    _url = "/evaluations/schedules/{id}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1371,7 +1371,7 @@ def build_evaluations_get_schedule_request(name: str, **kwargs: Any) -> HttpRequ
 
 
 def build_evaluations_create_or_replace_schedule_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1381,9 +1381,9 @@ def build_evaluations_create_or_replace_schedule_request(  # pylint: disable=nam
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{name}"
+    _url = "/evaluations/schedules/{id}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1426,7 +1426,7 @@ def build_evaluations_list_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_evaluations_delete_schedule_request(id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1434,9 +1434,9 @@ def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpR
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{name}"
+    _url = "/evaluations/schedules/{id}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -6314,7 +6314,7 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _list(
+    def _list(  # pylint: disable=protected-access
         self,
         *,
         category: Optional[Union[str, _models.ConnectionType]] = None,
@@ -6396,7 +6396,9 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get(self, connection_name: str, **kwargs: Any) -> _models._models.ConnectionsListSecretsResponse:
+    def _get(  # pylint: disable=protected-access
+        self, connection_name: str, **kwargs: Any
+    ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, without credentials.
 
         :param connection_name: Connection Name. Required.
@@ -6464,20 +6466,20 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse: ...
 
     @distributed_trace
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, ignored: str = _Unset, **kwargs: Any
     ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credentials (if available).
@@ -7021,12 +7023,11 @@ class EvaluationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_schedule(self, name: str, **kwargs: Any) -> _models.EvaluationSchedule:
+    def get_schedule(self, id: str, **kwargs: Any) -> _models.EvaluationSchedule:
         """Resource read operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.EvaluationSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7045,7 +7046,7 @@ class EvaluationsOperations:
         cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
 
         _request = build_evaluations_get_schedule_request(
-            name=name,
+            id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7093,13 +7094,12 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, name: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7112,13 +7112,12 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7131,13 +7130,12 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :param resource: The resource instance. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7150,13 +7148,12 @@ class EvaluationsOperations:
 
     @distributed_trace
     def create_or_replace_schedule(
-        self, name: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
+        self, id: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :param resource: The resource instance. Is one of the following types: EvaluationSchedule,
          JSON, IO[bytes] Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule or JSON or IO[bytes]
@@ -7186,7 +7183,7 @@ class EvaluationsOperations:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluations_create_or_replace_schedule_request(
-            name=name,
+            id=id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7337,12 +7334,11 @@ class EvaluationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_schedule(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resource delete operation template.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
-        :type name: str
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7361,7 +7357,7 @@ class EvaluationsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_evaluations_delete_schedule_request(
-            name=name,
+            id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

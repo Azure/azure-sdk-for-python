@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1809,9 +1808,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not None:
             vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif (
-            file_ids is not None or store_configuration is not None or (name is not None and expires_after is not None)
-        ):
+        elif file_ids is not None or (name is not None and expires_after is not None):
             vector_store = await self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
@@ -1824,7 +1821,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError(
                 "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
-                "'file_ids', 'store_configuration', or 'name' and 'expires_after'."
+                "'file_ids', or 'name' and 'expires_after'."
             )
 
         while vector_store.status == "in_progress":
@@ -1865,7 +1862,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         vector_store_id: str,
         *,
-        file_ids: Optional[List[str]] = None,
+        file_ids: List[str],
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,

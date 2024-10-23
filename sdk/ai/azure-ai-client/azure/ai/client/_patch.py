@@ -203,8 +203,7 @@ class AzureAIClient(ClientGenerated):
             from azure.ai.ml.constants import AssetTypes
         except ImportError:
             raise ImportError(
-                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
-            )
+                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`")
 
         data = Data(
             path=file_path,
@@ -232,7 +231,6 @@ class AzureAIClient(ClientGenerated):
             "resource_group_name": self._config3.resource_group_name,
             "project_name": self._config3.project_name,
         }
-
 
 __all__: List[str] = [
     "AzureAIClient",
