@@ -10,10 +10,10 @@ from typing import Any, Optional
 # from .entities._builders.parallel_func import parallel
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 
+from ._distillation._distillation_factory import distillation
 from ._ml_client import MLClient
 from ._utils._logger_utils import initialize_logger_info
 from ._version import VERSION
-from .distillation._distillation import distillation
 from .entities._builders.command_func import command
 from .entities._builders.spark_func import spark
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
