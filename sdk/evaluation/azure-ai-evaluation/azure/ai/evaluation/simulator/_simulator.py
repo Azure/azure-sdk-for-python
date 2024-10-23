@@ -627,7 +627,7 @@ class Simulator:
                             "content": conversation_starter,
                         }
                     ],
-                    action="rewrite the assitant's message as you have to accomplish the task by asking the right questions. Make sure the original question is not lost in your rewrite.",
+                    action="rewrite the assistant's message as you have to accomplish the task by asking the right questions. Make sure the original question is not lost in your rewrite.",
                 )
             else:
                 conversation_starter_from_simulated_user = await user_flow(
