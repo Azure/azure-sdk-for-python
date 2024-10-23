@@ -28,7 +28,7 @@ class JsonLineList(list):
 
     def to_eval_qr_json_lines(self):
         """
-        Converts the list to a string of JSON lines suitable for evaluation in a query & reponse format.
+        Converts the list to a string of JSON lines suitable for evaluation in a query & response format.
         Each item in the list is expected to be a dictionary with
         'messages' key. The 'messages' value is a list of
         dictionaries, each with a 'role' key and a 'content' key.
