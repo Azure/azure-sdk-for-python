@@ -32,9 +32,9 @@ AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
 
     foo: AggregateResult[float] = {
         "evaluation_per_turn": {
-            "gpt_coherence": [1.0, 2.0, 3.0]
+            "coherence": [1.0, 2.0, 3.0]
         },
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -44,7 +44,7 @@ DoEvalResult: TypeAlias = Dict[str, T]
     .. code-block:: python
 
     foo: DoEvalResult[float] = {
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 

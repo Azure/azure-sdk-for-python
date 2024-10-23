@@ -32,12 +32,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_groundedness": 5
+            "groundedness": 5,
+            "gpt_groundedness": 5,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     _PROMPTY_FILE = "groundedness.prompty"
-    _RESULT_KEY = "gpt_groundedness"
+    _RESULT_KEY = "groundedness"
 
     @override
     def __init__(self, model_config):

@@ -41,6 +41,11 @@ class QAEvaluator:
     .. code-block:: python
 
         {
+            "groundedness": 3.5,
+            "relevance": 4.0,
+            "coherence": 1.5,
+            "fluency": 4.0,
+            "similarity": 3.0,
             "gpt_groundedness": 3.5,
             "gpt_relevance": 4.0,
             "gpt_coherence": 1.5,
