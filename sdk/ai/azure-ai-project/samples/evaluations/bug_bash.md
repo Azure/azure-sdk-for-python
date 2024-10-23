@@ -66,6 +66,11 @@ git checkout users/singankit/remote_evaluation_bug_bash
 ### How to Get `Connection String` for the Project ?
 Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
 
+### Evaluation List
+Use the following uri for listing evaluation : https://int.ai.azure.com/build/evaluation?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&flight=RAIEvalNewListExp&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
+
+It needs a flight `&flight=RAIEvalNewListExp`
+
 ### Report Bugs
 
 Please use the following template to report bugs : [**Bug Template**](https://msdata.visualstudio.com/Vienna/_workitems/create/Bug?templateId=5f8cafcf-2bbc-42df-a0ba-13c3ebcbeabe&ownerId=31cd3b44-f331-4377-95dd-2f8d6e169ee4)
