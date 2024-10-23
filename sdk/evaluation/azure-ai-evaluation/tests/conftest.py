@@ -21,6 +21,7 @@ from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
 
+
 # Import of optional packages
 AZURE_INSTALLED = True
 try:
@@ -34,13 +35,20 @@ CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json")
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 
 
-class SanitizedValues(str, Enum):
+class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
     RESOURCE_GROUP_NAME = "00000"
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
 
+
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+# test_proxy auto-starts the test proxy
+# patch_sleep and patch_async_sleep streamline tests by disabling wait times during LRO polling
+@pytest.fixture(scope="session", autouse=True)
+def start_proxy(test_proxy, patch_sleep, patch_async_sleep):
+    return
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(
@@ -61,7 +69,7 @@ def add_sanitizers(
     def azure_workspace_triad_sanitizer():
         """Sanitize subscription, resource group, and workspace."""
         add_general_regex_sanitizer(
-            regex=r"/subscriptions/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+            regex=r"/subscriptions/([-\w\._\(\)]+)",
             value=mock_project_scope["subscription_id"],
             group_for_replace="1",
         )
@@ -71,7 +79,9 @@ def add_sanitizers(
             group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"/workspaces/([-\w\._\(\)]+)", 
+            value=mock_project_scope["project_name"], 
+            group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -114,11 +124,11 @@ def add_sanitizers(
         project_scope = connection_file["azure_ai_project_scope"]["value"]
         model_config = connection_file["azure_openai_model_config"]["value"]
 
-        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID.value)
+        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
         add_general_regex_sanitizer(
-            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME.value
+            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME
         )
-        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME.value)
+        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
         add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
 
     azure_workspace_triad_sanitizer()
@@ -440,7 +450,7 @@ def user_object_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-        return SanitizedValues.USER_OBJECT_ID.value
+        return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
