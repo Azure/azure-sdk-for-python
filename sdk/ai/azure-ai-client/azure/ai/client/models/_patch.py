@@ -41,7 +41,7 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
 
 logger = logging.getLogger(__name__)
 
@@ -283,18 +283,22 @@ class FunctionTool(Tool):
     A tool that executes user-defined functions.
     """
 
-    def __init__(self, functions: Dict[str, Any]):
+    def __init__(self, functions: Set[Callable[[], Any]]):
         """
         Initialize FunctionTool with a dictionary of functions.
 
-        :param functions: A dictionary where keys are function names and values are the function objects.
+        :param functions: A set of function objects.
         """
-        self._functions = functions
+        self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(functions)
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
+    def _create_function_dict(self, funcs: Set[Callable[[], Any]]) -> Dict[str, Callable[[], Any]]:
+        func_dict = {func.__name__: func for func in funcs}
+        return func_dict
+
+    def _build_function_definitions(self, functions: Set[Callable[[], Any]]) -> List[ToolDefinition]:
         specs = []
-        for name, func in functions.items():
+        for func in functions:
             sig = inspect.signature(func)
             params = sig.parameters
             docstring = inspect.getdoc(func)
@@ -307,7 +311,7 @@ class FunctionTool(Tool):
                 properties[param_name] = {"type": param_type, "description": param_description}
 
             function_def = FunctionDefinition(
-                name=name,
+                name=func.__name__,
                 description=description,
                 parameters={"type": "object", "properties": properties, "required": list(params.keys())},
             )
@@ -476,6 +480,12 @@ class FileSearchTool(Tool):
         """
         self.vector_store_ids.append(store_id)
 
+    def remove_vector_store(self, store_id: str):
+        """
+        Remove a vector store ID from the list of vector stores to search for files.
+        """
+        self.vector_store_ids.remove(store_id)
+
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
@@ -509,6 +519,14 @@ class CodeInterpreterTool(Tool):
         :param file_id: The ID of the file to interpret.
         """
         self.file_ids.append(file_id)
+
+    def remove_file(self, file_id: str):
+        """
+        Remove a file ID to the list of files to interpret.
+
+        :param file_id: The ID of the file to remove.
+        """
+        self.file_ids.remove(file_id)
 
     @property
     def definitions(self) -> List[ToolDefinition]:
