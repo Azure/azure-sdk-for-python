@@ -6,6 +6,8 @@
 
 import logging
 import pytest
+import time
+import json
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
 
@@ -35,7 +37,7 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
+    def test_topic_by_servicebus_client_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -55,7 +57,7 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
+    def test_topic_by_sas_token_credential_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -91,3 +93,39 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
         topics = client.list_topics()
         assert len(topics) >= 1
         # assert all(isinstance(t, TopicClient) for t in topics)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_topic_by_servicebus_client_send_large_messages_w_sleep(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        
+        # message of 160 kb - requires multiple transfer frames
+        def create_large_message():
+            size = 160
+            large_dict = {
+                "key": "A" * 1024
+            }
+            for i in range(size):
+                large_dict[f"key_{i}"] = "A" * 1024
+            return json.dumps(large_dict)
+
+        body = create_large_message()
+
+        with ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_topic_sender(servicebus_topic.name) as sender:
+                for _ in range(10):
+                    time.sleep(10)
+                    sender.send_messages(ServiceBusMessage(body))
+                message = ServiceBusMessage(b"Sample topic message")
+                sender.send_messages(message)
