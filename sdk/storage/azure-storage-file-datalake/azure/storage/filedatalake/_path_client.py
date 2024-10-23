@@ -13,7 +13,7 @@ from typing import (
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob import BlobClient, BlobProperties
+from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
 from ._generated import AzureDataLakeStorageRESTAPI
@@ -735,7 +735,7 @@ class PathClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _get_path_properties(self, **kwargs: Any) -> BlobProperties:
+    def _get_path_properties(self, **kwargs: Any) -> Union["DirectoryProperties", "FileProperties"]:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file or directory. It does not return the content of the directory or file.
 
@@ -780,7 +780,7 @@ class PathClient(StorageAccountHostsMixin):
         :returns:
             Information including user-defined metadata, standard HTTP properties,
             and system properties for the file or directory.
-        :rtype: BlobProperties
+        :rtype: DirectoryProperties or FileProperties
 
         .. admonition:: Example:
 
