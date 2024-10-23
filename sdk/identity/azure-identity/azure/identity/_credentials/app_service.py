@@ -7,7 +7,7 @@ import os
 from typing import Optional, Dict, Any
 from azure.core.pipeline.transport import HttpRequest
 
-from .._constants import EnvironmentVariables
+from .._constants import SystemEnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
@@ -19,8 +19,8 @@ class AppServiceCredential(MsalManagedIdentityClient):
 def _get_client_args(**kwargs: Any) -> Optional[Dict]:
     identity_config = kwargs.pop("identity_config", None) or {}
 
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
+    url = os.environ.get(SystemEnvironmentVariables.IDENTITY_ENDPOINT)
+    secret = os.environ.get(SystemEnvironmentVariables.IDENTITY_HEADER)
     if not (url and secret):
         # App Service managed identity isn't available in this environment
         return None

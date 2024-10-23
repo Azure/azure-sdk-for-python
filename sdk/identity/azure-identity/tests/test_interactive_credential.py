@@ -11,7 +11,7 @@ from azure.identity import (
     TokenCachePersistenceOptions,
 )
 from azure.identity._internal import InteractiveCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import SystemEnvironmentVariables
 from msal import TokenCache
 import pytest
 from urllib.parse import urlparse
@@ -443,7 +443,7 @@ def test_multitenant_authentication_not_allowed(get_token_method):
     token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token
 
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         kwargs = {"tenant_id": "un" + expected_tenant}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}

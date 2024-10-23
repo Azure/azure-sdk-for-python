@@ -8,7 +8,7 @@ from typing import Dict, Optional, Any
 
 from azure.core.pipeline.transport import HttpRequest
 
-from .._constants import EnvironmentVariables
+from .._constants import SystemEnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
@@ -18,9 +18,9 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
 
 
 def _get_client_args(**kwargs: Any) -> Optional[Dict]:
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
-    thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
+    url = os.environ.get(SystemEnvironmentVariables.IDENTITY_ENDPOINT)
+    secret = os.environ.get(SystemEnvironmentVariables.IDENTITY_HEADER)
+    thumbprint = os.environ.get(SystemEnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
     if not (url and secret and thumbprint):
         # Service Fabric managed identity isn't available in this environment
         return None

@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzureAuthorityHosts, CredentialUnavailableError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import VisualStudioCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -348,6 +348,6 @@ async def test_multitenant_authentication_not_allowed():
     token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
     assert token.token == expected_token * 2
 
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with mock.patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token

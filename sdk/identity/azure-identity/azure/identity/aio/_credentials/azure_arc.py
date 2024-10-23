@@ -10,14 +10,14 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .._internal.managed_identity_base import AsyncManagedIdentityBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
-from ..._constants import EnvironmentVariables
+from ..._constants import SystemEnvironmentVariables
 from ..._credentials.azure_arc import _get_request, _get_secret_key
 
 
 class AzureArcCredential(AsyncManagedIdentityBase):
     def get_client(self, **kwargs: Any) -> Optional[AsyncManagedIdentityClient]:
-        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-        imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
+        url = os.environ.get(SystemEnvironmentVariables.IDENTITY_ENDPOINT)
+        imds = os.environ.get(SystemEnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
             return AsyncManagedIdentityClient(
                 _per_retry_policies=[ArcChallengeAuthPolicy()],

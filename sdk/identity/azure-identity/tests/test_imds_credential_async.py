@@ -9,7 +9,7 @@ from unittest import mock
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import SystemEnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio._credentials.imds import ImdsCredential, PIPELINE_SETTINGS
@@ -259,7 +259,9 @@ async def test_imds_authority_override(get_token_method):
         ],
     )
 
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST: authority}, clear=True):
+    with mock.patch.dict(
+        "os.environ", {SystemEnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST: authority}, clear=True
+    ):
         credential = ImdsCredential(transport=transport)
         token = await getattr(credential, get_token_method)(scope)
 

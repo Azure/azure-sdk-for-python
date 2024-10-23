@@ -14,7 +14,7 @@ from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzurePowerShellCredential, CredentialUnavailableError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import SystemEnvironmentVariables
 from azure.identity._credentials.azure_powershell import (
     AZ_ACCOUNT_NOT_INSTALLED,
     BLOCKED_BY_EXECUTION_POLICY,
@@ -376,7 +376,7 @@ def test_multitenant_authentication_not_allowed(get_token_method):
         token = getattr(credential, get_token_method)("scope")
         assert token.token == expected_token
 
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
             kwargs = {"tenant_id": "12345"}
             if get_token_method == "get_token_info":
                 kwargs = {"options": kwargs}

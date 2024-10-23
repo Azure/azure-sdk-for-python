@@ -17,7 +17,7 @@ from devtools_testutils import (
     add_remove_header_sanitizer,
     set_custom_default_matcher,
 )
-from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables, SystemEnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
 TEST_ID = "00000000-0000-0000-0000-000000000000"
@@ -205,8 +205,8 @@ def add_sanitizers(test_proxy, environment_variables):
         excluded_headers="x-client-current-telemetry,x-client-last-telemetry,x-client-os,"
         "x-client-sku,x-client-ver,x-client-cpu,x-client-brkrver,x-ms-lib-capability"  # cspell:ignore brkrver
     )
-    if EnvironmentVariables.MSI_ENDPOINT in os.environ:
-        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+    if SystemEnvironmentVariables.MSI_ENDPOINT in os.environ:
+        url = os.environ.get(SystemEnvironmentVariables.MSI_ENDPOINT)
         PLAYBACK_URL = "https://msi-endpoint/token"
         add_general_regex_sanitizer(regex=url, value=PLAYBACK_URL)
     if "USER_ASSIGNED_IDENTITY_CLIENT_ID" in os.environ:

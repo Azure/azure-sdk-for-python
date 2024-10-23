@@ -11,7 +11,7 @@ from typing import List, Optional
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import EnvironmentVariables, KnownAuthorities
+from .._constants import EnvironmentVariables, SystemEnvironmentVariables, KnownAuthorities
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
@@ -104,7 +104,7 @@ def resolve_tenant(
     """
     if tenant_id is None or tenant_id == default_tenant:
         return default_tenant
-    if default_tenant == "adfs" or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH):
+    if default_tenant == "adfs" or os.environ.get(SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH):
         _LOGGER.info(
             "A token was request for a different tenant than was configured on the credential, "
             "but the configured value was used since multi tenant authentication has been disabled. "

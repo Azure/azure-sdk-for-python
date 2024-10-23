@@ -9,7 +9,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import CredentialUnavailableError, TokenCachePersistenceOptions
 from azure.identity.aio import SharedTokenCacheCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -768,6 +768,6 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
     kwargs = {"tenant_id": "some_tenant"}
     if get_token_method == "get_token_info":
         kwargs = {"options": kwargs}
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = await getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token

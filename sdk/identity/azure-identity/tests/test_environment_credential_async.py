@@ -7,7 +7,7 @@ from unittest import mock
 
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import EnvironmentCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, CLIENT_SECRET_VARS, CERT_VARS
 import pytest
 
 from helpers import mock_response, Request, GET_TOKEN_METHODS
@@ -20,7 +20,7 @@ ENVIRON = EnvironmentCredential.__module__ + ".os.environ"
 @pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
-    with mock.patch.dict(ENVIRON, {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+    with mock.patch.dict(ENVIRON, {var: "..." for var in CLIENT_SECRET_VARS}, clear=True):
         credential = EnvironmentCredential(transport=transport)
     assert transport.__aexit__.call_count == 0
 
@@ -31,7 +31,7 @@ async def test_close():
 @pytest.mark.asyncio
 async def test_context_manager():
     transport = AsyncMockTransport()
-    with mock.patch.dict(ENVIRON, {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+    with mock.patch.dict(ENVIRON, {var: "..." for var in CLIENT_SECRET_VARS}, clear=True):
         credential = EnvironmentCredential(transport=transport)
 
     async with credential:
@@ -73,8 +73,8 @@ async def test_incomplete_configuration(get_token_method):
 @pytest.mark.parametrize(
     "credential_name,envvars",
     (
-        ("ClientSecretCredential", EnvironmentVariables.CLIENT_SECRET_VARS),
-        ("CertificateCredential", EnvironmentVariables.CERT_VARS),
+        ("ClientSecretCredential", CLIENT_SECRET_VARS),
+        ("CertificateCredential", CERT_VARS),
     ),
 )
 def test_passes_authority_argument(credential_name, envvars):

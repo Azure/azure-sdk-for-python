@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import SystemEnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
 import msal
@@ -258,7 +258,7 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
     token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token * 2
 
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         kwargs = {"tenant_id": "un" + expected_tenant}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}

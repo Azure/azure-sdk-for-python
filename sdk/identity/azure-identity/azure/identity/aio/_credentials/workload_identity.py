@@ -6,7 +6,7 @@ import os
 from typing import Any, Optional
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.workload_identity import TokenFileMixin
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, SystemEnvironmentVariables
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -51,7 +51,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     ) -> None:
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-        token_file_path = token_file_path or os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE)
+        token_file_path = token_file_path or os.environ.get(SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE)
         if not tenant_id:
             raise ValueError(
                 "'tenant_id' is required. Please pass it in or set the "
@@ -65,7 +65,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         if not token_file_path:
             raise ValueError(
                 "'token_file_path' is required. Please pass it in or set the "
-                f"{EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE} environment variable"
+                f"{SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE} environment variable"
             )
         self._token_file_path = token_file_path
         super().__init__(

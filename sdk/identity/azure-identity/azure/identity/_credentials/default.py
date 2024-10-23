@@ -7,7 +7,7 @@ import os
 from typing import List, Any, Optional, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
-from .._constants import EnvironmentVariables
+from .._constants import EnvironmentVariables, SystemEnvironmentVariables, WORKLOAD_IDENTITY_VARS
 from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
 from .browser import InteractiveBrowserCredential
@@ -148,13 +148,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
-            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+            if all(os.environ.get(var) for var in WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
                 credentials.append(
                     WorkloadIdentityCredential(
                         client_id=cast(str, client_id),
                         tenant_id=workload_identity_tenant_id,
-                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ[SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                         **kwargs
                     )
                 )

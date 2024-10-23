@@ -8,7 +8,7 @@ from typing import Optional, Dict
 
 from azure.core.pipeline.transport import HttpRequest
 
-from .._constants import EnvironmentVariables
+from .._constants import SystemEnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
@@ -20,8 +20,8 @@ class AzureMLCredential(MsalManagedIdentityClient):
 def _get_client_args(**kwargs) -> Optional[Dict]:
     identity_config = kwargs.pop("identity_config", None) or {}
 
-    url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-    secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
+    url = os.environ.get(SystemEnvironmentVariables.MSI_ENDPOINT)
+    secret = os.environ.get(SystemEnvironmentVariables.MSI_SECRET)
     if not (url and secret):
         # Azure ML managed identity isn't available in this environment
         return None

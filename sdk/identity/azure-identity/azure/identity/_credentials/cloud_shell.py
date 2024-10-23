@@ -8,7 +8,7 @@ from typing import Any, Optional, Dict, Mapping
 
 from azure.core.pipeline.transport import HttpRequest
 
-from .._constants import EnvironmentVariables
+from .._constants import SystemEnvironmentVariables
 from .._internal import within_dac
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.managed_identity_base import ManagedIdentityBase
@@ -31,7 +31,7 @@ class CloudShellCredential(ManagedIdentityBase):
         identity_config = kwargs.get("identity_config")
         validate_client_id_and_config(client_id, identity_config)
 
-        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        url = os.environ.get(SystemEnvironmentVariables.MSI_ENDPOINT)
         if url:
             return ManagedIdentityClient(
                 request_factory=functools.partial(_get_request, url), base_headers={"Metadata": "true"}, **kwargs

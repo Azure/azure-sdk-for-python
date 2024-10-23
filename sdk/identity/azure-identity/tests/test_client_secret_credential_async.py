@@ -419,6 +419,6 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
     token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token * 2
 
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = await getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token

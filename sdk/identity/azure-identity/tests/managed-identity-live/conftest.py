@@ -5,7 +5,7 @@
 import os
 import sys
 
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import SystemEnvironmentVariables
 import pytest
 
 AZURE_IDENTITY_TEST_VAULT_URL = "AZURE_IDENTITY_TEST_VAULT_URL"
@@ -42,7 +42,7 @@ def live_managed_identity_config():
 def cloud_shell():
     """Cloud Shell MSI is distinguished by a value for MSI_ENDPOINT but not MSI_SECRET."""
 
-    if EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET in os.environ:
+    if SystemEnvironmentVariables.MSI_ENDPOINT not in os.environ or SystemEnvironmentVariables.MSI_SECRET in os.environ:
         pytest.skip("Cloud Shell MSI unavailable")
         return
 

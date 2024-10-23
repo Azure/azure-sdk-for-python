@@ -8,7 +8,7 @@ from typing import Optional, Any, Mapping, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, TokenCredential, SupportsTokenInfo
 from .. import CredentialUnavailableError
-from .._constants import EnvironmentVariables
+from .._constants import EnvironmentVariables, SystemEnvironmentVariables, WORKLOAD_IDENTITY_VARS
 from .._internal.decorators import log_get_token
 
 
@@ -62,9 +62,9 @@ class ManagedIdentityCredential:
         validate_identity_config(client_id, identity_config)
         self._credential: Optional[SupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
-        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
-                if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
+        if os.environ.get(SystemEnvironmentVariables.IDENTITY_ENDPOINT):
+            if os.environ.get(SystemEnvironmentVariables.IDENTITY_HEADER):
+                if os.environ.get(SystemEnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
                     _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
                     from .service_fabric import ServiceFabricCredential
 
@@ -78,13 +78,13 @@ class ManagedIdentityCredential:
                     self._credential = AppServiceCredential(
                         client_id=client_id, identity_config=identity_config, **kwargs
                     )
-            elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
+            elif os.environ.get(SystemEnvironmentVariables.IMDS_ENDPOINT):
                 _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(client_id=client_id, identity_config=identity_config, **kwargs)
-        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.MSI_SECRET):
+        elif os.environ.get(SystemEnvironmentVariables.MSI_ENDPOINT):
+            if os.environ.get(SystemEnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use Azure ML managed identity", self.__class__.__name__)
                 from .azure_ml import AzureMLCredential
 
@@ -94,10 +94,7 @@ class ManagedIdentityCredential:
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(client_id=client_id, identity_config=identity_config, **kwargs)
-        elif (
-            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
-            and not exclude_workload_identity
-        ):
+        elif all(os.environ.get(var) for var in WORKLOAD_IDENTITY_VARS) and not exclude_workload_identity:
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
@@ -108,7 +105,7 @@ class ManagedIdentityCredential:
             self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=workload_client_id,
-                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                token_file_path=os.environ[SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs,
             )
         else:

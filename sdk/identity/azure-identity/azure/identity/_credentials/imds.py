@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 
 from .. import CredentialUnavailableError
-from .._constants import EnvironmentVariables
+from .._constants import SystemEnvironmentVariables
 from .._internal import within_credential_chain
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
@@ -33,7 +33,7 @@ PIPELINE_SETTINGS = {
 
 def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
     url = (
-        os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
+        os.environ.get(SystemEnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
         + IMDS_TOKEN_PATH
     )
     request = HttpRequest("GET", url)
@@ -61,7 +61,7 @@ class ImdsCredential(MsalManagedIdentityClient):
         super(ImdsCredential, self).__init__(**kwargs)
         self._config = kwargs
 
-        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
+        if SystemEnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
         else:
             self._endpoint_available = None

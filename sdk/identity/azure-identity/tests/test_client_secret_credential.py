@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import ClientSecretCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import msal
@@ -144,7 +144,9 @@ def test_regional_authority(get_token_method):
         mock_confidential_client.reset_mock()
 
         # region can be configured via environment variable
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
+        with patch.dict(
+            "os.environ", {SystemEnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True
+        ):
             credential = ClientSecretCredential("tenant", "client-id", "secret")
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             getattr(credential, get_token_method)("scope")
@@ -373,7 +375,7 @@ def test_multitenant_authentication_not_allowed(get_token_method):
     kwargs = {"tenant_id": "un" + expected_tenant}
     if get_token_method == "get_token_info":
         kwargs = {"options": kwargs}
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token
 

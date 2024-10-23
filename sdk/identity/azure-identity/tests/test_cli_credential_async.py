@@ -12,7 +12,7 @@ from unittest import mock
 
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureCliCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
@@ -380,7 +380,9 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
             token = await getattr(credential, get_token_method)("scope")
             assert token.token == expected_token
 
-            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            with mock.patch.dict(
+                "os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
+            ):
                 kwargs = {"tenant_id": "un" + expected_tenant}
                 if get_token_method == "get_token_info":
                     kwargs = {"options": kwargs}

@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOpt
 from azure.core.credentials_async import AsyncSupportsTokenInfo
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, CLIENT_SECRET_VARS, CERT_VARS
 from .._internal import AsyncContextManager
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
@@ -54,14 +54,14 @@ class EnvironmentCredential(AsyncContextManager):
     def __init__(self, **kwargs: Any) -> None:
         self._credential: Optional[Union[CertificateCredential, ClientSecretCredential]] = None
 
-        if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
+        if all(os.environ.get(v) is not None for v in CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
-        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
+        elif all(os.environ.get(v) is not None for v in CERT_VARS):
             self._credential = CertificateCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
@@ -76,7 +76,7 @@ class EnvironmentCredential(AsyncContextManager):
         if self._credential:
             _LOGGER.info("Environment is configured for %s", self._credential.__class__.__name__)
         else:
-            expected_variables = set(EnvironmentVariables.CERT_VARS + EnvironmentVariables.CLIENT_SECRET_VARS)
+            expected_variables = set(CERT_VARS + CLIENT_SECRET_VARS)
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
                 _LOGGER.log(

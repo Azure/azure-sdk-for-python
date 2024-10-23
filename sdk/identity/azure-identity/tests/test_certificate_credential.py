@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._credentials.certificate import load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
@@ -173,7 +173,9 @@ def test_regional_authority(get_token_method):
         mock_confidential_client.reset_mock()
 
         # region can be configured via environment variable
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
+        with patch.dict(
+            "os.environ", {SystemEnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True
+        ):
             credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH)
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             getattr(credential, get_token_method)("scope")

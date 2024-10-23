@@ -7,7 +7,7 @@ import time
 from unittest import mock
 
 from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity._internal import within_credential_chain
@@ -17,22 +17,25 @@ from helpers import build_aad_response, validating_transport, mock_response, Req
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 ALL_ENVIRONMENTS = (
-    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IDENTITY_HEADER: "..."},  # App Service
-    {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
+    {
+        SystemEnvironmentVariables.IDENTITY_ENDPOINT: "...",
+        SystemEnvironmentVariables.IDENTITY_HEADER: "...",
+    },  # App Service
+    {SystemEnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
     {  # Service Fabric
-        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
-        EnvironmentVariables.IDENTITY_HEADER: "...",
-        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
+        SystemEnvironmentVariables.IDENTITY_ENDPOINT: "...",
+        SystemEnvironmentVariables.IDENTITY_HEADER: "...",
+        SystemEnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
     },
-    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
+    {SystemEnvironmentVariables.IDENTITY_ENDPOINT: "...", SystemEnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
     {  # token exchange
         EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://localhost",
         EnvironmentVariables.AZURE_CLIENT_ID: "...",
         EnvironmentVariables.AZURE_TENANT_ID: "...",
-        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
+        SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
     },
     {},  # IMDS
-    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
+    {SystemEnvironmentVariables.MSI_ENDPOINT: "...", SystemEnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
 )
 
 
@@ -170,7 +173,7 @@ def test_cloud_shell(get_token_method):
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
+    with mock.patch("os.environ", {SystemEnvironmentVariables.MSI_ENDPOINT: endpoint}):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
@@ -206,7 +209,7 @@ def test_cloud_shell_tenant_id(get_token_method):
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
+    with mock.patch("os.environ", {SystemEnvironmentVariables.MSI_ENDPOINT: endpoint}):
         kwargs = {"tenant_id": "tenant_id"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
@@ -257,7 +260,7 @@ def test_azure_ml(get_token_method):
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
+        {SystemEnvironmentVariables.MSI_ENDPOINT: url, SystemEnvironmentVariables.MSI_SECRET: secret},
         clear=True,
     ):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
@@ -309,7 +312,7 @@ def test_azure_ml_tenant_id(get_token_method):
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
+        {SystemEnvironmentVariables.MSI_ENDPOINT: url, SystemEnvironmentVariables.MSI_SECRET: secret},
         clear=True,
     ):
         kwargs = {"tenant_id": "tenant_id"}
@@ -360,7 +363,7 @@ def test_cloud_shell_identity_config(get_token_method):
         * 2,
     )
 
-    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {SystemEnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
@@ -402,10 +405,10 @@ def test_prefers_app_service_2019_08_01(get_token_method):
     )
 
     environ = {
-        EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-        EnvironmentVariables.IDENTITY_HEADER: secret,
-        EnvironmentVariables.MSI_ENDPOINT: endpoint,
-        EnvironmentVariables.MSI_SECRET: secret,
+        SystemEnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+        SystemEnvironmentVariables.IDENTITY_HEADER: secret,
+        SystemEnvironmentVariables.MSI_ENDPOINT: endpoint,
+        SystemEnvironmentVariables.MSI_SECRET: secret,
     }
     with mock.patch.dict("os.environ", environ, clear=True):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
@@ -449,10 +452,10 @@ def test_app_service_2019_08_01(get_token_method):
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: new_secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
+            SystemEnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            SystemEnvironmentVariables.IDENTITY_HEADER: new_secret,
+            SystemEnvironmentVariables.MSI_ENDPOINT: endpoint,
+            SystemEnvironmentVariables.MSI_SECRET: secret,
         },
         clear=True,
     ):
@@ -497,10 +500,10 @@ def test_app_service_2019_08_01_tenant_id(get_token_method):
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: new_secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
+            SystemEnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            SystemEnvironmentVariables.IDENTITY_HEADER: new_secret,
+            SystemEnvironmentVariables.MSI_ENDPOINT: endpoint,
+            SystemEnvironmentVariables.MSI_SECRET: secret,
         },
         clear=True,
     ):
@@ -557,7 +560,7 @@ def test_app_service_user_assigned_identity(get_token_method):
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
+        {SystemEnvironmentVariables.IDENTITY_ENDPOINT: endpoint, SystemEnvironmentVariables.IDENTITY_HEADER: secret},
         clear=True,
     ):
         token = getattr(ManagedIdentityCredential(client_id=client_id, transport=transport), get_token_method)(scope)
@@ -686,7 +689,7 @@ def test_client_id_none(get_token_method):
 
     # Cloud Shell
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
+        MANAGED_IDENTITY_ENVIRON, {SystemEnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = getattr(credential, get_token_method)(scope)
@@ -764,9 +767,9 @@ def test_service_fabric(get_token_method):
     with mock.patch(
         "os.environ",
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
+            SystemEnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            SystemEnvironmentVariables.IDENTITY_HEADER: secret,
+            SystemEnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
         },
     ):
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
@@ -805,9 +808,9 @@ def test_service_fabric_tenant_id(get_token_method):
     with mock.patch(
         "os.environ",
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
+            SystemEnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            SystemEnvironmentVariables.IDENTITY_HEADER: secret,
+            SystemEnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
         },
     ):
         kwargs = {"tenant_id": "tenant_id"}
@@ -861,7 +864,7 @@ def test_token_exchange(tmpdir, get_token_method):
         EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
         EnvironmentVariables.AZURE_CLIENT_ID: default_client_id,
         EnvironmentVariables.AZURE_TENANT_ID: tenant,
-        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
+        SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
     }
     # credential should default to AZURE_CLIENT_ID
     with mock.patch.dict("os.environ", mock_environ, clear=True):
@@ -916,7 +919,7 @@ def test_token_exchange(tmpdir, get_token_method):
         {
             EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
             EnvironmentVariables.AZURE_TENANT_ID: tenant,
-            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
+            SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
         },
         clear=True,
     ):
@@ -971,7 +974,7 @@ def test_token_exchange_tenant_id(tmpdir, get_token_method):
         EnvironmentVariables.AZURE_AUTHORITY_HOST: authority,
         EnvironmentVariables.AZURE_CLIENT_ID: default_client_id,
         EnvironmentVariables.AZURE_TENANT_ID: tenant,
-        EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
+        SystemEnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
     }
     with mock.patch.dict("os.environ", mock_environ, clear=True):
         credential = ManagedIdentityCredential(transport=transport)
@@ -1005,7 +1008,7 @@ def test_validate_identity_config():
 
 def test_validate_cloud_shell_credential():
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
+        MANAGED_IDENTITY_ENVIRON, {SystemEnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
     ):
         ManagedIdentityCredential()
         with pytest.raises(ValueError):

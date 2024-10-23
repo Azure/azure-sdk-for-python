@@ -11,7 +11,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
     TokenCachePersistenceOptions,
 )
-from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables, SystemEnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -1127,7 +1127,7 @@ def test_multitenant_authentication_not_allowed(get_token_method):
     token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token
 
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+    with patch.dict("os.environ", {SystemEnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         kwargs = {"tenant_id": "some_tenant"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}

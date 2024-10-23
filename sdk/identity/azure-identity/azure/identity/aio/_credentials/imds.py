@@ -8,7 +8,7 @@ from typing import Optional, Any
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessTokenInfo
 from ... import CredentialUnavailableError
-from ..._constants import EnvironmentVariables
+from ..._constants import SystemEnvironmentVariables
 from .._internal import AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
@@ -21,7 +21,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         super().__init__()
 
         self._client = AsyncManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
-        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
+        if SystemEnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
         else:
             self._endpoint_available = None

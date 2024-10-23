@@ -8,7 +8,7 @@ from typing import Optional, Any
 
 from .._internal.managed_identity_base import AsyncManagedIdentityBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
-from ..._constants import EnvironmentVariables
+from ..._constants import SystemEnvironmentVariables
 from ..._credentials.cloud_shell import _get_request, validate_client_id_and_config
 
 
@@ -18,7 +18,7 @@ class CloudShellCredential(AsyncManagedIdentityBase):
         identity_config = kwargs.get("identity_config")
         validate_client_id_and_config(client_id, identity_config)
 
-        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        url = os.environ.get(SystemEnvironmentVariables.MSI_ENDPOINT)
         if url:
             return AsyncManagedIdentityClient(
                 request_factory=functools.partial(_get_request, url), base_headers={"Metadata": "true"}, **kwargs
