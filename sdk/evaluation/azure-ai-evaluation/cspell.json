@@ -1,0 +1,6 @@
+{
+    "ignoreWords": [],
+    "ignorePaths": [
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty"
+    ]
+}
