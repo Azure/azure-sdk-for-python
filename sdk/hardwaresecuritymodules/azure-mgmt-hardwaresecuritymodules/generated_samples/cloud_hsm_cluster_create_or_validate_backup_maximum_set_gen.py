@@ -7,33 +7,34 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
 
+from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-hardwaresecuritymodules
 # USAGE
-    python payment_hsm_operations_list.py
+    python cloud_hsm_cluster_create_or_validate_backup_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = HardwareSecurityModulesMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.cloud_hsm_clusters.begin_backup(
+        resource_group_name='rgcloudhsm',
+        cloud_hsm_cluster_name='chsm1',
+    ).result()
+    print(response)
 
-
-# x-ms-original-file: specification/hardwaresecuritymodules/resource-manager/Microsoft.HardwareSecurityModules/stable/2021-11-30/examples/PaymentHsm_OperationsList.json
+# x-ms-original-file: specification/hardwaresecuritymodules/resource-manager/Microsoft.HardwareSecurityModules/preview/2024-06-30-preview/examples/CloudHsmCluster_CreateOrValidate_Backup_MaximumSet_Gen.json
 if __name__ == "__main__":
+    main()
+main__":
     main()
