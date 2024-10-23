@@ -16,8 +16,8 @@ USAGE:
     Before running the sample:
 
     pip install azure-identity
-    pip install "git+https://github.com/Azure/azure-sdk-for-python.git@users/singankit/ai_project_utils#egg=azure-ai-client&subdirectory=sdk/ai/azure-ai-client"
-    pip install "git+https://github.com/Azure/azure-sdk-for-python.git@users/singankit/demo_evaluators_id#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation"
+    pip install azure-ai-project
+    pip install azure-ai-evaluation
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -40,10 +40,16 @@ project_client = AIProjectClient.from_connection_string(
 
 # Upload data for evaluation
 data_id = project_client.upload_file("./evaluate_test_data.jsonl")
+# data_id = "azureml://registries/remote-eval-testing/data/content_harm_data_tiny/versions/1"
 # To use an existing dataset, replace the above line with the following line
 # data_id = "<dataset_id>"
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+
+deployment_name = "gpt-4-ignite-bugbash"
+api_version = "2024-08-01-preview"
+
+model_config = default_connection.to_evaluator_model_config(deployment_name=deployment_name, api_version=api_version)
 
 # Create an evaluation
 evaluation = Evaluation(
@@ -57,7 +63,7 @@ evaluation = Evaluation(
         "relevance": EvaluatorConfiguration(
             id=RelevanceEvaluator.id,
             init_params={
-                "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
+                "model_config": model_config
             },
         ),
         "violence": EvaluatorConfiguration(
@@ -66,12 +72,12 @@ evaluation = Evaluation(
                 "azure_ai_project": project_client.scope
             },
         ),
-        # "friendliness": EvaluatorConfiguration(
-        #     id="azureml://registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/versions/2",
-        #     init_params={
-        #         "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
-        #     }
-        # )
+        "friendliness": EvaluatorConfiguration(
+            id="azureml://registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/versions/2",
+            init_params={
+                "model_config": model_config
+            }
+        )
     },
     # This is needed as a workaround until environment gets published to registry
     properties={"Environment": "azureml://registries/remote-eval-testing/environments/eval-remote-test-env/versions/1"},
