@@ -222,10 +222,10 @@ class Simulator:
             for simulated_turn in simulation:
                 user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
                 current_simulation.add_to_history(user_turn)
-                assistant_response = await self._get_target_response(
+                assistant_response, assistant_context = await self._get_target_response(
                     target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
                 )
-                assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response)
+                assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
                 current_simulation.add_to_history(assistant_turn)
                 progress_bar.update(1)  # Update progress bar for both user and assistant turns
 
@@ -295,17 +295,17 @@ class Simulator:
         while len(current_simulation) < max_conversation_turns:
             user_response_content = await user_flow(
                 task="Continue the conversation",
-                conversation_history=current_simulation.to_list(),
+                conversation_history=current_simulation.to_context_free_list(),
                 **user_simulator_prompty_kwargs,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
             current_simulation.add_to_history(user_turn)
             await asyncio.sleep(api_call_delay_sec)
-            assistant_response = await self._get_target_response(
+            assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response)
+            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
             current_simulation.add_to_history(assistant_turn)
             progress_bar.update(1)
 
@@ -632,17 +632,17 @@ class Simulator:
             else:
                 conversation_starter_from_simulated_user = await user_flow(
                     task=task,
-                    conversation_history=conversation_history.to_list(),
+                    conversation_history=conversation_history.to_context_free_list(),
                     action="Your goal is to make sure the task is completed by asking the right questions. Do not ask the same questions again.",
                 )
             if isinstance(conversation_starter_from_simulated_user, dict):
                 conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]
             user_turn = Turn(role=ConversationRole.USER, content=conversation_starter_from_simulated_user)
             conversation_history.add_to_history(user_turn)
-            assistant_response = await self._get_target_response(
+            assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=conversation_history
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response)
+            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
             conversation_history.add_to_history(assistant_turn)
             progress_bar.update(1)
 
@@ -653,7 +653,7 @@ class Simulator:
 
     async def _get_target_response(
         self, *, target: Callable, api_call_delay_sec: float, conversation_history: ConversationHistory
-    ) -> str:
+    ) -> str, Optional[str]:
         """
         Retrieves the response from the target callback based on the current conversation history.
 
@@ -663,8 +663,8 @@ class Simulator:
         :paramtype api_call_delay_sec: float
         :keyword conversation_history: The current conversation history.
         :paramtype conversation_history: ConversationHistory
-        :return: The content of the response from the target.
-        :rtype: str
+        :return: The content of the response from the target and an optional context.
+        :rtype: str, Optional[str]
         """
         response = await target(
             messages={"messages": conversation_history.to_list()},
@@ -674,4 +674,4 @@ class Simulator:
         )
         await asyncio.sleep(api_call_delay_sec)
         latest_message = response["messages"][-1]
-        return latest_message["content"]
+        return latest_message["content"], latest_message.get("context", "")  # type: ignore
