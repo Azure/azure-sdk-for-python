@@ -22,13 +22,13 @@ from .code_client import CodeClient
 from .proxy_client import ProxyClient
 
 
-class BatchRunContext:
-    """Context manager for batch run clients.
+class EvalRunContext:
+    """Context manager for eval batch run.
 
     :param client: The client to run in the context.
     :type client: Union[
-        ~azure.ai.evaluation._evaluate._batch_run_client.code_client.CodeClient,
-        ~azure.ai.evaluation._evaluate._batch_run_client.proxy_client.ProxyClient
+        ~azure.ai.evaluation._evaluate._batch_run.code_client.CodeClient,
+        ~azure.ai.evaluation._evaluate._batch_run.proxy_client.ProxyClient
     ]
     """
 
