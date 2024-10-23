@@ -25,7 +25,10 @@ git checkout users/singankit/remote_evaluation_bug_bash
     pip uninstall azure-ai-project azure-ai-ml azure-ai-evaluation
 
    pip install azure-identity azure-ai-ml
-   pip install azure-ai-project azure-ai-evaluation
+   # installing azure-ai-evaluation
+   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_evaluation-1.0.0a20241022005-py3-none-any.whl
+   # installing azure-ai-project
+   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
     ```
 
 ### Report Bugs
@@ -34,5 +37,5 @@ Please use the following template to report bugs : [**Bug Template**](https://ms
 
 ### Sample Notebooks
 
-1. Remote Evaluation - [Notebook Link](./sample_evaluations.py). This sample demonstrates how to create a new evaluation in cloud.
-2. Online Evaluation - [Notebook Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
+1. Remote Evaluation - [Sample Link](./sample_evaluations.py). This sample demonstrates how to create a new evaluation in cloud.
+2. Online Evaluation - [Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
