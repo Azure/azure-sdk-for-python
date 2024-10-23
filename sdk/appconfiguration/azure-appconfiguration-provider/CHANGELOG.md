@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+* Allocation Id value changed so other providers can match the value.
+
 ### Bugs Fixed
 
 ### Other Changes
