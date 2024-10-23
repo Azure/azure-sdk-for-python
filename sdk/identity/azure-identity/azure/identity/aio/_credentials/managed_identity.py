@@ -11,7 +11,7 @@ from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsToke
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, WORKLOAD_IDENTITY_VARS
 from ..._credentials.managed_identity import validate_identity_config
 
 
@@ -83,7 +83,7 @@ class ManagedIdentityCredential(AsyncContextManager):
 
                 self._credential = CloudShellCredential(client_id=client_id, identity_config=identity_config, **kwargs)
         elif (
-            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
+            all(os.environ.get(var) for var in WORKLOAD_IDENTITY_VARS)
             and not exclude_workload_identity
         ):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)

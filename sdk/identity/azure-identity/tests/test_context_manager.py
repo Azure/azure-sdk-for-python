@@ -20,7 +20,7 @@ from azure.identity import (
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
 )
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, CLIENT_SECRET_VARS
 
 import pytest
 
@@ -54,7 +54,7 @@ FIXTURES = (
         EnvironmentCredential,
         ctor_patch_factory=lambda: patch.dict(
             EnvironmentCredential.__module__ + ".os.environ",
-            {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS},
+            {var: "..." for var in CLIENT_SECRET_VARS},
         ),
     ),
     CredentialFixture(InteractiveBrowserCredential),

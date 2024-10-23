@@ -8,7 +8,7 @@ from typing import Optional, Any, Mapping, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, TokenCredential, SupportsTokenInfo
 from .. import CredentialUnavailableError
-from .._constants import EnvironmentVariables
+from .._constants import EnvironmentVariables, WORKLOAD_IDENTITY_VARS
 from .._internal.decorators import log_get_token
 
 
@@ -95,7 +95,7 @@ class ManagedIdentityCredential:
 
                 self._credential = CloudShellCredential(client_id=client_id, identity_config=identity_config, **kwargs)
         elif (
-            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
+            all(os.environ.get(var) for var in WORKLOAD_IDENTITY_VARS)
             and not exclude_workload_identity
         ):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)

@@ -15,7 +15,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
 )
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, CLIENT_SECRET_VARS
 from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
@@ -108,7 +108,7 @@ def test_authority(authority):
                 assert "authority" not in kwargs
 
     # authority should be passed to EnvironmentCredential as a keyword argument
-    environment = {var: "foo" for var in EnvironmentVariables.CLIENT_SECRET_VARS}
+    environment = {var: "foo" for var in CLIENT_SECRET_VARS}
     with patch(DefaultAzureCredential.__module__ + ".EnvironmentCredential") as mock_credential:
         with patch.dict("os.environ", environment, clear=True):
             test_initialization(mock_credential, expect_argument=True)

@@ -8,7 +8,7 @@ from typing import List, Optional, Any, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, WORKLOAD_IDENTITY_VARS
 from ..._internal import get_default_authority, normalize_authority, within_dac
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
@@ -139,7 +139,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
-            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+            if all(os.environ.get(var) for var in WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
                 credentials.append(
                     WorkloadIdentityCredential(

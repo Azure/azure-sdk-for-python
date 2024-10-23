@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Exposed `EnvironmentVariables` class which contains environment variable names used by various credentials. ([#35989](https://github.com/Azure/azure-sdk-for-python/pull/35989))
+
 ### Breaking Changes
 
 ### Bugs Fixed

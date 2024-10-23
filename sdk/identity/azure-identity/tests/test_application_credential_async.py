@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio._credentials.application import AzureApplicationCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, CLIENT_SECRET_VARS
 import pytest
 from urllib.parse import urlparse
 
@@ -77,7 +77,7 @@ def test_authority(authority):
                 assert "authority" not in kwargs
 
     # authority should be passed to EnvironmentCredential as a keyword argument
-    environment = {var: "foo" for var in EnvironmentVariables.CLIENT_SECRET_VARS}
+    environment = {var: "foo" for var in CLIENT_SECRET_VARS}
     with patch(AzureApplicationCredential.__module__ + ".EnvironmentCredential") as mock_credential:
         with patch.dict("os.environ", environment, clear=True):
             test_initialization(mock_credential, expect_argument=True)
@@ -99,7 +99,7 @@ async def test_get_token(get_token_method):
         assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token=expected_token))
 
-    with patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+    with patch.dict("os.environ", {var: "..." for var in CLIENT_SECRET_VARS}, clear=True):
         credential = AzureApplicationCredential(transport=Mock(send=send))
 
     token = await getattr(credential, get_token_method)("scope")

@@ -8,7 +8,7 @@ from typing import Optional, Union, Any, cast
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
 
 from .. import CredentialUnavailableError
-from .._constants import EnvironmentVariables
+from .._constants import EnvironmentVariables, CLIENT_SECRET_VARS, CERT_VARS, USERNAME_PASSWORD_VARS
 from .._internal.decorators import log_get_token
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
@@ -69,14 +69,14 @@ class EnvironmentCredential:
     def __init__(self, **kwargs: Any) -> None:
         self._credential: Optional[EnvironmentCredentialTypes] = None
 
-        if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
+        if all(os.environ.get(v) is not None for v in CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
-        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
+        elif all(os.environ.get(v) is not None for v in CERT_VARS):
             self._credential = CertificateCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
@@ -87,7 +87,7 @@ class EnvironmentCredential:
                 ),
                 **kwargs
             )
-        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
+        elif all(os.environ.get(v) is not None for v in USERNAME_PASSWORD_VARS):
             self._credential = UsernamePasswordCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 username=os.environ[EnvironmentVariables.AZURE_USERNAME],
@@ -99,11 +99,7 @@ class EnvironmentCredential:
         if self._credential:
             _LOGGER.info("Environment is configured for %s", self._credential.__class__.__name__)
         else:
-            expected_variables = set(
-                EnvironmentVariables.CERT_VARS
-                + EnvironmentVariables.CLIENT_SECRET_VARS
-                + EnvironmentVariables.USERNAME_PASSWORD_VARS
-            )
+            expected_variables = set(CERT_VARS + CLIENT_SECRET_VARS + USERNAME_PASSWORD_VARS)
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
                 _LOGGER.log(
