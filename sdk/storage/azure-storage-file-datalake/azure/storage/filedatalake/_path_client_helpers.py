@@ -4,8 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import re
 from typing import (
-    Any, Dict, Optional,
+    Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, urlparse
@@ -194,3 +195,33 @@ def _rename_path_options(
     }
     options.update(kwargs)
     return options
+
+
+def _parse_rename_path(
+    new_name: str,
+    file_system_name: str,
+    query_str: str,
+    raw_credential: Optional[Union[str, Dict[str, str]]]
+) -> Tuple[str, str, Optional[str]]:
+    new_name = new_name.strip('/')
+    new_file_system = new_name.split('/')[0]
+    new_path = new_name[len(new_file_system):].strip('/')
+
+    new_sas = None
+    sas_split = new_path.split('?')
+    # If there is a ?, there could be a SAS token
+    if len(sas_split) > 0:
+        # Check last element for SAS by looking for sv= and sig=
+        potential_sas = sas_split[-1]
+        if re.search(r'sv=\d{4}-\d{2}-\d{2}', potential_sas) and 'sig=' in potential_sas:
+            new_sas = potential_sas
+            # Remove SAS from new path
+            new_path = new_path[:-(len(new_sas) + 1)]
+
+    if not new_sas:
+        if not raw_credential and new_file_system != file_system_name:
+            raise ValueError("please provide the sas token for the new file")
+        if not raw_credential and new_file_system == file_system_name:
+            new_sas = query_str.strip('?')
+
+    return new_file_system, new_path, new_sas

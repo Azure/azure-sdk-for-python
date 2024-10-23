@@ -23,6 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_dir_properties
 from .._models import DirectoryProperties, FileProperties
+from .._path_client_helpers import _parse_rename_path
 from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncTransportWrapper
 from ._data_lake_file_client_async import DataLakeFileClient
@@ -427,7 +428,8 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Rename the source directory.
         """
-        new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
+        new_file_system, new_path, new_dir_sas = _parse_rename_path(
+            new_name, self.file_system_name, self._query_str, self._raw_credential)
 
         new_directory_client = DataLakeDirectoryClient(
             f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,

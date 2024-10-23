@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
-import re
 from datetime import datetime
 from typing import (
-    Any, Callable, Dict, Optional, Tuple, Union,
+    Any, Callable, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -674,30 +673,6 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         except AzureError as error:
             error.continuation_token = last_continuation_token
             raise error
-
-    def _parse_rename_path(self, new_name: str) -> Tuple[str, str, Optional[str]]:
-        new_name = new_name.strip('/')
-        new_file_system = new_name.split('/')[0]
-        new_path = new_name[len(new_file_system):].strip('/')
-
-        new_sas = None
-        sas_split = new_path.split('?')
-        # If there is a ?, there could be a SAS token
-        if len(sas_split) > 0:
-            # Check last element for SAS by looking for sv= and sig=
-            potential_sas = sas_split[-1]
-            if re.search(r'sv=\d{4}-\d{2}-\d{2}', potential_sas) and 'sig=' in potential_sas:
-                new_sas = potential_sas
-                # Remove SAS from new path
-                new_path = new_path[:-(len(new_sas) + 1)]
-
-        if not new_sas:
-            if not self._raw_credential and new_file_system != self.file_system_name:
-                raise ValueError("please provide the sas token for the new file")
-            if not self._raw_credential and new_file_system == self.file_system_name:
-                new_sas = self._query_str.strip('?')
-
-        return new_file_system, new_path, new_sas
 
     async def _rename_path(self, rename_source: str, **kwargs: Any) -> Dict[str, Any]:
         """

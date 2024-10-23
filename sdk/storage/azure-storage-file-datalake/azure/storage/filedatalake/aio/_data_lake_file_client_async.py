@@ -22,6 +22,7 @@ from .._data_lake_file_client_helpers import (
 )
 from .._deserialize import deserialize_file_properties, process_storage_error
 from .._models import FileProperties
+from .._path_client_helpers import _parse_rename_path
 from .._serialize import convert_datetime_to_rfc1123
 from .._shared.base_client import parse_connection_str
 from ..aio._upload_helper import upload_datalake_file
@@ -781,7 +782,8 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Rename the source file.
         """
-        new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
+        new_file_system, new_path, new_file_sas = _parse_rename_path(
+            new_name, self.file_system_name, self._query_str, self._raw_credential)
 
         new_file_client = DataLakeFileClient(
             f"{self.scheme}://{self.primary_hostname}", new_file_system, file_path=new_path,
