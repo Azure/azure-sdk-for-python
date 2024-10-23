@@ -57,9 +57,11 @@ git checkout users/singankit/remote_evaluation_bug_bash
    pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
     ```
 
-### Evalautors to test
+### Evaluators to test
 
-- [Built In Evaluators](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview)
+- [Built In Evaluators](https://ai.azure.com/build/evaluation/evaluator?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&flight=ModelCatalogAMLTestRegistryName=azureml-staging&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)
+- Custom Prompt Based Evaluator
+  - [FriendlinessMeasureEvaluator](https://ml.azure.com/registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/version/1?tid=72f988bf-86f1-41af-91ab-2d7cd011db47#overview)
 
 ### Report Bugs
 

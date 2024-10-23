@@ -39,9 +39,9 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 # Upload data for evaluation
-# Service side fix needed to make this work
 data_id = project_client.upload_file("./evaluate_test_data.jsonl")
-# data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
+# To use an existing dataset, replace the above line with the following line
+# data_id = "<dataset_id>"
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
 
@@ -69,6 +69,12 @@ evaluation = Evaluation(
                 "azure_ai_project": project_client.scope
             },
         ),
+        "friendliness": EvaluatorConfiguration(
+            id="azureml://registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/versions/2",
+            init_params={
+                "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
+            }
+        )
     },
     # This is needed as a workaround until environment gets published to registry
     properties={"Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-test-env/versions/5"},
