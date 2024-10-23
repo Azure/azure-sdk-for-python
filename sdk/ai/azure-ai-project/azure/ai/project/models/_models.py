@@ -2865,7 +2865,7 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     :vartype frequency: str or ~azure.ai.project.models.Frequency
     :ivar interval: Specifies schedule interval in conjunction with frequency. Required.
     :vartype interval: int
-    :ivar schedule: The recurrence schedule. Required.
+    :ivar schedule: The recurrence schedule.
     :vartype schedule: ~azure.ai.project.models.RecurrenceSchedule
     """
 
@@ -2876,8 +2876,8 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
      \"Hour\", and \"Minute\"."""
     interval: int = rest_field()
     """Specifies schedule interval in conjunction with frequency. Required."""
-    schedule: "_models.RecurrenceSchedule" = rest_field()
-    """The recurrence schedule. Required."""
+    schedule: Optional["_models.RecurrenceSchedule"] = rest_field()
+    """The recurrence schedule."""
 
     @overload
     def __init__(
@@ -2885,7 +2885,7 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
         *,
         frequency: Union[str, "_models.Frequency"],
         interval: int,
-        schedule: "_models.RecurrenceSchedule",
+        schedule: Optional["_models.RecurrenceSchedule"] = None,
     ) -> None: ...
 
     @overload
