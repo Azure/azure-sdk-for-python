@@ -7,6 +7,9 @@
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- `RetrievalEvaluator` now requires a `context` input in addition to `query` in single-turn evaluation.
+- `RelevanceEvaluator` no longer takes `context` as an input. It now only takes `query` and `response` in single-turn evaluation.
+- `FluencyEvaluator` no longer takes `query` as an input. It now only takes `response` in single-turn evaluation.
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
@@ -15,6 +18,7 @@
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- `GroundednessEvaluator` now supports `query` as an optional input in single-turn evaluation. If `query` is provided, a different prompt template will be used for the evaluation.
 
 ## 1.0.0b4 (2024-10-16)
 
