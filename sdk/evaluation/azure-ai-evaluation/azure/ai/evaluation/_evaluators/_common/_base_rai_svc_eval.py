@@ -1,10 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import re
-from typing import Dict, Optional, Union, TypeVar
+from typing import Dict, Optional, TypeVar, Union
 
-from regex import E
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics, Tasks, _InternalAnnotationTasks

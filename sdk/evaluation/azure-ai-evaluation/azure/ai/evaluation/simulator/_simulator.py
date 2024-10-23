@@ -14,8 +14,8 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from promptflow.core import AsyncPrompty
 from tqdm import tqdm
 
-from azure.ai.evaluation._common.utils import construct_prompty_model_config
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import construct_prompty_model_config
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException

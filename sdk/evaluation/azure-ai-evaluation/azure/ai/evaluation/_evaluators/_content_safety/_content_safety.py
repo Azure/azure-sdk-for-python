@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Union, Optional
-from typing_extensions import override
+from typing import Callable, Dict, List, Optional, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from typing_extensions import override
 
-from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
