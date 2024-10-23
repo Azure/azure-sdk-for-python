@@ -1,23 +1,19 @@
+import asyncio
 import json
 import os
 import pathlib
 import time
-from typing import Dict, List, Any
-import asyncio
+from typing import Any, Dict, List
+
 import pandas as pd
 import pytest
 import requests
 from ci_tools.variables import in_ci
 from devtools_testutils import is_live
-from azure.identity import DefaultAzureCredential
 
-from azure.ai.evaluation import (
-    evaluate,
-    ProtectedMaterialEvaluator,
-    ViolenceEvaluator,
-)
-
+from azure.ai.evaluation import ProtectedMaterialEvaluator, ViolenceEvaluator, evaluate
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
