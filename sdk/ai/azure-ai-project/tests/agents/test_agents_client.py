@@ -45,17 +45,17 @@ if LOGGING_ENABLED:
 
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_client",
+    "azure_ai_project",
     project_connection_string_agents_tests="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'azure_ai_client',
-    azure_ai_client_host_name="https://foo.bar.some-domain.ms",
-    azure_ai_client_subscription_id="00000000-0000-0000-0000-000000000000",
-    azure_ai_client_resource_group_name="rg-resour-cegr-oupfoo1",
-    azure_ai_client_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
+    'azure_ai_project',
+    azure_ai_project_host_name="https://foo.bar.some-domain.ms",
+    azure_ai_project_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_project_resource_group_name="rg-resour-cegr-oupfoo1",
+    azure_ai_project_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 

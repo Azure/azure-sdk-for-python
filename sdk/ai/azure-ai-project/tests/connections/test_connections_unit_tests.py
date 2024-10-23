@@ -2,28 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
-import logging
 import datetime
 from azure.ai.project.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
-
-# import azure.ai.project as sdk
-
-# Set to True to enable SDK logging
-LOGGING_ENABLED = True
-
-if LOGGING_ENABLED:
-    # Create a logger for the 'azure' SDK
-    # See https://docs.python.org/3/library/logging.html
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)  # INFO or DEBUG
-
-    # Configure a console output
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
-
+from connection_test_base import ConnectionsTestBase
 
 class FakeTokenCredential(TokenCredential):
     def get_token(self, *scopes, **kwargs):
@@ -34,7 +17,7 @@ class FakeTokenCredential(TokenCredential):
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestUnit:
+class TestConnectionsUnitTests(ConnectionsTestBase):
 
     # **********************************************************************************
     #
@@ -112,3 +95,4 @@ class TestUnit:
 
         print(f"[TEST]   Actual expiration date: {sas_token_credential._expires_on}")
         assert sas_token_credential._expires_on == expiration_datatime_utc
+
