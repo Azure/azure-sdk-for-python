@@ -28,6 +28,7 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
+
 class ConnectionsTestBase:
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
@@ -37,4 +38,3 @@ class ConnectionsTestBase:
             conn_str=conn_str,
         )
         return project_client
-

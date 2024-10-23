@@ -40,7 +40,9 @@ async def main():
     async with project_client:
 
         # upload a file and wait for it to be processed
-        file = await project_client.agents.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.AGENTS)
+        file = await project_client.agents.upload_file_and_poll(
+            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
+        )
         print(f"Uploaded file, file ID: {file.id}")
 
         # create a vector store with no file and wait for it to be processed
