@@ -1,75 +1,95 @@
-from azure.ai.project import AIProjectClient
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
+"""
+FILE: sample_evaluations_schedules.py
+
+DESCRIPTION:
+    This sample demonstrates how to create a basic evaluation schedule from
+    the Online Evaluation Service using a synchronous client.
+
+USAGE:
+    python sample_evaluations_schedules.py
+
+    Before running the sample:
+
+    pip install azure-identity
+    pip install "git+https://github.com/Azure/azure-sdk-for-python.git@users/singankit/ai_project_utils#egg=azure-ai-client&subdirectory=sdk/ai/azure-ai-client"
+    pip install "git+https://github.com/Azure/azure-sdk-for-python.git@users/singankit/demo_evaluators_id#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation"
+
+    Set this environment variables with your own values:
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Make sure the application_insights access is setup correctly, please refer to the documentation for more details on how to get resource_id and other configs needed.
+"""
+
+import os
+from azure.ai.project import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.project.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, SamplingStrategy, EvaluationSchedule, CronTrigger, RecurrenceTrigger, Frequency, RecurrenceSchedule
- 
-def main():
-    # Project Configuration Canary
-    Subscription = "72c03bf3-4e69-41af-9532-dfcdc3eefef4"
-    ResourceGroup = "apeddau-rg-westus2"
-    Workspace = "apeddau-canay-ws-eastus2euap"
-    Endpoint = "eastus2euap.api.azureml.ms"
+import pprint
 
-    # Create an Azure AI client
-    ai_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=f"{Endpoint};{Subscription};{ResourceGroup};{Workspace}",
-        logging_enable=True,  # Optional. Remove this line if you don't want to show how to enable logging
-    )
+# Create an Azure AI Client from a connection string, copied from your AI Studio project.
+# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
+# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
 
-    # Sample for creating an evaluation schedule with recurrence trigger of daily frequency
-
-    app_insights_config = ApplicationInsightsConfiguration(
-        resource_id="/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/apeddau-rg-centraluseuap/providers/Microsoft.insights/components/apeddauwscentr0026977484",
-        query="traces | where message contains \"\"",
-        service_name="sample_service_name"
-    )
-   
-    f1_evaluator_config = EvaluatorConfiguration(
-        id="azureml://registries/model-evaluation-dev-01/models/F1ScoreEval/versions/1",
-        init_params={
-            "column_mapping": {
-                "response": "${data.message}",
-                "ground_truth": "${data.itemType}"
-            }
+# Sample for creating an evaluation schedule with recurrence trigger of daily frequency
+app_insights_config = ApplicationInsightsConfiguration(
+    resource_id="<sample-resource-id>",
+    query="<sample-query>",
+    service_name="<sample_service_name>"
+)
+f1_evaluator_config = EvaluatorConfiguration(
+    id="azureml://registries/model-evaluation-dev-01/models/F1ScoreEval/versions/1",
+    init_params={
+        "column_mapping": {
+            "response": "${data.message}",
+            "ground_truth": "${data.itemType}"
         }
-    )
- 
-    recurrence_trigger = RecurrenceTrigger(frequency="daily", interval=1)
-    evaluators = {
-        "f1_score": f1_evaluator_config,
     }
- 
-    sampling_strategy = SamplingStrategy(rate=0.2)
-    name = "CANARY-ONLINE-EVAL-TEST-WS-ENV-104"
-    description = "Testing Online eval command job in CANARY environment"
-    tags = {"tag1": "value1", "tag2": "value2"}
-    properties = {"Environment": "azureml://registries/apeddau-online-evals-registry/environments/online-eval-env/versions/1"}
- 
-    evaluation_schedule = EvaluationSchedule(
-        data=app_insights_config,
-        evaluators=evaluators,
-        trigger=recurrence_trigger,
-        sampling_strategy=sampling_strategy,
-        description=description,
-        tags=tags,
-        properties=properties
-    )
+)
+recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
+evaluators = {
+    "f1_score": f1_evaluator_config,
+}
 
-    evaluation_schedule = ai_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
-    print(evaluation_schedule.provisioning_status)
-    print(evaluation_schedule)
+sampling_strategy = SamplingStrategy(rate=0.7)
+name = "<sample-name>"
+description = "<sample-description>"
+tags = {"<tag-key>": "<tag-value>"}
+properties = {"Environment": "/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/apeddau-rg-eastus2euap/providers/Microsoft.MachineLearningServices/workspaces/apeddau-ws-canary-eastus2euap/environments/ws-online-eval-env/versions/1"}
 
-    # Sample for get an evaluation schedule with name
-    evaluation_schedule = ai_client.evaluations.get_schedule(name)
-    print(evaluation_schedule)
+evaluation_schedule = EvaluationSchedule(
+    data=app_insights_config,
+    evaluators=evaluators,
+    trigger=recurrence_trigger,
+    sampling_strategy=sampling_strategy,
+    description=description,
+    tags=tags,
+    properties=properties
+)
+evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
+pprint.pprint(evaluation_schedule)
 
-    # Sample for list evaluation schedules
-    for evaluation_schedule in ai_client.evaluations.list_schedule():
-        print(evaluation_schedule)
-    
-    # Sample for delete an evaluation schedule with name
-    ai_client.evaluations.delete_schedule(name)
- 
-if __name__ == "__main__":
-    main()
+# Below gives examples of other schedule actions available
+
+
+# # Sample for get an evaluation schedule with name
+# evaluation_schedule = project_client.evaluations.get_schedule("<sample-name>")
+# pprint.pprint(evaluation_schedule)
+
+# # Sample for list evaluation schedules
+# count = 0
+# for evaluation_schedule in project_client.evaluations.list_schedule():
+#     pprint.pprint(evaluation_schedule)
+#     count+=1
+# print(f"Total evaluation schedules: {count}")
+
+# # Sample for delete an evaluation schedule with name
+# project_client.evaluations.delete_schedule("<sample-name>")
+# print("Deleted the evaluation schedule")
