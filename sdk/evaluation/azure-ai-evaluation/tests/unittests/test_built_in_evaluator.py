@@ -39,5 +39,5 @@ class TestBuiltInEvaluators:
             fluency_eval(response=None)
 
         assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "Either 'response' or 'conversation' must be provided." in exc_info.value.args[0]
         )
