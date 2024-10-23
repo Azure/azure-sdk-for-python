@@ -662,7 +662,7 @@ vector_embedding_policy = {
 ```
 
 Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
-the path to the relevant field to be used, and the type of index from the possible options - flat, quantizedFlat, or DiskANN.
+the path to the relevant field to be used, and the type of index from the possible options - flat, quantizedFlat, or diskANN.
 A sample indexing policy with vector indexes would look like this:
 ```python
 indexing_policy = {
@@ -682,25 +682,25 @@ indexing_policy = {
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
             {"path": "/vector2", "type": "quantizedFlat"},
-            {"path": "/vector2", "type": "DiskANN"}
+            {"path": "/vector2", "type": "diskANN"}
         ]
     }
 ```
 
-For vector index types of DiskANN and quantizedFlat, there are additional options available as well. These are:
+For vector index types of diskANN and quantizedFlat, there are additional options available as well. These are:
 
-quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types DiskANN and quantizedFlat.
+quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types diskANN and quantizedFlat. The allowed range is between 1 and 256, and the default value is 64.
 
-vectorIndexShardKey - the list of string containing the shard keys used for partitioning the vector indexes. This applies to index types DiskANN and quantizedFlat.
+vectorIndexShardKey - the list of string containing the shard keys used for partitioning the vector indexes. This applies to index types diskANN and quantizedFlat.
 
-indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the DiskANN index as part of the optimization processes.
+indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. The allowed range is between 25 and 500.
 ```python
 indexing_policy = {
         "automatic": True,
         "indexingMode": "consistent",
         "vectorIndexes": [
             {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 8},
-            {"path": "/vector2", "type": "DiskANN", "vectorIndexShardKey": "/country/city", "indexingSearchListSize": 5}
+            {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": "/country/city", "indexingSearchListSize": 50}
         ]
     }
 ```
