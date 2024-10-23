@@ -182,6 +182,7 @@ from ._indexes import (
 from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
+from ._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings, TeacherModelSettings
 from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
@@ -318,6 +319,9 @@ __all__ = [
     "SparkJobEntryType",
     "CommandJobLimits",
     "ComputeConfiguration",
+    "EndpointRequestSettings",
+    "PromptSettings",
+    "TeacherModelSettings",
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
