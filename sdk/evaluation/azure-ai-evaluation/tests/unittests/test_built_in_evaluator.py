@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from azure.ai.evaluation import FluencyEvaluator, RetrievalEvaluator, SimilarityEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, RetrievalEvaluator
 
 
 async def quality_async_mock():

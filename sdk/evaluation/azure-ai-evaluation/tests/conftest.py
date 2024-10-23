@@ -9,25 +9,27 @@ from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import pytest
-from filelock import FileLock
-from azure.core.credentials import TokenCredential
+from ci_tools.variables import in_ci
 from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
+from filelock import FileLock
 from promptflow.client import PFClient
-from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
-from ci_tools.variables import in_ci
+
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.core.credentials import TokenCredential
 
 # Import of optional packages
 AZURE_INSTALLED = True
 try:
     import jwt
+
     from azure.ai.ml._ml_client import MLClient
 except ImportError:
     AZURE_INSTALLED = False
