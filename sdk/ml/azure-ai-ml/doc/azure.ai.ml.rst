@@ -1,11 +1,12 @@
 azure.ai.ml
-===================
+===================================
 
 .. automodule:: azure.ai.ml.distillation
-    :members:
-    :show-inheritance:
-    :no-index:
+   :members:
+   :noindex:  # Prevent indexing for the module
 
-.. autofunction:: azure.ai.ml.distillation._distillation.distillation
-    :members:
-    :show-inheritance:
+Function `distillation`
+------------------------
+
+.. autofunction:: azure.ai.ml.distillation
+   :noindex:  # Prevent indexing for the function
