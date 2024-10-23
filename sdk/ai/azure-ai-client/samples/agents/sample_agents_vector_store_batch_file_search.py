@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.ai.client.models._models import VectorStorageDataSource
 
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
@@ -38,16 +39,25 @@ ai_client = AzureAIClient.from_connection_string(
 with ai_client:
 
     # upload a file and wait for it to be processed
-    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {file.id}")
+    # file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+    # print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
     vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
+    ds = [
+        VectorStorageDataSource(
+            storage_uri="azureml://subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/"
+            "nirovins-rg-eastus/workspaces/nirovins-ai-project/datastores/test/paths/product_info_1.md"
+        )
+    ]
+    vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, file_ids=[file.id]
+        vector_store_id=vector_store.id,
+        data_sources=ds,
+        file_ids=[],
     )
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 

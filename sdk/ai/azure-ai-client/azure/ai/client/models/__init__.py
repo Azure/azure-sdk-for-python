@@ -130,6 +130,8 @@ from ._models import TruncationObject
 from ._models import UpdateCodeInterpreterToolResourceOptions
 from ._models import UpdateFileSearchToolResourceOptions
 from ._models import UpdateToolResourcesOptions
+from ._models import VectorStorageConfiguration
+from ._models import VectorStorageDataSource
 from ._models import VectorStore
 from ._models import VectorStoreAutoChunkingStrategyRequest
 from ._models import VectorStoreAutoChunkingStrategyResponse
@@ -142,6 +144,7 @@ from ._models import VectorStoreFileBatch
 from ._models import VectorStoreFileCount
 from ._models import VectorStoreFileDeletionStatus
 from ._models import VectorStoreFileError
+from ._models import VectorStoreFromAzure
 from ._models import VectorStoreStaticChunkingStrategyOptions
 from ._models import VectorStoreStaticChunkingStrategyRequest
 from ._models import VectorStoreStaticChunkingStrategyResponse
@@ -172,6 +175,7 @@ from ._enums import RunStepType
 from ._enums import RunStreamEvent
 from ._enums import ThreadStreamEvent
 from ._enums import TruncationStrategy
+from ._enums import VectorStorageDataSourceAssetType
 from ._enums import VectorStoreChunkingStrategyRequestType
 from ._enums import VectorStoreChunkingStrategyResponseType
 from ._enums import VectorStoreExpirationPolicyAnchor
@@ -310,6 +314,8 @@ __all__ = [
     "UpdateCodeInterpreterToolResourceOptions",
     "UpdateFileSearchToolResourceOptions",
     "UpdateToolResourcesOptions",
+    "VectorStorageConfiguration",
+    "VectorStorageDataSource",
     "VectorStore",
     "VectorStoreAutoChunkingStrategyRequest",
     "VectorStoreAutoChunkingStrategyResponse",
@@ -322,6 +328,7 @@ __all__ = [
     "VectorStoreFileCount",
     "VectorStoreFileDeletionStatus",
     "VectorStoreFileError",
+    "VectorStoreFromAzure",
     "VectorStoreStaticChunkingStrategyOptions",
     "VectorStoreStaticChunkingStrategyRequest",
     "VectorStoreStaticChunkingStrategyResponse",
@@ -351,6 +358,7 @@ __all__ = [
     "RunStreamEvent",
     "ThreadStreamEvent",
     "TruncationStrategy",
+    "VectorStorageDataSourceAssetType",
     "VectorStoreChunkingStrategyRequestType",
     "VectorStoreChunkingStrategyResponseType",
     "VectorStoreExpirationPolicyAnchor",
