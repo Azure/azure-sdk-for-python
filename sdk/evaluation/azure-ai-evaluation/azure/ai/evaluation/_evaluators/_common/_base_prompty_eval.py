@@ -73,4 +73,4 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
             match = re.search(r"\d", llm_output)
             if match:
                 score = float(match.group())
-        return {self._result_key: float(score)}
+        return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}

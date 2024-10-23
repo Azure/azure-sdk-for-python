@@ -32,12 +32,17 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_fluency": 4.0
+            "fluency": 4.0,
+            "gpt_fluency": 4.0,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     _PROMPTY_FILE = "fluency.prompty"
-    _RESULT_KEY = "gpt_fluency"
+    _RESULT_KEY = "fluency"
 
     @override
     def __init__(self, model_config):

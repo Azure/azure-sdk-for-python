@@ -88,13 +88,15 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        assert score["gpt_fluency"] > 1.0
+        print(f"score: {score}")
+        assert score["fluency"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        assert score2["gpt_fluency"] > 0
-        assert score2["evaluation_per_turn"]["gpt_fluency"][0] > 0
-        assert score2["evaluation_per_turn"]["gpt_fluency"][1] > 0
+        print(f"score2: {score2}")
+        assert score2["fluency"] > 0
+        assert score2["evaluation_per_turn"]["fluency"][0] > 0
+        assert score2["evaluation_per_turn"]["fluency"][1] > 0
 
     def test_quality_evaluator_coherence(self, model_config, simple_conversation):
         eval_fn = CoherenceEvaluator(model_config)
@@ -103,13 +105,15 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        assert score["gpt_coherence"] > 1.0
+        print(f"score: {score}")
+        assert score["coherence"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        assert score2["gpt_coherence"] > 0
-        assert score2["evaluation_per_turn"]["gpt_coherence"][0] > 0
-        assert score2["evaluation_per_turn"]["gpt_coherence"][1] > 0
+        print(f"score2: {score2}")
+        assert score2["coherence"] > 0
+        assert score2["evaluation_per_turn"]["coherence"][0] > 0
+        assert score2["evaluation_per_turn"]["coherence"][1] > 0
 
     def test_quality_evaluator_similarity(self, model_config):
         eval_fn = SimilarityEvaluator(model_config)
@@ -119,7 +123,8 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital.",
         )
         assert score is not None
-        assert score["gpt_similarity"] > 1.0
+        print(f"score: {score}")
+        assert score["similarity"] > 1.0
 
     def test_quality_evaluator_groundedness(self, model_config, simple_conversation):
         eval_fn = GroundednessEvaluator(model_config)
@@ -128,13 +133,15 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
-        assert score["gpt_groundedness"] > 1.0
+        print(f"score: {score}")
+        assert score["groundedness"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        assert score2["gpt_groundedness"] > 0
-        assert score2["evaluation_per_turn"]["gpt_groundedness"][0] > 0
-        assert score2["evaluation_per_turn"]["gpt_groundedness"][1] > 0
+        print(f"score2: {score2}")
+        assert score2["groundedness"] > 0
+        assert score2["evaluation_per_turn"]["groundedness"][0] > 0
+        assert score2["evaluation_per_turn"]["groundedness"][1] > 0
 
     def test_quality_evaluator_relevance(self, model_config, simple_conversation):
         eval_fn = RelevanceEvaluator(model_config)
@@ -144,13 +151,15 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
-        assert score["gpt_relevance"] > 1.0
+        print(f"score: {score}")
+        assert score["relevance"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        assert score2["gpt_relevance"] > 0
-        assert score2["evaluation_per_turn"]["gpt_relevance"][0] > 0
-        assert score2["evaluation_per_turn"]["gpt_relevance"][1] > 0
+        print(f"score2: {score2}")
+        assert score2["relevance"] > 0
+        assert score2["evaluation_per_turn"]["relevance"][0] > 0
+        assert score2["evaluation_per_turn"]["relevance"][1] > 0
 
     def test_quality_evaluator_f1_score(self):
         eval_fn = F1ScoreEvaluator()
@@ -168,7 +177,7 @@ class TestBuiltInEvaluators:
             response={"bar": 2},
         )
         assert score is not None
-        assert score["gpt_fluency"] > 0.0
+        assert score["fluency"] > 0.0
 
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
@@ -298,11 +307,11 @@ class TestBuiltInEvaluators:
         )
 
         assert score is not None
-        assert score["gpt_groundedness"] > 0.0
-        assert score["gpt_relevance"] > 0.0
-        assert score["gpt_coherence"] > 0.0
-        assert score["gpt_fluency"] > 0.0
-        assert score["gpt_similarity"] > 0.0
+        assert score["groundedness"] > 0.0
+        assert score["relevance"] > 0.0
+        assert score["coherence"] > 0.0
+        assert score["fluency"] > 0.0
+        assert score["similarity"] > 0.0
         assert score["f1_score"] > 0.0
 
     @pytest.mark.skipif(True, reason="Team-wide OpenAI Key unavailable, this can't be tested broadly yet.")
@@ -318,11 +327,11 @@ class TestBuiltInEvaluators:
         )
 
         assert score is not None
-        assert score["gpt_groundedness"] > 0.0
-        assert score["gpt_relevance"] > 0.0
-        assert score["gpt_coherence"] > 0.0
-        assert score["gpt_fluency"] > 0.0
-        assert score["gpt_similarity"] > 0.0
+        assert score["groundedness"] == score["gpt_groundedness"] > 0.0
+        assert score["relevance"] == score["gpt_relevance"] > 0.0
+        assert score["coherence"] == score["gpt_coherence"] > 0.0
+        assert score["fluency"] == score["gpt_fluency"] > 0.0
+        assert score["similarity"] == score["gpt_similarity"] > 0.0
         assert score["f1_score"] > 0.0
 
     def test_composite_evaluator_qa_for_nans(self, model_config):
@@ -330,11 +339,11 @@ class TestBuiltInEvaluators:
         # Test Q/A below would cause NaNs in the evaluation metrics before the fix.
         score = qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
 
-        assert not math.isnan(score["gpt_groundedness"])
-        assert not math.isnan(score["gpt_relevance"])
-        assert not math.isnan(score["gpt_coherence"])
-        assert not math.isnan(score["gpt_fluency"])
-        assert not math.isnan(score["gpt_similarity"])
+        assert not math.isnan(score["groundedness"])
+        assert not math.isnan(score["relevance"])
+        assert not math.isnan(score["coherence"])
+        assert not math.isnan(score["fluency"])
+        assert not math.isnan(score["similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
         safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=False)

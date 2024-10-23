@@ -32,9 +32,9 @@ AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
 
     foo: AggregateResult[float] = {
         "evaluation_per_turn": {
-            "gpt_coherence": [1.0, 2.0, 3.0]
+            "coherence": [1.0, 2.0, 3.0]
         },
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -44,7 +44,7 @@ DoEvalResult: TypeAlias = Dict[str, T]
     .. code-block:: python
 
     foo: DoEvalResult[float] = {
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -172,16 +172,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     response_context = response.get("context", None)
                     if global_context:
                         context["global_context"] = global_context
-                    if query_context and not include_query:
+                    if query_context and include_query:
                         context["query_context"] = query_context
-                    if response_context and not include_response:
+                    if response_context and include_response:
                         context["response_context"] = response_context
 
                 eval_input: DerivedEvalInput = {}
                 if include_query:
-                    eval_input["query"] = query
+                    eval_input["query"] = query.get("content", "")
                 if include_response:
-                    eval_input["response"] = response
+                    eval_input["response"] = response.get("content", "")
                 if include_context:
                     eval_input["context"] = str(context)
                 eval_inputs.append(eval_input)
@@ -274,7 +274,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
-
         return aggregated
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
@@ -315,7 +314,7 @@ class AsyncEvaluatorBase:
 
     # Don't look at my shame. Nothing to see here....
     # Oh, you're still here? Ok, the reason this has such a gross call signature and behavior is due
-    # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature#
+    # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature
     # are just not passed into this function instead of ending up in kwargs.
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
