@@ -27,7 +27,7 @@ import os, time
 from azure.ai.project import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.project.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-# from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -55,19 +55,16 @@ evaluation = Evaluation(
     data=Dataset(id=data_id),
     evaluators={
         "f1_score": EvaluatorConfiguration(
-            # id=F1ScoreEvaluator.evaluator_id,
-            id="azureml://registries/azureml-staging/models/F1Score-Evaluator/versions/3",
+            id=F1ScoreEvaluator.id,
         ),
         "relevance": EvaluatorConfiguration(
-            # id=RelevanceEvaluator.evaluator_id,
-            id="azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3",
+            id=RelevanceEvaluator.id,
             init_params={
                 "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
             },
         ),
         "violence": EvaluatorConfiguration(
-            # id=HateUnfairnessEvaluator.evaluator_id,
-            id="azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3",
+            id=ViolenceEvaluator.id,
             init_params={
                 "azure_ai_project": project_client.scope
             },
