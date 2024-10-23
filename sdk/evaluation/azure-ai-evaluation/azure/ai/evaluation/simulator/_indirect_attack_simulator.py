@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
 from azure.core.credentials import TokenCredential
