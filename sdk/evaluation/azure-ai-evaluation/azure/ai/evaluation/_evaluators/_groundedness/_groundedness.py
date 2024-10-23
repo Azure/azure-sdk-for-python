@@ -38,7 +38,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     """
 
     _PROMPTY_FILE = "groundedness.prompty"
-    _RESULT_KEY = "gpt_groundedness"
+    _RESULT_KEY = "groundedness"
 
     @override
     def __init__(self, model_config):

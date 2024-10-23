@@ -38,7 +38,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     """
 
     _PROMPTY_FILE = "fluency.prompty"
-    _RESULT_KEY = "gpt_fluency"
+    _RESULT_KEY = "fluency"
 
     @override
     def __init__(self, model_config):

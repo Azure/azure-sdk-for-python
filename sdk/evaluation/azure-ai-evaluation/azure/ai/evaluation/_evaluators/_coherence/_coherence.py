@@ -37,7 +37,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     """
 
     _PROMPTY_FILE = "coherence.prompty"
-    _RESULT_KEY = "gpt_coherence"
+    _RESULT_KEY = "coherence"
 
     @override
     def __init__(self, model_config):
