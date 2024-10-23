@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.ai.ml import MLClient, distillation
 from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.distillation import EndpointRequestSettings, PromptSettings
-from azure.ai.ml.entities import Data, ServerlessConnection
+from azure.ai.ml.entities import ServerlessConnection
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.operations._run_history_constants import JobStatus
 
@@ -30,7 +30,6 @@ class TestDistillationJob(AzureRecordedTestCase):
 
         training_data = Input(type=AssetTypes.URI_FILE, path=TRAINING_DATA_PATH)
         validation_data = Input(type=AssetTypes.URI_FILE, path=VALIDATION_DATA_PATH)
-
         distillation_job = distillation(
             experiment_name=f"Llama-distillation-{short_guid}",
             data_generation_type=DataGenerationType.LabelGeneration,
