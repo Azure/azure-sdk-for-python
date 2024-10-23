@@ -13,7 +13,7 @@
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
-- To align with our support of a diverse set of models, the following evaluators will now how have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key will with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+- To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
   - `CoherenceEvaluator`
   - `RelevanceEvaluator`
   - `FluencyEvaluator`
