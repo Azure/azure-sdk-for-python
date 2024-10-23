@@ -37,8 +37,9 @@ USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
-    Tasks.GROUNDEDNESS: Template("{\"question\": \"$query\", \"answer\": \"$response\", \"context\": \"$context\"}")
+    Tasks.GROUNDEDNESS: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
 }
+
 
 def get_common_headers(token: str) -> Dict:
     """Get common headers for the HTTP request
@@ -259,7 +260,9 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
 
-def _parse_content_harm_response(batch_response: List[Dict], metric_name: str, metric_display_name: str=None) -> Dict[str, Union[str, float]]:
+def _parse_content_harm_response(
+    batch_response: List[Dict], metric_name: str, metric_display_name: str = None
+) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
     :param batch_response: The annotation response from Responsible AI service.
@@ -422,8 +425,12 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
 
 
 async def evaluate_with_rai_service(
-    data: dict, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential,
-    annotation_task: Tasks=Tasks.CONTENT_HARM, metric_display_name=None
+    data: dict,
+    metric_name: str,
+    project_scope: AzureAIProject,
+    credential: TokenCredential,
+    annotation_task: Tasks = Tasks.CONTENT_HARM,
+    metric_display_name=None,
 ) -> Dict[str, Union[str, float]]:
     """ "Evaluate the content safety of the response using Responsible AI service
 

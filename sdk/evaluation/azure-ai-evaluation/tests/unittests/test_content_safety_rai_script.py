@@ -167,10 +167,7 @@ class TestContentSafetyEvaluator:
     )
     async def test_submit_request(self, client_mock):
         result = await submit_request(
-            data = {
-            "query":"What is the meaning of life",
-            "response":"42"
-            },
+            data={"query": "What is the meaning of life", "response": "42"},
             metric="points",
             rai_svc_url="www.notarealurl.com",
             token="dummy",
@@ -190,10 +187,7 @@ class TestContentSafetyEvaluator:
     async def test_submit_request_not_found(self, client_mock):
         with pytest.raises(HttpResponseError) as exc_info:
             _ = await submit_request(
-                data = {
-                "query":"What is the meaning of life",
-                "response":"42"
-                },
+                data={"query": "What is the meaning of life", "response": "42"},
                 metric="points",
                 rai_svc_url="www.notarealurl.com",
                 token="dummy",
@@ -257,7 +251,11 @@ class TestContentSafetyEvaluator:
     def test_parse_response(self):
         batch_response = [{"not-a-metric": "not-a-value"}]
         metric_name = EvaluationMetrics.HATE_FAIRNESS
-        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=EvaluationMetrics.HATE_UNFAIRNESS)
+        result = parse_response(
+            batch_response=batch_response,
+            metric_name=metric_name,
+            metric_display_name=EvaluationMetrics.HATE_UNFAIRNESS,
+        )
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
         assert result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"] == ""

@@ -8,7 +8,6 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-
 class GroundednessProEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
@@ -48,7 +47,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         azure_ai_project: dict,
         **kwargs,
     ):
-        self._passing_score = 3 # TODO update once the binarization PR is merged
+        self._passing_score = 3  # TODO update once the binarization PR is merged
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
@@ -85,15 +84,16 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
 
-
     @override
     async def _do_eval(self, eval_input: Dict):
-        """ This evaluator has some unique post-processing that requires data that
+        """This evaluator has some unique post-processing that requires data that
         the rai_service script is not currently built to handle. So we post-post-process
         the result here to message it into the right form.
         """
         result = await super()._do_eval(eval_input)
         real_result = {}
-        real_result[self._output_prefix + "_label"] = result[EvaluationMetrics.GROUNDEDNESS + "_score"] >= self._passing_score
+        real_result[self._output_prefix + "_label"] = (
+            result[EvaluationMetrics.GROUNDEDNESS + "_score"] >= self._passing_score
+        )
         real_result[self._output_prefix + "_reason"] = result[EvaluationMetrics.GROUNDEDNESS + "_reason"]
         return real_result

@@ -525,10 +525,12 @@ class TestBuiltInEvaluators:
         assert result is not None
         assert result["groundedness_pro_label"]
         assert result["groundedness_pro_reason"] is not None, "groundedness_pro_reason must not be None or empty."
-        
+
         convo_result = ground_eval(conversation=simple_conversation)
 
-        assert convo_result is not None;
+        assert convo_result is not None
         assert convo_result["groundedness_pro_label"] == 1.0
         assert convo_result["evaluation_per_turn"]["groundedness_pro_label"] == [True, True]
-        assert all(convo_result["evaluation_per_turn"]["groundedness_pro_reason"]), "groundedness_pro_reason must not be None or empty."
+        assert all(
+            convo_result["evaluation_per_turn"]["groundedness_pro_reason"]
+        ), "groundedness_pro_reason must not be None or empty."

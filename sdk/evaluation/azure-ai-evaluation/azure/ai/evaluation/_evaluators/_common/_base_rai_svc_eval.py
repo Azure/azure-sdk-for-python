@@ -5,7 +5,12 @@ from typing import Dict, Optional, TypeVar, Union
 
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics, Tasks, _InternalAnnotationTasks
+from azure.ai.evaluation._common.constants import (
+    EvaluationMetrics,
+    _InternalEvaluationMetrics,
+    Tasks,
+    _InternalAnnotationTasks,
+)
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -89,11 +94,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                     + " This should have failed earlier."
                 ),
             )
-        input_data= {
-                "query": query,
-                "response": response
-            }
-        
+        input_data = {"query": query, "response": response}
+
         if "context" in self._singleton_inputs:
             context = eval_input.get("context", None)
             if context is None:
@@ -108,12 +110,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
         return await evaluate_with_rai_service(
             metric_name=self._eval_metric,
-            data=input_data,   
+            data=input_data,
             project_scope=self._azure_ai_project,
             credential=self._credential,
-            annotation_task=self._get_task()
+            annotation_task=self._get_task(),
         )
-    
+
     def _get_task(self):
         """Get the annotation task for the current evaluation metric.
         The annotation task is used by the RAI service script to determine a the message format
@@ -121,7 +123,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
         :return: The annotation task for the evaluator's self._eval_metric value.
         :rtype: ~azure.ai.evaluation._common.constants.Tasks
-        
+
         """
         if self._eval_metric == EvaluationMetrics.GROUNDEDNESS:
             return Tasks.GROUNDEDNESS
