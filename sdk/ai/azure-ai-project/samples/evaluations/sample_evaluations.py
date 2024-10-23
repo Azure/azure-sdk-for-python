@@ -40,8 +40,8 @@ project_client = AIProjectClient.from_connection_string(
 
 # Upload data for evaluation
 # Service side fix needed to make this work
-# data_id = project_client.upload_file("./evaluate_test_data.jsonl")
-data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
+data_id = project_client.upload_file("./evaluate_test_data.jsonl")
+# data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe13fb85/data/remote-evals-data/versions/3"
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
 
