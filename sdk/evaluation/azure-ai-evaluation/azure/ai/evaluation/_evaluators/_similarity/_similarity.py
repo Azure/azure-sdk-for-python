@@ -75,7 +75,7 @@ class _AsyncSimilarityEvaluator:
             if match:
                 score = float(match.group())
 
-        return {"gpt_similarity": float(score)}
+        return {"similarity": float(score), "gpt_similarity": float(score)}
 
 
 class SimilarityEvaluator:
@@ -101,8 +101,13 @@ class SimilarityEvaluator:
     .. code-block:: python
 
         {
-            "gpt_similarity": 3.0
+            "similarity": 3.0,
+            "gpt_similarity": 3.0,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     def __init__(self, model_config):
