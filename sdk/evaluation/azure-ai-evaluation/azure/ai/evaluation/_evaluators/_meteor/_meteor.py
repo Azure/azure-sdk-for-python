@@ -1,11 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import nltk
 from nltk.translate.meteor_score import meteor_score
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
-from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._common.utils import nltk_tokenize, ensure_nltk_data_downloaded
 
 
 class _AsyncMeteorScoreEvaluator:
@@ -14,10 +13,7 @@ class _AsyncMeteorScoreEvaluator:
         self._beta = beta
         self._gamma = gamma
 
-        try:
-            nltk.find("corpora/wordnet.zip")
-        except LookupError:
-            nltk.download("wordnet")
+        ensure_nltk_data_downloaded()
 
     async def __call__(self, *, ground_truth: str, response: str, **kwargs):
         reference_tokens = nltk_tokenize(ground_truth)
