@@ -18,7 +18,7 @@ inputs:
     type: dict
   action:
     type: string
-    default: "continue the converasation and make sure the task is completed by asking relevant questions"
+    default: continue the converasation and make sure the task is completed by asking relevant questions
 
 ---
 system:
