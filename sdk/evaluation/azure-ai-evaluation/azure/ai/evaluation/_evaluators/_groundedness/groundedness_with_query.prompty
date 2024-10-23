@@ -1,136 +1,114 @@
+---
+name: Groundedness
+description: Evaluates groundedness score for RAG scenario
+model:
+  api: chat
+  configuration:
+    type: azure_openai
+    azure_deployment: ${env:AZURE_DEPLOYMENT}
+    api_key: ${env:AZURE_OPENAI_API_KEY}
+    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
+  parameters:
+    temperature: 0.0
+    max_tokens: None
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  query:
+    type: string
+  response:
+    type: string
+  context:
+    type: string
+
+
+---
+system:
 # Instruction
 ## Goal
-### You are an expert in evaluating the quality of an ANSWER from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+### You are an expert in evaluating the quality of an RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
 - **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
-- **Data**: Your input data include CONTEXT, QUESTION, and an ANSWER.
+- **Data**: Your input data include CONTEXT, QUERY, and an RESPONSE.
 - **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
 
-
+user:
 # Definition
+**Groundedness** refers to how well an answer is anchored in the provided context, evaluating its relevance, accuracy, and completeness based exclusively on that context. It assesses the extent to which the answer directly and fully addresses the question without introducing unrelated or incorrect information. The scale ranges from 1 to 5, with higher numbers indicating greater groundedness.
 
-**Groundedness** refers to the extent to which an answer accurately and completely addresses the question using only the information provided in the context, without adding, omitting, or altering essential details.
-
----
-
-**[Groundedness: 1] (Irrelevant Answer)**
-
-**Definition:**
-
-The answer does not address the question or relate to the context. It provides information that is entirely off-topic or nonsensical.
+# Ratings
+## [Groundedness: 1] (Completely Unrelated Response)
+**Definition:** An answer that does not relate to the question or the context in any way. It fails to address the topic, provides irrelevant information, or introduces completely unrelated subjects.
 
 **Examples:**
+  **Context:** The company's annual meeting will be held next Thursday.
+  **Query:** When is the company's annual meeting?
+  **Response:** I enjoy hiking in the mountains during summer.
 
-1. **Context:** "The committee will meet on Tuesday to discuss the new policy proposals."
+  **Context:** The new policy aims to reduce carbon emissions by 20% over the next five years.
+  **Query:** What is the goal of the new policy?
+  **Response:** My favorite color is blue.
 
-   **Question:** "When is the committee meeting to discuss the new policy proposals?"
-
-   **Answer:** "I think the weather is nice today."
-
-2. **Context:** "Researchers have developed a new vaccine that is 90% effective."
-
-   **Question:** "What have researchers developed?"
-
-   **Answer:** "My favorite color is blue."
-
----
-
-**[Groundedness: 2] (Incorrect Answer)**
-
-**Definition:**
-
-The answer addresses the question but contains information that is incorrect or contradicts the context. It may include fabricated details or errors.
+## [Groundedness: 2] (Related Topic but Does Not Respond to the Query)
+**Definition:** An answer that relates to the general topic of the context but does not answer the specific question asked. It may mention concepts from the context but fails to provide a direct or relevant response.
 
 **Examples:**
+  **Context:** The museum will exhibit modern art pieces from various local artists.
+  **Query:** What kind of art will be exhibited at the museum?
+  **Response:** Museums are important cultural institutions.
 
-1. **Context:** "The capital of France is Paris."
+  **Context:** The new software update improves battery life and performance.
+  **Query:** What does the new software update improve?
+  **Response:** Software updates can sometimes fix bugs.
 
-   **Question:** "What is the capital of France?"
-
-   **Answer:** "The capital of France is Lyon."
-
-2. **Context:** "The new smartphone model was released in September."
-
-   **Question:** "When was the new smartphone model released?"
-
-   **Answer:** "It was released in November."
-
----
-
-**[Groundedness: 3] (Incomplete Answer)**
-
-**Definition:**
-
-The answer partially addresses the question using the context but omits significant information required for a complete response.
+## [Groundedness: 3] (Attempts to Respond but Contains Incorrect Information)
+**Definition:** An answer that attempts to respond to the question but includes incorrect information not supported by the context. It may misstate facts, misinterpret the context, or provide erroneous details.
 
 **Examples:**
+  **Context:** The festival starts on June 5th and features international musicians.
+  **Query:** When does the festival start?
+  **Response:** The festival starts on July 5th and features local artists.
 
-1. **Context:** "The company's annual report highlights increases in revenue, customer base, and international expansion."
+  **Context:** The recipe requires two eggs and one cup of milk.
+  **Query:** How many eggs are needed for the recipe?
+  **Response:** You need three eggs for the recipe.
 
-   **Question:** "What does the company's annual report highlight?"
-
-   **Answer:** "Increases in revenue and customer base."
-
-2. **Context:** "To apply for the program, candidates must submit a resume, cover letter, and portfolio by May 1st."
-
-   **Question:** "What are the application requirements for the program?"
-
-   **Answer:** "Candidates must submit a resume and cover letter."
-
----
-
-**[Groundedness: 4] (Accurate Answer with Extraneous Details)**
-
-**Definition:**
-
-The answer fully and correctly addresses the question based on the context but includes additional information or personal opinions not supported by the context.
+## [Groundedness: 4] (Partially Correct Response)
+**Definition:** An answer that provides a correct response to the question but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding.
 
 **Examples:**
+  **Context:** The bookstore offers a 15% discount to students and a 10% discount to senior citizens.
+  **Query:** What discount does the bookstore offer to students?
+  **Response:** Students get a discount at the bookstore.
 
-1. **Context:** "The marathon will start at 7 AM on Sunday at the city park."
+  **Context:** The company's headquarters are located in Berlin, Germany.
+  **Query:** Where are the company's headquarters?
+  **Response:** The company's headquarters are in Germany.
 
-   **Question:** "When and where will the marathon start?"
-
-   **Answer:** "The marathon will start at 7 AM on Sunday at the city park. It's going to be a challenging race."
-
-2. **Context:** "The lecture covers Renaissance art and its influence on modern culture."
-
-   **Question:** "What is the lecture about?"
-
-   **Answer:** "The lecture covers Renaissance art and its influence on modern culture. I find this period fascinating."
-
----
-
-**[Groundedness: 5] (Fully Correct and Contextual Answer)**
-
-**Definition:**
-
-The answer precisely and completely addresses the question using only the information from the context, without adding or omitting essential details.
+## [Groundedness: 5] (Fully Correct and Complete Response)
+**Definition:** An answer that thoroughly and accurately responds to the question, including all relevant details from the context. It directly addresses the question with precise information, demonstrating complete understanding without adding extraneous information.
 
 **Examples:**
+  **Context:** The author released her latest novel, 'The Silent Echo', on September 1st.
+  **Query:** When was 'The Silent Echo' released?
+  **Response:** 'The Silent Echo' was released on September 1st.
 
-1. **Context:** "The CEO announced plans to invest $2 million in renewable energy projects next year."
-
-   **Question:** "What did the CEO announce?"
-
-   **Answer:** "The CEO announced plans to invest $2 million in renewable energy projects next year."
-
-2. **Context:** "Tickets for the concert will go on sale starting Monday at 10 AM."
-
-   **Question:** "When will tickets for the concert go on sale?"
-
-   **Answer:** "Tickets for the concert will go on sale starting Monday at 10 AM."
-
----
-
+  **Context:** Participants must register by May 31st to be eligible for early bird pricing.
+  **Query:** By what date must participants register to receive early bird pricing?
+  **Response:** Participants must register by May 31st to receive early bird pricing.
 
 
 # Data
-CONTEXT and QUESTION: {UserMessage}
-ANSWER: {ChatbotResponse}
+CONTEXT: {{context}}
+QUERY: {{query}}
+RESPONSE: {{response}}
 
 
 # Tasks
-## Please provide your assessment Score for the previous ANSWER in relation to the CONTEXT and QUESTION based on the Definitions above. Your output should include the following information:
+## Please provide your assessment Score for the previous RESPONSE in relation to the CONTEXT and QUERY based on the Definitions above. Your output should include the following information:
 - **ThoughtChain**: To improve the reasoning process, Think Step by Step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and Start your ThoughtChain with "Let's think step by step:".
 - **Explanation**: a very short explanation of why you think the input Data should get that Score.
 - **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
