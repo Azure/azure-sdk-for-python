@@ -79,8 +79,6 @@ evaluation = Evaluation(
             }
         )
     },
-    # This is needed as a workaround until environment gets published to registry
-    properties={"Environment": "azureml://registries/remote-eval-testing/environments/eval-remote-test-env/versions/1"},
 )
 
 # Create evaluation
