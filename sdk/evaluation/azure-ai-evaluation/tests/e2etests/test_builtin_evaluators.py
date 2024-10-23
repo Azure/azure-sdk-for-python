@@ -327,11 +327,11 @@ class TestBuiltInEvaluators:
         )
 
         assert score is not None
-        assert score["groundedness"] > 0.0
-        assert score["relevance"] > 0.0
-        assert score["coherence"] > 0.0
-        assert score["fluency"] > 0.0
-        assert score["similarity"] > 0.0
+        assert score["groundedness"] == score["gpt_groundedness"] > 0.0
+        assert score["relevance"] == score["gpt_relevance"] > 0.0
+        assert score["coherence"] == score["gpt_coherence"] > 0.0
+        assert score["fluency"] == score["gpt_fluency"] > 0.0
+        assert score["similarity"] == score["gpt_similarity"] > 0.0
         assert score["f1_score"] > 0.0
 
     def test_composite_evaluator_qa_for_nans(self, model_config):
