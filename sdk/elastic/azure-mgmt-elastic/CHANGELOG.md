@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b4 (2024-10-20)
+## 1.1.0b4 (2024-10-23)
 
 ### Features Added
 
@@ -42,7 +42,6 @@
   - Added model `ResubscribeProperties`
   - Added enum `Status`
   - Added model `SubscriptionList`
-  - Operation group `MonitorsOperations` added method `begin_update`
   - Operation group `OrganizationsOperations` added method `begin_resubscribe`
   - Operation group `OrganizationsOperations` added method `get_elastic_to_azure_subscription_mapping`
   - Added operation group `BillingInfoOperations`
