@@ -32,7 +32,7 @@ class Turn:
             "content": self.content,
             "context": str(self.context),
         }
-    
+  
     def to_context_free_dict(self) -> Dict[str, Optional[str]]:
         """
         Convert the conversation turn to a dictionary without context.
@@ -77,7 +77,7 @@ class ConversationHistory:
         :rtype: List[Dict[str, str]]
         """
         return [turn.to_dict() for turn in self.history]
-    
+  
     def to_context_free_list(self) -> List[Dict[str, Optional[str]]]:
         """
         Converts the conversation history to a list of dictionaries without context.

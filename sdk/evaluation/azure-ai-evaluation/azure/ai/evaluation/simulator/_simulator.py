@@ -9,7 +9,7 @@ import json
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union, Tuple
 
 from promptflow.core import AsyncPrompty
 from tqdm import tqdm
@@ -653,7 +653,7 @@ class Simulator:
 
     async def _get_target_response(
         self, *, target: Callable, api_call_delay_sec: float, conversation_history: ConversationHistory
-    ) -> str, Optional[str]:
+    ) -> Tuple[str, Optional[str]]:
         """
         Retrieves the response from the target callback based on the current conversation history.
 
