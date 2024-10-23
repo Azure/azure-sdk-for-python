@@ -27,7 +27,7 @@ import os, time
 from azure.ai.project import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.project.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
+# from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -45,6 +45,7 @@ data_id = "azureml://locations/eastus2/workspaces/faa79f3d-91b3-4ed5-afdc-4cc0fe
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
 
+PROJECT_CONNECTION_STRING="eastus2.api.azureml.ms;e0fd569c-e34a-4249-8c24-e8d723c7f054;rg-qunsongai;qunsong-0951"
 
 
 # Create an evaluation
@@ -54,23 +55,26 @@ evaluation = Evaluation(
     data=Dataset(id=data_id),
     evaluators={
         "f1_score": EvaluatorConfiguration(
-            id=F1ScoreEvaluator.evaluator_id,
+            # id=F1ScoreEvaluator.evaluator_id,
+            id="azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/2",
         ),
         "relevance": EvaluatorConfiguration(
-            id=RelevanceEvaluator.evaluator_id,
+            # id=RelevanceEvaluator.evaluator_id,
+            id="azureml://registries/jamahaja-evals-registry/models/RelevanceEvaluator/versions/1",
             init_params={
                 "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
             },
         ),
         "hate_unfairness": EvaluatorConfiguration(
-            id=HateUnfairnessEvaluator.evaluator_id,
+            # id=HateUnfairnessEvaluator.evaluator_id,
+            id="azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/4",
             init_params={
                 "azure_ai_project": project_client.scope
             },
         ),
     },
     # This is needed as a workaround until environment gets published to registry
-    properties={"Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-env/versions/6"},
+    properties={"Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-test-env/versions/5"},
 )
 
 # Create evaluation
