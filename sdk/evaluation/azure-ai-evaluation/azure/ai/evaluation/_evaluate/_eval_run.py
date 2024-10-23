@@ -452,8 +452,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         except HttpResponseError as ex:
             if ex.status_code == 403:
                 msg = (
-                    "Failed to upload evaluation run to the cloud due to insufficient permission to access the storage. "
-                    "Please ensure that the necessary access rights are granted."
+                    "Failed to upload evaluation run to the cloud due to insufficient permission to access the storage."
+                    " Please ensure that the necessary access rights are granted."
                 )
                 raise EvaluationException(
                     message=msg,

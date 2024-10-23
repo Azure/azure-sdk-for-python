@@ -419,13 +419,13 @@ def _apply_target_to_data(
     try:
         with TargetRunContext(upload_target_snaphot):
             run: Run = pf_client.run(
-                    flow=target,
-                    display_name=evaluation_name,
-                    data=data,
-                    properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-                    stream=True,
-                    name=_run_name,
-                )
+                flow=target,
+                display_name=evaluation_name,
+                data=data,
+                properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
+                stream=True,
+                name=_run_name,
+            )
     except (UserAuthenticationError, UploadInternalError) as ex:
         if "Failed to upload run" in ex.message:
             msg = (
