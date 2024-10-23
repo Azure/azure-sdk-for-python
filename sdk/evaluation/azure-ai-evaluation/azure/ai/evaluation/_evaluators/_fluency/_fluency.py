@@ -35,6 +35,10 @@ class FluencyEvaluator(PromptyEvaluatorBase):
             "fluency": 4.0,
             "gpt_fluency": 4.0,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     _PROMPTY_FILE = "fluency.prompty"
