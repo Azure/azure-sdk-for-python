@@ -52,7 +52,7 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed method `MonitorsOperations.update`
+  - Renamed method `update` to `begin_update` in Operation group `MonitorsOperations`
 
 ## 1.1.0b3 (2023-05-22)
 
