@@ -150,7 +150,9 @@ class AIProjectClient(ClientGenerated):
         self._serialize.client_side_validation = False
 
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
-        self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
+        self.agents = AgentsOperations(
+            self._client2, self._config2, self._serialize, self._deserialize, outer_instance=self
+        )
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
 

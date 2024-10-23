@@ -309,6 +309,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 
 class AgentsOperations(AgentsOperationsGenerated):
+
+    def __init__(self, *args, outer_instance=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.outer_instance = outer_instance
+
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -506,6 +511,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         if toolset is not None:
             self._toolset = toolset
             tools = toolset.definitions
+            connections = self.outer_instance.connections.list()
+            resource_list = zip([c.id for c in connections], [c.connection_type for c in connections])
+            toolset.updateResources(resource_list)
             tool_resources = toolset.resources
 
         return super().create_agent(
