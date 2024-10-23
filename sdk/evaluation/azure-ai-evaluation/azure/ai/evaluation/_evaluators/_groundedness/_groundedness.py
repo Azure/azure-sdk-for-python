@@ -53,7 +53,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
-        self._model_config = model_config  # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
+        self._model_config = model_config  
+        # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @override
     def __call__(
@@ -84,11 +85,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if any(val is None for val in [query, response, context]) and conversation is None:
-            raise ValueError("Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided.")
+        if any(val is None for val in [response, context]) and conversation is None:
+            raise ValueError(
+                "Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided."
+            )
         if query and response and context and conversation:
             raise ValueError("If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided.")
-        
+
         if query:
             self._prompty_file = self._PROMPTY_FILE_WITH_QUERY
             prompty_model_config = construct_prompty_model_config(

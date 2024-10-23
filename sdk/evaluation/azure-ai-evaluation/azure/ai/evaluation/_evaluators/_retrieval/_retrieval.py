@@ -154,9 +154,9 @@ class RetrievalEvaluator:
         """
         if any(val is None for val in [query, context]) and conversation is None:
             raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided.")
-        elif query and context and conversation:
+        if query and context and conversation:
             raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided, but not both.")
-    
+
         return async_run_allowing_running_loop(
             self._async_evaluator,
             query=query,
