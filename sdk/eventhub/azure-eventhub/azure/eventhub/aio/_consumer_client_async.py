@@ -28,6 +28,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from ._client_base_async import CredentialTypes
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -136,6 +137,9 @@ class EventHubConsumerClient(
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: Optional[str]
+    :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+     connection_verify will be ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -258,6 +262,7 @@ class EventHubConsumerClient(
         load_balancing_strategy: Union[str, LoadBalancingStrategy] = LoadBalancingStrategy.GREEDY,
         custom_endpoint_address: Optional[str] = None,
         connection_verify: Optional[str] = None,
+        ssl_context: Optional["SSLContext"] = None,
         uamqp_transport: bool = False,
         **kwargs: Any
     ) -> "EventHubConsumerClient":
@@ -333,6 +338,9 @@ class EventHubConsumerClient(
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
         :paramtype connection_verify: Optional[str]
+        :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+         connection_verify will be ignored.
+        :paramtype ssl_context: ssl.SSLContext or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -369,6 +377,7 @@ class EventHubConsumerClient(
             load_balancing_strategy=load_balancing_strategy,
             custom_endpoint_address=custom_endpoint_address,
             connection_verify=connection_verify,
+            ssl_context=ssl_context,
             uamqp_transport=uamqp_transport,
             **kwargs,
         )
