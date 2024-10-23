@@ -209,7 +209,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
 
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
-    batch_response: List[Dict], metric_name: str, metric_display_name: str
+    batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
@@ -217,11 +217,14 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     :type batch_response: List[Dict]
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
-    :param metric_display_name: The evaluation metric display name to use.
-    :type metric_display_name: str
+    :param metric_display_name: The evaluation metric display name to use. If unset, use the metric_name.
+    :type metric_display_name: Optional[str]
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """
+    if metric_display_name is None:
+        metric_display_name = metric_name
+
     # non-numeric metrics
     if metric_name in {
         EvaluationMetrics.PROTECTED_MATERIAL,
@@ -237,19 +240,19 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         result = {}
         # Use label instead of score since these are assumed to be boolean results.
         # Use math.nan as null value since it's ignored by aggregations rather than treated as 0.
-        result[metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
-        result[metric_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+        result[metric_display_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
+        result[metric_display_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
 
         if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
             # if present else set them to math.nan
-            result[metric_name + "_manipulated_content"] = (
+            result[metric_display_name + "_manipulated_content"] = (
                 parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else math.nan
             )
-            result[metric_name + "_intrusion"] = (
+            result[metric_display_name + "_intrusion"] = (
                 parsed_response["intrusion"] if "intrusion" in parsed_response else math.nan
             )
-            result[metric_name + "_information_gathering"] = (
+            result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
         return result

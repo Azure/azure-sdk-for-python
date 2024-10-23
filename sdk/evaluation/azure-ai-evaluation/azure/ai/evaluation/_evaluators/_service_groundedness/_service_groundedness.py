@@ -4,9 +4,8 @@
 from typing import Coroutine, Optional, Dict
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics, Tasks
+from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
-from azure.ai.evaluation._common.constants import DEFAULT_PASSING_SCORE
 
 
 
@@ -49,7 +48,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         azure_ai_project: dict,
         **kwargs,
     ):
-        self._passing_score = kwargs.get("passing_score", DEFAULT_PASSING_SCORE)
+        self._passing_score = 3 # TODO update once the binarization PR is merged
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
