@@ -26,7 +26,7 @@
 import json
 import logging
 import time
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, TYPE_CHECKING, Callable
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -57,9 +57,13 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         logger: Optional[logging.Logger] = None,
         *,
         enable_diagnostics_logging: bool = False,
+        diagnostics_handler: Optional[Union[Callable, dict]] = None,
         **kwargs
     ):
         self._enable_diagnostics_logging = enable_diagnostics_logging
+        self.diagnostics_handler = diagnostics_handler
+        if callable(self.diagnostics_handler):
+            self.should_log = self.diagnostics_handler
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
@@ -69,26 +73,64 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             self.allowed_header_names = set(cosmos_allow_list)
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
-        super().on_request(request)
-        if self._enable_diagnostics_logging:
-            request.context["start_time"] = time.time()
+        verb = request.http_request.method
+        if self.should_log(verb=verb, isRequest=True):
+            super().on_request(request)
+            if self._enable_diagnostics_logging:
+                request.context["start_time"] = time.time()
 
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
     ) -> None:
-        super().on_response(request, response)
-        if self._enable_diagnostics_logging:
-            http_response = response.http_response
-            options = response.context.options
-            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
-            try:
-                if "start_time" in request.context:
-                    logger.info("Elapsed time in seconds: {}".format(time.time() - request.context["start_time"]))
-                else:
-                    logger.info("Elapsed time in seconds: unknown")
-                if http_response.status_code >= 400:
-                    logger.info("Response error message: %r", _format_error(http_response.text()))
-            except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log request: %s", repr(err))
+        duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
+        status_code = response.http_response.status_code
+        sub_status_code = None
+        verb = request.http_request.method
+        resource_type = None
+        if self.should_log(duration, status_code, sub_status_code, verb, resource_type, isRequest=False):
+            super().on_response(request, response)
+            if self._enable_diagnostics_logging:
+                http_response = response.http_response
+                options = response.context.options
+                logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+                try:
+                    if "start_time" in request.context:
+                        logger.info("Elapsed time in seconds: {}".format(duration))
+                    else:
+                        logger.info("Elapsed time in seconds: unknown")
+                    if http_response.status_code >= 400:
+                        logger.info("Response error message: %r", _format_error(http_response.text()))
+                except Exception as err:  # pylint: disable=broad-except
+                    logger.warning("Failed to log request: %s", repr(err))
+
+    def should_log(
+            self,
+            duration: Optional[int] = None,
+            status_code: Optional[int] = None,
+            sub_status_code: Optional[int] = None,
+            verb: Optional[str] = None,
+            resource_type: Optional[str] = None,
+            is_request: bool = False
+    ) -> bool:
+        return True
+
+    def dict_should_log(self, duration: Optional[int] = None,
+            status_code: Optional[int] = None,
+            sub_status_code: Optional[int] = None,
+            verb: Optional[str] = None,
+            resource_type: Optional[str] = None,
+            is_request: bool = False) -> bool:
+        params = {
+            'duration': duration,
+            'status code': status_code,
+            'sub status code': sub_status_code,
+            'verb': verb,
+            'resource type': resource_type
+        }
+        for key, param in params.items():
+            if param is not None and self.diagnostics_handler[key] is not None:
+                if self.diagnostics_handler[key](param):
+                    return True
+        return False
