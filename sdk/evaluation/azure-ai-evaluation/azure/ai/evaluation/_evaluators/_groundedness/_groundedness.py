@@ -8,8 +8,8 @@ from typing_extensions import override
 from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from ..._common.utils import construct_prompty_model_config, validate_model_config
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 try:
     from ..._user_agent import USER_AGENT
@@ -54,7 +54,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
-        self._model_config = model_config  
+        self._model_config = model_config
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @override
