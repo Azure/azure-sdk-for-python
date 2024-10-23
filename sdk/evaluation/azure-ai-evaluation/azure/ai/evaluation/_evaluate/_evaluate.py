@@ -36,11 +36,45 @@ from ._utils import (
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 
+# For metrics (aggregates) whose metric names intentionally differ from their
+# originating column name, usually because the aggregation of the original value
+# means something sufficiently different.
+# Note that content safety metrics are handled seprately.
+METRIC_COLUMN_NAME_REPLACEMENTS = {
+    "groundedness_pro_label": "groundedness_pro_passing_rate",
+}
+
 
 class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
     metrics: Dict[str, Any]
     run_summary: Dict[str, Any]
+
+
+def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, float]]:
+    """Identify and average various metrics that need to have the metric name be replaced,
+    instead of having the metric match the originating column name.
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: A tuple; the first element is a list of dataframe columns that were aggregated,
+        and the second element is a dictionary of resultant new metric column names and their values.
+    :rtype: Tuple[List[str], Dict[str, float]]
+    """
+    renamed_cols = []
+    metric_columns = {}
+    for col in df.columns:
+        metric_prefix = col.split(".")[0]
+        metric_name = col.split(".")[1]
+        if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
+            renamed_cols.append(col)
+            new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+            col_with_numeric_values = pd.to_numeric(df[col], errors="coerce")
+            metric_columns[new_col_name] = round(
+                list_sum(col_with_numeric_values) / col_with_numeric_values.count(),
+                2,
+            )
+
+    return renamed_cols, metric_columns
 
 
 # pylint: disable=line-too-long
@@ -146,8 +180,11 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # Rename certain columns as defect rates if we know that's what their aggregates represent
     # Content safety metrics
     content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(df, evaluators)
+    other_renamed_cols, renamed_cols = _aggregate_other_metrics(df)
     handled_columns.extend(content_safety_cols)
+    handled_columns.extend(other_renamed_cols)
     defect_rates.update(cs_defect_rates)
+    defect_rates.update(renamed_cols)
     # Label-based (true/false) metrics where 'true' means 'something is wrong'
     label_cols, label_defect_rates = _aggregate_label_defect_metrics(df)
     handled_columns.extend(label_cols)

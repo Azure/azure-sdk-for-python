@@ -10,7 +10,11 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 class GroundednessProEvaluator(RaiServiceEvaluatorBase):
     """
-    Initialize a hate-unfairness evaluator for hate unfairness score.
+    Initialize a Groundedness Pro evaluator for determine if the response is grounded
+    in the query and context.
+
+    If this evaluator is supplied to the `evaluate` function, the aggregated metric
+    for the groundedness pro label will be "groundedness_pro_passing_rate".
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
@@ -28,16 +32,48 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             "project_name": "<project_name>",
         }
         eval_fn = GroundednessProEvaluator(azure_ai_project)
-        result = eval_fn(response="Paris", context="Paris.")
+        result = eval_fn(query="What's the capital of France", response="Paris", context="Paris.")
 
     **Output format**
 
     .. code-block:: python
 
         {
-            "groundedness": 5,
-            "reason": "The response is grounded"
+            "groundedness_pro_label": True,
+            "reason": "'All Contents are grounded"
         }
+
+    **Usage with conversation input**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        eval_fn = GroundednessProEvaluator(azure_ai_project)
+        conversation = {
+            "messages": [
+                {"role": "user", "content": "What is the capital of France?"},
+                {"role": "assistant", "content": "Paris.", "context": "Paris."}
+                {"role": "user", "content": "What is the capital of Germany?"},
+                {"role": "assistant", "content": "Berlin.", "context": "Berlin."}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format**
+
+    .. code-block:: python
+
+            {
+                "groundedness_pro_label": 1.0,
+                "evaluation_per_turn": {
+                    "groundedness_pro_label": [True, True],
+                    "groundedness_pro_reason": ["All contents are grounded", "All contents are grounded"]
+                }
+            }
     """
 
     @override
@@ -65,9 +101,10 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
-        """Evaluate groundedness. Accepts either a response and context a single evaluation,
+        """Evaluate groundedness. Accepts either a query, response and context for a single-turn evaluation, or a
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
-        the evaluator will aggregate the results of each turn.
+        the evaluator will aggregate the results of each turn, with the per-turn results available
+        in the output under the "evaluation_per_turn" key.
 
         :keyword query: The query to be evaluated.
         :paramtype query: Optional[str]
