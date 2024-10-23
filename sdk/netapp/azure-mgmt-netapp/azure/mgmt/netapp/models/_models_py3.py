@@ -3430,7 +3430,7 @@ class ReplicationObject(_serialization.Model):
     :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :ivar replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and "daily".
     :vartype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-    :ivar remote_volume_resource_id: The resource ID of the remote volume. Required.
+    :ivar remote_volume_resource_id: The resource ID of the remote volume.
     :vartype remote_volume_resource_id: str
     :ivar remote_path: The full path to a volume that is to be migrated into ANF. Required for
      Migration volumes.
@@ -3441,7 +3441,6 @@ class ReplicationObject(_serialization.Model):
 
     _validation = {
         "replication_id": {"readonly": True},
-        "remote_volume_resource_id": {"required": True},
     }
 
     _attribute_map = {
@@ -3456,7 +3455,7 @@ class ReplicationObject(_serialization.Model):
     def __init__(
         self,
         *,
-        remote_volume_resource_id: str,
+        remote_volume_resource_id: Optional[str] = None,
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         replication_schedule: Optional[Union[str, "_models.ReplicationSchedule"]] = None,
         remote_path: Optional["_models.RemotePath"] = None,
@@ -3470,7 +3469,7 @@ class ReplicationObject(_serialization.Model):
         :keyword replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and
          "daily".
         :paramtype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-        :keyword remote_volume_resource_id: The resource ID of the remote volume. Required.
+        :keyword remote_volume_resource_id: The resource ID of the remote volume.
         :paramtype remote_volume_resource_id: str
         :keyword remote_path: The full path to a volume that is to be migrated into ANF. Required for
          Migration volumes.
