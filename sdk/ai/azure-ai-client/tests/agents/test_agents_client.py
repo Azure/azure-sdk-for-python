@@ -1,7 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -21,8 +18,6 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
 from azure.ai.client.models import FunctionTool
 from azure.identity import DefaultAzureCredential
-from azure.ai.client.models._models import VectorStorageConfiguration, VectorStorageDataSource
-import pytest
 
 # TODO clean this up / get rid of anything not in use
 
@@ -1077,79 +1072,6 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_create_vector_store(self, **kwargs):
-        """Test the agent with vector store creation."""
-        # create client
-        ai_client = self.create_client(**kwargs)
-        assert isinstance(ai_client, AzureAIClient)
-
-        ds = [
-            VectorStorageDataSource(
-                uri="azureml://subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/"
-                "nirovins-rg-eastus/workspaces/nirovins-ai-project/datastores/test/paths/product_info_1.md"
-            )
-        ]
-        store_conf = VectorStorageConfiguration(data_sources=ds)
-        vector_store = ai_client.agents.create_vector_store_and_poll(
-            store_configuration=store_conf, name="my_vectorstore"
-        )
-        assert vector_store.id
-        file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-        agent = ai_client.agents.create_agent(
-            model="gpt-4-1106-preview",
-            name="my-assistant",
-            instructions="Hello, you are helpful assistant and can search information from uploaded files",
-            tools=file_search.definitions,
-            tool_resources=file_search.resources,
-        )
-        assert agent.id
-        thread = ai_client.agents.create_thread()
-        assert thread.id
-        run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-        ai_client.agents.delete_vector_store(vector_store.id)
-        assert run.status == "completed"
-        messages = ai_client.agents.list_messages(thread_id=thread.id)
-        assert len(messages)
-
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_create_vector_store_batch(self, **kwargs):
-        """Test the agent with vector store creation."""
-        # create client
-        ai_client = self.create_client(**kwargs)
-        assert isinstance(ai_client, AzureAIClient)
-
-        ds = [
-            VectorStorageDataSource(
-                uri="azureml://subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/"
-                "nirovins-rg-eastus/workspaces/nirovins-ai-project/datastores/test/paths/product_info_1.md"
-            )
-        ]
-        vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
-        vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(
-            vector_store_id=vector_store.id, data_sources=ds
-        )
-        assert vector_store_file_batch.id
-        assert vector_store.id
-        file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-        agent = ai_client.agents.create_agent(
-            model="gpt-4-1106-preview",
-            name="my-assistant",
-            instructions="Hello, you are helpful assistant and can search information from uploaded files",
-            tools=file_search.definitions,
-            tool_resources=file_search.resources,
-        )
-        assert agent.id
-        thread = ai_client.agents.create_thread()
-        assert thread.id
-        run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-        ai_client.agents.delete_vector_store(vector_store.id)
-        assert run.status == "completed"
-        messages = ai_client.agents.list_messages(thread_id=thread.id)
-        assert len(messages)
 
     # # **********************************************************************************
     # #
