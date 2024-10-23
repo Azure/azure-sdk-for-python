@@ -160,6 +160,7 @@ class FeatureStore(Workspace):
         self.identity = identity
         self.public_network_access = public_network_access
         self.managed_network = managed_network
+        self.compute_runtime = compute_runtime
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:
