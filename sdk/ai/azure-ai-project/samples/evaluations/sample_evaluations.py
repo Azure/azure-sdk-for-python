@@ -35,7 +35,7 @@ from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEv
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    conn_str="<connection_string>",
 )
 
 # Upload data for evaluation
@@ -66,15 +66,15 @@ evaluation = Evaluation(
                 "azure_ai_project": project_client.scope
             },
         ),
-        "friendliness": EvaluatorConfiguration(
-            id="azureml://registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/versions/2",
-            init_params={
-                "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
-            }
-        )
+        # "friendliness": EvaluatorConfiguration(
+        #     id="azureml://registries/remote-eval-testing/models/FriendlinessMeasureEvaluator/versions/2",
+        #     init_params={
+        #         "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
+        #     }
+        # )
     },
     # This is needed as a workaround until environment gets published to registry
-    properties={"Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-test-env/versions/5"},
+    properties={"Environment": "azureml://registries/remote-eval-testing/environments/eval-remote-test-env/versions/1"},
 )
 
 # Create evaluation
