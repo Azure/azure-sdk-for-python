@@ -24,7 +24,13 @@ import asyncio
 from typing import Any
 
 from azure.ai.project.aio import AIProjectClient
-from azure.ai.project.models._models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
+from azure.ai.project.models._models import (
+    MessageDeltaChunk,
+    MessageDeltaTextContent,
+    RunStep,
+    ThreadMessage,
+    ThreadRun,
+)
 from azure.ai.project.models._patch import AsyncAgentEventHandler
 from azure.identity import DefaultAzureCredential
 
