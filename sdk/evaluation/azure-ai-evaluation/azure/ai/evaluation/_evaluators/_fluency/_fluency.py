@@ -8,6 +8,7 @@ from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class FluencyEvaluator(PromptyEvaluatorBase):
@@ -65,8 +66,23 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         if response is None and conversation is None:
-            raise ValueError("Either 'response' or 'conversation' must be provided.")
+            msg = "Either 'response' or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.FLUENCY_EVALUATOR,
+            )
+
         if response and conversation:
-            raise ValueError("Either 'response' or 'conversation' must be provided, but not both.")
+            msg = "Either 'response' or 'conversation' must be provided, but not both."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.FLUENCY_EVALUATOR,
+            )
 
         return super().__call__(response=response, conversation=conversation, **kwargs)

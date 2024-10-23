@@ -14,6 +14,7 @@ from promptflow.core import AsyncPrompty
 
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 logger = logging.getLogger(__name__)
 
@@ -152,10 +153,24 @@ class RetrievalEvaluator:
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        if any(val is None for val in [query, context]) and conversation is None:
-            raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided.")
-        if query and context and conversation:
-            raise ValueError("Either a pair of 'query'/'context' or 'conversation' must be provided, but not both.")
+        if (query is None or context is None) and conversation is None:
+            msg = "Either a pair of 'query'/'context' or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.RETRIEVAL_EVALUATOR,
+            )
+        if (query or context) and conversation:
+            msg = "Either a pair of 'query'/'context' or 'conversation' must be provided, but not both."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.RETRIEVAL_EVALUATOR,
+            )
 
         return async_run_allowing_running_loop(
             self._async_evaluator,

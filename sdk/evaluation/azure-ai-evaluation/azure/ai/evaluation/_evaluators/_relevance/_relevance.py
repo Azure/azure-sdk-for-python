@@ -8,6 +8,7 @@ from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
@@ -70,9 +71,23 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if any(val is None for val in [query, response]) and conversation is None:
-            raise ValueError("Either a pair of 'query'/'response' or 'conversation' must be provided.")
+        if (query is None or response is None) and conversation is None:
+            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.RELEVANCE_EVALUATOR,
+            )
         if query and response and conversation:
-            raise ValueError("Either a pair of 'query'/'response' or 'conversation' must be provided, but not both.")
+            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided, but not both."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.RELEVANCE_EVALUATOR,
+            )
 
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

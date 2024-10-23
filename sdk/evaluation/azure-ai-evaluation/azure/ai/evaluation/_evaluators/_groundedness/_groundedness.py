@@ -9,6 +9,7 @@ from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from ..._common.utils import construct_prompty_model_config, validate_model_config
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 try:
     from ..._user_agent import USER_AGENT
@@ -85,15 +86,30 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if any(val is None for val in [response, context]) and conversation is None:
-            raise ValueError(
-                "Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided."
+        if (response is None or context is None) and conversation is None:
+            msg = "Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
-        if query and response and context and conversation:
-            raise ValueError("If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided.")
+
+        if (query or response or context) and conversation:
+            msg = "If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
 
         if query:
-            self._prompty_file = self._PROMPTY_FILE_WITH_QUERY
+            current_dir = os.path.dirname(__file__)
+            prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
+            self._prompty_file = prompty_path
             prompty_model_config = construct_prompty_model_config(
                 validate_model_config(self._model_config),
                 self._DEFAULT_OPEN_API_VERSION,
