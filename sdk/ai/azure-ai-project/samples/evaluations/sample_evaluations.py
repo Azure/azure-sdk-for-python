@@ -56,18 +56,18 @@ evaluation = Evaluation(
     evaluators={
         "f1_score": EvaluatorConfiguration(
             # id=F1ScoreEvaluator.evaluator_id,
-            id="azureml://registries/jamahaja-evals-registry/models/F1ScoreEvaluator/versions/2",
+            id="azureml://registries/azureml-staging/models/F1Score-Evaluator/versions/3",
         ),
         "relevance": EvaluatorConfiguration(
             # id=RelevanceEvaluator.evaluator_id,
-            id="azureml://registries/jamahaja-evals-registry/models/RelevanceEvaluator/versions/1",
+            id="azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3",
             init_params={
                 "model_config": default_connection.to_evaluator_model_config(deployment_name="GPT-4-Prod", api_version="2024-08-01-preview")
             },
         ),
-        "hate_unfairness": EvaluatorConfiguration(
+        "violence": EvaluatorConfiguration(
             # id=HateUnfairnessEvaluator.evaluator_id,
-            id="azureml://registries/jamahaja-evals-registry/models/HateUnfairnessEvaluator/versions/4",
+            id="azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3",
             init_params={
                 "azure_ai_project": project_client.scope
             },
