@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from typing import List, Dict
+from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
-try:
-    from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
-except ImportError:
-    from _content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
-
+@experimental
 class SelfHarmMultimodalEvaluator:
     """
     Initialize a self harm multimodal evaluator for self harm score.

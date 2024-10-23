@@ -4,10 +4,11 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from typing import Dict, List
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-try:
-    from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
-except ImportError:
-    from _content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
+from azure.ai.evaluation._common._experimental import experimental
+
+from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
+
+@experimental
 class SexualMultimodalEvaluator:
     """
     Initialize a sexual multimodal evaluator for sexual score.

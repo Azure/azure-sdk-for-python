@@ -268,7 +268,11 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
-    result: Dict[str, Union[str, float]] = {key.value: math.nan, key + "_score": math.nan, key + "_reason": ""}
+    result: Dict[str, Union[str, float]] = {
+    (key.value if hasattr(key, 'value') else key): math.nan,
+    f"{key}_score": math.nan,
+    f"{key}_reason": ""
+}
 
     response = batch_response[0]
     if metric_name not in response:
@@ -448,7 +452,7 @@ async def evaluate_with_rai_service(
 
     return result
 
-def generate_payload_multimodal(content_type: str, contents: str, metric: str) -> Dict:
+def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
     """Generate the payload for the annotation request
     :param content_type: The type of the content representing multimodal or images.
     :type content_type: str
@@ -469,14 +473,14 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
     return (
         {
             "ContentType": content_type,
-            "Contents": [{"messages" : contents }],
+            "Contents": [{"messages" : messages }],
             "AnnotationTask": task,
             "MetricList": [metric],
         }
         if include_metric
         else {
             "ContentType": content_type,
-            "Contents": [{"messages" : contents }],
+            "Contents": [{"messages" : messages }],
             "AnnotationTask": task,
         }
     )

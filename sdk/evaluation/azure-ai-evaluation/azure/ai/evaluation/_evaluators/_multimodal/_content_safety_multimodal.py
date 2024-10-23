@@ -13,16 +13,10 @@ from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-try:
-    from ._hate_unfairness import HateUnfairnessMultimodalEvaluator
-    from ._self_harm import SelfHarmMultimodalEvaluator
-    from ._sexual import SexualMultimodalEvaluator
-    from ._violence import ViolenceMultimodalEvaluator
-except ImportError:
-    from _hate_unfairness import HateUnfairnessMultimodalEvaluator
-    from _self_harm import SelfHarmMultimodalEvaluator
-    from _sexual import SexualMultimodalEvaluator
-    from _violence import ViolenceMultimodalEvaluator
+from ._hate_unfairness import HateUnfairnessMultimodalEvaluator
+from ._self_harm import SelfHarmMultimodalEvaluator
+from ._sexual import SexualMultimodalEvaluator
+from ._violence import ViolenceMultimodalEvaluator
 
 logger = logging.getLogger(__name__)
 
