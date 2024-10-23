@@ -303,7 +303,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             start_idx = 0
             remaining_payload_cnt = payload_size
             # encode n-1 frames if payload_size > available_frame_size
-            _LOGGER.debug("waiting for lock")
             with self.lock:
                 while remaining_payload_cnt > available_frame_size:
                     tmp_delivery_frame = {

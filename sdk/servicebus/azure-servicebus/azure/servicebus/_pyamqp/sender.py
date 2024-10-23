@@ -146,7 +146,6 @@ class SenderLink(Link):
         super()._on_session_state_change()
 
     def update_pending_deliveries(self):
-        _LOGGER.debug("locking pending deliveries")
         with self.lock:
             if self.current_link_credit <= 0:
                 self.current_link_credit = self.link_credit
