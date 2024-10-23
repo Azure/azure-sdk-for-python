@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union, TypeVar
+from typing import Dict, Optional, TypeVar, Union
 
 from typing_extensions import override
 
