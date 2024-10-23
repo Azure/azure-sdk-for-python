@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.project.models._models import VectorStorageDataSource
 
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
@@ -26,6 +25,7 @@ import os
 from azure.ai.project import AIProjectClient
 from azure.ai.project.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
+from azure.ai.project.models._models import VectorStorageDataSource
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
