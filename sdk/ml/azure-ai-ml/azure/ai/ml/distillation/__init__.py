@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""Contains distillation classes for Azure Machine Learning SDKv2."""
+"""Contains distillation classes for Azure Machine Learning SDKv2. :no-index:"""
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 

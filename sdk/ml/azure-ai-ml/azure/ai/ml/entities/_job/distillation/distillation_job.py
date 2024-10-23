@@ -507,7 +507,7 @@ class DistillationJob(Job, JobIOMixin):
         """Returns True if both instances have the same values.
 
         This method check instances equality and returns True if both of
-            the instances have the same attributes with the same values.
+        the instances have the same attributes with the same values.
 
         :param other: Any object
         :type other: object
