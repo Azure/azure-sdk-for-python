@@ -9,7 +9,8 @@ FILE: sample_agents_vector_store_batch_file_search_async.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
-    the Azure Agents service using a synchronous client.
+    the Azure Agents service using a synchronous client. It also shows how to remove a vector store from file search tool
+    and update the agent after that.
 
 USAGE:
     python sample_agents_vector_store_batch_file_search_async.py
@@ -84,6 +85,21 @@ with ai_client:
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
+
+    file_search_tool.remove_vector_store(vector_store.id)
+    print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
+
+    ai_client.agents.update_agent(assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources)
+    print(f"Updated agent, agent ID: {agent.id}")
+
+    thread = ai_client.agents.create_thread()
+    print(f"Created thread, thread ID: {thread.id}")
+
+    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
+    print(f"Created message, message ID: {message.id}")
+
+    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    print(f"Created run, run ID: {run.id}")    
 
     ai_client.agents.delete_file(file.id)
     print("Deleted file")

@@ -104,6 +104,7 @@ steps:
       SubscriptionConfiguration: $(SubscriptionConfiguration)
       Location: $(Location)
       ArmTemplateParameters: $(ArmTemplateParameters)
+      UseFederatedAuth: false
 
   - script: python $(Build.SourcesDirectory)/common/smoketest/program.py
     displayName: Run Smoke Test
@@ -112,4 +113,5 @@ steps:
     parameters:
       ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+      UseFederatedAuth: false
 
