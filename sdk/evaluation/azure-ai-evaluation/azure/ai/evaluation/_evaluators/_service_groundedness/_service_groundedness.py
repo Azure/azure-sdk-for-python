@@ -80,7 +80,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         **kwargs,
     ):
         self._passing_score = 3  # TODO update once the binarization PR is merged
