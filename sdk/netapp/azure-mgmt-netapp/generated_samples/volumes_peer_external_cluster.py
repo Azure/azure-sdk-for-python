@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python accounts_create_or_update.py
+    python volumes_peer_external_cluster.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,16 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.accounts.begin_create_or_update(
+    response = client.volumes.begin_peer_external_cluster(
         resource_group_name="myRG",
         account_name="account1",
-        body={"location": "eastus", "properties": {}},
+        pool_name="pool1",
+        volume_name="volume1",
+        body={"peerIpAddresses": ["0.0.0.1", "0.0.0.2", "0.0.0.3", "0.0.0.4", "0.0.0.5", "0.0.0.6"]},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-07-01/examples/Accounts_CreateOrUpdate.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-07-01/examples/Volumes_PeerExternalCluster.json
 if __name__ == "__main__":
     main()
