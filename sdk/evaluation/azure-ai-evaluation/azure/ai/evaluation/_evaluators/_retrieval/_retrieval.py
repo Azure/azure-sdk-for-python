@@ -41,62 +41,74 @@ class _AsyncRetrievalScoreEvaluator:
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, conversation, **kwargs):
-        # Extract queries, responses and contexts from conversation
-        queries = []
-        responses = []
-        contexts = []
+    async def __call__(self, *, query, context, conversation, **kwargs):
+        if conversation:
+            # Extract queries, responses and contexts from conversation
+            queries = []
+            responses = []
+            contexts = []
 
-        conversation = conversation.get("messages", None)
+            conversation = conversation.get("messages", None)
 
-        for each_turn in conversation:
-            role = each_turn["role"]
-            if role == "user":
-                queries.append(each_turn["content"])
-            elif role == "assistant":
-                responses.append(each_turn["content"])
-                if "context" in each_turn and "citations" in each_turn["context"]:
-                    citations = json.dumps(each_turn["context"]["citations"])
-                    contexts.append(citations)
+            for each_turn in conversation:
+                role = each_turn["role"]
+                if role == "user":
+                    queries.append(each_turn["content"])
+                elif role == "assistant":
+                    responses.append(each_turn["content"])
+                    if "context" in each_turn and "citations" in each_turn["context"]:
+                        citations = json.dumps(each_turn["context"]["citations"])
+                        contexts.append(citations)
 
-        # Evaluate each turn
-        per_turn_scores = []
-        history = []
-        for turn_num, query in enumerate(queries):
-            try:
-                query = query if turn_num < len(queries) else ""
-                answer = responses[turn_num] if turn_num < len(responses) else ""
-                context = contexts[turn_num] if turn_num < len(contexts) else ""
+            # Evaluate each turn
+            per_turn_scores = []
+            history = []
+            for turn_num, query in enumerate(queries):
+                try:
+                    query = query if turn_num < len(queries) else ""
+                    answer = responses[turn_num] if turn_num < len(responses) else ""
+                    context = contexts[turn_num] if turn_num < len(contexts) else ""
 
-                history.append({"user": query, "assistant": answer})
+                    history.append({"user": query, "assistant": answer})
 
-                llm_output = await self._flow(
-                    query=query, history=history, documents=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
-                )
-                score = math.nan
-                if llm_output:
-                    parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
-                    if len(parsed_score_response) > 0:
-                        score = float(parsed_score_response[0].replace("'", "").strip())
+                    llm_output = await self._flow(
+                        query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
+                    )
+                    score = math.nan
+                    if llm_output:
+                        parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
+                        if len(parsed_score_response) > 0:
+                            score = float(parsed_score_response[0].replace("'", "").strip())
 
-                per_turn_scores.append(score)
+                    per_turn_scores.append(score)
 
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
-                )
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
+                    )
 
-                per_turn_scores.append(math.nan)
+                    per_turn_scores.append(math.nan)
 
+            return {
+                "retrieval": list_mean_nan_safe(per_turn_scores),
+                "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
+                "evaluation_per_turn": {
+                    "gpt_retrieval": per_turn_scores,
+                    "retrieval": per_turn_scores,
+                },
+            }
+        llm_output = await self._flow(
+            query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
+        )
+        score = math.nan
+        if llm_output:
+            parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
+            if len(parsed_score_response) > 0:
+                score = float(parsed_score_response[0].replace("'", "").strip())
         return {
-            "retrieval": list_mean_nan_safe(per_turn_scores),
-            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
-            "evaluation_per_turn": {
-                "gpt_retrieval": per_turn_scores,
-                "retrieval": per_turn_scores,
-            },
+            "retrieval": score,
+            "gpt_retrieval": score,
         }
-
 
 class RetrievalEvaluator:
     """
@@ -170,6 +182,7 @@ class RetrievalEvaluator:
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.RETRIEVAL_EVALUATOR,
             )
+
         if (query or context) and conversation:
             msg = "Either a pair of 'query'/'context' or 'conversation' must be provided, but not both."
             raise EvaluationException(

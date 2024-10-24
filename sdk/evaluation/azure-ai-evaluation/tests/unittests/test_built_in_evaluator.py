@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, RetrievalEvaluator
+from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, RetrievalEvaluator, RelevanceEvaluator
 
 
 async def quality_async_mock():
@@ -69,4 +69,12 @@ class TestBuiltInEvaluators:
         }
 
         result = retrieval_eval(conversation=conversation)
+        assert result["evaluation_per_turn"]["retrieval"] == result["evaluation_per_turn"]["gpt_retrieval"] == [1.0]
+
+        retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
+        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_async_mock())
+        result = retrieval_eval(
+            query="What is the value of 2 + 2?",
+            context="1 + 2 = 2",
+        )
         assert result["retrieval"] == result["gpt_retrieval"] == 1
