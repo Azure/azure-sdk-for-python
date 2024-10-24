@@ -30,6 +30,10 @@ from ._models import (
     ToolResources,
     FileSearchToolDefinition,
     FileSearchToolResource,
+    BingGroundingToolDefinition,
+    ConnectionListResource,
+    AzureAISearchResource,
+    AzureAISearchToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
@@ -373,6 +377,90 @@ class AsyncFunctionTool(FunctionTool):
         except TypeError as e:
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
+
+class AzureAISearchTool(Tool):
+    """
+    A tool that searches for information using Azure AI Search.
+    """
+
+    def __init__(self):
+        self.index_list = []
+
+    def add_index(self, index: str):
+        """
+        Add an index ID to the list of indices used to search.
+        """
+        # TODO
+        self.index_list.append(index)
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+        """
+        return [AzureAISearchToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+        """
+        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BingGroundingTool(Tool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    def __init__(self):
+        self.connection_ids = []
+
+    def add_connection(self, connection_id: str):
+        """
+        Add a connection ID to the list of connections used to search.
+        """
+        # TODO
+        self.connection_ids.append(connection_id)
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+        """
+        return [BingGroundingToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Bing grounding resources.
+        """
+        return ToolResources(bing_grounding=ConnectionListResource(connection_list=self.connection_ids))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+"""
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+#        use connection_list to auto-update connections for bing search tool if no pre-existing
+        if self.connection_ids.__len__() == 0:
+            for id, connection_type in connection_list:
+                if connection_type == "ApiKey":
+                    self.connection_ids.append(id)
+                    return
+"""
+
+
+class FileSearchTool(Tool):
+    """
+    A tool that searches for uploaded file information from the created vector stores.
+    """
+
+    def __init__(self, vector_store_ids: List[str] = []):
+        self.vector_store_ids = vector_store_ids
 
 
 class FileSearchTool(Tool):
@@ -1000,6 +1088,8 @@ __all__: List[str] = [
     "CodeInterpreterTool",
     "FileSearchTool",
     "FunctionTool",
+    "BingGroundingTool",
+    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",
