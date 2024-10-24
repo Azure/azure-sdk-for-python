@@ -141,9 +141,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
-        # remove port (if present) from auth_uri
-        auth_uri_hostname = self.fully_qualified_namespace.split(":")[0]
-        self._auth_uri = f"sb://{auth_uri_hostname}"
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}"
         if self._entity_name:
             self._auth_uri = f"{self._auth_uri}/{self._entity_name}"
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library

@@ -319,9 +319,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             self._credential = credential  # type: ignore
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri: str
-        # remove port (if present) from auth_uri
-        auth_uri_hostname = self._address.hostname.split(":")[0]
-        self._eventhub_auth_uri = f"sb://{auth_uri_hostname}{self._address.path}"
+        self._eventhub_auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
             amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
@@ -339,6 +337,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
+
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         # Check if emulator is in use, unset tls if it is

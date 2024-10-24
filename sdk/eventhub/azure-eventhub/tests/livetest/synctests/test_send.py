@@ -760,20 +760,3 @@ def test_send_long_wait_idle_timeout(auth_credential_receivers, keep_alive, uamq
             else:
                 with pytest.raises(AMQPConnectionError):
                     sender._send_event_data()
-
-@pytest.mark.liveTest
-def test_send_with_port(
-    auth_credential_receivers, uamqp_transport
-):
-    fully_qualified_namespace, eventhub_name, credential, receivers = (
-        auth_credential_receivers
-    )
-    client = EventHubProducerClient(
-        fully_qualified_namespace=fully_qualified_namespace+":443/",
-        eventhub_name=eventhub_name,
-        credential=credential(),
-        uamqp_transport=uamqp_transport,
-    )
-
-    with client:
-        client.send_event(EventData("A single event"))
