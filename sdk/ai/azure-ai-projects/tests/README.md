@@ -22,6 +22,12 @@ The instructions below are for running tests locally, on a Windows machine, agai
         pip install dist\azure_ai_project-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
+## Log in to Azure
+
+```bash
+az login
+```
+
 ## Setup for running tests in the `agents` folder
 
 ```bash
@@ -39,7 +45,8 @@ TODO
 Copy the `Project connection string` from the Azure AI Studio and set the following environment variable:
 
 ```bash
-set PROJECT_CONNECTION_STRING_CONNECTIONS_TESTS=<your_connection_string>
+set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=<your_connection_string>
+set AZURE_AI_PROJECTS_CONNECTIONS_TEST_MODEL_DEPLOYMENT_NAME=<your-azure-openai-model-deployment-name>
 ```
 
 ## Configure test proxy

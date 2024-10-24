@@ -6,17 +6,19 @@ import sys
 import logging
 import functools
 from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
 """
 Set these environment variables before running the test:
 set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=
+set AZURE_AI_PROJECTS_CONNECTIONS_TEST_MODEL_DEPLOYMENT_NAME=
 """
-servicePreparerConnectionsTests = functools.partial(
+servicePreparerInferenceTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_connections_test",
     azure_ai_projects_connections_test_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
+    azure_ai_projects_connections_test_model_deployment_name="model-deployment-name",
 )
 
 
@@ -33,7 +35,7 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
-class ConnectionsTestBase(AzureRecordedTestCase):
+class InferenceTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_connections_test_project_connection_string")
@@ -44,3 +46,11 @@ class ConnectionsTestBase(AzureRecordedTestCase):
         )
         return project_client
 
+    def get_async_client(self, **kwargs) -> AIProjectClient:
+        conn_str = kwargs.pop("azure_ai_projects_connections_test_project_connection_string")
+        project_client = AIProjectClientAsync.from_connection_string(
+            credential=self.get_credential(AIProjectClientAsync, is_async=False),
+            conn_str=conn_str,
+            logging_enable=LOGGING_ENABLED
+        )
+        return project_client
