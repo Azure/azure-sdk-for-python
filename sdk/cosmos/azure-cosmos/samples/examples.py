@@ -259,12 +259,11 @@ for item in container.query_items(
 
 # Get the feed ranges list from container.
 # [START read_feed_ranges]
-container.read_feed_ranges()
+feed_ranges = list(container.read_feed_ranges())
 # [END read_feed_ranges]
 
 # Query a sorted list of items that were changed for one feed range
 # [START query_items_change_feed]
-feed_ranges = container.read_feed_ranges()
 for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
     print(json.dumps(item, indent=True))
 # [END query_items_change_feed]

@@ -265,14 +265,13 @@ async def examples_async():
 
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
-        await container.read_feed_ranges()
+        feed_ranges = list(await container.read_feed_ranges())
         # [END read_feed_ranges]
 
         # Query a sorted list of items that were changed for one feed range.
         # The asynchronous client returns asynchronous iterators for its query methods;
         # as such, we iterate over it by using an async for loop
         # [START query_items_change_feed]
-        feed_ranges = await container.read_feed_ranges()
         async for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
             print(json.dumps(item, indent=True))
         # [END query_items_change_feed]

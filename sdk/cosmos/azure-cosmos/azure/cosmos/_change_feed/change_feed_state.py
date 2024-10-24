@@ -383,9 +383,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
-            feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
-            feed_range_json = json.loads(feed_range_str)
-            feed_range = FeedRangeInternalEpk.from_json(feed_range_json)
+            feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
         elif change_feed_state_context.get("partitionKey"):
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
