@@ -134,12 +134,12 @@ class Simulator:
         if conversation_turns and (text or tasks):
             raise ValueError("Cannot specify both conversation_turns and text/tasks")
 
-        if num_queries > len(tasks):
+        if text and num_queries > len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' > len('tasks') ({num_queries} > {len(tasks)}). "
                 f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
             )
-        elif num_queries < len(tasks):
+        elif text and num_queries < len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
