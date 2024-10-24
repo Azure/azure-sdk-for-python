@@ -24,6 +24,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     ViolenceEvaluator,
+    RetrievalEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -175,6 +176,21 @@ class TestBuiltInEvaluators:
         )
         assert score is not None
         assert score["fluency"] > 0.0
+
+    def test_quality_evaluator_retrieval(self, model_config, simple_conversation):
+        eval_fn = RetrievalEvaluator(model_config)
+        score = eval_fn(
+            query="What is the value of 2 + 2?",
+            context="2 + 3 = 5",
+        )
+        assert score is not None
+        assert score["retrieval"] > 0.0
+
+        # Test conversation input
+        score2 = eval_fn(conversation=simple_conversation)
+        assert score2["retrieval"] > 0
+        assert score2["evaluation_per_turn"]["retrieval"][0] > 0
+        assert False
 
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
