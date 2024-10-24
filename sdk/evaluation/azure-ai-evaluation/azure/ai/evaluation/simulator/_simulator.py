@@ -225,7 +225,9 @@ class Simulator:
                 assistant_response, assistant_context = await self._get_target_response(
                     target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
                 )
-                assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+                assistant_turn = Turn(
+                    role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+                )
                 current_simulation.add_to_history(assistant_turn)
                 progress_bar.update(1)  # Update progress bar for both user and assistant turns
 
@@ -305,7 +307,9 @@ class Simulator:
             assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+            assistant_turn = Turn(
+                role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+            )
             current_simulation.add_to_history(assistant_turn)
             progress_bar.update(1)
 
@@ -642,7 +646,9 @@ class Simulator:
             assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=conversation_history
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+            assistant_turn = Turn(
+                role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+            )
             conversation_history.add_to_history(assistant_turn)
             progress_bar.update(1)
 

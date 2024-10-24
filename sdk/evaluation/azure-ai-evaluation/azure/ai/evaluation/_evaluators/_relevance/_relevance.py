@@ -38,6 +38,34 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             "gpt_relevance": 3.0,
         }
 
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        eval_fn = RelevanceEvaluator(model_config)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"},
+                {"content": "What is the capital of Japan?", "role": "user"},
+                {"content": "The capital of Japan is Tokyo.", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            "relevance": 1.5,
+            "gpt_relevance": 1.5,
+            "evaluation_per_turn": {
+                "relevance": [1.0, 2.0],
+                "gpt_relevance": [1.0, 2.0]
+            }
+        }
+
     Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
     To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.

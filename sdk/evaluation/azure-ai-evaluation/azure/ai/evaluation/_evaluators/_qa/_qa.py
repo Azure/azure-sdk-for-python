@@ -55,6 +55,7 @@ class QAEvaluator:
         }
     """
 
+    # TODO re-enable parallelism once a fix is in place
     def __init__(self, model_config, parallel: bool = True):
         self._parallel = parallel
 

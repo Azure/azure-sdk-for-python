@@ -24,7 +24,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         eval_fn = CoherenceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.")
+            response="The capital of Japan is Tokyo."
+        )
 
     **Output format**
 
@@ -33,6 +34,34 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         {
             "coherence": 1.0,
             "gpt_coherence": 1.0,
+        }
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        eval_fn = CoherenceEvaluator(model_config)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"},
+                {"content": "What is the capital of Japan?", "role": "user"},
+                {"content": "The capital of Japan is Tokyo.", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            "coherence": 1.5,
+            "gpt_coherence": 1.5,
+            "evaluation_per_turn": {
+                "coherence": [1.0, 2.0],
+                "gpt_coherence": [1.0, 2.0]
+            }
         }
 
     Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
@@ -62,10 +91,10 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
         turns, the evaluator will aggregate the results of each turn.
 
+        :keyword query: The query to be evaluated.
+        :paramtype query: Optional[str]
         :keyword response: The response to be evaluated.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".

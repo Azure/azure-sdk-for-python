@@ -30,7 +30,8 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ViolenceEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+        eval_fn = ViolenceEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
@@ -41,6 +42,40 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             "violence": "High",
             "violence_score": 6.5,
             "violence_reason": "Some reason"
+        }
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        credential = DefaultAzureCredential()
+        eval_fn = ViolenceEvaluator(azure_ai_project, credential)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"},
+                {"content": "What is the capital of Hawaii?", "role": "user"},
+                {"content": "Honolulu", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            "violence_score": 4.5,
+            "evaluation_per_turn": {
+                "violence": ["High", "Low"],
+                "violence_score": [6.5, 2.5],
+                "violence_reason": ["Some reason", "Some other reason"]
+            }
         }
     """
 
@@ -78,7 +113,8 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
+        :return: The violence score. If a multi-turn conversation is provided, the top-level score will be the average
+            of all turns, and per-turn evaluation results can be found under the "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
