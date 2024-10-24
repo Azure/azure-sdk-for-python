@@ -4,15 +4,16 @@
 # ------------------------------------
 import pprint
 from devtools_testutils.aio import recorded_by_proxy_async
-from inference_test_base import InferenceTestBase, servicePreparerConnectionsTests
+from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestInferenceAsync(InferenceTestBase):
     
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_azure_openai_client_async(self, **kwargs):
+        model = kwargs.pop("azure_ai_projects_connections_test_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
             async with await project_client.inference.get_azure_openai_client() as azure_openai_client:
                 response = await azure_openai_client.chat.completions.create(
@@ -22,14 +23,14 @@ class TestInferenceAsync(InferenceTestBase):
                             "content": "How many feet are in a mile?",
                         }
                     ],
-                    model="gpt-4-0613", # TODO: Get this from environment variable
+                    model=model,
                 )
                 pprint.pprint(response)
                 contains=["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
 
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_chat_completions_client_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
@@ -44,7 +45,7 @@ class TestInferenceAsync(InferenceTestBase):
                 contains=["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_embeddings_client_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:

@@ -9,15 +9,19 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
+"""
+Set these environment variables before running the test:
+set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=
+"""
 servicePreparerConnectionsTests = functools.partial(
     EnvironmentVariableLoader,
-    "project_connection_string",
-    project_connection_string_connections_tests="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name"
+    "azure_ai_projects_connections_test",
+    azure_ai_projects_connections_test_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
 )
 
 
 # Set to True to enable SDK logging
-LOGGING_ENABLED = True
+LOGGING_ENABLED = False
 
 if LOGGING_ENABLED:
     # Create a logger for the 'azure' SDK
@@ -32,10 +36,11 @@ if LOGGING_ENABLED:
 class ConnectionsTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
-        conn_str = kwargs.pop("project_connection_string_connections_tests")
+        conn_str = kwargs.pop("azure_ai_projects_connections_test_project_connection_string")
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
+            logging_enable=LOGGING_ENABLED
         )
         return project_client
 

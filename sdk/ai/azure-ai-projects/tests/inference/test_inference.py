@@ -4,15 +4,16 @@
 # ------------------------------------
 import pprint
 from devtools_testutils import recorded_by_proxy
-from inference_test_base import InferenceTestBase, servicePreparerConnectionsTests
+from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestInference(InferenceTestBase):
 
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_azure_openai_client(self, **kwargs):
+        model = kwargs.pop("azure_ai_projects_connections_test_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_azure_openai_client() as azure_openai_client:
                 response = azure_openai_client.chat.completions.create(
@@ -22,13 +23,13 @@ class TestInference(InferenceTestBase):
                             "content": "How many feet are in a mile?",
                         }
                     ],
-                    model="gpt-4-0613", # TODO: Get this from environment variable
+                    model=model,
                 )
                 pprint.pprint(response)
                 contains=["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_chat_completions_client(self, **kwargs):
         with self.get_sync_client(**kwargs) as project_client:
@@ -43,7 +44,9 @@ class TestInference(InferenceTestBase):
                 contains=["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
-    @servicePreparerConnectionsTests()
+    @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_embeddings_client(self, **kwargs):
-        project_client = self.get_sync_client(**kwargs)
+        with self.get_sync_client(**kwargs) as project_client:
+            # TODO: Add test code here
+            pass
