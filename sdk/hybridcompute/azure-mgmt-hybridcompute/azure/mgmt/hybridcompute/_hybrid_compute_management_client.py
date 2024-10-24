@@ -20,10 +20,12 @@ from ._configuration import HybridComputeManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     ExtensionMetadataOperations,
+    GatewaysOperations,
     HybridComputeManagementClientOperationsMixin,
     LicenseProfilesOperations,
     LicensesOperations,
     MachineExtensionsOperations,
+    MachineRunCommandsOperations,
     MachinesOperations,
     NetworkProfileOperations,
     NetworkSecurityPerimeterConfigurationsOperations,
@@ -31,6 +33,7 @@ from .operations import (
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     PrivateLinkScopesOperations,
+    SettingsOperations,
 )
 
 if TYPE_CHECKING:
@@ -57,6 +60,12 @@ class HybridComputeManagementClient(
     :vartype operations: azure.mgmt.hybridcompute.operations.Operations
     :ivar network_profile: NetworkProfileOperations operations
     :vartype network_profile: azure.mgmt.hybridcompute.operations.NetworkProfileOperations
+    :ivar machine_run_commands: MachineRunCommandsOperations operations
+    :vartype machine_run_commands: azure.mgmt.hybridcompute.operations.MachineRunCommandsOperations
+    :ivar gateways: GatewaysOperations operations
+    :vartype gateways: azure.mgmt.hybridcompute.operations.GatewaysOperations
+    :ivar settings: SettingsOperations operations
+    :vartype settings: azure.mgmt.hybridcompute.operations.SettingsOperations
     :ivar private_link_scopes: PrivateLinkScopesOperations operations
     :vartype private_link_scopes: azure.mgmt.hybridcompute.operations.PrivateLinkScopesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -75,8 +84,8 @@ class HybridComputeManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-07-10". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-07-31-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -129,6 +138,11 @@ class HybridComputeManagementClient(
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.network_profile = NetworkProfileOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.machine_run_commands = MachineRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gateways = GatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.settings = SettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_scopes = PrivateLinkScopesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

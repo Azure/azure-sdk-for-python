@@ -26,7 +26,7 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
             resource_group_name=resource_group.name,
             scope_name="str",
             perimeter_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
         response = self.client.network_security_perimeter_configurations.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
                 resource_group_name=resource_group.name,
                 scope_name="str",
                 perimeter_name="str",
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

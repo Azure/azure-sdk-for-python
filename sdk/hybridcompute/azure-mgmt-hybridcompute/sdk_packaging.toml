@@ -3,6 +3,6 @@ package_name = "azure-mgmt-hybridcompute"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Hybrid Compute Management"
 package_doc_id = ""
-is_stable = true
+is_stable = false
 is_arm = true
 title = "HybridComputeManagementClient"
