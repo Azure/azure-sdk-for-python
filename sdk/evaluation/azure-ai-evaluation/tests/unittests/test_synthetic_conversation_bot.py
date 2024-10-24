@@ -2,7 +2,6 @@ from unittest.mock import AsyncMock, patch
 
 import jinja2
 import pytest
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation.simulator._conversation import (
@@ -12,6 +11,7 @@ from azure.ai.evaluation.simulator._conversation import (
     LLMBase,
     OpenAIChatCompletionsModel,
 )
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 
 # Mock classes for dependencies
