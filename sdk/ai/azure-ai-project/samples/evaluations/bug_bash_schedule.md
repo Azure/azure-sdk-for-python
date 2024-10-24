@@ -37,6 +37,22 @@ git checkout users/singankit/remote_evaluation_bug_bash
 1. This Online Evaluation [sample_evaluation_schedules.py](./sample_evaluations_schedules.py) file demonstrates how to run CRUD operations on how to evaluate continuously by running evaluation on a given schedule.
 2. We have created AI project with relevant permissions to test for bug bash, please refer `Setup: Sample SDK API Testing Parameters` section in [Online Evaluation Bug Bash Document](https://microsoftapc-my.sharepoint.com/:w:/g/personal/shiprajain_microsoft_com/EQwumulCeG9JoQbgHw0ts-EB1-Yj9Vw8HeXKwgXQl_hv9w?e=kbBnKY) for values to override in [sample_evaluation_schedules.py](./sample_evaluations_schedules.py).
 
+### Log A Bug Under [Bug Bash Query Board](https://dev.azure.com/msdata/Vienna/_workitems/edit/3572161)
+
+#### Template  
+
+- Title: [Brief description of the bug]  
+- Steps to Reproduce:  
+- Expected Result: [What you expected to happen]  
+
+- Actual Result: [What actually happened]  
+
+- Screenshots/Logs: [Attach any relevant files]  
+
+- Priority: [Low/Medium/High]  
+
+- Tag: ignite, OnlineEvaluation  
+
 ### Appendix
 The following sections are optional for the bug bash and will be enhanced afterward.
 #### How to Get `Project Connection String`?
