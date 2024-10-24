@@ -72,6 +72,8 @@ try:
     from ._models_py3 import BindOptions
     from ._models_py3 import BlobReferenceForConsumptionDto
     from ._models_py3 import BuildContext
+    from ._models_py3 import CapabilityHost
+    from ._models_py3 import CapabilityHostProperties
     from ._models_py3 import CapacityConfig
     from ._models_py3 import CategoricalDataDriftMetricThreshold
     from ._models_py3 import CategoricalDataQualityMetricThreshold
@@ -684,6 +686,8 @@ except (SyntaxError, ImportError):
     from ._models import BindOptions  # type: ignore
     from ._models import BlobReferenceForConsumptionDto  # type: ignore
     from ._models import BuildContext  # type: ignore
+    from ._models import CapabilityHost  # type: ignore
+    from ._models import CapabilityHostProperties  # type: ignore
     from ._models import CapacityConfig  # type: ignore
     from ._models import CategoricalDataDriftMetricThreshold  # type: ignore
     from ._models import CategoricalDataQualityMetricThreshold  # type: ignore
@@ -1246,6 +1250,8 @@ from ._azure_machine_learning_workspaces_enums import (
     BillingCurrency,
     BlockedTransformers,
     Caching,
+    CapabilityHostKind,
+    CapabilityHostProvisioningState,
     CategoricalDataDriftMetric,
     CategoricalDataQualityMetric,
     CategoricalPredictionDriftMetric,
@@ -1488,6 +1494,8 @@ __all__ = [
     'BindOptions',
     'BlobReferenceForConsumptionDto',
     'BuildContext',
+    'CapabilityHost',
+    'CapabilityHostProperties',
     'CapacityConfig',
     'CategoricalDataDriftMetricThreshold',
     'CategoricalDataQualityMetricThreshold',
@@ -2048,6 +2056,8 @@ __all__ = [
     'BillingCurrency',
     'BlockedTransformers',
     'Caching',
+    'CapabilityHostKind',
+    'CapabilityHostProvisioningState',
     'CategoricalDataDriftMetric',
     'CategoricalDataQualityMetric',
     'CategoricalPredictionDriftMetric',

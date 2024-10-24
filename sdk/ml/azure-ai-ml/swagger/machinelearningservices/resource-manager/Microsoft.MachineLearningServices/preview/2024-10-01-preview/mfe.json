@@ -4136,6 +4136,214 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/capabilityHosts/{name}": {
+      "delete": {
+        "tags": [
+          "CapabilityHost"
+        ],
+        "summary": "Delete capabilityHost.",
+        "operationId": "CapabilityHosts_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "CapabilityHost name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete CapabilityHost.": {
+            "$ref": "./examples/CapabilityHost/delete.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      },
+      "get": {
+        "tags": [
+          "CapabilityHost"
+        ],
+        "summary": "Get capabilityHost.",
+        "operationId": "CapabilityHosts_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "CapabilityHost name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/CapabilityHostResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get CapabilityHost.": {
+            "$ref": "./examples/CapabilityHost/get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CapabilityHost"
+        ],
+        "summary": "Create or update capabilityHost.",
+        "operationId": "CapabilityHosts_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "CapabilityHost name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "CapabilityHost definition.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CapabilityHostResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update request is successful.",
+            "schema": {
+              "$ref": "#/definitions/CapabilityHostResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/CapabilityHostResource"
+            },
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Azure-AsyncOperation": {
+                "description": "URI to poll for asynchronous operation status.",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate CapabilityHost.": {
+            "$ref": "./examples/CapabilityHost/createOrUpdate.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes": {
       "get": {
         "tags": [
@@ -13701,6 +13909,11 @@
       "description": "Asset output type.",
       "type": "object",
       "properties": {
+        "assetName": {
+          "description": "Output Asset Name.",
+          "type": "string",
+          "x-nullable": true
+        },
         "mode": {
           "description": "Output Asset Delivery Mode.",
           "default": "ReadWriteMount",
@@ -14787,6 +15000,134 @@
           ]
         }
       },
+      "additionalProperties": false
+    },
+    "CapabilityHost": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResourceBase"
+        }
+      ],
+      "properties": {
+        "aiServicesConnections": {
+          "description": "List of AI services connections.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "capabilityHostKind": {
+          "description": "Kind of this capability host.",
+          "default": "Agents",
+          "$ref": "#/definitions/CapabilityHostKind"
+        },
+        "customerSubnet": {
+          "description": "Customer subnet info to help set up this capability host.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "provisioningState": {
+          "description": "Provisioning state for the CapabilityHost.",
+          "$ref": "#/definitions/CapabilityHostProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "storageConnections": {
+          "description": "List of Storage connections.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "vectorStoreConnections": {
+          "description": "List of VectorStore connections.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      },
+      "x-ms-client-name": "CapabilityHostProperties",
+      "additionalProperties": false
+    },
+    "CapabilityHostKind": {
+      "enum": [
+        "Agents"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "CapabilityHostKind",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Agents"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "CapabilityHostProvisioningState": {
+      "description": "Provisioning state of capability host.",
+      "enum": [
+        "Succeeded",
+        "Failed",
+        "Canceled",
+        "Creating",
+        "Updating",
+        "Deleting"
+      ],
+      "type": "string",
+      "readOnly": true,
+      "x-ms-enum": {
+        "name": "CapabilityHostProvisioningState",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Succeeded"
+          },
+          {
+            "value": "Failed"
+          },
+          {
+            "value": "Canceled"
+          },
+          {
+            "value": "Creating"
+          },
+          {
+            "value": "Updating"
+          },
+          {
+            "value": "Deleting"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "CapabilityHostResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ProxyResource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/CapabilityHost"
+        }
+      },
+      "x-ms-client-name": "CapabilityHost",
       "additionalProperties": false
     },
     "CategoricalDataDriftMetric": {
@@ -18485,7 +18826,7 @@
       "properties": {
         "model": {
           "description": "[Required] Input model for fine tuning.",
-          "$ref": "#/definitions/MLFlowModelJobInput"
+          "$ref": "#/definitions/JobInput"
         },
         "modelProvider": {
           "description": "[Required] Enum to determine the type of fine tuning.",

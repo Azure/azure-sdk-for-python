@@ -2488,6 +2488,8 @@ class AssetJobInput(msrest.serialization.Model):
 class AssetJobOutput(msrest.serialization.Model):
     """Asset output type.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -2496,6 +2498,7 @@ class AssetJobOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
     }
@@ -2503,11 +2506,14 @@ class AssetJobOutput(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -2515,6 +2521,7 @@ class AssetJobOutput(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(AssetJobOutput, self).__init__(**kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
 
@@ -3997,7 +4004,7 @@ class FineTuningVertical(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar model: Required. [Required] Input model for fine tuning.
-    :vartype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+    :vartype model: ~azure.mgmt.machinelearningservices.models.JobInput
     :ivar model_provider: Required. [Required] Enum to determine the type of fine tuning.Constant
      filled by server. Possible values include: "AzureOpenAI", "Custom".
     :vartype model_provider: str or ~azure.mgmt.machinelearningservices.models.ModelProvider
@@ -4020,7 +4027,7 @@ class FineTuningVertical(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'model': {'key': 'model', 'type': 'MLFlowModelJobInput'},
+        'model': {'key': 'model', 'type': 'JobInput'},
         'model_provider': {'key': 'modelProvider', 'type': 'str'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'training_data': {'key': 'trainingData', 'type': 'JobInput'},
@@ -4034,7 +4041,7 @@ class FineTuningVertical(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        model: "MLFlowModelJobInput",
+        model: "JobInput",
         task_type: Union[str, "FineTuningTaskType"],
         training_data: "JobInput",
         validation_data: Optional["JobInput"] = None,
@@ -4042,7 +4049,7 @@ class FineTuningVertical(msrest.serialization.Model):
     ):
         """
         :keyword model: Required. [Required] Input model for fine tuning.
-        :paramtype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.JobInput
         :keyword task_type: Required. [Required] Fine tuning task type. Possible values include:
          "ChatCompletion", "TextCompletion", "TextClassification", "QuestionAnswering",
          "TextSummarization", "TokenClassification", "TextTranslation", "ImageClassification",
@@ -4067,7 +4074,7 @@ class AzureOpenAiFineTuning(FineTuningVertical):
     All required parameters must be populated in order to send to Azure.
 
     :ivar model: Required. [Required] Input model for fine tuning.
-    :vartype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+    :vartype model: ~azure.mgmt.machinelearningservices.models.JobInput
     :ivar model_provider: Required. [Required] Enum to determine the type of fine tuning.Constant
      filled by server. Possible values include: "AzureOpenAI", "Custom".
     :vartype model_provider: str or ~azure.mgmt.machinelearningservices.models.ModelProvider
@@ -4093,7 +4100,7 @@ class AzureOpenAiFineTuning(FineTuningVertical):
     }
 
     _attribute_map = {
-        'model': {'key': 'model', 'type': 'MLFlowModelJobInput'},
+        'model': {'key': 'model', 'type': 'JobInput'},
         'model_provider': {'key': 'modelProvider', 'type': 'str'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'training_data': {'key': 'trainingData', 'type': 'JobInput'},
@@ -4104,7 +4111,7 @@ class AzureOpenAiFineTuning(FineTuningVertical):
     def __init__(
         self,
         *,
-        model: "MLFlowModelJobInput",
+        model: "JobInput",
         task_type: Union[str, "FineTuningTaskType"],
         training_data: "JobInput",
         validation_data: Optional["JobInput"] = None,
@@ -4113,7 +4120,7 @@ class AzureOpenAiFineTuning(FineTuningVertical):
     ):
         """
         :keyword model: Required. [Required] Input model for fine tuning.
-        :paramtype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.JobInput
         :keyword task_type: Required. [Required] Fine tuning task type. Possible values include:
          "ChatCompletion", "TextCompletion", "TextClassification", "QuestionAnswering",
          "TextSummarization", "TokenClassification", "TextTranslation", "ImageClassification",
@@ -5366,6 +5373,184 @@ class BuildContext(msrest.serialization.Model):
         self.dockerfile_path = dockerfile_path
 
 
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class CapabilityHost(ProxyResource):
+    """Azure Resource Manager resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. [Required] Additional attributes of the entity.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.CapabilityHostProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'CapabilityHostProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: "CapabilityHostProperties",
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. [Required] Additional attributes of the entity.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.CapabilityHostProperties
+        """
+        super(CapabilityHost, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class CapabilityHostProperties(ResourceBase):
+    """CapabilityHostProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar ai_services_connections: List of AI services connections.
+    :vartype ai_services_connections: list[str]
+    :ivar capability_host_kind: Kind of this capability host. Possible values include: "Agents".
+    :vartype capability_host_kind: str or
+     ~azure.mgmt.machinelearningservices.models.CapabilityHostKind
+    :ivar customer_subnet: Customer subnet info to help set up this capability host.
+    :vartype customer_subnet: str
+    :ivar provisioning_state: Provisioning state for the CapabilityHost. Possible values include:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.CapabilityHostProvisioningState
+    :ivar storage_connections: List of Storage connections.
+    :vartype storage_connections: list[str]
+    :ivar vector_store_connections: List of VectorStore connections.
+    :vartype vector_store_connections: list[str]
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'ai_services_connections': {'key': 'aiServicesConnections', 'type': '[str]'},
+        'capability_host_kind': {'key': 'capabilityHostKind', 'type': 'str'},
+        'customer_subnet': {'key': 'customerSubnet', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'storage_connections': {'key': 'storageConnections', 'type': '[str]'},
+        'vector_store_connections': {'key': 'vectorStoreConnections', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+        ai_services_connections: Optional[List[str]] = None,
+        capability_host_kind: Optional[Union[str, "CapabilityHostKind"]] = None,
+        customer_subnet: Optional[str] = None,
+        storage_connections: Optional[List[str]] = None,
+        vector_store_connections: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword ai_services_connections: List of AI services connections.
+        :paramtype ai_services_connections: list[str]
+        :keyword capability_host_kind: Kind of this capability host. Possible values include: "Agents".
+        :paramtype capability_host_kind: str or
+         ~azure.mgmt.machinelearningservices.models.CapabilityHostKind
+        :keyword customer_subnet: Customer subnet info to help set up this capability host.
+        :paramtype customer_subnet: str
+        :keyword storage_connections: List of Storage connections.
+        :paramtype storage_connections: list[str]
+        :keyword vector_store_connections: List of VectorStore connections.
+        :paramtype vector_store_connections: list[str]
+        """
+        super(CapabilityHostProperties, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
+        self.ai_services_connections = ai_services_connections
+        self.capability_host_kind = capability_host_kind
+        self.customer_subnet = customer_subnet
+        self.provisioning_state = None
+        self.storage_connections = storage_connections
+        self.vector_store_connections = vector_store_connections
+
+
 class CapacityConfig(msrest.serialization.Model):
     """The capacity configuration.
 
@@ -6301,47 +6486,6 @@ class CodeConfiguration(msrest.serialization.Model):
         super(CodeConfiguration, self).__init__(**kwargs)
         self.code_id = code_id
         self.scoring_script = scoring_script
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class CodeContainer(ProxyResource):
@@ -9576,7 +9720,7 @@ class CustomModelFineTuning(FineTuningVertical):
     All required parameters must be populated in order to send to Azure.
 
     :ivar model: Required. [Required] Input model for fine tuning.
-    :vartype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+    :vartype model: ~azure.mgmt.machinelearningservices.models.JobInput
     :ivar model_provider: Required. [Required] Enum to determine the type of fine tuning.Constant
      filled by server. Possible values include: "AzureOpenAI", "Custom".
     :vartype model_provider: str or ~azure.mgmt.machinelearningservices.models.ModelProvider
@@ -9601,7 +9745,7 @@ class CustomModelFineTuning(FineTuningVertical):
     }
 
     _attribute_map = {
-        'model': {'key': 'model', 'type': 'MLFlowModelJobInput'},
+        'model': {'key': 'model', 'type': 'JobInput'},
         'model_provider': {'key': 'modelProvider', 'type': 'str'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'training_data': {'key': 'trainingData', 'type': 'JobInput'},
@@ -9612,7 +9756,7 @@ class CustomModelFineTuning(FineTuningVertical):
     def __init__(
         self,
         *,
-        model: "MLFlowModelJobInput",
+        model: "JobInput",
         task_type: Union[str, "FineTuningTaskType"],
         training_data: "JobInput",
         validation_data: Optional["JobInput"] = None,
@@ -9621,7 +9765,7 @@ class CustomModelFineTuning(FineTuningVertical):
     ):
         """
         :keyword model: Required. [Required] Input model for fine tuning.
-        :paramtype model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.JobInput
         :keyword task_type: Required. [Required] Fine tuning task type. Possible values include:
          "ChatCompletion", "TextCompletion", "TextClassification", "QuestionAnswering",
          "TextSummarization", "TokenClassification", "TextTranslation", "ImageClassification",
@@ -9786,6 +9930,8 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -9804,6 +9950,7 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -9813,12 +9960,15 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -9827,7 +9977,8 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(CustomModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(CustomModelJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'custom_model'  # type: str
@@ -22606,6 +22757,8 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -22624,6 +22777,7 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -22633,12 +22787,15 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -22647,7 +22804,8 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLFlowModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLFlowModelJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'mlflow_model'  # type: str
@@ -22788,6 +22946,8 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -22806,6 +22966,7 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -22815,12 +22976,15 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -22829,7 +22993,8 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLTableJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLTableJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'mltable'  # type: str
@@ -30415,8 +30580,6 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
 class ServiceTagDestination(msrest.serialization.Model):
     """Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar action: The action enum for networking rule. Possible values include: "Allow", "Deny".
     :vartype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
     :ivar address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
@@ -30428,10 +30591,6 @@ class ServiceTagDestination(msrest.serialization.Model):
     :ivar service_tag:
     :vartype service_tag: str
     """
-
-    _validation = {
-        'address_prefixes': {'readonly': True},
-    }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
@@ -30445,6 +30604,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         self,
         *,
         action: Optional[Union[str, "RuleAction"]] = None,
+        address_prefixes: Optional[List[str]] = None,
         port_ranges: Optional[str] = None,
         protocol: Optional[str] = None,
         service_tag: Optional[str] = None,
@@ -30453,6 +30613,8 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         :keyword action: The action enum for networking rule. Possible values include: "Allow", "Deny".
         :paramtype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
+        :keyword address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
+        :paramtype address_prefixes: list[str]
         :keyword port_ranges:
         :paramtype port_ranges: str
         :keyword protocol:
@@ -30462,7 +30624,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         super(ServiceTagDestination, self).__init__(**kwargs)
         self.action = action
-        self.address_prefixes = None
+        self.address_prefixes = address_prefixes
         self.port_ranges = port_ranges
         self.protocol = protocol
         self.service_tag = service_tag
@@ -33033,6 +33195,8 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33051,6 +33215,7 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -33060,12 +33225,15 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33074,7 +33242,8 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(TritonModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(TritonModelJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'triton_model'  # type: str
@@ -33348,6 +33517,8 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33366,6 +33537,7 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -33375,12 +33547,15 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33389,7 +33564,8 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFileJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFileJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'uri_file'  # type: str
@@ -33523,6 +33699,8 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar asset_name: Output Asset Name.
+    :vartype asset_name: str
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33541,6 +33719,7 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
     }
 
     _attribute_map = {
+        'asset_name': {'key': 'assetName', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -33550,12 +33729,15 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
     def __init__(
         self,
         *,
+        asset_name: Optional[str] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword asset_name: Output Asset Name.
+        :paramtype asset_name: str
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
@@ -33564,7 +33746,8 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFolderJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFolderJobOutput, self).__init__(description=description, asset_name=asset_name, mode=mode, uri=uri, **kwargs)
+        self.asset_name = asset_name
         self.mode = mode
         self.uri = uri
         self.job_output_type = 'uri_folder'  # type: str
