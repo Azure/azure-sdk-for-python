@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Added logging to track received messages.
+
 ## 7.12.3 (2024-09-19)
 
 ### Bugs Fixed
