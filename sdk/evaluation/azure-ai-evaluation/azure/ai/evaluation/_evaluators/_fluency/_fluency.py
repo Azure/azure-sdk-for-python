@@ -32,18 +32,23 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_fluency": 4.0
+            "fluency": 4.0,
+            "gpt_fluency": 4.0,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    PROMPTY_FILE = "fluency.prompty"
-    RESULT_KEY = "gpt_fluency"
+    _PROMPTY_FILE = "fluency.prompty"
+    _RESULT_KEY = "fluency"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(
@@ -51,7 +56,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation=None,
         **kwargs,
     ):
         """
@@ -66,8 +71,8 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
-        :rtype: Dict[str, float]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
