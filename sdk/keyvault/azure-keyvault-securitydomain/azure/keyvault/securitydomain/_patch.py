@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from copy import deepcopy
 from enum import Enum
-from typing import Any, IO, List, MutableMapping, Union
+from typing import Any, IO, List, MutableMapping, overload, Union
 from urllib.parse import urlparse
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -107,8 +107,71 @@ class SecurityDomainClient(_SecurityDomainClient):
             api_version=self.api_version,
             authentication_policy=ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
             http_logging_policy=http_logging_policy,
-            **kwargs
+            **kwargs,
         )
+
+    @overload
+    def begin_download(
+        self, certificate_info_object: CertificateInfoObject, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[SecurityDomainObject]:
+        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
+        be used to activate a provisioned managed HSM resource.
+
+        :param certificate_info_object: The Security Domain download operation requires customer to
+         provide N certificates (minimum 3 and maximum 10)
+         containing a public key in JWK format. Required.
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SecurityDomainObject. The
+         SecurityDomainObject is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_download(
+        self, certificate_info_object: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[SecurityDomainObject]:
+        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
+        be used to activate a provisioned managed HSM resource.
+
+        :param certificate_info_object: The Security Domain download operation requires customer to
+         provide N certificates (minimum 3 and maximum 10)
+         containing a public key in JWK format. Required.
+        :type certificate_info_object: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SecurityDomainObject. The
+         SecurityDomainObject is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_download(
+        self, certificate_info_object: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[SecurityDomainObject]:
+        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
+        be used to activate a provisioned managed HSM resource.
+
+        :param certificate_info_object: The Security Domain download operation requires customer to
+         provide N certificates (minimum 3 and maximum 10)
+         containing a public key in JWK format. Required.
+        :type certificate_info_object: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SecurityDomainObject. The
+         SecurityDomainObject is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_download(
