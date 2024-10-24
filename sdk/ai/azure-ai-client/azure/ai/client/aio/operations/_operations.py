@@ -5676,11 +5676,12 @@ class EvaluationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_schedule(self, id: str, **kwargs: Any) -> _models.EvaluationSchedule:
+    async def get_schedule(self, name: str, **kwargs: Any) -> _models.EvaluationSchedule:
         """Resource read operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.EvaluationSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5699,7 +5700,7 @@ class EvaluationsOperations:
         cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
 
         _request = build_evaluations_get_schedule_request(
-            id=id,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5747,12 +5748,13 @@ class EvaluationsOperations:
 
     @overload
     async def create_or_replace_schedule(
-        self, id: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5765,12 +5767,13 @@ class EvaluationsOperations:
 
     @overload
     async def create_or_replace_schedule(
-        self, id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5783,12 +5786,13 @@ class EvaluationsOperations:
 
     @overload
     async def create_or_replace_schedule(
-        self, id: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -5801,12 +5805,13 @@ class EvaluationsOperations:
 
     @distributed_trace_async
     async def create_or_replace_schedule(
-        self, id: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :param resource: The resource instance. Is one of the following types: EvaluationSchedule,
          JSON, IO[bytes] Required.
         :type resource: ~azure.ai.client.models.EvaluationSchedule or JSON or IO[bytes]
@@ -5836,7 +5841,7 @@ class EvaluationsOperations:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluations_create_or_replace_schedule_request(
-            id=id,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5987,11 +5992,12 @@ class EvaluationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_schedule(self, id: str, **kwargs: Any) -> None:
+    async def delete_schedule(self, name: str, **kwargs: Any) -> None:
         """Resource delete operation template.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Name of the schedule, which also serves as the unique identifier for the
+         evaluation. Required.
+        :type name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6010,7 +6016,7 @@ class EvaluationsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_evaluations_delete_schedule_request(
-            id=id,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
