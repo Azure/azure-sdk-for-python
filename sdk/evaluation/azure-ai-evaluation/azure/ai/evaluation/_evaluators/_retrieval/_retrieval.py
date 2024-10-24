@@ -87,9 +87,11 @@ class _AsyncRetrievalScoreEvaluator:
                 per_turn_scores.append(math.nan)
 
         return {
+            "retrieval": list_mean_nan_safe(per_turn_scores),
             "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
                 "gpt_retrieval": per_turn_scores,
+                "retrieval": per_turn_scores,
             },
         }
 
@@ -128,10 +130,16 @@ class RetrievalEvaluator:
 
         {
             "gpt_retrieval": 3.0,
+            "retrieval": 3.0,
             "evaluation_per_turn": {
                 "gpt_retrieval": [1.0, 2.0, 3.0],
+                "retrieval": [1.0, 2.0, 3.0]
             }
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     def __init__(self, model_config):

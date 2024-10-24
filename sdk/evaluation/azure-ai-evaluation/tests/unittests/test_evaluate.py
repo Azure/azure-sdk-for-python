@@ -9,6 +9,13 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from azure.ai.evaluation import (
+    ContentSafetyEvaluator,
+    F1ScoreEvaluator,
+    GroundednessEvaluator,
+    ProtectedMaterialEvaluator,
+    evaluate,
+)
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -16,15 +23,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _rename_columns_conditionally,
 )
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
-from azure.ai.evaluation import (
-    evaluate,
-    ContentSafetyEvaluator,
-    F1ScoreEvaluator,
-    GroundednessEvaluator,
-    ProtectedMaterialEvaluator,
-)
-from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def _get_file(name):
@@ -557,7 +557,7 @@ class TestEvaluate:
 
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
-        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval, NoInputEval
+        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
         # All variants work with both keyworded inputs
         results = evaluate(

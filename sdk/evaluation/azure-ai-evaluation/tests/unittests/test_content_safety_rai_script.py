@@ -6,9 +6,6 @@ from typing import Any, Iterator, MutableMapping, Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.identity import DefaultAzureCredential
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics, HarmSeverityLevel, RAIService
 from azure.ai.evaluation._common.rai_service import (
@@ -22,6 +19,9 @@ from azure.ai.evaluation._common.rai_service import (
     submit_request,
     Tasks,
 )
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
