@@ -17,7 +17,7 @@ from azure.storage.blob.aio import BlobLeaseClient
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.filedatalake import DataLakeDirectoryClient, DataLakeFileClient, FileSystemClient
+    from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, FileSystemClient
 
 
 class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword

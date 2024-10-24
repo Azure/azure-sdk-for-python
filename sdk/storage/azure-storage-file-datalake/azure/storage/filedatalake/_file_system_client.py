@@ -6,7 +6,10 @@
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import functools
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing import (
+    Any, cast, Dict, Optional, Union,
+    TYPE_CHECKING
+)
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -35,6 +38,7 @@ from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.storage.blob._models import AccessPolicy as BlobAccessPolicy
     from datetime import datetime
     from ._models import AccessPolicy, PathProperties
 
@@ -124,7 +128,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                _hosts=datalake_hosts, **kwargs)
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
-        self._hosts[LocationMode.SECONDARY] = ""
+        self._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
@@ -136,7 +140,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             file_system=self.file_system_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # pylint: disable=protected-access
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname: str) -> str:
@@ -325,7 +329,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self._container_client.exists(**kwargs)
 
-    def _rename_file_system(self, new_name: str, **kwargs: Any) -> Self:
+    def _rename_file_system(self, new_name: str, **kwargs: Any) -> "FileSystemClient":
         """Renames a filesystem.
 
         Operation is successful only if the source filesystem exists.
@@ -469,7 +473,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: filesystem-updated property dict (Etag and last modified).
+        :returns: filesystem-updated property dict (ETag and last modified).
         :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
@@ -522,11 +526,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: File System-updated property dict (Etag and last modified).
+        :returns: File System-updated property dict (ETag and last modified).
         :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
         """
         return self._container_client.set_container_access_policy(
-            signed_identifiers,
+            cast(Dict[str, "BlobAccessPolicy"], signed_identifiers),
             public_access=public_access,
             **kwargs
         )
@@ -1021,7 +1025,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting the file client to interact with a specific file.
         """
         if isinstance(file_path, FileProperties):
-            file_path = file_path.get('name')
+            file_path = file_path.name
         else:
             file_path = str(file_path)
         _pipeline = Pipeline(
