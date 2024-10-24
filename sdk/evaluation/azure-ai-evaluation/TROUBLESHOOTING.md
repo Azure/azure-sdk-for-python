@@ -7,7 +7,8 @@ This guide walks you through how to investigate failures, common errors in the `
 - [Handle Evaluate API Errors](#handle-evaluate-api-errors)
   - [Troubleshoot Remote Tracking Issues](#troubleshoot-remote-tracking-issues)
   - [Safety Metric Supported Regions](#safety-metric-supported-regions)
-- [Handle Simulator Errors](#handle-simulator-errors)
+- [Handle Simulation Errors](#handle-simulation-errors)
+  - [Adversarial Simulation Supported Regions](#adversarial-simulation-supported-regions)
 - [Logging](#logging)
 - [Get additional help](#get-additional-help)
 
@@ -21,11 +22,13 @@ This guide walks you through how to investigate failures, common errors in the `
 
 ### Safety Metric Supported Regions
 
-Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators).
+Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaisafetyeval-regionsupport).
 
-## Handle Simulator Errors
+## Handle Simulation Errors
 
-Coming soon...
+### Adversarial Simulation Supported Regions
+
+Adversarial simulators use Azure AI Studio safety evaluation backend service to generate an adversarial dataset against your application. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaiadvsimulator-regionsupport).
 
 ## Logging
 
