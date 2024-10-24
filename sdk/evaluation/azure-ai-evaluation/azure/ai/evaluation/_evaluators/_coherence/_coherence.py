@@ -40,6 +40,11 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
 

@@ -77,6 +77,11 @@ class RougeScoreEvaluator:
         }
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     def __init__(self, rouge_type: RougeType):
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
 

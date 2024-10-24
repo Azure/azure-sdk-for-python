@@ -71,6 +71,11 @@ class MeteorScoreEvaluator:
         }
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
         self._async_evaluator = _AsyncMeteorScoreEvaluator(alpha=alpha, beta=beta, gamma=gamma)
 

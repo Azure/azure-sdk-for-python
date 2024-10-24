@@ -55,6 +55,11 @@ class QAEvaluator:
         }
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     def __init__(self, model_config, parallel: bool = True):
         self._parallel = parallel
 
