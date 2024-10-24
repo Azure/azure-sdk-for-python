@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Coroutine, Optional, Dict
+from typing import Optional, Dict
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
@@ -133,6 +133,11 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         """This evaluator has some unique post-processing that requires data that
         the rai_service script is not currently built to handle. So we post-post-process
         the result here to message it into the right form.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
         """
         result = await super()._do_eval(eval_input)
         real_result = {}

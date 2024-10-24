@@ -7,7 +7,7 @@ import math
 import re
 import time
 from ast import literal_eval
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 
@@ -24,7 +24,6 @@ from .constants import (
     EvaluationMetrics,
     RAIService,
     Tasks,
-    _InternalAnnotationTasks,
     _InternalEvaluationMetrics,
 )
 from .utils import get_harm_severity_level
@@ -151,6 +150,8 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :type rai_svc_url: str
     :param token: The Azure authentication token.
     :type token: str
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
     :return: The operation ID.
     :rtype: str
     """
@@ -261,7 +262,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
 
 
 def _parse_content_harm_response(
-    batch_response: List[Dict], metric_name: str, metric_display_name: str = None
+    batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
@@ -269,6 +270,8 @@ def _parse_content_harm_response(
     :type batch_response: List[Dict]
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
+    :param metric_display_name: The evaluation metric display name to use. If unset, use the metric_name.
+    :type metric_display_name: Optional[str]
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """

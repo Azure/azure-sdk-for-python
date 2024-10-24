@@ -127,10 +127,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         """
         if self._eval_metric == EvaluationMetrics.GROUNDEDNESS:
             return Tasks.GROUNDEDNESS
-        elif self._eval_metric == EvaluationMetrics.XPIA:
+        if self._eval_metric == EvaluationMetrics.XPIA:
             return Tasks.XPIA
-        elif self._eval_metric == _InternalEvaluationMetrics.ECI:
+        if self._eval_metric == _InternalEvaluationMetrics.ECI:
             return _InternalAnnotationTasks.ECI
-        elif self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
+        if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
             return Tasks.PROTECTED_MATERIAL
         return Tasks.CONTENT_HARM
