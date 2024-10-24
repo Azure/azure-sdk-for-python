@@ -43,10 +43,10 @@ project_client = AIProjectClient.from_connection_string(
 app_insights_config = ApplicationInsightsConfiguration(
     resource_id="<sample-resource-id>",
     query="<sample-query>",
-    service_name="<sample_service_name>"
+    service_name="<sample_service_name>" # this is not being used, keep empty for now
 )
 f1_evaluator_config = EvaluatorConfiguration(
-    id=F1ScoreEvaluator.id,
+    id="<sample-evaluator-id>",
     init_params={},
     data_mapping={"response": "${data.message}", "ground_truth": "${data.itemType}"}
 )

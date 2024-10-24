@@ -24,17 +24,20 @@ git checkout users/singankit/remote_evaluation_bug_bash
 2. Install the required packages by running the following command:
     ```bash
    # Clearing any old installation
-    pip uninstall azure-ai-project azure-ai-ml azure-ai-evaluation
+    pip uninstall azure-ai-project azure-ai-ml
 
    pip install azure-identity azure-ai-ml
-   # installing azure-ai-evaluation
-   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_evaluation-1.0.0a20241022005-py3-none-any.whl
    # installing azure-ai-project
    pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
     ```
 
 ### How to Get `Connection String` for the Project ?
-Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page. Here is the [link]() to the project overview page.
+Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
+
+### Instructions for pushing application insights data
+
+
+### Instructions to view enriched data
 
 ### Samples
 1. Online Evaluation - [Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
