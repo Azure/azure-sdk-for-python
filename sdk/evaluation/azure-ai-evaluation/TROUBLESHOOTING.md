@@ -15,13 +15,13 @@ This guide walks you through how to investigate failures, common errors in the `
 
 ### Troubleshoot Remote Tracking Issues
 
-- If your AI Studio hub is set to identity-based storage access and you're unable to upload data because of permission issues, check whether the `Storage Blob Data Contributor` role is assigned to the storage account linked to your Azure AI Studio hub. You can find more details [here](https://review.learn.microsoft.com/en-us/azure/ai-studio/how-to/disable-local-auth?branch=pr-en-us-278974&tabs=portal).
+- If your AI Studio hub is set to identity-based storage access and you're unable to upload data because of permission issues, check whether the `Storage Blob Data Contributor` role is assigned to the storage account linked to your Azure AI Studio hub. You can find more details [here](https://review.learn.microsoft.com/en-us/azure/ai-studio/how-to/disable-local-auth).
 
-- Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
+- Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
 
 ### Safety Metric Supported Regions
 
-Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators).
+Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators).
 
 ## Handle Simulator Errors
 

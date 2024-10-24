@@ -688,6 +688,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         }
     )
 
+    if target is not None:
+        _validate_columns_for_target(input_data_df, target)
+
     # Target Run
     try:
         pf_client = PFClient(
