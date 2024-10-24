@@ -8,18 +8,22 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from copy import deepcopy
 from enum import Enum
-from typing import Any, List
+from typing import Any, IO, List, MutableMapping, Union
 from urllib.parse import urlparse
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import KeyVaultClient
-from ._internal import ChallengeAuthPolicy
+from ._client import SecurityDomainClient as _SecurityDomainClient
+from ._internal import ChallengeAuthPolicy, SecurityDomainClientPolling, SecurityDomainClientPollingMethod
+from .models import CertificateInfoObject, SecurityDomainObject
 from ._serialization import Serializer
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 __all__: List[str] = [
     "SecurityDomainClient",
@@ -67,12 +71,8 @@ def _format_api_version(request: HttpRequest, api_version: str) -> HttpRequest:
     return request_copy
 
 
-class SecurityDomainClient(KeyVaultClient):
+class SecurityDomainClient(_SecurityDomainClient):
     """Manages the security domain of a Managed HSM.
-
-    :ivar hsm_security_domain: HsmSecurityDomainOperations operations
-    :vartype hsm_security_domain:
-     azure.keyvault.securitydomain.operations.HsmSecurityDomainOperations
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
         You should validate that this URL references a valid Key Vault or Managed HSM resource.
@@ -108,6 +108,32 @@ class SecurityDomainClient(KeyVaultClient):
             authentication_policy=ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
             http_logging_policy=http_logging_policy,
             **kwargs
+        )
+
+    @distributed_trace
+    def begin_download(
+        self, certificate_info_object: Union[CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[SecurityDomainObject]:
+        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
+        be used to activate a provisioned managed HSM resource.
+
+        :param certificate_info_object: The Security Domain download operation requires customer to
+         provide N certificates (minimum 3 and maximum 10)
+         containing a public key in JWK format. Is one of the following types: CertificateInfoObject,
+         JSON, IO[bytes] Required.
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
+         JSON or IO[bytes]
+        :return: An instance of LROPoller that returns SecurityDomainObject. The
+         SecurityDomainObject is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        return super().begin_download(
+            certificate_info_object,
+            polling=SecurityDomainClientPollingMethod(lro_algorithms=[SecurityDomainClientPolling()], timeout=delay),
+            **kwargs,
         )
 
     @property
