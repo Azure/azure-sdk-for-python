@@ -18,8 +18,8 @@ git checkout users/singankit/remote_evaluation_bug_bash
 
 1. Create a **virtual environment of you choice**. To create one using conda, run the following command:
     ```bash
-    conda create -n remote-evaluation-bug-bash python=3.11
-    conda activate remote-evaluation-bug-bash
+    conda create -n online-evaluation-bug-bash python=3.11
+    conda activate online-evaluation-bug-bash
     ```
 2. Install the required packages by running the following command:
     ```bash
@@ -27,12 +27,13 @@ git checkout users/singankit/remote_evaluation_bug_bash
     pip uninstall azure-ai-project azure-ai-ml
 
    pip install azure-identity azure-ai-ml
-   # installing azure-ai-project
+   # Optional: Upgrade pip if any issues occur in above two steps (pip install --upgrade pip)
+   # installing azure-ai-project, SDK is same for remote, if already installed please ignore.
    pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
     ```
 
-### How to Get `Connection String` for the Project ?
-Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
+### How to Get `Project Connection String`?
+Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
 
 ### Instructions for pushing application insights data
 
@@ -40,4 +41,5 @@ Connection string is needed to easily create `AIProjectClient` object. You can g
 ### Instructions to view enriched data
 
 ### Samples
-1. Online Evaluation - [Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
+1. Online Evaluation - [SDK Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
+2. We had created project with relevant permissions to test for bug bash, please refer `Setup` section in [Online Evaluation Bug Bash Document](https://microsoftapc-my.sharepoint.com/:w:/g/personal/shiprajain_microsoft_com/EQwumulCeG9JoQbgHw0ts-EB1-Yj9Vw8HeXKwgXQl_hv9w?e=kbBnKY) for values to override in sample example.

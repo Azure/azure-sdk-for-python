@@ -28,7 +28,6 @@ import os
 from azure.ai.project import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.project.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, SamplingStrategy, EvaluationSchedule, CronTrigger, RecurrenceTrigger, Frequency, RecurrenceSchedule
-from azure.ai.evaluation import F1ScoreEvaluator
 import pprint
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
