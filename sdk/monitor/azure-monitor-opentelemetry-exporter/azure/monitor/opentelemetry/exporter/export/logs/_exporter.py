@@ -213,7 +213,7 @@ def _map_body_to_message(log_body: Any) -> str:
 
     try:
         return json.dumps(log_body)[:32768]
-    except Exception:
+    except:
         return str(log_body)[:32768]
 
 def _is_ignored_attribute(key: str) -> bool:
