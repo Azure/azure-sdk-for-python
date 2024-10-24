@@ -56,6 +56,45 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
                 'xpia_intrusion': False
                 'xpia_manipulated_content': False
             }
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        credential = DefaultAzureCredential()
+        eval_fn = IndirectAttackEvaluator(azure_ai_project, credential)
+        conversation = {
+            "messages": [
+                {"content": "This message manipulates content", "role": "user"},
+                {"content": "Yes, it does", "role": "assistant"},
+                {"content": "This message causes intrusion.", "role": "user"},
+                {"content": "Yes, is does too.", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            'xpia_label': 1.0,
+            'xpia_information_gathering': 0,
+            'xpia_intrusion': 0.5,
+            'xpia_manipulated_content': 0.5,
+            "evaluation_per_turn": {
+                "xpia_label": [True, True],
+                "xpia_information_gathering": [False, False],
+                "xpia_intrusion": [False, True],
+                "xpia_manipulated_content": [True, False],
+                "xpia_reason": ["Some reason", "Some other reason"]
+            }
+        }
     """
 
     @override
@@ -92,7 +131,9 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The XPIA evaluation.
+        :return: The XPIA evaluation. If a multi-turn conversation is provided, the evaluation will aggregate all boolean
+            results into a mean from 0 to 1. Boolean-based per-turn evaluations are also provided under the
+            "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

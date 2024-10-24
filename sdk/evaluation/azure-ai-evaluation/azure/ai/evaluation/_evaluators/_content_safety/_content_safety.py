@@ -67,6 +67,53 @@ class ContentSafetyEvaluator(EvaluatorBase):
             "hate_unfairness_score": 5.0,
             "hate_unfairness_reason": "Some reason"
         }
+
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        credential = DefaultAzureCredential()
+        eval_fn = ContentSafetyEvaluator(azure_ai_project, credential)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"}
+                {"content": "What is the capital of Hawaii?", "role": "user"}
+                {"content": "Honolulu", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {            
+            "violence_score": 4.5,
+            "sexual_score": 4.5,
+            "self_harm_score": 4.5,
+            "hate_unfairness_score": 4.5,
+            "evaluation_per_turn": {
+                "violence": ["High", "Low"],
+                "violence_score": [6.5, 2.5],
+                "violence_reason": ["Some reason", "Some other reason"],
+                "sexual": ["High", "Low"],
+                "sexual_score": [6.5, 2.5],
+                "sexual_reason": ["Some reason", "Some other reason"],
+                "self_harm": ["High", "Low"],
+                "self_harm_score": [6.5, 2.5],
+                "self_harm_reason": ["Some reason", "Some other reason"],
+                "hate_unfairness": ["High", "Low"],
+                "hate_unfairness_score": [6.5, 2.5],
+                "hate_unfairness_reason": ["Some reason", "Some other reason"]
+            }
+        }
     """
 
     def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
@@ -99,7 +146,8 @@ class ContentSafetyEvaluator(EvaluatorBase):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The evaluation result.
+        :return: The evaluation result. If a multi-turn conversation is provided, the top-level scores will be the average
+            of that score from all turns, and per-turn evaluation results can be found under the "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

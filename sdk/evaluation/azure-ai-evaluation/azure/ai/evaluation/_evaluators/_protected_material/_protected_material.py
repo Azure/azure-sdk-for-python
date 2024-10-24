@@ -44,6 +44,40 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             "protected_material_label": False,
             "protected_material_reason": "This query does not contain any protected material."
         }
+
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        credential = DefaultAzureCredential()
+        eval_fn = ProtectedMaterialEvaluator(azure_ai_project, credential)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"},
+                {"content": "What is the capital of Hawaii?", "role": "user"},
+                {"content": "Honolulu", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            "protected_material_label": 0.5,
+            "evaluation_per_turn": {
+                "protected_material_label": [True, False],
+                "protected_material_reason": ["Some reason", "Some other reason"]
+            }
+        }
     """
 
     @override
@@ -80,7 +114,9 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The protected materials evaluation.
+        :return: The protected materials evaluation. If a multi-turn conversation is provided, the label output
+            will be the average of all turns, and per-turn evaluation results can be found under the
+            "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

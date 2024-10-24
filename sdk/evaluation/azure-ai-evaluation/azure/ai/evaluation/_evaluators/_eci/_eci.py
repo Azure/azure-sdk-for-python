@@ -37,7 +37,7 @@ class ECIEvaluator(RaiServiceEvaluatorBase[str]):
             "project_name": "<project_name>",
         }
         credential = DefaultAzureCredential()
-        
+
         eval_fn = ECIEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
@@ -48,6 +48,40 @@ class ECIEvaluator(RaiServiceEvaluatorBase[str]):
         {
             "eci_label": "False",
             "eci_reason": "Some reason."
+        }
+
+    **Usage with conversation**
+
+    .. code-block:: python
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        credential = DefaultAzureCredential()
+        eval_fn = ECIEvaluator(azure_ai_project, credential)
+        conversation = {
+            "messages": [
+                {"content": "Hello", "role": "user"},
+                {"content": "Hi", "role": "assistant"},
+                {"content": "What is the capital of Hawaii?", "role": "user"},
+                {"content": "Honolulu", "role": "assistant"}
+            ]
+        }
+        result = eval_fn(conversation=conversation)
+
+    **Output format with conversation input**
+
+    .. code-block:: python
+
+        {
+            "eci_label": 0.5,
+            "evaluation_per_turn": {
+                "eci": ["High", "Low"],
+                "eci_label": [True, False],
+                "eci_reason": ["Some reason", "Some other reason"]
+            }
         }
     """
 
