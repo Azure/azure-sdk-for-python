@@ -21,6 +21,8 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
 
     **Usage**
 
@@ -31,7 +33,9 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = GroundednessProEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+
+        eval_fn = GroundednessProEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What's the capital of France", response="Paris", context="Paris.")
 
     **Output format**
@@ -52,7 +56,9 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = GroundednessProEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+
+        eval_fn = GroundednessProEvaluator(azure_ai_project, credential)
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the capital of France?"},
@@ -89,6 +95,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            **kwargs,
         )
 
     @override

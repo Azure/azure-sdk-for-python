@@ -4,6 +4,7 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+- Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
