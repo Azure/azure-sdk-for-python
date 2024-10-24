@@ -183,8 +183,8 @@ class SecurityDomainClient(_SecurityDomainClient):
         path_format_arguments = {
             "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
         }
-        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client._client.send_request(request_copy, stream=stream, **kwargs)
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)
 
 
 def patch_sdk():
