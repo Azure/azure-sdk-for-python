@@ -37,7 +37,6 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
-    ConnectionType,
 )
 
 from abc import ABC, abstractmethod

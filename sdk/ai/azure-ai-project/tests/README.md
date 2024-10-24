@@ -1,22 +1,14 @@
-# copied from azure-ai-inference TODO update
-
-# Azure AI client library tests for Python
+# Azure AI Project client library tests for Python
 
 The instructions below are for running tests locally, on a Windows machine, against the live service.
 
-## Prerequisites
-
-The live tests were written against the AI models mentioned below. You will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
-
-- `gpt-4o` on Azure OpenAI (AOAI), for Agents tests
-
-## Setup
+## Build and install the client library
 
 - Clone or download this sample repository.
-- Open a command prompt window in the folder `sdk\ai\azure-ai-client`.
+- Open a command prompt window in the folder `sdk\ai\azure-ai-project`
 - If you want to run tests against the latest published client library, install it by running:
    ```bash
-   pip install azure-ai-client
+   pip install azure-ai-project
    ```
 - If you want to run tests against a locally built client library:
     - First build the wheel:
@@ -25,29 +17,30 @@ The live tests were written against the AI models mentioned below. You will need
         pip install -r dev_requirements.txt
         python setup.py bdist_wheel
         ```
-    - Then install the resulting local wheel (update version `1.0.0b2` to the current one):
+    - Then install the resulting local wheel (update version `1.0.0b1` to the current one):
         ```bash
-        pip install dist\azure_ai_client-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_project-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
-## Set environment variables
-
-Here is the list of environment variables used by the tests:
+## Setup for running tests in the `agents` folder
 
 ```bash
-# For agents, including tools
-set AZURE_AI_CLIENT_AGENTS_CONNECTION_STRING=<your_connection_string>
+set PROJECT_CONNECTION_STRING_AGENTS_TESTS=<your_connection_string>
 ```
 
-<!--
-In addition, the following environment values **must be** defined, although not used. Assign any value to them:
+## Setup for running tests in the `evaluations` folder
+
+## Setup for running tests in the `connections` and `inference` folders
+
+You need an Azure AI Project that has the following:
+
+TODO
+
+Copy the `Project connection string` from the Azure AI Studio and set the following environment variable:
 
 ```bash
-set AI_TENANT_ID=not-used
-set AI_CLIENT_ID=not-used
-set AI_CLIENT_SECRET=not-used
+set PROJECT_CONNECTION_STRING_CONNECTIONS_TESTS=<your_connection_string>
 ```
--->
 
 ## Configure test proxy
 
@@ -68,10 +61,10 @@ To run all tests, type:
 pytest
 ```
 
-For windows run:
+To run tests in a particular folder (`tests\connections` for example):
 
 ```bash
-python -m pytest tests\agents
+python tests\connections
 ```
 
 ## Additional information
