@@ -109,7 +109,7 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
     ):
-        if delivery_tag not in self._received_delivery_tags:
+        if delivery_tag != b"$cbs" and delivery_tag not in self._received_delivery_tags:
             raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
 
         disposition_frame = DispositionFrame(
@@ -118,7 +118,8 @@ class ReceiverLink(Link):
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
-        self._received_delivery_tags.remove(delivery_tag)
+        if delivery_tag != b"$cbs":
+            self._received_delivery_tags.remove(delivery_tag)
 
     def attach(self):
         super().attach()
