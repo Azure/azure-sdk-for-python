@@ -181,16 +181,12 @@ class SecurityDomainOperationStatus(_model_base.Model):
     :vartype status: str or ~azure.keyvault.securitydomain.models.OperationStatus
     :ivar status_details: Details of the operation status.
     :vartype status_details: str
-    :ivar value: The Security Domain.
-    :vartype value: str
     """
 
     status: Optional[Union[str, "_models.OperationStatus"]] = rest_field()
     """Operation status. Known values are: \"Success\", \"InProgress\", and \"Failed\"."""
     status_details: Optional[str] = rest_field()
     """Details of the operation status."""
-    value: Optional[str] = rest_field()
-    """The Security Domain."""
 
     @overload
     def __init__(
@@ -198,7 +194,6 @@ class SecurityDomainOperationStatus(_model_base.Model):
         *,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
         status_details: Optional[str] = None,
-        value: Optional[str] = None,
     ) -> None: ...
 
     @overload
