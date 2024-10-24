@@ -42,7 +42,7 @@ project_client = AIProjectClient.from_connection_string(
 app_insights_config = ApplicationInsightsConfiguration(
     resource_id="<sample-resource-id>",
     query="<sample-query>",
-    service_name="<sample_service_name>" # this is not being used, keep empty for now
+    service_name="" # this is not being used, keep empty for now
 )
 f1_evaluator_config = EvaluatorConfiguration(
     id="<sample-evaluator-id>",
@@ -51,11 +51,11 @@ f1_evaluator_config = EvaluatorConfiguration(
 )
 recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
 evaluators = {
-    "f1_score": f1_evaluator_config,
+    "<evaluator-name>": f1_evaluator_config,
 }
 
 sampling_strategy = SamplingStrategy(rate=0.7)
-name = "<sample-name>"
+name = "<sample-name-prefix-with-alias>"
 description = "<sample-description>"
 tags = {"<tag-key>": "<tag-value>"}
 properties = {"Environment": "<sample-environment>"}
@@ -69,23 +69,26 @@ evaluation_schedule = EvaluationSchedule(
     tags=tags,
     properties=properties
 )
+# Comment the below sections to run CRUD operations on Online Evaluation Schedule
+# -------CREATE ONLINE EVALUATION SCHEDULE-------------
 evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
 pprint.pprint(evaluation_schedule)
+# -----------------------------------------------------
 
-# Below gives examples of other schedule actions available
-
-
-# # Sample for get an evaluation schedule with name
-# evaluation_schedule = project_client.evaluations.get_schedule("<sample-name>")
+# -------GET ONLINE EVALUATION SCHEDULE BY NAME --------------
+# evaluation_schedule = project_client.evaluations.get_schedule(name)
 # pprint.pprint(evaluation_schedule)
+# ------------------------------------------------------------
 
-# # Sample for list evaluation schedules
+# -------LIST ONLINE EVALUATION SCHEDULES-------------
 # count = 0
 # for evaluation_schedule in project_client.evaluations.list_schedule():
 #     pprint.pprint(evaluation_schedule)
 #     count+=1
 # print(f"Total evaluation schedules: {count}")
+# -----------------------------------------------------
 
-# # Sample for delete an evaluation schedule with name
-# project_client.evaluations.delete_schedule("<sample-name>")
-# print("Deleted the evaluation schedule")
+# ------SOFT DELETE (DISABLE) ONLINE EVALUATION SCHEDULE-------------
+# project_client.evaluations.delete_schedule(name)
+# print("Successfully Soft Deleted (Disabled) the online evaluation schedule - {}".format(name))
+# -------------------------------------------------------------------
