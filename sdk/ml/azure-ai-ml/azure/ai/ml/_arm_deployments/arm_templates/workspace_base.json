@@ -753,7 +753,7 @@
                 "networkAcls": "[if(equals(parameters('associatedResourcePNA'), 'Disabled'), variables('networkAclsForManagedNetworkDependencies'), if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null')))]",
                 "publicNetworkAccess": "[parameters('associatedResourcePNA')]",
                 "isHnsEnabled": "[equals(parameters('kind'), 'featurestore')]",
-                "minimumTlsVersion": "[if(equals(parameters('kind'), 'featurestore'), 'TLS1_2', 'TLS1_0')]"
+                "minimumTlsVersion": "TLS1_2"
             }
         },
         {
