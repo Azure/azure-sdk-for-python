@@ -6,36 +6,36 @@
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.timezone.aio import MapsTimezoneClient
+from azure.maps.timezone.aio import MapsTimeZoneClient
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from timezone_preparer import MapsTimezonePreparer
+from timezone_preparer import MapsTimeZonePreparer
 
 
 # cSpell:disable
-class TestMapsTimezoneClient(AzureRecordedTestCase):
+class TestMapsTimeZoneClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = MapsTimezoneClient(
+        self.client = MapsTimeZoneClient(
             credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
         )
         assert self.client is not None
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_timezone_by_coordinates(self):
         async with self.client:
             result = await self.client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
             assert result is not None and "TimeZones" in result
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_timezone_by_id(self):
         async with self.client:
             result = await self.client.get_timezone_by_id(timezone_id="sr-Latn-RS")
             assert result is not None and "TimeZones" in result
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_iana_version(self):
         async with self.client:
@@ -43,21 +43,21 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
             result = await self.client.get_iana_version()
             assert result == expected_result
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_iana_timezone_ids(self):
         async with self.client:
             result = await self.client.get_iana_timezone_ids()
             assert result is not None and len(result) > 0
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_windows_timezone_ids(self):
         async with self.client:
             result = await self.client.get_windows_timezone_ids()
             assert result is not None and len(result) > 0
 
-    @MapsTimezonePreparer()
+    @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_convert_windows_timezone_to_iana(self):
         async with self.client:
