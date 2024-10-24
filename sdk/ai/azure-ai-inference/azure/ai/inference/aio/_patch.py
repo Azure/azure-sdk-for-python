@@ -87,7 +87,7 @@ async def load_client(
         )
 
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion"):
+    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
@@ -228,6 +228,19 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._seed = seed
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -437,7 +450,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
+    # pylint:disable=client-method-missing-tracing-decorator-async
     async def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -706,6 +719,19 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -989,6 +1015,19 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 

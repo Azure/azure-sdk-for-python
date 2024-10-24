@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Literal, TypedDict
+from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
 
@@ -16,7 +16,7 @@ class AzureOpenAIModelConfiguration(TypedDict):
     """Name of Azure OpenAI deployment to make request to"""
     azure_endpoint: str
     """Endpoint of Azure OpenAI resource to make request to"""
-    api_key: str
+    api_key: NotRequired[str]
     """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
     """(Optional) API version to use in request to Azure OpenAI deployment"""
@@ -53,3 +53,20 @@ class EvaluatorConfig(TypedDict, total=False):
 
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
+
+
+class Message(TypedDict):
+    role: str
+    content: Union[str, List[Dict]]
+    context: NotRequired[Dict[str, Any]]
+
+
+class Conversation(TypedDict):
+    messages: List[Message]
+    context: NotRequired[Dict[str, Any]]
+
+
+class EvaluationResult(TypedDict):
+    metrics: Dict
+    studio_url: NotRequired[str]
+    rows: List[Dict]
