@@ -117,7 +117,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
 
