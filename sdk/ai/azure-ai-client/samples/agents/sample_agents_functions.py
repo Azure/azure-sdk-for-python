@@ -38,39 +38,36 @@ ai_client = AzureAIClient.from_connection_string(
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
 
-with ai_client:
-    # Create an agent and run user's request with function calls
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview",
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=functions.definitions,
-    )
-    print(f"Created agent, ID: {agent.id}")
+scenario = os.path.basename(__file__)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 
-    thread = ai_client.agents.create_thread()
-    print(f"Created thread, ID: {thread.id}")
+with tracer.start_as_current_span(scenario):
+    with ai_client:
+        # Create an agent and run user's request with function calls
+        agent = ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="You are a helpful assistant",
+            tools=functions.definitions,
+        )
+        print(f"Created agent, ID: {agent.id}")
 
-    message = ai_client.agents.create_message(
-        thread_id=thread.id,
-        role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
-    )
-    print(f"Created message, ID: {message.id}")
+        thread = ai_client.agents.create_thread()
+        print(f"Created thread, ID: {thread.id}")
 
-    run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Created run, ID: {run.id}")
+        message = ai_client.agents.create_message(
+            thread_id=thread.id,
+            role="user",
+            content="Hello, send an email with the datetime and weather information in New York?",
+        )
+        print(f"Created message, ID: {message.id}")
 
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+        run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        print(f"Created run, ID: {run.id}")
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                ai_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                break
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            time.sleep(1)
+            run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
             tool_outputs = []
             for tool_call in tool_calls:
@@ -92,14 +89,18 @@ with ai_client:
                     thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
                 )
 
-        print(f"Current run status: {run.status}")
+                print(f"Tool outputs: {tool_outputs}")
+                if tool_outputs:
+                    ai_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
-    print(f"Run completed with status: {run.status}")
+            print(f"Current run status: {run.status}")
 
-    # Delete the agent when done
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+        print(f"Run completed with status: {run.status}")
 
-    # Fetch and log all messages
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+        # Delete the agent when done
+        ai_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+
+        # Fetch and log all messages
+        messages = ai_client.agents.list_messages(thread_id=thread.id)
+        print(f"Messages: {messages}")

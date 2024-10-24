@@ -136,14 +136,25 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         """
         ...
 
-    def add_attribute(self, key: str, value: Union[str, int]) -> None:
+    def add_attribute(self, key: str, value: Union[str, int, float]) -> None:
         """
         Add attribute (key value pair) to the current span.
 
         :param key: The key of the key value pair
         :type key: str
         :param value: The value of the key value pair
-        :type value: Union[str, int]
+        :type value: Union[str, int, float]
+        """
+        ...
+
+    def set_error(self, error_code: Optional[str] = None, exc: Optional[Exception] = None) -> None:
+        """
+        Set error information on the span.
+
+        :param error_code: The low cardinality error code.
+        :type error_code: str
+        :param exc: The exception.
+        :type value: Optional[Exception]
         """
         ...
 

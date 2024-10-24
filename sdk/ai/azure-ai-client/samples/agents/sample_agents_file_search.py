@@ -25,6 +25,7 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models._patch import FileSearchTool
 from azure.identity import DefaultAzureCredential
+from samples.tracing_helpers import configure_tracing
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -35,53 +36,59 @@ ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
-with ai_client:
+scenario = os.path.basename(__file__)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 
-    openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-    print(f"Uploaded file, file ID: {openai_file.id}")
+with tracer.start_as_current_span(scenario):
+    with ai_client:
 
-    openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
-    print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
+        openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+        print(f"Uploaded file, file ID: {openai_file.id}")
 
-    # Create file search tool with resources
-    file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
+        openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
+        print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
-    # Create agent with file search tool and process assistant run
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview",
-        name="my-assistant",
-        instructions="Hello, you are helpful assistant and can search information from uploaded files",
-        tools=file_search.definitions,
-        tool_resources=file_search.resources,
-    )
-    print(f"Created agent, agent ID: {agent.id}")
+        # Create file search tool with resources
+        file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
 
-    # Create thread for communication
-    thread = ai_client.agents.create_thread()
-    print(f"Created thread, ID: {thread.id}")
+        # Create agent with file search tool and process assistant run
+        agent = ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=file_search.resources,
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-    # Create message to thread
-    message = ai_client.agents.create_message(
-        thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
-    )
-    print(f"Created message, ID: {message.id}")
+        # Create thread for communication
+        thread = ai_client.agents.create_thread()
+        print(f"Created thread, ID: {thread.id}")
 
-    # Create and process assistant run in thread with tools
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Run finished with status: {run.status}")
+        file_search.add_vector_store(openai_vectorstore.id)
 
-    if run.status == "failed":
-        # Check if you got "Rate limit is exceeded.", then you want to get more quota
-        print(f"Run failed: {run.last_error}")
+        # Create message to thread
+        message = ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
+        )
+        print(f"Created message, ID: {message.id}")
 
-    # Delete the file when done
-    ai_client.agents.delete_vector_store(openai_vectorstore.id)
-    print("Deleted vector store")
+        # Create and process assistant run in thread with tools
+        run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        print(f"Run finished with status: {run.status}")
 
-    # Delete the agent when done
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+        if run.status == "failed":
+            # Check if you got "Rate limit is exceeded.", then you want to get more quota
+            print(f"Run failed: {run.last_error}")
 
-    # Fetch and log all messages
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+        # Delete the file when done
+        ai_client.agents.delete_vector_store(openai_vectorstore.id)
+        print("Deleted vector store")
+
+        # Delete the agent when done
+        ai_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+
+        # Fetch and log all messages
+        messages = ai_client.agents.list_messages(thread_id=thread.id)
+        print(f"Messages: {messages}")

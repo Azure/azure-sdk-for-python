@@ -27,9 +27,14 @@ from azure.ai.client.models import FilePurpose
 from azure.ai.client.models import FileSearchTool, MessageAttachment, ToolResources
 from azure.identity import DefaultAzureCredential
 
+
 import os
 
+from samples.tracing_helpers import configure_tracing
 
+tracer = configure_tracing("agent-samples").get_tracer(__file__)
+
+@tracer.start_as_current_span(__file__)
 async def main():
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"

@@ -33,6 +33,7 @@ from azure.ai.client.models import FunctionTool, ToolSet
 import os
 from typing import Any
 
+from samples.tracing_helpers import configure_tracing
 from user_functions import user_functions
 
 
@@ -65,7 +66,7 @@ class MyEventHandler(AgentEventHandler):
             print(f"Run failed. Error: {run.last_error}")
 
     def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+        print(f"RunStep type: {step.type}, Status: {step.status}\nContent: {step.as_dict()}")
 
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")
@@ -77,33 +78,37 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
-with ai_client:
-    functions = FunctionTool(user_functions)
-    toolset = ToolSet()
-    toolset.add(functions)
+scenario = os.path.basename(__file__)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
-    )
-    print(f"Created agent, ID: {agent.id}")
+with tracer.start_as_current_span(scenario):
+    with ai_client:
+        functions = FunctionTool(user_functions)
+        toolset = ToolSet()
+        toolset.add(functions)
 
-    thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID {thread.id}")
+        agent = ai_client.agents.create_agent(
+            model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        )
+        print(f"Created agent, ID: {agent.id}")
 
-    message = ai_client.agents.create_message(
-        thread_id=thread.id,
-        role="user",
-        content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
-    )
-    print(f"Created message, message ID {message.id}")
+        thread = ai_client.agents.create_thread()
+        print(f"Created thread, thread ID {thread.id}")
 
-    with ai_client.agents.create_stream(
-        thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
-        stream.until_done()
+        message = ai_client.agents.create_message(
+            thread_id=thread.id,
+            role="user",
+            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
+        )
+        print(f"Created message, message ID {message.id}")
 
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+        with ai_client.agents.create_stream(
+            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+        ) as stream:
+            stream.until_done()
 
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+        ai_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+
+        messages = ai_client.agents.list_messages(thread_id=thread.id)
+        print(f"Messages: {messages}")

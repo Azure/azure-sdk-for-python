@@ -12,6 +12,8 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
+from azure.ai.client._instrumentation._agent_instrumentation import add_thread_message_event, start_create_message_span, start_create_thread_span, start_list_messages_span
+from azure.ai.client._instrumentation._utils import GEN_AI_MESSAGE_ID, GEN_AI_THREAD_ID
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -1558,7 +1560,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
     def create_agent(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2235,7 +2236,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
     def create_thread(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2267,72 +2267,78 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        with start_create_thread_span(self._config.project_name, messages=messages) as span:
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
+            error_map: MutableMapping = {
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+            error_map.update(kwargs.pop("error_map", {}) or {})
 
-        if body is _Unset:
-            body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+            _params = kwargs.pop("params", {}) or {}
 
-        _request = build_agents_create_thread_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
-            ),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+            cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            if body is _Unset:
+                body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
+                body = {k: v for k, v in body.items() if v is not None}
+            content_type = content_type or "application/json"
+            _content = None
+            if isinstance(body, (IOBase, bytes)):
+                _content = body
+            else:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        response = pipeline_response.http_response
+            _request = build_agents_create_thread_request(
+                content_type=content_type,
+                api_version=self._config.api_version,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+                "resourceGroupName": self._serialize.url(
+                    "self._config.resource_group_name", self._config.resource_group_name, "str"
+                ),
+                "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200]:
+            _stream = kwargs.pop("stream", False)
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    try:
+                        response.read()  # Load the body in memory and close the socket
+                    except (StreamConsumedError, StreamClosedError):
+                        pass
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
             if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.AgentThread, response.json())
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
+            if span:
+                span.add_attribute(GEN_AI_THREAD_ID, deserialized.get("id"))
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  # type: ignore
+            return deserialized  # type: ignore
 
     @distributed_trace
     def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
@@ -2713,7 +2719,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
     def create_message(
         self,
         thread_id: str,
@@ -2756,79 +2761,84 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        with start_create_message_span(self._config.project_name, thread_id, role=role, content=content, attachments=attachments) as span:
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
+            error_map: MutableMapping = {
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+            error_map.update(kwargs.pop("error_map", {}) or {})
 
-        if body is _Unset:
-            if role is _Unset:
-                raise TypeError("missing required argument: role")
-            if content is _Unset:
-                raise TypeError("missing required argument: content")
-            body = {"attachments": attachments, "content": content, "metadata": metadata, "role": role}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+            _params = kwargs.pop("params", {}) or {}
 
-        _request = build_agents_create_message_request(
-            thread_id=thread_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
-            ),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+            cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            if body is _Unset:
+                if role is _Unset:
+                    raise TypeError("missing required argument: role")
+                if content is _Unset:
+                    raise TypeError("missing required argument: content")
+                body = {"attachments": attachments, "content": content, "metadata": metadata, "role": role}
+                body = {k: v for k, v in body.items() if v is not None}
+            content_type = content_type or "application/json"
+            _content = None
+            if isinstance(body, (IOBase, bytes)):
+                _content = body
+            else:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        response = pipeline_response.http_response
+            _request = build_agents_create_message_request(
+                thread_id=thread_id,
+                content_type=content_type,
+                api_version=self._config.api_version,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+                "resourceGroupName": self._serialize.url(
+                    "self._config.resource_group_name", self._config.resource_group_name, "str"
+                ),
+                "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200]:
+            _stream = kwargs.pop("stream", False)
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    try:
+                        response.read()  # Load the body in memory and close the socket
+                    except (StreamConsumedError, StreamClosedError):
+                        pass
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
             if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.ThreadMessage, response.json())
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadMessage, response.json())
+            if span:
+                span.add_attribute(GEN_AI_MESSAGE_ID, deserialized.get("id"))
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  # type: ignore
+            return deserialized  # type: ignore
 
-    @distributed_trace
     def list_messages(
         self,
         thread_id: str,
@@ -2867,65 +2877,72 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        with start_list_messages_span(self._config.project_name, thread_id) as span:
 
-        cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
+            error_map: MutableMapping = {
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+            error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _request = build_agents_list_messages_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
-            ),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            _headers = kwargs.pop("headers", {}) or {}
+            _params = kwargs.pop("params", {}) or {}
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
 
-        response = pipeline_response.http_response
+            _request = build_agents_list_messages_request(
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=limit,
+                order=order,
+                after=after,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+                "resourceGroupName": self._serialize.url(
+                    "self._config.resource_group_name", self._config.resource_group_name, "str"
+                ),
+                "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200]:
+            _stream = kwargs.pop("stream", False)
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    try:
+                        response.read()  # Load the body in memory and close the socket
+                    except (StreamConsumedError, StreamClosedError):
+                        pass
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
             if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.OpenAIPageableListOfThreadMessage, response.json())
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfThreadMessage, response.json())
+            if span:
+                for message in deserialized.data:
+                    add_thread_message_event(span, message)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized  # type: ignore
+            return deserialized  # type: ignore
 
     @distributed_trace
     def get_message(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
@@ -3298,7 +3315,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
     def create_run(
         self,
         thread_id: str,
@@ -3398,6 +3414,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7390,3 +7407,4 @@ class EvaluationsOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
+

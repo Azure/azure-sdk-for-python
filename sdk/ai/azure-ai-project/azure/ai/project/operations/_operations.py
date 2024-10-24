@@ -12,6 +12,9 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
+from azure.ai.client._instrumentation._agent_instrumentation import add_thread_message_event, start_create_message_span, start_create_thread_span, start_list_messages_span
+from azure.ai.client._instrumentation._utils import GEN_AI_MESSAGE_ID, GEN_AI_THREAD_ID
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,

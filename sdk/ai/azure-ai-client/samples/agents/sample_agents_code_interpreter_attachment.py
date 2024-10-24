@@ -27,6 +27,7 @@ from azure.ai.client.models import CodeInterpreterTool
 from azure.ai.client.models import FilePurpose
 from azure.ai.client.models import MessageAttachment
 from azure.identity import DefaultAzureCredential
+from samples.tracing_helpers import configure_tracing
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -37,44 +38,46 @@ ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
-with ai_client:
-    # upload a file and wait for it to be processed
-    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {file.id}")
 
-    code_interpreter = CodeInterpreterTool()
+scenario = os.path.basename(__file__)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 
-    # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview",
-        name="my-assistant",
-        instructions="You are helpful assistant",
-        tools=code_interpreter.definitions,
-    )
-    print(f"Created agent, agent ID: {agent.id}")
+with tracer.start_as_current_span(scenario):
+    with ai_client:
+        # upload a file and wait for it to be processed
+        file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+        print(f"Uploaded file, file ID: {file.id}")
 
-    thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID: {thread.id}")
+        code_interpreter = CodeInterpreterTool()
 
-    # create a message with the attachment
-    attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
-    message = ai_client.agents.create_message(
-        thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-    )
-    print(f"Created message, message ID: {message.id}")
+        # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+        agent = ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="You are helpful assistant",
+            tools=code_interpreter.definitions,
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Run finished with status: {run.status}")
+        thread = ai_client.agents.create_thread()
+        print(f"Created thread, thread ID: {thread.id}")
 
-    if run.status == "failed":
-        # Check if you got "Rate limit is exceeded.", then you want to get more quota
-        print(f"Run failed: {run.last_error}")
+        # create a message with the attachment
+        attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
+        message = ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+        )
+        print(f"Created message, message ID: {message.id}")
 
-    ai_client.agents.delete_file(file.id)
-    print("Deleted file")
+        run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        print(f"Run finished with status: {run.status}")
 
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+        if run.status == "failed":
+            # Check if you got "Rate limit is exceeded.", then you want to get more quota
+            print(f"Run failed: {run.last_error}")
 
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+        ai_client.agents.delete_file(file.id)
+        print("Deleted file")
+
+        messages = ai_client.agents.list_messages(thread_id=thread.id)
+        print(f"Messages: {messages}")

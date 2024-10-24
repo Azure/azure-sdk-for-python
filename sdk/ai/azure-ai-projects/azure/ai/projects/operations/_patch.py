@@ -12,6 +12,9 @@ import sys, io, logging, os, time
 from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 
+from azure.ai.client._instrumentation._agent_instrumentation import set_end_run, start_submit_tool_outputs_span, start_thread_run_span, wrap_handler
+from azure.ai.client._instrumentation._utils import GEN_AI_AGENT_ID, OperationName
+
 # from zoneinfo import ZoneInfo
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
@@ -498,29 +501,48 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: An Agent object.
         :raises: HttpResponseError for HTTP errors.
         """
-        if body is not _Unset:
-            if isinstance(body, IOBase):
-                return super().create_agent(body=body, content_type=content_type, **kwargs)
-            return super().create_agent(body=body, **kwargs)
 
-        if toolset is not None:
-            self._toolset = toolset
-            tools = toolset.definitions
-            tool_resources = toolset.resources
-
-        return super().create_agent(
-            model=model,
+        with start_create_agent_span(
+            self._config.project_name,
             name=name,
+            model=model,
             description=description,
             instructions=instructions,
             tools=tools,
             tool_resources=tool_resources,
+            toolset=toolset,
             temperature=temperature,
             top_p=top_p,
-            response_format=response_format,
-            metadata=metadata,
-            **kwargs,
-        )
+            response_format=response_format) as span:
+
+            if body is not _Unset:
+                if isinstance(body, IOBase):
+                    return super().create_agent(body=body, content_type=content_type, **kwargs)
+                return super().create_agent(body=body, **kwargs)
+
+            if toolset is not None:
+                self._toolset = toolset
+                tools = toolset.definitions
+                tool_resources = toolset.resources
+
+            agent = super().create_agent(
+                model=model,
+                name=name,
+                description=description,
+                instructions=instructions,
+                tools=tools,
+                tool_resources=tool_resources,
+                temperature=temperature,
+                top_p=top_p,
+                response_format=response_format,
+                metadata=metadata,
+                **kwargs,
+            )
+
+            if span:
+                span.add_attribute(GEN_AI_AGENT_ID, agent.id)
+
+            return agent
 
     def get_toolset(self) -> Optional[_models.ToolSet]:
         """
@@ -760,41 +782,59 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if isinstance(body, dict):  # Handle overload with JSON body.
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+        with start_thread_run_span(OperationName.START_THREAD_RUN,
+            self._config.project_name,
+            thread_id,
+            assistant_id,
+            model=model,
+            instructions=instructions,
+            additional_instructions=additional_instructions,
+            additional_messages=additional_messages,
+            temperature=temperature,
+            tools=tools,
+            top_p=top_p,
+            max_prompt_tokens=max_prompt_tokens,
+            max_completion_tokens=max_completion_tokens,
+            response_format=response_format) as span:
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
-            response = super().create_run(
-                thread_id,
-                assistant_id=assistant_id,
-                model=model,
-                instructions=instructions,
-                additional_instructions=additional_instructions,
-                additional_messages=additional_messages,
-                tools=tools,
-                stream_parameter=False,
-                stream=False,
-                temperature=temperature,
-                top_p=top_p,
-                max_prompt_tokens=max_prompt_tokens,
-                max_completion_tokens=max_completion_tokens,
-                truncation_strategy=truncation_strategy,
-                tool_choice=tool_choice,
-                response_format=response_format,
-                metadata=metadata,
-                **kwargs,
-            )
+            if isinstance(body, dict):  # Handle overload with JSON body.
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
-        elif isinstance(body, io.IOBase):  # Handle overload with binary body.
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+                response = super().create_run(
+                    thread_id,
+                    assistant_id=assistant_id,
+                    model=model,
+                    instructions=instructions,
+                    additional_instructions=additional_instructions,
+                    additional_messages=additional_messages,
+                    tools=tools,
+                    stream_parameter=False,
+                    stream=False,
+                    temperature=temperature,
+                    top_p=top_p,
+                    max_prompt_tokens=max_prompt_tokens,
+                    max_completion_tokens=max_completion_tokens,
+                    truncation_strategy=truncation_strategy,
+                    tool_choice=tool_choice,
+                    response_format=response_format,
+                    metadata=metadata,
+                    **kwargs,
+                )
 
-        else:
-            raise ValueError("Invalid combination of arguments provided.")
+            elif isinstance(body, io.IOBase):  # Handle overload with binary body.
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
-        # If streaming is enabled, return the custom stream object
-        return response
+            else:
+                raise ValueError("Invalid combination of arguments provided.")
+
+            if span:
+                set_end_run(span, response)
+
+            # If streaming is enabled, return the custom stream object
+            return response
 
     @distributed_trace
     def create_and_process_run(
@@ -892,51 +932,69 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        # Create and initiate the run with additional parameters
-        run = self.create_run(
-            thread_id=thread_id,
-            assistant_id=assistant_id,
+
+        with start_thread_run_span(
+            OperationName.PROCESS_THREAD_RUN,
+            self._config.project_name,
+            thread_id,
+            assistant_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
-            tools=tools,
             temperature=temperature,
+            tools=tools,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
-            truncation_strategy=truncation_strategy,
-            tool_choice=tool_choice,
-            response_format=response_format,
-            metadata=metadata,
-            **kwargs,
-        )
+            response_format=response_format) as span:
 
-        # Monitor and process the run status
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(sleep_interval)
-            run = self.get_run(thread_id=thread_id, run_id=run.id)
+            # Create and initiate the run with additional parameters
+            run = self.create_run(
+                thread_id=thread_id,
+                assistant_id=assistant_id,
+                model=model,
+                instructions=instructions,
+                additional_instructions=additional_instructions,
+                additional_messages=additional_messages,
+                tools=tools,
+                temperature=temperature,
+                top_p=top_p,
+                max_prompt_tokens=max_prompt_tokens,
+                max_completion_tokens=max_completion_tokens,
+                truncation_strategy=truncation_strategy,
+                tool_choice=tool_choice,
+                response_format=response_format,
+                metadata=metadata,
+                **kwargs,
+            )
 
-            if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    logging.warning("No tool calls provided - cancelling run")
-                    self.cancel_run(thread_id=thread_id, run_id=run.id)
-                    break
+            # Monitor and process the run status
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                time.sleep(sleep_interval)
+                run = self.get_run(thread_id=thread_id, run_id=run.id)
 
-                toolset = self.get_toolset()
-                if toolset:
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-                else:
-                    raise ValueError("Toolset is not available in the client.")
+                if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    if not tool_calls:
+                        logging.warning("No tool calls provided - cancelling run")
+                        self.cancel_run(thread_id=thread_id, run_id=run.id)
+                        break
 
-                logging.info("Tool outputs: %s", tool_outputs)
-                if tool_outputs:
-                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                    toolset = self.get_toolset()
+                    if toolset:
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                    else:
+                        raise ValueError("Toolset is not available in the client.")
 
-            logging.info("Current run status: %s", run.status)
+                    logging.info("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
-        return run
+                logging.info("Current run status: %s", run.status)
+
+            set_end_run(span, run)
+            return run
 
     @overload
     def create_stream(
@@ -1173,42 +1231,62 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if isinstance(body, dict):  # Handle overload with JSON body.
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+        span = start_thread_run_span(
+            OperationName.PROCESS_THREAD_RUN,
+            self._config.project_name,
+            thread_id,
+            assistant_id,
+            model=model,
+            instructions=instructions,
+            additional_instructions=additional_instructions,
+            additional_messages=additional_messages,
+            temperature=temperature,
+            tools=tools,
+            top_p=top_p,
+            max_prompt_tokens=max_prompt_tokens,
+            max_completion_tokens=max_completion_tokens,
+            response_format=response_format)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
-            response = super().create_run(
-                thread_id,
-                assistant_id=assistant_id,
-                model=model,
-                instructions=instructions,
-                additional_instructions=additional_instructions,
-                additional_messages=additional_messages,
-                tools=tools,
-                stream_parameter=True,
-                stream=True,
-                temperature=temperature,
-                top_p=top_p,
-                max_prompt_tokens=max_prompt_tokens,
-                max_completion_tokens=max_completion_tokens,
-                truncation_strategy=truncation_strategy,
-                tool_choice=tool_choice,
-                response_format=response_format,
-                metadata=metadata,
-                **kwargs,
-            )
+        # TODO: how to keep span active in the current context without existing?
+        # TODO: dummy span for none
+        with span.change_context(span.span_instance):
 
-        elif isinstance(body, io.IOBase):  # Handle overload with binary body.
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            if isinstance(body, dict):  # Handle overload with JSON body.
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
-        else:
-            raise ValueError("Invalid combination of arguments provided.")
+            elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+                response = super().create_run(
+                    thread_id,
+                    assistant_id=assistant_id,
+                    model=model,
+                    instructions=instructions,
+                    additional_instructions=additional_instructions,
+                    additional_messages=additional_messages,
+                    tools=tools,
+                    stream_parameter=True,
+                    stream=True,
+                    temperature=temperature,
+                    top_p=top_p,
+                    max_prompt_tokens=max_prompt_tokens,
+                    max_completion_tokens=max_completion_tokens,
+                    truncation_strategy=truncation_strategy,
+                    tool_choice=tool_choice,
+                    response_format=response_format,
+                    metadata=metadata,
+                    **kwargs,
+                )
 
-        response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+            elif isinstance(body, io.IOBase):  # Handle overload with binary body.
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
-        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+            else:
+                raise ValueError("Invalid combination of arguments provided.")
+
+            response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+
+            return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, wrap_handler(event_handler, span))
 
     @overload
     def submit_tool_outputs_to_run(
@@ -1316,24 +1394,32 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if isinstance(body, dict):
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+        with start_submit_tool_outputs_span(self._config.project_name,
+                                        thread_id=thread_id,
+                                        run_id=run_id,
+                                        tool_outputs=tool_outputs,
+                                        event_handler=event_handler) as span:
+            if isinstance(body, dict):
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        elif tool_outputs is not _Unset:
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
-            )
+            elif tool_outputs is not _Unset:
+                response = super().submit_tool_outputs_to_run(
+                    thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
+                )
 
-        elif isinstance(body, io.IOBase):
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+            elif isinstance(body, io.IOBase):
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        else:
-            raise ValueError("Invalid combination of arguments provided.")
+            else:
+                raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
-        return response
+            if span:
+                set_end_run(span, response)
+
+            # If streaming is enabled, return the custom stream object
+            return response
 
     @overload
     def submit_tool_outputs_to_stream(
@@ -1441,49 +1527,57 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if isinstance(body, dict):
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+        with start_submit_tool_outputs_span(self._config.project_name,
+                                        thread_id,
+                                        run_id=run_id,
+                                        tool_outputs=tool_outputs,
+                                        event_handler=event_handler) as span:
 
-        elif tool_outputs is not _Unset:
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
-            )
+            if isinstance(body, dict):
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        elif isinstance(body, io.IOBase):
-            content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+            elif tool_outputs is not _Unset:
+                response = super().submit_tool_outputs_to_run(
+                    thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
+                )
 
-        else:
-            raise ValueError("Invalid combination of arguments provided.")
+            elif isinstance(body, io.IOBase):
+                content_type = kwargs.get("content_type", "application/json")
+                response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        # Cast the response to Iterator[bytes] for type correctness
-        response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+            else:
+                raise ValueError("Invalid combination of arguments provided.")
 
-        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+            # Cast the response to Iterator[bytes] for type correctness
+            response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+
+            return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, wrap_handler(event_handler, span))
 
     def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None
     ) -> None:
-        if isinstance(run.required_action, _models.SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                logger.debug("No tool calls to execute.")
-                return
+        run_span = getattr(event_handler, "span", None)
+        with run_span.change_context(run_span.span_instance):
+            if isinstance(run.required_action, _models.SubmitToolOutputsAction):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.debug("No tool calls to execute.")
+                    return
 
-            toolset = self.get_toolset()
-            if toolset:
-                tool_outputs = toolset.execute_tool_calls(tool_calls)
-            else:
-                logger.warning("Toolset is not available in the client.")
-                return
+                toolset = self.get_toolset()
+                if toolset:
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+                else:
+                    logger.warning("Toolset is not available in the client.")
+                    return
 
-            logger.info(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                with self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                ) as stream:
-                    stream.until_done()
+                logger.info(f"Tool outputs: {tool_outputs}")
+                if tool_outputs:
+                    with self.submit_tool_outputs_to_stream(
+                        thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
+                    ) as stream:
+                        stream.until_done()
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

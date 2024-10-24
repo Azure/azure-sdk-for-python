@@ -29,7 +29,12 @@ from azure.identity import DefaultAzureCredential
 
 import os
 
+from samples.tracing_helpers import configure_tracing
 
+scenario = os.path.basename(__file__)
+tracer = configure_tracing().get_tracer(scenario)
+
+@tracer.start_as_current_span(scenario)
 async def main():
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
