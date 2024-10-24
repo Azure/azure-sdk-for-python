@@ -957,7 +957,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             pipeline=pipeline
         )
         try:
-            is_file = await path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)  # type: ignore [func-returns-value]
+            is_file = cast(bool, await path_client.path.undelete(
+                undelete_source=undelete_source, cls=is_file_path, **kwargs))
             if is_file:
                 return self.get_file_client(deleted_path_name)
             return self.get_directory_client(deleted_path_name)

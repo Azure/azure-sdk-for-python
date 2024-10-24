@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -27,8 +27,8 @@ from .._models import (
     UserDelegationKey
 )
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
-from .._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from .._models import PublicAccess
 
 
-class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with the DataLake Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -111,7 +111,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._blob_account_url = blob_account_url
 
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
-        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
@@ -119,10 +119,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
                                                     credential=self._raw_credential, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
-        self._hosts[LocationMode.SECONDARY] = ""
+        self._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self) -> Self:
@@ -232,7 +232,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     @distributed_trace
     def list_file_systems(
         self, name_starts_with: Optional[str] = None,
-        include_metadata: Optional[bool] = None,
+        include_metadata: bool = False,
         **kwargs: Any
     ) -> AsyncItemPaged[FileSystemProperties]:
         """Returns a generator to list the file systems under the specified account.
@@ -274,11 +274,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
                 :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
-        item_paged = self._blob_service_client.list_containers(
+        item_paged = cast(AsyncItemPaged[FileSystemProperties], self._blob_service_client.list_containers(
             name_starts_with=name_starts_with,
             include_metadata=include_metadata,
             **kwargs
-        )
+        ))
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
@@ -473,7 +473,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
                                 api_version=self.api_version,
@@ -519,7 +519,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
@@ -566,7 +566,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
