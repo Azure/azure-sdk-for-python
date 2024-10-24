@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache
+from .polling import SecurityDomainClientPolling, SecurityDomainClientPollingMethod
 
 HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
 
@@ -16,6 +17,8 @@ __all__ = [
     "ChallengeAuthPolicy",
     "HttpChallenge",
     "HttpChallengeCache",
+    "SecurityDomainClientPolling",
+    "SecurityDomainClientPollingMethod",
 ]
 
 _VaultId = namedtuple("_VaultId", ["vault_url", "collection", "name", "version"])
