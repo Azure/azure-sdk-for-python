@@ -28,6 +28,7 @@ import os
 from azure.ai.project import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.project.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, SamplingStrategy, EvaluationSchedule, CronTrigger, RecurrenceTrigger, Frequency, RecurrenceSchedule
+from azure.ai.evaluation import F1ScoreEvaluator
 import pprint
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -45,13 +46,9 @@ app_insights_config = ApplicationInsightsConfiguration(
     service_name="<sample_service_name>"
 )
 f1_evaluator_config = EvaluatorConfiguration(
-    id="azureml://registries/model-evaluation-dev-01/models/F1ScoreEval/versions/1",
-    init_params={
-        "column_mapping": {
-            "response": "${data.message}",
-            "ground_truth": "${data.itemType}"
-        }
-    }
+    id=F1ScoreEvaluator.id,
+    init_params={},
+    data_mapping={"response": "${data.message}", "ground_truth": "${data.itemType}"}
 )
 recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
 evaluators = {
