@@ -19,7 +19,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import SecurityDomainClient as _SecurityDomainClient
-from ._internal import ChallengeAuthPolicy, SecurityDomainClientPolling, SecurityDomainClientPollingMethod
+from ._internal import (
+    ChallengeAuthPolicy,
+    SecurityDomainClientDownloadPolling,
+    SecurityDomainClientDownloadPollingMethod,
+    SecurityDomainClientUploadPolling,
+    SecurityDomainClientUploadPollingMethod,
+)
 from .models import CertificateInfoObject, SecurityDomainObject
 from ._serialization import Serializer
 
@@ -195,7 +201,32 @@ class SecurityDomainClient(_SecurityDomainClient):
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         return super().begin_download(
             certificate_info_object,
-            polling=SecurityDomainClientPollingMethod(lro_algorithms=[SecurityDomainClientPolling()], timeout=delay),
+            polling=SecurityDomainClientDownloadPollingMethod(
+                lro_algorithms=[SecurityDomainClientDownloadPolling()], timeout=delay
+            ),
+            **kwargs,
+        )
+
+    @distributed_trace
+    def begin_upload(
+        self, security_domain: Union[SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Restore the provided Security Domain.
+
+        :param security_domain: The Security Domain to be restored. Is one of the following types:
+         SecurityDomainObject, JSON, IO[bytes] Required.
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        return super().begin_upload(
+            security_domain,
+            polling=SecurityDomainClientUploadPollingMethod(
+                lro_algorithms=[SecurityDomainClientUploadPolling()], timeout=delay
+            ),
             **kwargs,
         )
 
