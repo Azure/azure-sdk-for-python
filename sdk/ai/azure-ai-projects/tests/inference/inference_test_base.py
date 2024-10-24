@@ -6,6 +6,7 @@ import sys
 import logging
 import functools
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
 from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
@@ -29,7 +30,7 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
-class ConnectionsTestBase(AzureRecordedTestCase):
+class InferenceTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("project_connection_string_connections_tests")
@@ -39,3 +40,10 @@ class ConnectionsTestBase(AzureRecordedTestCase):
         )
         return project_client
 
+    def get_async_client(self, **kwargs) -> AIProjectClient:
+        conn_str = kwargs.pop("project_connection_string_connections_tests")
+        project_client = AIProjectClientAsync.from_connection_string(
+            credential=self.get_credential(AIProjectClientAsync, is_async=False),
+            conn_str=conn_str,
+        )
+        return project_client
