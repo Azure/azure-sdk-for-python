@@ -85,5 +85,6 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
+        "azure.ai.evaluation.simulator._data_sources": ["*.json"],
     },
 )

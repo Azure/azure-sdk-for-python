@@ -330,6 +330,7 @@ class TestSimulator:
             prompty_model_config={},
             user_simulator_prompty=None,
             user_simulator_prompty_kwargs={},
+            concurrent_async_tasks=1,
         )
 
         assert len(result) == 1
