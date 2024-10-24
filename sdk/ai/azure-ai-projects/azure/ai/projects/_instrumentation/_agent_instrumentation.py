@@ -9,7 +9,7 @@ from typing import List, Any, Optional, Union
 
 from azure.ai.client import _types
 
-from azure.ai.client._instrumentation._utils import * # pylint: disable=unused-wildcard-import
+from azure.ai.projects._instrumentation._utils import * # pylint: disable=unused-wildcard-import
 from azure.ai.client.models import _models
 from azure.ai.client.models import MessageRole, RunStepStatus
 from azure.ai.client.models import MessageAttachment, MessageDeltaChunk, RunStep, RunStepDeltaChunk, RunStepFunctionToolCall, RunStepToolCallDetails, SubmitToolOutputsAction, ThreadMessage, ThreadMessageOptions, ThreadRun, ToolDefinition, ToolOutput, ToolResources
