@@ -92,7 +92,7 @@ class Simulator:
         api_call_delay_sec: float = 1,
         query_response_generating_prompty_kwargs: Dict[str, Any] = {},
         user_simulator_prompty_kwargs: Dict[str, Any] = {},
-        conversation_turns: List[List[str]] = [],
+        conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -119,7 +119,7 @@ class Simulator:
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
         :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
         :keyword conversation_turns: Predefined conversation turns to simulate.
-        :paramtype conversation_turns: List[List[str]]
+        :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
 
@@ -183,7 +183,7 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int,
-        conversation_turns: List[List[str]],
+        conversation_turns: List[List[Union[str, Dict[str, Any]]]],
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
         api_call_delay_sec: float,
@@ -197,7 +197,7 @@ class Simulator:
         :keyword max_conversation_turns: Maximum number of turns for the simulation.
         :paramtype max_conversation_turns: int
         :keyword conversation_turns: A list of predefined conversation turns.
-        :paramtype conversation_turns: List[List[str]]
+        :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
@@ -220,7 +220,16 @@ class Simulator:
         for simulation in conversation_turns:
             current_simulation = ConversationHistory()
             for simulated_turn in simulation:
-                user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
+                if isinstance(simulated_turn, str):
+                    user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
+                elif isinstance(simulated_turn, dict):
+                    user_turn = Turn(
+                        role=ConversationRole.USER,
+                        content=str(simulated_turn.get("content")),
+                        context=str(simulated_turn.get("context"))
+                    )
+                else:
+                    raise ValueError("Each simulated turn must be a string or a dict with 'content' and 'context' keys")
                 current_simulation.add_to_history(user_turn)
                 assistant_response, assistant_context = await self._get_target_response(
                     target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
