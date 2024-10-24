@@ -3430,7 +3430,7 @@ class ReplicationObject(_serialization.Model):
     :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :ivar replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and "daily".
     :vartype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-    :ivar remote_volume_resource_id: The resource ID of the remote volume.
+    :ivar remote_volume_resource_id: The resource ID of the remote volume. Required for cross region and cross zone replication.
     :vartype remote_volume_resource_id: str
     :ivar remote_path: The full path to a volume that is to be migrated into ANF. Required for
      Migration volumes.
@@ -3469,7 +3469,7 @@ class ReplicationObject(_serialization.Model):
         :keyword replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and
          "daily".
         :paramtype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-        :keyword remote_volume_resource_id: The resource ID of the remote volume.
+        :keyword remote_volume_resource_id: The resource ID of the remote volume. Required for cross region and cross zone replication.
         :paramtype remote_volume_resource_id: str
         :keyword remote_path: The full path to a volume that is to be migrated into ANF. Required for
          Migration volumes.
