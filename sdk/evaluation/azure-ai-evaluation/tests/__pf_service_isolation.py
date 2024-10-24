@@ -21,3 +21,8 @@ from pathlib import Path
 
 if "TOX_ENV_DIR" in os.environ:
     os.environ["PF_HOME_DIRECTORY"] = str(Path(os.environ["TOX_ENV_DIR"], ".promptflow"))
+
+    import promptflow._sdk._constants
+
+    # Reduce the potential for parallel tox invocations to try to spawn their PF SERVICE on identical ports
+    promptflow._sdk._constants.PF_SERVICE_DEFAULT_PORT += hash(os.environ["TOX_ENV_DIR"]) % 300
