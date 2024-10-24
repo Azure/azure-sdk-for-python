@@ -30,7 +30,8 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = HateUnfairnessEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+        eval_fn = HateUnfairnessEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
@@ -78,7 +79,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
+        :return: The hate unfairness score.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

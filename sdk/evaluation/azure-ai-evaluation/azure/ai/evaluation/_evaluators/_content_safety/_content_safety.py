@@ -26,7 +26,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param eval_last_turn: Whether to evaluate the last turn of a conversation. Default is False.
+    :param eval_last_turn: Whether or not to only evaluate the last turn of a conversation. Default is False.
     :type eval_last_turn: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -42,7 +42,8 @@ class ContentSafetyEvaluator(EvaluatorBase):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ContentSafetyEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+        eval_fn = ContentSafetyEvaluator(azure_ai_project, credential)
         result = eval_fn(
             query="What is the capital of France?",
             response="Paris.",

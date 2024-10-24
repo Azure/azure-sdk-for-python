@@ -32,7 +32,8 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+        eval_fn = ProtectedMaterialEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
@@ -79,7 +80,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
+        :return: The protected materials evaluation.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

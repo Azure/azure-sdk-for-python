@@ -55,7 +55,8 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config, parallel: bool = True):
+    # TODO re-enable parallelism once a fix is in place
+    def __init__(self, model_config, parallel: bool = False):
         self._parallel = parallel
 
         self._evaluators: List[Callable[..., Dict[str, float]]] = [

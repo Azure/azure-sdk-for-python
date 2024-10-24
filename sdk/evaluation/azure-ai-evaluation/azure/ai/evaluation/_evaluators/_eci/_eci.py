@@ -36,7 +36,9 @@ class ECIEvaluator(RaiServiceEvaluatorBase[str]):
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ECIEvaluator(azure_ai_project)
+        credential = DefaultAzureCredential()
+        
+        eval_fn = ECIEvaluator(azure_ai_project, credential)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
