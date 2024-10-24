@@ -110,6 +110,11 @@ class SimilarityEvaluator:
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 

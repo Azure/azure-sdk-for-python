@@ -44,6 +44,11 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         }
     """
 
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    ID = None
+
     @override
     def __init__(
         self,
