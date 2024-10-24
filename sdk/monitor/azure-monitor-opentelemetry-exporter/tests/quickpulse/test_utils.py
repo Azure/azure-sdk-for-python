@@ -9,8 +9,12 @@ from opentelemetry.sdk.metrics.export import HistogramDataPoint, NumberDataPoint
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _COMMITTED_BYTES_NAME
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _COMMITTED_BYTES_NAME,
+    _QUICKPULSE_PROJECTION_MAX_VALUE,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    AggregationType,
     DerivedMetricInfo,
     DocumentType,
     Exception,
@@ -21,7 +25,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     TelemetryType,
     Trace,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._types import _DependencyData
+from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DependencyData,
+    _RequestData,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _calculate_aggregation,
     _check_metric_filters,
@@ -319,3 +326,104 @@ class TestUtils(unittest.TestCase):
         match = _check_metric_filters([metric_info], data)
         filter_mock.assert_called_once_with(filters_mock, data)
         self.assertFalse(match)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_projection_map")
+    def test_init_derived_metric_projection(self, set_map_mock):
+        filter_mock = mock.Mock()
+        filter_mock.aggregation = AggregationType.MIN
+        filter_mock.id = "mock_id"
+        _init_derived_metric_projection(filter_mock)
+        set_map_mock.assert_called_once_with("mock_id", AggregationType.MIN, _QUICKPULSE_PROJECTION_MAX_VALUE, 0)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_projection_map")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._calculate_aggregation")
+    def test_create_projections_count(self, aggregation_mock, set_map_mock):
+        data_mock = mock.Mock()
+        metric_info = mock.Mock()
+        metric_info.id = "mock_id"
+        metric_info.projection = "Count()"
+        metric_info.aggregation = AggregationType.SUM
+        aggregation_mock.return_value = (1,2)
+        _create_projections([metric_info], data_mock)
+        aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 1)
+        set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 1, 2)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_projection_map")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._calculate_aggregation")
+    def test_create_projections_duration(self, aggregation_mock, set_map_mock):
+        data_mock = _RequestData(
+            duration=5.0,
+            success=True,
+            name="test",
+            response_code=200,
+            url="",
+            custom_dimensions={},
+        )
+        metric_info = mock.Mock()
+        metric_info.id = "mock_id"
+        metric_info.projection = "Duration"
+        metric_info.aggregation = AggregationType.SUM
+        aggregation_mock.return_value = (6.0,2)
+        _create_projections([metric_info], data_mock)
+        aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 5.0)
+        set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 6.0, 2)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_projection_map")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._calculate_aggregation")
+    def test_create_projections_dimensions(self, aggregation_mock, set_map_mock):
+        data_mock = mock.Mock()
+        data_mock.custom_dimensions = {
+            "test-key": "6.7",
+        }
+        metric_info = mock.Mock()
+        metric_info.id = "mock_id"
+        metric_info.projection = "CustomDimensions.test-key"
+        metric_info.aggregation = AggregationType.SUM
+        aggregation_mock.return_value = (8.2,2)
+        _create_projections([metric_info], data_mock)
+        aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 6.7)
+        set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 8.2, 2)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_calculate_aggregation_sum(self, projection_map_mock):
+        projection_map_mock.return_value = {"test-id": (AggregationType.SUM, 3.0, 6)}
+        agg_tuple = _calculate_aggregation(AggregationType.SUM, "test-id", 4.0)
+        self.assertEqual(agg_tuple, (7.0, 7))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_calculate_aggregation_min(self, projection_map_mock):
+        projection_map_mock.return_value = {"test-id": (AggregationType.MIN, 3.0, 6)}
+        agg_tuple = _calculate_aggregation(AggregationType.MIN, "test-id", 4.0)
+        self.assertEqual(agg_tuple, (3.0, 7))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_calculate_aggregation_max(self, projection_map_mock):
+        projection_map_mock.return_value = {"test-id": (AggregationType.MAX, 3.0, 6)}
+        agg_tuple = _calculate_aggregation(AggregationType.MAX, "test-id", 4.0)
+        self.assertEqual(agg_tuple, (4.0, 7))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_calculate_aggregation_avg(self, projection_map_mock):
+        projection_map_mock.return_value = {"test-id": (AggregationType.AVG, 3.0, 3)}
+        agg_tuple = _calculate_aggregation(AggregationType.AVG, "test-id", 5.0)
+        self.assertEqual(agg_tuple, (8.0, 4))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_calculate_aggregation_none(self, projection_map_mock):
+        projection_map_mock.return_value = {"test-id": (AggregationType.AVG, 3.0, 3)}
+        agg_tuple = _calculate_aggregation(AggregationType.AVG, "test-id2", 5.0)
+        self.assertIsNone(agg_tuple)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_projection_map")
+    def test_get_metrics_from_projections(self, projection_map_mock):
+        projection_map_mock.return_value = {
+            "test-id": (AggregationType.MIN, 3.0, 3),
+            "test-id2": (AggregationType.MAX, 5.0, 4),
+            "test-id3": (AggregationType.SUM, 2.0, 2),
+            "test-id4": (AggregationType.AVG, 12.0, 3),
+        }
+        metric_tuples = _get_metrics_from_projections()
+        self.assertEqual(
+            metric_tuples,
+            [("test-id", 3.0),("test-id2", 5.0),("test-id3", 2.0),("test-id4", 4.0),]
+        )

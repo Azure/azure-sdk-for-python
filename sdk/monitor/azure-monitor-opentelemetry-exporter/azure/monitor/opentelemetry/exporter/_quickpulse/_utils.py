@@ -294,13 +294,15 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
         elif metric_info.projection == _QUICKPULSE_PROJECTION_DURATION:
             if isinstance(data, _RequestData) or isinstance(data, _DependencyData):
                 value = data.duration
+            else:
+                continue
         elif metric_info.projection.startswith(_QUICKPULSE_PROJECTION_CUSTOM):
             key = metric_info.projection.split(_QUICKPULSE_PROJECTION_CUSTOM, 1)[1].strip()
             dim_value = data.custom_dimensions.get(key, 0)
             try:
                 value = float(dim_value)
             except ValueError:
-                pass
+                continue
             
         aggregate: Optional[Tuple[float, int]] = _calculate_aggregation(
             AggregationType(metric_info.aggregation),
