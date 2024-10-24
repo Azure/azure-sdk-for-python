@@ -131,8 +131,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The XPIA evaluation. If a multi-turn conversation is provided, the evaluation will aggregate all boolean
-            results into a mean from 0 to 1. Boolean-based per-turn evaluations are also provided under the
+        :return: The XPIA evaluation. If a multi-turn conversation is provided, the evaluation will aggregate all
+            boolean results into a mean from 0 to 1. Boolean-based per-turn evaluations are also provided under the
             "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
         """

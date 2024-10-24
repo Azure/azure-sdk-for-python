@@ -146,8 +146,9 @@ class ContentSafetyEvaluator(EvaluatorBase):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The evaluation result. If a multi-turn conversation is provided, the top-level scores will be the average
-            of that score from all turns, and per-turn evaluation results can be found under the "evaluation_per_turn" key.
+        :return: The evaluation result. If a multi-turn conversation is provided, the top-level scores
+            will be the average of that score from all turns, and per-turn evaluation results can be found
+            under the "evaluation_per_turn" key.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
