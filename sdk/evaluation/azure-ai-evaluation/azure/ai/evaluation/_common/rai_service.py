@@ -299,7 +299,7 @@ def _parse_content_harm_response(
 
         # get content harm metric_value
         if "label" in harm_response:
-            metric_value = int(harm_response["label"])
+            metric_value = harm_response["label"]
         elif "valid" in harm_response:
             metric_value = 0 if harm_response["valid"] else math.nan
         else:

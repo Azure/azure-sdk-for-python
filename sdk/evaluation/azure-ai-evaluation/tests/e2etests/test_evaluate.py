@@ -229,6 +229,7 @@ class TestEvaluate:
 
         convo_row_result_df = pd.DataFrame(convo_result["rows"])
         convo_metrics = convo_result["metrics"]
+        assert convo_row_result_df.shape[0] == len(convo_input_data)
         assert "outputs.groundedness_pro.groundedness_pro_label" in convo_row_result_df.columns.to_list()
         assert "outputs.groundedness_pro.evaluation_per_turn" in convo_row_result_df.columns.to_list()
 
