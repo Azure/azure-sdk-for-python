@@ -94,7 +94,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
 
     .. code-block:: python
 
-        {            
+        {
             "violence_score": 4.5,
             "sexual_score": 4.5,
             "self_harm_score": 4.5,
