@@ -162,7 +162,7 @@ class TestSimulator:
         mock_user_flow = AsyncMock()
         mock_user_flow.return_value = {"content": "User response"}
         mock_load_user_simulation_flow.return_value = mock_user_flow
-        mock_get_target_response.return_value = "Assistant response"
+        mock_get_target_response.return_value = "Assistant response", "Assistant context"
 
         conversation = await simulator._complete_conversation(
             conversation_starter="Hello",
@@ -186,7 +186,7 @@ class TestSimulator:
         mock_target = AsyncMock()
         mock_target.return_value = {
             "messages": [
-                {"role": "assistant", "content": "Assistant response"},
+                {"role": "assistant", "content": "Assistant response", "context": "assistant context"},
             ]
         }
         response = await simulator._get_target_response(
@@ -194,7 +194,7 @@ class TestSimulator:
             api_call_delay_sec=0,
             conversation_history=AsyncMock(),
         )
-        assert response == "Assistant response"
+        assert response == ("Assistant response", "assistant context")
 
     @pytest.mark.asyncio
     async def test_call_with_both_conversation_turns_and_text_tasks(self, valid_openai_model_config):
@@ -318,7 +318,7 @@ class TestSimulator:
         self, mock_extend_conversation_with_simulator, mock_get_target_response, valid_openai_model_config
     ):
         simulator = Simulator(model_config=valid_openai_model_config)
-        mock_get_target_response.return_value = "assistant_response"
+        mock_get_target_response.return_value = "assistant_response", "assistant_context"
         mock_extend_conversation_with_simulator.return_value = None
 
         conversation_turns = [["user_turn"]]
@@ -354,6 +354,7 @@ class TestSimulator:
             api_call_delay_sec=1,
             user_simulator_prompty=None,
             user_simulator_prompty_kwargs={},
+            text="some text",
         )
 
         assert len(result) == 1
