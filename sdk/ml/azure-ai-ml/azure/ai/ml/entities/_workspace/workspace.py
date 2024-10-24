@@ -314,7 +314,10 @@ class Workspace(Resource):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None
+    ) -> Optional["Workspace"]:
+
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -329,8 +332,20 @@ class Workspace(Resource):
 
         # TODO: Remove attribute check once Oct API version is out
         mlflow_tracking_uri = None
+
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
-            mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+            try:
+                from azureml.mlflow import get_mlflow_tracking_uri_v2
+
+                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+            except ImportError:
+                mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+                error_msg = (
+                    "azureml.mlflow could not be imported. "
+                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment"
+                )
+                print(error_msg)
+                # warnings.warn(error_msg, UserWarning)
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None

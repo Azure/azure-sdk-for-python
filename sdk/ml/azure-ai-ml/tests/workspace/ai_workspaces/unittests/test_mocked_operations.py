@@ -42,7 +42,8 @@ class TestMockedOperations:
         else:
             mock_hub_operation._operation.list_by_resource_group.assert_called_once()
 
-    def test_get(self, mock_hub_operation: WorkspaceOperations) -> None:
+    def test_get(self, mock_hub_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mock_hub_operation.get(name="random_name")
         mock_hub_operation._operation.get.assert_called_once()
 
