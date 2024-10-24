@@ -4,7 +4,6 @@
 
 # pylint: disable=too-many-instance-attributes
 
-import warnings
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
@@ -342,11 +341,11 @@ class Workspace(Resource):
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
                 error_msg = (
-                    "azureml.mlflow could not be imported. azureml-mlflow will not use credentials passed to `MLClient`"
-                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment. "
+                    "azureml.mlflow could not be imported. "
+                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment"
                 )
-                warnings.warn(error_msg, UserWarning)
-            # mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+                print(error_msg)
+                # warnings.warn(error_msg, UserWarning)
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None
