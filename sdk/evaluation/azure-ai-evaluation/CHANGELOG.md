@@ -4,7 +4,7 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
-- Groundedness detection in Non Adversarial Simulator via predefiened query/context pairs
+- Groundedness detection in Non Adversarial Simulator via query/context pairs
 ```python
 import importlib.resources as pkg_resources
 package = "azure.ai.evaluation.simulator._data_sources"
