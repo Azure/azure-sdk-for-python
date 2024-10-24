@@ -24,6 +24,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
 from azure.monitor.opentelemetry.exporter._quickpulse._types import _DependencyData
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _calculate_aggregation,
+    _check_metric_filters,
     _create_projections,
     _derive_metrics_from_telemetry_data,
     _get_metrics_from_projections,
@@ -292,3 +293,29 @@ class TestUtils(unittest.TestCase):
         get_derived_mock.assert_called_once()
         filter_mock.assert_called_once_with(metric_infos, data)
         projection_mock.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_filters")
+    def test_check_metric_filters(self, filter_mock):
+        metric_info = mock.Mock()
+        group_mock = mock.Mock()
+        filters_mock = mock.Mock()
+        group_mock.filters = filters_mock
+        metric_info.filter_groups = [group_mock]
+        filter_mock.return_value = True
+        data = mock.Mock()
+        match = _check_metric_filters([metric_info], data)
+        filter_mock.assert_called_once_with(filters_mock, data)
+        self.assertTrue(match)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_filters")
+    def test_check_metric_filters_no_match(self, filter_mock):
+        metric_info = mock.Mock()
+        group_mock = mock.Mock()
+        filters_mock = mock.Mock()
+        group_mock.filters = filters_mock
+        metric_info.filter_groups = [group_mock]
+        filter_mock.return_value = False
+        data = mock.Mock()
+        match = _check_metric_filters([metric_info], data)
+        filter_mock.assert_called_once_with(filters_mock, data)
+        self.assertFalse(match)
