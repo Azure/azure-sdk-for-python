@@ -43,9 +43,7 @@ if TYPE_CHECKING:
     from .._models  import (
         ServerCallLocator,
         GroupCallLocator,
-        RoomCallLocator,
-        MediaStreamingOptions,
-        TranscriptionOptions
+        RoomCallLocator
     )
     from azure.core.credentials_async import (
         AsyncTokenCredential,
