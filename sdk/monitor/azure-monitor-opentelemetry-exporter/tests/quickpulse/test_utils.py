@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from datetime import datetime
+import json
 import unittest
 from unittest import mock
 
@@ -10,18 +11,27 @@ from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import _COMMITTED_BYTES_NAME
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
     DocumentType,
     Exception,
     MetricPoint,
     MonitoringDataPoint,
     RemoteDependency,
     Request,
+    TelemetryType,
     Trace,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._types import _DependencyData
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _calculate_aggregation,
+    _create_projections,
+    _derive_metrics_from_telemetry_data,
+    _get_metrics_from_projections,
     _get_span_document,
     _get_log_record_document,
+    _init_derived_metric_projection,
     _metric_to_quick_pulse_data_points,
+    _update_filter_configuration,
 )
 
 
@@ -213,3 +223,72 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(isinstance(doc, Trace))
         self.assertEqual(doc.document_type, DocumentType.TRACE)
         self.assertEqual(doc.message, "body")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_etag")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.DerivedMetricInfo")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._clear_quickpulse_projection_map")
+    def test_update_filter_configuration(self, clear_mock, dict_mock, init_projection_mock, set_metric_info_mock, etag_mock):
+        etag = "new-etag"
+        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_dict = json.loads(test_config_bytes.decode()).get("Metrics")[0]
+        metric_info_mock = mock.Mock()
+        metric_info_mock.telemetry_type = TelemetryType.REQUEST
+        dict_mock.from_dict.return_value = metric_info_mock
+        _update_filter_configuration(etag, test_config_bytes)
+        clear_mock.assert_called_once()
+        dict_mock.from_dict.assert_called_once_with(test_config_dict)
+        init_projection_mock.assert_called_once_with(metric_info_mock)
+        metric_infos = {}
+        metric_infos[TelemetryType.REQUEST] = [metric_info_mock]
+        set_metric_info_mock.assert_called_once_with(metric_infos)
+        etag_mock.assert_called_once_with(etag)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._create_projections")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_metric_filters")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_from_telemetry_data(self, get_derived_mock, filter_mock, projection_mock):
+        metric_infos = [mock.Mock]
+        get_derived_mock.return_value = {
+            TelemetryType.DEPENDENCY: metric_infos,
+        }
+        data = _DependencyData(
+            duration=0,
+            success=True,
+            name="test",
+            result_code=200,
+            target="",
+            type="",
+            data="",
+            custom_dimensions={},
+        )
+        filter_mock.return_value = True
+        _derive_metrics_from_telemetry_data(data)
+        get_derived_mock.assert_called_once()
+        filter_mock.assert_called_once_with(metric_infos, data)
+        projection_mock.assert_called_once_with(metric_infos, data)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._create_projections")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_metric_filters")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_from_telemetry_data_filter_false(self, get_derived_mock, filter_mock, projection_mock):
+        metric_infos = [mock.Mock]
+        get_derived_mock.return_value = {
+            TelemetryType.DEPENDENCY: metric_infos,
+        }
+        data = _DependencyData(
+            duration=0,
+            success=True,
+            name="test",
+            result_code=200,
+            target="",
+            type="",
+            data="",
+            custom_dimensions={},
+        )
+        filter_mock.return_value = False
+        _derive_metrics_from_telemetry_data(data)
+        get_derived_mock.assert_called_once()
+        filter_mock.assert_called_once_with(metric_infos, data)
+        projection_mock.assert_not_called()
