@@ -16,7 +16,18 @@ This guide walks you through how to investigate failures, common errors in the `
 
 ### Troubleshoot Remote Tracking Issues
 
-- If your AI Studio hub is set to identity-based storage access and you're unable to upload data because of permission issues, check whether the `Storage Blob Data Contributor` role is assigned to the storage account linked to your Azure AI Studio hub. You can find more details [here](https://review.learn.microsoft.com/azure/ai-studio/how-to/disable-local-auth).
+- Before running `evaluate()`, to ensure that you can enable logging and tracing to your Azure AI project, make sure you are first logged in by running `az login`.
+- Then install the following sub-package:
+
+    ```Shell
+    pip install azure-ai-evaluation[remote]
+    ```
+
+- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://review.learn.microsoft.com/azure/ai-studio/how-to/disable-local-auth).
+
+    ```Shell
+    az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
+    ```
 
 - Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
 
