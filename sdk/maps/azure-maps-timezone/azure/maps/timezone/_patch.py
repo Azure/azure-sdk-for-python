@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 # pylint: disable=unused-import
-from typing import Union, Any, List
+from typing import Union, Any, List, Optional
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -47,13 +47,16 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
+        client_id: Optional[str] = None,
+        *,
+        endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
 
         super().__init__(
             credential=credential,  # type: ignore
-            endpoint=kwargs.pop("endpoint", "https://atlas.microsoft.com"),
-            client_id=kwargs.pop("client_id", None),
+            client_id=client_id,
+            endpoint=endpoint,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
