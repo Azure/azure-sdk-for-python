@@ -199,28 +199,28 @@ On January 24, 1984, former Apple CEO Steve Jobs introduced the first Macintosh.
 Some years later, research firms IDC and Gartner reported that Apple's market share in the U.S. had increased to about 6%.
 <|text_end|>
 Output with 5 QnAs:
-[
-  {
-    "q": "When did the former Apple CEO Steve Jobs introduced the first Macintosh?",
-    "r": "January 24, 1984"
-  },
-  {
-    "q": "Who was the former Apple CEO that introduced the first Macintosh on January 24, 1984?",
-    "r": "Steve Jobs"
-  },
-  {
-    "q": "What percent of the desktop share did Apple have in the United States in late 2003?",
-    "r": "2.06 percent"
-  },
-  {
-    "q": "What were the research firms that reported on Apple's market share in the U.S.?",
-    "r": "IDC and Gartner"
-  },
-  {
-    "q": "What was the percentage increase of Apple's market share in the U.S., as reported by research firms IDC and Gartner?",
-    "r": "6%"
-  }
-]
+{
+    "qna": [{
+        "q": "When did the former Apple CEO Steve Jobs introduced the first Macintosh?",
+        "r": "January 24, 1984"
+    },
+    {
+        "q": "Who was the former Apple CEO that introduced the first Macintosh on January 24, 1984?",
+        "r": "Steve Jobs"
+    },
+    {
+        "q": "What percent of the desktop share did Apple have in the United States in late 2003?",
+        "r": "2.06 percent"
+    },
+    {
+        "q": "What were the research firms that reported on Apple's market share in the U.S.?",
+        "r": "IDC and Gartner"
+    },
+    {
+        "q": "What was the percentage increase of Apple's market share in the U.S., as reported by research firms IDC and Gartner?",
+        "r": "6%"
+    }]
+}
 Text:
 <|text_start|>
 {{ text }}
