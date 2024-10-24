@@ -10,7 +10,6 @@ import requests
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
-    evaluate,
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
