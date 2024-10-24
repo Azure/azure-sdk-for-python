@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for KeyVaultClient.
+class SecurityDomainClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for SecurityDomainClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

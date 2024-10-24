@@ -15,20 +15,16 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import KeyVaultClientConfiguration
-from .operations import HsmSecurityDomainOperations
+from ._configuration import SecurityDomainClientConfiguration
+from ._operations import SecurityDomainClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient:
-    """The key vault client performs cryptographic key operations and vault operations
-    against the Key Vault service.
+class SecurityDomainClient(SecurityDomainClientOperationsMixin):
+    """SecurityDomainClient.
 
-    :ivar hsm_security_domain: HsmSecurityDomainOperations operations
-    :vartype hsm_security_domain:
-     azure.keyvault.securitydomain.aio.operations.HsmSecurityDomainOperations
     :param vault_base_url: Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -42,7 +38,7 @@ class KeyVaultClient:
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{vaultBaseUrl}"
-        self._config = KeyVaultClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
+        self._config = SecurityDomainClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -65,9 +61,6 @@ class KeyVaultClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.hsm_security_domain = HsmSecurityDomainOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
