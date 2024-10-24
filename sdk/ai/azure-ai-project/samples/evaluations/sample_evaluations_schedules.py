@@ -35,7 +35,7 @@ import pprint
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    conn_str="<project_connection_string>",
 )
 
 # Sample for creating an evaluation schedule with recurrence trigger of daily frequency
