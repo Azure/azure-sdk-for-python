@@ -19,6 +19,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $AllPkgProps
   )
   $additionalValidationPackages = @()
+  $uniqueResultSet = @()
 
   function isOther($fileName) {
     $startsWithPrefixes = @(".config", ".devcontainer", ".github", ".vscode", "common", "conda", "doc", "eng", "scripts")
@@ -68,7 +69,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
   $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
   $changedServices = $changedServices | Get-Unique
-  $uniqueResultSet = @()
 
   if ($toolChanged) {
     $additionalPackages = @(
