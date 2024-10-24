@@ -68,7 +68,6 @@ class TestCallAutomationClient(unittest.TestCase):
         call_connection_properties = call_automation_client.create_call(
             target_participant=call_invite,
             callback_url=self.callback_url,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -78,7 +77,6 @@ class TestCallAutomationClient(unittest.TestCase):
         call_connection_properties = call_automation_client.create_call(
             target_participant=user,
             callback_url=self.callback_url,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -178,12 +176,11 @@ class TestCallAutomationClient(unittest.TestCase):
             transport=Mock(send=mock_send)
         )
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
-        call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
+        call_automation_client.redirect_call(self.incoming_call_context, user)
         with pytest.raises(ValueError) as e:
             call_automation_client.redirect_call(
                 self.incoming_call_context,
                 user,
-                voip_headers={"foo": "bar"},
                 source_display_name="baz"
             )
         assert "unexpected kwargs" in str(e.value)
@@ -198,3 +195,28 @@ class TestCallAutomationClient(unittest.TestCase):
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
         call_automation_client.reject_call(self.incoming_call_context)
+
+    def test_connect_call(self):
+        def mock_send(request, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            body = json.loads(request.content)
+            return mock_response(status_code=200, json_payload={
+                "callConnectionId": self.call_connection_id,
+                "serverCallId": self.server_callI_id,
+                "callbackUri": self.callback_url,
+                "targets": [
+                    {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}],
+                "sourceIdentity": {"rawId": self.communication_user_source_id,
+                                   "communicationUser": {"id": self.communication_user_source_id}}})
+
+        call_automation_client = CallAutomationClient(
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=mock_send)
+        )
+        call_connection_properties = call_automation_client.connect_call(server_call_id="123456",callback_url=self.callback_url)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)
