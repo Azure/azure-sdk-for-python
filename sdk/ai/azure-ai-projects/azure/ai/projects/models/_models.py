@@ -5540,6 +5540,9 @@ class VectorStore(_model_base.Model):
     :ivar last_active_at: The Unix timestamp (in seconds) for when the vector store was last
      active. Required.
     :vartype last_active_at: ~datetime.datetime
+    :ivar store_configuration: The vector store configuration, used when vector store is created
+     from Azure asset ID.
+    :vartype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -5568,6 +5571,8 @@ class VectorStore(_model_base.Model):
     """The Unix timestamp (in seconds) for when the vector store will expire."""
     last_active_at: datetime.datetime = rest_field(format="unix-timestamp")
     """The Unix timestamp (in seconds) for when the vector store was last active. Required."""
+    store_configuration: Optional["_models.VectorStorageConfiguration"] = rest_field(name="configuration")
+    """The vector store configuration, used when vector store is created from Azure asset ID."""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -5587,6 +5592,7 @@ class VectorStore(_model_base.Model):
         metadata: Dict[str, str],
         expires_after: Optional["_models.VectorStoreExpirationPolicy"] = None,
         expires_at: Optional[datetime.datetime] = None,
+        store_configuration: Optional["_models.VectorStorageConfiguration"] = None,
     ) -> None: ...
 
     @overload
