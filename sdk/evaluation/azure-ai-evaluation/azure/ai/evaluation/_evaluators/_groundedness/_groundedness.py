@@ -5,8 +5,16 @@ import os
 from typing import Optional
 
 from typing_extensions import override
+from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from ..._common.utils import construct_prompty_model_config, validate_model_config
+
+try:
+    from ..._user_agent import USER_AGENT
+except ImportError:
+    USER_AGENT = "None"
 
 
 class GroundednessEvaluator(PromptyEvaluatorBase):
@@ -41,31 +49,40 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    _PROMPTY_FILE = "groundedness.prompty"
+    _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
+    _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "groundedness"
 
     @override
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
+
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        self._model_config = model_config
+        # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @override
     def __call__(
         self,
         *,
+        query: Optional[str] = None,
         response: Optional[str] = None,
         context: Optional[str] = None,
         conversation=None,
         **kwargs,
     ):
-        """Evaluate groundedless. Accepts either a response and context a single evaluation,
+        """Evaluate groundedless. Accepts either a query, response, and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword response: The response to be evaluated.
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation`. Optional parameter for use
+            with the `response` and `context` parameters. If provided, a different prompt template will be used for
+            evaluation.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
+        :keyword context: The context to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
@@ -74,4 +91,35 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+        if (response is None or context is None) and conversation is None:
+            msg = "Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
+
+        if (query or response or context) and conversation:
+            msg = "If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
+
+        if query:
+            current_dir = os.path.dirname(__file__)
+            prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
+            self._prompty_file = prompty_path
+            prompty_model_config = construct_prompty_model_config(
+                validate_model_config(self._model_config),
+                self._DEFAULT_OPEN_API_VERSION,
+                USER_AGENT,
+            )
+            self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+
+        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)

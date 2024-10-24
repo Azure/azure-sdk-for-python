@@ -7,10 +7,12 @@ import logging
 import math
 import os
 import re
+from typing import Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
@@ -39,62 +41,74 @@ class _AsyncRetrievalScoreEvaluator:
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, conversation, **kwargs):
-        # Extract queries, responses and contexts from conversation
-        queries = []
-        responses = []
-        contexts = []
+    async def __call__(self, *, query, context, conversation, **kwargs):
+        if conversation:
+            # Extract queries, responses and contexts from conversation
+            queries = []
+            responses = []
+            contexts = []
 
-        conversation = conversation.get("messages", None)
+            conversation = conversation.get("messages", None)
 
-        for each_turn in conversation:
-            role = each_turn["role"]
-            if role == "user":
-                queries.append(each_turn["content"])
-            elif role == "assistant":
-                responses.append(each_turn["content"])
-                if "context" in each_turn and "citations" in each_turn["context"]:
-                    citations = json.dumps(each_turn["context"]["citations"])
-                    contexts.append(citations)
+            for each_turn in conversation:
+                role = each_turn["role"]
+                if role == "user":
+                    queries.append(each_turn["content"])
+                elif role == "assistant":
+                    responses.append(each_turn["content"])
+                    if "context" in each_turn and "citations" in each_turn["context"]:
+                        citations = json.dumps(each_turn["context"]["citations"])
+                        contexts.append(citations)
 
-        # Evaluate each turn
-        per_turn_scores = []
-        history = []
-        for turn_num, query in enumerate(queries):
-            try:
-                query = query if turn_num < len(queries) else ""
-                answer = responses[turn_num] if turn_num < len(responses) else ""
-                context = contexts[turn_num] if turn_num < len(contexts) else ""
+            # Evaluate each turn
+            per_turn_scores = []
+            history = []
+            for turn_num, query in enumerate(queries):
+                try:
+                    query = query if turn_num < len(queries) else ""
+                    answer = responses[turn_num] if turn_num < len(responses) else ""
+                    context = contexts[turn_num] if turn_num < len(contexts) else ""
 
-                history.append({"user": query, "assistant": answer})
+                    history.append({"user": query, "assistant": answer})
 
-                llm_output = await self._flow(
-                    query=query, history=history, documents=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
-                )
-                score = math.nan
-                if llm_output:
-                    parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
-                    if len(parsed_score_response) > 0:
-                        score = float(parsed_score_response[0].replace("'", "").strip())
+                    llm_output = await self._flow(
+                        query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
+                    )
+                    score = math.nan
+                    if llm_output:
+                        parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
+                        if len(parsed_score_response) > 0:
+                            score = float(parsed_score_response[0].replace("'", "").strip())
 
-                per_turn_scores.append(score)
+                    per_turn_scores.append(score)
 
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
-                )
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
+                    )
 
-                per_turn_scores.append(math.nan)
+                    per_turn_scores.append(math.nan)
 
+            return {
+                "retrieval": list_mean_nan_safe(per_turn_scores),
+                "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
+                "evaluation_per_turn": {
+                    "gpt_retrieval": per_turn_scores,
+                    "retrieval": per_turn_scores,
+                },
+            }
+        llm_output = await self._flow(
+            query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
+        )
+        score = math.nan
+        if llm_output:
+            parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
+            if len(parsed_score_response) > 0:
+                score = float(parsed_score_response[0].replace("'", "").strip())
         return {
-            "retrieval": list_mean_nan_safe(per_turn_scores),
-            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
-            "evaluation_per_turn": {
-                "gpt_retrieval": per_turn_scores,
-                "retrieval": per_turn_scores,
-            },
+            "retrieval": score,
+            "gpt_retrieval": score,
         }
-
 
 class RetrievalEvaluator:
     """
@@ -145,15 +159,47 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
 
-    def __call__(self, *, conversation, **kwargs):
-        """Evaluates retrieval score chat scenario.
+    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation = None, **kwargs):
+        """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
+        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
 
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: Optional[str]
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: ~azure.ai.evaluation.Conversation
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
+        if (query is None or context is None) and conversation is None:
+            msg = "Either a pair of 'query'/'context' or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.RETRIEVAL_EVALUATOR,
+            )
+
+        if (query or context) and conversation:
+            msg = "Either a pair of 'query'/'context' or 'conversation' must be provided, but not both."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.RETRIEVAL_EVALUATOR,
+            )
+
+        return async_run_allowing_running_loop(
+            self._async_evaluator,
+            query=query,
+            context=context,
+            conversation=conversation,
+            **kwargs
+        )
 
     def _to_async(self):
         return self._async_evaluator

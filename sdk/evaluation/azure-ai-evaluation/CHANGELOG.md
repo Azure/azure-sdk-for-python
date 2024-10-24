@@ -7,6 +7,9 @@
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- `RetrievalEvaluator` now requires a `context` input in addition to `query` in single-turn evaluation.
+- `RelevanceEvaluator` no longer takes `context` as an input. It now only takes `query` and `response` in single-turn evaluation.
+- `FluencyEvaluator` no longer takes `query` as an input. It now only takes `response` in single-turn evaluation.
 - AdversarialScenario enum does not include `ADVERSARIAL_INDIRECT_JAILBREAK`, invoking IndirectJailbreak or XPIA should be done with `IndirectAttackSimulator`
 - Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
 ```json 
@@ -25,6 +28,7 @@
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- `GroundednessEvaluator` now supports `query` as an optional input in single-turn evaluation. If `query` is provided, a different prompt template will be used for the evaluation.
 - To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
   - `CoherenceEvaluator`
   - `RelevanceEvaluator`

@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from azure.ai.evaluation import FluencyEvaluator, RetrievalEvaluator, SimilarityEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, RetrievalEvaluator, RelevanceEvaluator
 
 
 async def quality_async_mock():
@@ -17,7 +17,7 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._flow = MagicMock(return_value=quality_async_mock())
 
-        score = fluency_eval(query="What is the capital of Japan?", response="The capital of Japan is Tokyo.")
+        score = fluency_eval(response="The capital of Japan is Tokyo.")
 
         assert score is not None
         assert score["fluency"] == score["gpt_fluency"] == 1
@@ -26,7 +26,7 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._flow = MagicMock(return_value=quality_async_mock())
 
-        score = fluency_eval(query={"foo": 1}, response={"bar": "2"})
+        score = fluency_eval(response={"bar": "2"})
 
         assert score is not None
         assert score["fluency"] == score["gpt_fluency"] == 1
@@ -36,10 +36,10 @@ class TestBuiltInEvaluators:
         fluency_eval._flow = MagicMock(return_value=quality_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
-            fluency_eval(query="What is the capital of Japan?", response=None)
+            fluency_eval(response=None)
 
         assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "Either 'response' or 'conversation' must be provided." in exc_info.value.args[0]
         )
 
     def test_similarity_evaluator_keys(self, mock_model_config):
@@ -69,4 +69,12 @@ class TestBuiltInEvaluators:
         }
 
         result = retrieval_eval(conversation=conversation)
+        assert result["evaluation_per_turn"]["retrieval"] == result["evaluation_per_turn"]["gpt_retrieval"] == [1.0]
+
+        retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
+        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_async_mock())
+        result = retrieval_eval(
+            query="What is the value of 2 + 2?",
+            context="1 + 2 = 2",
+        )
         assert result["retrieval"] == result["gpt_retrieval"] == 1

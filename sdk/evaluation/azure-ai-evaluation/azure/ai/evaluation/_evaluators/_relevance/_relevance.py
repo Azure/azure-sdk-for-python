@@ -8,6 +8,7 @@ from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
@@ -25,9 +26,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         eval_fn = RelevanceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
+            response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -59,20 +58,17 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        context: Optional[str] = None,
         conversation=None,
         **kwargs,
     ):
-        """Evaluate relevance. Accepts either a response and context a single evaluation,
+        """Evaluate relevance. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
+        :keyword query: The query to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
@@ -80,4 +76,23 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        if (query is None or response is None) and conversation is None:
+            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.RELEVANCE_EVALUATOR,
+            )
+        if query and response and conversation:
+            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided, but not both."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.RELEVANCE_EVALUATOR,
+            )
+
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
