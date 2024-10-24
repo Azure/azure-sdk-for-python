@@ -34,13 +34,18 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         {
-            "gpt_relevance": 3.0
+            "relevance": 3.0,
+            "gpt_relevance": 3.0,
         }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     # Constants must be defined within eval's directory to be save/loadable
     _PROMPTY_FILE = "relevance.prompty"
-    _RESULT_KEY = "gpt_relevance"
+    _RESULT_KEY = "relevance"
 
     @override
     def __init__(self, model_config):

@@ -11,18 +11,13 @@ from ._models_py3 import DataBoundaryProperties
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
-from ._models_py3 import Operation
-from ._models_py3 import OperationDisplay
-from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import SystemData
 
-from ._data_boundary_mgmt_client_enums import ActionType
 from ._data_boundary_mgmt_client_enums import CreatedByType
 from ._data_boundary_mgmt_client_enums import DataBoundary
 from ._data_boundary_mgmt_client_enums import DefaultName
-from ._data_boundary_mgmt_client_enums import Origin
 from ._data_boundary_mgmt_client_enums import ProvisioningState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -34,17 +29,12 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
-    "Operation",
-    "OperationDisplay",
-    "OperationListResult",
     "ProxyResource",
     "Resource",
     "SystemData",
-    "ActionType",
     "CreatedByType",
     "DataBoundary",
     "DefaultName",
-    "Origin",
     "ProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

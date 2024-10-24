@@ -20,11 +20,10 @@ from ._configuration import FabricMgmtClientConfiguration
 from .operations import FabricCapacitiesOperations, Operations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FabricMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class FabricMgmtClient:
     """FabricMgmtClient.
 
     :ivar fabric_capacities: FabricCapacitiesOperations operations

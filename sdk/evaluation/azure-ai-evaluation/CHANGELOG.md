@@ -7,6 +7,15 @@
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
+```json 
+{"question": <user_message>, "answer": <assistant_message>}
+```
+`to_eval_qr_json_lines` now has:
+```json 
+{"query": <user_message>, "response": assistant_message}
+```
+
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
@@ -15,6 +24,13 @@
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+  - `CoherenceEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `GroundednessEvaluator`
+  - `SimilarityEvaluator`
+  - `RetrievalEvaluator`
 
 ## 1.0.0b4 (2024-10-16)
 
