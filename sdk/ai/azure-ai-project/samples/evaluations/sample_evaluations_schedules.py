@@ -59,7 +59,7 @@ sampling_strategy = SamplingStrategy(rate=0.7)
 name = "<sample-name>"
 description = "<sample-description>"
 tags = {"<tag-key>": "<tag-value>"}
-properties = {"Environment": "/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/apeddau-rg-eastus2euap/providers/Microsoft.MachineLearningServices/workspaces/apeddau-ws-canary-eastus2euap/environments/ws-online-eval-env/versions/1"}
+properties = {"Environment": "<sample-environment>"}
 
 evaluation_schedule = EvaluationSchedule(
     data=app_insights_config,
