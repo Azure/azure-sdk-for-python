@@ -12,7 +12,6 @@ import json
 import logging
 import base64
 import asyncio
-import traceback
 
 from azure.ai.client._instrumentation._utils import trace_tool_execution
 from azure.core.credentials import TokenCredential, AccessToken
@@ -1033,5 +1032,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
-
