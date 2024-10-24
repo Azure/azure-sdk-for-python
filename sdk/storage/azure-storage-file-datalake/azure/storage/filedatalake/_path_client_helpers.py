@@ -42,7 +42,6 @@ def _parse_url(account_url: str) -> "ParseResult":
 
 
 def _format_url(scheme: str, hostname: str, file_system_name: str, path_name: str, query_str: str) -> str:
-    file_system_name = file_system_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(file_system_name)}/{quote(path_name, safe='~')}{query_str}"
 
 
