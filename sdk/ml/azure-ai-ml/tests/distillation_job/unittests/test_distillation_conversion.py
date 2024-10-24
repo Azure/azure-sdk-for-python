@@ -3,7 +3,6 @@ import pytest
 from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import NoneCredentialConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.distillation_types import (

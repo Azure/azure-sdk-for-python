@@ -1,7 +1,8 @@
 import pytest
 
-from azure.ai.ml import Input, distillation
+from azure.ai.ml import Input
 from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType
+from azure.ai.ml.distillation import distillation
 from azure.ai.ml.entities import NoneCredentialConfiguration, ServerlessConnection, WorkspaceConnection
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings
