@@ -65,7 +65,8 @@ class _AsyncRetrievalScoreEvaluator:
             history = []
             for turn_num, query in enumerate(queries):
                 try:
-                    query = query if turn_num < len(queries) else ""
+                    if turn_num >= len(queries):
+                        query = ""
                     answer = responses[turn_num] if turn_num < len(responses) else ""
                     context = contexts[turn_num] if turn_num < len(contexts) else ""
 
