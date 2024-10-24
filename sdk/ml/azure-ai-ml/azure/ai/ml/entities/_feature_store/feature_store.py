@@ -160,6 +160,9 @@ class FeatureStore(Workspace):
         self.identity = identity
         self.public_network_access = public_network_access
         self.managed_network = managed_network
+        # here, compute_runtime is used instead of feature_store_settings because
+        # it uses default spark version if no compute_runtime is specified during update
+        self.compute_runtime = compute_runtime
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:

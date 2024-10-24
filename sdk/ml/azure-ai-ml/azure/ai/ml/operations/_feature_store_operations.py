@@ -460,6 +460,14 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         if not online_store_target_to_update:
             update_online_store_role_assignment = False
 
+        user_defined_cr = feature_store.compute_runtime
+        if (
+            user_defined_cr
+            and user_defined_cr.spark_runtime_version != feature_store_settings.compute_runtime.spark_runtime_version
+        ):
+            # update user defined compute runtime
+            feature_store_settings.compute_runtime = feature_store.compute_runtime
+
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:
             identity = IdentityConfiguration(
