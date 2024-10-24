@@ -68,6 +68,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         }
     """
 
+    # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
         self._parallel = kwargs.pop("parallel", False)

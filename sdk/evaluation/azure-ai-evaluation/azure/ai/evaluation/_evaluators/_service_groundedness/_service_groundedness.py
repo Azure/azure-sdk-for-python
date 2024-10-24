@@ -4,10 +4,12 @@
 from typing import Optional, Dict
 from typing_extensions import override
 
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
+@experimental
 class GroundednessProEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a Groundedness Pro evaluator for determine if the response is grounded
