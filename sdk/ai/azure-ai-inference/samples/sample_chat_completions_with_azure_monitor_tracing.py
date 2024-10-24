@@ -4,10 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use tracing with the Inference client library.
-    Azure AI Inference is instrumented with OpenTelemetry. In order to enable tracing
-    you need to configure OpenTelemetry to export traces to your observability backend.
-    This sample shows how to capture the traces to a file.
+    This sample demonstrates how to enable distributed tracing with OpenTelemetry
+    in Azure AI Inference client library and export traces to Azure Monitor.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -15,7 +13,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
-    python sample_chat_completions_with_tracing.py
+    python sample_chat_completions_with_azure_monitor_tracing.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
@@ -23,6 +21,7 @@ USAGE:
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    3) APPLICATIONINSIGHTS_CONNECTION_STRING - Your Azure Monitor (Application Insights) connection string.
 """
 
 
@@ -132,6 +131,9 @@ def chat_completion_with_function_call(key, endpoint):
 
 
 def main():
+    # There is no need to pass APPLICATIONINSIGHTS_CONNECTION_STRING explicitly,
+    # as it is read from this environment variable by the configure_azure_monitor function
+    # It's provided here for clarity.
     configure_azure_monitor(connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 
     try:
