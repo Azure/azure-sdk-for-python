@@ -1,12 +1,11 @@
-## Welcome to the Evaluation in Cloud with schedules Bug Bash!
+## Welcome to the Bug Bash for Evaluation in Cloud with Schedules!
 
-### Prerequisites
-- Azure AI Project in `EastUS2` region
+### Environment
+- Online Evaluation Service & Azure AI Project deployed in `EastUS2` region
 
-### Resources
+### How To Get Started
 
-
-### Clone the repository
+#### Azure SDK Setup
 ```bash
 git clone https://github.com/Azure/azure-sdk-for-python.git
 # Navigate to cloned repo folder
@@ -14,14 +13,16 @@ git pull
 git checkout users/singankit/remote_evaluation_bug_bash
 ```
 
-### Installation Instructions:
+#### Python Environment Creation Instructions:
 
 1. Create a **virtual environment of you choice**. To create one using conda, run the following command:
+
     ```bash
     conda create -n online-evaluation-bug-bash python=3.11
     conda activate online-evaluation-bug-bash
     ```
 2. Install the required packages by running the following command:
+
     ```bash
    # Clearing any old installation
     pip uninstall azure-ai-project azure-ai-ml
@@ -31,15 +32,20 @@ git checkout users/singankit/remote_evaluation_bug_bash
    # installing azure-ai-project, SDK is same for remote, if already installed please ignore.
    pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
     ```
+### How To Run Python Samples From SDK
 
-### How to Get `Project Connection String`?
-Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
+1. This Online Evaluation [sample_evaluation_schedules.py](./sample_evaluations_schedules.py) file demonstrates how to run CRUD operations on how to evaluate continuously by running evaluation on a given schedule.
+2. We have created AI project with relevant permissions to test for bug bash, please refer `Setup: Sample SDK API Testing Parameters` section in [Online Evaluation Bug Bash Document](https://microsoftapc-my.sharepoint.com/:w:/g/personal/shiprajain_microsoft_com/EQwumulCeG9JoQbgHw0ts-EB1-Yj9Vw8HeXKwgXQl_hv9w?e=kbBnKY) for values to override in [sample_evaluation_schedules.py](./sample_evaluations_schedules.py).
 
-### Instructions for pushing application insights data
+### Appendix
+The following sections are optional for the bug bash and will be enhanced afterward.
+#### How to Get `Project Connection String`?
+- Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
+
+#### Instructions for pushing application insights data
+- TBD
 
 
-### Instructions to view enriched data
+#### Instructions to view enriched data
+- TBD
 
-### Samples
-1. Online Evaluation - [SDK Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
-2. We had created project with relevant permissions to test for bug bash, please refer `Setup` section in [Online Evaluation Bug Bash Document](https://microsoftapc-my.sharepoint.com/:w:/g/personal/shiprajain_microsoft_com/EQwumulCeG9JoQbgHw0ts-EB1-Yj9Vw8HeXKwgXQl_hv9w?e=kbBnKY) for values to override in sample example.
