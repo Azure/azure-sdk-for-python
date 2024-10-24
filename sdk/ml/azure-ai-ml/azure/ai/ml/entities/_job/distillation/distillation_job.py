@@ -67,6 +67,12 @@ class DistillationJob(Job, JobIOMixin):
                 f"{DataGenerationType.DataGeneration}."
             )
 
+        if self._validation_data is None and self._data_generation_type == DataGenerationType.LabelGeneration:
+            raise ValueError(
+                f"Validation data can only be None when data generation type is set to "
+                f"{DataGenerationType.DataGeneration}."
+            )
+
         kwargs[TYPE] = JobType.DISTILLATION
         self._outputs = kwargs.pop("outputs", None)
         super().__init__(**kwargs)

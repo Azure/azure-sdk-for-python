@@ -87,6 +87,12 @@ def distillation(
             f"{DataGenerationType.DataGeneration}."
         )
 
+    if validation_data is None and data_generation_type == DataGenerationType.LabelGeneration:
+        raise ValueError(
+            f"Validation data can only be None when data generation type is set to "
+            f"{DataGenerationType.DataGeneration}."
+        )
+
     return DistillationJob(
         data_generation_type=data_generation_type,
         data_generation_task_type=data_generation_task_type,

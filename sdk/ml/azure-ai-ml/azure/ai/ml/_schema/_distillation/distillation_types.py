@@ -13,7 +13,7 @@ from azure.ai.ml._utils._experimental import experimental
 class PromptSettingsSchema(metaclass=PatchedSchemaMeta):
     enable_chain_of_thought = fields.Bool()
     enable_chain_of_density = fields.Bool()
-    max_len_summary = fields.Number()
+    max_len_summary = fields.Int()
     # custom_prompt = fields.Str()
 
     @post_load

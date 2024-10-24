@@ -44,7 +44,7 @@ class TestDistillationJob:
             "learning_rate": 0.00002,
         }, "Hyperparameters not set correctly"
 
-    def test_distillation_function_fails(self):
+    def test_distillation_function_fails_no_training_data(self):
         with pytest.raises(ValueError) as exception:
             _ = distillation(
                 experiment_name="llama-test",
@@ -54,8 +54,26 @@ class TestDistillationJob:
                     type="custom", credentials=NoneCredentialConfiguration(), name="llama", target="None"
                 ),
                 student_model="llama-student",
+                validation_data="azureml:foo:1",
             )
         error_msg = (
             f"Training data can only be None when data generation type is set to {DataGenerationType.DataGeneration}."
+        )
+        assert str(exception.value) == error_msg
+
+    def test_distillation_function_fails_no_validation_data(self):
+        with pytest.raises(ValueError) as exception:
+            _ = distillation(
+                experiment_name="llama-test",
+                data_generation_type=DataGenerationType.LabelGeneration,
+                data_generation_task_type=DataGenerationTaskType.NLI,
+                teacher_model_endpoint_connection=WorkspaceConnection(
+                    type="custom", credentials=NoneCredentialConfiguration(), name="llama", target="None"
+                ),
+                student_model="llama-student",
+                training_data="azureml:foo:1",
+            )
+        error_msg = (
+            f"Validation data can only be None when data generation type is set to {DataGenerationType.DataGeneration}."
         )
         assert str(exception.value) == error_msg
