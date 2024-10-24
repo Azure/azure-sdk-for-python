@@ -62,3 +62,5 @@ def _configure_auto_instrumentation() -> None:
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
     if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
         settings.tracing_implementation = OpenTelemetrySpan
+
+
