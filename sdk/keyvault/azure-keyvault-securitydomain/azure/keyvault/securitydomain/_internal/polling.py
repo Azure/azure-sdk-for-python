@@ -58,7 +58,7 @@ def _is_empty(response: HttpResponse) -> bool:
     return not bool(response.content)
 
 
-class SecurityDomainClientPolling(OperationResourcePolling):
+class SecurityDomainClientDownloadPolling(OperationResourcePolling):
     def __init__(self) -> None:
         self._polling_url = ""
         super().__init__(operation_location_header="azure-asyncoperation")
@@ -74,11 +74,13 @@ class SecurityDomainClientPolling(OperationResourcePolling):
         self._polling_url = response.headers["azure-asyncoperation"]
 
         if response.status_code in {200, 201, 202, 204}:
+            # The initial download response doesn't contain the status, so we consider it as "InProgress"
+            # The next status update request will point to the download status endpoint and correctly update
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
 
-class SecurityDomainClientPollingMethod(LROBasePolling):
+class SecurityDomainClientDownloadPollingMethod(LROBasePolling):
     def initialize(
         self,
         client: PipelineClientType,
@@ -175,4 +177,65 @@ class SecurityDomainClientPollingMethod(LROBasePolling):
         # To be clean, we would have to make the polling return type Optional "just in case the Swagger/TSP is wrong".
         # This is reducing the quality and the value of the typing annotations
         # for a case that is not supposed to happen in the first place. So we decided to ignore the type error here.
-        return None  # type: ignore 
+        return None  # type: ignore
+
+
+class SecurityDomainClientUploadPolling(SecurityDomainClientDownloadPolling):
+    def set_initial_status(self, pipeline_response: "PipelineResponse") -> str:
+        response: HttpResponse = pipeline_response.http_response
+        self._polling_url = response.headers["azure-asyncoperation"]
+
+        if response.status_code in {200, 201, 202, 204}:
+            return self.get_status(pipeline_response)
+        raise OperationFailed("Operation failed or canceled")
+
+
+class SecurityDomainClientUploadPollingMethod(SecurityDomainClientDownloadPollingMethod):
+    def initialize(
+        self,
+        client: PipelineClientType,
+        initial_response: PipelineResponse[HttpRequest, HttpResponse],
+        deserialization_callback: Callable[
+            [PipelineResponse[HttpRequest, HttpResponse]],
+            SecurityDomainObject,
+        ],
+    ) -> None:
+        """Set the initial status of this LRO.
+
+        :param client: The Azure Core Pipeline client used to make request.
+        :type client: ~azure.core.pipeline.PipelineClient
+        :param initial_response: The initial response for the call.
+        :type initial_response: ~azure.core.pipeline.PipelineResponse
+        :param deserialization_callback: A callback function to deserialize the final response.
+        :type deserialization_callback: callable
+        :raises: HttpResponseError if initial status is incorrect LRO state
+        """
+        self._client = client
+        self._pipeline_response = (  # pylint: disable=attribute-defined-outside-init
+            self._initial_response  # pylint: disable=attribute-defined-outside-init
+        ) = initial_response
+
+        def get_long_running_output(_):  # pylint: disable=inconsistent-return-statements
+            return None
+
+        self._deserialization_callback = get_long_running_output
+
+        for operation in self._lro_algorithms:
+            if operation.can_poll(initial_response):
+                self._operation = operation
+                break
+        else:
+            raise BadResponse("Unable to find status link for polling.")
+
+        try:
+            _raise_if_bad_http_status_and_method(self._initial_response.http_response)
+            self._status = self._operation.set_initial_status(initial_response)
+
+        except BadStatus as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=initial_response.http_response, error=err) from err
+        except BadResponse as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err) from err
+        except OperationFailed as err:
+            raise HttpResponseError(response=initial_response.http_response, error=err) from err

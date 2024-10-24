@@ -16,7 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client import SecurityDomainClient as _SecurityDomainClient
-from .._internal import AsyncChallengeAuthPolicy, AsyncSecurityDomainClientPollingMethod, SecurityDomainClientPolling
+from .._internal import (
+    AsyncChallengeAuthPolicy,
+    AsyncSecurityDomainClientDownloadPollingMethod,
+    AsyncSecurityDomainClientUploadPollingMethod,
+    SecurityDomainClientDownloadPolling,
+    SecurityDomainClientUploadPolling,
+)
 from ..models import CertificateInfoObject, SecurityDomainObject
 from .._patch import DEFAULT_VERSION, _format_api_version, _SERIALIZER
 
@@ -27,7 +33,9 @@ else:
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "SecurityDomainClient",
+]  # Add all objects you want publicly available to users at this package level
 
 
 class SecurityDomainClient(_SecurityDomainClient):
@@ -154,8 +162,31 @@ class SecurityDomainClient(_SecurityDomainClient):
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         return await super().begin_download(
             certificate_info_object,
-            polling=AsyncSecurityDomainClientPollingMethod(
-                lro_algorithms=[SecurityDomainClientPolling()], timeout=delay
+            polling=AsyncSecurityDomainClientDownloadPollingMethod(
+                lro_algorithms=[SecurityDomainClientDownloadPolling()], timeout=delay
+            ),
+            **kwargs,
+        )
+
+    @distributed_trace_async
+    async def begin_upload(
+        self, security_domain: Union[SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restore the provided Security Domain.
+
+        :param security_domain: The Security Domain to be restored. Is one of the following types:
+         SecurityDomainObject, JSON, IO[bytes] Required.
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        return await super().begin_upload(
+            security_domain,
+            polling=AsyncSecurityDomainClientUploadPollingMethod(
+                lro_algorithms=[SecurityDomainClientUploadPolling()], timeout=delay
             ),
             **kwargs,
         )
