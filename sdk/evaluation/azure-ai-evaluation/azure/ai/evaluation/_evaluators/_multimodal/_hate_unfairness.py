@@ -58,14 +58,23 @@ class HateUnfairnessMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, credential=None) -> None:
-        self._async_evaluator = _AsyncHateUnfairnessMultimodalEvaluator(azure_ai_project, credential)
+    def __init__(
+        self, 
+        credential,
+        azure_ai_project
+    ):
+        self._async_evaluator = _AsyncHateUnfairnessMultimodalEvaluator(credential, azure_ai_project)
     
-    def __call__(self, *, messages, **kwargs):
+    def __call__(
+        self, 
+        *, 
+        messages, 
+        **kwargs
+    ):
         """
         Evaluates hate unfairness content.
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: List[Dict]
+        :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: The hate unfairness score.
         :rtype: Dict
         """
@@ -76,12 +85,21 @@ class HateUnfairnessMultimodalEvaluator:
     
 
 class _AsyncHateUnfairnessMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(
+        self, 
+        credential,
+        azure_ai_project
+    ):
         super().__init__(
             metric=EvaluationMetrics.HATE_FAIRNESS,
-            azure_ai_project=azure_ai_project,
             credential=credential,
+            azure_ai_project=azure_ai_project,
         )
     
-    async def __call__(self, *, messages, **kwargs):
+    async def __call__(
+        self, 
+        *, 
+        messages, 
+        **kwargs
+    ):
         return await super().__call__(messages=messages, **kwargs)

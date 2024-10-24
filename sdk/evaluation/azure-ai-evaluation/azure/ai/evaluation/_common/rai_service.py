@@ -270,8 +270,8 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
 
     result: Dict[str, Union[str, float]] = {
     (key.value if hasattr(key, 'value') else key): math.nan,
-    f"{key}_score": math.nan,
-    f"{key}_reason": ""
+    f"{(key.value if hasattr(key, 'value') else key)}_score": math.nan,
+    f"{(key.value if hasattr(key, 'value') else key)}_reason": math.nan
 }
 
     response = batch_response[0]

@@ -24,18 +24,21 @@ logger = logging.getLogger(__name__)
 class ContentSafetyMultimodalEvaluator:
     """
     Initialize a content safety multimodal evaluator configured to evaluate content safety metrics for multimodal scenario.
+    
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :type parallel: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
+    
     :return: A function that evaluates multimodal chat messages and generates metrics.
     :rtype: Callable
     
     **Usage**
+    
     .. code-block:: python
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
@@ -85,13 +88,18 @@ class ContentSafetyMultimodalEvaluator:
         }
     """
     
-    def __init__(self, credential, azure_ai_project: dict, parallel: bool = False):
+    def __init__(
+        self, 
+        credential, 
+        azure_ai_project, 
+        parallel: bool = False
+    ):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
-            ViolenceMultimodalEvaluator(azure_ai_project, credential),
-            SexualMultimodalEvaluator(azure_ai_project, credential),
-            SelfHarmMultimodalEvaluator(azure_ai_project, credential),
-            HateUnfairnessMultimodalEvaluator(azure_ai_project, credential),
+            ViolenceMultimodalEvaluator(credential, azure_ai_project),
+            SexualMultimodalEvaluator(credential, azure_ai_project),
+            SelfHarmMultimodalEvaluator(credential, azure_ai_project),
+            HateUnfairnessMultimodalEvaluator(credential, azure_ai_project),
         ]
 
     def __call__(
@@ -102,7 +110,7 @@ class ContentSafetyMultimodalEvaluator:
         """
         Evaluates content-safety metrics for list of messages.
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: Dict
+        :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: The scores for messages.
         :rtype: Dict
         """
@@ -208,7 +216,6 @@ class ContentSafetyMultimodalEvaluator:
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        
     def _get_harm_severity_level(self, harm_score: float) -> Union[HarmSeverityLevel, float]:
         HARM_SEVERITY_LEVEL_MAPPING = {
             HarmSeverityLevel.VeryLow: (0, 1),

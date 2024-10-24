@@ -11,12 +11,15 @@ from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBas
 class SelfHarmMultimodalEvaluator:
     """
     Initialize a self harm multimodal evaluator for self harm score.
+    
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
+    
     **Usage**
+    
     .. code-block:: python
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
@@ -56,14 +59,23 @@ class SelfHarmMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(azure_ai_project, credential)
+    def __init__(
+        self,
+        credential, 
+        azure_ai_project
+    ):
+        self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(credential, azure_ai_project)
     
-    def __call__(self, *, messages, **kwargs):
+    def __call__(
+        self, 
+        *, 
+        messages, 
+        **kwargs
+    ):
         """
         Evaluates self harm content.
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: List[Dict]
+        :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: The self harm score.
         :rtype: Dict
         """
@@ -73,11 +85,15 @@ class SelfHarmMultimodalEvaluator:
         return self._async_evaluator
     
 class _AsyncSelfHarmMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(
+        self, 
+        credential,
+        azure_ai_project
+    ):
         super().__init__(
             metric=EvaluationMetrics.SELF_HARM,
-            azure_ai_project=azure_ai_project,
             credential=credential,
+            azure_ai_project=azure_ai_project,
         )
     async def __call__(self, *, messages, **kwargs):
         return await super().__call__(messages=messages, **kwargs)

@@ -18,6 +18,7 @@ class ProtectedMaterialMultimodalEvaluator:
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
     :rtype: Dict[str, str]
 
@@ -61,15 +62,24 @@ class ProtectedMaterialMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncProtectedMaterialMultimodalEvaluator(azure_ai_project, credential)
+    def __init__(
+        self,
+        credential, 
+        azure_ai_project,
+    ):
+        self._async_evaluator = _AsyncProtectedMaterialMultimodalEvaluator(credential, azure_ai_project)
 
-    def __call__(self, *, messages, **kwargs):
+    def __call__(
+        self, 
+        *, 
+        messages, 
+        **kwargs
+    ):
         """
         Evaluates protected materials content.
 
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: List[Dict]
+        :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: dict
         """
@@ -79,15 +89,19 @@ class ProtectedMaterialMultimodalEvaluator:
         return self._async_evaluator
 
 class _AsyncProtectedMaterialMultimodalEvaluator:
-    def __init__(self, azure_ai_project: dict, credential: None):
-        self._azure_ai_project = azure_ai_project
+    def __init__(
+        self, 
+        credential,
+        azure_ai_project
+    ):
         self._credential = credential
+        self._azure_ai_project = azure_ai_project
 
     async def __call__(self, *, messages, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: List[Dict]
+        :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
@@ -97,7 +111,7 @@ class _AsyncProtectedMaterialMultimodalEvaluator:
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,
             metric_name=EvaluationMetrics.PROTECTED_MATERIAL,
-            project_scope=self._azure_ai_project,
             credential=self._credential,
+            project_scope=self._azure_ai_project,
         )
         return result

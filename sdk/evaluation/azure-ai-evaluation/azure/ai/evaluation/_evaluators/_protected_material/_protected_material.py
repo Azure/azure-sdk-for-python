@@ -26,7 +26,6 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     **Usage**
 
     .. code-block:: python
-
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
@@ -38,7 +37,6 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     **Output format**
 
     .. code-block:: python
-
         {
             "protected_material_label": False,
             "protected_material_reason": "This query does not contain any protected material."
