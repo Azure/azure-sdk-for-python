@@ -4,8 +4,12 @@
 # ------------------------------------
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from .polling import SecurityDomainClientPollingMethod
+from .polling import SecurityDomainClientDownloadPollingMethod, SecurityDomainClientUploadPollingMethod
 
 
-class AsyncSecurityDomainClientPollingMethod(SecurityDomainClientPollingMethod, AsyncLROBasePolling):
+class AsyncSecurityDomainClientDownloadPollingMethod(AsyncLROBasePolling, SecurityDomainClientDownloadPollingMethod):
+    pass
+
+
+class AsyncSecurityDomainClientUploadPollingMethod(AsyncLROBasePolling, SecurityDomainClientUploadPollingMethod):
     pass
