@@ -4,16 +4,34 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+- Groundedness detection in Non Adversarial Simulator via query/context pairs
+```python
+import importlib.resources as pkg_resources
+package = "azure.ai.evaluation.simulator._data_sources"
+resource_name = "grounding.json"
+custom_simulator = Simulator(model_config=model_config)
+conversation_turns = []
+with pkg_resources.path(package, resource_name) as grounding_file:
+    with open(grounding_file, "r") as file:
+        data = json.load(file)
+for item in data:
+    conversation_turns.append([item])
+outputs = asyncio.run(custom_simulator(
+    target=callback,
+    conversation_turns=conversation_turns,
+    max_conversation_turns=1,
+))
+```
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
 - AdversarialScenario enum does not include `ADVERSARIAL_INDIRECT_JAILBREAK`, invoking IndirectJailbreak or XPIA should be done with `IndirectAttackSimulator`
 - Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
-```json 
+```json
 {"question": <user_message>, "answer": <assistant_message>}
 ```
 `to_eval_qr_json_lines` now has:
-```json 
+```json
 {"query": <user_message>, "response": assistant_message}
 ```
 
@@ -32,6 +50,7 @@
   - `GroundednessEvaluator`
   - `SimilarityEvaluator`
   - `RetrievalEvaluator`
+- Improved the error message for storage access permission issues to provide clearer guidance for users.
 
 ## 1.0.0b4 (2024-10-16)
 
