@@ -16,7 +16,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from ._configuration import AIProjectClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations
+from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, DiagnosticsOperations
 from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
@@ -48,11 +48,46 @@ class AIProjectClient(ClientGenerated):
         if "credential_scopes" in kwargs:
             raise ValueError("No support for overriding the credential scopes")
 
+        kwargs0 = kwargs.copy()
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
 
-        # For Endpoints operations (enumerating connections, getting SAS tokens)
+        # For getting AppInsights connection string from the AppInsights resource.
+        # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
+        # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resouce_group_name}/providers/microsoft.insights/components/{appinsights_resouce_name}
+        _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
+        self._config0 = AIProjectClientConfiguration(
+            endpoint=endpoint,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            project_name=project_name,
+            credential=credential,
+            api_version="2020-02-02",
+            credential_scopes=["https://management.azure.com"],
+            **kwargs0,
+        )
+
+        _policies0 = kwargs0.pop("policies", None)
+        if _policies0 is None:
+            _policies0 = [
+                policies.RequestIdPolicy(**kwargs0),
+                self._config0.headers_policy,
+                self._config0.user_agent_policy,
+                self._config0.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs0),
+                self._config0.redirect_policy,
+                self._config0.retry_policy,
+                self._config0.authentication_policy,
+                self._config0.custom_hook_policy,
+                self._config0.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs0),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs0) if self._config0.redirect_policy else None,
+                self._config0.http_logging_policy,
+            ]
+        self._client0 = PipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
+
+        # For Endpoints operations (listing connections, getting connection properties, getting project properties)
         _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config1 = AIProjectClientConfiguration(
             endpoint=endpoint,
@@ -149,23 +184,27 @@ class AIProjectClient(ClientGenerated):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+        self.diagnostics = DiagnosticsOperations(self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self)
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
 
     def close(self) -> None:
+        self._client0.close()
         self._client1.close()
         self._client2.close()
         self._client3.close()
 
     def __enter__(self) -> Self:
+        self._client0.__enter__()
         self._client1.__enter__()
         self._client2.__enter__()
         self._client3.__enter__()
         return self
 
     def __exit__(self, *exc_details: Any) -> None:
+        self._client0.__exit__(*exc_details)
         self._client1.__exit__(*exc_details)
         self._client2.__exit__(*exc_details)
         self._client3.__exit__(*exc_details)

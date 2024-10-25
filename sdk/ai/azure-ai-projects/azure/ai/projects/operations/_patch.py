@@ -16,7 +16,7 @@ from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
-from ..models._models import GetConnectionResponse, ListConnectionsResponse
+from ..models._models import GetConnectionResponse, ListConnectionsResponse, GetAppInsightsResponse, GetWorkspaceResponse
 from .._types import AgentsApiResponseFormatOption
 from ..models._patch import ConnectionProperties
 from ..models._enums import FilePurpose
@@ -309,10 +309,23 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 
 class DiagnosticsOperations(DiagnosticsOperationsGenerated):
+
+    def __init__(self, *args, **kwargs):
+        self.outer_instance = kwargs.pop("outer_instance")
+        super().__init__(*args, **kwargs)
+
     @distributed_trace
-    def enable(self, **kwargs):
-        get_workspace_response = self.outer_instance.connections._get_workspace()
-        print(get_workspace_response)
+    def enable(self, **kwargs) -> bool:
+
+        # Get the AI Studio Project properties
+        get_workspace_response: GetWorkspaceResponse = self.outer_instance.connections._get_workspace()
+
+        # No Application Insights resource was enabled for this Project
+        if not get_workspace_response.properties.application_insights:
+            return False
+
+        app_insights_respose: GetAppInsightsResponse = self.get_app_insights(app_insights_resource_url=get_workspace_response.properties.application_insights)
+        print(app_insights_respose)
 
 
 class AgentsOperations(AgentsOperationsGenerated):
@@ -1976,6 +1989,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 __all__: List[str] = [
     "AgentsOperations",
     "ConnectionsOperations",
+    "DiagnosticsOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
