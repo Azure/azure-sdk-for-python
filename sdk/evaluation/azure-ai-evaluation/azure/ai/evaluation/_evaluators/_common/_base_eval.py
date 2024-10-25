@@ -231,17 +231,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         if conversation is not None:
             return self._derive_conversation_converter()(conversation)
         # Handle Singletons
-        singletons = remove_optional_singletons(self, singletons)
-        if all(value is not None for value in singletons.values()):
-            return [singletons]
-        # Missing input
-        msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided."
-        raise EvaluationException(
-            message=msg,
-            blame=ErrorBlame.USER_ERROR,
-            category=ErrorCategory.INVALID_VALUE,
-            target=ErrorTarget.CONVERSATION,
-        )
+        return [singletons]
 
     def _aggregate_results(self, per_turn_results: List[DoEvalResult[T_EvalValue]]) -> AggregateResult[T_EvalValue]:
         """Aggregate the evaluation results of each conversation turn into a single result.
