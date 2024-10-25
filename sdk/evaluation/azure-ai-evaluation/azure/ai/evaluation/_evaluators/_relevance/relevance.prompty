@@ -22,12 +22,12 @@ inputs:
 system:
 # Instruction
 ## Goal
-### You are an expert in evaluating the quality of an RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
 - **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
-- **Data**: Your input data include QUERY, and an RESPONSE.
+- **Data**: Your input data include QUERY and RESPONSE.
 - **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
 
-
+user:
 # Definition
 **Relevance** refers to how effectively a response addresses a question. It assesses the accuracy, completeness, and direct relevance of the response based solely on the given information.
 
@@ -91,7 +91,7 @@ RESPONSE: {{response}}
 
 # Tasks
 ## Please provide your assessment Score for the previous RESPONSE in relation to the QUERY based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, Think Step by Step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and Start your ThoughtChain with "Let's think step by step:".
+- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
 - **Explanation**: a very short explanation of why you think the input Data should get that Score.
 - **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
 
