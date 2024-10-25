@@ -1305,8 +1305,8 @@ class ContainerProxy:
         :rtype: Iterable[Dict[str, Any]]
 
         .. note::
-          For each feed range, even through a Dict has been returned,
-          but in the future, the structure may change. Please just treat it as opaque and do not take any dependent on it.
+          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
+          Please just treat it as opaque and do not take any dependent on it.
 
         """
         if force_refresh is True:
