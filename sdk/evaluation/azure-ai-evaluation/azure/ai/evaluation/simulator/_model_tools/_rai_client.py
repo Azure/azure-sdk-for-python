@@ -74,14 +74,17 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             timeout=5,
         )
         if response.status_code != 200:
-            msg = "Failed to retrieve the discovery service URL."
+            msg = (
+                f"Unable to connect to your Azure AI project. Please verify that the project is correctly configured. "
+                f"Status code: {response.status_code}"
+            )
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
                 target=ErrorTarget.RAI_CLIENT,
                 category=ErrorCategory.SERVICE_UNAVAILABLE,
-                blame=ErrorBlame.UNKNOWN,
+                blame=ErrorBlame.USER_ERROR,
             )
+
         base_url = urlparse(response.json()["properties"]["discoveryUrl"])
         return f"{base_url.scheme}://{base_url.netloc}"
 

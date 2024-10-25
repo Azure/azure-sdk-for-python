@@ -76,27 +76,31 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     async with get_async_http_client() as client:
         response = await client.get(svc_liveness_url, headers=headers)
 
-    if response.status_code != 200:
-        msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.UNKNOWN,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        if response.status_code != 200:
+            msg = (
+                f"RAI service is unavailable in this region, or you lack the necessary permissions "
+                f"to access the AI project. Status Code: {response.status_code}"
+            )
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
-    capabilities = response.json()
-
-    if capability and capability not in capabilities:
-        msg = f"Capability '{capability}' is not available in this region"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        capabilities = response.json()
+        if capability and capability not in capabilities:
+            msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
 
 def generate_payload(normalized_user_text: str, metric: str) -> Dict:
@@ -346,15 +350,17 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
             headers=headers,
         )
 
-    if response.status_code != 200:
-        msg = "Failed to retrieve the discovery service URL."
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.UNKNOWN,
-        )
+        if response.status_code != 200:
+            msg = (
+                f"Unable to connect to your Azure AI project. Please verify that the project is correctly configured. "
+                f"Status code: {response.status_code}"
+            )
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])
     return f"{base_url.scheme}://{base_url.netloc}"
