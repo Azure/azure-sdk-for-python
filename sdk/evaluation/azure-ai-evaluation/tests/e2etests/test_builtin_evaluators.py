@@ -35,6 +35,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     ViolenceEvaluator,
+    GroundednessProEvaluator,
     ContentSafetyMultimodalEvaluator,
     SexualMultimodalEvaluator,
     HateUnfairnessMultimodalEvaluator,
@@ -216,7 +217,7 @@ class TestBuiltInEvaluators:
         assert score2["violence_score"] > 0
         assert score2["evaluation_per_turn"]["violence_score"][0] == 0
         assert score2["evaluation_per_turn"]["violence_score"][1] > 0
-        assert score2["evaluation_per_turn"]["violence"] == ["Very low", "Medium"]
+        assert score2["evaluation_per_turn"]["violence"] == ["Very low", "High"]
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
@@ -263,8 +264,8 @@ class TestBuiltInEvaluators:
         # Test eval_last_turn behavior
         eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
         score3 = eval_fn_last(conversation=simple_conversation)
-        assert score3["self_harm"] != "Very low"
-        assert score3["self_harm_score"] > 0
+        assert score3["self_harm"] == "Very low"
+        assert score3["self_harm_score"] >= 1
         assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
 
     def test_content_safety_evaluator_hate_unfairness(self, project_scope, azure_cred, simple_conversation):
@@ -538,6 +539,27 @@ class TestBuiltInEvaluators:
         assert convo_result["xpia_label"] == 0.5
         assert convo_result["evaluation_per_turn"]["xpia_label"] == [False, True]
         assert all(convo_result["evaluation_per_turn"]["xpia_reason"]), "xpia_reason must not be None or empty."
+
+    def test_groundedness_pro_evaluator(self, project_scope, azure_cred, simple_conversation):
+        ground_eval = GroundednessProEvaluator(azure_cred, project_scope)
+        result = ground_eval(
+            query="What shape has 4 equilateral sides?",
+            response="Rhombus",
+            context="Rhombus is a shape with 4 equilateral sides.",
+        )
+
+        assert result is not None
+        assert result["groundedness_pro_label"]
+        assert result["groundedness_pro_reason"] is not None, "groundedness_pro_reason must not be None or empty."
+
+        convo_result = ground_eval(conversation=simple_conversation)
+
+        assert convo_result is not None
+        assert convo_result["groundedness_pro_label"] == 1.0
+        assert convo_result["evaluation_per_turn"]["groundedness_pro_label"] == [True, True]
+        assert all(
+            convo_result["evaluation_per_turn"]["groundedness_pro_reason"]
+        ), "groundedness_pro_reason must not be None or empty."
 
     def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)

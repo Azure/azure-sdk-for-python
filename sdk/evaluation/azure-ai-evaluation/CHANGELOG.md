@@ -3,6 +3,7 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+- Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
 - Groundedness detection in Non Adversarial Simulator via query/context pairs
 ```python
 import importlib.resources as pkg_resources
