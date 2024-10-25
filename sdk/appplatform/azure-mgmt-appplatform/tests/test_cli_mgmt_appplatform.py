@@ -5,12 +5,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import pytest
 from azure.mgmt.appplatform import AppPlatformManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
+@pytest.mark.live_test_only
 class TestMgmtAppPlatform(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
