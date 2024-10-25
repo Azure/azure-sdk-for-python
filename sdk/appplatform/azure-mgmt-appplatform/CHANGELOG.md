@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - This package is converted to single-api package which only contain one kind of api version. After this change, the package size will be much smaller then before. Since most of users actually only actually one use the API of default api-version, you won't even feel the change.
+  - This package is converted to single-api package which only contain one kind of api version. After this change, the package size will be much smaller then before. Since most of users actually only use the API of default api-version, you won't even feel the change.
 
 ## 9.1.0 (2024-07-03)
 
