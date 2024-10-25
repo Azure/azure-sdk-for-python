@@ -68,7 +68,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         response: str,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate a given query/response pair for protected material
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -86,7 +86,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         **kwargs,
     ) -> Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]:
         """Evaluate a conversation for protected material
-        
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".

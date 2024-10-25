@@ -58,7 +58,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
             credential=credential,
             eval_last_turn=eval_last_turn,
         )
-    
+
     @overload
     def __call__(
         self,
@@ -67,7 +67,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
         response: str,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate the given query/response pair for hateful content
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -85,7 +85,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
         **kwargs,
     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a conversation for hateful content
-        
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".

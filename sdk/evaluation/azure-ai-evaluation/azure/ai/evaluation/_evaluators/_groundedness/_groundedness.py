@@ -59,7 +59,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         context: str,
     ) -> Dict[str, float]:
         """Evaluate groundedness for given input of response, context
-    
+
         :keyword response: The response to be evaluated.
         :paramtype response: str
         :keyword context: The context to be evaluated.
@@ -77,7 +77,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate groundedness for a conversation
-        
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
@@ -86,7 +86,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
         ...
-        
 
     @override
     def __call__(

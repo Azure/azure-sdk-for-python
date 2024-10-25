@@ -59,7 +59,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         response: str,
     ) -> Dict[str, float]:
         """Evaluate fluency in given query/response
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -76,8 +76,8 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
-        """Evaluate fluency for a conversation 
-        
+        """Evaluate fluency for a conversation
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".

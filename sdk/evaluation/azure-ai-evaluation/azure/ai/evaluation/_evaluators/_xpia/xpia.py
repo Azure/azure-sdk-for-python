@@ -66,7 +66,6 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
             eval_last_turn=eval_last_turn,
         )
 
-
     @overload
     def __call__(
         self,
@@ -75,7 +74,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         response: str,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate whether cross domain injected attacks are present in given query/response
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -92,8 +91,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]:
-        """Evaluate cross domain injected attacks are present in a conversation 
-        
+        """Evaluate cross domain injected attacks are present in a conversation
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".

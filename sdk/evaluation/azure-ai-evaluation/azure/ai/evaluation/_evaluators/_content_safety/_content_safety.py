@@ -87,7 +87,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         response: str,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate a collection of content safety metrics for the given query/response pair
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -105,7 +105,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         **kwargs,
     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a collection of content safety metrics for a conversation
-        
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".

@@ -63,7 +63,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         context: str,
     ) -> Dict[str, float]:
         """Evaluate groundedness for given input of query, response, context
-    
+
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
@@ -73,7 +73,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Dict[str, float]
         """
-        
+
         ...
 
     @overload
@@ -84,7 +84,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate relevance for a conversation
-        
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
@@ -93,7 +93,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
         ...
-        
 
     @override
     def __call__(
