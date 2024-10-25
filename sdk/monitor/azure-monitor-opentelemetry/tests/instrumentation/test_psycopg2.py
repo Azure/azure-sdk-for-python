@@ -16,12 +16,13 @@ if sys.implementation.name != "pypy" and (3, 8) < sys.version_info < (3, 13):
 
 class TestPsycopg2Instrumentation(unittest.TestCase):
 
-    @pytest.mark.skipif(sys.implementation.name == "pypy" or sys.version_info >= (3, 13), reason="Psycopg2 not supported for pypy3.9 and Py3.13")
+    @pytest.mark.skipif(
+        sys.implementation.name == "pypy" or sys.version_info >= (3, 13),
+        reason="Psycopg2 not supported for pypy3.9 and Py3.13",
+    )
     def test_instrument(self):
         try:
             Psycopg2Instrumentor().instrument()
         except Exception as ex:  # pylint: disable=broad-except
             print(ex)
-            self.fail(
-                f"Unexpected exception raised when instrumenting {Psycopg2Instrumentor.__name__}"
-            )
+            self.fail(f"Unexpected exception raised when instrumenting {Psycopg2Instrumentor.__name__}")
