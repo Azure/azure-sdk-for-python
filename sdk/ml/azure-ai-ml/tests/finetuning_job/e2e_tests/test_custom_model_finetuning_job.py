@@ -2,22 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Tuple
+import uuid
+from typing import Dict, Optional, Tuple
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
+from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningTaskType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.operations._run_history_constants import JobStatus
-from azure.ai.ml.entities._inputs_outputs import Input
-from typing import Optional, Dict
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
-import pytest
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    FineTuningTaskType,
-)
-import uuid
+from azure.ai.ml.operations._run_history_constants import JobStatus
 
 
 @pytest.mark.finetuning_job_test

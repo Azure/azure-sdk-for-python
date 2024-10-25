@@ -206,6 +206,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
@@ -228,6 +229,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             job_type = PipelineJob
         elif type_str == JobType.FINE_TUNING:
             job_type = FineTuningJob
+        elif type_str == JobType.DISTILLATION:
+            job_type = DistillationJob
         else:
             msg = f"Unsupported job type: {type_str}."
             raise ValidationException(
@@ -289,6 +292,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
@@ -319,6 +323,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+                if obj.properties.properties.get("azureml.enable_distillation", False):
+                    return DistillationJob._load_from_rest(obj)
                 return FineTuningJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.PIPELINE:
                 res_pipeline: Job = PipelineJob._load_from_rest(obj)
