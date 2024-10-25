@@ -26,7 +26,7 @@ from ._internal import (
     SecurityDomainClientUploadPolling,
     SecurityDomainClientUploadPollingMethod,
 )
-from .models import CertificateInfoObject, SecurityDomainObject
+from .models import CertificateInfoObject, SecurityDomainObject, SecurityDomainOperationStatus
 from ._serialization import Serializer
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -210,15 +210,17 @@ class SecurityDomainClient(_SecurityDomainClient):
     @distributed_trace
     def begin_upload(
         self, security_domain: Union[SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Is one of the following types:
          SecurityDomainObject, JSON, IO[bytes] Required.
         :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
          IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
