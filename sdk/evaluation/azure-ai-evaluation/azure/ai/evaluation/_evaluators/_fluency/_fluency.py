@@ -8,7 +8,6 @@ from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class FluencyEvaluator(PromptyEvaluatorBase):
