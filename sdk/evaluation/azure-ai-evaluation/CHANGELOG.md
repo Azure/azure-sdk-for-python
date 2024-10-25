@@ -4,6 +4,24 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+- Groundedness detection in Non Adversarial Simulator via query/context pairs
+```python
+import importlib.resources as pkg_resources
+package = "azure.ai.evaluation.simulator._data_sources"
+resource_name = "grounding.json"
+custom_simulator = Simulator(model_config=model_config)
+conversation_turns = []
+with pkg_resources.path(package, resource_name) as grounding_file:
+    with open(grounding_file, "r") as file:
+        data = json.load(file)
+for item in data:
+    conversation_turns.append([item])
+outputs = asyncio.run(custom_simulator(
+    target=callback,
+    conversation_turns=conversation_turns,
+    max_conversation_turns=1,
+))
+```
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
