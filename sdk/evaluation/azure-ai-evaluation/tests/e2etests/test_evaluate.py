@@ -10,7 +10,6 @@ import requests
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
-    evaluate,
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
@@ -114,18 +113,18 @@ class TestEvaluate:
         assert result["rows"] is not None
         assert row_result_df.shape[0] == len(input_data)
 
-        assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
         assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
 
-        assert "grounded.gpt_groundedness" in metrics.keys()
+        assert "grounded.groundedness" in metrics.keys()
         assert "f1_score.f1_score" in metrics.keys()
 
-        assert metrics.get("grounded.gpt_groundedness") == list_mean_nan_safe(
-            row_result_df["outputs.grounded.gpt_groundedness"]
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
         )
         assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
 
-        assert row_result_df["outputs.grounded.gpt_groundedness"][2] in [4, 5]
+        assert row_result_df["outputs.grounded.groundedness"][2] in [4, 5]
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
@@ -157,11 +156,11 @@ class TestEvaluate:
             assert result["rows"] is not None
             assert row_result_df.shape[0] == len(input_data)
 
-            assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
-            assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
+            assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+            assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
 
-            assert "grounded.gpt_groundedness" in metrics.keys()
-            assert "fluency.gpt_fluency" in metrics.keys()
+            assert "grounded.groundedness" in metrics.keys()
+            assert "fluency.fluency" in metrics.keys()
         finally:
             os.chdir(original_working_dir)
 
@@ -230,8 +229,8 @@ class TestEvaluate:
         assert result["rows"] is not None
         input_data = pd.read_json(data_file, lines=True)
         assert row_result_df.shape[0] == len(input_data)
-        assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
-        assert "fluency.gpt_fluency" in metrics.keys()
+        assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
+        assert "fluency.fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
         os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
