@@ -33,6 +33,7 @@ az login
 
 ```bash
 set AZURE_AI_PROJECTS_CONNECTION_STRING=<your_connection_string>
+set AZURE_AI_PROJECTS_DATA_PATH=<your_blob_containing_product_info_1.md_from_samples>
 ```
 
 ## Setup for running tests in the `evaluations` folder
