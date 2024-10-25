@@ -15,4 +15,3 @@ class TestDiagnostics(DiagnosticsTestBase):
     def test_diagnostics(self, **kwargs):
         project_client = self.get_sync_client(**kwargs)
         print(project_client.diagnostics.enable())
-

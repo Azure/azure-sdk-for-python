@@ -1459,7 +1459,7 @@ class GetAppInsightsResponse(_model_base.Model):
     """Response from getting properties of the Application Insights resource.
 
 
-    :ivar id: A unique identifier for the resouce. Required.
+    :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -1468,7 +1468,7 @@ class GetAppInsightsResponse(_model_base.Model):
     """
 
     id: str = rest_field()
-    """A unique identifier for the resouce. Required."""
+    """A unique identifier for the resource. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
     properties: "_models.AppInsightsProperties" = rest_field()
@@ -1518,7 +1518,7 @@ class GetWorkspaceResponse(_model_base.Model):
     """Response from the Workspace - Get operation.
 
 
-    :ivar id: A unique identifier for the resouce. Required.
+    :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -1527,7 +1527,7 @@ class GetWorkspaceResponse(_model_base.Model):
     """
 
     id: str = rest_field()
-    """A unique identifier for the resouce. Required."""
+    """A unique identifier for the resource. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
     properties: "_models._models.WorkspaceProperties" = rest_field()

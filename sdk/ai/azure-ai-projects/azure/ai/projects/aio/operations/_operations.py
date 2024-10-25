@@ -5299,11 +5299,15 @@ class DiagnosticsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_app_insights(self, resource_name: str, **kwargs: Any) -> _models.GetAppInsightsResponse:
+    async def get_app_insights(self, app_insights_resource_url: str, **kwargs: Any) -> _models.GetAppInsightsResponse:
+        # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
-        :param resource_name: The AppInsights Azure resource Name. Required.
-        :type resource_name: str
+        :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the
+         format:
+         ``/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource-name}``.
+         Required.
+        :type app_insights_resource_url: str
         :return: GetAppInsightsResponse. The GetAppInsightsResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.GetAppInsightsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5322,7 +5326,7 @@ class DiagnosticsOperations:
         cls: ClsType[_models.GetAppInsightsResponse] = kwargs.pop("cls", None)
 
         _request = build_diagnostics_get_app_insights_request(
-            resource_name=resource_name,
+            app_insights_resource_url=app_insights_resource_url,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

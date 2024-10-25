@@ -271,7 +271,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            return ConnectionProperties(connection=await self._get_connection(connection_name=connection_name, **kwargs))
+            return ConnectionProperties(
+                connection=await self._get_connection(connection_name=connection_name, **kwargs)
+            )
 
     @distributed_trace_async
     async def list(

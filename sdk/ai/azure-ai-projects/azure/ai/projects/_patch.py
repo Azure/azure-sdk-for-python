@@ -55,7 +55,7 @@ class AIProjectClient(ClientGenerated):
 
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
-        # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resouce_group_name}/providers/microsoft.insights/components/{appinsights_resouce_name}
+        # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
         _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
         self._config0 = AIProjectClientConfiguration(
             endpoint=endpoint,
@@ -184,7 +184,9 @@ class AIProjectClient(ClientGenerated):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        self.diagnostics = DiagnosticsOperations(self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self)
+        self.diagnostics = DiagnosticsOperations(
+            self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self
+        )
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)

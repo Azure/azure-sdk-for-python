@@ -16,7 +16,12 @@ from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
-from ..models._models import GetConnectionResponse, ListConnectionsResponse, GetAppInsightsResponse, GetWorkspaceResponse
+from ..models._models import (
+    GetConnectionResponse,
+    ListConnectionsResponse,
+    GetAppInsightsResponse,
+    GetWorkspaceResponse,
+)
 from .._types import AgentsApiResponseFormatOption
 from ..models._patch import ConnectionProperties
 from ..models._enums import FilePurpose
@@ -298,7 +303,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connections_list: ListConnectionsResponse = self._list_connections(include_all=True, category=connection_type, **kwargs)
+        connections_list: ListConnectionsResponse = self._list_connections(
+            include_all=True, category=connection_type, **kwargs
+        )
 
         # Iterate to create the simplified result property
         connection_properties_list: List[ConnectionProperties] = []
@@ -324,7 +331,9 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
         if not get_workspace_response.properties.application_insights:
             return False
 
-        app_insights_respose: GetAppInsightsResponse = self.get_app_insights(app_insights_resource_url=get_workspace_response.properties.application_insights)
+        app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
+            app_insights_resource_url=get_workspace_response.properties.application_insights
+        )
         print(app_insights_respose)
 
 
