@@ -79,7 +79,7 @@ class ProtectedMaterialMultimodalEvaluator:
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
         :paramtype messages: ~azure.ai.evaluation.Conversation
         :return: A dictionary containing a boolean label and reasoning.
-        :rtype: dict
+        :rtype: Dict[str, str]
         """
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
 

@@ -71,7 +71,7 @@ class SexualMultimodalEvaluator:
         :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The sexual score.
-        :rtype: Dict
+        :rtype: Dict[str, Union[float, str]]
         """
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
 

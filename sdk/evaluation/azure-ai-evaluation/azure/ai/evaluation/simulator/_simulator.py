@@ -236,15 +236,19 @@ class Simulator:
                         user_turn = Turn(
                             role=ConversationRole.USER,
                             content=str(simulated_turn.get("content")),
-                            context=str(simulated_turn.get("context"))
+                            context=str(simulated_turn.get("context")),
                         )
                     else:
-                        raise ValueError("Each simulated turn must be a string or a dict with 'content' and 'context' keys")
+                        raise ValueError(
+                            "Each simulated turn must be a string or a dict with 'content' and 'context' keys"
+                        )
                     current_simulation.add_to_history(user_turn)
                     assistant_response, assistant_context = await self._get_target_response(
                         target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
                     )
-                    assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+                    assistant_turn = Turn(
+                        role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+                    )
                     current_simulation.add_to_history(assistant_turn)
                     async with progress_bar_lock:
                         progress_bar.update(1)
@@ -286,7 +290,7 @@ class Simulator:
         prompty_model_config: Dict[str, Any],
         target: Callable,
         progress_bar: tqdm,
-        progress_bar_lock: asyncio.Lock
+        progress_bar_lock: asyncio.Lock,
     ):
         """
         Extends an ongoing conversation using a user simulator until the maximum number of turns is reached.
