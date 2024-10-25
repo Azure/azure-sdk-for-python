@@ -182,7 +182,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
+    ) -> AsyncLROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
@@ -193,17 +193,15 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_download(
         self, certificate_info_object: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
+    ) -> AsyncLROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
@@ -214,17 +212,15 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_download(
         self, certificate_info_object: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
+    ) -> AsyncLROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
@@ -235,17 +231,15 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_download(
         self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
+    ) -> AsyncLROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
@@ -255,17 +249,15 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
          JSON, IO[bytes] Required.
         :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
          JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -281,18 +273,9 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url(
@@ -310,15 +293,13 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.SecurityDomainOperationStatus].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.SecurityDomainOperationStatus](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_upload_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -450,7 +431,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
     @overload
     async def begin_upload(
         self, security_domain: _models.SecurityDomainObject, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required.
@@ -458,15 +439,17 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_upload(
         self, security_domain: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required.
@@ -474,15 +457,17 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_upload(
         self, security_domain: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required.
@@ -490,30 +475,34 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_upload(
         self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Is one of the following types:
          SecurityDomainObject, JSON, IO[bytes] Required.
         :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
          IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -529,9 +518,18 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url(
@@ -549,13 +547,15 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[_models.SecurityDomainOperationStatus].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.SecurityDomainOperationStatus](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_transfer_key(self, **kwargs: Any) -> _models.TransferKey:
