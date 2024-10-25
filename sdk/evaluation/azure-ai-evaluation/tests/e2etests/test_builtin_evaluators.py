@@ -88,15 +88,16 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["fluency"] > 1.0
+        assert score["fluency_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["fluency"] > 0
         assert score2["evaluation_per_turn"]["fluency"][0] > 0
         assert score2["evaluation_per_turn"]["fluency"][1] > 0
+        assert score2["evaluation_per_turn"]["fluency_reason"][0]
+        assert score2["evaluation_per_turn"]["fluency_reason"][1]
 
     def test_quality_evaluator_coherence(self, model_config, simple_conversation):
         eval_fn = CoherenceEvaluator(model_config)
@@ -105,15 +106,16 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["coherence"] > 1.0
+        assert score["coherence_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["coherence"] > 0
         assert score2["evaluation_per_turn"]["coherence"][0] > 0
         assert score2["evaluation_per_turn"]["coherence"][1] > 0
+        assert score2["evaluation_per_turn"]["coherence_reason"][0]
+        assert score2["evaluation_per_turn"]["coherence_reason"][1]
 
     def test_quality_evaluator_similarity(self, model_config):
         eval_fn = SimilarityEvaluator(model_config)
@@ -123,7 +125,6 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["similarity"] > 1.0
 
     def test_quality_evaluator_groundedness(self, model_config, simple_conversation):
@@ -133,15 +134,16 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["groundedness"] > 1.0
+        assert score["groundedness_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["groundedness"] > 0
         assert score2["evaluation_per_turn"]["groundedness"][0] > 0
         assert score2["evaluation_per_turn"]["groundedness"][1] > 0
+        assert score2["evaluation_per_turn"]["groundedness_reason"][0]
+        assert score2["evaluation_per_turn"]["groundedness_reason"][1]
 
     def test_quality_evaluator_relevance(self, model_config, simple_conversation):
         eval_fn = RelevanceEvaluator(model_config)
@@ -150,12 +152,10 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["relevance"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["relevance"] > 0
         assert score2["evaluation_per_turn"]["relevance"][0] > 0
         assert score2["evaluation_per_turn"]["relevance"][1] > 0
@@ -305,7 +305,6 @@ class TestBuiltInEvaluators:
                 query="What is the capital of Japan?",
                 response="The capital of Japan is Tokyo.",
             )
-            print(score)
 
         assert "RAI service is not available in this region" in exc_info._excinfo[1].args[0]
 
