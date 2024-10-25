@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
 
+
 class AzureOpenAIModelConfiguration(TypedDict):
     """Model Configuration for Azure OpenAI Model"""
 

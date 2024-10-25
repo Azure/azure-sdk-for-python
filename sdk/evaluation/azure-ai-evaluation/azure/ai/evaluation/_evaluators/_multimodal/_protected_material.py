@@ -7,6 +7,7 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 
+
 @experimental
 class ProtectedMaterialMultimodalEvaluator:
     """
@@ -18,7 +19,7 @@ class ProtectedMaterialMultimodalEvaluator:
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    
+
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
     :rtype: Dict[str, str]
 
@@ -55,7 +56,7 @@ class ProtectedMaterialMultimodalEvaluator:
                 ]
             }
         )
-    
+
     **Output format**
     .. code-block:: python
         {
@@ -63,20 +64,15 @@ class ProtectedMaterialMultimodalEvaluator:
             "protected_material_reason": "This query does not contain any protected material."
         }
     """
-    
+
     def __init__(
         self,
-        credential, 
+        credential,
         azure_ai_project,
     ):
         self._async_evaluator = _AsyncProtectedMaterialMultimodalEvaluator(credential, azure_ai_project)
 
-    def __call__(
-        self, 
-        *, 
-        conversation, 
-        **kwargs
-    ):
+    def __call__(self, *, conversation, **kwargs):
         """
         Evaluates protected materials content.
 
@@ -90,12 +86,9 @@ class ProtectedMaterialMultimodalEvaluator:
     def _to_async(self):
         return self._async_evaluator
 
+
 class _AsyncProtectedMaterialMultimodalEvaluator:
-    def __init__(
-        self, 
-        credential,
-        azure_ai_project
-    ):
+    def __init__(self, credential, azure_ai_project):
         self._credential = credential
         self._azure_ai_project = azure_ai_project
 

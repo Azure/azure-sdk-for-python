@@ -22,11 +22,12 @@ from ._violence import ViolenceMultimodalEvaluator
 
 logger = logging.getLogger(__name__)
 
+
 @experimental
 class ContentSafetyMultimodalEvaluator:
     """
     Initialize a content safety multimodal evaluator configured to evaluate content safety metrics for multimodal scenario.
-    
+
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
@@ -35,12 +36,12 @@ class ContentSafetyMultimodalEvaluator:
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :type parallel: bool
-    
+
     :return: A function that evaluates multimodal chat messages and generates metrics.
     :rtype: Callable
-    
+
     **Usage**
-    
+
     .. code-block:: python
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
@@ -73,7 +74,7 @@ class ContentSafetyMultimodalEvaluator:
                 ]
             }
         )
-        
+
     **Output format**
     .. code-block:: python
         {
@@ -91,13 +92,8 @@ class ContentSafetyMultimodalEvaluator:
             "hate_unfairness_reason": "Some reason"
         }
     """
-    
-    def __init__(
-        self, 
-        credential, 
-        azure_ai_project, 
-        parallel: bool = False
-    ):
+
+    def __init__(self, credential, azure_ai_project, parallel: bool = False):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceMultimodalEvaluator(credential, azure_ai_project),
@@ -106,11 +102,7 @@ class ContentSafetyMultimodalEvaluator:
             HateUnfairnessMultimodalEvaluator(credential, azure_ai_project),
         ]
 
-    def __call__(
-            self, 
-            *, 
-            conversation, 
-            **kwargs):
+    def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content-safety metrics for list of messages.
         :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.

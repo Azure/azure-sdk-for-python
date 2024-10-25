@@ -92,9 +92,7 @@ def add_sanitizers(
             group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"/workspaces/([-\w\._\(\)]+)", 
-            value=mock_project_scope["project_name"], 
-            group_for_replace="1"
+            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():

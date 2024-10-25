@@ -6,6 +6,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
+
 @experimental
 class HateUnfairnessMultimodalEvaluator:
     """
@@ -15,7 +16,7 @@ class HateUnfairnessMultimodalEvaluator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    
+
     **Usage**
     .. code-block:: python
         azure_ai_project = {
@@ -49,7 +50,7 @@ class HateUnfairnessMultimodalEvaluator:
                 ]
             }
         )
-    
+
     **Output format**
     .. code-block:: python
         {
@@ -58,20 +59,11 @@ class HateUnfairnessMultimodalEvaluator:
             "hate_unfairness_reason": "Some reason"
         }
     """
-    
-    def __init__(
-        self, 
-        credential,
-        azure_ai_project
-    ):
+
+    def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncHateUnfairnessMultimodalEvaluator(credential, azure_ai_project)
-    
-    def __call__(
-        self, 
-        *, 
-        conversation, 
-        **kwargs
-    ):
+
+    def __call__(self, *, conversation, **kwargs):
         """
         Evaluates hate unfairness content.
         :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
@@ -80,27 +72,18 @@ class HateUnfairnessMultimodalEvaluator:
         :rtype: Dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
-    
+
     def _to_async(self):
         return self._async_evaluator
-    
+
 
 class _AsyncHateUnfairnessMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(
-        self, 
-        credential,
-        azure_ai_project
-    ):
+    def __init__(self, credential, azure_ai_project):
         super().__init__(
             metric=EvaluationMetrics.HATE_FAIRNESS,
             credential=credential,
             azure_ai_project=azure_ai_project,
         )
-    
-    async def __call__(
-        self, 
-        *, 
-        conversation, 
-        **kwargs
-    ):
+
+    async def __call__(self, *, conversation, **kwargs):
         return await super().__call__(conversation=conversation, **kwargs)

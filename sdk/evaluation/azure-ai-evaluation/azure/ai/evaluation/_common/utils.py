@@ -273,10 +273,11 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
+
 def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     """Get the content type for service payload.
-    
-    :param messages: The list of messages to be annotated by evaluation service 
+
+    :param messages: The list of messages to be annotated by evaluation service
     :type messages: list
     :param metric: A string representing the metric type
     :type metric: str
@@ -286,7 +287,7 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     # Check if metric is "protected_material"
     if metric == "protected_material":
         return "image"
-    
+
     # Ensure there are messages
     if assistant_messages:
         # Iterate through each message
@@ -299,9 +300,10 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
                         return "image"
         # Default return if no image was found
         return "text"
-    
+
     # Default return if no messages
-    return "text" 
+    return "text"
+
 
 def validate_conversation(conversation):
     if conversation is None or "messages" not in conversation:
@@ -313,7 +315,7 @@ def validate_conversation(conversation):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    messages = conversation["messages"]   
+    messages = conversation["messages"]
     if messages is None or not isinstance(messages, list):
         msg = "'messages' parameter must be a JSON-compatible list of chat messages"
         raise EvaluationException(
@@ -323,7 +325,7 @@ def validate_conversation(conversation):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    expected_roles = [ "user", "assistant", "system"]
+    expected_roles = ["user", "assistant", "system"]
     image_found = False
     for num, message in enumerate(messages):
         msg_num = num + 1
@@ -351,9 +353,9 @@ def validate_conversation(conversation):
                     for content in message["content"]:
                         if content.get("type") == "image_url":
                             image_url = content.get("image_url")
-                            if image_url and 'url' in image_url:
+                            if image_url and "url" in image_url:
                                 image_found = True
-                                
+
                 if isinstance(message["content"], dict):
                     msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
                     raise EvaluationException(
@@ -362,16 +364,26 @@ def validate_conversation(conversation):
                         target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                         category=ErrorCategory.INVALID_VALUE,
                         blame=ErrorBlame.USER_ERROR,
-                    )         
+                    )
         else:
             try:
-                from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ImageContentItem
+                from azure.ai.inference.models import (
+                    ChatRequestMessage,
+                    UserMessage,
+                    AssistantMessage,
+                    SystemMessage,
+                    ImageContentItem,
+                )
             except ImportError:
                 error_message = "Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
                 raise MissingRequiredPackage(message=error_message)
             else:
                 if isinstance(messages[0], ChatRequestMessage):
-                    if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage):
+                    if (
+                        not isinstance(message, UserMessage)
+                        and not isinstance(message, AssistantMessage)
+                        and not isinstance(message, SystemMessage)
+                    ):
                         msg = f"Messsage in array must be a strongly typed class of [UserMessage, SystemMessage, AssistantMessage]. Message number: {msg_num}"
                         raise EvaluationException(
                             message=msg,
@@ -379,12 +391,12 @@ def validate_conversation(conversation):
                             target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                             category=ErrorCategory.INVALID_VALUE,
                             blame=ErrorBlame.USER_ERROR,
-                        )  
+                        )
                     if message.content and isinstance(message.content, list):
                         image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
                         if len(image_items) > 0:
                             image_found = True
-    if image_found is False:    
+    if image_found is False:
         msg = f"Message needs to have multimodal input like images."
         raise EvaluationException(
             message=msg,

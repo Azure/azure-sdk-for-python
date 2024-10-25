@@ -82,32 +82,34 @@ def _azure_pf_client_and_triad(trace_destination) -> Tuple[PFClient, AzureMLWork
 
     return azure_pf_client, ws_triad
 
+
 def _store_multimodal_content(messages, tmpdir: str):
     # verify if images folder exists
     images_folder_path = os.path.join(tmpdir, "images")
     os.makedirs(images_folder_path, exist_ok=True)
-    
+
     # traverse all messages and replace base64 image data with new file name.
     for message in messages:
         if "content" in message:
             for content in message["content"]:
                 if content.get("type") == "image_url":
                     image_url = content.get("image_url")
-                    if image_url and 'url' in image_url and image_url['url'].startswith("data:image/jpg;base64,"):
+                    if image_url and "url" in image_url and image_url["url"].startswith("data:image/jpg;base64,"):
                         # Extract the base64 string
-                        base64image = image_url['url'].replace("data:image/jpg;base64,", "")
-                        
+                        base64image = image_url["url"].replace("data:image/jpg;base64,", "")
+
                         # Generate a unique filename
                         image_file_name = f"{str(uuid.uuid4())}.jpg"
-                        image_url['url'] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
-                        
+                        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+
                         # Decode the base64 string to binary image data
                         image_data_binary = base64.b64decode(base64image)
-                        
+
                         # Write the binary image data to the file
                         image_file_path = os.path.join(images_folder_path, image_file_name)
                         with open(image_file_path, "wb") as f:
                             f.write(image_data_binary)
+
 
 def _log_metrics_and_instance_results(
     metrics: Dict[str, Any],
@@ -144,7 +146,7 @@ def _log_metrics_and_instance_results(
                 for key, item in instance_results[col_name].items():
                     if "messages" in item:
                         _store_multimodal_content(item["messages"], tmpdir)
-            
+
             # storing artifact result
             tmp_path = os.path.join(tmpdir, artifact_name)
 

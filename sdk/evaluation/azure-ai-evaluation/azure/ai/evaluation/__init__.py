@@ -76,5 +76,5 @@ __all__ = [
     "SelfHarmMultimodalEvaluator",
     "SexualMultimodalEvaluator",
     "ViolenceMultimodalEvaluator",
-    "ProtectedMaterialMultimodalEvaluator"
+    "ProtectedMaterialMultimodalEvaluator",
 ]

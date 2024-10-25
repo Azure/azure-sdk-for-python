@@ -10,12 +10,13 @@ from azure.ai.evaluation._common.utils import validate_conversation
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common._experimental import experimental
 
+
 @experimental
 class ContentSafetyMultimodalEvaluatorBase(ABC):
     """
     Initialize a evaluator for a specified Evaluation Metric. Base class that is not
     meant to be instantiated by users.
-    
+
     :param metric: The metric to be evaluated.
     :type metric: ~azure.ai.evaluation._evaluators._content_safety.flow.constants.EvaluationMetrics
     :param credential: The credential for connecting to Azure AI project. Required
@@ -24,23 +25,18 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     """
-    
+
     def __init__(
-        self, 
+        self,
         metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
         credential: TokenCredential,
-        azure_ai_project, 
+        azure_ai_project,
     ):
         self._metric = metric
         self._azure_ai_project = azure_ai_project
         self._credential = credential
-    
-    async def __call__(
-        self, 
-        *, 
-        conversation, 
-        **kwargs
-    ):
+
+    async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
         :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.

@@ -171,6 +171,7 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
+
 async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCredential, token: str) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
@@ -267,10 +268,10 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
     result: Dict[str, Union[str, float]] = {
-    (key.value if hasattr(key, 'value') else key): math.nan,
-    f"{(key.value if hasattr(key, 'value') else key)}_score": math.nan,
-    f"{(key.value if hasattr(key, 'value') else key)}_reason": math.nan
-}
+        (key.value if hasattr(key, "value") else key): math.nan,
+        f"{(key.value if hasattr(key, 'value') else key)}_score": math.nan,
+        f"{(key.value if hasattr(key, 'value') else key)}_reason": math.nan,
+    }
 
     response = batch_response[0]
     if metric_name not in response:
@@ -319,7 +320,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
         reason = ""
 
     harm_score = metric_value
-    if metric_value == 'n/a':
+    if metric_value == "n/a":
         return result
     if not math.isnan(metric_value):
         # int(math.nan) causes a value error, and math.nan is already handled
@@ -450,6 +451,7 @@ async def evaluate_with_rai_service(
 
     return result
 
+
 def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
     """Generate the payload for the annotation request
     :param content_type: The type of the content representing multimodal or images.
@@ -467,21 +469,22 @@ def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dic
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         task = Tasks.PROTECTED_MATERIAL
         include_metric = False
-    
+
     return (
         {
             "ContentType": content_type,
-            "Contents": [{"messages" : messages }],
+            "Contents": [{"messages": messages}],
             "AnnotationTask": task,
             "MetricList": [metric],
         }
         if include_metric
         else {
             "ContentType": content_type,
-            "Contents": [{"messages" : messages }],
+            "Contents": [{"messages": messages}],
             "AnnotationTask": task,
         }
     )
+
 
 async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
@@ -501,7 +504,9 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError:
-            error_message = "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            error_message = (
+                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            )
             raise MissingRequiredPackage(message=error_message)
         else:
             if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
@@ -511,7 +516,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     assistant_messages = [message for message in messages if message["role"] == "assistant"]
     content_type = retrieve_content_type(assistant_messages, metric)
     payload = generate_payload_multimodal(content_type, filtered_messages, metric)
-    
+
     ## calling rai service for annotation
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
@@ -525,7 +530,8 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     result = response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
-    
+
+
 async def evaluate_with_rai_service_multimodal(
     messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
@@ -542,7 +548,7 @@ async def evaluate_with_rai_service_multimodal(
        :return: The parsed annotation result.
        :rtype: List[List[Dict]]
     """
-    
+
     # Get RAI service URL from discovery service and check service availability
     token = await fetch_or_reuse_token(credential)
     rai_svc_url = await get_rai_svc_url(project_scope, token)

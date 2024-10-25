@@ -7,19 +7,20 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.utils import validate_conversation
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
+
 @experimental
 class ViolenceMultimodalEvaluator:
     """
     Initialize a violence multimodal evaluator for violence score.
-    
+
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    
+
     **Usage**
-    
+
     .. code-block:: python
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
@@ -60,20 +61,11 @@ class ViolenceMultimodalEvaluator:
             "violence_reason": "Some reason"
         }
     """
-    
-    def __init__(
-        self,
-        credential, 
-        azure_ai_project
-    ):
+
+    def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncViolenceMultimodalEvaluator(credential, azure_ai_project)
-    
-    def __call__(
-        self, 
-        *, 
-        conversation, 
-        **kwargs
-    ):
+
+    def __call__(self, *, conversation, **kwargs):
         """
         Evaluates violence content.
         :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
@@ -82,20 +74,18 @@ class ViolenceMultimodalEvaluator:
         :rtype: Dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
-    
+
     def _to_async(self):
         return self._async_evaluator
 
+
 class _AsyncViolenceMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(
-        self, 
-        credential,
-        azure_ai_project
-    ):
+    def __init__(self, credential, azure_ai_project):
         super().__init__(
             metric=EvaluationMetrics.VIOLENCE,
             credential=credential,
             azure_ai_project=azure_ai_project,
         )
+
     async def __call__(self, *, conversation, **kwargs):
         return await super().__call__(conversation=conversation, **kwargs)
