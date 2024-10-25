@@ -2,18 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import json
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
-import json
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
+from promptflow._sdk._errors import MissingAzurePackage
 from promptflow.client import PFClient
 from promptflow.entities import Run
-from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from .._constants import (
@@ -23,11 +24,10 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
 )
-from .._model_configurations import AzureAIProject, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
-from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
+from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext
 from ._utils import (
-    EvaluateResult,
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
@@ -292,76 +292,85 @@ def _validate_columns_for_evaluators(
 
 def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
     if data is None:
-        msg = "data parameter must be provided for evaluation."
+        msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
             target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not isinstance(data, (os.PathLike, str)):
+        msg = "The 'data' parameter must be a string or a path-like object."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not os.path.exists(data):
+        msg = f"The input data file path '{data}' does not exist."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
     if target is not None:
         if not callable(target):
-            msg = "target parameter must be a callable function."
+            msg = "The 'target' parameter must be a callable function."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    if data is not None:
-        if not isinstance(data, str):
-            msg = "data parameter must be a string."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
-
-    if evaluators is not None:
-        if not isinstance(evaluators, dict):
-            msg = "evaluators parameter must be a dictionary."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+    if not evaluators:
+        msg = "The 'evaluators' parameter is required and cannot be None or empty."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    if not isinstance(evaluators, dict):
+        msg = "The 'evaluators' parameter must be a dictionary."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
 
     if output_path is not None:
-        if not isinstance(output_path, str):
-            msg = "output_path parameter must be a string."
+        if not isinstance(output_path, (os.PathLike, str)):
+            msg = "The 'output_path' parameter must be a string or a path-like object."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
+        if not os.path.exists(output_dir):
+            msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
+            raise EvaluationException(
+                message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
     if azure_ai_project is not None:
-        if not isinstance(azure_ai_project, Dict):
-            msg = "azure_ai_project parameter must be a dictionary."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+        validate_azure_ai_project(azure_ai_project)
 
     if evaluation_name is not None:
-        if not isinstance(evaluation_name, str):
-            msg = "evaluation_name parameter must be a string."
+        if not isinstance(evaluation_name, str) or not evaluation_name.strip():
+            msg = "The 'evaluation_name' parameter must be a non-empty string."
             raise EvaluationException(
                 message=msg,
-                internal_message=msg,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
@@ -371,8 +380,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         initial_data_df = pd.read_json(data, lines=True)
     except Exception as e:
         raise EvaluationException(
-            message=f"Failed to load data from {data}. Confirm that it is valid jsonl data. Error: {str(e)}.",
-            internal_message="Failed to load data. Confirm that it is valid jsonl data.",
+            message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL format. Detailed error: {e}.",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
@@ -383,11 +391,11 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 
 def _apply_target_to_data(
     target: Callable,
-    data: str,
+    data: Union[str, os.PathLike],
     pf_client: PFClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
-    _run_name: Optional[str] = None,
+    **kwargs,
 ) -> Tuple[pd.DataFrame, Set[str], Run]:
     """
     Apply the target function to the data set and return updated data and generated columns.
@@ -395,29 +403,29 @@ def _apply_target_to_data(
     :param target: The function to be applied to data.
     :type target: Callable
     :param data: The path to input jsonl file.
-    :type data: str
+    :type data: Union[str, os.PathLike]
     :param pf_client: The promptflow client to be used.
     :type pf_client: PFClient
     :param initial_data: The data frame with the loaded data.
     :type initial_data: pd.DataFrame
     :param evaluation_name: The name of the evaluation.
     :type evaluation_name: Optional[str]
-    :param _run_name: The name of target run. Used for testing only.
-    :type _run_name: Optional[str]
     :return: The tuple, containing data frame and the list of added columns.
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
-    # We are manually creating the temporary directory for the flow
-    # because the way tempdir remove temporary directories will
-    # hang the debugger, because promptflow will keep flow directory.
-    run: Run = pf_client.run(
-        flow=target,
-        display_name=evaluation_name,
-        data=data,
-        properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-        stream=True,
-        name=_run_name,
-    )
+    _run_name = kwargs.get("_run_name")
+    upload_target_snaphot = kwargs.get("_upload_target_snapshot", False)
+
+    with TargetRunContext(upload_target_snaphot):
+        run: Run = pf_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
+            stream=True,
+            name=_run_name,
+        )
+
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
     generated_columns = {
@@ -505,15 +513,15 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 # @log_evaluate_activity
 def evaluate(
     *,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
-):
+) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 
@@ -538,7 +546,7 @@ def evaluate(
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
     :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
-    :rtype: dict
+    :rtype: ~azure.ai.evaluation.EvaluationResult
 
     :Example:
 
@@ -635,12 +643,12 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: str,
+    data: Union[str, os.PathLike],
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[str, os.PathLike]] = None,
     **kwargs,
-) -> EvaluateResult:
+) -> EvaluationResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
 
     # Process evaluator config to replace ${target.} with ${data.}
@@ -674,7 +682,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
         )
 
-        raise EvaluationException(
+        raise EvaluationException(  # pylint: disable=raise-missing-from
             message=msg,
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.MISSING_PACKAGE,
@@ -682,6 +690,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
 
     trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
+
+    # Handle the case where the customer manually run "pf config set trace.destination=none"
+    if trace_destination and trace_destination.lower() == "none":
+        trace_destination = None
+
     target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
@@ -693,7 +706,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     target_generated_columns: Set[str] = set()
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
+            target, data, pf_client, input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():
@@ -725,7 +738,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     def eval_batch_run(
         batch_run_client: TClient, *, data=Union[str, os.PathLike, pd.DataFrame]
     ) -> Dict[str, __EvaluatorInfo]:
-        with BatchRunContext(batch_run_client):
+        with EvalRunContext(batch_run_client):
             runs = {
                 evaluator_name: batch_run_client.run(
                     flow=evaluator,
@@ -739,7 +752,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 for evaluator_name, evaluator in evaluators.items()
             }
 
-            # get_details needs to be called within BatchRunContext scope in order to have user agent populated
+            # get_details needs to be called within EvalRunContext scope in order to have user agent populated
             return {
                 evaluator_name: {
                     "result": batch_run_client.get_details(run, all_results=True),
@@ -809,7 +822,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         evaluation_name,
     )
 
-    result: EvaluateResult = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
+    result_df_dict = result_df.to_dict("records")
+    result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
     if output_path:
         _write_output(output_path, result)

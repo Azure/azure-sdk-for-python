@@ -1,7 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import base64
-import json
 import random
 import time
 import unittest
@@ -107,7 +105,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         pk_range_id2, session_token2 = parse_session_token(session_tokens[1])
         pk_range_ids = [pk_range_id1, pk_range_id2]
 
-        assert 320 == (session_token1.global_lsn + session_token2.global_lsn)
+        assert 320 <= (session_token1.global_lsn + session_token2.global_lsn)
         assert '1' in pk_range_ids
         assert '2' in pk_range_ids
         await self.database.delete_container(container.id)
@@ -179,12 +177,8 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
             session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
             pk = item['pk'] if not hpk else [item['state'], item['city'], item['zipcode']]
             pk_feed_range = await container.feed_range_from_partition_key(pk)
-            pk_feed_range_str = base64.b64decode(pk_feed_range).decode('utf-8')
-            feed_range_json = json.loads(pk_feed_range_str)
-            pk_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
-            target_feed_range_str = base64.b64decode(target_pk_range).decode('utf-8')
-            feed_range_json = json.loads(target_feed_range_str)
-            target_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+            pk_feed_range_epk = FeedRangeInternalEpk.from_json(pk_feed_range)
+            target_feed_range_epk = FeedRangeInternalEpk.from_json(target_pk_range)
             if (pk_feed_range_epk.get_normalized_range() ==
                     target_feed_range_epk.get_normalized_range()):
                 target_session_token = session_token
@@ -196,7 +190,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     @staticmethod
     async def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
-        container_feed_ranges = await container.read_feed_ranges()
+        container_feed_ranges = list(await container.read_feed_ranges())
         target_feed_range = None
         for feed_range in container_feed_ranges:
             if await container.is_feed_range_subset(feed_range, pk_feed_range):

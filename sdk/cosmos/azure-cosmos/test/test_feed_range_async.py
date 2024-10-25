@@ -1,7 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import base64
-import json
 import unittest
 import uuid
 
@@ -49,15 +47,16 @@ class TestFeedRangeAsync:
             partition_key=partition_key.PartitionKey(path="/id")
         )
         feed_range = await created_container.feed_range_from_partition_key("1")
-        feed_range_str = base64.b64decode(feed_range).decode('utf-8')
-        feed_range_json = json.loads(feed_range_str)
-        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
         assert feed_range_epk.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
                                                                                "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
         await setup["created_db"].delete_container(created_container)
 
     async def test_feed_range_is_subset_from_pk(self, setup):
-        epk_parent_feed_range = FeedRangeInternalEpk(Range("", "FF", True, False)).__str__()
+        epk_parent_feed_range = FeedRangeInternalEpk(Range("",
+                                                           "FF",
+                                                        True,
+                                                        False)).to_dict()
         epk_child_feed_range = await setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 

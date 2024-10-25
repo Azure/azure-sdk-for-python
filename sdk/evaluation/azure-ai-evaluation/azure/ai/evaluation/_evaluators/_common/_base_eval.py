@@ -32,9 +32,9 @@ AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
 
     foo: AggregateResult[float] = {
         "evaluation_per_turn": {
-            "gpt_coherence": [1.0, 2.0, 3.0]
+            "coherence": [1.0, 2.0, 3.0]
         },
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -44,7 +44,7 @@ DoEvalResult: TypeAlias = Dict[str, T]
     .. code-block:: python
 
     foo: DoEvalResult[float] = {
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -96,7 +96,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :keyword kwargs: A dictionary that contains inputs needed to evaluate a conversation.
         :type kwargs: Dict
         :return: The evaluation result
-        :rtype: Dict
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         return async_run_allowing_running_loop(self._async_evaluator, **kwargs)
 
@@ -110,7 +110,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :param eval_input: Whatever inputs are needed for this evaluator to perform a single evaluation.
         :type eval_input: Any
         :return: A single evaluation result
-        :rtype: Dict
+        :rtype: DoEvalResult[T_EvalValue]
         """
 
     # ~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -172,16 +172,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     response_context = response.get("context", None)
                     if global_context:
                         context["global_context"] = global_context
-                    if query_context and not include_query:
+                    if query_context and include_query:
                         context["query_context"] = query_context
-                    if response_context and not include_response:
+                    if response_context and include_response:
                         context["response_context"] = response_context
 
                 eval_input: DerivedEvalInput = {}
                 if include_query:
-                    eval_input["query"] = query
+                    eval_input["query"] = query.get("content", "")
                 if include_response:
-                    eval_input["response"] = response
+                    eval_input["response"] = response.get("content", "")
                 if include_context:
                     eval_input["context"] = str(context)
                 eval_inputs.append(eval_input)
@@ -219,9 +219,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             singletons = {key: kwargs.get(key, None) for key in self._singleton_inputs}
         # Check that both conversation and other inputs aren't set
         if conversation is not None and any(singletons.values()):
+            msg = f"{type(self).__name__}: Cannot provide both 'conversation' and individual inputs at the same time."
             raise EvaluationException(
-                message="Invalid input",
-                internal_message=f"Both conversation and individual inputs were provided to {type(self).__name__}",
+                message=msg,
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
@@ -233,9 +233,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         if all(value is not None for value in singletons.values()):
             return [singletons]  # TODO loosen requirements to allow for optional singletons?
         # Missing input
+        msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided."
         raise EvaluationException(
-            message="Missing input",
-            internal_message=f"Neither conversation nor individual inputs provided to {type(self).__name__}.",
+            message=msg,
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.CONVERSATION,
@@ -254,7 +254,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         values (including non-numerics) located in under the "evaluation_per_turn" key,
         which each sub-key being a metric and each sub-value being a the list of that metric's
         per-turn values.
-        :rtype: Dict
+        :rtype: AggregateResult[T_EvalValue]
         """
 
         aggregated: Dict[str, Union[float, Dict[str, List[T_EvalValue]]]] = {}
@@ -274,7 +274,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
-
         return aggregated
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
@@ -283,7 +282,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :keyword kwargs: The inputs to evaluate.
         :type kwargs: Dict
         :return: The evaluation result.
-        :rtype: Dict
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
         eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
@@ -315,7 +314,7 @@ class AsyncEvaluatorBase:
 
     # Don't look at my shame. Nothing to see here....
     # Oh, you're still here? Ok, the reason this has such a gross call signature and behavior is due
-    # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature#
+    # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature
     # are just not passed into this function instead of ending up in kwargs.
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.

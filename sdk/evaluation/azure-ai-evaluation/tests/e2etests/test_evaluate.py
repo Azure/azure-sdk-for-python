@@ -114,18 +114,18 @@ class TestEvaluate:
         assert result["rows"] is not None
         assert row_result_df.shape[0] == len(input_data)
 
-        assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
         assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
 
-        assert "grounded.gpt_groundedness" in metrics.keys()
+        assert "grounded.groundedness" in metrics.keys()
         assert "f1_score.f1_score" in metrics.keys()
 
-        assert metrics.get("grounded.gpt_groundedness") == list_mean_nan_safe(
-            row_result_df["outputs.grounded.gpt_groundedness"]
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
         )
         assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
 
-        assert row_result_df["outputs.grounded.gpt_groundedness"][2] in [4, 5]
+        assert row_result_df["outputs.grounded.groundedness"][2] in [4, 5]
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
@@ -157,24 +157,26 @@ class TestEvaluate:
             assert result["rows"] is not None
             assert row_result_df.shape[0] == len(input_data)
 
-            assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
-            assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
+            assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+            assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
 
-            assert "grounded.gpt_groundedness" in metrics.keys()
-            assert "fluency.gpt_fluency" in metrics.keys()
+            assert "grounded.groundedness" in metrics.keys()
+            assert "fluency.fluency" in metrics.keys()
         finally:
             os.chdir(original_working_dir)
 
     @pytest.mark.azuretest
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file):
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file, azure_cred):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        content_safety_eval = ContentSafetyEvaluator(project_scope, credential=None, parallel=False)
+        content_safety_eval = ContentSafetyEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+        )
 
         # run the evaluation
         result = evaluate(
@@ -207,7 +209,7 @@ class TestEvaluate:
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "true"
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
 
         start_time = time.time()
@@ -228,10 +230,10 @@ class TestEvaluate:
         assert result["rows"] is not None
         input_data = pd.read_json(data_file, lines=True)
         assert row_result_df.shape[0] == len(input_data)
-        assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
-        assert "fluency.gpt_fluency" in metrics.keys()
+        assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
+        assert "fluency.fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
-        os.environ.pop("PF_EVALS_BATCH_USE_ASYNC")
+        os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
         "use_pf_client,function,column",

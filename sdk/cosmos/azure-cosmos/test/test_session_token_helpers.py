@@ -91,7 +91,7 @@ class TestSessionTokenHelpers:
 
     def test_get_session_token_update(self, setup):
         feed_range = FeedRangeInternalEpk(
-            Range("AA", "BB", True, False)).__str__()
+            Range("AA", "BB", True, False)).to_dict()
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         session_token = "0:1#51#3=52"
@@ -101,7 +101,7 @@ class TestSessionTokenHelpers:
 
     def test_many_session_tokens_update_same_range(self, setup):
         feed_range = FeedRangeInternalEpk(
-            Range("AA", "BB", True, False)).__str__()
+            Range("AA", "BB", True, False)).to_dict()
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
@@ -114,7 +114,7 @@ class TestSessionTokenHelpers:
 
     def test_many_session_tokens_update(self, setup):
         feed_range = FeedRangeInternalEpk(
-            Range("AA", "BB", True, False)).__str__()
+            Range("AA", "BB", True, False)).to_dict()
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
@@ -122,9 +122,9 @@ class TestSessionTokenHelpers:
 
         # adding irrelevant feed ranges
         feed_range1 = FeedRangeInternalEpk(
-            Range("CC", "FF", True, False)).__str__()
+            Range("CC", "FF", True, False)).to_dict()
         feed_range2 = FeedRangeInternalEpk(
-            Range("00", "55", True, False)).__str__()
+            Range("00", "55", True, False)).to_dict()
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             if i % 2 == 0:
@@ -142,15 +142,15 @@ class TestSessionTokenHelpers:
         actual_split_ranges = []
         for feed_range, session_token in split_ranges:
             actual_split_ranges.append((FeedRangeInternalEpk(Range(feed_range[0], feed_range[1],
-                                                True, False)).__str__(), session_token))
+                                                True, False)).to_dict(), session_token))
         target_feed_range = FeedRangeInternalEpk(Range(target_feed_range[0], target_feed_range[1][1],
-                                               True, False)).__str__()
+                                               True, False)).to_dict()
         updated_session_token = setup[COLLECTION].get_latest_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
     def test_invalid_feed_range(self, setup):
         feed_range = FeedRangeInternalEpk(
-            Range("AA", "BB", True, False)).__str__()
+            Range("AA", "BB", True, False)).to_dict()
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
@@ -159,7 +159,7 @@ class TestSessionTokenHelpers:
                                                                       "CC",
                                                                       "FF",
                                                                       True,
-                                                                      False)).__str__())
+                                                                      False)).to_dict())
 
 if __name__ == '__main__':
     unittest.main()

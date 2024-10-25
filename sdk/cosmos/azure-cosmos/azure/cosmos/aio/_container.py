@@ -21,11 +21,9 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import base64
-import json
 import warnings
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload
+from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, Iterable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -537,7 +535,7 @@ class ContainerProxy:
     def query_items_change_feed(
             self,
             *,
-            feed_range: str,
+            feed_range: Dict[str, Any],
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -545,7 +543,7 @@ class ContainerProxy:
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -623,7 +621,7 @@ class ContainerProxy:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
         :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
@@ -1299,13 +1297,17 @@ class ContainerProxy:
             *,
             force_refresh: Optional[bool] = False,
             **kwargs: Any
-    ) -> List[str]:
+    ) -> Iterable[Dict[str, Any]]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
         :returns: A list representing the feed ranges in base64 encoded string
-        :rtype: List[str]
+        :rtype: Iterable[Dict[str, Any]]
+
+        .. note::
+          For each feed range, even through a Dict has been returned,
+          but in the future, the structure may change. Please just treat it as opaque and do not take any dependent on it.
 
         """
         if force_refresh is True:
@@ -1318,50 +1320,58 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).__str__()
+        feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                 for partitionKeyRange in partition_key_ranges]
+        return (feed_range for feed_range in feed_ranges)
 
     async def get_latest_session_token(self,
-                                       feed_ranges_to_session_tokens: List[Tuple[str, str]],
-                                       target_feed_range: str
+                                       feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
+                                       target_feed_range: Dict[str, Any]
                                        ) -> str:
-        """Gets the the most up to date session token from the list of session token and feed range tuples
+        """ **provisional** Gets the the most up to date session token from the list of session token and feed range tuples
         for a specific target feed range. The feed range can be obtained from a logical partition or by reading the
         container feed ranges. This should only be used if maintaining own session token or else the sdk will
         keep track of session token. Session tokens and feed ranges are scoped to a container. Only input session
         tokens and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
-        :type feed_ranges_to_session_tokens: List[Tuple[str, FeedRange]]
+        :type feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]]
         :param target_feed_range: feed range to get most up to date session token.
-        :type target_feed_range: FeedRange
+        :type target_feed_range: Dict[str, Any]
         :returns: a session token
         :rtype: str
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
-    async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> str:
+    async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> Dict[str, Any]:
         """Gets the feed range for a given partition key.
         :param partition_key: partition key to get feed range.
         :type partition_key: PartitionKey
         :returns: a feed range
-        :rtype: str
-        """
-        return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key)).__str__()
+        :rtype: Dict[str, Any]
 
-    async def is_feed_range_subset(self, parent_feed_range: str, child_feed_range: str) -> bool:
+        .. note::
+          For the feed range, even through a Dict has been returned, but in the future,
+          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+
+        """
+        return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key)).to_dict()
+
+    async def is_feed_range_subset(self, parent_feed_range: Dict[str, Any],
+                                   child_feed_range: Dict[str, Any]) -> bool:
         """Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
-        :type parent_feed_range: str
+        :type parent_feed_range: Dict[str, Any]
         :param child_feed_range: right feed range
-        :type child_feed_range: str
+        :type child_feed_range: Dict[str, Any]
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
+
+        .. note::
+          For the feed range, even through a Dict has been returned, but in the future,
+          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+
         """
-        parent_feed_range_str = base64.b64decode(parent_feed_range).decode('utf-8')
-        feed_range_json = json.loads(parent_feed_range_str)
-        parent_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
-        child_feed_range_str = base64.b64decode(child_feed_range).decode('utf-8')
-        feed_range_json = json.loads(child_feed_range_str)
-        child_feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+        parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
+        child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
         return child_feed_range_epk.get_normalized_range().is_subset(
             parent_feed_range_epk.get_normalized_range())

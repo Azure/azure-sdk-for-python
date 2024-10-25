@@ -1,7 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import base64
-import json
 import unittest
 import uuid
 
@@ -94,22 +92,20 @@ class TestFeedRange:
             partition_key=partition_key.PartitionKey(path="/id")
         )
         feed_range = created_container.feed_range_from_partition_key("1")
-        feed_range_str = base64.b64decode(feed_range).decode('utf-8')
-        feed_range_json = json.loads(feed_range_str)
-        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_json)
+        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
         assert feed_range_epk.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
                         "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
         setup["created_db"].delete_container(created_container)
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
     def test_feed_range_is_subset(self, setup, parent_feed_range, child_feed_range, is_subset):
-        epk_parent_feed_range = FeedRangeInternalEpk(parent_feed_range).__str__()
-        epk_child_feed_range = FeedRangeInternalEpk(child_feed_range).__str__()
+        epk_parent_feed_range = FeedRangeInternalEpk(parent_feed_range).to_dict()
+        epk_child_feed_range = FeedRangeInternalEpk(child_feed_range).to_dict()
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range) == is_subset
 
     def test_feed_range_is_subset_from_pk(self, setup):
         epk_parent_feed_range = FeedRangeInternalEpk(
-            Range("", "FF", True, False)).__str__()
+            Range("", "FF", True, False)).to_dict()
         epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
