@@ -224,7 +224,6 @@ class TestEvaluate:
             assert isinstance(files, list), "The result should be a list"
             assert 1==len(files), "file1.txt should be present in the folder"
 
-    @pytest.mark.skip(reason="Temporary skip")
     def test_evaluate_with_content_safety_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
@@ -263,7 +262,6 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
         
-    @pytest.mark.skip(reason="Temporary skip")
     def test_evaluate_with_content_safety_multimodal_evaluator_with_target(self, project_scope, azure_cred, multimodal_file_with_imageurls):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         from .target_fn import target_multimodal_fn1
