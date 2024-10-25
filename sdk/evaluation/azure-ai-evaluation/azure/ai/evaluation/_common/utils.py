@@ -300,11 +300,11 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
             score = float(score_match[0].strip())
         if reason_match:
             reason = reason_match[0].strip()
-    
+
     return score, reason
 
 def remove_optional_singletons(eval_class, singletons):
-    if hasattr(eval_class, "_OPTIONAL_PARAMS"):
+    if hasattr(eval_class, "_OPTIONAL_PARAMS"):  # pylint: disable=protected-access
         for param in eval_class._OPTIONAL_PARAMS:
             if param in singletons:
                 del singletons[param]

@@ -6,7 +6,6 @@ import json
 import logging
 import math
 import os
-import re
 from typing import Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
@@ -63,14 +62,14 @@ class _AsyncRetrievalScoreEvaluator:
             # Evaluate each turn
             per_turn_scores = []
             per_turn_reasons = []
-            for turn_num, query in enumerate(queries):
+            for turn_num, turn_query in enumerate(queries):
                 try:
                     if turn_num >= len(queries):
-                        query = ""
+                        turn_query = ""  
                     context = contexts[turn_num] if turn_num < len(contexts) else ""
 
                     llm_output = await self._flow(
-                        query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
+                        query=turn_query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
                     )
                     score, reason = parse_quality_evaluator_reason_score(llm_output)
                     per_turn_scores.append(score)

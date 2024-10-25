@@ -22,8 +22,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evalation.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
 
     **Usage**
 
@@ -73,7 +73,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
-        """Evaluate groundedless. Accepts either a query, response, and context for a single evaluation,
+        """Evaluate groundedness. Accepts either a query, response, and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 

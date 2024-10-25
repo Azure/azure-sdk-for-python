@@ -4,7 +4,7 @@
 
 import math
 import re
-from typing import Dict
+from typing import Dict, Union
 
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
@@ -57,7 +57,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     # defining a default here.
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
@@ -73,9 +73,13 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
         if llm_output:
             if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                 score, reason = parse_quality_evaluator_reason_score(llm_output)
-                return {self._result_key: float(score), f"gpt_{self._result_key}": float(score), f"{self._result_key}_reason": reason}
-            else:
-                match = re.search(r"\d", llm_output)
-                if match:
-                    score = float(match.group())
-                return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}
+                return {
+                    self._result_key: float(score),
+                    f"gpt_{self._result_key}": float(score),
+                    f"{self._result_key}_reason": reason
+                }
+            match = re.search(r"\d", llm_output)
+            if match:
+                score = float(match.group())
+            return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}
+        return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}

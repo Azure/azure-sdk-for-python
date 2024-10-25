@@ -7,6 +7,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 PROMPT_BASED_REASON_EVALUATORS = ["coherence", "relevance", "retrieval", "groundedness", "fluency"]
+
 class CommonConstants:
     """Define common constants."""
 
