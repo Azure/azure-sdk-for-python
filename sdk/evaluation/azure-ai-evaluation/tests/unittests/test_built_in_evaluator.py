@@ -51,7 +51,7 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(response=None)
 
-        assert "Either 'response' or 'conversation' must be provided." in exc_info.value.args[0]
+        assert "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
