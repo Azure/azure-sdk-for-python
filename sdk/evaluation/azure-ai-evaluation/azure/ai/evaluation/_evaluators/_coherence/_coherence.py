@@ -7,6 +7,7 @@ from typing import Dict, Union, List, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase):
@@ -71,7 +72,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate coherence for a conversation

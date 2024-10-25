@@ -9,6 +9,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
@@ -81,7 +82,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]:
         """Evaluate a conversation for protected material

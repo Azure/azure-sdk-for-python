@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
@@ -80,9 +81,9 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
-     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]
+     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a conversation for sexual content
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
