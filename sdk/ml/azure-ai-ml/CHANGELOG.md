@@ -3,8 +3,9 @@
 ## 1.22.0 (unreleased)
 
 ### Features Added
-
+  - Update TLS version from 1.0 to 1.2
 ### Bugs Fixed
+  - Fix send email notification issue in model monitoring
 
 
 ## 1.21.1 (2024-10-21)

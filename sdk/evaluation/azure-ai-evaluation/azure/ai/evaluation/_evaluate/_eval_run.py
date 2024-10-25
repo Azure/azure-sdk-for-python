@@ -21,6 +21,7 @@ from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
+from azure.core.exceptions import HttpResponseError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -443,10 +444,26 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         datastore = self._ml_client.datastores.get_default(include_secrets=True)
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
         svc_client = BlobServiceClient(account_url=account_url, credential=self._get_datastore_credential(datastore))
-        for local, remote in zip(local_paths, remote_paths["paths"]):
-            blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
-            with open(local, "rb") as fp:
-                blob_client.upload_blob(fp, overwrite=True)
+        try:
+            for local, remote in zip(local_paths, remote_paths["paths"]):
+                blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
+                with open(local, "rb") as fp:
+                    blob_client.upload_blob(fp, overwrite=True)
+        except HttpResponseError as ex:
+            if ex.status_code == 403:
+                msg = (
+                    "Failed to upload evaluation run to the cloud due to insufficient permission to access the storage."
+                    " Please ensure that the necessary access rights are granted."
+                )
+                raise EvaluationException(
+                    message=msg,
+                    target=ErrorTarget.EVAL_RUN,
+                    category=ErrorCategory.FAILED_REMOTE_TRACKING,
+                    blame=ErrorBlame.USER_ERROR,
+                    tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
+                ) from ex
+
+            raise ex
 
         # To show artifact in UI we will need to register it. If it is a promptflow run,
         # we are rewriting already registered artifact and need to skip this step.
