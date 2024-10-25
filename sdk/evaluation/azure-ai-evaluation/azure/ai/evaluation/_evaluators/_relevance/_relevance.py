@@ -62,6 +62,18 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         response: str,
         context: str,
     ) -> Dict[str, float]:
+        """Evaluate groundedness for given input of query, response, context
+    
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
+        :return: The relevance score.
+        :rtype: Dict[str, float]
+        """
+        
         ...
 
     @overload
@@ -71,6 +83,15 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+        """Evaluate relevance for a conversation
+        
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The relevance score.
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
         ...
         
 
