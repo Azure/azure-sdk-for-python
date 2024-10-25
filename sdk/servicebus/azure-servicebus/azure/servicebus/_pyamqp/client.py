@@ -214,6 +214,9 @@ class AMQPClient(
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
+        # Emulator
+        self._use_tls: bool = kwargs.get("use_tls", True)
+
     def __enter__(self):
         """Run Client in a context manager.
 
@@ -236,7 +239,7 @@ class AMQPClient(
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
+                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -312,7 +315,7 @@ class AMQPClient(
             self._external_connection = True
         elif not self._connection:
             self._connection = Connection(
-                "amqps://" + self._hostname,
+                "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
                 ssl_opts={"ca_certs": self._connection_verify or certifi.where()},
                 container_id=self._name,
@@ -325,6 +328,7 @@ class AMQPClient(
                 http_proxy=self._http_proxy,
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
+                use_tls=self._use_tls,
             )
             self._connection.open()
         if not self._session:
@@ -862,7 +866,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit <= 0:
+            if self._link.total_link_credit <= 0:
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

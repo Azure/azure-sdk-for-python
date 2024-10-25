@@ -17,14 +17,10 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: 'linux'
+  - name: BuildTargetingString
+    type: string
+    default: '*'
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked wherever
-# package targeting needs to be resolved prior to doing any actual work, whether it be build, static analysis, or test.
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`. This variable
-# will be updated by PR diff detection as well.
-
-# In addition, the variable ENABLE_EXTENSION_BUILD is honored to enable builds on windows and mac if necessary.
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -40,10 +36,91 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
+
+  - pwsh: |
+      if ("${{ parameters.ServiceDirectory }}" -ne "auto")
+      {
+        Write-Host "##vso[task.setvariable variable=ComponentDetection.SourcePath]$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"
+      }
+    displayName: Set Component Governance Path
+
+  # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
+  # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
+  - template: set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+  # now we need to call Save-Package-Properties so that we can filter on it
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.ServiceDirectory, 'auto')) }}:
+    - pwsh: |
+        mkdir -p $(Build.ArtifactStagingDirectory)/diff
+      displayName: Create PR Diff Folder
+
+    - pwsh: |
+        $location = Join-Path "$(Build.ArtifactStagingDirectory)" "diff"
+
+        Write-Host "./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath `"$(Build.SourcesDirectory)`" -ArtifactPath `"$location`""
+        ./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath "$(Build.SourcesDirectory)" -ArtifactPath "$location"
+      displayName: Generate PR Diff
+
+    - pwsh: |
+        Write-Host "We freshly generated the PR diff, and this is what it sees!"
+        Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
+        cat $(Build.ArtifactStagingDirectory)/diff/diff.json
+      displayName: Dump PR Diff
+
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -PrDiff $(Build.ArtifactStagingDirectory)/diff/diff.json
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Save package properties filtered for PR
+
+  - ${{ else }}:
+    - task: Powershell@2
+      condition: and(succeeded(), eq(variables['SetDevVersion'],'true'))
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+          -AddDevVersion
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties with dev version
+    - task: Powershell@2
+      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties for service
+
+  - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+
+  # todo, walk the artifacts and ensure that one which includes an extension package is present
+  # if not, we only need to build on linux. if so, we need to build on all platforms
+  - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
+    parameters:
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
@@ -58,11 +135,6 @@ steps:
       python -m pip freeze --all
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
-  - template: set-dev-build.yml@self
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - task: Powershell@2
     inputs:
@@ -86,7 +158,7 @@ steps:
   - pwsh: |
       $(VENV_ACTIVATION_SCRIPT)
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80

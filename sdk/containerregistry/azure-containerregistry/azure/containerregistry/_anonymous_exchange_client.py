@@ -17,7 +17,7 @@ from ._user_agent import USER_AGENT
 
 class AnonymousAccessCredential(TokenCredential):
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
@@ -46,7 +46,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
-        self, challenge: str, **kwargs
+        self, challenge: str, **kwargs: Any
     ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return self.exchange_refresh_token_for_access_token(
@@ -58,7 +58,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
-        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
+        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs: Any
     ) -> Optional[str]:
         auth_operation = cast(AuthenticationOperations, self._client.authentication)
         access_token = auth_operation.exchange_acr_refresh_token_for_acr_access_token(

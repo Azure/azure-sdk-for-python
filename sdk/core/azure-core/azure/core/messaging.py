@@ -22,7 +22,7 @@ _Unset: Any = object()
 DataType = TypeVar("DataType")
 
 
-class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attributes
+class CloudEvent(Generic[DataType]):
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
 
@@ -57,13 +57,13 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
     """Identifies the context in which an event happened. The combination of id and source must
        be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name."""
 
-    type: str  # pylint: disable=redefined-builtin
+    type: str
     """Type of event related to the originating occurrence."""
 
     specversion: str = "1.0"
     """The version of the CloudEvent spec. Defaults to "1.0" """
 
-    id: str  # pylint: disable=redefined-builtin
+    id: str
     """An identifier for the event. The combination of id and source must be
        unique for each distinct event. If not provided, a random UUID will be generated and used."""
 

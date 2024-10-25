@@ -6,10 +6,9 @@
 # --------------------------------------------------------------------------------------------
 
 from enum import Enum
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 import jsondiff
 from breaking_changes_tracker import BreakingChangesTracker
-from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
@@ -18,30 +17,36 @@ class ChangeType(str, Enum):
     ADDED_CLASS_METHOD = "AddedClassMethod"
     ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
     ADDED_CLASS_PROPERTY = "AddedClassProperty"
+    ADDED_ENUM = "AddedEnum"
+    ADDED_ENUM_MEMBER = "AddedEnumMember"
     ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
     ADDED_OPERATION_GROUP = "AddedOperationGroup"
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}' was added in the current version"
+        "Added client `{}`"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}' client method '{}' was added in the current version"
+        "Client `{}` added method `{}`"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}' was added in the current version"
+        "Added model `{}`"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}' method '{}' was added in the current version"
+        "Model `{}` added method `{}`"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
+        "Model `{}` added parameter `{}` in method `{}`"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}' had parameter '{}' added in the current version"
+        "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the current version"
+        "Model `{}` added property `{}`"
+    ADDED_ENUM_MSG = \
+        "Added enum `{}`"
+    ADDED_ENUM_MEMBER_MSG = \
+        "Enum `{}` added member `{}`"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}' client had operation group '{}' added in the current version"
+        "Client `{}` added operation group `{}`"
 
 
-    def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
-        super().__init__(stable, current, diff, package_name, **kwargs)
+    def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
+        super().__init__(stable, current, package_name, **kwargs)
         self.features_added = []
 
     def run_checks(self) -> None:
@@ -68,6 +73,14 @@ class ChangelogTracker(BreakingChangesTracker):
                         fa = (
                             self.ADDED_CLIENT_MSG,
                             ChangeType.ADDED_CLIENT,
+                            self.module_name, class_name
+                        )
+                        self.features_added.append(fa)
+                    elif class_components.get("type", None) == "Enum":
+                        # This is a new enum
+                        fa = (
+                            self.ADDED_ENUM_MSG,
+                            ChangeType.ADDED_ENUM,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -135,6 +148,12 @@ class ChangelogTracker(BreakingChangesTracker):
                                         ChangeType.ADDED_OPERATION_GROUP,
                                         self.module_name, self.class_name, property_name
                                     )
+                            if stable_class_nodes[self.class_name]["type"] == "Enum":
+                                fa = (
+                                    self.ADDED_ENUM_MEMBER_MSG,
+                                    ChangeType.ADDED_ENUM_MEMBER,
+                                    self.module_name, class_name, property_name
+                                )
                             self.features_added.append(fa)
 
 
@@ -155,10 +174,11 @@ class ChangelogTracker(BreakingChangesTracker):
                     )
                 )
 
-    def report_changes(self) -> None:
-        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
-        self.get_reportable_breaking_changes(ignore_changes)
 
+    def report_changes(self) -> None:
+        ignore_changes = self.ignore if self.ignore else {}
+        self.get_reportable_changes(ignore_changes, self.breaking_changes)
+        self.get_reportable_changes(ignore_changes, self.features_added)
         # Code borrowed and modified from the previous change log tool
         def _build_md(content: list, title: str, buffer: list):
             buffer.append(title)

@@ -48,9 +48,6 @@ $templateFileParameters['sshPubKey'] = $sshKey
 Write-Host "Sleeping for a bit to ensure service principal is ready."
 Start-Sleep -s 45
 
-# Install this specific version of the Azure CLI to avoid https://github.com/Azure/azure-cli/issues/28358.
-pip install azure-cli=="2.56.0"
-
 $az_version = az version
 Write-Host "Azure CLI version: $az_version"
 az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN

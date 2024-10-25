@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b4 (2024-09-05)
 
 ### Features Added
 - Added support for the Analyze Batch Documents API:
@@ -22,6 +32,7 @@
 - Added property `allow_overwrite` to model `BuildDocumentClassifierRequest`.
 - Added properties `allow_overwrite` and `max_training_hours` to model `BuildDocumentModelRequest`.
 - Added properties `classifier_id`, `split` and `doc_types` to model `ComposeDocumentModelRequest`.
+- Added support for getting `operation_id` via `details` property in the new return types `AnalyzeDocumentLROPoller` and `AsyncAnalyzeDocumentLROPoller` in operation `begin_analyze_document()`.
 
 ### Breaking Changes
 - Removed support for extracting lists from analyzed documents:

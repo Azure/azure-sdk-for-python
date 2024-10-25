@@ -34,11 +34,15 @@ IGNORE_PACKAGES.append("azure-openai")
 GIT_TOKEN = os.environ["GH_TOKEN"]
 auth = Auth.Token(GIT_TOKEN)
 github = Github(auth=auth)
-# repo = github.get_repo("Azure/azure-sdk-for-python")
+repo = github.get_repo("Azure/azure-sdk-for-python")
+health_report_path = pathlib.Path(__file__).parent
 
 # Azure DevOps
-DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
-token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+if not in_ci():
+    DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
+    token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+else:
+    token =os.environ["SYSTEM_ACCESSTOKEN"]
 AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 DEVOPS_TASK_STATUS = typing.Literal[
     "abandoned",
@@ -252,7 +256,7 @@ def get_pipelines(
 
     response = httpx.get(LIST_BUILDS, headers=AUTH_HEADERS)
     if response.status_code != 200:
-        raise Exception(f"Failed to get pipelines - {response.status_code}")
+        raise Exception(f"Failed to get pipelines - {response.status_code} {response.text}")
     pipelines_json = json.loads(response.text)
     python_pipelines = [
         pipeline
@@ -283,7 +287,8 @@ def get_pipelines(
 
 def record_check_result(task: dict[str, str], type: str, pipeline: PipelineResultsUnion):
     pipeline.update({type: CheckStatus(status=task["result"])})
-    pipeline[type]["log"] = task["log"]["url"]
+    if task["log"]:
+        pipeline[type]["log"] = task["log"].get("url")
 
 
 def record_test_result(
@@ -297,10 +302,12 @@ def record_test_result(
             pipeline.update({type: CheckStatus(status="succeeded")})
     elif task["result"] == "failed":
         pipeline.update({type: CheckStatus(status="failed")})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
     elif pipeline.get(type, {}).get("status") != "failed":
         pipeline.update({type: CheckStatus(status=task["result"])})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
 
 
 def record_all_pipeline(
@@ -652,7 +659,6 @@ def report_sla_and_total_issues(
 
     tracked_labels = map_codeowners_to_label(libraries)
     today = datetime.datetime.now(datetime.UTC)
-    repo = github.get_repo("Azure/azure-sdk-for-python")
     filter_labels = ["issue-addressed", "needs-author-feedback", "feature-request"]
     issues = list(repo.get_issues(state="open", labels=["customer-reported", "Client"]))
     record_total_customer_reported_issues(libraries, tracked_labels, issues)
@@ -668,7 +674,7 @@ def report_sla_and_total_issues(
 
 
 def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]) -> None:
-    with open("./health_report.csv", mode="w", newline="", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.csv", mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
 
         column_names = [
@@ -760,12 +766,12 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
             sla = details.get("sla")
             if sla:
                 question_link = (
-                    f"([link]({sla.get("question", {}).get("link", None)}))"
+                    f"([link]({sla.get('question', {}).get('link', None)}))"
                     if sla.get("question", {}).get("link", None) is not None
                     else ""
                 )
                 bug_link = (
-                    f"([link]({sla.get("bug", {}).get("link", None)}))"
+                    f"([link]({sla.get('bug', {}).get('link', None)}))"
                     if sla.get("bug", {}).get("link", None) is not None
                     else ""
                 )
@@ -777,29 +783,29 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
                 library,
                 status_colored,
                 details["mypy"]["status"]
-                + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
+                + (f" ([link]({details['mypy']['link']}))" if details["mypy"]["link"] is not None else ""),
                 details["pyright"]["status"]
-                + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
+                + (f" ([link]({details['pyright']['link']}))" if details["pyright"]["link"] is not None else ""),
                 details["type_check_samples"],
                 details["pylint"]["status"]
-                + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
+                + (f" ([link]({details['pylint']['link']}))" if details["pylint"]["link"] is not None else ""),
                 details["sphinx"]["status"]
-                + (f" ([link]({details["sphinx"]["link"]}))" if details["sphinx"]["link"] is not None else ""),
+                + (f" ([link]({details['sphinx']['link']}))" if details["sphinx"]["link"] is not None else ""),
                 details["ci"]["status"]
-                + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
+                + (f" ([link]({details['ci']['link']}))" if details["ci"]["link"] is not None else ""),
                 details["tests"]["status"]
-                + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
+                + (f" ([link]({details['tests']['link']}))" if details["tests"]["link"] is not None else ""),
                 sla_str,
                 str(details.get("customer_issues", {}).get("num", 0))
                 + (
-                    f" ([link]({details.get("customer_issues", {}).get("link", "")}))"
-                    if details.get("customer_issues", {}).get("link", None) is not None
+                    f" ([link]({details.get('customer_issues', {}).get('link', '')}))"
+                    if details.get('customer_issues', {}).get('link', None) is not None
                     else ""
                 ),
             ]
             rows.append(row)
 
-    with open("./health_report.md", mode="w", newline="", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.md", mode="w", newline="", encoding="utf-8") as file:
 
         file.write("|" + "|".join(column_names) + "|\n")
         file.write("|" + "---|" * len(column_names) + "\n")
@@ -811,7 +817,7 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
 
 def write_to_html(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]) -> None:
     write_to_markdown(libraries)
-    with open("./health_report.md", "r") as f:
+    with open(health_report_path / "health_report.md", "r", encoding="utf-8") as f:
         markd = f.read()
 
     html = markdown.markdown(markd, extensions=["tables"])
@@ -830,7 +836,7 @@ def write_to_html(libraries: dict[ServiceDirectory, dict[LibraryName, LibrarySta
 
     html_with_css = css_styles + html
 
-    with open("./health_report.html", "w", encoding="utf-8") as file:
+    with open(health_report_path / "health_report.html", "w", encoding="utf-8") as file:
         file.write(html_with_css)
 
 
@@ -872,11 +878,13 @@ if __name__ == "__main__":
     elif args.format == "html":
         write_to_html(libraries)
 
-    # if in_ci():
-    #     repo = github.get_repo("Azure/azure-sdk-for-python")
-    #     repo.create_file(
-    #         path="scripts/library_health_status/health_report.csv",
-    #         message="Update health report",
-    #         content=open("health_report.csv", "rb").read(),
-    #         branch="health-status-script",
-    #     )
+    if in_ci():
+        path = "scripts/repo_health_status_report/health_report.csv"
+        content = repo.get_contents(path, ref="python-sdk-health-report")
+        repo.update_file(
+            path=path,
+            message="Update health report",
+            content=open(path, "rb").read(),
+            branch="python-sdk-health-report",
+            sha=content.sha
+        )

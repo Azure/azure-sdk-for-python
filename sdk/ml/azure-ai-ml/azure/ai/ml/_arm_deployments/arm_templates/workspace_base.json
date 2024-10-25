@@ -83,6 +83,10 @@
                 "description": "Determines whether or not to put the storage account behind VNet"
             }
         },
+        "storageAccountSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
         "storageAccountResourceGroupName": {
             "type": "string",
             "defaultValue": "[parameters('resourceGroupName')]"
@@ -635,7 +639,7 @@
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
-        "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "storageAccount": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
         "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
         "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
         "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",

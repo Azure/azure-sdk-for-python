@@ -372,7 +372,11 @@ class MLClient:
 
         self._service_client_07_2024_preview = ServiceClient072024Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
@@ -474,7 +478,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -485,7 +489,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -702,7 +706,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]

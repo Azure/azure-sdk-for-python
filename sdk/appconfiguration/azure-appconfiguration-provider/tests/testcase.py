@@ -195,8 +195,15 @@ def create_feature_flag_config_setting(key, label, enabled):
     )
 
 
-def has_feature_flag(client, feature_id, enabled=False):
+def get_feature_flag(client, feature_id):
     for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
         if feature_flag["id"] == feature_id:
-            return feature_flag["enabled"] == enabled
+            return feature_flag
+    return None
+
+
+def has_feature_flag(client, feature_id, enabled=False):
+    feature_flag = get_feature_flag(client, feature_id)
+    if feature_flag:
+        return feature_flag["enabled"] == enabled
     return False

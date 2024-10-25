@@ -10,11 +10,22 @@
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
     },
-    "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
+    "PythonVersion": [ "3.8", "3.11", "3.10", "3.12" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
   "include": [
+    {
+      "PyPyConfig": {
+        "ubuntu2004_pypy39": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "pypy3.9",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
     {
       "CoverageConfig": {
         "ubuntu2004_39_coverage": {
@@ -28,10 +39,10 @@
     },
     {
       "Config": {
-        "Ubuntu2004_312": {
+        "Ubuntu2004_313": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.12",
+          "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }

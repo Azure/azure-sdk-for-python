@@ -126,6 +126,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._port = PORT
         self.state: Optional[ConnectionState] = None
 
+        # Set the port for AmqpOverWebsocket
+        if transport_type.value == TransportType.AmqpOverWebsocket.value:
+            self._port = WEBSOCKET_PORT
+
         # Custom Endpoint
         custom_endpoint_address = kwargs.get("custom_endpoint_address")
         custom_endpoint = None
@@ -157,6 +161,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
+                port=self._port,
                 custom_endpoint=custom_endpoint,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
@@ -580,7 +585,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 "END frame received on invalid channel. Closing connection.",
                 extra=self._network_trace_params
             )
-            return
 
     def _process_incoming_frame(self, channel: int, frame: Optional[Union[bytes, Tuple[Any,...]]]) -> bool:  # pylint:disable=too-many-return-statements
         """Process an incoming frame, either directly or by passing to the necessary Session.

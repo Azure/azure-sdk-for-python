@@ -89,7 +89,7 @@ class RequestsTransport(HttpTransport):
         self.open()
         return self
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         self.close()
 
     def _init_session(self, session: requests.Session) -> None:

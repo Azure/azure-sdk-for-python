@@ -1,0 +1,20 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-communication-sms'
+      JobName: sms
+      ServiceDirectory: communication
+      Clouds: Int
+      CloudConfig:
+        Int:
+          SubscriptionConfigurations:
+            - $(sub-config-communication-int-test-resources-common)
+            - $(sub-config-communication-int-test-resources-python)
+            - $(sub-config-communication-sms-int-test-resources)
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'True'
+      TestResourceDirectories:
+        - communication/test-resources/

@@ -4,3 +4,4 @@ https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitati
 https://github.com/Azure/azure-rest-api-specs-pr
 http://localhost:8000/samples/pyodide_integration
 https://pypi.org/project/azure-mynewpackage/
+https://aka.ms/azsdk/python/migrate/my-new-package

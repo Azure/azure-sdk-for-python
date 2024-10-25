@@ -107,7 +107,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
         return False
 
     async def _sleep_backoff(
-        self, settings: Dict[str, Any], transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        settings: Dict[str, Any],
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
     ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
@@ -172,7 +174,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
             transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = cast(
-                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType], request.context.transport
+                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
+                request.context.transport,
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
@@ -189,7 +192,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
                         is_response_error = True
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

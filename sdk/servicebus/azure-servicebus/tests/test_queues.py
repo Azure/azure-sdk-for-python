@@ -3381,29 +3381,30 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_complete_message_on_different_receiver(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        # Skipping if uamqp: This bug will not be fixed in uamqp.
-        if not uamqp_transport:
-            with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
-                sender = sb_client.get_queue_sender(servicebus_queue.name)
-                receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
-                receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
-                
-                with sender, receiver1, receiver2:
-                    sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    received_msgs = []
-                    # the amount of messages returned by receive call is not stable, especially in live tests
-                    # of different os platforms, this is why a while loop is used here to receive the specific
-                    # amount of message we want to receive
-                    while len(received_msgs) < 5:
-                        # start receives on the first receiver and complete them on the other one.
-                        # the messages should settle over the management of the second receiver.
-                        for msg in receiver1.receive_messages(max_message_count=10, max_wait_time=5):
-                            receiver2.complete_message(msg)
-                            received_msgs.append(msg)
-                    
-                    assert len(received_msgs) == 5
-                    
-                    messages_in_queue = receiver1.peek_messages()
-        
-                    assert len(messages_in_queue) == 0
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            with sender, receiver1, receiver2:
+                sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
+                received_msgs = []
+                # the amount of messages returned by receive call is not stable, especially in live tests
+                # of different os platforms, this is why a while loop is used here to receive the specific
+                # amount of message we want to receive
+                while len(received_msgs) < 5:
+                    # start receives on the first receiver and complete them on the other one.
+                    # the messages should settle over the management of the second receiver.
+                    for msg in receiver1.receive_messages(max_message_count=10, max_wait_time=5):
+                        receiver2.complete_message(msg)
+                        received_msgs.append(msg)
+
+                assert len(received_msgs) == 5
+
+                if uamqp_transport:
+                    # wait to make sure message completed, since uamqp is taking longer in the CI
+                    time.sleep(10)
+                messages_in_queue = receiver1.peek_messages()
+
+                assert len(messages_in_queue) == 0

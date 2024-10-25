@@ -46,6 +46,7 @@ import uuid
 
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -56,7 +57,7 @@ async def radiology_insights_async() -> None:
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -131,7 +132,7 @@ async def radiology_insights_async() -> None:
                 resource=patient_data,
             )
             radiology_insights_result = await poller.result()
-            
+
             display_followup_recommendation(radiology_insights_result)
     except Exception as ex:
         raise ex

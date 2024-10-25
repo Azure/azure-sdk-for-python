@@ -12,7 +12,7 @@ from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+
     from ...credentials import (
         AccessToken,
         TokenCredential,
@@ -116,7 +116,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self.on_request(request)
         try:
             response = self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             self.on_exception(request)
             raise
 
@@ -129,7 +129,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                     try:
                         response = self.next.send(request)
                         self.on_response(request, response)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         self.on_exception(request)
                         raise
 
