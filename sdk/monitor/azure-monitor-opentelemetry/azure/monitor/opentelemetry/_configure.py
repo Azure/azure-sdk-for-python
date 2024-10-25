@@ -227,17 +227,17 @@ def _send_attach_warning():
 
 
 def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    if not _AZURE_SDK_INSTRUMENTATION_NAME in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
+    if _AZURE_SDK_INSTRUMENTATION_NAME not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
         return
 
-    if (not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME)):
+    if not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         _logger.debug(
             "Instrumentation skipped for library azure_sdk"
         )
         return
 
     try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor # type: ignore
+        from azure.ai.inference.tracing import AIInferenceInstrumentor # pylint: disable=import-error,no-name-in-module
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug(
             "Failed to import AIInferenceInstrumentor from azure-ai-inference",
