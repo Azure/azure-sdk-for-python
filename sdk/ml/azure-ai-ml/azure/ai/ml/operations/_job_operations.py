@@ -713,7 +713,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
@@ -730,6 +730,20 @@ class JobOperations(_ScopeDependentOperations):
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
 
+        result = service_client_operation.create_or_update(
+            id=rest_job_resource.name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
+
+        return result
+
+    def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
+        self, rest_job_resource: JobBase, **kwargs: Any
+    ) -> JobBase:
+        service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,

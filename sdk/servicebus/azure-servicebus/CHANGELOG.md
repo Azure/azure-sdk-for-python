@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a broken f-string present in a `ValueError` when using the async client ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+
 ### Other Changes
 
 ## 7.12.3 (2024-09-19)

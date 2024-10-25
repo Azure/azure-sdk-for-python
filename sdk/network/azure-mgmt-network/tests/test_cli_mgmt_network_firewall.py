@@ -28,7 +28,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer,
 
 AZURE_LOCATION = 'eastus'
 
-
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

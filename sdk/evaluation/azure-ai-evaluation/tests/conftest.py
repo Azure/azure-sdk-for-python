@@ -1,4 +1,5 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
+from . import __pf_service_isolation  # isort: split  # noqa: F401
 
 import json
 import multiprocessing
@@ -9,22 +10,27 @@ from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import pytest
-from azure.core.credentials import TokenCredential
+from ci_tools.variables import in_ci
 from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
+from filelock import FileLock
 from promptflow.client import PFClient
-from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
+
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.core.credentials import TokenCredential
 
 # Import of optional packages
 AZURE_INSTALLED = True
 try:
     import jwt
+
     from azure.ai.ml._ml_client import MLClient
 except ImportError:
     AZURE_INSTALLED = False
@@ -40,6 +46,21 @@ class SanitizedValues(str, Enum):
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_nltk_data() -> None:
+    """Ensures that nltk data has been downloaded."""
+
+    def try_download_nltk():
+        for _ in range(3):
+            ensure_nltk_data_downloaded()
+
+    if in_ci():
+        with FileLock(Path.home() / "azure_ai_evaluation_nltk_data.txt"):
+            try_download_nltk()
+    else:
+        try_download_nltk()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -178,6 +199,27 @@ def redirect_asyncio_requests_traffic() -> None:
 
 
 @pytest.fixture
+def simple_conversation():
+    return {
+        "messages": [
+            {
+                "content": "What is the capital of France?",
+                "role": "user",
+                "context": "Customer wants to know the capital of France",
+            },
+            {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+            {
+                "content": "What is the capital of Hawaii?",
+                "role": "user",
+                "context": "Customer wants to know the capital of Hawaii",
+            },
+            {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+        ],
+        "context": "Global context",
+    }
+
+
+@pytest.fixture
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
@@ -224,7 +266,7 @@ def dev_connections(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.openai.azure.com",
+        azure_endpoint="https://Sanitized.api.cognitive.microsoft.com",
         api_key="aoai-api-key",
         api_version="2024-04-01-preview",
         azure_deployment="aoai-deployment",
@@ -469,7 +511,6 @@ def pytest_collection_modifyitems(items):
 
 
 def pytest_sessionfinish() -> None:
-
     def stop_promptflow_service() -> None:
         """Ensure that the promptflow service is stopped when pytest exits.
 

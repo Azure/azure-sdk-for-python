@@ -1,39 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from typing import Optional, Union
 
+from typing_extensions import override
+
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-
-try:
-    from ._content_safety_base import ContentSafetyEvaluatorBase
-except ImportError:
-    from _content_safety_base import ContentSafetyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class _AsyncHateUnfairnessEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
-        # Hate_fairness is the actual backend metric name. Which, uh, doesn't sound great.
-        # so invert the name.
-        super().__init__(
-            metric=EvaluationMetrics.HATE_FAIRNESS,
-            azure_ai_project=azure_ai_project,
-            credential=credential,
-        )
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        return await super().__call__(query=query, response=response, **kwargs)
-
-
-class HateUnfairnessEvaluator:
+@experimental
+class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
 
     **Usage**
 
@@ -58,21 +44,41 @@ class HateUnfairnessEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, credential=None) -> None:
-        self._async_evaluator = _AsyncHateUnfairnessEvaluator(azure_ai_project, credential)
+    @override
+    def __init__(
+        self,
+        credential,
+        azure_ai_project,
+        eval_last_turn: bool = False,
+    ):
+        super().__init__(
+            eval_metric=EvaluationMetrics.HATE_FAIRNESS,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
+        )
 
-    def __call__(self, *, query: str, response: str, **kwargs):
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation=None,
+        **kwargs,
+    ):
         """
-        Evaluates hate unfairness content.
+        Evaluate whether hateful content is present in your AI system's response.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :return: The hate unfairness score.
-        :rtype: dict
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score.
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
-
-    def _to_async(self):
-        return self._async_evaluator
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

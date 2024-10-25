@@ -136,7 +136,10 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 if result and "access_token" in result and "expires_in" in result:
                     refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
                     return AccessTokenInfo(
-                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                        result["access_token"],
+                        now + int(result["expires_in"]),
+                        token_type=result.get("token_type", "Bearer"),
+                        refresh_on=refresh_on,
                     )
 
         return None
@@ -157,4 +160,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
         refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
-        return AccessTokenInfo(result["access_token"], request_time + int(result["expires_in"]), refresh_on=refresh_on)
+        return AccessTokenInfo(
+            result["access_token"],
+            request_time + int(result["expires_in"]),
+            token_type=result.get("token_type", "Bearer"),
+            refresh_on=refresh_on,
+        )

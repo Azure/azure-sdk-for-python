@@ -25,7 +25,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
         response = self.client.private_endpoint_connections.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,9 +63,17 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
                         "status": "str",
                     },
                     "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "type": "str",
                 },
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +88,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
                 resource_group_name=resource_group.name,
                 account_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

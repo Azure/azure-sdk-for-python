@@ -417,6 +417,8 @@ class HttpLoggingPolicy(
             "Transfer-Encoding",
             "User-Agent",
             "WWW-Authenticate",  # OAuth Challenge header.
+            "x-vss-e2eid",  # Needed by Azure DevOps pipelines.
+            "x-msedge-ref",  # Needed by Azure DevOps pipelines.
         ]
     )
     REDACTED_PLACEHOLDER: str = "REDACTED"

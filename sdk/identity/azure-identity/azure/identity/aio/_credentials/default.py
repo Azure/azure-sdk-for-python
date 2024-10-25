@@ -25,7 +25,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
-    """A default credential capable of handling most Azure SDK authentication scenarios.
+    """A credential capable of handling most Azure SDK authentication scenarios. See
+    https://aka.ms/azsdk/python/identity/credential-chains#usage-guidance-for-defaultazurecredential.
 
     The identity it uses depends on the environment. When an access token is needed, it requests one using these
     identities in turn, stopping when one provides a token:
@@ -144,7 +145,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     WorkloadIdentityCredential(
                         client_id=cast(str, client_id),
                         tenant_id=workload_identity_tenant_id,
-                        file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                         **kwargs
                     )
                 )

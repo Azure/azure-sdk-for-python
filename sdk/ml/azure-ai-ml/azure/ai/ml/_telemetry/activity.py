@@ -153,7 +153,7 @@ def error_preprocess(activityLogger, exception):
 
 
 @contextlib.contextmanager
-def log_activity(
+def log_activity(  # pylint:disable=useless-return
     logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
