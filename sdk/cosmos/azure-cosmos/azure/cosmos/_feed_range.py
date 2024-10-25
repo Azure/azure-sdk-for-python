@@ -55,7 +55,7 @@ class FeedRangeEpk(FeedRange):
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 
-        self._feed_range_internal = FeedRangeInternalEpk(feed_range)
+        self.feed_range_internal = FeedRangeInternalEpk(feed_range)
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.
@@ -63,7 +63,7 @@ class FeedRangeEpk(FeedRange):
 
         :return: A json representation of the feed range.
         """
-        return self._feed_range_internal.__str__()
+        return self.feed_range_internal.__str__()
 
     @classmethod
     def _from_json(cls, data: Dict[str, Any]) -> 'FeedRange':

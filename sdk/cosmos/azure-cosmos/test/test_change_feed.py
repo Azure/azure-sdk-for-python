@@ -13,7 +13,16 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode
 
+ID = 'id'
+CURRENT = 'current'
+PREVIOUS = 'previous'
+METADATA = 'metadata'
+OPERATION_TYPE = 'operationType'
+CREATE = 'create'
+DELETE = 'delete'
+E_TAG = 'etag'
 
 @pytest.fixture(scope="class")
 def setup():
@@ -28,6 +37,27 @@ def setup():
     return {
         "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID)
     }
+
+def round_time():
+    utc_now = datetime.now(timezone.utc)
+    return utc_now - timedelta(microseconds=utc_now.microsecond)
+
+def assert_change_feed(expected, actual):
+    if len(actual) == 0:
+        assert len(expected) == len(actual)
+        return
+
+    # Sort actual by operation_type and id
+    actual = sorted(actual, key=lambda k: (k[METADATA][OPERATION_TYPE], k[CURRENT][ID]) if k[METADATA][OPERATION_TYPE] == CREATE else (k[METADATA][OPERATION_TYPE], k[PREVIOUS][ID]))
+
+
+    for expected_change_feed, actual_change_feed in zip(expected, actual):
+        for expected_type, expected_data in expected_change_feed.items():
+            assert expected_type in actual_change_feed
+            actual_data = actual_change_feed[expected_type]
+            for key, value in expected_data.items():
+                assert key in actual_data
+                assert expected_data[key] == actual_data[key]
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
@@ -63,7 +93,7 @@ class TestChangeFeed:
             filter_param = None
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(filter_param)
+        query_iterable = created_collection.query_items_change_feed(**filter_param)
         iter_list = list(query_iterable)
         assert len(iter_list) == 0
         assert 'etag' in created_collection.client_connection.last_response_headers
@@ -165,9 +195,6 @@ class TestChangeFeed:
                                                                             PartitionKey(path="/pk"))
         batchSize = 50
 
-        def round_time():
-            utc_now = datetime.now(timezone.utc)
-            return utc_now - timedelta(microseconds=utc_now.microsecond)
         def create_random_items(container, batch_size):
             for _ in range(batch_size):
                 # Generate a Random partition key
@@ -218,14 +245,6 @@ class TestChangeFeed:
         # Should equal batch size
         assert totalCount == batchSize
 
-        # test an invalid value, Attribute error will be raised for passing non datetime object
-        invalid_time = "Invalid value"
-        try:
-            list(created_collection.query_items_change_feed(start_time=invalid_time))
-            fail("Cannot format date on a non datetime object.")
-        except ValueError as e: #TODO: previously it is throwing AttributeError, now has changed into ValueError, is it breaking change?
-            assert "Invalid start_time 'Invalid value'" == e.args[0]
-
         setup["created_db"].delete_container(created_collection.id)
 
     def test_query_change_feed_with_multi_partition(self, setup):
@@ -251,6 +270,165 @@ class TestChangeFeed:
             actual_ids.append(item['id'])
 
         assert actual_ids == expected_ids
+
+    def test_query_change_feed_with_delete(self, setup):
+        partition_key = 'pk'
+        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+                                                                  PartitionKey(path=f"/{partition_key}"),
+                                                                  offer_throughput=11000)
+        change_feed_mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+
+        ## Test Change Feed with empty collection(Save the continuation token)
+        query_iterable = created_collection.query_items_change_feed(
+            change_feed_mode=change_feed_mode,
+        )
+        expected_change_feeds = []
+        actual_change_feeds = list(query_iterable)
+        cont_token1 = created_collection.client_connection.last_response_headers[E_TAG]
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+        ## Test change_feed for created items from cont_token1 (Save the new continuation token)
+        new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
+        created_items = []
+        for document in new_documents:
+            created_item = created_collection.create_item(body=document)
+            created_items.append(created_item)
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=cont_token1,
+            change_feed_mode=change_feed_mode,
+        )
+
+        expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]
+        actual_change_feeds = list(query_iterable)
+        cont_token2 = created_collection.client_connection.last_response_headers['etag']
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+        ## Test change_feed for deleted items
+        for item in created_items:
+            created_collection.delete_item(item=item, partition_key=item['pk'])
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=cont_token2,
+            change_feed_mode=change_feed_mode,
+        )
+
+        expected_change_feeds = [{CURRENT: {}, PREVIOUS: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: DELETE}} for i in range(4)]
+        actual_change_feeds = list(query_iterable)
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+        ## Test change_feed for created/deleted items
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=cont_token1,
+            change_feed_mode = change_feed_mode
+        )
+
+        expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]\
+                                + [{CURRENT: {}, PREVIOUS: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: DELETE}} for i in range(4)]
+        actual_change_feeds = list(query_iterable)
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+    def test_query_change_feed_with_errors(self, setup):
+        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+                                                                  PartitionKey(path="/pk"))
+        change_feed_mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+
+        # Error if invalid change_feed_mode was used
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                change_feed_mode="test_invalid_change_feed_mode",
+            )
+        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are ['LatestVersion', 'AllVersionsAndDeletes']."
+
+        # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                partition_key_range_id="TestPartitionKeyRangeId",
+                change_feed_mode=change_feed_mode,
+            )
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported with 'partition_key_range_id'. Please use 'feed_range' instead."
+
+        # Error if is_start_from_beginning was in invalid type
+        with pytest.raises(TypeError) as e:
+            created_collection.query_items_change_feed(
+                is_start_from_beginning="Now",
+            )
+        assert str(e.value) == "'is_start_from_beginning' must be 'bool' type, but given 'str'."
+
+        # Error if is_start_from_beginning was used with FULL_FIDELITY_FEED
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                is_start_from_beginning=True,
+                change_feed_mode=change_feed_mode,
+            )
+        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'is_start_from_beginning'. Please use 'continuation' instead."
+
+        # Error if 'is_start_from_beginning' was used with 'start_time'
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                is_start_from_beginning=True,
+                start_time="Now",
+            )
+        assert str(e.value) == "'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them."
+
+        # Error if 'start_time' was invalid value
+        invalid_time = "Invalid value"
+        # TODO: previously it is throwing AttributeError, now has changed into ValueError, is it breaking change?
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(start_time=invalid_time)
+        assert str(e.value) == "'start_time' must be either 'Now' or 'Beginning', but given 'Invalid value'."
+
+        # Error if 'start_time' was invalid type
+        invalid_time = 1.2
+        with pytest.raises(TypeError) as e:
+            created_collection.query_items_change_feed(start_time=invalid_time)
+        assert str(e.value) == "'start_time' must be either a 'datetime' or 'str' type, but given 'float'."
+
+        # Error if start_time was used with FULL_FIDELITY_FEED
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                start_time=round_time(),
+                change_feed_mode=change_feed_mode,
+            )
+        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'start_time'. Please use 'continuation' instead."
+
+        # Error if too many positional arguments
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                "partition_key_range_id",
+                False,
+                "continuation",
+                10,
+                "extra_argument",
+            )
+        assert str(e.value) == "Too many arguments. Expected: less than 4, but given: 5"
+
+        # Error if types are not matching
+        positional_arguments = [
+            (123, False, "continuation", 10, "'123' is not of type 'str'"),
+            ("partition_key_range_id", 123, "continuation", 10, "'123' is not of type 'bool'"),
+            ("partition_key_range_id", False, 123, 10, "'123' is not of type 'str'"),
+            ("partition_key_range_id", False, "continuation", 12.34, "'12.34' is not of type 'int'"),
+        ]
+        for positional_argument in positional_arguments:
+            partition_key_range_id, continuation, start_time, end_time, error_msg = positional_argument
+            with pytest.raises(TypeError) as e:
+                created_collection.query_items_change_feed(
+                    partition_key_range_id,
+                    continuation,
+                    start_time,
+                    end_time,
+                )
+            assert str(e.value) == error_msg
+
+        # Error if arguments are in both positional and keyword arguement list
+        with pytest.raises(ValueError) as e:
+            created_collection.query_items_change_feed(
+                "partition_key_range_id",
+                False,
+                "continuation",
+                10,
+                continuation="123",
+            )
+        assert str(e.value) == "'continuation' is in both positional and keyword argument list. Please remove one of them."
 
 if __name__ == "__main__":
     unittest.main()

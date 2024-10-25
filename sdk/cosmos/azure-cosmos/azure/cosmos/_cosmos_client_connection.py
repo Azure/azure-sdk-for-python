@@ -1161,6 +1161,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
         else:
+            # TODO: Why re-casting options to dict? Is there any case we don't get dict here?
             options = dict(options)
 
         resource_key_map = {"Documents": "docs"}
@@ -1175,6 +1176,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             if collection_link in self.__container_properties_cache:
+                # TODO: This will make deep copy. Check if this has any performance impact
                 new_options = dict(options)
                 new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
@@ -3005,6 +3007,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # This case should be interpreted as an empty array.
                 return []
 
+        # TODO: copy is not needed if query was none, since the header was copied inside of "base.GetHeaders"
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
         if query is None:
