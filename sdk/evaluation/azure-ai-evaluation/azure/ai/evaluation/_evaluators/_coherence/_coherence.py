@@ -4,7 +4,7 @@
 import os
 from typing import Optional
 
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
@@ -49,6 +49,42 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ):
+        """Evaluate coherence for given input of query, response
+    
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The coherence score.
+        :rtype: Dict[str, float]
+        """
+        ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation,
+        **kwargs,
+    ):
+        """Evaluate coherence for a conversation
+        
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The coherence score.
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+        ...
+
     @override
     def __call__(
         self,
@@ -58,19 +94,4 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
-        """Evaluate coherence. Accepts either a query and response for a single evaluation,
-        or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
-        turns, the evaluator will aggregate the results of each turn.
-
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
-        """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

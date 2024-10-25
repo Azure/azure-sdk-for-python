@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Optional, Union
 
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
@@ -58,6 +58,42 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             eval_last_turn=eval_last_turn,
         )
 
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ):
+        """Evaluate a given query/response pair for sexual content
+    
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The sexual score
+        :rtype: Dict[str, Union[str, float]]
+        """
+        ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation,
+        **kwargs,
+    ):
+        """Evaluate a conversation for sexual content
+        
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The sexual score
+        :rtype: Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]
+        """
+        ...
+
     @override
     def __call__(
         self,
@@ -67,18 +103,4 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         conversation=None,
         **kwargs,
     ):
-        """
-        Evaluate whether sexual content is present in your AI system's response.
-
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
-        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
-        """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
