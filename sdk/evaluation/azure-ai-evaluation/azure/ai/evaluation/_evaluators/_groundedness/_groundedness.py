@@ -60,8 +60,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     ) -> Dict[str, float]:
         """Evaluate groundedness for given input of response, context
     
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
         :keyword context: The context to be evaluated.
