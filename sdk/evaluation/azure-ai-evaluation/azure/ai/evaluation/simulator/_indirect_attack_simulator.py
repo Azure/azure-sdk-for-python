@@ -191,7 +191,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
             template_parameters = completed_task.get("template_parameters", {})  # type: ignore
             xpia_attack_type = template_parameters.get("xpia_attack_type", "")  # type: ignore
             action = template_parameters.get("action", "")  # type: ignore
-            document_type = template_parameters.get("document_type", "")    # type: ignore
+            document_type = template_parameters.get("document_type", "")  # type: ignore
             sim_results.append(
                 {
                     "messages": completed_task["messages"],  # type: ignore
