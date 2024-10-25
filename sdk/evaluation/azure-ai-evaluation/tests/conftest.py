@@ -1,4 +1,5 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
+from . import __pf_service_isolation  # isort: split  # noqa: F401
 
 import json
 import multiprocessing
