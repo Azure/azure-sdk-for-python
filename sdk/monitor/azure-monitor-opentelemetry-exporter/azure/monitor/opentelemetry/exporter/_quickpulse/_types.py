@@ -53,6 +53,7 @@ class _RequestData(_TelemetryData):
         if span.attributes:
             attributes = span.attributes
             url = span.attributes.get(SpanAttributes.HTTP_URL, "")
+            # TODO: get url for http requests
             status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:

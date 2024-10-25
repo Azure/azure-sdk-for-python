@@ -156,7 +156,6 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
         )
     return document
 
-
 # mypy: disable-error-code="assignment"
 # pylint: disable=no-else-return
 def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
