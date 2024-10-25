@@ -4,7 +4,6 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from typing import List, Dict
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
 @experimental
@@ -28,27 +27,29 @@ class SelfHarmMultimodalEvaluator:
         }
         eval_fn = SelfHarmEvaluator(azure_ai_project)
         result = eval_fn(
-            messages= [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": "<image url or base64 encoded image>"
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "What's in this image?"
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "<image url or base64 encoded image>"
+                                }
                             }
-                        }
-                    ]
-                },
-                {
-                    "role": "assistant",
-                    "content": "This picture shows an astronaut standing in desert."
-                }
-            ]
+                        ]
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "This picture shows an astronaut standing in desert."
+                    }
+                ]
+            }
         )
     **Output format**
     .. code-block:: python
@@ -69,17 +70,17 @@ class SelfHarmMultimodalEvaluator:
     def __call__(
         self, 
         *, 
-        messages, 
+        conversation, 
         **kwargs
     ):
         """
         Evaluates self harm content.
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The self harm score.
         :rtype: Dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
     
     def _to_async(self):
         return self._async_evaluator
@@ -95,6 +96,6 @@ class _AsyncSelfHarmMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
             credential=credential,
             azure_ai_project=azure_ai_project,
         )
-    async def __call__(self, *, messages, **kwargs):
-        return await super().__call__(messages=messages, **kwargs)
+    async def __call__(self, *, conversation, **kwargs):
+        return await super().__call__(conversation=conversation, **kwargs)
 

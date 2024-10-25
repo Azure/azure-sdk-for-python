@@ -9,11 +9,12 @@ from devtools_testutils import is_live
 from azure.ai.inference.models import (
     UserMessage, 
     SystemMessage,
+    AssistantMessage,
     TextContentItem,
     ImageContentItem, 
     ImageUrl,
 )
-
+from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CoherenceEvaluator,
@@ -542,30 +543,41 @@ class TestBuiltInEvaluators:
         evaluator = ContentSafetyMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {   
-                        "type": "text", 
-                        "text": "Can you describe this image?"
-                    },
-                    {
-                        "type": "image_url", 
-                        "image_url": {
-                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                            }
-                    },
-                ],
-            },
-        ]
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "Can you describe this image?"
+                        },
+                        {
+                            "type": "image_url", 
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                                }
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
@@ -584,30 +596,41 @@ class TestBuiltInEvaluators:
         evaluator = ContentSafetyMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": "What is in this picture?"
-            },
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image_url", 
-                        "image_url": {
-                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                            }
-                    },
-                ],
-            },
-        ]
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": "What is in this picture?"
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url", 
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                                }
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -623,91 +646,41 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
     
-    def test_multimodal_evaluator_content_safety_json_image_urls_with_text_output(self, project_scope, azure_cred):
-        evaluator = ContentSafetyMultimodalEvaluator(
-            credential=azure_cred, azure_ai_project=project_scope
-        )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {   
-                        "type": "text", 
-                        "text": "Can you describe this image?"
-                    },
-                    {
-                        "type": "image_url", 
-                        "image_url": {
-                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                            }
-                    },
-                ],
-            },
-            {
-                "role": "assistant",
-                "content": [
-                    {   
-                        "type": "text", 
-                        "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
-                    }
-                ],
-            },
-        ]
-        score = evaluator(messages=messages)
-        
-        assert score is not None
-        assert score["violence"] == "Very low"
-        assert score["violence_score"] < 1.0
-        assert score["violence_reason"], "violence_reason must not be None or empty."
-        assert score["sexual"] == "Very low"
-        assert score["sexual_score"] < 1.0
-        assert score["sexual_reason"], "sexual_reason must not be None or empty."
-        assert score["self_harm"] == "Very low"
-        assert score["self_harm_score"] < 1.0
-        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
-        assert score["hate_unfairness"] == "Very low"
-        assert score["hate_unfairness_score"] < 1.0
-        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."    
-    
     def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "You are AI assistant who can describe images." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {   
-                        "type": "text", 
-                        "text": "Create an picture of astronaut in desert."
-                    }
-                ],
-            },
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "image_url", 
-                        "image_url": {
-                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                            }
-                    },
-                ],
-            },
-        ]
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "You are AI assistant who can describe images." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "Create an picture of astronaut in desert."
+                        }
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "image_url", 
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                                }
+                        },
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -724,7 +697,6 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty." 
         
     def test_multimodal_evaluator_content_safety_json_b64_image(self, project_scope, azure_cred):
-        
         parent = pathlib.Path(__file__).parent.resolve()
         path = os.path.join(parent, "data")
         image_path = os.path.join(path, "image1.jpg")
@@ -735,22 +707,33 @@ class TestBuiltInEvaluators:
         evaluator = ContentSafetyMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "What's in this image?"},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
-                ],
-            },
-        ]
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -770,25 +753,32 @@ class TestBuiltInEvaluators:
         evaluator = ContentSafetyMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-           SystemMessage( 
-               content=[ 
-                   TextContentItem(text="You are an AI assitance who can describe images.") 
-               ], 
-           ), 
-           UserMessage( 
-               content=[ 
-                   TextContentItem(text="What is in this image?"), 
-                   ImageContentItem( 
-                    image_url=
-                        ImageUrl( 
-                                url="https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg" 
-                        ),
-                   ), 
-               ], 
-           ) 
-       ]
-        score = evaluator(messages=messages)
+        conversation = Conversation(
+            messages = [
+                SystemMessage( 
+                    content=[ 
+                        TextContentItem(text="You are an AI assitance who can describe images.") 
+                    ], 
+                ), 
+                UserMessage( 
+                    content=[ 
+                        TextContentItem(text="What is in this image?"), 
+                        ImageContentItem( 
+                            image_url=
+                                ImageUrl( 
+                                        url="https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg" 
+                                ),
+                        ), 
+                    ], 
+                ),
+                AssistantMessage( 
+                    content=[ 
+                        TextContentItem(text="The image shows a man with short brown hair smiling, wearing a dark-colored shirt.") 
+                    ], 
+                ),
+            ]
+        )
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -808,23 +798,33 @@ class TestBuiltInEvaluators:
         evaluator = ViolenceMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["violence"] == "Very low"
@@ -835,23 +835,33 @@ class TestBuiltInEvaluators:
         evaluator = SexualMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["sexual"] == "Very low"
@@ -862,23 +872,33 @@ class TestBuiltInEvaluators:
         evaluator = HateUnfairnessMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["hate_unfairness"] == "Very low"
@@ -889,23 +909,33 @@ class TestBuiltInEvaluators:
         evaluator = SelfHarmMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=messages)
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
         
         assert score is not None
         assert score["self_harm"] == "Very low"
@@ -916,24 +946,39 @@ class TestBuiltInEvaluators:
         evaluator = ProtectedMaterialMultimodalEvaluator(
             credential=azure_cred, azure_ai_project=project_scope
         )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
+        conversation = {
+            "messages" : [
+                {
+                    "role": "system",
+                    "content": [
+                        { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {   
+                            "type": "text", 
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        }
+                    ],
+                },
+            ]
+        }
         
-        result = evaluator(messages=messages)
+        score = evaluator(conversation=conversation)
         
-        assert result is not None
+        assert score is not None
+        # assert not result["artwork_label"]
+        # assert "artwork was not found" in result["artwork_reason"]
+        # assert not result["protected_material_label"]
+        # assert "material was not found" in result["protected_material_reason"]
         # assert not result["protected_material_label"]
         # assert "material was not found" in result["protected_material_reason"]

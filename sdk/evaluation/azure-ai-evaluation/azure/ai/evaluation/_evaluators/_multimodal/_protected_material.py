@@ -6,7 +6,6 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 
-
 @experimental
 class ProtectedMaterialMultimodalEvaluator:
     """
@@ -31,27 +30,29 @@ class ProtectedMaterialMultimodalEvaluator:
         }
         eval_fn = ProtectedMaterialMultimodalEvaluator(azure_ai_project)
         result = eval_fn(
-            messages= [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": "<image url or base64 encoded image>"
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "What's in this image?"
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "<image url or base64 encoded image>"
+                                }
                             }
-                        }
-                    ]
-                },
-                {
-                    "role": "assistant",
-                    "content": "This picture shows an astronaut standing in desert."
-                }
-            ]
+                        ]
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "This picture shows an astronaut standing in desert."
+                    }
+                ]
+            }
         )
     
     **Output format**
@@ -72,7 +73,7 @@ class ProtectedMaterialMultimodalEvaluator:
     def __call__(
         self, 
         *, 
-        messages, 
+        conversation, 
         **kwargs
     ):
         """
@@ -83,7 +84,7 @@ class ProtectedMaterialMultimodalEvaluator:
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator
@@ -97,16 +98,16 @@ class _AsyncProtectedMaterialMultimodalEvaluator:
         self._credential = credential
         self._azure_ai_project = azure_ai_project
 
-    async def __call__(self, *, messages, **kwargs):
+    async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
-        
+        messages = conversation["messages"]
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,

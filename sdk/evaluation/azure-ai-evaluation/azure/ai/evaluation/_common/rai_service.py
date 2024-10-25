@@ -13,12 +13,10 @@ from urllib.parse import urlparse
 import jwt
 import json
 
-from azure.ai.inference._model_base import SdkJSONEncoder
-from azure.ai.inference.models import ChatRequestMessage, SystemMessage, AssistantMessage
-
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._model_configurations import AzureAIProject, Message
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
@@ -499,19 +497,20 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     :rtype: str
     """
     ## handle json payload and payload from inference sdk strongly type messages
-    if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
-        filtered_messages = [message for message in messages if not isinstance(message, SystemMessage)]
-        assistant_messages = [message for message in messages if isinstance(message, AssistantMessage)]
-        content_type = retrieve_content_type(assistant_messages, metric)
-        json_text = generate_payload_multimodal(content_type, filtered_messages, metric)
-        messages_text = json.dumps(json_text, cls=SdkJSONEncoder, exclude_readonly=True)
-        payload = json.loads(messages_text)
-    
-    else:
-        filtered_messages = [message for message in messages if message["role"] != "system"]
-        assistant_messages = [message for message in messages if message["role"] == "assistant"]
-        content_type = retrieve_content_type(assistant_messages, metric)
-        payload = generate_payload_multimodal(content_type, filtered_messages, metric)
+    if len(messages) > 0 and not isinstance(messages[0], Dict):
+        try:
+            from azure.ai.inference.models import ChatRequestMessage
+        except ImportError:
+            error_message = "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            raise MissingRequiredPackage(message=error_message)
+        else:
+            if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
+                messages = [message.as_dict() for message in messages]
+
+    filtered_messages = [message for message in messages if message["role"] != "system"]
+    assistant_messages = [message for message in messages if message["role"] == "assistant"]
+    content_type = retrieve_content_type(assistant_messages, metric)
+    payload = generate_payload_multimodal(content_type, filtered_messages, metric)
     
     ## calling rai service for annotation
     url = rai_svc_url + "/submitannotation"

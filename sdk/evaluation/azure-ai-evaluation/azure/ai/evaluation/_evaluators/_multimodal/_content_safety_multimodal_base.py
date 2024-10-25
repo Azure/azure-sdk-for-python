@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, List, Union
+from typing import Union
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
@@ -35,16 +35,17 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
     async def __call__(
         self, 
         *, 
-        messages, 
+        conversation, 
         **kwargs
     ):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
+        messages = conversation["messages"]
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,

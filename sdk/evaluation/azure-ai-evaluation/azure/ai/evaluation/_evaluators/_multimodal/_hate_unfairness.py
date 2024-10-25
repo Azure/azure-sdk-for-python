@@ -4,7 +4,6 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from typing import List, Dict
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
 @experimental
@@ -26,27 +25,29 @@ class HateUnfairnessMultimodalEvaluator:
         }
         eval_fn = HateUnfairnessEvaluator(azure_ai_project)
         result = eval_fn(
-            messages= [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": "<image url or base64 encoded image>"
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "What's in this image?"
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "<image url or base64 encoded image>"
+                                }
                             }
-                        }
-                    ]
-                },
-                {
-                    "role": "assistant",
-                    "content": "This picture shows an astronaut standing in desert."
-                }
-            ]
+                        ]
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "This picture shows an astronaut standing in desert."
+                    }
+                ]
+            }
         )
     
     **Output format**
@@ -68,17 +69,18 @@ class HateUnfairnessMultimodalEvaluator:
     def __call__(
         self, 
         *, 
-        messages, 
+        conversation, 
         **kwargs
     ):
         """
         Evaluates hate unfairness content.
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The hate unfairness score.
         :rtype: Dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
+        self._validate_conversation(conversation)
+        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
     
     def _to_async(self):
         return self._async_evaluator
@@ -99,7 +101,7 @@ class _AsyncHateUnfairnessMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBa
     async def __call__(
         self, 
         *, 
-        messages, 
+        conversation, 
         **kwargs
     ):
-        return await super().__call__(messages=messages, **kwargs)
+        return await super().__call__(conversation=conversation, **kwargs)

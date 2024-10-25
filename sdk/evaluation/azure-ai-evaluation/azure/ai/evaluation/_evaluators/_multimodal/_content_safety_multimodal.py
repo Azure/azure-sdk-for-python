@@ -5,14 +5,14 @@ import logging
 import math
 from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
-from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ToolMessage, ContentItem, ImageContentItem
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-
+from azure.ai.evaluation._model_configurations import Conversation
 from ._hate_unfairness import HateUnfairnessMultimodalEvaluator
 from ._self_harm import SelfHarmMultimodalEvaluator
 from ._sexual import SexualMultimodalEvaluator
@@ -47,27 +47,29 @@ class ContentSafetyMultimodalEvaluator:
         }
         eval_fn = ContentSafetyMultimodalEvaluator(azure_ai_project)
         result = eval_fn(
-            messages= [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": "<image url or base64 encoded image>"
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "What's in this image?"
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "<image url or base64 encoded image>"
+                                }
                             }
-                        }
-                    ]
-                },
-                {
-                    "role": "assistant",
-                    "content": "This picture shows an astronaut standing in desert."
-                }
-            ]
+                        ]
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "This picture shows an astronaut standing in desert."
+                    }
+                ]
+            }
         )
         
     **Output format**
@@ -105,22 +107,22 @@ class ContentSafetyMultimodalEvaluator:
     def __call__(
             self, 
             *, 
-            messages, 
+            conversation, 
             **kwargs):
         """
         Evaluates content-safety metrics for list of messages.
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The scores for messages.
         :rtype: Dict
         """
-        self._validate_messages(messages)
+        self._validate_conversation(conversation)
         
         results: Dict[str, Union[str, float]] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
-                    executor.submit(evaluator, messages=messages, **kwargs): evaluator
+                    executor.submit(evaluator, conversation=conversation, **kwargs): evaluator
                     for evaluator in self._evaluators
                 }
 
@@ -128,14 +130,24 @@ class ContentSafetyMultimodalEvaluator:
                     results.update(future.result())
         else:
             for evaluator in self._evaluators:
-                result = evaluator(messages=messages, **kwargs)
+                result = evaluator(conversation=conversation, **kwargs)
                 results.update(result)
 
         return results
     
-    def _validate_messages(self, messages):
+    def _validate_conversation(self, conversation):
+        if conversation is None or "messages" not in conversation:
+            msg = "Attribute messages is missing in the request"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        messages = conversation["messages"]   
         if messages is None or not isinstance(messages, list):
-            msg = "messages parameter must be a list of JSON representation of chat messages or strong typed child class of ChatRequestMessage"
+            msg = "messages parameter must be a list of JSON representation of chat messages"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -143,19 +155,10 @@ class ContentSafetyMultimodalEvaluator:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
-        expected_roles = [ "user", "assistant", "system", "tool" ]
+        expected_roles = [ "user", "assistant", "system"]
         image_found = False
         for num, message in enumerate(messages):
             msg_num = num + 1
-            if not isinstance(message, dict) and not isinstance(message, ChatRequestMessage):
-                msg = f"Messsage in array must be a dictionary or class of ChatRequestMessage [UserMessage, SystemMessage, AssistantMessage, ToolMessage]. Message number: {msg_num}"
-                raise EvaluationException(
-                    message=msg,
-                    internal_message=msg,
-                    target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    blame=ErrorBlame.USER_ERROR,
-                )
             if isinstance(message, dict):
                 if "role" in message or "content" in message:
                     if message["role"] not in expected_roles:
@@ -192,22 +195,29 @@ class ContentSafetyMultimodalEvaluator:
                             category=ErrorCategory.INVALID_VALUE,
                             blame=ErrorBlame.USER_ERROR,
                         )         
-            if isinstance(message, ChatRequestMessage):
-                if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage) and not isinstance(message, ToolMessage):
-                    msg = f"Messsage in array must be a strongly typed class of ChatRequestMessage [UserMessage, SystemMessage, AssistantMessage, ToolMessage]. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )  
-                if message.content and isinstance(message.content, list):
-                    image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
-                    if len(image_items) > 0:
-                        image_found = True
+            else:
+                try:
+                    from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ImageContentItem
+                except ImportError:
+                    error_message = "Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
+                    raise MissingRequiredPackage(message=error_message)
+                else:
+                    if isinstance(messages[0], ChatRequestMessage):
+                        if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage):
+                            msg = f"Messsage in array must be a strongly typed class of [UserMessage, SystemMessage, AssistantMessage]. Message number: {msg_num}"
+                            raise EvaluationException(
+                                message=msg,
+                                internal_message=msg,
+                                target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                                category=ErrorCategory.INVALID_VALUE,
+                                blame=ErrorBlame.USER_ERROR,
+                            )  
+                        if message.content and isinstance(message.content, list):
+                            image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
+                            if len(image_items) > 0:
+                                image_found = True
         if image_found is False:    
-            msg = f"Message needs to have multimodal input like images"
+            msg = f"Message needs to have multimodal input like images."
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,

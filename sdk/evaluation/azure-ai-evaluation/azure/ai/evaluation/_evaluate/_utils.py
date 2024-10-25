@@ -88,14 +88,14 @@ def _store_multimodal_content(messages, tmpdir: str):
     os.makedirs(images_folder_path, exist_ok=True)
     
     # traverse all messages and replace base64 image data with new file name.
-    for item in messages:
-        if "content" in item:
-            for content in item["content"]:
+    for message in messages:
+        if "content" in message:
+            for content in message["content"]:
                 if content.get("type") == "image_url":
                     image_url = content.get("image_url")
-                    if image_url and 'url' in image_url and image_url['url'].startswith("data:image/jpeg;base64,"):
+                    if image_url and 'url' in image_url and image_url['url'].startswith("data:image/jpg;base64,"):
                         # Extract the base64 string
-                        base64image = image_url['url'].replace("data:image/jpeg;base64,", "")
+                        base64image = image_url['url'].replace("data:image/jpg;base64,", "")
                         
                         # Generate a unique filename
                         image_file_name = f"{str(uuid.uuid4())}.jpg"
@@ -139,10 +139,12 @@ def _log_metrics_and_instance_results(
 
         with tempfile.TemporaryDirectory() as tmpdir:
             # storing multi_modal images if exists
-            col_name = "inputs.messages"
+            col_name = "inputs.conversation"
             if col_name in instance_results.columns:
-                instance_results[col_name].apply(lambda messages: _store_multimodal_content(messages, tmpdir))
-
+                for key, item in instance_results[col_name].items():
+                    if "messages" in item:
+                        _store_multimodal_content(item["messages"], tmpdir)
+            
             # storing artifact result
             tmp_path = os.path.join(tmpdir, artifact_name)
 
