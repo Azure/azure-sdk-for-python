@@ -384,7 +384,11 @@ class MLClient:
 
         self._service_client_10_2024_preview = ServiceClient102024Preview(
             credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
