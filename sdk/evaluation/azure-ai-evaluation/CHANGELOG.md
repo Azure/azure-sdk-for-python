@@ -1,9 +1,9 @@
 # Release History
 
-
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+- Adding evaluator for multimodal use cases
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
