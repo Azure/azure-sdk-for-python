@@ -60,6 +60,7 @@ class ServiceOperations:
     async def set_properties(  # pylint: disable=inconsistent-return-statements
         self, storage_service_properties: _models.StorageServiceProperties, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties for a storage account's File service endpoint, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -74,7 +75,7 @@ class ServiceOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -127,6 +128,7 @@ class ServiceOperations:
 
     @distributed_trace_async
     async def get_properties(self, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
+        # pylint: disable=line-too-long
         """Gets the properties of a storage account's File service, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -139,7 +141,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.fileshare.models.StorageServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -199,6 +201,7 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ListSharesResponse:
+        # pylint: disable=line-too-long
         """The List Shares Segment operation returns a list of the shares and share snapshots under the
         specified account.
 
@@ -226,7 +229,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.fileshare.models.ListSharesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -1,9 +1,9 @@
 import json
+import math
 import os
 import pathlib
 import time
 
-import numpy as np
 import pandas as pd
 import pytest
 import requests
@@ -14,7 +14,9 @@ from azure.ai.evaluation import (
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
+    evaluate,
 )
+from azure.ai.evaluation._common.math import list_mean_nan_safe
 
 
 @pytest.fixture
@@ -111,18 +113,18 @@ class TestEvaluate:
         assert result["rows"] is not None
         assert row_result_df.shape[0] == len(input_data)
 
-        assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
         assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
 
-        assert "grounded.gpt_groundedness" in metrics.keys()
+        assert "grounded.groundedness" in metrics.keys()
         assert "f1_score.f1_score" in metrics.keys()
 
-        assert metrics.get("grounded.gpt_groundedness") == np.nanmean(
-            row_result_df["outputs.grounded.gpt_groundedness"]
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
         )
-        assert metrics.get("f1_score.f1_score") == np.nanmean(row_result_df["outputs.f1_score.f1_score"])
+        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
 
-        assert row_result_df["outputs.grounded.gpt_groundedness"][2] in [4, 5]
+        assert row_result_df["outputs.grounded.groundedness"][2] in [4, 5]
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
@@ -154,24 +156,26 @@ class TestEvaluate:
             assert result["rows"] is not None
             assert row_result_df.shape[0] == len(input_data)
 
-            assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
-            assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
+            assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+            assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
 
-            assert "grounded.gpt_groundedness" in metrics.keys()
-            assert "fluency.gpt_fluency" in metrics.keys()
+            assert "grounded.groundedness" in metrics.keys()
+            assert "fluency.fluency" in metrics.keys()
         finally:
             os.chdir(original_working_dir)
 
     @pytest.mark.azuretest
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file):
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file, azure_cred):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        content_safety_eval = ContentSafetyEvaluator(project_scope, credential=None, parallel=False)
+        content_safety_eval = ContentSafetyEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+        )
 
         # run the evaluation
         result = evaluate(
@@ -204,7 +208,7 @@ class TestEvaluate:
     @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "true"
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
 
         start_time = time.time()
@@ -225,10 +229,10 @@ class TestEvaluate:
         assert result["rows"] is not None
         input_data = pd.read_json(data_file, lines=True)
         assert row_result_df.shape[0] == len(input_data)
-        assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
-        assert "fluency.gpt_fluency" in metrics.keys()
+        assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
+        assert "fluency.fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
-        os.environ.pop("PF_EVALS_BATCH_USE_ASYNC")
+        os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
         "use_pf_client,function,column",
@@ -260,7 +264,7 @@ class TestEvaluate:
         metric = f"answer.{column}"
         assert out_column in row_result_df.columns.to_list()
         assert metric in metrics.keys()
-        assert metrics.get(metric) == np.nanmean(row_result_df[out_column])
+        assert metrics.get(metric) == list_mean_nan_safe(row_result_df[out_column])
         assert row_result_df[out_column][2] == 31
 
     def test_evaluate_with_target(self, questions_file):
@@ -284,7 +288,7 @@ class TestEvaluate:
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(np.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
 
     @pytest.mark.parametrize(
         "evaluation_config",
@@ -399,6 +403,7 @@ class TestEvaluate:
         # module named test_evaluate and it will be a different module in unit test
         # folder. By keeping function in separate file we guarantee, it will be loaded
         # from there.
+        # os.environ["AZURE_TEST_RUN_LIVE"] = "True"
         from .target_fn import target_fn
 
         f1_score_eval = F1ScoreEvaluator()
@@ -413,11 +418,10 @@ class TestEvaluate:
         )
         row_result_df = pd.DataFrame(result["rows"])
 
-        assert "outputs.answer" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(np.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
         assert result["studio_url"] is not None
 
         # get remote run and validate if it exists
@@ -427,6 +431,7 @@ class TestEvaluate:
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["azureml.promptflow.local_to_cloud"] == "true"
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
+        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
@@ -461,7 +466,7 @@ class TestEvaluate:
         assert row_result_df.shape[0] == len(input_data)
         assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
         assert "f1_score.f1_score" in metrics.keys()
-        assert metrics.get("f1_score.f1_score") == np.nanmean(row_result_df["outputs.f1_score.f1_score"])
+        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is not None
 
@@ -470,6 +475,7 @@ class TestEvaluate:
         remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
 
         assert remote_run is not None
+        assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "azure-ai-generative-parent"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 

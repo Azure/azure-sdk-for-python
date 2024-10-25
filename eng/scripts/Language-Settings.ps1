@@ -19,6 +19,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $AllPkgProps
   )
   $additionalValidationPackages = @()
+  $uniqueResultSet = @()
 
   function isOther($fileName) {
     $startsWithPrefixes = @(".config", ".devcontainer", ".github", ".vscode", "common", "conda", "doc", "eng", "scripts")
@@ -33,9 +34,41 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     return $startsWith
   }
 
+  # this section will identify the list of packages that we should treat as
+  # "directly" changed for a given service level change. While that doesn't
+  # directly change a package within the service, I do believe we should directly include all
+  # packages WITHIN that service. This is because the service level file changes are likely to
+  # have an impact on the packages within that service.
+  $changedServices = @()
+  foreach($file in $diffObj.ChangedFiles) {
+    $pathComponents = $file -split "/"
+    # handle changes only in sdk/<service>/<file>/<extension>
+    if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
+      $changedServices += $pathComponents[1]
+    }
+
+    # handle any changes under sdk/<file>.<extension>
+    if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
+      changedServices += "template"
+    }
+  }
+  foreach ($changedService in $changedServices) {
+    $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
+
+    foreach ($pkg in $additionalPackages) {
+      if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+        # notice the lack of setting IncludedForValidation to true. This is because these "changed services"
+        # are specifically where a file within the service, but not an individual package within that service has changed.
+        # we want this package to be fully validated
+        $uniqueResultSet += $pkg
+      }
+    }
+  }
+
   $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
   $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
+  $changedServices = $changedServices | Get-Unique
 
   if ($toolChanged) {
     $additionalPackages = @(
@@ -50,7 +83,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
       "azure-core-experimental",
       "azure-core-tracing-opentelemetry",
       "azure-core-tracing-opencensus",
-      "azure-cosmos",
+      # "azure-cosmos", leave removed until we resolve what to do with the emulator tests
       "azure-ai-documentintelligence",
       "azure-ai-ml",
       "azure-ai-inference",
@@ -73,8 +106,8 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $additionalValidationPackages += $additionalPackages
   }
 
-  $uniqueResultSet = @()
-  foreach($pkg in $additionalPackages) {
+
+  foreach ($pkg in $additionalValidationPackages) {
     if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
       $pkg.IncludedForValidation = $true
       $uniqueResultSet += $pkg
@@ -82,7 +115,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   }
 
   Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
-  foreach($pkg in $uniqueResultSet) {
+  foreach ($pkg in $uniqueResultSet) {
     Write-Host "  - $($pkg.Name)"
   }
 

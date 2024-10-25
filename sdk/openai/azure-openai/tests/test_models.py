@@ -11,6 +11,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, ASST_AZURE, OPENAI, AZURE, PREVIEW, GA
 
 
+@pytest.mark.live_test_only
 class TestModels(AzureRecordedTestCase):
 
     @configure

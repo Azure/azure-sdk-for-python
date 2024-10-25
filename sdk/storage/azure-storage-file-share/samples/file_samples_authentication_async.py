@@ -25,8 +25,9 @@ USAGE:
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
 
-import os
 import asyncio
+import os
+import sys
 from datetime import datetime, timedelta
 
 
@@ -39,6 +40,11 @@ class FileAuthSamplesAsync(object):
     access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
 
     async def authentication_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: authentication_connection_string_async")
+            sys.exit(1)
+
         # Instantiate the ShareServiceClient from a connection string
         # [START create_share_service_client_from_conn_string]
         from azure.storage.fileshare.aio import ShareServiceClient
@@ -46,6 +52,16 @@ class FileAuthSamplesAsync(object):
         # [END create_share_service_client_from_conn_string]
 
     async def authentication_shared_access_key_async(self):
+        if self.account_url is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_URL." + '\n' +
+                  "Test: authentication_shared_access_key_async")
+            sys.exit(1)
+
+        if self.access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: authentication_shared_access_key_async")
+            sys.exit(1)
+
         # Instantiate a ShareServiceClient using a shared access key
         # [START create_share_service_client]
         from azure.storage.fileshare.aio import ShareServiceClient
@@ -56,6 +72,21 @@ class FileAuthSamplesAsync(object):
         # [END create_share_service_client]
 
     async def authentication_shared_access_signature_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: authentication_shared_access_signature_async")
+            sys.exit(1)
+
+        if self.account_name is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_NAME." + '\n' +
+                  "Test: authentication_shared_access_signature_async")
+            sys.exit(1)
+
+        if self.access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: authentication_shared_access_signature_async")
+            sys.exit(1)
+
         # Instantiate a ShareServiceClient using a connection string
         from azure.storage.fileshare.aio import ShareServiceClient
         share_service_client = ShareServiceClient.from_connection_string(self.connection_string)
@@ -64,14 +95,19 @@ class FileAuthSamplesAsync(object):
         from azure.storage.fileshare import generate_account_sas, ResourceTypes, AccountSasPermissions
 
         sas_token = generate_account_sas(
-            share_service_client.account_name,
-            share_service_client.credential.account_key,
+            self.account_name,
+            self.access_key,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
     async def authentication_default_azure_credential_async(self):
+        if self.account_url is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCOUNT_URL." + '\n' +
+                  "Test: authentication_default_azure_credential_async")
+            sys.exit(1)
+
         # [START file_share_oauth]
         # Get a credential for authentication
         # DefaultAzureCredential attempts a chained set of authentication methods.

@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
-# pylint: disable=super-init-not-called, too-many-lines
+# pylint: disable=too-few-public-methods
 from azure.storage.blob.aio._models import ContainerPropertiesPaged
 from .._models import FileSystemProperties
 

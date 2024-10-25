@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast, Union
+from typing import Optional, cast, Union, Tuple
 from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import (
@@ -102,3 +102,103 @@ def get_domain(url: str) -> str:
     :return: The domain of the url.
     """
     return str(urlparse(url).netloc).lower()
+
+
+def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter: str) -> Optional[str]:
+    """
+    Parses the specified parameter from a challenge header found in the response.
+
+    :param dict[str, str] headers: The response headers to parse.
+    :param str challenge_scheme: The challenge scheme containing the challenge parameter, e.g., "Bearer".
+    :param str challenge_parameter: The parameter key name to search for.
+    :return: The value of the parameter name if found.
+    :rtype: str or None
+    """
+    header_value = headers.get("WWW-Authenticate")
+    if not header_value:
+        return None
+
+    scheme = challenge_scheme
+    parameter = challenge_parameter
+    header_span = header_value
+
+    # Iterate through each challenge value.
+    while True:
+        challenge = get_next_challenge(header_span)
+        if not challenge:
+            break
+        challenge_key, header_span = challenge
+        if challenge_key.lower() != scheme.lower():
+            continue
+        # Enumerate each key-value parameter until we find the parameter key on the specified scheme challenge.
+        while True:
+            parameters = get_next_parameter(header_span)
+            if not parameters:
+                break
+            key, value, header_span = parameters
+            if key.lower() == parameter.lower():
+                return value
+
+    return None
+
+
+def get_next_challenge(header_value: str) -> Optional[Tuple[str, str]]:
+    """
+    Iterates through the challenge schemes present in a challenge header.
+
+    :param str header_value: The header value which will be sliced to remove the first parsed challenge key.
+    :return: The parsed challenge scheme and the remaining header value.
+    :rtype: tuple[str, str] or None
+    """
+    header_value = header_value.lstrip(" ")
+    end_of_challenge_key = header_value.find(" ")
+
+    if end_of_challenge_key < 0:
+        return None
+
+    challenge_key = header_value[:end_of_challenge_key]
+    header_value = header_value[end_of_challenge_key + 1 :]
+
+    return challenge_key, header_value
+
+
+def get_next_parameter(header_value: str, separator: str = "=") -> Optional[Tuple[str, str, str]]:
+    """
+    Iterates through a challenge header value to extract key-value parameters.
+
+    :param str header_value: The header value after being parsed by get_next_challenge.
+    :param str separator: The challenge parameter key-value pair separator, default is '='.
+    :return: The next available challenge parameter as a tuple (param_key, param_value, remaining header_value).
+    :rtype: tuple[str, str, str] or None
+    """
+    space_or_comma = " ,"
+    header_value = header_value.lstrip(space_or_comma)
+
+    next_space = header_value.find(" ")
+    next_separator = header_value.find(separator)
+
+    if next_space < next_separator and next_space != -1:
+        return None
+
+    if next_separator < 0:
+        return None
+
+    param_key = header_value[:next_separator].strip()
+    header_value = header_value[next_separator + 1 :]
+
+    quote_index = header_value.find('"')
+
+    if quote_index >= 0:
+        header_value = header_value[quote_index + 1 :]
+        param_value = header_value[: header_value.find('"')]
+    else:
+        trailing_delimiter_index = header_value.find(" ")
+        if trailing_delimiter_index >= 0:
+            param_value = header_value[:trailing_delimiter_index]
+        else:
+            param_value = header_value
+
+    if header_value != param_value:
+        header_value = header_value[len(param_value) + 1 :]
+
+    return param_key, param_value, header_value
