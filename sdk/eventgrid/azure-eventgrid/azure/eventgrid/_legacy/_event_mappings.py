@@ -80,9 +80,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsChatParticipantRemovedFromThreadEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
 
-    AcsChatParticipantRemovedFromThreadWithUserEventName = (
-        "Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser"
-    )
+    AcsChatParticipantRemovedFromThreadWithUserEventName = "Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser"
 
     AcsChatThreadCreatedEventName = "Microsoft.Communication.ChatThreadCreated"
 
@@ -174,33 +172,21 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementGatewayApiRemovedEventName = "Microsoft.ApiManagement.GatewayAPIRemoved"
 
-    ApiManagementGatewayCertificateAuthorityCreatedEventName = (
-        "Microsoft.ApiManagement.GatewayCertificateAuthorityCreated"
-    )
+    ApiManagementGatewayCertificateAuthorityCreatedEventName = "Microsoft.ApiManagement.GatewayCertificateAuthorityCreated"
 
-    ApiManagementGatewayCertificateAuthorityDeletedEventName = (
-        "Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted"
-    )
+    ApiManagementGatewayCertificateAuthorityDeletedEventName = "Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted"
 
-    ApiManagementGatewayCertificateAuthorityUpdatedEventName = (
-        "Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated"
-    )
+    ApiManagementGatewayCertificateAuthorityUpdatedEventName = "Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated"
 
     ApiManagementGatewayCreatedEventName = "Microsoft.ApiManagement.GatewayCreated"
 
     ApiManagementGatewayDeletedEventName = "Microsoft.ApiManagement.GatewayDeleted"
 
-    ApiManagementGatewayHostnameConfigurationCreatedEventName = (
-        "Microsoft.ApiManagement.GatewayHostnameConfigurationCreated"
-    )
+    ApiManagementGatewayHostnameConfigurationCreatedEventName = "Microsoft.ApiManagement.GatewayHostnameConfigurationCreated"
 
-    ApiManagementGatewayHostnameConfigurationDeletedEventName = (
-        "Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted"
-    )
+    ApiManagementGatewayHostnameConfigurationDeletedEventName = "Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted"
 
-    ApiManagementGatewayHostnameConfigurationUpdatedEventName = (
-        "Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated"
-    )
+    ApiManagementGatewayHostnameConfigurationUpdatedEventName = "Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated"
 
     ApiManagementGatewayUpdatedEventName = "Microsoft.ApiManagement.GatewayUpdated"
 
@@ -424,17 +410,13 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceDeleteSuccessName = "Microsoft.Resources.ResourceDeleteSuccess"
 
-    ResourceNotificationsHealthResourcesAnnotatedEventName = (
-        "Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated"
-    )
+    ResourceNotificationsContainerServiceEventResourcesScheduledEventEmittedEventName = "Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted"
 
-    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = (
-        "Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged"
-    )
+    ResourceNotificationsHealthResourcesAnnotatedEventName = "Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated"
 
-    ResourceNotificationsResourceManagementCreatedOrUpdatedEventName = (
-        "Microsoft.ResourceNotifications.Resources.CreatedOrUpdated"
-    )
+    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = "Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged"
+
+    ResourceNotificationsResourceManagementCreatedOrUpdatedEventName = "Microsoft.ResourceNotifications.Resources.CreatedOrUpdated"
 
     ResourceNotificationsResourceManagementDeletedEventName = "Microsoft.ResourceNotifications.Resources.Deleted"
 
@@ -444,21 +426,13 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceWriteSuccessName = "Microsoft.Resources.ResourceWriteSuccess"
 
-    ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = (
-        "Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications"
-    )
+    ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = "Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications"
 
-    ServiceBusActiveMessagesAvailableWithNoListenersEventName = (
-        "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
-    )
+    ServiceBusActiveMessagesAvailableWithNoListenersEventName = "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
 
-    ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = (
-        "Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications"
-    )
+    ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = "Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications"
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = (
-        "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
-    )
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
 
     SignalRServiceClientConnectionConnectedEventName = "Microsoft.SignalRService.ClientConnectionConnected"
 
@@ -528,6 +502,4 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryEventName = "Microsoft.ContainerRegistry.ChartPushed"
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = (
-        "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
-    )
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
