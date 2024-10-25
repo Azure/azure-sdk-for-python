@@ -6,6 +6,9 @@
 
 import logging
 import pytest
+import time
+import json
+import sys
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
 
@@ -26,6 +29,20 @@ uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 
+import logging
+import sys
+from random import randint
+
+log_fmt = logging.Formatter(fmt="%(asctime)s | %(threadName)s | %(levelname)s | %(name)s | %(message)s")
+handler = logging.FileHandler('out8.log')
+handler.setFormatter(log_fmt)
+logger = logging.getLogger('azure.servicebus')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+uamqp_logger = logging.getLogger('uamqp')
+uamqp_logger.setLevel(logging.DEBUG)
+uamqp_logger.addHandler(handler)
+
 
 class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
@@ -35,7 +52,7 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
+    def test_topic_by_servicebus_client_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -55,7 +72,7 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
+    def test_topic_by_sas_token_credential_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -91,3 +108,49 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
         topics = client.list_topics()
         assert len(topics) >= 1
         # assert all(isinstance(t, TopicClient) for t in topics)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_topic_by_servicebus_client_send_large_messages_w_sleep(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        
+        # message of 100 kb - requires multiple transfer frames
+        size = 100
+        large_dict = {
+            "key": "A" * 1024
+        }
+        for i in range(size):
+            large_dict[f"key_{i}"] = "A" * 1024
+        body = json.dumps(large_dict)
+
+        sb_client = ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            logging_enable=True,
+            uamqp_transport=uamqp_transport
+        )
+
+        # This issue doesn't repro unless logging is added here w/ this socket timeout,
+        # seemingly due to slowing down and some threading behavior.
+        # Adding in the logging here to make sure this bug is being hit and tested.
+        sender = sb_client.get_topic_sender(servicebus_topic.name, socket_timeout=60)
+        for i in range(10):
+            try:
+                time.sleep(10)
+                logging.info("sender created for %d", i)
+                size_in_bytes = sys.getsizeof(body)
+
+                # Convert bytes to kilobytes (KB)
+                size_in_kb = size_in_bytes / 1024
+                logging.info(f"size of body: {size_in_kb:.2f} KB")
+                sender.send_messages(ServiceBusMessage(body))
+                logging.info(f"Message sent %d successfully", i)
+            except Exception as e:
+                logging.error(f"Error sending message %d: %s", i, str(e))
+                raise
