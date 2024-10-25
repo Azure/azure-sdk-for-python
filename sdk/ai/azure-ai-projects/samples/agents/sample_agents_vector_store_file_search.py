@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.projects.models._models import VectorStorageConfiguration, VectorStorageDataSource
 
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
@@ -23,8 +22,6 @@ USAGE:
 """
 
 import os
-from azure.ai.ml import MLClient
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
@@ -34,27 +31,23 @@ from azure.identity import DefaultAzureCredential
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
-credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:
 
-    azure_client = MLClient.from_config(credential)
-    data_ul = azure_client.data.get(name="products", version="1.0")
+    # upload a file and wait for it to be processed
+    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+    print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
-    ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
-    vc = VectorStorageConfiguration(data_sources=[ds])
-    vector_store = project_client.agents.create_vector_store_and_poll(
-        store_configuration=vc, name="sample_vector_store"
-    )
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, data_sources=[ds]
+        vector_store_id=vector_store.id, file_ids=[file.id]
     )
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
