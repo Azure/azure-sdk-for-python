@@ -31,7 +31,6 @@ class ContentSafetyEvaluator(EvaluatorBase):
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
-    :rtype: Callable
 
     **Usage**
 
