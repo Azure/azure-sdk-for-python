@@ -55,9 +55,8 @@ class _AsyncRetrievalScoreEvaluator:
                     queries.append(each_turn["content"])
                 elif role == "assistant":
                     responses.append(each_turn["content"])
-                    if "context" in each_turn and "citations" in each_turn["context"]:
-                        citations = json.dumps(each_turn["context"]["citations"])
-                        contexts.append(citations)
+                    if "context" in each_turn:
+                        contexts.append(each_turn["context"])
 
             # Evaluate each turn
             per_turn_scores = []
@@ -123,13 +122,8 @@ class RetrievalEvaluator:
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the value of 2 + 2?"},
-                {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                    "citations": [
-                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
-                    }
-                }
-            ]
+                {"role": "assistant", "content": "2 + 2 = 4"}],
+            "context": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"
         }
         result = chat_eval(conversation=conversation)
 

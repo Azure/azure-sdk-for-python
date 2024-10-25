@@ -80,13 +80,8 @@ class TestBuiltInEvaluators:
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the value of 2 + 2?"},
-                {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                    "citations": [
-                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
-                    }
-                }
-            ]
+                {"role": "assistant", "content": "2 + 2 = 4"}],
+            "context": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"
         }
 
         result = retrieval_eval(conversation=conversation)

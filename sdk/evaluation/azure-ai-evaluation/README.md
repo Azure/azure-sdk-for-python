@@ -286,9 +286,7 @@ async def callback(
     formatted_response = {
         "content": response,
         "role": "assistant",
-        "context": {
-            "citations": None,
-        },
+        "context": "",
     }
     messages["messages"].append(formatted_response)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
