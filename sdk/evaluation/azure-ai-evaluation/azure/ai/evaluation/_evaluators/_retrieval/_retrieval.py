@@ -56,7 +56,11 @@ class _AsyncRetrievalScoreEvaluator:
                 elif role == "assistant":
                     responses.append(each_turn["content"])
                     if "context" in each_turn:
-                        contexts.append(each_turn["context"])
+                        if "citations" in each_turn["context"]:
+                            citations = json.dumps(each_turn["context"]["citations"])
+                            contexts.append(citations)
+                        elif isinstance(each_turn["context"], str):
+                            contexts.append(each_turn["context"])
 
             # Evaluate each turn
             per_turn_scores = []

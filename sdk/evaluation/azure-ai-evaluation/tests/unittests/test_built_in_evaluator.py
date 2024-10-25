@@ -94,3 +94,19 @@ class TestBuiltInEvaluators:
 
         result = retrieval_eval(conversation=conversation)
         assert result["retrieval"] == result["gpt_retrieval"] == 1
+
+        retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
+        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
+        conversation = {
+            "messages": [
+                {"role": "user", "content": "What is the value of 2 + 2?"},
+                {
+                    "role": "assistant",
+                    "content": "2 + 2 = 4",
+                    "context": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"
+                },
+            ]
+        }
+
+        result = retrieval_eval(conversation=conversation)
+        assert result["retrieval"] == result["gpt_retrieval"] == 1
