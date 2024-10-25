@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class InferenceOperations:
 
     def __init__(self, outer_instance):
-        self.outer_instance = outer_instance
+        self._outer_instance = outer_instance
 
     @distributed_trace
     def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
@@ -61,7 +61,7 @@ class InferenceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = self.outer_instance.connections.get_default(
+        connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
@@ -113,7 +113,7 @@ class InferenceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = self.outer_instance.connections.get_default(
+        connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
@@ -164,7 +164,7 @@ class InferenceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = self.outer_instance.connections.get_default(
+        connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
         if not connection:
@@ -317,24 +317,42 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
+    connection_string: Optional[str] = None
+    """ Application Insights connection string. Call `enable()` to populate this property. """
+
     def __init__(self, *args, **kwargs):
-        self.outer_instance = kwargs.pop("outer_instance")
+        self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
     @distributed_trace
     def enable(self, **kwargs) -> bool:
+        """Enable Application Insights tracing.
+        This method makes service calls to get the properties of the Applications Insights resource
+        connected to the Azure AI Studio Project. If Application Insights was not enabled for this project,
+        this method will return False. Otherwise, it will return True. In this case the Application Insights
+        connection string can be accessed via the `.diagnostics.connection_string` property.
 
-        # Get the AI Studio Project properties
-        get_workspace_response: GetWorkspaceResponse = self.outer_instance.connections._get_workspace()
+        :return: True if Application Insights tracing was enabled. False otherwise.
+        :rtype: bool
+        """
+        if not self.connection_string:
+            # Get the AI Studio Project properties
+            get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()
 
-        # No Application Insights resource was enabled for this Project
-        if not get_workspace_response.properties.application_insights:
-            return False
+            # No Application Insights resource was enabled for this Project
+            if not get_workspace_response.properties.application_insights:
+                return False
 
-        app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
-            app_insights_resource_url=get_workspace_response.properties.application_insights
-        )
-        print(app_insights_respose)
+            app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
+                app_insights_resource_url=get_workspace_response.properties.application_insights
+            )
+
+            if not app_insights_respose.properties.connection_string:
+                raise ValueError("Application Insights resource does not have a connection string")
+
+            self.connection_string = app_insights_respose.properties.connection_string
+
+        return True
 
 
 class AgentsOperations(AgentsOperationsGenerated):
