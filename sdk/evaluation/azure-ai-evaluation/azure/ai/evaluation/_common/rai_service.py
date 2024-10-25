@@ -34,7 +34,7 @@ except importlib.metadata.PackageNotFoundError:
     version = "unknown"
 USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
-USER_TEXT_TEMPLATE_DICT = {
+USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
     Tasks.GROUNDEDNESS: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
 }
@@ -104,7 +104,7 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
         )
 
 
-def generate_payload(normalized_user_text: str, metric: str, annotation_task: Tasks) -> Dict:
+def generate_payload(normalized_user_text: str, metric: str, annotation_task: str) -> Dict:
     """Generate the payload for the annotation request
 
     :param normalized_user_text: The normalized user text to be entered as the "UserTextList" in the payload.
@@ -432,7 +432,7 @@ async def evaluate_with_rai_service(
     metric_name: str,
     project_scope: AzureAIProject,
     credential: TokenCredential,
-    annotation_task: Tasks = Tasks.CONTENT_HARM,
+    annotation_task: str = Tasks.CONTENT_HARM,
     metric_display_name=None,
 ) -> Dict[str, Union[str, float]]:
     """ "Evaluate the content safety of the response using Responsible AI service

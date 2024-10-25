@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, TypeVar, Union
+from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
 
-T = TypeVar("T")
+T = Union[str, float]
 
 
 class RaiServiceEvaluatorBase(EvaluatorBase[T]):
