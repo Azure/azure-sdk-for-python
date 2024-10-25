@@ -9,6 +9,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -83,7 +84,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         *,
         query: str,
         response: str,
-    ):
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate a collection of content safety metrics for the given query/response pair
     
         :keyword query: The query to be evaluated.
@@ -99,9 +100,9 @@ class ContentSafetyEvaluator(EvaluatorBase):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
-    ):
+    ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a collection of content safety metrics for a conversation
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -122,6 +123,20 @@ class ContentSafetyEvaluator(EvaluatorBase):
         conversation=None,
         **kwargs,
     ):
+        """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
+        This inputs must supply either a query AND response, or a conversation, but not both.
+
+        :keyword query: The query to evaluate.
+        :paramtype query: Optional[str]
+        :keyword response: The response to evaluate.
+        :paramtype response: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The evaluation result.
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
+        """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
     @override

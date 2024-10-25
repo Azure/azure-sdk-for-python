@@ -1,13 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
@@ -64,7 +65,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         *,
         query: str,
         response: str,
-    ):
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate a given query/response pair for violent content
     
         :keyword query: The query to be evaluated.
@@ -80,9 +81,9 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
-    ):
+    ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a conversation for violent content
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -103,4 +104,19 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         conversation=None,
         **kwargs,
     ):
+        """
+        Evaluate whether violent content is present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score.
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
+        """
+
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

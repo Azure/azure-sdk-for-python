@@ -3,11 +3,12 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, List, Optional, Union
 
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 class FluencyEvaluator(PromptyEvaluatorBase):
@@ -49,6 +50,42 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ) -> Dict[str, float]:
+        """Evaluate fleuncy in given query/response
+    
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The fluency score
+        :rtype: Dict[str, float]
+        """
+        ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+        **kwargs,
+    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+        """Evaluate cross domain injected attacks are present in a conversation 
+        
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+        ...
 
     @override
     def __call__(

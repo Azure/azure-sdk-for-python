@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
@@ -60,36 +61,16 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         query: str,
         response: str,
         context: str,
-    ):
-        """Evaluate relevance for given input of query, response, context
-    
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword context: The context to be evaluated.
-        :paramtype context: str
-        :return: The relevance score.
-        :rtype: Dict[str, float]
-        """
+    ) -> Dict[str, float]:
         ...
 
     @overload
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
-    ):
-        """Evaluate relevance for a conversation
-        
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages", and potentially a global context under the key "context". Conversation turns are expected
-            to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The relevance score.
-        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
-        """
+    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         ...
         
 
@@ -103,4 +84,21 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
+        """Evaluate relevance. Accepts either a response and context a single evaluation,
+        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated.
+        :paramtype response: Optional[str]
+        :keyword context: The context to be evaluated.
+        :paramtype context: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The relevance score.
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)

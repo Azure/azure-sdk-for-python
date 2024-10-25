@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
@@ -55,7 +55,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: str,
         response: str,
-    ):
+    ) -> Dict[str, float]:
         """Evaluate coherence for given input of query, response
     
         :keyword query: The query to be evaluated.
@@ -73,7 +73,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         conversation,
         **kwargs,
-    ):
+    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate coherence for a conversation
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -94,4 +94,19 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
+        """Evaluate coherence. Accepts either a query and response for a single evaluation,
+        or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
+        turns, the evaluator will aggregate the results of each turn.
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: Optional[str]
+        :keyword context: The context to be evaluated.
+        :paramtype context: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The relevance score.
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

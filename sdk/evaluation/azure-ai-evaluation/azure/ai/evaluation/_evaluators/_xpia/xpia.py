@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
 
@@ -72,15 +73,15 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *,
         query: str,
         response: str,
-    ):
+    ) -> Dict[str, Union[str, bool]]:
         """Evaluate whether cross domain injected attacks are present in given query/response
     
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :return: The sexual score
-        :rtype: Dict[str, Union[str, float]]
+        :return: The cross domain injection attack score
+        :rtype: Dict[str, Union[str, bool]]
         """
         ...
 
@@ -88,17 +89,17 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     def __call__(
         self,
         *,
-        conversation,
+        conversation: Conversation,
         **kwargs,
-    ):
+    ) -> Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]:
         """Evaluate cross domain injected attacks are present in a conversation 
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The sexual score
-        :rtype: Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]
+        :return: The cross domain injection attack score
+        :rtype: Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]
         """
         ...
 
@@ -111,4 +112,18 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         conversation=None,
         **kwargs,
     ):
+        """
+        Evaluate whether cross domain injected attacks are present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The cross domain injection attack score
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
+        """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
