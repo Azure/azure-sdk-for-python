@@ -5,7 +5,6 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema._distillation.distillation_types import PromptSettingsSchema, TeacherModelSettingsSchema
-from azure.ai.ml._schema._finetuning.finetuning_vertical import FineTuningVerticalSchema
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     LocalPathField,
@@ -25,10 +24,10 @@ from azure.ai.ml.constants._common import AzureMLResourceType
 
 
 @experimental
-class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
+class DistillationJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DISTILLATION)
     data_generation_type = StringTransformedEnum(
-        allowed_values=[DataGenerationType.LabelGeneration, DataGenerationType.DataGeneration],
+        allowed_values=[DataGenerationType.LABEL_GENERATION, DataGenerationType.DATA_GENERATION],
         required=True,
     )
     data_generation_task_type = StringTransformedEnum(
@@ -82,6 +81,3 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
     hyperparameters = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     resources = NestedField(JobResourceConfigurationSchema)
     outputs = OutputsField()
-
-    class Meta:  # type: ignore
-        exclude = ("model", "task")

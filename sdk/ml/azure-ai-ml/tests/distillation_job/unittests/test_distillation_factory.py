@@ -12,7 +12,7 @@ class TestDistillationJob:
     def test_distillation_function(self):
         distillation_job = distillation(
             experiment_name="llama-test",
-            data_generation_type=DataGenerationType.DataGeneration,
+            data_generation_type=DataGenerationType.DATA_GENERATION,
             data_generation_task_type=DataGenerationTaskType.SUMMARIZATION,
             teacher_model_endpoint_connection=ServerlessConnection(name="llama", endpoint="None", api_key="TESTKEY"),
             student_model="llama-student",
@@ -48,7 +48,7 @@ class TestDistillationJob:
         with pytest.raises(ValueError) as exception:
             _ = distillation(
                 experiment_name="llama-test",
-                data_generation_type=DataGenerationType.LabelGeneration,
+                data_generation_type=DataGenerationType.LABEL_GENERATION,
                 data_generation_task_type=DataGenerationTaskType.NLI,
                 teacher_model_endpoint_connection=WorkspaceConnection(
                     type="custom", credentials=NoneCredentialConfiguration(), name="llama", target="None"
@@ -57,7 +57,7 @@ class TestDistillationJob:
                 validation_data="azureml:foo:1",
             )
         error_msg = (
-            f"Training data can only be None when data generation type is set to {DataGenerationType.DataGeneration}."
+            f"Training data can not be None when data generation type is set to {DataGenerationType.LABEL_GENERATION}."
         )
         assert str(exception.value) == error_msg
 
@@ -65,7 +65,7 @@ class TestDistillationJob:
         with pytest.raises(ValueError) as exception:
             _ = distillation(
                 experiment_name="llama-test",
-                data_generation_type=DataGenerationType.LabelGeneration,
+                data_generation_type=DataGenerationType.LABEL_GENERATION,
                 data_generation_task_type=DataGenerationTaskType.NLI,
                 teacher_model_endpoint_connection=WorkspaceConnection(
                     type="custom", credentials=NoneCredentialConfiguration(), name="llama", target="None"
@@ -73,7 +73,5 @@ class TestDistillationJob:
                 student_model="llama-student",
                 training_data="azureml:foo:1",
             )
-        error_msg = (
-            f"Validation data can only be None when data generation type is set to {DataGenerationType.DataGeneration}."
-        )
+        error_msg = f"Validation data can not be None when data generation type is set to {DataGenerationType.LABEL_GENERATION}."
         assert str(exception.value) == error_msg

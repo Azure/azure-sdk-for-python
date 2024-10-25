@@ -38,6 +38,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 class DistillationJob(Job, JobIOMixin):
     def __init__(
         self,
+        *,
         data_generation_type: str,
         data_generation_task_type: str,
         teacher_model_endpoint_connection: WorkspaceConnection,
@@ -61,16 +62,16 @@ class DistillationJob(Job, JobIOMixin):
         self._hyperparameters = hyperparameters
         self._resources = resources
 
-        if self._training_data is None and self._data_generation_type == DataGenerationType.LabelGeneration:
+        if self._training_data is None and self._data_generation_type == DataGenerationType.LABEL_GENERATION:
             raise ValueError(
-                f"Training data can only be None when data generation type is set to "
-                f"{DataGenerationType.DataGeneration}."
+                f"Training data can not be None when data generation type is set to "
+                f"{DataGenerationType.LABEL_GENERATION}."
             )
 
-        if self._validation_data is None and self._data_generation_type == DataGenerationType.LabelGeneration:
+        if self._validation_data is None and self._data_generation_type == DataGenerationType.LABEL_GENERATION:
             raise ValueError(
-                f"Validation data can only be None when data generation type is set to "
-                f"{DataGenerationType.DataGeneration}."
+                f"Validation data can not be None when data generation type is set to "
+                f"{DataGenerationType.LABEL_GENERATION}."
             )
 
         kwargs[TYPE] = JobType.DISTILLATION
@@ -412,15 +413,15 @@ class DistillationJob(Job, JobIOMixin):
         :param properties: Current distillation properties
         :type properties: typing.Dict
         """
-        properties[AzureMLDistillationProperties.EnableDistillation] = True
-        properties[AzureMLDistillationProperties.DataGenerationTaskType] = self._data_generation_task_type.upper()
-        properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = (
+        properties[AzureMLDistillationProperties.ENABLE_DISTILLATION] = True
+        properties[AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE] = self._data_generation_task_type.upper()
+        properties[f"{AzureMLDistillationProperties.TEACHER_MODEL}.endpoint_name"] = (
             self._teacher_model_endpoint_connection.name
         )
 
         # Not needed for FT Overload API but additional info needed to convert from REST object to Distillation object
-        properties[AzureMLDistillationProperties.DataGenerationType] = self._data_generation_type
-        properties[AzureMLDistillationProperties.ConnectionInformation] = json.dumps(
+        properties[AzureMLDistillationProperties.DATA_GENERATION_TYPE] = self._data_generation_type
+        properties[AzureMLDistillationProperties.CONNECTION_INFORMATION] = json.dumps(
             self._teacher_model_endpoint_connection._to_dict()  # pylint: disable=protected-access
         )
 
@@ -436,7 +437,7 @@ class DistillationJob(Job, JobIOMixin):
             if inference_settings:
                 for inference_key, value in inference_settings.items():
                     if value is not None:
-                        properties[f"{AzureMLDistillationProperties.TeacherModel}.{inference_key}"] = value
+                        properties[f"{AzureMLDistillationProperties.TEACHER_MODEL}.{inference_key}"] = value
 
             if endpoint_settings:
                 for setting, value in endpoint_settings.items():
@@ -444,7 +445,7 @@ class DistillationJob(Job, JobIOMixin):
                         properties[f"azureml.{setting.strip('_')}"] = value
 
         if self._resources and self._resources.instance_type:
-            properties[f"{AzureMLDistillationProperties.InstanceType}.data_generation"] = self._resources.instance_type
+            properties[f"{AzureMLDistillationProperties.INSTANCE_TYPE}.data_generation"] = self._resources.instance_type
 
     # TODO: Remove once Distillation is added to MFE
     @classmethod
@@ -464,16 +465,16 @@ class DistillationJob(Job, JobIOMixin):
         teacher_model_info = ""
         for key, val in properties.items():
             param = key.split(".")[-1]
-            if AzureMLDistillationProperties.TeacherModel in key and param != "endpoint_name":
+            if AzureMLDistillationProperties.TEACHER_MODEL in key and param != "endpoint_name":
                 inference_parameters[param] = val
-            elif AzureMLDistillationProperties.InstanceType in key:
+            elif AzureMLDistillationProperties.INSTANCE_TYPE in key:
                 resources[key.split(".")[1]] = val
-            elif AzureMLDistillationProperties.ConnectionInformation in key:
+            elif AzureMLDistillationProperties.CONNECTION_INFORMATION in key:
                 teacher_model_info = val
             else:
-                if param in EndpointSettings.valid_settings:
+                if param in EndpointSettings.VALID_SETTINGS:
                     endpoint_settings[param] = val
-                elif param in PromptSettingKeys.valid_settings:
+                elif param in PromptSettingKeys.VALID_SETTINGS:
                     prompt_settings[param] = val
 
         if inference_parameters:
@@ -482,8 +483,8 @@ class DistillationJob(Job, JobIOMixin):
             teacher_settings["endpoint_request_settings"] = EndpointRequestSettings(**endpoint_settings)  # type: ignore
 
         return {
-            "data_generation_task_type": properties.get(AzureMLDistillationProperties.DataGenerationTaskType),
-            "data_generation_type": properties.get(AzureMLDistillationProperties.DataGenerationType),
+            "data_generation_task_type": properties.get(AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE),
+            "data_generation_type": properties.get(AzureMLDistillationProperties.DATA_GENERATION_TYPE),
             "teacher_model_endpoint_connection": WorkspaceConnection._load(  # pylint: disable=protected-access
                 data=json.loads(teacher_model_info)
             ),

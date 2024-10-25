@@ -28,7 +28,7 @@ class TestDistillationJobConversion:
     )
     def test_distillation_job_conversion(self, data_generation_task_type: str):
         distillation_job = DistillationJob(
-            data_generation_type=DataGenerationType.LabelGeneration,
+            data_generation_type=DataGenerationType.LABEL_GENERATION,
             data_generation_task_type=data_generation_task_type,
             teacher_model_endpoint_connection=ServerlessConnection(
                 name="Llama-3-1-405B-Instruct-BASE", endpoint="http://foo.com", api_key="TESTKEY"
@@ -63,7 +63,7 @@ class TestDistillationJobConversion:
             original_object.data_generation_task_type.lower() == data_generation_task_type.lower()
         ), "Data Generation Task Type not set correctly"
         assert (
-            original_object.data_generation_type == DataGenerationType.LabelGeneration
+            original_object.data_generation_type == DataGenerationType.LABEL_GENERATION
         ), "Data Generation Type not set correctly"
 
         assert isinstance(
@@ -137,7 +137,7 @@ class TestDistillationJobConversion:
     )
     def test_distillation_job_read_from_wire(self, data_generation_task_type: str):
         distillation_job = DistillationJob(
-            data_generation_type=DataGenerationType.DataGeneration,
+            data_generation_type=DataGenerationType.DATA_GENERATION,
             data_generation_task_type=data_generation_task_type,
             teacher_model_endpoint_connection=ServerlessConnection(
                 name="llama-teacher", endpoint="http://bar.com", api_key="TESTKEY"
@@ -162,9 +162,8 @@ class TestDistillationJobConversion:
         )
 
         dict_object = distillation_job._to_dict()
-        print(f"Dict object is {dict_object}")
         assert (
-            dict_object["data_generation_type"] == DataGenerationType.DataGeneration
+            dict_object["data_generation_type"] == DataGenerationType.DATA_GENERATION
         ), "Data Generation Task not set correctly"
         assert (
             dict_object["data_generation_task_type"] == data_generation_task_type

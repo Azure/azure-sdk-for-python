@@ -32,7 +32,7 @@ class TestDistillationJob(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.URI_FILE, path=VALIDATION_DATA_PATH)
         distillation_job = distillation(
             experiment_name=f"Llama-distillation-{short_guid}",
-            data_generation_type=DataGenerationType.LabelGeneration,
+            data_generation_type=DataGenerationType.LABEL_GENERATION,
             data_generation_task_type=DataGenerationTaskType.MATH,
             teacher_model_endpoint_connection=ServerlessConnection(
                 name=TEACHER_MODEL_ENDPOINT_NAME, endpoint="", api_key="e"

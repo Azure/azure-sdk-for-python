@@ -12,5 +12,5 @@ class DataGenerationTaskType:
 
 
 class DataGenerationType:
-    LabelGeneration = "label_generation"
-    DataGeneration = "data_generation"
+    LABEL_GENERATION = "label_generation"
+    DATA_GENERATION = "data_generation"

@@ -5,6 +5,7 @@
 """Entrypoint for creating Distillation task."""
 from typing import Any, Dict, Optional, Union
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -14,7 +15,9 @@ from azure.ai.ml.entities._job.resource_configuration import ResourceConfigurati
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
+@experimental
 def distillation(
+    *,
     experiment_name: str,
     data_generation_type: str,
     data_generation_task_type: str,
@@ -38,7 +41,7 @@ def distillation(
     :type experiment_name: str
     :param data_generation_type: The type of data generation to perform.
 
-        Acceptable values: data_generation, label_generation
+        Acceptable values: label_generation
     :type data_generation_type: str
     :param data_generation_task_type: The type of data to generate
 
@@ -49,12 +52,10 @@ def distillation(
     :type: teacher_model_endpoint_connection: WorkspaceConnection
     :param student_model: The model to train
     :type student_model: typing.Union[Input, str]
-    :param training_data: The training data to use. Training data can be None if `data_generation_type` is
-        `data_generation`. Otherwise, training data should contain the question but not the labels, defaults to None
+    :param training_data: The training data to use. Should contain the questions but not the labels, defaults to None
     :type training_data: typing.Optional[typing.Union[Input, str]], optional
-    :param validation_data: The validation data to use. Validation data can be None and will created by
-        partitioning the training_data. If validation data is not None, it should contain the questions but not the
-        labels, defaults to None
+    :param validation_data: The validation data to use. Should contain the questions but not the labels, defaults to
+        None
     :type validation_data: typing.Optional[typing.Union[Input, str]], optional
     :param teacher_model_settings: The settings for the teacher model. Accepts both the inference parameters and
         endpoint settings, defaults to None
@@ -81,16 +82,16 @@ def distillation(
     if isinstance(validation_data, str):
         validation_data = Input(type=AssetTypes.URI_FILE, path=validation_data)
 
-    if training_data is None and data_generation_type == DataGenerationType.LabelGeneration:
+    if training_data is None and data_generation_type == DataGenerationType.LABEL_GENERATION:
         raise ValueError(
-            f"Training data can only be None when data generation type is set to "
-            f"{DataGenerationType.DataGeneration}."
+            f"Training data can not be None when data generation type is set to "
+            f"{DataGenerationType.LABEL_GENERATION}."
         )
 
-    if validation_data is None and data_generation_type == DataGenerationType.LabelGeneration:
+    if validation_data is None and data_generation_type == DataGenerationType.LABEL_GENERATION:
         raise ValueError(
-            f"Validation data can only be None when data generation type is set to "
-            f"{DataGenerationType.DataGeneration}."
+            f"Validation data can not be None when data generation type is set to "
+            f"{DataGenerationType.LABEL_GENERATION}."
         )
 
     return DistillationJob(

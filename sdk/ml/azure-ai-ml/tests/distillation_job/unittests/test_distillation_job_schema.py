@@ -25,7 +25,7 @@ def loaded_distillation_job_as_rest_obj(path: str) -> FineTuningJob:
 class TestDistillationJobSchema:
     def test_distillation_job_full_rest_transform(self):
         distillation_job = DistillationJob(
-            data_generation_type=DataGenerationType.LabelGeneration,
+            data_generation_type=DataGenerationType.LABEL_GENERATION,
             data_generation_task_type=DataGenerationTaskType.MATH,
             teacher_model_endpoint_connection=WorkspaceConnection(
                 type="custom",
@@ -59,7 +59,7 @@ class TestDistillationJobSchema:
 
     def test_distillation_job_input_rest_transform(self):
         distillation_job = DistillationJob(
-            data_generation_type=DataGenerationType.LabelGeneration,
+            data_generation_type=DataGenerationType.LABEL_GENERATION,
             data_generation_task_type=DataGenerationTaskType.SUMMARIZATION,
             teacher_model_endpoint_connection=ServerlessConnection(
                 name="Llama-3-1-405B-Instruct-BASE", endpoint="http://foo.com", api_key="FAKEKEY"
