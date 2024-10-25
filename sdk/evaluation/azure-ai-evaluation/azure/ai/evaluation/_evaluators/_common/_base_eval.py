@@ -241,7 +241,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.CONVERSATION,
-        )        
+        )
 
     def _aggregate_results(self, per_turn_results: List[DoEvalResult[T_EvalValue]]) -> AggregateResult[T_EvalValue]:
         """Aggregate the evaluation results of each conversation turn into a single result.

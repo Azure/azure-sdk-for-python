@@ -57,7 +57,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     # defining a default here.
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
@@ -77,7 +77,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
                 return {
                     self._result_key: float(score),
                     f"gpt_{self._result_key}": float(score),
-                    f"{self._result_key}_reason": reason
+                    f"{self._result_key}_reason": reason,
                 }
             match = re.search(r"\d", llm_output)
             if match:

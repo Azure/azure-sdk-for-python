@@ -68,7 +68,7 @@ class _AsyncRetrievalScoreEvaluator:
             for turn_num, turn_query in enumerate(queries):
                 try:
                     if turn_num >= len(queries):
-                        turn_query = ""  
+                        turn_query = ""
                     context = contexts[turn_num] if turn_num < len(contexts) else ""
 
                     llm_output = await self._flow(
@@ -97,9 +97,7 @@ class _AsyncRetrievalScoreEvaluator:
                     "retrieval_reason": per_turn_reasons,
                 },
             }
-        llm_output = await self._flow(
-            query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
-        )
+        llm_output = await self._flow(query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs)
         score, reason = parse_quality_evaluator_reason_score(llm_output)
 
         return {
@@ -107,6 +105,7 @@ class _AsyncRetrievalScoreEvaluator:
             "retrieval_reason": reason,
             "gpt_retrieval": score,
         }
+
 
 class RetrievalEvaluator:
     """
@@ -156,7 +155,7 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
 
-    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation = None, **kwargs):
+    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation=None, **kwargs):
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -191,11 +190,7 @@ class RetrievalEvaluator:
             )
 
         return async_run_allowing_running_loop(
-            self._async_evaluator,
-            query=query,
-            context=context,
-            conversation=conversation,
-            **kwargs
+            self._async_evaluator, query=query, context=context, conversation=conversation, **kwargs
         )
 
     def _to_async(self):

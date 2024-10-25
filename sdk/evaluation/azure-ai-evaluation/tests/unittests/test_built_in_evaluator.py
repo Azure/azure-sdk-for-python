@@ -7,17 +7,21 @@ from azure.ai.evaluation import FluencyEvaluator, SimilarityEvaluator, Retrieval
 
 
 async def quality_response_async_mock():
-    return ("<S0>Let's think step by step: The response 'Honolulu' is a single word. "
-    "It does not form a complete sentence, lacks grammatical structure, and does not "
-    "convey any clear idea or message. It is not possible to assess vocabulary range, "
-    "sentence complexity, coherence, or overall readability from a single word. Therefore,"
-    "it falls into the category of minimal command of the language.</S0>"
-    "<S1>The response is a single word and does not provide any meaningful content to evaluate"
-    " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
-    "levels.</S1><S2>1</S2>")
+    return (
+        "<S0>Let's think step by step: The response 'Honolulu' is a single word. "
+        "It does not form a complete sentence, lacks grammatical structure, and does not "
+        "convey any clear idea or message. It is not possible to assess vocabulary range, "
+        "sentence complexity, coherence, or overall readability from a single word. Therefore,"
+        "it falls into the category of minimal command of the language.</S0>"
+        "<S1>The response is a single word and does not provide any meaningful content to evaluate"
+        " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
+        "levels.</S1><S2>1</S2>"
+    )
+
 
 async def quality_no_response_async_mock():
     return "1"
+
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
@@ -47,9 +51,7 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(response=None)
 
-        assert (
-            "Either 'response' or 'conversation' must be provided." in exc_info.value.args[0]
-        )
+        assert "Either 'response' or 'conversation' must be provided." in exc_info.value.args[0]
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
@@ -103,7 +105,7 @@ class TestBuiltInEvaluators:
                 {
                     "role": "assistant",
                     "content": "2 + 2 = 4",
-                    "context": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"
+                    "context": "Information about additions: 1 + 2 = 3, 2 + 2 = 4",
                 },
             ]
         }
@@ -131,6 +133,4 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             retrieval_eval(context="1 + 2 = 2.")  # Retrieval requires "query"
 
-        assert (
-            "Either a pair of 'query'/'context' or 'conversation' must be provided." in exc_info.value.args[0]
-        )
+        assert "Either a pair of 'query'/'context' or 'conversation' must be provided." in exc_info.value.args[0]
