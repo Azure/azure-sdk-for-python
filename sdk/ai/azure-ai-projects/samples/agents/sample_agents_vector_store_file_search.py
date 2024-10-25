@@ -21,12 +21,15 @@ USAGE:
 """
 
 import os
+from azure.ai.ml._ml_client import MLClient
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.entities import Data
+
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models._models import VectorStorageConfiguration,\
     VectorStorageDataSource
-from azure.ai.ml._ml_client import MLClient
 
 
 
@@ -34,14 +37,19 @@ from azure.ai.ml._ml_client import MLClient
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
+credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:
 
     azure_client = MLClient.from_config(credential)
-    data_ul = azure_client.data.get(name="products", version="1.0")
+    # We will upload the local file to Azure and will use if for vector store creation.
+    local_data = Data(name="products", path='./product_info_1.md', type=AssetTypes.URI_FILE)
+    # The new data object will contain the Azure ID of an uploaded file,
+    # which is the uri starting from azureml://.
+    data_ul = azure_client.data.create_or_update(local_data)
 
     # create a vector store with no file and wait for it to be processed
     ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
