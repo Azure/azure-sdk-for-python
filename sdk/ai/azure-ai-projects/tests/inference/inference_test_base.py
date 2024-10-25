@@ -35,6 +35,7 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
+
 class InferenceTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
@@ -42,7 +43,7 @@ class InferenceTestBase(AzureRecordedTestCase):
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
-            logging_enable=LOGGING_ENABLED
+            logging_enable=LOGGING_ENABLED,
         )
         return project_client
 
@@ -51,6 +52,6 @@ class InferenceTestBase(AzureRecordedTestCase):
         project_client = AIProjectClientAsync.from_connection_string(
             credential=self.get_credential(AIProjectClientAsync, is_async=False),
             conn_str=conn_str,
-            logging_enable=LOGGING_ENABLED
+            logging_enable=LOGGING_ENABLED,
         )
         return project_client

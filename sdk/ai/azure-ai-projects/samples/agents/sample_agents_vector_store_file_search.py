@@ -28,9 +28,7 @@ from azure.ai.ml.entities import Data
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models._models import VectorStorageConfiguration,\
-    VectorStorageDataSource
-
+from azure.ai.projects.models._models import VectorStorageConfiguration, VectorStorageDataSource
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -46,13 +44,13 @@ with project_client:
 
     azure_client = MLClient.from_config(credential)
     # We will upload the local file to Azure and will use if for vector store creation.
-    local_data = Data(name="products", path='./product_info_1.md', type=AssetTypes.URI_FILE)
+    local_data = Data(name="products", path="./product_info_1.md", type=AssetTypes.URI_FILE)
     # The new data object will contain the Azure ID of an uploaded file,
     # which is the uri starting from azureml://.
     data_ul = azure_client.data.create_or_update(local_data)
 
     # create a vector store with no file and wait for it to be processed
-    ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
+    ds = VectorStorageDataSource(storage_uri=data_ul.path, asset_type="uri_asset")
     vc = VectorStorageConfiguration(data_sources=[ds])
     vector_store = project_client.agents.create_vector_store_and_poll(
         store_configuration=vc, name="sample_vector_store"

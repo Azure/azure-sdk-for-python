@@ -28,8 +28,7 @@ from azure.ai.ml.entities import Data
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models._models import VectorStorageConfiguration,\
-    VectorStorageDataSource
+from azure.ai.projects.models._models import VectorStorageConfiguration, VectorStorageDataSource
 
 
 async def main():
@@ -40,26 +39,26 @@ async def main():
     project_client = AIProjectClient.from_connection_string(
         credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
     )
-    
+
     async with project_client:
-    
+
         azure_client = MLClient.from_config(credential)
         # We will upload the local file to Azure and will use if for vector store creation.
-        local_data = Data(name="products", path='../product_info_1.md', type=AssetTypes.URI_FILE)
+        local_data = Data(name="products", path="../product_info_1.md", type=AssetTypes.URI_FILE)
         # The new data object will contain the Azure ID of an uploaded file,
         # which is the uri starting from azureml://.
         data_ul = azure_client.data.create_or_update(local_data)
         # create a vector store with no file and wait for it to be processed
-        ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
+        ds = VectorStorageDataSource(storage_uri=data_ul.path, asset_type="uri_asset")
         vc = VectorStorageConfiguration(data_sources=[ds])
         vector_store = await project_client.agents.create_vector_store_and_poll(
             store_configuration=vc, name="sample_vector_store"
         )
         print(f"Created vector store, vector store ID: {vector_store.id}")
-    
+
         # create a file search tool
         file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-    
+
         # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
         agent = await project_client.agents.create_agent(
             model="gpt-4-1106-preview",
@@ -69,24 +68,24 @@ async def main():
             tool_resources=file_search_tool.resources,
         )
         print(f"Created agent, agent ID: {agent.id}")
-    
+
         thread = await project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
-    
+
         message = await project_client.agents.create_message(
             thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
         )
         print(f"Created message, message ID: {message.id}")
-    
+
         run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         print(f"Created run, run ID: {run.id}")
-    
+
         await project_client.agents.delete_vector_store(vector_store.id)
         print("Deleted vectore store")
-    
+
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
-    
+
         messages = await project_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
 

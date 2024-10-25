@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -15,8 +16,7 @@ import sys
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.ai.projects.models._models import VectorStorageDataSource,\
-    VectorStorageConfiguration, VectorStore
+from azure.ai.projects.models._models import VectorStorageDataSource, VectorStorageConfiguration, VectorStore
 
 # TODO clean this up / get rid of anything not in use
 
@@ -46,7 +46,7 @@ agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
     azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
-    azure_ai_projects_data_path = "azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md" 
+    azure_ai_projects_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 """
 agentClientPreparer = functools.partial(
@@ -1081,8 +1081,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [
-            VectorStorageDataSource(uri=kwargs["azure_ai_projects_data_path"])]
+        ds = [VectorStorageDataSource(uri=kwargs["azure_ai_projects_data_path"])]
         store_conf = VectorStorageConfiguration(data_sources=ds)
         vector_store = ai_client.agents.create_vector_store_and_poll(
             store_configuration=store_conf, name="my_vectorstore"
@@ -1115,7 +1114,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"] , asset_type="uri_asset")]
+        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
         vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file_batch = ai_client.agents.create_vector_store_file_batch_and_poll(
@@ -1123,7 +1122,6 @@ class TestagentClient(AzureRecordedTestCase):
         )
         assert vector_store_file_batch.id
         self._test_file_search(ai_client, vector_store)
-        
 
     def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore):
         """Test the file search"""

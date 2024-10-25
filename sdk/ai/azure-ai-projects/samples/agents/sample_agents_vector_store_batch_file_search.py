@@ -45,16 +45,14 @@ with project_client:
 
     azure_client = MLClient.from_config(credential)
     # We will upload the local file to Azure and will use if for vector store creation.
-    local_data = Data(name="products", path='./product_info_1.md', type=AssetTypes.URI_FILE)
+    local_data = Data(name="products", path="./product_info_1.md", type=AssetTypes.URI_FILE)
     # The new data object will contain the Azure ID of an uploaded file,
     # which is the uri starting from azureml://.
     data_ul = azure_client.data.create_or_update(local_data)
 
     # create a vector store with no file and wait for it to be processed
-    ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
-    vector_store = project_client.agents.create_vector_store_and_poll(
-        file_ids=[], name="sample_vector_store"
-    )
+    ds = VectorStorageDataSource(storage_uri=data_ul.path, asset_type="uri_asset")
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
@@ -90,17 +88,21 @@ with project_client:
     file_search_tool.remove_vector_store(vector_store.id)
     print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
-    project_client.agents.update_agent(assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources)
+    project_client.agents.update_agent(
+        assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
+    )
     print(f"Updated agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
+    message = project_client.agents.create_message(
+        thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+    )
     print(f"Created message, message ID: {message.id}")
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    print(f"Created run, run ID: {run.id}")        
+    print(f"Created run, run ID: {run.id}")
 
     project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vectore store")

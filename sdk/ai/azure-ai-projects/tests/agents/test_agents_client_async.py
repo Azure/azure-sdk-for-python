@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,8 +14,7 @@ import sys
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.ai.projects.models._models import VectorStorageDataSource,\
-    VectorStorageConfiguration, VectorStore
+from azure.ai.projects.models._models import VectorStorageDataSource, VectorStorageConfiguration, VectorStore
 
 # TODO clean this up / get rid of anything not in use
 
@@ -44,7 +44,7 @@ agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
     azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
-    azure_ai_projects_data_path = "azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md"
+    azure_ai_projects_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 """
 agentClientPreparer = functools.partial(
@@ -290,7 +290,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created agent, agent ID", agent.id)
 
         # create thread
-        thread =await client.agents.create_thread()
+        thread = await client.agents.create_thread()
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
@@ -425,10 +425,14 @@ class TestagentClient(AzureRecordedTestCase):
         message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         assert message.id
         print("Created message, message ID", message.id)
-        message2 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+        message2 = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me another joke"
+        )
         assert message2.id
         print("Created message, message ID", message2.id)
-        message3 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+        message3 = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a third joke"
+        )
         assert message3.id
         print("Created message, message ID", message3.id)
 
@@ -468,14 +472,18 @@ class TestagentClient(AzureRecordedTestCase):
         assert messages1.data.__len__() == 1
         assert messages1.data[0].id == message1.id
 
-        message2 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+        message2 = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me another joke"
+        )
         assert message2.id
         print("Created message, message ID", message2.id)
         messages2 = await client.agents.list_messages(thread_id=thread.id)
         assert messages2.data.__len__() == 2
         assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
 
-        message3 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+        message3 = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a third joke"
+        )
         assert message3.id
         print("Created message, message ID", message3.id)
         messages3 = await client.agents.list_messages(thread_id=thread.id)
@@ -793,7 +801,9 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, what time is it?"
+        )
         assert message.id
         print("Created message, message ID", message.id)
 
@@ -978,7 +988,9 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create message
-        message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        message = await client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, what time is it?"
+        )
         assert message.id
         print("Created message, message ID", message.id)
 
@@ -1079,8 +1091,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [
-            VectorStorageDataSource(uri=kwargs["azure_ai_projects_data_path"])]
+        ds = [VectorStorageDataSource(uri=kwargs["azure_ai_projects_data_path"])]
         store_conf = VectorStorageConfiguration(data_sources=ds)
         vector_store = await ai_client.agents.create_vector_store_and_poll(
             store_configuration=store_conf, name="my_vectorstore"
@@ -1096,7 +1107,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"] , asset_type="uri_asset")]
+        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
         vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = await ai_client.agents.create_vector_store_file(vector_store.id, data_sources=ds)(
@@ -1113,7 +1124,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"] , asset_type="uri_asset")]
+        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file_batch = await ai_client.agents.create_vector_store_file_batch_and_poll(
@@ -1121,7 +1132,6 @@ class TestagentClient(AzureRecordedTestCase):
         )
         assert vector_store_file_batch.id
         await self._test_file_search(ai_client, vector_store)
-        
 
     async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore):
         """Test the file search"""
@@ -1145,7 +1155,6 @@ class TestagentClient(AzureRecordedTestCase):
         await ai_client.agents.delete_agent(agent.id)
         print("Deleted agent")
         await ai_client.close()
-        
 
     # # **********************************************************************************
     # #

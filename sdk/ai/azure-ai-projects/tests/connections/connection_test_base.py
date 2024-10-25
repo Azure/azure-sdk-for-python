@@ -33,6 +33,7 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
+
 class ConnectionsTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
@@ -40,7 +41,6 @@ class ConnectionsTestBase(AzureRecordedTestCase):
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
-            logging_enable=LOGGING_ENABLED
+            logging_enable=LOGGING_ENABLED,
         )
         return project_client
-

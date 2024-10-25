@@ -4,6 +4,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1987,9 +1988,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_vector_store_file_and_poll(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json",
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -2018,7 +2023,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -2044,9 +2049,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_vector_store_file_and_poll(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json",
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -2075,7 +2084,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -2107,9 +2116,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
         else:
             content_type = kwargs.get("content_type", "application/json")
-            vector_store_file = await super().create_vector_store_file(
-                body=body, content_type=content_type, **kwargs
-            )
+            vector_store_file = await super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
 
         while vector_store_file.status == "in_progress":
             time.sleep(sleep_interval)

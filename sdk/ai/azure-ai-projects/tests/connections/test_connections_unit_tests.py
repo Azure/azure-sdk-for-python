@@ -8,6 +8,7 @@ from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 from connection_test_base import ConnectionsTestBase
 
+
 class FakeTokenCredential(TokenCredential):
     def get_token(self, *scopes, **kwargs):
         # Create a fake token with an expiration time
