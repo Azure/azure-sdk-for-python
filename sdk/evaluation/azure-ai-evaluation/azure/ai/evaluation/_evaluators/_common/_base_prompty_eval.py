@@ -71,6 +71,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
 
         score = math.nan
         if llm_output:
+            # Parse out score and reason from evaluators known to possess them.
             if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                 score, reason = parse_quality_evaluator_reason_score(llm_output)
                 return {
