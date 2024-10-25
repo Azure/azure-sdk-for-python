@@ -269,6 +269,20 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
     return cast(T_TypedDict, o)
 
 def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    """Parse the output of prompt-based quality evaluators that return a score and reason.
+
+    Current supported evaluators:
+        - Fluency
+        - Relevance
+        - Retrieval
+        - Groundedness
+        - Coherence
+    
+    :param llm_output: The output of the prompt-based quality evaluator.
+    :type llm_output: str
+    :return: The score and reason.
+    :rtype: Tuple[float, str]
+    """
     score = math.nan
     reason = ""
     if llm_output:
@@ -278,13 +292,8 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
         reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
         if score_match:
             score = float(score_match[0].strip())
-        else:
-            print("No score match")
         if reason_match:
             reason = reason_match[0].strip()
-    else:
-        print("No llm_output")
-    print(f"Score: {score}, Reason: {reason}")
     
     return score, reason
 

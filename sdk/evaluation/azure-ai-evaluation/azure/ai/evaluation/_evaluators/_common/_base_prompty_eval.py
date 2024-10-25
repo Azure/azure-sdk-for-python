@@ -9,6 +9,7 @@ from typing import Dict
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
+from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
@@ -70,7 +71,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
 
         score = math.nan
         if llm_output:
-            if self._result_key in ["coherence", "relevance", "retrieval", "groundedness", "fluency"]:
+            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                 score, reason = parse_quality_evaluator_reason_score(llm_output)
                 return {self._result_key: float(score), f"gpt_{self._result_key}": float(score), f"{self._result_key}_reason": reason}
             else:
