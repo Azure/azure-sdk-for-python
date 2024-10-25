@@ -30,13 +30,13 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_security_domain_download_request,
-    build_security_domain_get_download_status_request,
-    build_security_domain_get_transfer_key_request,
-    build_security_domain_get_upload_status_request,
-    build_security_domain_upload_request,
+    build_key_vault_download_request,
+    build_key_vault_get_download_status_request,
+    build_key_vault_get_transfer_key_request,
+    build_key_vault_get_upload_status_request,
+    build_key_vault_upload_request,
 )
-from .._vendor import SecurityDomainClientMixinABC
+from .._vendor import KeyVaultClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -47,7 +47,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
+class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @distributed_trace_async
     async def get_download_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -71,7 +71,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_download_status_request(
+        _request = build_key_vault_get_download_status_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -133,7 +133,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             _content = json.dumps(certificate_info_object, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_security_domain_download_request(
+        _request = build_key_vault_download_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -323,7 +323,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_upload_status_request(
+        _request = build_key_vault_get_upload_status_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -385,7 +385,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             _content = json.dumps(security_domain, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_security_domain_upload_request(
+        _request = build_key_vault_upload_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -578,7 +578,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.TransferKey] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_transfer_key_request(
+        _request = build_key_vault_get_transfer_key_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

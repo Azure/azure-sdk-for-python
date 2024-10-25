@@ -18,7 +18,7 @@ from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import SecurityDomainClient as _SecurityDomainClient
+from ._client import KeyVaultClient
 from ._internal import (
     ChallengeAuthPolicy,
     SecurityDomainClientDownloadPolling,
@@ -77,7 +77,7 @@ def _format_api_version(request: HttpRequest, api_version: str) -> HttpRequest:
     return request_copy
 
 
-class SecurityDomainClient(_SecurityDomainClient):
+class SecurityDomainClient(KeyVaultClient):
     """Manages the security domain of a Managed HSM.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
@@ -116,7 +116,7 @@ class SecurityDomainClient(_SecurityDomainClient):
             **kwargs,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_download(
         self, certificate_info_object: CertificateInfoObject, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[SecurityDomainObject]:
@@ -199,7 +199,7 @@ class SecurityDomainClient(_SecurityDomainClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        return super().begin_download(
+        return super().begin_download(  # type: ignore[return-value]
             certificate_info_object,
             polling=SecurityDomainClientDownloadPollingMethod(
                 lro_algorithms=[SecurityDomainClientDownloadPolling()], timeout=delay
