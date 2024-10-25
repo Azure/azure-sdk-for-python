@@ -1,12 +1,12 @@
 {
-  "commit": "3cb1b51638616435470fc10ea00de92512186ece",
+  "commit": "71341bf84d11e4cf6c3d3c6aa9d1615238b20e90",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.14.3",
+    "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/appplatform/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.14.3 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/appplatform/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2023-12 --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/appplatform/resource-manager/readme.md",
   "package-2023-12": "2023-12-14 09:48:21 +0800 0fac19a4056fab82c3955a9d8eeba33e79158e49 Microsoft.AppPlatform/stable/2023-12-01/appplatform.json",
   "package-preview-2023-11": "2023-10-25 09:34:29 +0800 eac41e7f43d1fdfeff98eced43a90d7b1dd746e2 Microsoft.AppPlatform/preview/2023-11-01-preview/appplatform.json",

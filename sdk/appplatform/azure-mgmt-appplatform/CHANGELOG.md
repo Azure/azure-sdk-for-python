@@ -1,5 +1,91 @@
 # Release History
 
+## 10.0.0 (2024-10-25)
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `AppPlatformManagementClient.eureka_servers`
+  - Deleted or renamed client operation group `AppPlatformManagementClient.jobs`
+  - Deleted or renamed client operation group `AppPlatformManagementClient.job`
+  - Deleted or renamed client operation group `AppPlatformManagementClient.job_execution`
+  - Deleted or renamed client operation group `AppPlatformManagementClient.job_executions`
+  - Model `AppResourceProperties` deleted or renamed its instance variable `secrets`
+  - Model `AppResourceProperties` deleted or renamed its instance variable `workload_profile_name`
+  - Model `AppResourceProperties` deleted or renamed its instance variable `test_endpoint_auth_state`
+  - Deleted or renamed enum value `BindingType.CA_CERTIFICATES`
+  - Model `BuildpackProperties` deleted or renamed its instance variable `version`
+  - Model `ClusterResourceProperties` deleted or renamed its instance variable `maintenance_schedule_configuration`
+  - Model `ClusterResourceProperties` deleted or renamed its instance variable `managed_environment_id`
+  - Model `ClusterResourceProperties` deleted or renamed its instance variable `infra_resource_group`
+  - Model `ConfigServerProperties` deleted or renamed its instance variable `resource_requests`
+  - Model `ConfigServerProperties` deleted or renamed its instance variable `instances`
+  - Model `ConfigServerProperties` deleted or renamed its instance variable `enabled_state`
+  - Deleted or renamed enum value `ConfigServerState.CREATING`
+  - Deleted or renamed enum value `ConfigServerState.DELETING`
+  - Model `ConfigurationServiceSettings` deleted or renamed its instance variable `refresh_interval_in_seconds`
+  - Model `DeploymentSettings` deleted or renamed its instance variable `scale`
+  - Model `GatewayProperties` deleted or renamed its instance variable `apm_types`
+  - Model `GatewayProperties` deleted or renamed its instance variable `addon_configs`
+  - Model `GatewayProperties` deleted or renamed its instance variable `response_cache_properties`
+  - Model `ServiceResource` deleted or renamed its instance variable `identity`
+  - Model `ServiceVNetAddons` deleted or renamed its instance variable `private_storage_access`
+  - Model `ServiceVNetAddons` deleted or renamed its instance variable `private_dns_zone_id`
+  - Model `SupportedBuildpackResourceProperties` deleted or renamed its instance variable `version`
+  - Deleted or renamed enum value `SupportedRuntimeValue.JAVA21`
+  - Deleted or renamed model `ApmType`
+  - Deleted or renamed model `ConfigServerEnabledState`
+  - Deleted or renamed model `ConfigServerInstance`
+  - Deleted or renamed model `ConfigServerResourceCollection`
+  - Deleted or renamed model `ConfigServerResourceRequests`
+  - Deleted or renamed model `CustomScaleRule`
+  - Deleted or renamed model `EnvSecretsCollection`
+  - Deleted or renamed model `EnvVar`
+  - Deleted or renamed model `EurekaServerEnabledState`
+  - Deleted or renamed model `EurekaServerProperties`
+  - Deleted or renamed model `EurekaServerResource`
+  - Deleted or renamed model `EurekaServerResourceCollection`
+  - Deleted or renamed model `EurekaServerState`
+  - Deleted or renamed model `Frequency`
+  - Deleted or renamed model `GatewayLocalResponseCachePerInstanceProperties`
+  - Deleted or renamed model `GatewayLocalResponseCachePerRouteProperties`
+  - Deleted or renamed model `GatewayResponseCacheProperties`
+  - Deleted or renamed model `HttpScaleRule`
+  - Deleted or renamed model `JobExecution`
+  - Deleted or renamed model `JobExecutionCollection`
+  - Deleted or renamed model `JobExecutionRunningState`
+  - Deleted or renamed model `JobExecutionTemplate`
+  - Deleted or renamed model `JobResource`
+  - Deleted or renamed model `JobResourceCollection`
+  - Deleted or renamed model `JobResourceProperties`
+  - Deleted or renamed model `JobResourceProvisioningState`
+  - Deleted or renamed model `JobResourceRequests`
+  - Deleted or renamed model `JobTriggerConfig`
+  - Deleted or renamed model `MaintenanceScheduleConfiguration`
+  - Deleted or renamed model `ManagedComponentReference`
+  - Deleted or renamed model `ManualJobTriggerConfig`
+  - Deleted or renamed model `PrivateStorageAccess`
+  - Deleted or renamed model `QueueScaleRule`
+  - Deleted or renamed model `Scale`
+  - Deleted or renamed model `ScaleRule`
+  - Deleted or renamed model `ScaleRuleAuth`
+  - Deleted or renamed model `Secret`
+  - Deleted or renamed model `SystemAssignedServiceIdentity`
+  - Deleted or renamed model `SystemAssignedServiceIdentityType`
+  - Deleted or renamed model `TcpScaleRule`
+  - Deleted or renamed model `TestEndpointAuthState`
+  - Deleted or renamed model `TriggerType`
+  - Deleted or renamed model `WeekDay`
+  - Deleted or renamed model `WeeklyMaintenanceScheduleConfiguration`
+  - Deleted or renamed method `ConfigServersOperations.begin_delete`
+  - Deleted or renamed method `ConfigServersOperations.list`
+  - Method `DeploymentsOperations.list` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
+  - Deleted or renamed method `GatewaysOperations.begin_update_capacity`
+  - Deleted or renamed model `EurekaServersOperations`
+  - Deleted or renamed model `JobExecutionOperations`
+  - Deleted or renamed model `JobExecutionsOperations`
+  - Deleted or renamed model `JobOperations`
+  - Deleted or renamed model `JobsOperations`
+
 ## 9.1.0 (2024-07-03)
 
 ### Features Added
