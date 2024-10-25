@@ -195,6 +195,10 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             _logger.debug("Instrumentation skipped for library %s", entry_point.name)
             continue
         try:
+            if lib_name == _AZURE_SDK_INSTRUMENTATION_NAME:
+                _setup_additional_azure_sdk_instrumentations()
+                continue
+
             # Check if dependent libraries/version are installed
             conflict = get_dist_dependency_conflicts(entry_point.dist)  # type: ignore
             if conflict:
@@ -214,7 +218,6 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 lib_name,
                 exc_info=ex,
             )
-    _setup_additional_azure_sdk_instrumentations(configurations=configurations)
 
 
 def _send_attach_warning():
@@ -226,11 +229,7 @@ def _send_attach_warning():
         )
 
 
-def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    if not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
-        _logger.debug(
-            "Instrumentation skipped for library %s", _AZURE_SDK_INSTRUMENTATION_NAME
-        )
+def _setup_additional_azure_sdk_instrumentations():
     try:
         from azure.ai.inference.tracing import AIInferenceInstrumentor # type: ignore
     except Exception as ex:  # pylint: disable=broad-except
