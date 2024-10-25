@@ -31,8 +31,6 @@ from enum import Enum
 from typing import Optional, Union, List, Any, Dict, Deque
 import warnings
 
-from typing_extensions import Literal
-
 from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
@@ -140,10 +138,9 @@ class ChangeFeedStateV1(ChangeFeedState):
         self._continuation = continuation
         super(ChangeFeedStateV1, self).__init__(ChangeFeedStateVersion.V1)
 
-    # Not in use
-    # @property
-    # def container_rid(self):
-    #     return self._container_rid
+    @property
+    def container_rid(self):
+        return self._container_rid
 
     @classmethod
     def from_json(
@@ -233,10 +230,9 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)
 
-    # Not in use
-    # @property
-    # def container_rid(self) -> str :
-    #     return self._container_rid
+    @property
+    def container_rid(self) -> str :
+        return self._container_rid
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -258,7 +254,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         self._change_feed_start_from.populate_request_headers(request_headers)
 
         if self._continuation.current_token is not None and self._continuation.current_token.token is not None:
-            change_feed_start_from_feed_range_and_etag = \
+            change_feed_start_from_feed_range_and_etag =\
                 ChangeFeedStartFromETagAndFeedRange(
                     self._continuation.current_token.token,
                     self._continuation.current_token.feed_range)
@@ -346,9 +342,8 @@ class ChangeFeedStateV2(ChangeFeedState):
     def should_retry_on_not_modified_response(self) -> bool:
         return self._continuation.should_retry_on_not_modified_response()
 
-    # Not in use
-    # def apply_not_modified_response(self) -> None:
-    #     self._continuation.apply_not_modified_response()
+    def apply_not_modified_response(self) -> None:
+        self._continuation.apply_not_modified_response()
 
     def get_feed_range_gone_error(self, over_lapping_ranges: List[Dict[str, Any]]) -> CosmosHttpResponseError:
         formatted_message =\
