@@ -84,7 +84,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The relevance score.
+        :return: The groundedness score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
         ...
