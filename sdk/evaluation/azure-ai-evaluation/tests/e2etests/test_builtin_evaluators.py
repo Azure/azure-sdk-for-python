@@ -145,6 +145,17 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["groundedness_reason"][0]
         assert score2["evaluation_per_turn"]["groundedness_reason"][1]
 
+    def test_quality_evaluator_groundedness_with_query(self, model_config, simple_conversation):
+        eval_fn = GroundednessEvaluator(model_config)
+        score = eval_fn(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is Japan's capital.",
+        )
+        assert score is not None
+        assert score["groundedness"] > 1.0
+        assert score["groundedness_reason"]
+
     def test_quality_evaluator_relevance(self, model_config, simple_conversation):
         eval_fn = RelevanceEvaluator(model_config)
         score = eval_fn(
@@ -190,7 +201,6 @@ class TestBuiltInEvaluators:
         score2 = eval_fn(conversation=simple_conversation)
         assert score2["retrieval"] > 0
         assert score2["evaluation_per_turn"]["retrieval"][0] > 0
-        assert False
 
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
