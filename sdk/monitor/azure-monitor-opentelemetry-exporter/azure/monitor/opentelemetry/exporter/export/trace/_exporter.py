@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Sequence
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
+from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
@@ -425,6 +426,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     target,  # type: ignore
                     span.attributes,
                 )
+            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
             else:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
