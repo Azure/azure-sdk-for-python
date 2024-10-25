@@ -79,7 +79,6 @@ class HateUnfairnessMultimodalEvaluator:
         :return: The hate unfairness score.
         :rtype: Dict
         """
-        self._validate_conversation(conversation)
         return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
     
     def _to_async(self):
