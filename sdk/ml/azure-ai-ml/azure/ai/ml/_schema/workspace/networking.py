@@ -201,7 +201,7 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         outbound_rules = data.get("outbound_rules", False)
 
         firewall_sku = data.get("firewall_sku", False)
-        firewall_sku_value = _snake_to_camel(data["firewall_sku"]) if firewall_sku else None
+        firewall_sku_value = _snake_to_camel(data["firewall_sku"]) if firewall_sku else FirewallSku.STANDARD
 
         if outbound_rules:
             return ManagedNetwork(
