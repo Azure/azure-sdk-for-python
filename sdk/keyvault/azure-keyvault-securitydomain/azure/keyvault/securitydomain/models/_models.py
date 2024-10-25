@@ -54,19 +54,6 @@ class CertificateInfoObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultError(_model_base.Model):
-    """The key vault error exception.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.securitydomain.models.Error
-    """
-
-    error: Optional["_models.Error"] = rest_field(visibility=["read"])
-    """The key vault server error."""
-
-
 class SecurityDomainJsonWebKey(_model_base.Model):
     """A JSON Web Key (JWK) for use in a security domain operation.
 

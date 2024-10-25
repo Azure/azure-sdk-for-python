@@ -30,7 +30,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import SecurityDomainClientMixinABC
+from .._vendor import KeyVaultClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,7 +44,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_key_vault_get_download_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -63,7 +63,7 @@ def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
+def build_key_vault_download_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -85,7 +85,7 @@ def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_key_vault_get_upload_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -104,7 +104,7 @@ def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
+def build_key_vault_upload_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -126,7 +126,7 @@ def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_key_vault_get_transfer_key_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -145,7 +145,7 @@ def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
+class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @distributed_trace
     def get_download_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -169,7 +169,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_download_status_request(
+        _request = build_key_vault_get_download_status_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -231,7 +231,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             _content = json.dumps(certificate_info_object, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_security_domain_download_request(
+        _request = build_key_vault_download_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -420,7 +420,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_upload_status_request(
+        _request = build_key_vault_get_upload_status_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -482,7 +482,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         else:
             _content = json.dumps(security_domain, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_security_domain_upload_request(
+        _request = build_key_vault_upload_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -674,7 +674,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         cls: ClsType[_models.TransferKey] = kwargs.pop("cls", None)
 
-        _request = build_security_domain_get_transfer_key_request(
+        _request = build_key_vault_get_transfer_key_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
