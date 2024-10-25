@@ -11,7 +11,6 @@ from typing_extensions import ParamSpec, TypeAlias
 
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._common.utils import remove_optional_singletons
 
 P = ParamSpec("P")
 T = TypeVar("T")
