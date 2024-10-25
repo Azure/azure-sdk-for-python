@@ -16,6 +16,7 @@ from ._evaluators._f1_score import F1ScoreEvaluator
 from ._evaluators._fluency import FluencyEvaluator
 from ._evaluators._gleu import GleuScoreEvaluator
 from ._evaluators._groundedness import GroundednessEvaluator
+from ._evaluators._service_groundedness import GroundednessProEvaluator
 from ._evaluators._meteor import MeteorScoreEvaluator
 from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
@@ -40,6 +41,7 @@ __all__ = [
     "F1ScoreEvaluator",
     "FluencyEvaluator",
     "GroundednessEvaluator",
+    "GroundednessProEvaluator",
     "RelevanceEvaluator",
     "SimilarityEvaluator",
     "QAEvaluator",
