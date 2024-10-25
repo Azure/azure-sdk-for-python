@@ -8,7 +8,6 @@
 
 ### Bugs Fixed
 
-
 ### Other Changes
 
 ## 5.12.2 (2024-10-02)
