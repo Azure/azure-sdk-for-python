@@ -9,7 +9,7 @@ from typing import Dict
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
 try:
@@ -70,7 +70,11 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
 
         score = math.nan
         if llm_output:
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-        return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}
+            if self._result_key in ["coherence", "relevance", "retrieval", "groundedness", "fluency"]:
+                score, reason = parse_quality_evaluator_reason_score(llm_output)
+                return {self._result_key: float(score), f"gpt_{self._result_key}": float(score), f"{self._result_key}_reason": reason}
+            else:
+                match = re.search(r"\d", llm_output)
+                if match:
+                    score = float(match.group())
+                return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}

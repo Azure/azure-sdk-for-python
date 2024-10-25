@@ -14,7 +14,7 @@ from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.math import list_mean_nan_safe
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
 logger = logging.getLogger(__name__)
 
@@ -62,26 +62,19 @@ class _AsyncRetrievalScoreEvaluator:
 
             # Evaluate each turn
             per_turn_scores = []
-            history = []
+            per_turn_reasons = []
             for turn_num, query in enumerate(queries):
                 try:
                     if turn_num >= len(queries):
                         query = ""
-                    answer = responses[turn_num] if turn_num < len(responses) else ""
                     context = contexts[turn_num] if turn_num < len(contexts) else ""
-
-                    history.append({"user": query, "assistant": answer})
 
                     llm_output = await self._flow(
                         query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
                     )
-                    score = math.nan
-                    if llm_output:
-                        parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
-                        if len(parsed_score_response) > 0:
-                            score = float(parsed_score_response[0].replace("'", "").strip())
-
+                    score, reason = parse_quality_evaluator_reason_score(llm_output)
                     per_turn_scores.append(score)
+                    per_turn_reasons.append(reason)
 
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.warning(
@@ -89,25 +82,27 @@ class _AsyncRetrievalScoreEvaluator:
                     )
 
                     per_turn_scores.append(math.nan)
+                    per_turn_reasons.append("")
+
+            mean_per_turn_score = list_mean_nan_safe(per_turn_scores)
 
             return {
-                "retrieval": list_mean_nan_safe(per_turn_scores),
-                "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
+                "retrieval": mean_per_turn_score,
+                "gpt_retrieval": mean_per_turn_score,
                 "evaluation_per_turn": {
                     "gpt_retrieval": per_turn_scores,
                     "retrieval": per_turn_scores,
+                    "retrieval_reason": per_turn_reasons,
                 },
             }
         llm_output = await self._flow(
             query=query, context=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
         )
-        score = math.nan
-        if llm_output:
-            parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
-            if len(parsed_score_response) > 0:
-                score = float(parsed_score_response[0].replace("'", "").strip())
+        score, reason = parse_quality_evaluator_reason_score(llm_output)
+
         return {
             "retrieval": score,
+            "retrieval_reason": reason,
             "gpt_retrieval": score,
         }
 
@@ -148,7 +143,8 @@ class RetrievalEvaluator:
             "retrieval": 3.0,
             "evaluation_per_turn": {
                 "gpt_retrieval": [1.0, 2.0, 3.0],
-                "retrieval": [1.0, 2.0, 3.0]
+                "retrieval": [1.0, 2.0, 3.0],
+                "retrieval_reason": ["<reasoning for score 1>", "<reasoning for score 2>", "<reasoning for score 3>"]
             }
         }
 

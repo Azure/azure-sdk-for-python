@@ -52,6 +52,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "groundedness"
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(self, model_config):

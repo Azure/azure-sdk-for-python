@@ -35,6 +35,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         {
             "relevance": 3.0,
             "gpt_relevance": 3.0,
+            "relevance_reason": "The response is relevant to the query because it provides the correct answer.",
         }
 
     Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.

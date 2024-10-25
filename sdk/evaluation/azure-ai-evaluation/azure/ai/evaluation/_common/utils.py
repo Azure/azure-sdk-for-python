@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Type, TypeVar, Union, cast, get_args, get_origin
+from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
@@ -266,3 +267,30 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         validate_annotation(v, annotations[k])
 
     return cast(T_TypedDict, o)
+
+def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    score = math.nan
+    reason = ""
+    if llm_output:
+        score_pattern = r"<S2>(.*?)</S2>"
+        reason_pattern = r"<S1>(.*?)</S1>"
+        score_match = re.findall(score_pattern, llm_output, re.DOTALL)
+        reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+        if score_match:
+            score = float(score_match[0].strip())
+        else:
+            print("No score match")
+        if reason_match:
+            reason = reason_match[0].strip()
+    else:
+        print("No llm_output")
+    print(f"Score: {score}, Reason: {reason}")
+    
+    return score, reason
+
+def remove_optional_singletons(eval_class, singletons):
+    if hasattr(eval_class, "_OPTIONAL_PARAMS"):
+        for param in eval_class._OPTIONAL_PARAMS:
+            if param in singletons:
+                del singletons[param]
+    return singletons
