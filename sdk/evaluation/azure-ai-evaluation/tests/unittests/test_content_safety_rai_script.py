@@ -253,7 +253,7 @@ class TestContentSafetyEvaluator:
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
-        assert result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"] == ""
+        assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"])
 
         metric_name = EvaluationMetrics.VIOLENCE
         response_value = {
