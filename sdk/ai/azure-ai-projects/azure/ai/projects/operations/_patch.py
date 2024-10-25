@@ -14,6 +14,7 @@ from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYP
 # from zoneinfo import ZoneInfo
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import GetConnectionResponse, ListConnectionsResponse
 from .._types import AgentsApiResponseFormatOption
@@ -305,6 +306,13 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             connection_properties_list.append(ConnectionProperties(connection=connection))
 
         return connection_properties_list
+
+
+class DiagnosticsOperations(DiagnosticsOperationsGenerated):
+    @distributed_trace
+    def enable(self, **kwargs):
+        get_workspace_response = self.outer_instance.connections._get_workspace()
+        print(get_workspace_response)
 
 
 class AgentsOperations(AgentsOperationsGenerated):

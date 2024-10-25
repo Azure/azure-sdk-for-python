@@ -14,7 +14,7 @@ class TestInferenceAsync(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_azure_openai_client_async(self, **kwargs):
-        model = kwargs.pop("azure_ai_projects_connections_test_model_deployment_name")
+        model = kwargs.pop("azure_ai_projects_inference_tests_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
             async with await project_client.inference.get_azure_openai_client() as azure_openai_client:
                 response = await azure_openai_client.chat.completions.create(
