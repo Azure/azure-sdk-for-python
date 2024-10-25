@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._client import SecurityDomainClient as _SecurityDomainClient
+from ._client import KeyVaultClient
 from .._internal import (
     AsyncChallengeAuthPolicy,
     AsyncSecurityDomainClientDownloadPollingMethod,
@@ -23,7 +23,7 @@ from .._internal import (
     SecurityDomainClientDownloadPolling,
     SecurityDomainClientUploadPolling,
 )
-from ..models import CertificateInfoObject, SecurityDomainObject
+from ..models import CertificateInfoObject, SecurityDomainObject, SecurityDomainOperationStatus
 from .._patch import DEFAULT_VERSION, _format_api_version, _SERIALIZER
 
 if sys.version_info < (3, 9):
@@ -38,7 +38,7 @@ __all__: List[str] = [
 ]  # Add all objects you want publicly available to users at this package level
 
 
-class SecurityDomainClient(_SecurityDomainClient):
+class SecurityDomainClient(KeyVaultClient):
     """Manages the security domain of a Managed HSM.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
@@ -77,7 +77,7 @@ class SecurityDomainClient(_SecurityDomainClient):
             **kwargs,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_download(
         self, certificate_info_object: CertificateInfoObject, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SecurityDomainObject]:
@@ -160,7 +160,7 @@ class SecurityDomainClient(_SecurityDomainClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        return await super().begin_download(
+        return await super().begin_download(  # type: ignore[return-value]
             certificate_info_object,
             polling=AsyncSecurityDomainClientDownloadPollingMethod(
                 lro_algorithms=[SecurityDomainClientDownloadPolling()], timeout=delay
@@ -168,18 +168,20 @@ class SecurityDomainClient(_SecurityDomainClient):
             **kwargs,
         )
 
-    @distributed_trace_async
+    @distributed_trace_async  # type: ignore[override]
     async def begin_upload(
         self, security_domain: Union[SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Is one of the following types:
          SecurityDomainObject, JSON, IO[bytes] Required.
         :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
          IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SecurityDomainOperationStatus. The
+         SecurityDomainOperationStatus is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)

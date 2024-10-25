@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import CertificateInfoObject
-from ._models import KeyVaultError
 from ._models import SecurityDomainJsonWebKey
 from ._models import SecurityDomainObject
 from ._models import SecurityDomainOperationStatus
@@ -20,7 +19,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "CertificateInfoObject",
-    "KeyVaultError",
     "SecurityDomainJsonWebKey",
     "SecurityDomainObject",
     "SecurityDomainOperationStatus",

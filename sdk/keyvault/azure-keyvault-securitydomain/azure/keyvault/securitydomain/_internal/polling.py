@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Callable, cast, TypeVar, Union
+from typing import Any, Callable, cast, TypeVar, Union
 
+from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling.base_polling import LROBasePolling, OperationFailed, OperationResourcePolling
 from azure.core.rest import HttpResponse, HttpRequest
@@ -13,7 +14,6 @@ from .._model_base import _deserialize
 from .._serialization import Deserializer
 
 
-PipelineClientType = TypeVar("PipelineClientType")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 # The correct success response should be "Succeeded", but this has already shipped.
@@ -96,7 +96,7 @@ class SecurityDomainClientDownloadPolling(OperationResourcePolling):
 class SecurityDomainClientDownloadPollingMethod(PollingTerminationMixin, LROBasePolling):
     def initialize(
         self,
-        client: PipelineClientType,
+        client: PipelineClient[Any, Any],
         initial_response: PipelineResponse[HttpRequest, HttpResponse],
         deserialization_callback: Callable[
             [PipelineResponse[HttpRequest, HttpResponse]],
@@ -150,7 +150,7 @@ class SecurityDomainClientUploadPolling(SecurityDomainClientDownloadPolling):
 class SecurityDomainClientUploadPollingMethod(PollingTerminationMixin, LROBasePolling):
     def initialize(
         self,
-        client: PipelineClientType,
+        client: PipelineClient[Any, Any],
         initial_response: PipelineResponse[HttpRequest, HttpResponse],
         deserialization_callback: Callable[
             [PipelineResponse[HttpRequest, HttpResponse]],

@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import SecurityDomainClientConfiguration
+from ._configuration import KeyVaultClientConfiguration
 
 if TYPE_CHECKING:
     from azure.core import PipelineClient
@@ -16,10 +16,10 @@ if TYPE_CHECKING:
     from ._serialization import Deserializer, Serializer
 
 
-class SecurityDomainClientMixinABC(ABC):
+class KeyVaultClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"
-    _config: SecurityDomainClientConfiguration
+    _config: KeyVaultClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
