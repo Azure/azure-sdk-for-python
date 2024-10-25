@@ -17,7 +17,7 @@ from azure.ai.ml._schema.core.fields import (
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_entry import DataInputSchema, ModelInputSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import OutputsField
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import ResourceConfigurationSchema
 from azure.ai.ml._schema.workspace.connections import ServerlessConnectionSchema, WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType, JobType
@@ -80,5 +80,5 @@ class DistillationJobSchema(BaseJobSchema):
     teacher_model_settings = NestedField(TeacherModelSettingsSchema)
     prompt_settings = NestedField(PromptSettingsSchema)
     hyperparameters = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
-    resources = NestedField(JobResourceConfigurationSchema)
+    resources = NestedField(ResourceConfigurationSchema)
     outputs = OutputsField()
