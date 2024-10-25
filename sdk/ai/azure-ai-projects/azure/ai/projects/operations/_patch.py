@@ -172,7 +172,7 @@ class InferenceOperations:
 
         # Pick latest GA version from the "Data plane - Inference" row in the table
         # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-        AZURE_OPENAI_API_VERSION = "2024-06-01"
+        AZURE_OPENAI_API_VERSION = "2024-07-01-preview"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(

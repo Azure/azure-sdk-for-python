@@ -36,7 +36,9 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin, cast
+from openai.types.beta.threads.required_action_function_tool_call import RequiredActionFunctionToolCall
+from openai.types.beta.function_tool_param import FunctionToolParam
 
 logger = logging.getLogger(__name__)
 
@@ -310,7 +312,7 @@ class FunctionTool(Tool):
             specs.append(tool_def)
         return specs
 
-    def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
+    def _get_func_and_args(self, tool_call: RequiredActionFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
         function_name = tool_call.function.name
         arguments = tool_call.function.arguments
 
@@ -332,7 +334,7 @@ class FunctionTool(Tool):
 
         return function, parsed_arguments
 
-    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+    def execute(self, tool_call: RequiredActionFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
@@ -350,6 +352,12 @@ class FunctionTool(Tool):
         """
         return self._definitions
 
+    def get_openai_definitions(self) -> List[FunctionToolParam]:
+        """
+        Get the function definitions as OpenAI FunctionToolParam objects.
+        """
+        return cast(List[FunctionToolParam], self._definitions)
+    
     @property
     def resources(self) -> ToolResources:
         """
@@ -362,7 +370,7 @@ class FunctionTool(Tool):
 
 class AsyncFunctionTool(FunctionTool):
 
-    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+    async def execute(self, tool_call: RequiredActionFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
