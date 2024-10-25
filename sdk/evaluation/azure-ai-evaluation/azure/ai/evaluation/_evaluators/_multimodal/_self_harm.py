@@ -4,6 +4,7 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.utils import validate_conversation
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
 @experimental

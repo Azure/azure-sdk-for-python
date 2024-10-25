@@ -8,9 +8,9 @@ from typing import Any, List, Literal, Mapping, Type, TypeVar, Union, cast, get_
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
-
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -273,7 +273,7 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
-def retrieve_content_type(assistant_messages: list, metric: str) -> str:
+def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     """Get the content type for service payload.
     
     :param messages: The list of messages to be annotated by evaluation service 
@@ -302,3 +302,94 @@ def retrieve_content_type(assistant_messages: list, metric: str) -> str:
     
     # Default return if no messages
     return "text" 
+
+def validate_conversation(conversation):
+    if conversation is None or "messages" not in conversation:
+        msg = "Attribute 'messages' is missing in the request"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    messages = conversation["messages"]   
+    if messages is None or not isinstance(messages, list):
+        msg = "'messages' parameter must be a JSON-compatible list of chat messages"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+    expected_roles = [ "user", "assistant", "system"]
+    image_found = False
+    for num, message in enumerate(messages):
+        msg_num = num + 1
+        if isinstance(message, dict):
+            if "role" in message or "content" in message:
+                if message["role"] not in expected_roles:
+                    msg = f"Invalid role provided: {message['role']}. Message number: {msg_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        blame=ErrorBlame.USER_ERROR,
+                    )
+                if not isinstance(message["content"], str) and not isinstance(message["content"], list):
+                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        blame=ErrorBlame.USER_ERROR,
+                    )
+                if isinstance(message["content"], list):
+                    for content in message["content"]:
+                        if content.get("type") == "image_url":
+                            image_url = content.get("image_url")
+                            if image_url and 'url' in image_url:
+                                image_found = True
+                                
+                if isinstance(message["content"], dict):
+                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        blame=ErrorBlame.USER_ERROR,
+                    )         
+        else:
+            try:
+                from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ImageContentItem
+            except ImportError:
+                error_message = "Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
+                raise MissingRequiredPackage(message=error_message)
+            else:
+                if isinstance(messages[0], ChatRequestMessage):
+                    if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage):
+                        msg = f"Messsage in array must be a strongly typed class of [UserMessage, SystemMessage, AssistantMessage]. Message number: {msg_num}"
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )  
+                    if message.content and isinstance(message.content, list):
+                        image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
+                        if len(image_items) > 0:
+                            image_found = True
+    if image_found is False:    
+        msg = f"Message needs to have multimodal input like images."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )

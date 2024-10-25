@@ -4,6 +4,7 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 
 @experimental
@@ -107,6 +108,7 @@ class _AsyncProtectedMaterialMultimodalEvaluator:
         :rtype: Any
         """
         # Validate inputs
+        validate_conversation(conversation)
         messages = conversation["messages"]
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service_multimodal(

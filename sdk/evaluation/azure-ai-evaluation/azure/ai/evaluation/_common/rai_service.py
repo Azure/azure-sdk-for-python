@@ -497,7 +497,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     :rtype: str
     """
     ## handle json payload and payload from inference sdk strongly type messages
-    if len(messages) > 0 and not isinstance(messages[0], Dict):
+    if len(messages) > 0 and not isinstance(messages[0], dict):
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError:

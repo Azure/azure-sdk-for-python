@@ -6,8 +6,11 @@ from typing import Union
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
+from azure.ai.evaluation._common.utils import validate_conversation
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._common._experimental import experimental
 
+@experimental
 class ContentSafetyMultimodalEvaluatorBase(ABC):
     """
     Initialize a evaluator for a specified Evaluation Metric. Base class that is not
@@ -45,6 +48,8 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
+        # validate inputs
+        validate_conversation(conversation)
         messages = conversation["messages"]
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service_multimodal(
