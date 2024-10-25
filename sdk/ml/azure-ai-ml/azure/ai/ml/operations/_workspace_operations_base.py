@@ -11,8 +11,8 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -60,7 +60,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient072024Preview,
+        service_client: ServiceClient102024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
