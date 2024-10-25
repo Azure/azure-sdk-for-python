@@ -113,6 +113,7 @@ class SecurityDomainClientDownloadPollingMethod(PollingTerminationMixin, LROBase
         :type deserialization_callback: callable
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
+
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
@@ -166,6 +167,7 @@ class SecurityDomainClientUploadPollingMethod(PollingTerminationMixin, LROBasePo
         :type deserialization_callback: callable
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
+
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
