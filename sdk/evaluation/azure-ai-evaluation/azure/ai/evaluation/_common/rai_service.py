@@ -522,7 +522,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     headers = get_common_headers(token)
     async with get_async_http_client() as client:
         response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+            url, json=payload, headers=headers
         )
     if response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["Contents"], response.text))
