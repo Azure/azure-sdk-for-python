@@ -25,7 +25,7 @@ _nltk_data_download_lock = threading.Lock()
 T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
-def get_harm_severity_level(harm_score: int) -> Union[str, float]:
+def get_harm_severity_level(harm_score: Union[float, int]) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
