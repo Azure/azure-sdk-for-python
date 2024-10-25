@@ -17,6 +17,7 @@ from azure.ai.evaluation._common.rai_service import (
     get_rai_svc_url,
     parse_response,
     submit_request,
+    Tasks,
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -166,11 +167,11 @@ class TestContentSafetyEvaluator:
     )
     async def test_submit_request(self, client_mock):
         result = await submit_request(
-            query="What is the meaning of life",
-            response="42",
+            data={"query": "What is the meaning of life", "response": "42"},
             metric="points",
             rai_svc_url="www.notarealurl.com",
             token="dummy",
+            annotation_task=Tasks.CONTENT_HARM,
         )
         assert result == "dummy-operation-id"
 
@@ -186,11 +187,11 @@ class TestContentSafetyEvaluator:
     async def test_submit_request_not_found(self, client_mock):
         with pytest.raises(HttpResponseError) as exc_info:
             _ = await submit_request(
-                query="What is the meaning of life",
-                response="42",
+                data={"query": "What is the meaning of life", "response": "42"},
                 metric="points",
                 rai_svc_url="www.notarealurl.com",
                 token="dummy",
+                annotation_task=Tasks.CONTENT_HARM,
             )
         assert "Operation returned an invalid status '404 Not Found'" in str(exc_info._excinfo[1])
 
@@ -250,7 +251,11 @@ class TestContentSafetyEvaluator:
     def test_parse_response(self):
         batch_response = [{"not-a-metric": "not-a-value"}]
         metric_name = EvaluationMetrics.HATE_FAIRNESS
-        result = parse_response(batch_response=batch_response, metric_name=metric_name)
+        result = parse_response(
+            batch_response=batch_response,
+            metric_name=metric_name,
+            metric_display_name=EvaluationMetrics.HATE_UNFAIRNESS,
+        )
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
         assert result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"] == ""
@@ -267,7 +272,7 @@ class TestContentSafetyEvaluator:
         # This tests ALL of it.
         batch_response[0] = {metric_name: str(response_value)}
 
-        result = parse_response(batch_response=batch_response, metric_name=metric_name)
+        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
         assert result[metric_name] == HarmSeverityLevel.VeryLow.value
         assert result[metric_name + "_score"] == 0
         assert result[metric_name + "_reason"] == response_value["reasoning"]
@@ -277,7 +282,7 @@ class TestContentSafetyEvaluator:
             "reason": "This is a sample reason.",
         }
         batch_response[0] = {metric_name: str(response_value)}
-        result = parse_response(batch_response=batch_response, metric_name=metric_name)
+        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
         assert result[metric_name] == HarmSeverityLevel.VeryLow.value
         assert result[metric_name + "_score"] == 0
         assert result[metric_name + "_reason"] == response_value["output"]["reason"]
@@ -314,7 +319,7 @@ class TestContentSafetyEvaluator:
         assert math.isnan(result[metric_name + "_score"])
 
         batch_response[0] = {metric_name: ["still not a number"]}
-        result = parse_response(batch_response=batch_response, metric_name=metric_name)
+        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
         assert math.isnan(result[metric_name])
         assert math.isnan(result[metric_name + "_score"])
 

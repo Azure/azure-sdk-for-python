@@ -12,7 +12,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class SelfHarmEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a self harm evaluator for self harm score.
 

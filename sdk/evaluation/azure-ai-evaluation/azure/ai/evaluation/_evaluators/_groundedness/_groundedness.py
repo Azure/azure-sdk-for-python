@@ -97,7 +97,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         conversation=None,
         **kwargs,
     ):
-        """Evaluate groundedless. Accepts either a response and context a single evaluation,
+        """Evaluate groundedness. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 

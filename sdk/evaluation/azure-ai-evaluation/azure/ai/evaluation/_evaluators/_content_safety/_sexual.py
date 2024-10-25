@@ -12,7 +12,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class SexualEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a sexual evaluator for sexual score.
 

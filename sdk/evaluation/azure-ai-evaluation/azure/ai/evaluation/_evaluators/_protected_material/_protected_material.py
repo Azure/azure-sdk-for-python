@@ -13,7 +13,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a protected material evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.

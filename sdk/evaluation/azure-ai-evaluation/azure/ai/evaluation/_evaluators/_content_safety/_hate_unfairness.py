@@ -12,7 +12,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 

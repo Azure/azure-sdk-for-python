@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.

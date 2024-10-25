@@ -12,7 +12,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class ViolenceEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a violence evaluator for violence score.
 
