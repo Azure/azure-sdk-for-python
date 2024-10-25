@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, T
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import MissingAzurePackage
+from promptflow._sdk._errors import MissingAzurePackage, UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
@@ -416,15 +416,31 @@ def _apply_target_to_data(
     _run_name = kwargs.get("_run_name")
     upload_target_snaphot = kwargs.get("_upload_target_snapshot", False)
 
-    with TargetRunContext(upload_target_snaphot):
-        run: Run = pf_client.run(
-            flow=target,
-            display_name=evaluation_name,
-            data=data,
-            properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-            stream=True,
-            name=_run_name,
-        )
+    try:
+        with TargetRunContext(upload_target_snaphot):
+            run: Run = pf_client.run(
+                flow=target,
+                display_name=evaluation_name,
+                data=data,
+                properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
+                stream=True,
+                name=_run_name,
+            )
+    except (UserAuthenticationError, UploadInternalError) as ex:
+        if "Failed to upload run" in ex.message:
+            msg = (
+                "Failed to upload the target run to the cloud. "
+                "This may be caused by insufficient permission to access storage or other errors."
+            )
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.FAILED_REMOTE_TRACKING,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
+            ) from ex
+
+        raise ex
 
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
@@ -620,7 +636,17 @@ def evaluate(
                 internal_message=error_message,
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.FAILED_EXECUTION,
-                blame=ErrorBlame.UNKNOWN,
+                blame=ErrorBlame.USER_ERROR,
+            ) from e
+
+        # Ensure a consistent user experience when encountering errors by converting
+        # all other exceptions to EvaluationException.
+        if not isinstance(e, EvaluationException):
+            raise EvaluationException(
+                message=str(e),
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.SYSTEM_ERROR,
             ) from e
 
         raise e
