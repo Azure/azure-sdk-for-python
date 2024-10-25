@@ -1306,8 +1306,8 @@ class ContainerProxy:
         :rtype: Iterable[Dict[str, Any]]
 
         .. note::
-          For each feed range, even through a Dict has been returned,
-          but in the future, the structure may change. Please just treat it as opaque and do not take any dependent on it.
+          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
+          Please just treat it as opaque and do not take any dependent on it.
 
         """
         if force_refresh is True:
@@ -1328,11 +1328,11 @@ class ContainerProxy:
                                        feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
                                        target_feed_range: Dict[str, Any]
                                        ) -> str:
-        """ **provisional** Gets the the most up to date session token from the list of session token and feed range tuples
-        for a specific target feed range. The feed range can be obtained from a logical partition or by reading the
-        container feed ranges. This should only be used if maintaining own session token or else the sdk will
-        keep track of session token. Session tokens and feed ranges are scoped to a container. Only input session
-        tokens and feed ranges obtained from the same container.
+        """ **provisional** Gets the the most up to date session token from the list of session token and feed
+        range tuples for a specific target feed range. The feed range can be obtained from a logical partition
+        or by reading the container feed ranges. This should only be used if maintaining own session token or else
+        the sdk willkeep track of session token. Session tokens and feed ranges are scoped to a container.
+        Only input session tokens and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
         :type feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]]
         :param target_feed_range: feed range to get most up to date session token.
