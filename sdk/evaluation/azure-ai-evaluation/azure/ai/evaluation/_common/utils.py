@@ -24,7 +24,7 @@ _nltk_data_download_lock = threading.Lock()
 T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
-def get_harm_severity_level(harm_score: int) -> Union[str, float]:
+def get_harm_severity_level(harm_score: Union[float, int]) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
@@ -48,13 +48,19 @@ def get_harm_severity_level(harm_score: int) -> Union[str, float]:
 
 def ensure_nltk_data_downloaded():
     """Download NLTK data packages if not already downloaded."""
+    nltk_data = [
+        ("wordnet", "corpora/wordnet.zip"),
+        ("perluniprops", "misc/perluniprops.zip"),
+        ("punkt", "tokenizers/punkt.zip"),
+        ("punkt_tab", "tokenizers/punkt_tab.zip"),
+    ]
+
     with _nltk_data_download_lock:
-        try:
-            from nltk.tokenize.nist import NISTTokenizer  # pylint: disable=unused-import
-        except LookupError:
-            nltk.download("perluniprops")
-            nltk.download("punkt")
-            nltk.download("punkt_tab")
+        for _id, resource_name in nltk_data:
+            try:
+                nltk.find(resource_name)
+            except LookupError:
+                nltk.download(_id)
 
 
 def nltk_tokenize(text: str) -> List[str]:

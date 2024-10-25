@@ -27,7 +27,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             backup_vault_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             backup_vault_name="str",
             backup_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "useExistingSnapshot": False,
                 },
-                api_version="2024-03-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -123,7 +123,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 backup_vault_name="str",
                 backup_name="str",
-                api_version="2024-03-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -139,7 +139,7 @@ class TestNetAppManagementBackupsOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 backup_vault_name="str",
                 backup_name="str",
-                api_version="2024-03-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

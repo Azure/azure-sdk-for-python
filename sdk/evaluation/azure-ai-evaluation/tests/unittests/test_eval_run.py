@@ -9,9 +9,9 @@ import jwt
 import pytest
 from promptflow.azure._utils._token_cache import ArmTokenCache
 
-from azure.ai.evaluation._exceptions import EvaluationException
 import azure.ai.evaluation._evaluate._utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def generate_mock_token():
