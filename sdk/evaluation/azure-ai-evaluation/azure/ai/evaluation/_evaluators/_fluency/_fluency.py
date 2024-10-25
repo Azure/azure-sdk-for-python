@@ -58,7 +58,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         query: str,
         response: str,
     ) -> Dict[str, float]:
-        """Evaluate fleuncy in given query/response
+        """Evaluate fluency in given query/response
     
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -76,7 +76,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
-        """Evaluate cross domain injected attacks are present in a conversation 
+        """Evaluate fluency for a conversation 
         
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
