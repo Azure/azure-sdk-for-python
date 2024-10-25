@@ -83,7 +83,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b28",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b31",
         "opentelemetry-instrumentation-django~=0.48b0",
         "opentelemetry-instrumentation-fastapi~=0.48b0",
         "opentelemetry-instrumentation-flask~=0.48b0",

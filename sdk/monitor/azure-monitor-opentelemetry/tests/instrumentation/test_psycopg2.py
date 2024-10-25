@@ -8,8 +8,8 @@ import sys
 import unittest
 
 # Skip for Python v3.13 until https://github.com/psycopg/psycopg2/pull/1729 is resolved
-# Skip for Python v3.9 due to https://github.com/psycopg/psycopg/issues/936
-if sys.implementation.name != "pypy" and sys.version_info > (3, 8) and sys.version_info < (3, 13):
+# Skip for Python v3.8 due to https://github.com/psycopg/psycopg/issues/936
+if sys.implementation.name != "pypy" and (3, 8) < sys.version_info < (3, 13):
     from opentelemetry.instrumentation.psycopg2 import (
         Psycopg2Instrumentor,
     )
