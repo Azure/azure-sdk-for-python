@@ -110,3 +110,27 @@ class TestBuiltInEvaluators:
 
         result = retrieval_eval(conversation=conversation)
         assert result["retrieval"] == result["gpt_retrieval"] == 1
+
+    def test_quality_evaluator_missing_input(self, mock_model_config):
+        """All evaluators that inherit from EvaluatorBase are covered by this test"""
+        quality_eval = RelevanceEvaluator(model_config=mock_model_config)
+        quality_eval._flow = MagicMock(return_value=quality_response_async_mock())
+
+        with pytest.raises(EvaluationException) as exc_info:
+            quality_eval(response="The capital of Japan is Tokyo.")  # Relevance requires "query"
+
+        assert (
+            "RelevanceEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+        )
+
+    def test_retrieval_evaluator_missing_input(self, mock_model_config):
+        """This test can be removed if RetrievalEvaluator is refactored to be a child of EvaluatorBase"""
+        retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
+        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
+
+        with pytest.raises(EvaluationException) as exc_info:
+            retrieval_eval(context="1 + 2 = 2.")  # Retrieval requires "query"
+
+        assert (
+            "Either a pair of 'query'/'context' or 'conversation' must be provided." in exc_info.value.args[0]
+        )

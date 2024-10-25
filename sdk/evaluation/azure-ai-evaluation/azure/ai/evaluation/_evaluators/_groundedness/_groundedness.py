@@ -52,6 +52,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "groundedness"
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(self, model_config):
@@ -91,25 +92,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if (response is None or context is None) and conversation is None:
-            msg = "Either a pair of 'response'/'context' ('query' optional) or 'conversation' must be provided."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
-            )
-
-        if (query or response or context) and conversation:
-            msg = "If 'conversation' is provided, 'query', 'response', and 'context' cannot be provided."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
-            )
 
         if query:
             current_dir = os.path.dirname(__file__)

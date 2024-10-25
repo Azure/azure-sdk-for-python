@@ -77,23 +77,5 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if (query is None or response is None) and conversation is None:
-            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.RELEVANCE_EVALUATOR,
-            )
-        if query and response and conversation:
-            msg = "Either a pair of 'query'/'response' or 'conversation' must be provided, but not both."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.RELEVANCE_EVALUATOR,
-            )
 
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

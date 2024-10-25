@@ -70,24 +70,5 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        if response is None and conversation is None:
-            msg = "Either 'response' or 'conversation' must be provided."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.FLUENCY_EVALUATOR,
-            )
-
-        if response and conversation:
-            msg = "Either 'response' or 'conversation' must be provided, but not both."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.FLUENCY_EVALUATOR,
-            )
 
         return super().__call__(response=response, conversation=conversation, **kwargs)
