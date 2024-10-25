@@ -23,7 +23,7 @@
 """
 import warnings
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload
+from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, Iterable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -534,7 +534,7 @@ class ContainerProxy:
     def query_items_change_feed(
             self,
             *,
-            feed_range: str,
+            feed_range: Dict[str, Any],
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -542,7 +542,7 @@ class ContainerProxy:
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -620,7 +620,7 @@ class ContainerProxy:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
         :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
@@ -1296,13 +1296,17 @@ class ContainerProxy:
             *,
             force_refresh: Optional[bool] = False,
             **kwargs: Any
-    ) -> List[str]:
+    ) -> Iterable[Dict[str, Any]]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
         :returns: A list representing the feed ranges in base64 encoded string
-        :rtype: List[str]
+        :rtype: Iterable[Dict[str, Any]]
+
+        .. note::
+          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
+          Please just treat it as opaque and do not take any dependent on it.
 
         """
         if force_refresh is True:
@@ -1315,5 +1319,7 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).__str__()
+        feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                 for partitionKeyRange in partition_key_ranges]
+
+        return (feed_range for feed_range in feed_ranges)

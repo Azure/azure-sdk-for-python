@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Union
+from typing import Optional
 
 from typing_extensions import override
 
@@ -11,7 +11,7 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
 @experimental
-class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class ViolenceEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a violence evaluator for violence score.
 

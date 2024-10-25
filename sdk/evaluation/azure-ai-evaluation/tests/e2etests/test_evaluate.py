@@ -14,6 +14,7 @@ from azure.ai.evaluation import (
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
+    GroundednessProEvaluator,
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
@@ -23,6 +24,12 @@ from azure.ai.evaluation._common.math import list_mean_nan_safe
 def data_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data.jsonl")
+
+
+@pytest.fixture
+def data_convo_file():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data_conversation.jsonl")
 
 
 @pytest.fixture
@@ -205,7 +212,36 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
-    @pytest.mark.performance_test
+    def test_evaluate_with_groundedness_pro_evaluator(self, project_scope, data_convo_file, azure_cred):
+
+        # CS evaluator tries to store the credential, which breaks multiprocessing at
+        # pickling stage. So we pass None for credential and let child evals
+        # generate a default credential at runtime.
+        # Internal Parallelism is also disabled to avoid faulty recordings.
+        gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred, parallel=False)
+
+        convo_input_data = pd.read_json(data_convo_file, lines=True)
+        # run the evaluation
+        convo_result = evaluate(
+            data=data_convo_file,
+            evaluators={"groundedness_pro": gp_eval},
+        )
+
+        convo_row_result_df = pd.DataFrame(convo_result["rows"])
+        convo_metrics = convo_result["metrics"]
+        assert convo_row_result_df.shape[0] == len(convo_input_data)
+        assert "outputs.groundedness_pro.groundedness_pro_label" in convo_row_result_df.columns.to_list()
+        assert "outputs.groundedness_pro.evaluation_per_turn" in convo_row_result_df.columns.to_list()
+
+        per_turn_results = convo_row_result_df["outputs.groundedness_pro.evaluation_per_turn"][0]
+        assert "groundedness_pro_label" in per_turn_results.keys()
+        assert "groundedness_pro_reason" in per_turn_results.keys()
+
+        # Check that label is renamed to passsing rate in metrics
+        assert "groundedness_pro.groundedness_pro_passing_rate" in convo_metrics.keys()
+        assert 0 <= convo_metrics.get("groundedness_pro.groundedness_pro_passing_rate") <= 1
+
+    # @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"

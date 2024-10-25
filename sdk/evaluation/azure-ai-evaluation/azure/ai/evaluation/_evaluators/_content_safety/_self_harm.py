@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Union
+from typing import Optional
 
 from typing_extensions import override
 
@@ -11,7 +11,7 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
 @experimental
-class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
+class SelfHarmEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a self harm evaluator for self harm score.
 
