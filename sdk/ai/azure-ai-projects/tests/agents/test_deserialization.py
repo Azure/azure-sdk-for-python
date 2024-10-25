@@ -9,6 +9,7 @@ import pytest
 from azure.ai.projects.models._models import ThreadRun, RunStep, ThreadMessage
 from azure.ai.projects.models._patch import _safe_instantiate, _filter_parameters
 
+
 class TestDeserialization:
     """Tests for deserialization of sse responses."""
 

@@ -7,6 +7,7 @@ from devtools_testutils import recorded_by_proxy
 from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestInference(InferenceTestBase):
 
@@ -26,7 +27,7 @@ class TestInference(InferenceTestBase):
                     model=model,
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()
@@ -41,7 +42,7 @@ class TestInference(InferenceTestBase):
                     ]
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()

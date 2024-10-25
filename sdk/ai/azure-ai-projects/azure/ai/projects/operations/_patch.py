@@ -1,5 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -16,7 +15,7 @@ from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYP
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
-from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
+from ..models._models import GetConnectionResponse, ListConnectionsResponse
 from .._types import AgentsApiResponseFormatOption
 from ..models._patch import ConnectionProperties
 from ..models._enums import FilePurpose
@@ -264,7 +263,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Connection name cannot be empty")
         if with_credentials:
-            connection: ConnectionsListSecretsResponse = self._list_secrets(
+            connection: GetConnectionResponse = self._get_connection_with_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
@@ -284,7 +283,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            return ConnectionProperties(connection=self._get(connection_name=connection_name, **kwargs))
+            return ConnectionProperties(connection=self._get_connection(connection_name=connection_name, **kwargs))
 
     @distributed_trace
     def list(self, *, connection_type: ConnectionType | None = None, **kwargs: Any) -> Iterable[ConnectionProperties]:
@@ -298,7 +297,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connections_list: ConnectionsListResponse = self._list(include_all=True, category=connection_type, **kwargs)
+        connections_list: ListConnectionsResponse = self._list_connections(include_all=True, category=connection_type, **kwargs)
 
         # Iterate to create the simplified result property
         connection_properties_list: List[ConnectionProperties] = []

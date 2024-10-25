@@ -7,9 +7,10 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestInferenceAsync(InferenceTestBase):
-    
+
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_azure_openai_client_async(self, **kwargs):
@@ -26,9 +27,8 @@ class TestInferenceAsync(InferenceTestBase):
                     model=model,
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
-
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
@@ -42,7 +42,7 @@ class TestInferenceAsync(InferenceTestBase):
                     ]
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()
