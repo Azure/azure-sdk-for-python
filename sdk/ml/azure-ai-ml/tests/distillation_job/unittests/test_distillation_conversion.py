@@ -5,11 +5,9 @@ from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import (
-    EndpointRequestSettings,
-    PromptSettings,
-    TeacherModelSettings,
-)
+from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
+from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import ServerlessConnection
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection

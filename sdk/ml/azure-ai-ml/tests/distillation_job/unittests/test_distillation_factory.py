@@ -5,7 +5,8 @@ from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenera
 from azure.ai.ml.distillation import distillation
 from azure.ai.ml.entities import NoneCredentialConfiguration, ServerlessConnection, WorkspaceConnection
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import EndpointRequestSettings, PromptSettings
+from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
 
 
 class TestDistillationJob:

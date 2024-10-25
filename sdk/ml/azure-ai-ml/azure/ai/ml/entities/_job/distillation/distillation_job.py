@@ -21,11 +21,9 @@ from azure.ai.ml.entities._job.distillation.constants import (
     EndpointSettings,
     PromptSettingKeys,
 )
-from azure.ai.ml.entities._job.distillation.distillation_types import (
-    EndpointRequestSettings,
-    PromptSettings,
-    TeacherModelSettings,
-)
+from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
+from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration

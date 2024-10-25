@@ -10,7 +10,8 @@ from azure.ai.ml.constants import DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.distillation_types import PromptSettings, TeacherModelSettings
+from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
+from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 

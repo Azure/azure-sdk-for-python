@@ -4,7 +4,8 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema._distillation.distillation_types import PromptSettingsSchema, TeacherModelSettingsSchema
+from azure.ai.ml._schema._distillation.prompt_settings import PromptSettingsSchema
+from azure.ai.ml._schema._distillation.teacher_model_settings import TeacherModelSettingsSchema
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     LocalPathField,
