@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._operations._patch import DocumentTranslationLROPoller, DocumentTranslationLROPollingMethod, TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
 from .models import (
-    BatchRequest,
+    DocumentBatch,
     SourceInput,
     TranslationTarget,
     DocumentFilter,
@@ -107,7 +107,7 @@ def get_translation_input(args, kwargs, continuation_token):
 
             request = StartTranslationDetails(
                 inputs=[
-                    BatchRequest(
+                    DocumentBatch(
                         source=SourceInput(
                             source_url=source_url,
                             filter=DocumentFilter(prefix=prefix, suffix=suffix),
