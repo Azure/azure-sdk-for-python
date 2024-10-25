@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
 
@@ -11,11 +10,11 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search_async.py
+    python sample_agents_vector_store_file_search.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure.ai.projects azure-identity azure-ai-ml
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -25,6 +24,10 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models._models import VectorStorageConfiguration,\
+    VectorStorageDataSource
+from azure.ai.ml._ml_client import MLClient
+
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -37,19 +40,16 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {file.id}")
+    azure_client = MLClient.from_config(credential)
+    data_ul = azure_client.data.get(name="products", version="1.0")
 
     # create a vector store with no file and wait for it to be processed
-    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
-    print(f"Created vector store, vector store ID: {vector_store.id}")
-
-    # add the file to the vector store or you can supply file ids in the vector store creation
-    vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, file_ids=[file.id]
+    ds = VectorStorageDataSource(storage_uri=data_ul.path , asset_type="uri_asset")
+    vc = VectorStorageConfiguration(data_sources=[ds])
+    vector_store = project_client.agents.create_vector_store_and_poll(
+        store_configuration=vc, name="sample_vector_store"
     )
-    print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
+    print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # create a file search tool
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -74,9 +74,6 @@ with project_client:
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-
-    project_client.agents.delete_file(file.id)
-    print("Deleted file")
 
     project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vectore store")
