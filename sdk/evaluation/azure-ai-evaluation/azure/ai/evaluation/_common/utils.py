@@ -304,6 +304,7 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     # Default return if no messages
     return "text"
 
+
 def validate_conversation(conversation):
     def raise_exception(msg, target):
         raise EvaluationException(
@@ -313,6 +314,7 @@ def validate_conversation(conversation):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
+
     if not conversation or "messages" not in conversation:
         raise_exception(
             "Attribute 'messages' is missing in the request",

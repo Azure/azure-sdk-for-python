@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 @experimental
 class ContentSafetyMultimodalEvaluator:
     """
-    Initialize a content safety multimodal evaluator configured to evaluate content safety metrics 
+    Initialize a content safety multimodal evaluator configured to evaluate content safety metrics
     for multimodal scenario.
 
     :param credential: The credential for connecting to Azure AI project. Required
@@ -100,7 +100,7 @@ class ContentSafetyMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content-safety metrics for list of messages.
-        :keyword conversation: The conversation contains list of messages to be evaluated. 
+        :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score based on the Content Safety Metrics.

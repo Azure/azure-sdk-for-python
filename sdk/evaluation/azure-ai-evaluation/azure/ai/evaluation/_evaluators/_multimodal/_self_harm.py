@@ -6,6 +6,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
+
 @experimental
 class SelfHarmMultimodalEvaluator:
     """
@@ -66,7 +67,7 @@ class SelfHarmMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates self harm content.
-        :keyword conversation: The conversation contains list of messages to be evaluated. 
+        :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The self harm score.

@@ -38,7 +38,7 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
     async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword conversation: The conversation contains list of messages to be evaluated. 
+        :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
