@@ -71,6 +71,7 @@ evaluation = Evaluation(
         ),
     },
     # This is needed as a workaround until environment gets published to registry
+    # cSpell:disable-next-line
     properties={"Environment": "azureml://registries/jamahaja-evals-registry/environments/eval-remote-env/versions/6"},
 )
 

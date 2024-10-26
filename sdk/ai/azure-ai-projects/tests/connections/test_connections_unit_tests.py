@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable 
 import datetime
 from azure.ai.projects.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken

@@ -8,6 +8,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable 
 import os
 import json
 import time
@@ -51,6 +52,7 @@ if LOGGING_ENABLED:
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_project",
+    # cSpell:disable-next-line
     project_connection_string_agents_tests="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
