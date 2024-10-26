@@ -377,7 +377,7 @@ class TestEvaluate:
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred, parallel=False)
+        gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred)
 
         convo_input_data = pd.read_json(data_convo_file, lines=True)
         # run the evaluation
