@@ -226,7 +226,6 @@ class Simulator:
         semaphore = asyncio.Semaphore(concurrent_async_tasks)
         progress_bar_lock = asyncio.Lock()
 
-
         async def run_simulation(simulation: List[Union[str, Dict[str, Any]]]) -> JsonLineChatProtocol:
             async with semaphore:
                 current_simulation = ConversationHistory()

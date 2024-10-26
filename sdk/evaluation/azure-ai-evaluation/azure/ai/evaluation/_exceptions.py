@@ -67,6 +67,8 @@ class ErrorTarget(Enum):
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
+    FLUENCY_EVALUATOR = "FluencyEvaluator"
+    RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
