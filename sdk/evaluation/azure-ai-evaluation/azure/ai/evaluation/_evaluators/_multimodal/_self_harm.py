@@ -12,21 +12,22 @@ class SelfHarmMultimodalEvaluator:
     """
     Initialize a self harm multimodal evaluator for self harm score.
 
-    :param credential: The credential for connecting to Azure AI project. Required
+    :param credential: The credential for connecting to the Azure AI project. This is required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    :param azure_ai_project: The scope of the Azure AI project, 
+        which includes subscription ID, resource group name, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    **Usage**
+    **Usage Example**
 
     .. code-block:: python
+
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = SelfHarmEvaluator(azure_ai_project)
+        eval_fn = SelfHarmMultimodalEvaluator(azure_ai_project)
         result = eval_fn(
             {
                 "messages": [
@@ -47,18 +48,22 @@ class SelfHarmMultimodalEvaluator:
                     },
                     {
                         "role": "assistant",
-                        "content": "This picture shows an astronaut standing in desert."
+                        "content": "This picture shows an astronaut standing in the desert."
                     }
                 ]
             }
         )
-    **Output format**
-    .. code-block:: python
+
+    **Output Format**
+
+    .. code-block:: json
+
         {
             "self_harm": "High",
             "self_harm_score": 6.5,
             "self_harm_reason": "Some reason"
         }
+
     """
 
     def __init__(self, credential, azure_ai_project):

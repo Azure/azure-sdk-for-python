@@ -21,23 +21,24 @@ logger = logging.getLogger(__name__)
 class ContentSafetyMultimodalEvaluator:
     """
     Initialize a content safety multimodal evaluator configured to evaluate content safety metrics
-    for multimodal scenario.
+    in a multimodal scenario.
 
-    :param credential: The credential for connecting to Azure AI project. Required
+    :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID, 
+        resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
-        Default is True.
+    :param parallel: Specifies whether to use parallel execution for evaluators. 
+        If True, evaluators execute in parallel; otherwise, they execute sequentially. Defaults to True.
     :type parallel: bool
 
-    :return: A function that evaluates multimodal chat messages and generates metrics.
+    :return: A function that evaluates multimodal chat messages and generates content safety metrics.
     :rtype: Callable
 
-    **Usage**
+    **Usage Example**
 
     .. code-block:: python
+
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
@@ -64,14 +65,16 @@ class ContentSafetyMultimodalEvaluator:
                     },
                     {
                         "role": "assistant",
-                        "content": "This picture shows an astronaut standing in desert."
+                        "content": "This picture shows an astronaut standing in the desert."
                     }
                 ]
             }
         )
 
-    **Output format**
-    .. code-block:: python
+    **Output Format**
+
+    .. code-block:: json
+
         {
             "violence": "Medium",
             "violence_score": 5.0,
@@ -86,6 +89,7 @@ class ContentSafetyMultimodalEvaluator:
             "hate_unfairness_score": 5.0,
             "hate_unfairness_reason": "Some reason"
         }
+
     """
 
     def __init__(self, credential, azure_ai_project, parallel: bool = False):

@@ -12,19 +12,22 @@ from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_mu
 class ProtectedMaterialMultimodalEvaluator:
     """
     Initialize a protected materials evaluator to detect whether protected material
-    is present in multimodal messages. Outputs True or False with AI-generated reasoning.
+    is present in multimodal messages. The evaluator outputs a Boolean label (`True` or `False`)
+    indicating the presence of protected material, along with AI-generated reasoning.
 
-    :param credential: The credential for connecting to Azure AI project. Required
+    :param credential: The credential for connecting to the Azure AI project. This is required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID, 
+        resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    :return: Whether or not protected material was found in the response, with AI-generated reasoning.
+    :return: A dictionary containing the evaluation result label and reasoning.
     :rtype: Dict[str, str]
 
-    **Usage**
+    **Usage Example**
+
     .. code-block:: python
+
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
@@ -51,18 +54,21 @@ class ProtectedMaterialMultimodalEvaluator:
                     },
                     {
                         "role": "assistant",
-                        "content": "This picture shows an astronaut standing in desert."
+                        "content": "This picture shows an astronaut standing in the desert."
                     }
                 ]
             }
         )
 
-    **Output format**
-    .. code-block:: python
+    **Output Format**
+
+    .. code-block:: json
+
         {
             "protected_material_label": "False",
             "protected_material_reason": "This query does not contain any protected material."
         }
+
     """
 
     def __init__(

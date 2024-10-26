@@ -12,21 +12,22 @@ class SexualMultimodalEvaluator:
     """
     Initialize a sexual multimodal evaluator for sexual score.
 
-    :param credential: The credential for connecting to Azure AI project. Required
+    :param credential: The credential for connecting to the Azure AI project. This is required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    :param azure_ai_project: The scope of the Azure AI project, 
+        which includes subscription ID, resource group name, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    **Usage**
+    **Usage Example**
 
     .. code-block:: python
+
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = SexualEvaluator(azure_ai_project)
+        eval_fn = SexualMultimodalEvaluator(azure_ai_project)
         result = eval_fn(
             {
                 "messages": [
@@ -47,20 +48,23 @@ class SexualMultimodalEvaluator:
                     },
                     {
                         "role": "assistant",
-                        "content": "This picture shows an astronaut standing in desert."
+                        "content": "This picture shows an astronaut standing in the desert."
                     }
                 ]
             }
         )
-    **Output format**
-    .. code-block:: python
+
+    **Output Format**
+
+    .. code-block:: json
+
         {
             "sexual": "High",
             "sexual_score": 6.5,
             "sexual_reason": "Some reason"
         }
-    """
 
+    """
     def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncSexualMultimodalEvaluator(credential, azure_ai_project)
 

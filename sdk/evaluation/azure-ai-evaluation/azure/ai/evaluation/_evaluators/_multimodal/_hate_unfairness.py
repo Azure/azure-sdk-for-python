@@ -11,20 +11,23 @@ from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBas
 class HateUnfairnessMultimodalEvaluator:
     """
     Initialize a hate-unfairness multimodal evaluator for hate unfairness score.
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
 
-    **Usage**
+    :param credential: The credential for connecting to the Azure AI project. This is required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param azure_ai_project: The scope of the Azure AI project, 
+        which includes subscription ID, resource group name, and project name.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+
+    **Usage Example**
+
     .. code-block:: python
+
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = HateUnfairnessEvaluator(azure_ai_project)
+        eval_fn = HateUnfairnessMultimodalEvaluator(azure_ai_project)
         result = eval_fn(
             {
                 "messages": [
@@ -45,19 +48,22 @@ class HateUnfairnessMultimodalEvaluator:
                     },
                     {
                         "role": "assistant",
-                        "content": "This picture shows an astronaut standing in desert."
+                        "content": "This picture shows an astronaut standing in the desert."
                     }
                 ]
             }
         )
 
-    **Output format**
-    .. code-block:: python
+    **Output Format**
+
+    .. code-block:: json
+
         {
             "hate_unfairness": "High",
             "hate_unfairness_score": 6.5,
             "hate_unfairness_reason": "Some reason"
         }
+
     """
 
     def __init__(self, credential, azure_ai_project):
