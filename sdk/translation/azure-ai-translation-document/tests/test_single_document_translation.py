@@ -73,7 +73,7 @@ class TestSingleDocumentTranslation(DocumentTranslationTest):
             document_translate_content = DocumentTranslateContent(document=self._get_document_content())
 
             # Invoke document translation
-            response_stream = client.document_translate(
+            response_stream = client.translate(
                 body=document_translate_content, target_language=target_languages
             )
 
@@ -97,7 +97,7 @@ class TestSingleDocumentTranslation(DocumentTranslationTest):
             )
 
             # Invoke document translation
-            response_stream = client.document_translate(
+            response_stream = client.translate(
                 body=document_translate_content, target_language=target_languages
             )
 
@@ -123,7 +123,7 @@ class TestSingleDocumentTranslation(DocumentTranslationTest):
 
             # Invoke document translation and validate exception
             try:
-                client.document_translate(body=document_translate_content, target_language=target_languages)
+                client.translate(body=document_translate_content, target_language=target_languages)
             except HttpResponseError as e:
                 assert e.status_code == 400
             return variables

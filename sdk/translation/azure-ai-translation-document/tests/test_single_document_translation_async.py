@@ -45,7 +45,7 @@ class TestSingleDocumentTranslation(AsyncDocumentTranslationTest):
             )
 
             # Invoke document translation
-            response_stream = await client.document_translate(
+            response_stream = await client.translate(
                 body=document_translate_content, target_language=target_languages
             )
 
@@ -70,7 +70,7 @@ class TestSingleDocumentTranslation(AsyncDocumentTranslationTest):
             )
 
             # Invoke document translation
-            response_stream = await client.document_translate(
+            response_stream = await client.translate(
                 body=document_translate_content, target_language=target_languages
             )
 
@@ -97,7 +97,7 @@ class TestSingleDocumentTranslation(AsyncDocumentTranslationTest):
 
             # Invoke document translation and validate exception
             try:
-                await client.document_translate(body=document_translate_content, target_language=target_languages)
+                await client.translate(body=document_translate_content, target_language=target_languages)
             except HttpResponseError as e:
                 assert e.status_code == 400
             return variables
