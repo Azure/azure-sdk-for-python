@@ -24,7 +24,7 @@ from .._deserialize import deserialize_file_properties, process_storage_error
 from .._models import FileProperties
 from .._path_client_helpers import _parse_rename_path
 from .._serialize import convert_datetime_to_rfc1123
-from .._shared.base_client import parse_connection_str
+from .._shared.base_client_async import parse_connection_str
 from ..aio._upload_helper import upload_datalake_file
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient

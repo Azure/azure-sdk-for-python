@@ -443,7 +443,7 @@ class DataLakeDirectoryClient(PathClient):
         self, sub_directory: Union[DirectoryProperties, str],
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Self:
+    ) -> "DataLakeDirectoryClient":
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
 
@@ -526,7 +526,10 @@ class DataLakeDirectoryClient(PathClient):
         return subdir
 
     @distributed_trace_async
-    async def delete_sub_directory(self, sub_directory: Union[DirectoryProperties, str], **kwargs: Any) -> Self:
+    async def delete_sub_directory(
+        self, sub_directory: Union[DirectoryProperties, str],
+        **kwargs: Any
+    ) -> "DataLakeDirectoryClient":
         """
         Marks the specified subdirectory for deletion.
 
