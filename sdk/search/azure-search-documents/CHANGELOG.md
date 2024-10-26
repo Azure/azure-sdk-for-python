@@ -5,12 +5,35 @@
 ### Features Added
 
 - Added `SearchResourceEncryptionKey`.`identity` support.
+- Added `query_rewrites` in `SearchClient`.`Search`.
+- Added `query_rewrites` in `VectorizableTextQuery`.
+- Added new models:
+  - `azure.search.documents.QueryRewritesType`
+  - `azure.search.documents.indexes.AIServicesAccountIdentity`
+  - `azure.search.documents.indexes.AIServicesAccountKey`
+  - `azure.search.documents.indexes.AzureOpenAITokenizerParameters`
+  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth`
+  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputMode`
+  - `azure.search.documents.indexes.DataSourceCredentials`
+  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkill`
+  - `azure.search.documents.indexes.IndexerCurrentState`
+  - `azure.search.documents.indexes.MarkdownHeaderDepth`
+  - `azure.search.documents.indexes.MarkdownParsingSubmode`
+  - `azure.search.documents.indexes.RescoringOptions`
+  - `azure.search.documents.indexes.ResourceCounter`
+  - `azure.search.documents.indexes.SkillNames`
+  - `azure.search.documents.indexes.SplitSkillEncoderModelName`
+  - `azure.search.documents.indexes.SplitSkillUnit`
+  - `azure.search.documents.indexes.VectorSearchCompressionKind`
+  - `azure.search.documents.indexes.VectorSearchCompressionRescoreStorageMethod`
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated the API version to "2024-1-01-preview"
 
 ## 11.6.0b6 (2024-10-08)
 

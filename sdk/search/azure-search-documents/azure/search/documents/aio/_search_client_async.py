@@ -28,6 +28,7 @@ from .._generated.models import (
     VectorFilterMode,
     VectorQuery,
     SemanticErrorMode,
+    QueryRewritesType,
     QueryDebugMode,
     SuggestRequest,
     HybridSearch,
@@ -178,6 +179,7 @@ class SearchClient(HeadersMixin):
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
+        query_rewrites: Optional[Union[str, QueryRewritesType]] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         hybrid_search: Optional[HybridSearch] = None,
         **kwargs
@@ -289,6 +291,13 @@ class SearchClient(HeadersMixin):
         :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
             time it takes for semantic enrichment to finish processing before the request fails.
+        :keyword query_rewrites: When QueryRewrites is set to ``generative``\\ , the query terms are sent
+            to a generate model which will produce 10 (default) rewrites to help increase the recall of the
+            request. The requested count can be configured by appending the pipe character ``|`` followed
+            by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
+            ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
+            "none" and "generative".
+        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
             results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
@@ -372,6 +381,7 @@ class SearchClient(HeadersMixin):
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            query_rewrites=query_rewrites,
             debug=debug,
             hybrid_search=hybrid_search,
         )
