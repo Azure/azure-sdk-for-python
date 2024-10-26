@@ -351,12 +351,6 @@ class FunctionTool(Tool):
         :return: A list of function definitions.
         """
         return self._definitions
-
-    def get_openai_definitions(self) -> List[FunctionToolParam]:
-        """
-        Get the function definitions as OpenAI FunctionToolParam objects.
-        """
-        return cast(List[FunctionToolParam], self._definitions)
     
     @property
     def resources(self) -> ToolResources:

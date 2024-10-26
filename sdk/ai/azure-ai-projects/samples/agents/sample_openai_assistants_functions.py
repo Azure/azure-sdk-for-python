@@ -40,7 +40,7 @@ with AIProjectClient.from_connection_string(
 
     with client:
         agent = client.beta.assistants.create(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=functions.get_openai_definitions()
+            model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
         )
         print(f"Created agent, agent ID: {agent.id}")
 
