@@ -6,6 +6,7 @@
 from devtools_testutils import recorded_by_proxy
 from connection_test_base import ConnectionsTestBase, servicePreparerConnectionsTests
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestConnections(ConnectionsTestBase):
 

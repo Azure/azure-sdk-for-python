@@ -30,7 +30,7 @@ with AIProjectClient.from_connection_string(
 ) as project_client:
 
     # Get an authenticated OpenAI client for your default Azure OpenAI connection:
-    with project_client.inference.get_azure_openai_client() as client:
+    with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
             model="gpt-4-0613",
