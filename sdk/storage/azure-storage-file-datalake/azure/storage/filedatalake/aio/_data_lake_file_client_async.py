@@ -101,7 +101,7 @@ class DataLakeFileClient(PathClient):
         cls, conn_str: str,
         file_system_name: str,
         file_path: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """
@@ -387,10 +387,11 @@ class DataLakeFileClient(PathClient):
         :rtype: None
         """
         try:
-            expires_on = convert_datetime_to_rfc1123(expires_on)
+            expiration_time = convert_datetime_to_rfc1123(expires_on)
         except AttributeError:
-            expires_on = str(expires_on)
-        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
+            expiration_time = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(
+            expiry_options, expires_on=expiration_time, **kwargs)
 
     @distributed_trace_async
     async def upload_data(
@@ -715,7 +716,7 @@ class DataLakeFileClient(PathClient):
         return StorageStreamDownloader(downloader)
 
     @distributed_trace_async
-    async def rename_file(self, new_name: str, **kwargs: Any) -> Self:
+    async def rename_file(self, new_name: str, **kwargs: Any) -> "DataLakeFileClient":
         """
         Rename the source file.
 

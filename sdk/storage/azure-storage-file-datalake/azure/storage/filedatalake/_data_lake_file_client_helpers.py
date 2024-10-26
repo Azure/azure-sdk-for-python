@@ -6,8 +6,9 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
-    TYPE_CHECKING
+    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
+    Dict, IO, Iterable, Optional, Union,
+    TYPE_CHECKING,
 )
 
 from ._serialize import (
@@ -108,6 +109,7 @@ def _upload_options(
     if isinstance(data, bytes):
         data = data[:length]
 
+    stream: Optional[Any] = None
     if isinstance(data, bytes):
         stream = BytesIO(data)
     elif hasattr(data, 'read'):
@@ -115,7 +117,7 @@ def _upload_options(
     elif hasattr(data, '__iter__'):
         stream = IterStreamer(data, encoding=encoding)
     elif hasattr(data, '__aiter__'):
-        stream = AsyncIterStreamer(data, encoding=encoding)
+        stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 

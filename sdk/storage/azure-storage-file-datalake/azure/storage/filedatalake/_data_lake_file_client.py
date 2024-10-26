@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
+from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
@@ -32,7 +33,6 @@ from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
     from ._models import ContentSettings
 
 
@@ -144,7 +144,7 @@ class DataLakeFileClient(PathClient):
         self, content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, "datetime"]]:
+    ) -> Dict[str, Union[str, datetime]]:
         """
         Create a new file.
 
@@ -350,7 +350,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace
     def set_file_expiry(
         self, expiry_options: str,
-        expires_on: Optional[Union["datetime", int]] = None,
+        expires_on: Optional[Union[datetime, int]] = None,
         **kwargs: Any
     ) -> None:
         """Sets the time a file will expire and be deleted.
@@ -370,11 +370,11 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        try:
-            expires_on = convert_datetime_to_rfc1123(expires_on)
-        except AttributeError:
-            expires_on = str(expires_on)
-        self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
+        if isinstance(expires_on, datetime):
+            expiration_time = convert_datetime_to_rfc1123(expires_on)
+        else:
+            expiration_time = str(expires_on)
+        self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiration_time, **kwargs)
 
     @distributed_trace
     def upload_data(
@@ -715,7 +715,7 @@ class DataLakeFileClient(PathClient):
         return self._exists(**kwargs)
 
     @distributed_trace
-    def rename_file(self, new_name: str, **kwargs: Any) -> Self:
+    def rename_file(self, new_name: str, **kwargs: Any) -> "DataLakeFileClient":
         """
         Rename the source file.
 
