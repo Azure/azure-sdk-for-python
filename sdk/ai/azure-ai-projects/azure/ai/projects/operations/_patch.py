@@ -155,14 +155,20 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_azure_openai_client(self, **kwargs) -> "AzureOpenAI":
+    def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
+        :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
+         See "Data plane - Inference" row in the table at
+         https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs. If this keyword
+         is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
+        :paramtype api_version: str
         :return: An authenticated AzureOpenAI client
         :rtype: ~openai.AzureOpenAI
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         kwargs.setdefault("merge_span", True)
         connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
@@ -175,16 +181,12 @@ class InferenceOperations:
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai'")
 
-        # Pick latest GA version from the "Data plane - Inference" row in the table
-        # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-        AZURE_OPENAI_API_VERSION = "2024-06-01"
-
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AzureOpenAI(
-                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
+                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
         elif connection.authentication_type == AuthenticationType.AAD:
             logger.debug(
@@ -202,7 +204,7 @@ class InferenceOperations:
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=connection.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION,
+                api_version=api_version,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
@@ -211,7 +213,7 @@ class InferenceOperations:
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=connection.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION,
+                api_version=api_version,
             )
         else:
             raise ValueError("Unknown authentication type")
