@@ -6,7 +6,7 @@
 
 import json
 import time
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from queue import Empty
 from threading import Event
 
@@ -15,9 +15,13 @@ from blinker import Namespace
 from azure.core.pipeline.transport import HttpTransport
 
 from ._servicebus import CloudMachineServiceBus
+from ..resources import resources
+if TYPE_CHECKING:
+    from .._client import CloudMachineClient
 
 cloudmachine_events = Namespace()
 
+cm_servicebus = resources.get('servicebus', cls=CloudMachineServiceBus)['CLOUDMACHINE']
 
 class EventListener:
     _listener_topic: str = "cm_internal_topic"
@@ -25,9 +29,11 @@ class EventListener:
 
     def __init__(
             self,
+            cloudmachine: 'CloudMachineClient',
             transport: Optional[HttpTransport] = None
     ) -> None:
-        self._client = CloudMachineServiceBus(transport=transport)
+        self._client = cm_servicebus.client(transport=transport)
+        self._cm = cloudmachine
         self.shutdown = Event()
 
     def __call__(self):
@@ -39,7 +45,12 @@ class EventListener:
                     timeout=10
                 )
                 event = json.loads(event_msg.content)
-                cloudmachine_events[event['eventType']].send(event=event['data'])
+                cloudmachine_events[event['eventType']].send(self._cm, event=event['data'])
+                self._client.task_done(
+                    event_msg,
+                    topic=self._listener_topic,
+                    subscription=self._listen_subscription
+                )
             except KeyError:
                 self._client.task_done(
                     event_msg,

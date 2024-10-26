@@ -8,7 +8,8 @@ from io import SEEK_END, SEEK_SET
 import logging
 import email
 from datetime import datetime, timezone, timedelta
-from typing import IO, Any, Callable, Dict, Generator, Generic, Literal, Optional, Self, Tuple, TypeVar, Union
+from typing import IO, Any, Callable, Dict, Generator, Generic, Optional, Tuple, TypeVar, Union
+from typing_extensions import Self
 from urllib.parse import quote
 
 from azure.core import MatchConditions

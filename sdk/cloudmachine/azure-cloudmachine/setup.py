@@ -80,6 +80,7 @@ setup(
         "azure-data-tables>=12.1.0",
         "azure-identity",
         "azure-core",
+        "typing-extensions>=4.5",
         "blinker",
         "click",
     ],

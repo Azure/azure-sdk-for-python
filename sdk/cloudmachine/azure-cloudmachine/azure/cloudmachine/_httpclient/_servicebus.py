@@ -40,6 +40,9 @@ class Message:
     def __repr__(self):
         return repr(self.content)
 
+    def __str__(self) -> str:
+        return str(self.content)
+
 @dataclass
 class LockedMessage(Message):
     lock_token: str
@@ -76,17 +79,6 @@ class CloudMachineServiceBus(CloudMachineClientlet):
                 # log renewal exception
                 print("Lock renew failed", e)
                 return
-
-    def get_client(self, **kwargs) -> 'azure.servicebus.ServiceBusClient':
-        try:
-            from azure.servicebus import ServiceBusClient
-        except ImportError as e:
-            raise ImportError("Please install azure-servicebus SDK to use SDK client.") from e
-        return ServiceBusClient(
-            fully_qualified_namespace=self._endpoint,
-            credential=self._credential,
-            **kwargs
-        )
 
     def full(self, **kwargs) -> Literal[False]:
         return False

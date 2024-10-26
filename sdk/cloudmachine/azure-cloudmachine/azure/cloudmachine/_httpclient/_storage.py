@@ -13,19 +13,20 @@ from time import time
 import uuid
 from wsgiref.handlers import format_date_time
 from urllib.parse import urlparse, quote
-from typing import IO, Any, Dict, Generator, Generic, Iterable, List, Mapping, Optional, Protocol, Self, Tuple, Type, TypeVar, Union, overload, Literal
+from typing import IO, Any, Dict, Generator, Generic, Iterable, List, Mapping, Optional, Tuple, Type, TypeVar, Union, overload, Literal
 from threading import Thread
 from concurrent.futures import Executor, Future
 import xml.etree.ElementTree as ET
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import PipelineClient, MatchConditions
 from azure.core.utils import case_insensitive_dict
 from azure.core.pipeline.policies import HeadersPolicy
 
-
+from ._config import CloudMachinePipelineConfig
 from ._eventlistener import cloudmachine_events
 from ._base import CloudMachineClientlet
 from ._utils import (
@@ -68,6 +69,21 @@ class StorageHeadersPolicy(HeadersPolicy):
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
 
+class StorageBatchError(HttpResponseError):
+    succeeded: List[Union[str, 'StorageFile']]
+    failed: List[Tuple[Union[str, 'StorageFile'], HttpResponseError]]
+
+    def __init__(
+            self,
+            *args,
+            succeeded: List[Union[str, 'StorageFile']],
+            failed: List[Tuple[Union[str, 'StorageFile'], HttpResponseError]],
+            response: HttpResponse,
+            **kwargs):
+        self.succeeded = succeeded
+        self.failed = failed
+        super().__init__(*args, response=response, **kwargs)
+
 
 T = TypeVar("T")
 
@@ -78,6 +94,7 @@ class StorageFile(Generic[T]):
     etag: str
     content: T
     filename: str
+    container: str
     content_length: int
     content_type: Optional[str]
     content_encoding: Optional[str]
@@ -89,6 +106,7 @@ class StorageFile(Generic[T]):
             self,
             *,
             filename: str,
+            container: str,
             content: T,
             content_length: Union[int, str],
             etag: str,
@@ -98,6 +116,7 @@ class StorageFile(Generic[T]):
         self.content_length = int(content_length)
         self.etag = etag
         self.filename = filename
+        self.container = container
         self.metadata = kwargs.get('metadata') or {}
         self.tags = kwargs.get('tags') or {}
         self.content_type = kwargs.get('content_type')
@@ -107,6 +126,12 @@ class StorageFile(Generic[T]):
         self.cache_control = kwargs.get('content_type')
         self.__responsedata__ = kwargs.get('responsedata', {})
 
+    def __repr__(self) -> str:
+        return f"StorageFile(filename={self.filename}, content_length={self.content_length})"
+
+    def __str__(self) -> str:
+        return f"{self.container}/{self.filename}"
+
 
 class CloudMachineStorage(CloudMachineClientlet):
     _id: Literal['Blob'] = 'Blob'
@@ -114,16 +139,24 @@ class CloudMachineStorage(CloudMachineClientlet):
     
     def __init__(
             self,
+            endpoint: str,
+            credential: Union[AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo],
             *,
             transport: Optional[HttpTransport] = None,
-            name: Optional[str] = None,
+            api_version: Optional[str] = None,
             executor: Optional[Executor] = None,
+            config: Optional[CloudMachinePipelineConfig] = None,
+            scope: str,
             **kwargs
     ):
         headers_policy = StorageHeadersPolicy(**kwargs)
         super().__init__(
+            endpoint=endpoint,
+            credential=credential,
             transport=transport,
-            name=name,
+            api_version=api_version,
+            config=config,
+            scope=scope,
             executor=executor,
             headers_policy=headers_policy,
             **kwargs
@@ -144,19 +177,13 @@ class CloudMachineStorage(CloudMachineClientlet):
             self._containers[container] = container_client
             return container_client
 
-
-    def _batch_send(self, endpoint: str, *reqs: HttpRequest, **kwargs) -> None:
-        policies = [StorageHeadersPolicy()]
+    def _batch_send(self, *reqs: HttpRequest, **kwargs) -> None:
+        policies = [StorageHeadersPolicy(), self._config.authentication_policy]
         request = HttpRequest(
             method="POST",
-            url=f"{endpoint}/$batch",
-            headers={
-                "x-ms-version": self._config.api_version,
-                "DataServiceVersion": "3.0",
-                "MaxDataServiceVersion": "3.0;NetFx",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
+            url=self._endpoint,
+            params={'comp': 'batch'},
+            headers={"x-ms-version": self._config.api_version},
         )
         request.set_multipart_mixed(
             *reqs,
@@ -167,19 +194,7 @@ class CloudMachineStorage(CloudMachineClientlet):
         response = self._client.send_request(request, stream=True, **kwargs)
         if response.status_code not in [202]:
             raise HttpResponseError(response=response)
-
-    def get_client(self, **kwargs) -> 'azure.storage.blob.BlobServiceClient':
-        try:
-            from azure.storage.blob import BlobServiceClient
-        except ImportError as e:
-            raise ImportError("Please install azure-storage-blob SDK to use SDK client.") from e
-        return BlobServiceClient(
-            fully_qualified_namespace=self._endpoint,
-            credential=self._credential,
-            api_version=self._config.api_version,
-            transport=self._config.transport,
-            **kwargs
-        )
+        return response
 
     def list(
             self,
@@ -222,6 +237,7 @@ class CloudMachineStorage(CloudMachineClientlet):
                         properties = xmlblob.find('Properties')
                         yield StorageFile(
                             filename=xmlblob[0].text,
+                            container=container or self.default_container_name,
                             content=None,
                             content_length=properties.find('Content-Length').text,
                             etag=properties.find('Etag').text,
@@ -235,6 +251,7 @@ class CloudMachineStorage(CloudMachineClientlet):
                         yield StorageFile(
                             filename=blob['Name'],
                             content=None,
+                            container=container or self.default_container_name,
                             content_length=properties['Content-Length'],
                             etag=properties['Etag'],
                             metadata=blob.get('Metadata', {}),
@@ -256,36 +273,48 @@ class CloudMachineStorage(CloudMachineClientlet):
         )
             
 
-    # TODO: Delete should use a batch request and support multiple files
+    # TODO: Scope batch delete to specific container to prevent accidental delete outside of scope.
     def _delete(self, *files: Union[str, StorageFile], container: Optional[str] = None, **kwargs) -> None:
-        client = self._get_container_client(container)
-        kwargs['version'] = self._config.api_version
+        if not files:
+            return
         condition = kwargs.pop('condition', MatchConditions.Unconditionally)
         requests = []
+        etag = kwargs.pop('etag', None)
         for file in files:
             try:
                 etag = file.etag
                 filename = file.filename
+                file_container = file.container
             except AttributeError:
                 filename = file
-                etag = kwargs.pop('etag', None)
+                file_container = container or self.default_container_name
+
             kwargs['if_match'] = prep_if_match(etag, condition)
             kwargs['if_none_match'] = prep_if_none_match(etag, condition)
+            print(filename, file_container)
             requests.append(
-                build_delete_container_request(
-                    container.endpoint,
+                build_delete_blob_request(
+                    f"/{quote(file_container)}",
                     filename,
                     kwargs
                 )
             )
-        response = client.send_request(request, **kwargs)
-        if ((response.status_code == 202) or
-            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
-            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
-            (response.status_code == 409 and response.headers.get(_ERROR_CODE) == 'ContainerBeingDeleted')):
-            self._containers.pop(container, None)
-            return
-        raise HttpResponseError(response=response)
+            print(requests[-1].headers)
+        response = self._batch_send(*requests)
+        succeeded = []
+        failed = []
+        for file, part_response in zip(files, response.parts()):
+            print(part_response.status_code, part_response.headers)
+            if ((part_response.status_code == 202) or
+                (part_response.status_code == 404 and part_response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
+                (part_response.status_code == 404 and part_response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
+                (part_response.status_code == 409 and part_response.headers.get(_ERROR_CODE) == 'ContainerBeingDeleted')):
+                succeeded.append(file)
+            else:
+                failed.append((file, HttpResponseError(response=response)))
+        if failed:
+            raise StorageBatchError(response=response, succeeded=succeeded, failed=failed)
+
     @overload
     def delete(
             self,
@@ -308,36 +337,30 @@ class CloudMachineStorage(CloudMachineClientlet):
             **kwargs
     ) -> Future[None]:
         ...
-    def delete(self, file: Union[StorageFile, str], *, container: Optional[str] = None, **kwargs) -> None:
-        client = self._get_container_client(container)
-        kwargs['version'] = self._config.api_version
-        condition = kwargs.pop('condition', MatchConditions.IfPresent)
-        try:
-            kwargs['if_match'] = prep_if_match(file.etag, condition)
-            kwargs['if_none_match'] = prep_if_none_match(file.etag, condition)
-            request = build_delete_container_request(
-                container.endpoint,
-                file.filename,
-                kwargs
+    def delete(
+            self,
+            *files: Union[StorageFile, str],
+            container: Optional[str] = None,
+            condition: MatchConditions = MatchConditions.Unconditionally,
+            etag: Optional[str] = None,
+            wait: bool = True,
+            **kwargs) -> None:
+        if wait:
+            return self._delete(
+                *files,
+                container=container,
+                condition=condition,
+                etag=etag,
+                **kwargs
             )
-        except AttributeError:
-            etag = kwargs.pop('etag', None)
-            kwargs['if_match'] = prep_if_match(etag, condition)
-            kwargs['if_none_match'] = prep_if_none_match(etag, condition)
-            request = build_delete_container_request(
-                container.endpoint,
-                file,
-                kwargs
+        return self._executor.submit(
+                self._delete,
+                *files,
+                container=container,
+                condition=condition,
+                etag=etag,
+                **kwargs
             )
-        response = client.send_request(request, **kwargs)
-        # TODO: Test these status codes against the different conditional combinations.
-        if ((response.status_code == 202) or
-            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
-            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
-            (response.status_code == 409 and response.headers.get(_ERROR_CODE) == 'ContainerBeingDeleted')):
-            self._containers.pop(container, None)
-            return
-        raise HttpResponseError(response=response)
 
     def _upload(
             self,
@@ -392,6 +415,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             raise HttpResponseError(response=response)
         return StorageFile(
             filename = filename,
+            container = container or self.default_container_name,
             content_length = content_length,
             last_modified = response.headers['Last-Modified'],
             etag = response.headers['ETag'],
@@ -562,6 +586,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             )
         return StorageFile(
             filename=filename,
+            container=container or self.default_container_name,
             content_length=filelength,
             last_modified = response.headers['Last-Modified'],
             etag = response.headers['ETag'],
@@ -774,8 +799,8 @@ def build_delete_blob_request(
     if_match: Optional[str] = kwargs.pop("if_match", None)
     if_none_match: Optional[str] = kwargs.pop("if_none_match", None)
     if_tags: Optional[str] = kwargs.pop("if_tags", None)
-    blob_delete_type: Literal["Permanent"] = "Permanent"
-    version: str = kwargs.pop("version")
+    blob_delete_type: Optional[Literal["Permanent"]] = None
+    version: Optional[str] = kwargs.pop("version", None)
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -811,7 +836,8 @@ def build_delete_blob_request(
         _headers["If-None-Match"] = if_none_match
     if if_tags is not None:
         _headers["x-ms-if-tags"] = if_tags
-    _headers["x-ms-version"] = version
+    if version is not None:
+        _headers["x-ms-version"] = version
     _headers["Accept"] = accept
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)

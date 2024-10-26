@@ -6,7 +6,7 @@
 
 # pylint: disable=line-too-long
 
-from typing import IO, ClassVar, Dict, List, Optional, Literal, TypedDict, Required
+from typing import IO, ClassVar, Dict, List, Optional, Literal, TypedDict
 from dataclasses import field, dataclass
 from ._resource import (
     Output,
@@ -31,18 +31,23 @@ class Permissions(TypedDict, total=False):
 
 
 class AccessPolicyEntry(TypedDict, total=False):
-    objectId: Required[BicepStr]
-    permissions: Required[Permissions]
-    tenantId: Required[BicepStr]
+    # Required
+    objectId: BicepStr
+    # Required
+    permissions: Permissions
+    # Required
+    tenantId: BicepStr
     applicationId: BicepStr
 
 
-class IPRule(TypedDict, total=False):
-    value: Required[BicepStr]
+class IPRule(TypedDict):
+    # Required
+    value: BicepStr
 
 
 class VirtualNetworkRule(TypedDict, total=False):
-    id: Required[BicepStr]
+    # Required
+    id: BicepStr
     ignoreMissingVnetServiceEndpoint: BicepBool
 
 
@@ -53,9 +58,11 @@ class NetworkRuleSet(TypedDict, total=False):
     virtualNetworkRules: List[VirtualNetworkRule]
 
 
-class Sku(TypedDict, total=False):
-    family: Required[Literal['A']]
-    name: Required[Literal['premium', 'standard']]
+class Sku(TypedDict):
+    # Required
+    family: Literal['A']
+    # Required
+    name: Literal['premium', 'standard']
 
 
 class KeyAttributes(TypedDict, total=False):
@@ -70,12 +77,14 @@ class KeyReleasePolicy(TypedDict, total=False):
     data: BicepStr
 
 
-class KeyRotationPolicyAttributes(TypedDict, total=False):
-    expiryTime: Required[BicepStr]
+class KeyRotationPolicyAttributes(TypedDict):
+    # Required
+    expiryTime: BicepStr
 
 
-class Action(TypedDict, total=False):
-    type: Required[Literal['notify', 'rotate']]
+class Action(TypedDict):
+    # Required
+    type: Literal['notify', 'rotate']
 
 
 class Trigger(TypedDict, total=False):
@@ -115,8 +124,9 @@ class SecretProperties(TypedDict, total=False):
     value: BicepStr
 
 
-class VaultAccessPolicyProperties(TypedDict, total=False):
-    accessPolicies: Required[List[AccessPolicyEntry]]
+class VaultAccessPolicyProperties(TypedDict):
+    # Required
+    accessPolicies: List[AccessPolicyEntry]
 
 
 @dataclass(kw_only=True)
@@ -160,9 +170,11 @@ class VaultProperties(TypedDict, total=False):
     networkAcls: NetworkRuleSet
     provisioningState: Literal['RegisteringDns', 'Succeeded']
     publicNetworkAccess: BicepStr
-    sku: Required[Sku]
+    # Required
+    sku: Sku
     softDeleteRetentionInDays: BicepInt
-    tenantId: Required[BicepStr]
+    # Required
+    tenantId: BicepStr
     vaultUri: BicepStr
 
 

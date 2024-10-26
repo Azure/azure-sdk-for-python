@@ -7,7 +7,8 @@
 # pylint: disable=line-too-long
 
 from enum import Enum
-from typing import IO, ClassVar, List, Optional, Dict, Literal, TypedDict, Required
+from functools import partial
+from typing import IO, ClassVar, List, Optional, Dict, Literal, TypedDict
 from dataclasses import field, dataclass
 
 from ._roles import RoleAssignment
@@ -36,14 +37,17 @@ class ServiceBusRoleAssignments(Enum):
 
 
 class Identity(TypedDict, total=False):
-    type: Required[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']]
+    # Required
+    type: Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']
     userAssignedIdentities: Dict[BicepStr, BicepStr]
 
 
 class ServiceBusSku(TypedDict, total=False):
     capacity: BicepInt
-    name: Required[Literal['Basic', 'Premium', 'Standard']]
-    tier: Required[Literal['Basic', 'Premium', 'Standard']]
+    # Required
+    name: Literal['Basic', 'Premium', 'Standard']
+    # Required
+    tier: Literal['Basic', 'Premium', 'Standard']
 
 
 class UserAssignedIdentityProperties(TypedDict, total=False):
@@ -58,7 +62,8 @@ class KeyVaultProperties(TypedDict, total=False):
 
 
 class ServiceBusEncryption(TypedDict, total=False):
-    keySource: Required[Literal['Microsoft.KeyVault']]
+    # Required
+    keySource: Literal['Microsoft.KeyVault']
     keyVaultProperties: List[KeyVaultProperties]
     requireInfrastructureEncryption: BicepBool
 
@@ -74,30 +79,34 @@ class GeoDataReplicationProperties(TypedDict, total=False):
     maxReplicationLagDurationInSeconds: BicepInt
 
 
-class PrivateEndpoint(TypedDict, total=False):
-    id: Required[BicepStr]
+class PrivateEndpoint(TypedDict):
+    # Required
+    id: BicepStr
 
 
-class PrivateEndpointConnectionProperties(TypedDict, total=False):
-    privateEndpoint: Required[PrivateEndpoint]
+class PrivateEndpointConnectionProperties(TypedDict):
+    # Required
+    privateEndpoint: PrivateEndpoint
     # privateLinkServiceConnectionState	Details about the state of the connection.	ConnectionState
     # provisioningState	Provisioning state of the Private Endpoint Connection.	'Canceled','Creating','Deleting','Failed','Succeeded','Updating'
 
 
-class PrivateEndpointConnection(TypedDict, total=False):
-    properties: Required[PrivateEndpointConnectionProperties]
+class PrivateEndpointConnection(TypedDict):
+    # Required
+    properties: PrivateEndpointConnectionProperties
 
 
-class AuthorizationRuleProperties(TypedDict, total=False):
-    rights: Required[List[Literal['Listen', 'Manage', 'Send']]]
+class AuthorizationRuleProperties(TypedDict):
+    # Required
+    rights: List[Literal['Listen', 'Manage', 'Send']]
 
 
 @dataclass(kw_only=True)
 class AuthorizationRule(Resource):
     _resource: ClassVar[Literal['Microsoft.ServiceBus/namespaces/AuthorizationRules']] = 'Microsoft.ServiceBus/namespaces/AuthorizationRules'
     _version: ClassVar[str] = '2021-11-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("sbar"), init=False, repr=False)
-    name: BicepStr = field(default_factory=lambda: UniqueName(prefix="cm_sb_auth_rule-", length=50), metadata={'rest': 'name'})
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "sbar"), init=False, repr=False)
+    name: BicepStr = field(default_factory=partial(UniqueName, prefix="cm_sb_auth_rule_", length=50), metadata={'rest': 'name'})
     properties: AuthorizationRuleProperties = field(metadata={'rest': 'properties'})
 
 
@@ -128,8 +137,8 @@ class SubscriptionProperties(TypedDict, total=False):
 class TopicSubsciprtion(Resource):
     _resource: ClassVar[Literal['Microsoft.ServiceBus/namespaces/topics/subscriptions']] = 'Microsoft.ServiceBus/namespaces/topics/subscriptions'
     _version: ClassVar[str] = '2021-11-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("sbsub"), init=False, repr=False)
-    name: BicepStr = field(default_factory=lambda: UniqueName(prefix="cm_sb_subscription-", length=50), metadata={'rest': 'name'})
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "sbsub"), init=False, repr=False)
+    name: BicepStr = field(default_factory=partial(UniqueName, prefix="cm_sb_subscription_", length=50), metadata={'rest': 'name'})
     properties: SubscriptionProperties = field(metadata={'rest': 'properties'})
 
 
@@ -151,8 +160,8 @@ class TopicProperties(TypedDict, total=False):
 class ServiceBusTopic(Resource):
     _resource: ClassVar[Literal['Microsoft.ServiceBus/namespaces/topics']] = 'Microsoft.ServiceBus/namespaces/topics'
     _version: ClassVar[str] = '2021-11-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("sbtp"), init=False, repr=False)
-    name: BicepStr = field(default_factory=lambda: UniqueName(prefix="cm_sb_topic-", length=50), metadata={'rest': 'name'})
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "sbtp"), init=False, repr=False)
+    name: BicepStr = field(default_factory=partial(UniqueName, prefix="cm_sb_topic_", length=50), metadata={'rest': 'name'})
     properties: Optional[TopicProperties] = field(metadata={'rest': 'properties'})
     subscriptions: List[TopicSubsciprtion] = field(default_factory=list, metadata={'rest': _SKIP})
 
@@ -186,7 +195,7 @@ class ServiceBusNamespace(LocatedResource):
     roles: List[RoleAssignment] = field(default_factory=list, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.ServiceBus/namespaces']] = 'Microsoft.ServiceBus/namespaces'
     _version: ClassVar[str] = '2017-04-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("sbns"), init=False, repr=False)
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "sbns"), init=False, repr=False)
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)

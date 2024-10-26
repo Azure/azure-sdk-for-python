@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import ClassVar, Literal, TypedDict, Required
+from typing import ClassVar, Literal, TypedDict
 from dataclasses import field, dataclass
 
 from ._resource import (
@@ -15,8 +15,10 @@ from ._resource import (
 
 
 class RoleAssignmentProperties(TypedDict, total=False):
-    principalId: Required[BicepStr]
-    roleDefinitionId: Required[BicepStr]
+    # Required
+    principalId: BicepStr
+    # Required
+    roleDefinitionId: BicepStr
     condition: BicepStr
     conditionVersion: Literal['2.0']
     delegatedManagedIdentityResourceId: BicepStr

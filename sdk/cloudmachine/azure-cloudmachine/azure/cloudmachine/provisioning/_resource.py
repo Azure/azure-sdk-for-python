@@ -65,9 +65,9 @@ class ResourceId(BicepResolver):
         return f"{self._resource._symbolicname}.id"  # pylint: disable=protected-access
 
 
-class CloudMachineName(BicepResolver):
+class CloudMachineId(BicepResolver):
     def resolve(self) -> str:
-        return "cloudmachineName"
+        return "cloudmachineId"
 
 
 class PrincipalId(BicepResolver):

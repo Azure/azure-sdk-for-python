@@ -19,6 +19,7 @@ class CloudMachinePipelineConfig:
 
     def __init__(self, **kwargs: Any) -> None:
         self.api_version: str = kwargs.get("api_version")
+        self.authentication_policy = kwargs.get('authentication_policy')
         self.transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = kwargs.get('transport')
         self.pipeline = self._build_pipeline(**kwargs)
 
@@ -50,7 +51,7 @@ class CloudMachinePipelineConfig:
             policies.extend(
                 [
                     kwargs.get("retry_policy") or core_policies.RetryPolicy(**kwargs),
-                    kwargs.get("authentication_policy"),
+                    self.authentication_policy,
                     kwargs.get("custom_hook_policy") or core_policies.CustomHookPolicy(**kwargs),
                 ]
             )

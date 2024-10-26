@@ -6,7 +6,8 @@
 
 # pylint: disable=line-too-long
 
-from typing import IO, Any, ClassVar, List, Optional, Dict, Literal, Required, TypedDict
+from functools import partial
+from typing import IO, Any, ClassVar, List, Optional, Dict, Literal, TypedDict
 from dataclasses import field, dataclass
 
 from ._resource import (
@@ -39,7 +40,8 @@ class SkuCapacity(TypedDict, total=False):
 
 
 class SkuDescription(TypedDict, total=False):
-    name: Required[BicepStr]
+    # Required
+    name: BicepStr
     capabilities: List[Capability]
     capacity: BicepInt
     family: BicepStr
@@ -49,16 +51,19 @@ class SkuDescription(TypedDict, total=False):
     tier: BicepStr
 
 
-class ExtendedLocation(TypedDict, total=False):
-    name: Required[BicepStr]
+class ExtendedLocation(TypedDict):
+    # Required
+    name: BicepStr
 
 
-class KubeEnvironmentProfile(TypedDict, total=False):
-    id: Required[BicepStr]
+class KubeEnvironmentProfile(TypedDict):
+    # Required
+    id: BicepStr
 
 
-class HostingEnvironmentProfile(TypedDict, total=False):
-    id: Required[BicepStr]
+class HostingEnvironmentProfile(TypedDict):
+    # Required
+    id: BicepStr
 
 
 class AppServicePlanProperties(TypedDict, total=False):
@@ -80,12 +85,14 @@ class AppServicePlanProperties(TypedDict, total=False):
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
-    type: Required[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']]
+    # Required
+    type: Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']
     userAssignedIdentities: Dict[BicepStr, BicepStr]
 
 
 class CloningInfo(TypedDict, total=False):
-    sourceWebAppId: Required[BicepStr]
+    # Required
+    sourceWebAppId: BicepStr
     appSettingsOverrides: Dict[BicepStr, BicepStr]
     cloneCustomHostNames: BicepBool
     cloneSourceControl: BicepBool
@@ -107,17 +114,21 @@ class HostNameSslState(TypedDict, total=False):
     virtualIP: BicepStr
 
 
-class NameValuePair(TypedDict, total=False):
-    name: Required[BicepStr]
-    value: Required[BicepStr]
+class NameValuePair(TypedDict):
+    # Required
+    name: BicepStr
+    # Required
+    value: BicepStr
 
 
-class ApiDefinitionInfo(TypedDict, total=False):
-    url: Required[BicepStr]
+class ApiDefinitionInfo(TypedDict):
+    # Required
+    url: BicepStr
 
 
-class ApiManagementConfig(TypedDict, total=False):
-    id: Required[BicepStr]
+class ApiManagementConfig(TypedDict):
+    # Required
+    id: BicepStr
 
 
 class AutoHealCustomAction(TypedDict, total=False):
@@ -195,8 +206,9 @@ class RampUpRule(TypedDict, total=False):
     reroutePercentage: BicepInt
 
 
-class Experiments(TypedDict, total=False):
-    rampUpRules: Required[List[RampUpRule]]
+class Experiments(TypedDict):
+    # Required
+    rampUpRules: List[RampUpRule]
 
 
 class HandlerMapping(TypedDict, total=False):
@@ -226,14 +238,16 @@ class SiteLimits(TypedDict, total=False):
 
 
 class PushSettingsProperties(TypedDict, total=False):
-    isPushEnabled: Required[BicepBool]
+    # Required
+    isPushEnabled: BicepBool
     dynamicTagsJson: BicepStr
     tagsRequiringAuth: BicepStr
     tagWhitelistJson: BicepStr
 
 
 class PushSettings(TypedDict, total=False):
-    kind: Required[BicepStr]
+    # Required
+    kind: BicepStr
     properties: PushSettingsProperties
 
 
@@ -355,16 +369,19 @@ class SiteProperties(TypedDict, total=False):
 class AzureBlobStorageApplicationLogsConfig(TypedDict, total=False):
     level: Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']
     retentionInDays: BicepInt
-    sasUrl: Required[BicepStr]
+    # Required
+    sasUrl: BicepStr
 
 
 class AzureTableStorageApplicationLogsConfig(TypedDict, total=False):
     level: Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']
-    sasUrl: Required[BicepStr]
+    # Required
+    sasUrl: BicepStr
 
 
-class FileSystemApplicationLogsConfig(TypedDict, total=False):
-    level: Required[Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']]
+class FileSystemApplicationLogsConfig(TypedDict):
+    # Required
+    level: Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']
 
 
 class ApplicationLogsConfig(TypedDict, total=False):
@@ -373,8 +390,9 @@ class ApplicationLogsConfig(TypedDict, total=False):
     fileSystem: FileSystemApplicationLogsConfig
 
 
-class EnabledConfig(TypedDict, total=False):
-    enabled: Required[BicepBool]
+class EnabledConfig(TypedDict):
+    # Required
+    enabled: BicepBool
 
 
 class AzureBlobStorageHttpLogsConfig(TypedDict, total=False):
@@ -405,7 +423,7 @@ class SiteLogsConfigProperties(TypedDict, total=False):
 class AppServiceConfig(Resource):
     _resource: ClassVar[Literal['Microsoft.Web/sites/config']] = 'Microsoft.Web/sites/config'
     _version: ClassVar[str] = '2022-09-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("siteconfig"), init=False, repr=False)
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "siteconfig"), init=False, repr=False)
     kind: Optional[BicepStr] = field(default=_UNSET, metadata={'rest': 'kind'})
 
 
@@ -421,15 +439,16 @@ class AppServiceLogsConfig(AppServiceConfig):
     properties: SiteLogsConfigProperties = field(metadata={'rest': 'properties'})
 
 
-class PublishingCredentialsPoliciesProperties(TypedDict, total=False):
-    allow: Required[BicepBool]
+class PublishingCredentialsPoliciesProperties(TypedDict):
+    # Required
+    allow: BicepBool
 
 
 @dataclass(kw_only=True)
 class BasicPublishingCredentialsPolicy(Resource):
     _resource: ClassVar[Literal['Microsoft.Web/sites/basicPublishingCredentialsPolicies']] = 'Microsoft.Web/sites/basicPublishingCredentialsPolicies'
     _version: ClassVar[str] = '2022-09-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("siteconfig"), init=False, repr=False)
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "siteconfig"), init=False, repr=False)
     name: Literal['scm', 'ftp'] = field(metadata={'rest': 'name'})
     kind: Optional[BicepStr] = field(default=_UNSET, metadata={'rest': 'kind'})
     properties: PublishingCredentialsPoliciesProperties = field(metadata={'rest': 'properties'})
@@ -445,7 +464,7 @@ class AppServiceSite(LocatedResource):
     policies: List[BasicPublishingCredentialsPolicy] = field(default_factory=list, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Web/sites']] = 'Microsoft.Web/sites'
     _version: ClassVar[str] = '2022-09-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("site"), init=False, repr=False)
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "site"), init=False, repr=False)
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
@@ -476,7 +495,7 @@ class AppServicePlan(LocatedResource):
     site: Optional[AppServiceSite] = field(default=None, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Web/serverfarms']] = 'Microsoft.Web/serverfarms'
     _version: ClassVar[str] = '2022-09-01'
-    _symbolicname: str = field(default_factory=lambda: generate_symbol("serverfarm"), init=False, repr=False)
+    _symbolicname: str = field(default_factory=partial(generate_symbol, "serverfarm"), init=False, repr=False)
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)

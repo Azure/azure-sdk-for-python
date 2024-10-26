@@ -15,6 +15,7 @@ from typing import Dict, Literal, Optional, List, Union
 
 from .._version import VERSION
 from ._resource import (
+    CloudMachineId,
     ResourceGroup,
     SubscriptionResourceId,
     PrincipalId,
@@ -49,6 +50,7 @@ from ._appservice import (
     AppServiceSite,
     BasicPublishingCredentialsPolicy,
 )
+from ._openai import CognitiveServices, OpenAIRoleAssignments, AiDeployment
 from .._httpclient._eventlistener import cloudmachine_events
 
 
@@ -57,29 +59,41 @@ def azd_env_name(name: str, host: str, label: Optional[str]) -> str:
     return f'cloudmachine-{name}' + (f'-{suffix}' if suffix else '')
 
 
-def run_project(deployment: 'CloudMachineDeployment', label: Optional[str], args: List[str]) -> None:
+def run_project(deployment: 'CloudMachineDeployment', label: Optional[str], localrun_args: List[str]) -> None:
     project_name = azd_env_name(deployment.name, deployment.host, label)
-    output = subprocess.run(['azd', 'provision', '-e', project_name])
-    print(output)
+    args = ['azd', 'provision', '-e', project_name]
+    print("Running: ", args)
+    output = subprocess.run(args)
+    print("Output: ", output)
     try:
-        output = subprocess.run(args)
+        print("Running: ", localrun_args)
+        output = subprocess.run(localrun_args)
     except KeyboardInterrupt:
         return
 
 
 def shutdown_project(deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
     project_name = azd_env_name(deployment.name, deployment.host, label)
-    output = subprocess.run(['azd', 'down', '-e', project_name, '--force', '--purge'])
-    print(output)
+    args = ['azd', 'down', '-e', project_name, '--force', '--purge']
+    print("Running: ", args)
+    output = subprocess.run(args)
+    print("Output: ", output)
 
 
 def deploy_project(deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
     project_name = azd_env_name(deployment.name, deployment.host, label)
-    output = subprocess.run(['azd', 'provision', '-e', project_name])
+    args = ['azd', 'provision', '-e', project_name]
+    print("Running: ", args)
+    output = subprocess.run(args)
+    print("Output: ", output)
     if output.returncode == 0:
         deployment_name = f"py-cloudmachine-{deployment.name}"
-        output = subprocess.run(['azd', 'deploy', deployment_name, '-e', project_name])
-    print(output)
+        args = ['azd', 'deploy', deployment_name, '-e', project_name]
+        print("Running: ", args)
+        output = subprocess.run(args)
+        print("Output: ", output)
+    else:
+        print("Resource provision failed.")
 
 
 def init_project(
@@ -153,11 +167,11 @@ def _get_empty_directory(root_path: str, name: str) -> str:
 class CloudMachineDeployment:
     name: str
     location: Optional[str]
-    core: ResourceGroup
     host: Union[Literal['local'], AppServicePlan]
     identity: ManagedIdentity
     storage: Optional[StorageAccount] = None
     messaging: Optional[ServiceBusNamespace] = None
+    ai: Optional[CognitiveServices] = None
     app_settings: Dict[str, str]
 
     def __init__(
@@ -169,6 +183,7 @@ class CloudMachineDeployment:
         events: bool = True,
         messaging: bool = True,
         storage: bool = True,
+        openai: bool = False,
         monitoring: bool = True,
         vault: bool = True,
 
@@ -180,20 +195,23 @@ class CloudMachineDeployment:
         self.app_settings = {}
 
         self._params = copy.deepcopy(DEFAULT_PARAMS)
-        self.core = ResourceGroup(
+        self._core = ResourceGroup(
             friendly_name=self.name,
             tags={"abc": "def"},
         )
         self.identity = ManagedIdentity()
-        self.core.add(self.identity)
+        self._core.add(self.identity)
         if storage:
             self.storage = self._define_storage()
-            self.core.add(self.storage)
+            self._core.add(self.storage)
         if messaging:
             self.messaging = self._define_messaging()
-            self.core.add(self.messaging)
+            self._core.add(self.messaging)
         if events and messaging:
-            self.core.add(self._define_events())
+            self._core.add(self._define_events())
+        if openai:
+            self.ai = self._define_ai()
+            self._core.add(self.ai)
         self.host = self._define_host(host)
 
     def _define_host(self, host: str) -> Union[str, AppServicePlan]:
@@ -439,6 +457,42 @@ class CloudMachineDeployment:
             ]
         )
 
+    def _define_ai(self) -> CognitiveServices:
+        return CognitiveServices(
+            kind='OpenAI',
+            properties={
+                'customSubDomainName': CloudMachineId(),
+                'publicNetworkAccess': 'Enabled',
+            },
+            sku={
+                'name': 'S0'
+            },
+            roles=[
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            OpenAIRoleAssignments.CONTRIBUTOR
+                        ),
+                        'principal_id': PrincipalId(),
+                        'principalType': 'User'
+                    }
+                )
+            ],
+            deployments=[
+                AiDeployment(
+                    properties={
+                        'model': {
+                            'format': 'OpenAI',
+                            'name': 'gpt-35-turbo',
+                            'version': '0125'
+                        }
+                    }
+                )
+            ]
+
+        )
+    
     def write(self, root_path: str):
         infra_dir = _get_empty_directory(root_path, ".infra")
         main_bicep = os.path.join(infra_dir, "main.bicep")
@@ -458,15 +512,15 @@ class CloudMachineDeployment:
             main.write("var cloudmachineId = uniqueString(subscription().subscriptionId, environmentName, location)\n\n")
             cm_bicep = os.path.join(infra_dir, "cloudmachine.bicep")
             with open(cm_bicep, 'w') as cm_file:
-                _serialize_resource(main, self.core)
-                outputs = self.core.write(cm_file)
+                _serialize_resource(main, self._core)
+                outputs = self._core.write(cm_file)
                 if self.host != 'local':
                     self.app_settings.update({f"AZURE_CLOUDMACHINE_{generate_envvar(k)}": v for k, v in outputs.items()})
                     outputs.update(self.host.write(cm_file))
 
             main.write("module cloudmachine 'cloudmachine.bicep' = {\n")
             main.write("    name: 'cloudmachine'\n")
-            main.write(f"    scope: {self.core._symbolicname}\n")
+            main.write(f"    scope: {self._core._symbolicname}\n")
             main.write("    params: {\n")
             main.write("        location: location\n")
             main.write("        tags: tags\n")

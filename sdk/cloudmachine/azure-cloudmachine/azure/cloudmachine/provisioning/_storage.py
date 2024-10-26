@@ -7,7 +7,7 @@
 # pylint: disable=line-too-long, protected-access
 
 from enum import Enum
-from typing import IO, ClassVar, Dict, List, Optional, Literal, Required, TypedDict
+from typing import IO, ClassVar, Dict, List, Optional, Literal, TypedDict
 from dataclasses import field, dataclass
 from ._roles import RoleAssignment
 from ._identity import UserAssignedIdentities
@@ -36,24 +36,31 @@ class StorageRoleAssignments(Enum):
 PrincipalType = Literal['User', 'Group', 'ServicePrincipal', 'Unknown', 'DirectoryRoleTemplate', 'ForeignGroup', 'Application', 'MSI', 'DirectoryObjectOrGroup', 'Everyone']
 
 
-class Sku(TypedDict, total=False):
-    name: Required[Literal['Premium_LRS', 'Premium_ZRS', 'Standard_GRS', 'Standard_GZRS', 'Standard_LRS', 'Standard_RAGRS', 'Standard_RAGZRS', 'Standard_ZRS']]
+class Sku(TypedDict):
+    # Required
+    name: Literal['Premium_LRS', 'Premium_ZRS', 'Standard_GRS', 'Standard_GZRS', 'Standard_LRS', 'Standard_RAGRS', 'Standard_RAGZRS', 'Standard_ZRS']
 
 
-class ExtendedLocation(TypedDict, total=False):
-    name: Required[BicepStr]
-    type: Required[Literal['EdgeZone']]
+class ExtendedLocation(TypedDict):
+    # Required
+    name: BicepStr
+    # Required
+    type: Literal['EdgeZone']
 
 
 class Identity(TypedDict, total=False):
-    type: Required[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']]
+    # Required
+    type: Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']
     userAssignedIdentities: UserAssignedIdentities
 
 
 class ActiveDirectoryProperties(TypedDict, total=False):
-    domainGuid: Required[BicepStr]
-    domainName: Required[BicepStr]
-    accountType: Required[Literal['Computer', 'User']]
+    # Required
+    domainGuid: BicepStr
+    # Required
+    domainName: BicepStr
+    # Required
+    accountType: Literal['Computer', 'User']
     azureStorageSid: BicepStr
     domainSid: BicepStr
     forestName: BicepStr
@@ -64,11 +71,13 @@ class ActiveDirectoryProperties(TypedDict, total=False):
 class AzureFilesIdentityBasedAuthentication(TypedDict, total=False):
     activeDirectoryProperties: ActiveDirectoryProperties
     defaultSharePermission: Literal['StorageFileDataSmbShareContributor', 'StorageFileDataSmbShareElevatedContributor', 'StorageFileDataSmbShareReader']
-    directoryServiceOptions: Required[Literal['AADKERB', 'AD', 'None']]
+    # Required
+    directoryServiceOptions: Literal['AADKERB', 'AD', 'None']
 
 
 class CustomDomain(TypedDict, total=False):
-    name: Required[BicepStr]
+    # Required
+    name: BicepStr
     useSubDomainName: BicepBool
 
 
@@ -114,28 +123,34 @@ class ImmutableStorageAccount(TypedDict, total=False):
     immutabilityPolicy: AccountImmutabilityPolicyProperties
 
 
-class KeyPolicy(TypedDict, total=False):
-    keyExpirationPeriodInDays: Required[BicepInt]
+class KeyPolicy(TypedDict):
+    # Required
+    keyExpirationPeriodInDays: BicepInt
 
 
-class IPRule(TypedDict, total=False):
+class IPRule(TypedDict):
     action: Literal['Allow']
-    value: Required[BicepStr]
+    # Required
+    value: BicepStr
 
 
-class ResourceAccessRule(TypedDict, total=False):
-    resourceId: Required[BicepStr]
-    tenantId: Required[BicepStr]
+class ResourceAccessRule(TypedDict):
+    # Required
+    resourceId: BicepStr
+    # Required
+    tenantId: BicepStr
 
 
-class VirtualNetworkRule(TypedDict, total=False):
+class VirtualNetworkRule(TypedDict):
     action: Literal['Allow']
-    id: Required[BicepStr]
+    # Required
+    id: BicepStr
 
 
 class NetworkRuleSet(TypedDict, total=False):
     bypass: Literal['AzureServices', 'Logging', 'Metrics', 'None']
-    defaultAction: Required[Literal['Allow', 'Deny']]
+    # Required
+    defaultAction: Literal['Allow', 'Deny']
     ipRules: List[IPRule]
     resourceAccessRules: List[ResourceAccessRule]
     virtualNetworkRules: List[VirtualNetworkRule]
@@ -147,9 +162,11 @@ class RoutingPreference(TypedDict, total=False):
     routingChoice: Literal['InternetRouting', 'MicrosoftRouting']
 
 
-class SasPolicy(TypedDict, total=False):
-    expirationAction: Required[Literal["Log"]]
-    sasExpirationPeriod: Required[BicepStr]
+class SasPolicy(TypedDict):
+    # Required
+    expirationAction: Literal["Log"]
+    # Required
+    sasExpirationPeriod: BicepStr
 
 
 class Properties(TypedDict, total=False):

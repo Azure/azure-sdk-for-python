@@ -10,13 +10,6 @@ from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 
-TOKEN_AUTH_SCOPES = {
-    "Table": ["https://storage.azure.com/.default"],
-    "Blob": ["https://storage.azure.com/.default"],
-    "ServiceBus": ["https://servicebus.azure.net/.default"]
-}
-
-
 class _HttpChallenge:  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server.
 

@@ -177,7 +177,6 @@ def cm_infra(cm: CloudMachine) -> None:
 def cm_run_local(cm: CloudMachine) -> None:
     cm_infra(cm)
     args = ["flask"] + sys.argv[1: sys.argv.index('cm')] + ["run"]
-    print(f"Running dev service with args: {args}")
     run_project(cm.deployment, cm.label, args)
 
 def cm_down(cm: CloudMachine) -> None:

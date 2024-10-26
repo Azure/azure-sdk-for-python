@@ -5,23 +5,32 @@
 # --------------------------------------------------------------------------
 
 import os
-from typing import IO, Any, Dict, Generator, Literal, Mapping, Optional, Protocol, Self, Type, Union, overload
+from typing import IO, Any, Dict, Generator, Generic, Literal, Mapping, Optional, Protocol, Type, TypeVar, Union, overload
+from typing_extensions import Self
 from threading import Thread
 from concurrent.futures import Executor, ThreadPoolExecutor
 
 from dotenv import load_dotenv, dotenv_values
 
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo
 from azure.core.pipeline.transport import HttpTransport
 from azure.data.tables import TableServiceClient, TableClient
 from azure.identity import DefaultAzureCredential
 
-from .resources._deployment import azd_env_name
+from .resources._resources import Resources, resources as global_resources
+from .resources._client_settings import ClientSettings, SyncClient
+from .provisioning._deployment import azd_env_name, CloudMachineDeployment
 from ._httpclient._eventlistener import EventListener, cloudmachine_events
 from ._httpclient import TransportWrapper
 from ._httpclient._servicebus import CloudMachineServiceBus
 from ._httpclient._config import CloudMachinePipelineConfig
 from ._httpclient._storage import CloudMachineStorage
 from ._httpclient._base import CloudMachineClientlet
+
+try:
+    from openai import AzureOpenAI
+except ImportError:
+    AzureOpenAI = 'openai.AzureOpenAI'
 
 
 def load_dev_environment(name: str) -> Dict[str, str]:
@@ -40,8 +49,8 @@ def load_dev_environment(name: str) -> Dict[str, str]:
     full_env = dotenv_values(os.path.join(azd_dir, env_name, ".env"))
     trimmed_env = {}
     for key, value in full_env.items():
-        if key.startswith('AZURE_CLOUDMACHINE_'):
-            trimmed_env[key[19:]] = value
+        if key.startswith('AZURE_'):
+            trimmed_env[key[6:]] = value
     return trimmed_env
 
 
@@ -62,27 +71,30 @@ class CloudMachineTableData(CloudMachineClientlet):
 
     def __init__(
             self,
+            endpoint: str,
+            credential: Union[AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo],
             *,
             transport: Optional[HttpTransport] = None,
+            api_version: Optional[str] = None,
             executor: Optional[Executor] = None,
-            name: Optional[str] = None,
             config: Optional[CloudMachinePipelineConfig] = None,
-            clients: Optional[Dict[str, Self]] = None,
+            scope: str,
             **kwargs
     ):
         super().__init__(
+            endpoint=endpoint,
+            credential=credential,
             transport=transport,
+            api_version=api_version,
             executor=executor,
-            name=name,
             config=config,
-            clients=clients,
+            scope=scope,
             **kwargs
         )
-        credential = DefaultAzureCredential()
         self._client = TableServiceClient(
             endpoint=self._endpoint,
             api_version=self._config.api_version,
-            credential=credential,
+            credential=self._credential,
             transport=self._config.transport,
             **kwargs
         )
@@ -228,25 +240,26 @@ class CloudMachineClient:
     def __init__(
             self,
             *,
+            resources: Optional[Resources] = None,
+            deployment: Optional[CloudMachineDeployment] = None,
             http_transport: Optional[HttpTransport] = None,
             event_listener: bool = True,
             **kwargs
     ):
         self._http_transport = http_transport or self._build_transport(**kwargs)
         self._wrapped_transport = TransportWrapper(self._http_transport)
-        if event_listener:
+        if event_listener: # We shouldn't poll till we know someone is listening.
             self._listener = EventListener(
+                cloudmachine=self,
                 transport=self._wrapped_transport
             )
             self._listener_thread = Thread(target=self._listener, daemon=True)
         else:
             self._listener = None
             self._listener_thread = None
-        self._storage: Dict[CloudMachineStorage] = {}
-        self._messaging: Dict[CloudMachineServiceBus] = {}
-        self._data: Dict[CloudMachineTableData] = {}
-        self._executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
 
+        self._executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
+        self._resources = resources or global_resources
 
     def _build_transport(self, **kwargs):
         import requests
@@ -265,37 +278,50 @@ class CloudMachineClient:
             **kwargs
         )
 
-    @property
-    def storage(self):
-        if not self._storage:
-            if self._listener_thread:
+    def storage(self, name: Optional[str] = None) -> ClientSettings[CloudMachineStorage]:
+        if self._listener_thread:
+            try:
                 self._listener_thread.start()
-            self._storage['default'] = CloudMachineStorage(
-                transport=self._http_transport,
-                executor=self._executor,
-                clients=self._storage,
-            )
-        return self._storage['default']
+            except RuntimeError:
+                pass
+        return self._resources.get(
+            'blobstorage',
+            transport=self._http_transport,
+            cls=CloudMachineStorage,
+            client_options={'executor': self._executor}
+        )[name or 'CLOUDMACHINE']
 
-    @property
-    def messaging(self):
-        if not self._messaging:
-            self._messaging['default'] = CloudMachineServiceBus(
-                transport=self._http_transport,
-                executor=self._executor,
-                clients=self._messaging,
-            )
-        return self._messaging['default']
+    def messaging(self, name: Optional[str] = None) -> ClientSettings[CloudMachineServiceBus]:
+        return self._resources.get(
+            'servicebus',
+            transport=self._http_transport,
+            cls=CloudMachineStorage,
+            client_options={'executor': self._executor}
+        )[name or 'CLOUDMACHINE']
 
-    @property
-    def data(self):
-        if not self._data:
-            self._data['default'] = CloudMachineTableData(
-                transport=self._http_transport,
-                executor=self._executor,
-                clients=self._data,
-            )
-        return self._data['default']
+    def data(self, name: Optional[str] = None) -> ClientSettings[CloudMachineTableData]:
+        return self._resources.get(
+            'servicebus',
+            transport=self._http_transport,
+            cls=CloudMachineStorage,
+            client_options={'executor': self._executor}
+        )[name or 'CLOUDMACHINE']
+
+    def vault(self, name: Optional[str] = None) -> ClientSettings:
+        return self._resources.get(
+            'keyvault',
+            transport=self._http_transport,
+            #cls=CloudMachineKeyVault,
+            client_options={'executor': self._executor}
+        )[name or 'CLOUDMACHINE']
+
+    def ai(self, name: Optional[str] = None) -> ClientSettings[AzureOpenAI]:
+        return self._resources.get(
+            'openai',
+            transport=self._http_transport,
+            cls=CloudMachineStorage,
+            client_options={'executor': self._executor}
+        )[name or 'CLOUDMACHINE']
 
     def close(self):
         self._listener.close()
