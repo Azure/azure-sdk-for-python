@@ -14,7 +14,7 @@ class ViolenceMultimodalEvaluator:
 
     :param credential: The credential for connecting to the Azure AI project. This is required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project, 
+    :param azure_ai_project: The scope of the Azure AI project,
         which includes subscription ID, resource group name, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 

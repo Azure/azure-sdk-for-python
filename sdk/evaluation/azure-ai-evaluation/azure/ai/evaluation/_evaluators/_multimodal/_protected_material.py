@@ -17,7 +17,7 @@ class ProtectedMaterialMultimodalEvaluator:
 
     :param credential: The credential for connecting to the Azure AI project. This is required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID, 
+    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID,
         resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
