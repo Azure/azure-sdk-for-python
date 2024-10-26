@@ -34,10 +34,16 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
+    OpenAIPageableListOfThreadMessage,
+    ThreadMessage,
+    MessageTextContent,
+    MessageImageFileContent,
+    MessageTextFileCitationAnnotation,
+    MessageTextFilePathAnnotation,
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin, Union
 
 logger = logging.getLogger(__name__)
 
@@ -419,8 +425,8 @@ class CodeInterpreterTool(Tool):
     A tool that interprets code files uploaded to the agent.
     """
 
-    def __init__(self):
-        self.file_ids = []
+    def __init__(self, file_ids: List[str] = []):
+        self.file_ids = file_ids
 
     def add_file(self, file_id: str):
         """
@@ -991,6 +997,62 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             pass
 
 
+class Conversation:
+    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
+        self._messages = pageable_list.data
+
+    @property
+    def messages(self) -> List[ThreadMessage]:
+        """Returns all messages in the conversation."""
+        return self._messages
+
+    @property
+    def text_messages(self) -> List[MessageTextContent]:
+        """Returns all text message contents in the conversation."""
+        texts = [content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)]
+        return texts
+
+    @property
+    def image_contents(self) -> List[MessageImageFileContent]:
+        """Returns all image file contents from image message contents in the conversation."""
+        return [
+            content for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageImageFileContent)
+        ]
+
+    @property
+    def file_annotations(self) -> List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]]:
+        """
+        Returns all file-related annotations from text message annotations in the conversation.
+        The returned list contains instances of MessageTextFileCitationAnnotation and MessageTextFilePathAnnotation.
+        """
+        annotations: List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]] = []
+        for msg in self._messages:
+            for content in msg.content:
+                if isinstance(content, MessageTextContent):
+                    for annotation in content.text.annotations:
+                        if isinstance(annotation, (MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation)):
+                            annotations.append(annotation)
+        return annotations
+
+    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
+        """Returns the last message from the specified sender."""
+        for msg in reversed(self._messages):
+            if msg.role == sender:
+                return msg
+        return None
+
+    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
+        """Returns the last text message from the specified sender."""
+        for msg in reversed(self._messages):
+            if msg.role == sender:
+                for content in reversed(msg.content):
+                    if isinstance(content, MessageTextContent):
+                        return content
+        return None
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -999,6 +1061,7 @@ __all__: List[str] = [
     "AsyncFunctionTool",
     "AsyncToolSet",
     "CodeInterpreterTool",
+    "Conversation",
     "FileSearchTool",
     "FunctionTool",
     "SASTokenCredential",

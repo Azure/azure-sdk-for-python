@@ -39,10 +39,10 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
     # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+    file = project_client.agents.upload_file_and_poll(file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
-    code_interpreter = CodeInterpreterTool()
+    code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
     # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
     agent = project_client.agents.create_agent(
@@ -50,16 +50,16 @@ with project_client:
         name="my-assistant",
         instructions="You are helpful assistant",
         tools=code_interpreter.definitions,
+        tool_resources=code_interpreter.resources,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # create a message with the attachment
-    attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
+    # create a message
     message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+        thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit and provide file to me?"
     )
     print(f"Created message, message ID: {message.id}")
 

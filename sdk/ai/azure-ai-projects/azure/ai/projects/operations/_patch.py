@@ -358,6 +358,7 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
 
 class AgentsOperations(AgentsOperationsGenerated):
+
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -2013,6 +2014,19 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
+    
+    @distributed_trace
+    def parse_conversation(
+            self,
+            messages: _models.OpenAIPageableListOfThreadMessage
+    ) -> _models.Conversation:
+        """Parses the OpenAIPageableListOfThreadMessage response and returns a Conversation object.
+        
+        :param messages: The OpenAIPageableListOfThreadMessage response.
+        :type messages: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
+
+        """
+        return _models.Conversation(pageable_list=messages)
 
 
 __all__: List[str] = [
