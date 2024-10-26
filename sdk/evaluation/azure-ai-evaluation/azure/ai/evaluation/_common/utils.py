@@ -277,8 +277,8 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     """Get the content type for service payload.
 
-    :param messages: The list of messages to be annotated by evaluation service
-    :type messages: list
+    :param assistant_messages: The list of messages to be annotated by evaluation service
+    :type assistant_messages: list
     :param metric: A string representing the metric type
     :type metric: str
     :return: A text representing the content type. Example: 'text', or 'image'
@@ -304,68 +304,30 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     # Default return if no messages
     return "text"
 
-
 def validate_conversation(conversation):
-    if conversation is None or "messages" not in conversation:
-        msg = "Attribute 'messages' is missing in the request"
+    def raise_exception(msg, target):
         raise EvaluationException(
             message=msg,
             internal_message=msg,
-            target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+            target=target,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
+        )
+    if not conversation or "messages" not in conversation:
+        raise_exception(
+            "Attribute 'messages' is missing in the request",
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     messages = conversation["messages"]
-    if messages is None or not isinstance(messages, list):
-        msg = "'messages' parameter must be a JSON-compatible list of chat messages"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
+    if not isinstance(messages, list):
+        raise_exception(
+            "'messages' parameter must be a JSON-compatible list of chat messages",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
-    expected_roles = ["user", "assistant", "system"]
+    expected_roles = {"user", "assistant", "system"}
     image_found = False
-    for num, message in enumerate(messages):
-        msg_num = num + 1
-        if isinstance(message, dict):
-            if "role" in message or "content" in message:
-                if message["role"] not in expected_roles:
-                    msg = f"Invalid role provided: {message['role']}. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-                if not isinstance(message["content"], str) and not isinstance(message["content"], list):
-                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-                if isinstance(message["content"], list):
-                    for content in message["content"]:
-                        if content.get("type") == "image_url":
-                            image_url = content.get("image_url")
-                            if image_url and "url" in image_url:
-                                image_found = True
-
-                if isinstance(message["content"], dict):
-                    msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
-                    raise EvaluationException(
-                        message=msg,
-                        internal_message=msg,
-                        target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        blame=ErrorBlame.USER_ERROR,
-                    )
-        else:
+    for num, message in enumerate(messages, 1):
+        if not isinstance(message, dict):
             try:
                 from azure.ai.inference.models import (
                     ChatRequestMessage,
@@ -374,34 +336,40 @@ def validate_conversation(conversation):
                     SystemMessage,
                     ImageContentItem,
                 )
-            except ImportError:
-                error_message = "Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
-                raise MissingRequiredPackage(message=error_message)
-            else:
-                if isinstance(messages[0], ChatRequestMessage):
-                    if (
-                        not isinstance(message, UserMessage)
-                        and not isinstance(message, AssistantMessage)
-                        and not isinstance(message, SystemMessage)
-                    ):
-                        msg = f"Messsage in array must be a strongly typed class of [UserMessage, SystemMessage, AssistantMessage]. Message number: {msg_num}"
-                        raise EvaluationException(
-                            message=msg,
-                            internal_message=msg,
-                            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-                            category=ErrorCategory.INVALID_VALUE,
-                            blame=ErrorBlame.USER_ERROR,
-                        )
-                    if message.content and isinstance(message.content, list):
-                        image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
-                        if len(image_items) > 0:
-                            image_found = True
-    if image_found is False:
-        msg = f"Message needs to have multimodal input like images."
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
+            except ImportError as ex:
+                raise MissingRequiredPackage(
+                    message="Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
+                ) from ex
+
+            if isinstance(messages[0], ChatRequestMessage) and not isinstance(
+                message, (UserMessage, AssistantMessage, SystemMessage)
+            ):
+                raise_exception(
+                    f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
+                    ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                )
+
+            if isinstance(message.content, list) and any(
+                isinstance(item, ImageContentItem) for item in message.content
+            ):
+                image_found = True
+            continue
+        if message.get("role") not in expected_roles:
+            raise_exception(
+                f"Invalid role provided: {message.get('role')}. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        content = message.get("content")
+        if not isinstance(content, (str, list)):
+            raise_exception(
+                f"Content in each turn must be a string or array. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        if isinstance(content, list):
+            if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+                image_found = True
+    if not image_found:
+        raise_exception(
+            "Message needs to have multi-modal input like images.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )

@@ -143,9 +143,10 @@ def _log_metrics_and_instance_results(
             # storing multi_modal images if exists
             col_name = "inputs.conversation"
             if col_name in instance_results.columns:
-                for key, item in instance_results[col_name].items():
-                    if "messages" in item:
-                        _store_multimodal_content(item["messages"], tmpdir)
+                for item in instance_results[col_name].items():
+                    value = item[1]
+                    if "messages" in value:
+                        _store_multimodal_content(value["messages"], tmpdir)
 
             # storing artifact result
             tmp_path = os.path.join(tmpdir, artifact_name)

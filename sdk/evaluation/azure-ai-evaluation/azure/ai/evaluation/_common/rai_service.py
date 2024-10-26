@@ -12,12 +12,11 @@ from urllib.parse import urlparse
 from string import Template
 
 import jwt
-import json
 
 from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
-from azure.ai.evaluation._model_configurations import AzureAIProject, Message
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
@@ -526,14 +525,13 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     if len(messages) > 0 and not isinstance(messages[0], dict):
         try:
             from azure.ai.inference.models import ChatRequestMessage
-        except ImportError:
+        except ImportError as ex:
             error_message = (
                 "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
             )
-            raise MissingRequiredPackage(message=error_message)
-        else:
-            if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
-                messages = [message.as_dict() for message in messages]
+            raise MissingRequiredPackage(message=error_message) from ex
+        if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
+            messages = [message.as_dict() for message in messages]
 
     filtered_messages = [message for message in messages if message["role"] != "system"]
     assistant_messages = [message for message in messages if message["role"] == "assistant"]

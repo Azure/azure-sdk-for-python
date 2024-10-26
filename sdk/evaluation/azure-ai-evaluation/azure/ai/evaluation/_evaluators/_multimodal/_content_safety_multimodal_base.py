@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 from abc import ABC
 from typing import Union
-from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -39,7 +38,8 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
     async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :keyword conversation: The conversation contains list of messages to be evaluated. 
+            Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Dict[str, Union[float, str]]

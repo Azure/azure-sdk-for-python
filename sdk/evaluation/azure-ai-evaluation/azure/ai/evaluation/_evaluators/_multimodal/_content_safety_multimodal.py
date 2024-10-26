@@ -2,18 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-import math
 from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._common.constants import HarmSeverityLevel
-from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._common.utils import validate_conversation
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import Conversation
 from ._hate_unfairness import HateUnfairnessMultimodalEvaluator
 from ._self_harm import SelfHarmMultimodalEvaluator
 from ._sexual import SexualMultimodalEvaluator
@@ -26,7 +20,8 @@ logger = logging.getLogger(__name__)
 @experimental
 class ContentSafetyMultimodalEvaluator:
     """
-    Initialize a content safety multimodal evaluator configured to evaluate content safety metrics for multimodal scenario.
+    Initialize a content safety multimodal evaluator configured to evaluate content safety metrics 
+    for multimodal scenario.
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
@@ -105,7 +100,8 @@ class ContentSafetyMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content-safety metrics for list of messages.
-        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :keyword conversation: The conversation contains list of messages to be evaluated. 
+            Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score based on the Content Safety Metrics.
         :rtype: Dict[str, Union[float, str]]

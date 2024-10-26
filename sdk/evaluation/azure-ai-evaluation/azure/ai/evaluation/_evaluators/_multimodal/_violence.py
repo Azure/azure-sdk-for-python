@@ -4,7 +4,6 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from azure.ai.evaluation._common.utils import validate_conversation
 from ._content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
 
@@ -68,7 +67,8 @@ class ViolenceMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates violence content.
-        :keyword conversation: The conversation contains list of messages to be evaluated. Each message should have "role" and "content" keys.
+        :keyword conversation: The conversation contains list of messages to be evaluated. 
+            Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The violence score.
         :rtype: Dict[str, Union[float, str]]
