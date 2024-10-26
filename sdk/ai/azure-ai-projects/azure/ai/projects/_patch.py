@@ -115,6 +115,7 @@ class AIProjectClient(ClientGenerated):
         self._client2 = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
+        # cSpell:disable-next-line
         _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config3 = AIProjectClientConfiguration(
             endpoint=endpoint,
@@ -203,7 +204,8 @@ class AIProjectClient(ClientGenerated):
             from azure.ai.ml.constants import AssetTypes
         except ImportError:
             raise ImportError(
-                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`")
+                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
+            )
 
         data = Data(
             path=file_path,
@@ -231,6 +233,7 @@ class AIProjectClient(ClientGenerated):
             "resource_group_name": self._config3.resource_group_name,
             "project_name": self._config3.project_name,
         }
+
 
 __all__: List[str] = [
     "AIProjectClient",

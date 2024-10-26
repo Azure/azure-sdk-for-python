@@ -369,6 +369,35 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AppInsightsProperties(_model_base.Model):
+    """The properties of the Application Insights resource.
+
+
+    :ivar connection_string: Authentication type of the connection target. Required.
+    :vartype connection_string: str
+    """
+
+    connection_string: str = rest_field(name="ConnectionString")
+    """Authentication type of the connection target. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_string: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InputData(_model_base.Model):
     """Abstract data class for input data configuration.
 
@@ -793,38 +822,6 @@ class ConnectionResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ConnectionsListResponse(_model_base.Model):
-    """Response from the list operation.
-
-
-    :ivar value: A list of connection list secrets. Required.
-    :vartype value: list[~azure.ai.projects.models._models.ConnectionsListSecretsResponse]
-    """
-
-    value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
-    """A list of connection list secrets. Required."""
-
-
-class ConnectionsListSecretsResponse(_model_base.Model):
-    """Response from the listSecrets operation.
-
-
-    :ivar id: A unique identifier for the connection. Required.
-    :vartype id: str
-    :ivar name: The name of the resource. Required.
-    :vartype name: str
-    :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models._models.ConnectionProperties
-    """
-
-    id: str = rest_field()
-    """A unique identifier for the connection. Required."""
-    name: str = rest_field()
-    """The name of the resource. Required."""
-    properties: "_models._models.ConnectionProperties" = rest_field()
-    """The properties of the resource. Required."""
 
 
 class CredentialsApiKeyAuth(_model_base.Model):
@@ -1458,6 +1455,85 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
         super().__init__(*args, type="function", **kwargs)
 
 
+class GetAppInsightsResponse(_model_base.Model):
+    """Response from getting properties of the Application Insights resource.
+
+
+    :ivar id: A unique identifier for the resource. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models.AppInsightsProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the resource. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models.AppInsightsProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        properties: "_models.AppInsightsProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetConnectionResponse(_model_base.Model):
+    """Response from the listSecrets operation.
+
+
+    :ivar id: A unique identifier for the connection. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models._models.ConnectionProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the connection. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models._models.ConnectionProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+
+class GetWorkspaceResponse(_model_base.Model):
+    """Response from the Workspace - Get operation.
+
+
+    :ivar id: A unique identifier for the resource. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models._models.WorkspaceProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the resource. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models._models.WorkspaceProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+
 class IndexResource(_model_base.Model):
     """A Index resource.
 
@@ -1491,6 +1567,18 @@ class IndexResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ListConnectionsResponse(_model_base.Model):
+    """Response from the list operation.
+
+
+    :ivar value: A list of connection list secrets. Required.
+    :vartype value: list[~azure.ai.projects.models._models.GetConnectionResponse]
+    """
+
+    value: List["_models._models.GetConnectionResponse"] = rest_field()
+    """A list of connection list secrets. Required."""
 
 
 class MessageAttachment(_model_base.Model):
@@ -4899,10 +4987,10 @@ class ThreadMessageOptions(_model_base.Model):
 
 
      * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-     cases to represent user-generated messages.
+       cases to represent user-generated messages.
      * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: "user" and "assistant".
+       messages from the agent into the
+       conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -4921,11 +5009,11 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``\ : Indicates the message is sent by an actual user and should be used in most cases
-     to represent user-generated messages.
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
+       cases to represent user-generated messages.
      * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: \"user\" and \"assistant\"."""
+       messages from the agent into the
+       conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
@@ -6007,7 +6095,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     :vartype max_chunk_size_tokens: int
     :ivar chunk_overlap_tokens: The number of tokens that overlap between chunks. The default value
      is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required.
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required.
     :vartype chunk_overlap_tokens: int
     """
 
@@ -6016,7 +6104,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
      and the maximum value is 4096. Required."""
     chunk_overlap_tokens: int = rest_field()
     """The number of tokens that overlap between chunks. The default value is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required."""
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
 
     @overload
     def __init__(
@@ -6104,3 +6192,15 @@ class VectorStoreStaticChunkingStrategyResponse(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.STATIC, **kwargs)
+
+
+class WorkspaceProperties(_model_base.Model):
+    """workspace properties.
+
+
+    :ivar application_insights: Authentication type of the connection target. Required.
+    :vartype application_insights: str
+    """
+
+    application_insights: str = rest_field(name="applicationInsights")
+    """Authentication type of the connection target. Required."""

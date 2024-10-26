@@ -1,3 +1,7 @@
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +21,7 @@ from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    ConnectionsListSecretsResponse,
+    GetConnectionResponse,
     MessageDeltaChunk,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -95,7 +99,7 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(self, *, connection: GetConnectionResponse, token_credential: TokenCredential = None) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
@@ -283,8 +287,8 @@ class FunctionTool(Tool):
         self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(self._functions)
 
-    def _create_function_dict(self, funcs: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in funcs}
+    def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
+        func_dict = {func.__name__: func for func in functions}
         return func_dict
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:

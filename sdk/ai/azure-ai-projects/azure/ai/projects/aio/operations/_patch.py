@@ -1,5 +1,9 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -20,7 +24,7 @@ from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ...models._patch import ConnectionProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
-from ...models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
+from ...models._models import GetConnectionResponse, ListConnectionsResponse
 from ... import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -252,7 +256,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
-            connection: ConnectionsListSecretsResponse = await self._list_secrets(
+            connection: GetConnectionResponse = await self._list_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
@@ -281,14 +285,14 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
-        If not provided, all connections are listed.
+            If not provided, all connections are listed.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :return: A list of connection properties
         :rtype: Iterable[~azure.ai.projects.models._models.ConnectionProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connections_list: ConnectionsListResponse = await self._list(
+        connections_list: ListConnectionsResponse = await self._list(
             include_all=True, category=connection_type, **kwargs
         )
 
