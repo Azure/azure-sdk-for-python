@@ -125,8 +125,8 @@ class DocumentStatus(_model_base.Model):
     :vartype error: ~azure.ai.translation.document.models.DocumentTranslationError
     :ivar translation_progress: Progress of the translation if available. Required.
     :vartype translation_progress: float
-    :ivar document_id: Document Id. Required.
-    :vartype document_id: str
+    :ivar id: Document Id. Required.
+    :vartype id: str
     :ivar characters_charged: Character charged by the API.
     :vartype characters_charged: int
     """
@@ -150,7 +150,7 @@ class DocumentStatus(_model_base.Model):
      inner error with more descriptive details."""
     translation_progress: float = rest_field(name="progress")
     """Progress of the translation if available. Required."""
-    document_id: str = rest_field(name="id")
+    id: str = rest_field()
     """Document Id. Required."""
     characters_charged: Optional[int] = rest_field(name="characterCharged")
     """Character charged by the API."""
@@ -165,7 +165,7 @@ class DocumentStatus(_model_base.Model):
         status: Union[str, "_models.Status"],
         translated_to: str,
         translation_progress: float,
-        document_id: str,
+        id: str,  # pylint: disable=redefined-builtin
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
@@ -583,8 +583,8 @@ class TranslationStatus(_model_base.Model):
     """Translation job status response.
 
 
-    :ivar translation_id: Id of the translation operation. Required.
-    :vartype translation_id: str
+    :ivar id: Id of the translation operation. Required.
+    :vartype id: str
     :ivar created_on: Operation created date time. Required.
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Date time in which the operation's status has been updated. Required.
@@ -600,7 +600,7 @@ class TranslationStatus(_model_base.Model):
     :vartype summary: ~azure.ai.translation.document.models.TranslationStatusSummary
     """
 
-    translation_id: str = rest_field(name="id")
+    id: str = rest_field()
     """Id of the translation operation. Required."""
     created_on: datetime.datetime = rest_field(name="createdDateTimeUtc", format="rfc3339")
     """Operation created date time. Required."""
@@ -620,7 +620,7 @@ class TranslationStatus(_model_base.Model):
     def __init__(
         self,
         *,
-        translation_id: str,
+        id: str,  # pylint: disable=redefined-builtin
         created_on: datetime.datetime,
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.Status"],

@@ -45,9 +45,7 @@ class TestSingleDocumentTranslation(AsyncDocumentTranslationTest):
             )
 
             # Invoke document translation
-            response_stream = await client.translate(
-                body=document_translate_content, target_language=target_languages
-            )
+            response_stream = await client.translate(body=document_translate_content, target_language=target_languages)
 
             # validate response
             translated_response = response_stream.decode("utf-8-sig")
@@ -70,9 +68,7 @@ class TestSingleDocumentTranslation(AsyncDocumentTranslationTest):
             )
 
             # Invoke document translation
-            response_stream = await client.translate(
-                body=document_translate_content, target_language=target_languages
-            )
+            response_stream = await client.translate(body=document_translate_content, target_language=target_languages)
 
             # validate response
             translated_response = response_stream.decode("utf-8-sig")
