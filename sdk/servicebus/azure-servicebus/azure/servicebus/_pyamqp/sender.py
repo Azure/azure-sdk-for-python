@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import time
+import threading
 
 from ._encode import encode_payload
 from .link import Link
@@ -45,6 +46,7 @@ class SenderLink(Link):
             kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
+        self._sender_lock = threading.RLock()
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -84,36 +86,38 @@ class SenderLink(Link):
         self.update_pending_deliveries()
 
     def _outgoing_transfer(self, delivery):
-        output = bytearray()
-        encode_payload(output, delivery.message)
-        delivery_count = self.delivery_count + 1
-        delivery.frame = {
-            "handle": self.handle,
-            "delivery_tag": struct.pack(">I", abs(delivery_count)),
-            "message_format": delivery.message._code,  # pylint:disable=protected-access
-            "settled": delivery.settled,
-            "more": False,
-            "rcv_settle_mode": None,
-            "state": None,
-            "resume": None,
-            "aborted": None,
-            "batchable": None,
-            "payload": output,
-        }
-        self._session._outgoing_transfer(  # pylint:disable=protected-access
-            delivery, self.network_trace_params if self.network_trace else None
-        )
-        sent_and_settled = False
-        if delivery.transfer_state == SessionTransferState.OKAY:
-            self.delivery_count = delivery_count
-            self.current_link_credit -= 1
-            delivery.sent = True
-            if delivery.settled:
-                delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
-                sent_and_settled = True
-        # elif delivery.transfer_state == SessionTransferState.ERROR:
-        # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
-        return sent_and_settled
+        with self._sender_lock:
+            output = bytearray()
+            encode_payload(output, delivery.message)
+            delivery_count = self.delivery_count + 1
+            delivery.frame = {
+                "handle": self.handle,
+                "delivery_tag": struct.pack(">I", abs(delivery_count)),
+                "message_format": delivery.message._code,  # pylint:disable=protected-access
+                "settled": delivery.settled,
+                "more": False,
+                "rcv_settle_mode": None,
+                "state": None,
+                "resume": None,
+                "aborted": None,
+                "batchable": None,
+                "payload": output,
+            }
+            self._session._outgoing_transfer(  # pylint:disable=protected-access
+                delivery,
+                self.network_trace_params if self.network_trace else None
+            )
+            sent_and_settled = False
+            if delivery.transfer_state == SessionTransferState.OKAY:
+                self.delivery_count = delivery_count
+                self.current_link_credit -= 1
+                delivery.sent = True
+                if delivery.settled:
+                    delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
+                    sent_and_settled = True
+            # elif delivery.transfer_state == SessionTransferState.ERROR:
+            # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
+            return sent_and_settled
 
     def _incoming_disposition(self, frame):
         if not frame[3]:  # settled
@@ -139,21 +143,22 @@ class SenderLink(Link):
         super()._on_session_state_change()
 
     def update_pending_deliveries(self):
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            self._outgoing_flow()
-        now = time.time()
-        pending = []
-        for delivery in self._pending_deliveries:
-            if delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                continue
-            if not delivery.sent:
-                sent_and_settled = self._outgoing_transfer(delivery)
-                if sent_and_settled:
+        with self._sender_lock:
+            if self.current_link_credit <= 0:
+                self.current_link_credit = self.link_credit
+                self._outgoing_flow()
+            now = time.time()
+            pending = []
+            for delivery in self._pending_deliveries:
+                if delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                     continue
-            pending.append(delivery)
-        self._pending_deliveries = pending
+                if not delivery.sent:
+                    sent_and_settled = self._outgoing_transfer(delivery)
+                    if sent_and_settled:
+                        continue
+                pending.append(delivery)
+            self._pending_deliveries = pending
 
     def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
