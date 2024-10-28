@@ -34,7 +34,6 @@ from ...operations._container_apps_revisions_operations import (
     build_list_revisions_request,
     build_restart_revision_request,
 )
-from .._vendor import ContainerAppsAPIClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
