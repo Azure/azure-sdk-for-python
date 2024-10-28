@@ -30,7 +30,6 @@ with AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 ) as project_client:
 
-
     if not project_client.diagnostics.enable():
         print("Application Insights was not enabled for this project.")
         print("Enable it via the 'Tracing' tab under 'Tools', in your AI Studio project page.")

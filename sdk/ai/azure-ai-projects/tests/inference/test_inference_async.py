@@ -17,7 +17,9 @@ class TestInferenceAsync(InferenceTestBase):
         model = kwargs.pop("azure_ai_projects_inference_tests_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
             # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-            async with await project_client.inference.get_azure_openai_client(api_version="2024-10-01-preview") as azure_openai_client:
+            async with await project_client.inference.get_azure_openai_client(
+                api_version="2024-10-01-preview"
+            ) as azure_openai_client:
                 response = await azure_openai_client.chat.completions.create(
                     messages=[
                         {
