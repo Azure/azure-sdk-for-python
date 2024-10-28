@@ -5,8 +5,8 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, and directly providing the 
-    input in string format.
+    the service using a synchronous client, with input message template
+    in string format.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
