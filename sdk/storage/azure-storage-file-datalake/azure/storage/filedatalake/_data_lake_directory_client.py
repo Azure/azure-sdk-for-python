@@ -136,9 +136,12 @@ class DataLakeDirectoryClient(PathClient):
             credential=credential, **kwargs)
 
     @distributed_trace
-    def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
-                         **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def create_directory(
+        self, metadata: Optional[Dict[str, str]] = None,
+        *,
+        client_transaction_id: Optional[str] = None,
+        **kwargs
+    ) -> Dict[str, Union[str, "datetime"]]:
         """
         Create a new directory.
 
@@ -203,6 +206,9 @@ class DataLakeDirectoryClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword str client_transaction_id:
+            UUID that identifies a request and provides idempotency on retries. Max length is 32.
+            All retries on the same request should have the same transaction ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -221,7 +227,12 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 8
                 :caption: Create directory.
         """
-        return self._create('directory', metadata=metadata, **kwargs)
+        return self._create(
+            'directory',
+            metadata=metadata,
+            client_transaction_id=client_transaction_id,
+            **kwargs
+        )
 
     @distributed_trace
     def delete_directory(self, **kwargs):

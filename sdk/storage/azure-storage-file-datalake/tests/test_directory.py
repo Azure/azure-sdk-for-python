@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import uuid
 from datetime import datetime, timedelta
 from time import sleep
 
@@ -1630,6 +1631,27 @@ class TestDirectory(StorageRecordedTestCase):
         assert path_response[0]['name'] == directory_name + '1' + '/' + 'file0'
         assert path_response[1]['name'] == directory_name + '1' + '/' + 'file1'
 
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_rename_directory(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        create_transaction_id = str(uuid.uuid4())
+
+        try:
+            # Act
+            directory_client.create_directory(client_transaction_id=create_transaction_id)
+
+            # Assert
+            props = directory_client.get_directory_properties()
+            assert props.client_transaction_id == create_transaction_id
+        finally:
+            directory_client.delete_directory()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

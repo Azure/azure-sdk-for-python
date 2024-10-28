@@ -155,11 +155,14 @@ class PathClient(StorageAccountHostsMixin):
         return (f"{self.scheme}://{hostname}/{quote(file_system_name)}/"
                 f"{quote(self.path_name, safe='~')}{self._query_str}")
 
-    def _create_path_options(self, resource_type,
-                             content_settings=None,  # type: Optional[ContentSettings]
-                             metadata=None,  # type: Optional[Dict[str, str]]
-                             **kwargs):
-        # type: (...) -> Dict[str, Any]
+    def _create_path_options(
+        self, resource_type: str,
+        scheme: str,
+        content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        client_transaction_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
@@ -167,7 +170,7 @@ class PathClient(StorageAccountHostsMixin):
         if content_settings:
             path_http_headers = get_path_http_headers(content_settings)
 
-        cpk_info = get_cpk_info(self.scheme, kwargs)
+        cpk_info = get_cpk_info(scheme, kwargs)
 
         expires_on = kwargs.pop('expires_on', None)
         if expires_on:
@@ -196,12 +199,20 @@ class PathClient(StorageAccountHostsMixin):
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
             'encryption_context': kwargs.pop('encryption_context', None),
-            'cls': return_response_headers}
+            'client_transaction_id': client_transaction_id,
+            'cls': return_response_headers
+        }
         options.update(kwargs)
         return options
 
-    def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def _create(
+        self, resource_type: str,
+        content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        client_transaction_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """
         Create directory or file
 
@@ -280,6 +291,9 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword str client_transaction_id:
+            UUID that identifies a request and provides idempotency on retries. Max length is 32.
+            All retries on the same request should have the same transaction ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -301,7 +315,9 @@ class PathClient(StorageAccountHostsMixin):
             resource_type,
             content_settings=content_settings,
             metadata=metadata,
-            **kwargs)
+            client_transaction_id=client_transaction_id,
+            **kwargs
+        )
         try:
             return self._client.path.create(**options)
         except HttpResponseError as error:

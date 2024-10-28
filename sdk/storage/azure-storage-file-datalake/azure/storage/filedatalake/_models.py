@@ -160,6 +160,8 @@ class DirectoryProperties(DictMixin):
         Indicates when the directory was created, in UTC.
     :ivar int remaining_retention_days: The number of days that the directory will be retained
         before being permanently deleted by the service.
+    :ivar str client_transaction_id:
+        UUID that identifies a request and provides idempotency on retries. Max length is 32.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
 
@@ -174,6 +176,7 @@ class DirectoryProperties(DictMixin):
         self.deleted_time = None
         self.remaining_retention_days = None
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
+        self.client_transaction_id = kwargs.get('x-ms-client-transaction-id')
 
         # This is being passed directly not coming from headers
         self.owner = kwargs.get('owner', None)
