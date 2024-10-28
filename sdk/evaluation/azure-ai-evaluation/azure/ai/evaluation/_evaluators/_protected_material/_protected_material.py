@@ -15,15 +15,19 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a protected material evaluator to detect whether protected material
-    is present in your AI system's response. Outputs True or False with AI-generated reasoning.
+    is present in the AI system's response. The evaluator outputs a Boolean label (`True` or `False`)
+    indicating the presence of protected material, along with AI-generated reasoning.
 
-    :param credential: The credential for connecting to Azure AI project. Required
+    :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID,
+        resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    **Usage**
+    :return: A dictionary with a label indicating the presence of protected material and the reasoning.
+    :rtype: Dict[str, Union[bool, str]]
+
+    **Usage Example**
 
     .. code-block:: python
 
@@ -35,14 +39,15 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
 
-    **Output format**
+    **Output Format**
 
-    .. code-block:: python
+    .. code-block:: json
 
         {
-            "protected_material_label": False,
+            "protected_material_label": false,
             "protected_material_reason": "This query does not contain any protected material."
         }
+
     """
 
     @override
