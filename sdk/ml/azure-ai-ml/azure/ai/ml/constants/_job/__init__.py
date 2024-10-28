@@ -14,6 +14,7 @@ from .automl import (
     NlpModels,
     TabularTrainingMode,
 )
+from .distillation import DataGenerationTaskType, DataGenerationType
 from .job import DistributionType, ImportSourceType, JobType
 from .pipeline import PipelineConstants
 from .sweep import SearchSpace
@@ -21,6 +22,8 @@ from .sweep import SearchSpace
 __all__ = [
     "AutoMLConstants",
     "AutoMLTransformerParameterKeys",
+    "DataGenerationTaskType",
+    "DataGenerationType",
     "DistributionType",
     "ImageClassificationModelNames",
     "ImageObjectDetectionModelNames",

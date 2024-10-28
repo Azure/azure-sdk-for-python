@@ -15,7 +15,7 @@ from azure.core.exceptions import ClientAuthenticationError
 import subprocess
 import pytest
 
-from helpers import mock, INVALID_CHARACTERS, GET_TOKEN_METHODS
+from helpers import mock, INVALID_CHARACTERS, INVALID_SUBSCRIPTION_CHARACTERS, GET_TOKEN_METHODS
 
 CHECK_OUTPUT = AzureCliCredential.__module__ + ".subprocess.check_output"
 
@@ -74,6 +74,40 @@ def test_invalid_scopes(get_token_method):
     for c in INVALID_CHARACTERS:
         with pytest.raises(ValueError):
             getattr(AzureCliCredential(), get_token_method)("scope" + c)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_subscription(get_token_method):
+    """The credential should accept a subscription ID"""
+
+    subscription = "foo subscription"
+    credential = AzureCliCredential(subscription=subscription)
+    assert credential.subscription == subscription
+
+    def fake_check_output(command_line, **_):
+        assert f'--subscription "{subscription}"' in command_line[-1]
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": "access-token",
+                "subscription": subscription,
+                "tenant": "tenant",
+                "tokenType": "Bearer",
+            }
+        )
+
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, fake_check_output):
+            token = getattr(credential, get_token_method)("scope")
+            assert token.token == "access-token"
+
+
+def test_invalid_subscriptons():
+    """Subscriptions with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_SUBSCRIPTION_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzureCliCredential(subscription="subscription" + c)
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
