@@ -11,7 +11,7 @@ import re
 from typing import Dict, List, Type, Union
 from pydantic import BaseModel
 from azure.ai.inference.models import ChatRequestMessage, SystemMessage, UserMessage, AssistantMessage, ToolMessage
-from .core import Invoker, Prompty, SimpleModel
+from ._core import Invoker, Prompty, SimpleModel
 
 
 class RoleMap:

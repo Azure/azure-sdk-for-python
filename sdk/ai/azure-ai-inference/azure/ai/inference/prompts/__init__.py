@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .core import InvokerFactory
-from .core import Prompty
+from ._core import InvokerFactory
+from ._core import Prompty
 
-from .renderers import MustacheRenderer
-from .parsers import PromptyChatParser
-from .utils import load
+from ._renderers import MustacheRenderer
+from ._parsers import PromptyChatParser
+from ._utils import load
 from ._patch import patch_sdk as _patch_sdk, PromptTemplate
 
 # Register the Mustache renderer and parser

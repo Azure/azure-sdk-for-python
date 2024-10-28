@@ -8,9 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import azure.ai.inference.prompts as prompts
-from .core import Prompty
-from .utils import prepare
-from .mustache import render
+from ._core import Prompty
+from ._utils import prepare
+from ._mustache import render
 
 
 class PromptTemplate:

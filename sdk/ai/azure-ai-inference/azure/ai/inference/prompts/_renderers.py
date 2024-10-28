@@ -7,9 +7,9 @@ Adapted from https://github.com/langchain-ai/langchain
 MIT License
 """
 from pydantic import BaseModel
-from .mustache import render
+from ._mustache import render
 
-from .core import Invoker, Prompty, SimpleModel
+from ._core import Invoker, Prompty, SimpleModel
 
 
 class MustacheRenderer(Invoker):

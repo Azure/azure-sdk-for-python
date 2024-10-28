@@ -10,7 +10,7 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
-from .core import (
+from ._core import (
     Frontmatter,
     InvokerFactory,
     ModelSettings,
