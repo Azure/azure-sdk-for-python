@@ -1,5 +1,11 @@
 # Release History
 
+## 8.2.0 (2024-10-22)
+
+### Features Added
+
+  - Model RecordSet has a new parameter traffic_management_profile
+
 ## 8.1.0 (2023-06-14)
 
 ### Features Added

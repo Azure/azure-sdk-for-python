@@ -399,9 +399,8 @@ class ChangeFeedStateV2(ChangeFeedState):
             collection_rid: str,
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
-        feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
-            feed_range = change_feed_state_context.get("feedRange")
+            feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
         elif change_feed_state_context.get("partitionKey"):
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
@@ -412,7 +411,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
-            warnings.warn("'feed_range' was not given, so by default using full range", UserWarning)
+            warnings.warn("'feed_range' empty. Use full range by default.", UserWarning)
             feed_range = FeedRangeInternalEpk(
                 Range(
                 "",

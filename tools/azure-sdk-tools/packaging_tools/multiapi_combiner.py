@@ -409,8 +409,9 @@ class CodeModel:
         for m in models_and_enums:
             if hasattr(m.generated_class, "from_dict"):
                 self.models[m.name] = m
-            else:
+            elif m.name != "TYPE_CHECKING":
                 self.enums.append(m)
+
         self._sort_models()
 
     def _sort_models(self) -> None:
