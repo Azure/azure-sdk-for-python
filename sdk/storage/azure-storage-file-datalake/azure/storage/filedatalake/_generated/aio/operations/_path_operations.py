@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -43,7 +43,7 @@ from ...operations._path_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -68,7 +68,7 @@ class PathOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(  # pylint: disable=inconsistent-return-statements
+    async def create(
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -88,6 +88,7 @@ class PathOperations:
         expiry_options: Optional[Union[str, _models.PathExpiryOptions]] = None,
         expires_on: Optional[str] = None,
         encryption_context: Optional[str] = None,
+        client_transaction_id: Optional[str] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -184,6 +185,9 @@ class PathOperations:
         :param encryption_context: Specifies the encryption context to set on the file. Default value
          is None.
         :type encryption_context: str
+        :param client_transaction_id: Optional, UUID that identifies a request.  Max length is 32.  All
+         retries of the same request should have the same transaction ID. Default value is None.
+        :type client_transaction_id: str
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -199,7 +203,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -289,6 +293,7 @@ class PathOperations:
             expiry_options=expiry_options,
             expires_on=expires_on,
             encryption_context=encryption_context,
+            client_transaction_id=client_transaction_id,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -475,7 +480,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -606,7 +611,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def lease(  # pylint: disable=inconsistent-return-statements
+    async def lease(
         self,
         x_ms_lease_action: Union[str, _models.PathLeaseAction],
         request_id_parameter: Optional[str] = None,
@@ -661,7 +666,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -794,7 +799,7 @@ class PathOperations:
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -940,7 +945,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(  # pylint: disable=inconsistent-return-statements
+    async def get_properties(
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -989,7 +994,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1068,12 +1073,15 @@ class PathOperations:
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-client-transaction-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-transaction-id")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1122,7 +1130,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1196,7 +1204,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_access_control(  # pylint: disable=inconsistent-return-statements
+    async def set_access_control(
         self,
         timeout: Optional[int] = None,
         owner: Optional[str] = None,
@@ -1243,7 +1251,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1369,7 +1377,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1430,7 +1438,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def flush_data(  # pylint: disable=inconsistent-return-statements
+    async def flush_data(
         self,
         timeout: Optional[int] = None,
         position: Optional[int] = None,
@@ -1514,7 +1522,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1627,7 +1635,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def append_data(  # pylint: disable=inconsistent-return-statements
+    async def append_data(
         self,
         body: IO[bytes],
         position: Optional[int] = None,
@@ -1708,7 +1716,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1804,7 +1812,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_expiry(  # pylint: disable=inconsistent-return-statements
+    async def set_expiry(
         self,
         expiry_options: Union[str, _models.PathExpiryOptions],
         timeout: Optional[int] = None,
@@ -1833,7 +1841,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1886,7 +1894,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def undelete(  # pylint: disable=inconsistent-return-statements
+    async def undelete(
         self,
         timeout: Optional[int] = None,
         undelete_source: Optional[str] = None,
@@ -1912,7 +1920,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
