@@ -285,8 +285,8 @@ class FunctionTool(Tool):
         self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(self._functions)
 
-    def _create_function_dict(self, funcs: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in funcs}
+    def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
+        func_dict = {func.__name__: func for func in functions}
         return func_dict
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:

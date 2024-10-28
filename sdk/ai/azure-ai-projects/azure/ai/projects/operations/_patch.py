@@ -299,7 +299,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
-        If not provided, all connections are listed.
+            If not provided, all connections are listed.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :return: A list of connection properties
         :rtype: Iterable[~azure.ai.projects.models._models.ConnectionProperties]
