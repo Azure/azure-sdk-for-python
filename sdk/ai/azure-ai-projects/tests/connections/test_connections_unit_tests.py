@@ -59,7 +59,7 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
             sas_token=sas_token,
             credential=FakeTokenCredential(),
             subscription_id="fake_subscription_id",
-            resource_group_name="fake_resouce_group",
+            resource_group_name="fake_resource_group",
             project_name="fake_project_name",
             connection_name="fake_connection_name",
         )

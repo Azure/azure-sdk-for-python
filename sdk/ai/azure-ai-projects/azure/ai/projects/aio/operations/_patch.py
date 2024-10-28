@@ -1,9 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -22,9 +17,19 @@ from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping,
 from azure.ai.projects import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
 from ...models._patch import ConnectionProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
+<<<<<<< HEAD
 from ...models._models import GetConnectionResponse, ListConnectionsResponse
+=======
+from ...models._models import (
+    GetConnectionResponse,
+    ListConnectionsResponse,
+    GetAppInsightsResponse,
+    GetWorkspaceResponse,
+)
+>>>>>>> 46e18c384c16459d46e538a13568f75bd4ff17ea
 from ... import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -37,7 +42,7 @@ _Unset: Any = object()
 class InferenceOperations:
 
     def __init__(self, outer_instance):
-        self.outer_instance = outer_instance
+        self._outer_instance = outer_instance
 
     @distributed_trace_async
     async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
@@ -50,7 +55,7 @@ class InferenceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = await self.outer_instance.connections.get_default(
+        connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
@@ -102,7 +107,7 @@ class InferenceOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = await self.outer_instance.connections.get_default(
+        connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
         )
         if not connection:
@@ -142,16 +147,21 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
+        :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
+         See "Data plane - Inference" row in the table at
+         https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs. If this keyword
+         is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
+        :paramtype api_version: str
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = await self.outer_instance.connections.get_default(
+        connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
         if not connection:
@@ -162,16 +172,12 @@ class InferenceOperations:
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai-async'")
 
-        # Pick latest GA version from the "Data plane - Inference" row in the table
-        # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-        AZURE_OPENAI_API_VERSION = "2024-06-01"
-
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AsyncAzureOpenAI(
-                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
+                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
         elif connection.authentication_type == AuthenticationType.AAD:
             logger.debug(
@@ -189,7 +195,7 @@ class InferenceOperations:
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=connection.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION,
+                api_version=api_version,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
@@ -198,7 +204,7 @@ class InferenceOperations:
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=connection.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION,
+                api_version=api_version,
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -256,7 +262,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
+<<<<<<< HEAD
             connection: GetConnectionResponse = await self._list_secrets(
+=======
+            connection: GetConnectionResponse = await self._get_connection_with_secrets(
+>>>>>>> 46e18c384c16459d46e538a13568f75bd4ff17ea
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
@@ -276,7 +286,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            return ConnectionProperties(connection=await self._get(connection_name=connection_name, **kwargs))
+            return ConnectionProperties(
+                connection=await self._get_connection(connection_name=connection_name, **kwargs)
+            )
 
     @distributed_trace_async
     async def list(
@@ -292,7 +304,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connections_list: ListConnectionsResponse = await self._list(
+        connections_list: ListConnectionsResponse = await self._list_connections(
             include_all=True, category=connection_type, **kwargs
         )
 
@@ -302,6 +314,47 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             connection_properties_list.append(ConnectionProperties(connection=connection))
 
         return connection_properties_list
+
+
+class DiagnosticsOperations(DiagnosticsOperationsGenerated):
+
+    connection_string: Optional[str] = None
+    """ Application Insights connection string. Call `enable()` to populate this property. """
+
+    def __init__(self, *args, **kwargs):
+        self._outer_instance = kwargs.pop("outer_instance")
+        super().__init__(*args, **kwargs)
+
+    @distributed_trace_async
+    async def enable(self, **kwargs) -> bool:
+        """Enable Application Insights tracing.
+        This method makes service calls to get the properties of the Applications Insights resource
+        connected to the Azure AI Studio Project. If Application Insights was not enabled for this project,
+        this method will return False. Otherwise, it will return True. In this case the Application Insights
+        connection string can be accessed via the `.diagnostics.connection_string` property.
+
+        :return: True if Application Insights tracing was enabled. False otherwise.
+        :rtype: bool
+        """
+
+        if not self.connection_string:
+            # Get the AI Studio Project properties
+            get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
+
+            # No Application Insights resource was enabled for this Project
+            if not get_workspace_response.properties.application_insights:
+                return False
+
+            app_insights_respose: GetAppInsightsResponse = await self.get_app_insights(
+                app_insights_resource_url=get_workspace_response.properties.application_insights
+            )
+
+            if not app_insights_respose.properties.connection_string:
+                raise ValueError("Application Insights resource does not have a connection string")
+
+            self.connection_string = app_insights_respose.properties.connection_string
+
+        return True
 
 
 class AgentsOperations(AgentsOperationsGenerated):
@@ -1968,6 +2021,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 __all__: List[str] = [
     "AgentsOperations",
     "ConnectionsOperations",
+    "DiagnosticsOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

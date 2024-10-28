@@ -30,24 +30,9 @@ az login
 
 ## Setup for running tests in the `agents` folder
 
-```bash
-set PROJECT_CONNECTION_STRING_AGENTS_TESTS=<your_connection_string>
-```
-
 ## Setup for running tests in the `evaluations` folder
 
 ## Setup for running tests in the `connections` and `inference` folders
-
-You need an Azure AI Project that has the following:
-
-TODO
-
-Copy the `Project connection string` from the Azure AI Studio and set the following environment variable:
-
-```bash
-set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=<your_connection_string>
-set AZURE_AI_PROJECTS_CONNECTIONS_TEST_MODEL_DEPLOYMENT_NAME=<your-azure-openai-model-deployment-name>
-```
 
 ## Configure test proxy
 
