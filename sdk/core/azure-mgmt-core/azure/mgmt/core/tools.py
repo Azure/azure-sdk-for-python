@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Mapping, MutableMapping, Optional, Type, Union, cast
+from typing import Mapping, MutableMapping, Optional, Type, Union, cast, Dict, Any
 import re
 import logging
 from azure.core import AzureClouds
@@ -220,7 +220,7 @@ def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseExcepti
     return False
 
 
-def get_arm_info(cloud_setting: AzureClouds) -> dict[str, str]:
+def get_arm_info(cloud_setting: AzureClouds) -> Dict[str, Any]:
     """Get the ARM endpoint and ARM authentication endpoint for the given cloud setting.
 
     :param cloud_setting: The cloud setting for which to get the ARM endpoint.
