@@ -682,7 +682,7 @@ indexing_policy = {
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
             {"path": "/vector2", "type": "quantizedFlat"},
-            {"path": "/vector2", "type": "diskANN"}
+            {"path": "/vector3", "type": "diskANN"}
         ]
     }
 ```
