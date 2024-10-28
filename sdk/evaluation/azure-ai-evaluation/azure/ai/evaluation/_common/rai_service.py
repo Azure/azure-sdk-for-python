@@ -374,17 +374,18 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
             headers=headers,
         )
 
-        if response.status_code != 200:
-            msg = (
-                f"Unable to connect to your Azure AI project. Please verify that the project is correctly configured. "
-                f"Status code: {response.status_code}"
-            )
-            raise EvaluationException(
-                message=msg,
-                target=ErrorTarget.RAI_CLIENT,
-                category=ErrorCategory.SERVICE_UNAVAILABLE,
-                blame=ErrorBlame.USER_ERROR,
-            )
+    if response.status_code != 200:
+        msg = (
+            f"Connection to the Azure AI project failed. Please check if the project scope is configured correctly, "
+            f"and make sure you have the necessary access permissions. "
+            f"Status code: {response.status_code}."
+        )
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            blame=ErrorBlame.USER_ERROR,
+            tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+        )
 
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])
     return f"{base_url.scheme}://{base_url.netloc}"
