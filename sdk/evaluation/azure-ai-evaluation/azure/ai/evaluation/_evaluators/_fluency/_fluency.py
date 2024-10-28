@@ -24,9 +24,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     .. code-block:: python
 
         eval_fn = FluencyEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.")
+        result = eval_fn(response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -55,13 +53,10 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     def __call__(
         self,
         *,
-        query: str,
         response: str,
     ) -> Dict[str, float]:
         """Evaluate fluency in given query/response
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
         :return: The fluency score
@@ -93,17 +88,14 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         **kwargs,
     ):
         """
-        Evaluate fluency. Accepts either a query and response for a single evaluation,
+        Evaluate fluency. Accepts either a response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
+        :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
         :paramtype response: str
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
+            key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]

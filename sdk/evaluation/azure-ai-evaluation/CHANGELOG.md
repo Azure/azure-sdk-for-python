@@ -1,6 +1,5 @@
 # Release History
 
-
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
@@ -23,9 +22,13 @@ outputs = asyncio.run(custom_simulator(
     max_conversation_turns=1,
 ))
 ```
+- Adding evaluator for multimodal use cases
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- `RetrievalEvaluator` now requires a `context` input in addition to `query` in single-turn evaluation.
+- `RelevanceEvaluator` no longer takes `context` as an input. It now only takes `query` and `response` in single-turn evaluation.
+- `FluencyEvaluator` no longer takes `query` as an input. It now only takes `response` in single-turn evaluation.
 - AdversarialScenario enum does not include `ADVERSARIAL_INDIRECT_JAILBREAK`, invoking IndirectJailbreak or XPIA should be done with `IndirectAttackSimulator`
 - Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
 ```json
@@ -44,6 +47,7 @@ outputs = asyncio.run(custom_simulator(
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- `GroundednessEvaluator` now supports `query` as an optional input in single-turn evaluation. If `query` is provided, a different prompt template will be used for the evaluation.
 - To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
   - `CoherenceEvaluator`
   - `RelevanceEvaluator`
@@ -51,6 +55,15 @@ outputs = asyncio.run(custom_simulator(
   - `GroundednessEvaluator`
   - `SimilarityEvaluator`
   - `RetrievalEvaluator`
+- The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
+    
+    | Evaluator | New Token Limit |
+    | --- | --- |
+    | `CoherenceEvaluator` | 800 |
+    | `RelevanceEvaluator` | 800 |
+    | `FluencyEvaluator` | 800 |
+    | `GroundednessEvaluator` | 800 |
+    | `RetrievalEvaluator` | 1600 |
 - Improved the error message for storage access permission issues to provide clearer guidance for users.
 
 ## 1.0.0b4 (2024-10-16)

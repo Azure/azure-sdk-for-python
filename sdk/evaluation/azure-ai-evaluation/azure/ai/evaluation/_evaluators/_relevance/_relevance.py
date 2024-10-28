@@ -26,9 +26,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         eval_fn = RelevanceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
+            response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -37,6 +35,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         {
             "relevance": 3.0,
             "gpt_relevance": 3.0,
+            "relevance_reason": "The response is relevant to the query because it provides the correct answer.",
         }
 
     Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
@@ -60,7 +59,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         *args,
         query: str,
         response: str,
-        context: str,
         **kwargs,
     ) -> Dict[str, float]:
         """Evaluate groundedness for given input of query, response, context
@@ -69,8 +67,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :keyword context: The context to be evaluated.
-        :paramtype context: str
         :return: The relevance score.
         :rtype: Dict[str, float]
         """
@@ -101,16 +97,14 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         *args,
         **kwargs,
     ):
-        """Evaluate relevance. Accepts either a response and context a single evaluation,
+        """Evaluate relevance. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
+        :keyword query: The query to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
