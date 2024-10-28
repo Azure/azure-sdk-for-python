@@ -258,11 +258,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
-<<<<<<< HEAD
-            connection: GetConnectionResponse = await self._list_secrets(
-=======
             connection: GetConnectionResponse = await self._get_connection_with_secrets(
->>>>>>> 46e18c384c16459d46e538a13568f75bd4ff17ea
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
