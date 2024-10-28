@@ -38,7 +38,7 @@ class TestChangeFeed:
     def test_get_feed_ranges(self, setup):
         created_collection = setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
-        result = created_collection.read_feed_ranges()
+        result = list(created_collection.read_feed_ranges())
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
@@ -56,7 +56,7 @@ class TestChangeFeed:
         elif change_feed_filter_param == "partitionKeyRangeId":
             filter_param = {"partition_key_range_id": "0"}
         elif change_feed_filter_param == "feedRange":
-            feed_ranges = created_collection.read_feed_ranges()
+            feed_ranges = list(created_collection.read_feed_ranges())
             assert len(feed_ranges) == 1
             filter_param = {"feed_range": feed_ranges[0]}
         else:
