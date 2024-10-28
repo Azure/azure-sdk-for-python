@@ -20,16 +20,12 @@ from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
 from ...models._patch import ConnectionProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
-<<<<<<< HEAD
-from ...models._models import GetConnectionResponse, ListConnectionsResponse
-=======
 from ...models._models import (
     GetConnectionResponse,
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
 )
->>>>>>> 46e18c384c16459d46e538a13568f75bd4ff17ea
 from ... import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
 

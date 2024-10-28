@@ -5305,7 +5305,7 @@ class DiagnosticsOperations:
 
         :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the
          format:
-         ``/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource-name}``.
+         '/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resourcename}'.
          Required.
         :type app_insights_resource_url: str
         :return: GetAppInsightsResponse. The GetAppInsightsResponse is compatible with MutableMapping
