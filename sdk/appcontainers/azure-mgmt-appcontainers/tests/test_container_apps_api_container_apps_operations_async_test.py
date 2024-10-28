@@ -25,7 +25,6 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.container_apps.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         )
         result = [r async for r in response]
         assert result == []
-        
