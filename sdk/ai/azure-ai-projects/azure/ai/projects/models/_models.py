@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,7 +13,12 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
-from ._enums import AuthenticationType, RunStepType, VectorStoreChunkingStrategyRequestType, VectorStoreChunkingStrategyResponseType
+from ._enums import (
+    AuthenticationType,
+    RunStepType,
+    VectorStoreChunkingStrategyRequestType,
+    VectorStoreChunkingStrategyResponseType,
+)
 
 if TYPE_CHECKING:
     from .. import _types, models as _models
@@ -54,7 +60,7 @@ class Agent(_model_base.Model):
     :ivar top_p: An alternative to sampling with temperature, called nucleus sampling, where the
      model considers the results of the tokens with top_p probability mass.
      So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-    
+
      We generally recommend altering this or temperature but not both. Required.
     :vartype top_p: float
     :ivar response_format: The response format of the tool calls used by this agent. Is one of the
@@ -107,9 +113,6 @@ class Agent(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -126,8 +129,7 @@ class Agent(_model_base.Model):
         top_p: float,
         metadata: Dict[str, str],
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -164,17 +166,13 @@ class AgentDeletionStatus(_model_base.Model):
     """The object type, which is always 'assistant.deleted'. Required. Default value is
      \"assistant.deleted\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -201,16 +199,12 @@ class AgentsApiResponseFormat(_model_base.Model):
     type: Optional[Union[str, "_models.ApiResponseFormat"]] = rest_field()
     """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.ApiResponseFormat"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -242,17 +236,13 @@ class AgentsNamedToolChoice(_model_base.Model):
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: Union[str, "_models.AgentsNamedToolChoiceType"],
         function: Optional["_models.FunctionName"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -307,9 +297,6 @@ class AgentThread(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -318,8 +305,7 @@ class AgentThread(_model_base.Model):
         created_at: datetime.datetime,
         tool_resources: "_models.ToolResources",
         metadata: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -363,9 +349,6 @@ class AgentThreadCreationOptions(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -373,8 +356,7 @@ class AgentThreadCreationOptions(_model_base.Model):
         messages: Optional[List["_models.ThreadMessageOptions"]] = None,
         tool_resources: Optional["_models.ToolResources"] = None,
         metadata: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -398,16 +380,12 @@ class AppInsightsProperties(_model_base.Model):
     connection_string: str = rest_field(name="ConnectionString")
     """Authentication type of the connection target. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         connection_string: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -435,16 +413,12 @@ class InputData(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """Type of the data. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -457,7 +431,7 @@ class InputData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsConfiguration(InputData, discriminator='app_insights'):
+class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """Data Source for Application Insights.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -487,9 +461,6 @@ class ApplicationInsightsConfiguration(InputData, discriminator='app_insights'):
     connection_string: Optional[str] = rest_field(name="connectionString")
     """Connection String to connect to ApplicationInsights."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -498,8 +469,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator='app_insights'):
         query: str,
         service_name: str,
         connection_string: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -524,16 +494,12 @@ class AzureAISearchResource(_model_base.Model):
     """The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index_list: Optional[List["_models.IndexResource"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -563,16 +529,12 @@ class ToolDefinition(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -585,7 +547,7 @@ class ToolDefinition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureAISearchToolDefinition(ToolDefinition, discriminator='azure_ai_search'):
+class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
 
@@ -598,14 +560,10 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator='azure_ai_search
     """The object type, which is always 'azure_ai_search'. Required. Default value is
      \"azure_ai_search\"."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -618,7 +576,7 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator='azure_ai_search
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
-class BingGroundingToolDefinition(ToolDefinition, discriminator='bing_grounding'):
+class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
 
@@ -632,14 +590,10 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator='bing_grounding'
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -652,7 +606,7 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator='bing_grounding'
         super().__init__(*args, type="bing_grounding", **kwargs)
 
 
-class CodeInterpreterToolDefinition(ToolDefinition, discriminator='code_interpreter'):
+class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
     """The input definition information for a code interpreter tool as used to configure an agent.
 
 
@@ -665,14 +619,10 @@ class CodeInterpreterToolDefinition(ToolDefinition, discriminator='code_interpre
     """The object type, which is always 'code_interpreter'. Required. Default value is
      \"code_interpreter\"."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -699,16 +649,12 @@ class CodeInterpreterToolResource(_model_base.Model):
      20 files
      associated with the tool."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_ids: Optional[List[str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -735,16 +681,12 @@ class ConnectionListResource(_model_base.Model):
     """The connections attached to this agent. There can be a maximum of 1 connection
      resource attached to the agent."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         connection_list: Optional[List["_models.ConnectionResource"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -775,11 +717,7 @@ class ConnectionProperties(_model_base.Model):
      and \"SAS\"."""
 
 
-
-
-
-
-class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator='AAD'):
+class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
     ).
 
@@ -803,11 +741,7 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator='AAD'):
     """The connection URL to be used for this service. Required."""
 
 
-
-
-
-
-class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator='ApiKey'):
+class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.
 
 
@@ -833,11 +767,7 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator='ApiKey
     """The connection URL to be used for this service. Required."""
 
 
-
-
-
-
-class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator='SAS'):
+class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     """Connection properties for connections with SAS authentication.
 
 
@@ -865,10 +795,6 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator='SAS'):
     """The connection URL to be used for this service. Required."""
 
 
-
-
-
-
 class ConnectionResource(_model_base.Model):
     """A connection resource.
 
@@ -880,16 +806,12 @@ class ConnectionResource(_model_base.Model):
     connection_id: str = rest_field()
     """A connection in a ConnectionListResource attached to this agent. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         connection_id: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -914,10 +836,6 @@ class CredentialsApiKeyAuth(_model_base.Model):
     """The API key. Required."""
 
 
-
-
-
-
 class CredentialsSASAuth(_model_base.Model):
     """The credentials needed for Shared Access Signatures (SAS) authentication.
 
@@ -928,10 +846,6 @@ class CredentialsSASAuth(_model_base.Model):
 
     sas: str = rest_field(name="SAS")
     """The Shared Access Signatures (SAS) token. Required."""
-
-
-
-
 
 
 class Trigger(_model_base.Model):
@@ -949,16 +863,12 @@ class Trigger(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """Type of the trigger. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -971,7 +881,7 @@ class Trigger(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CronTrigger(Trigger, discriminator='Cron'):
+class CronTrigger(Trigger, discriminator="Cron"):
     """Cron Trigger Definition.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -988,16 +898,12 @@ class CronTrigger(Trigger, discriminator='Cron'):
     expression: str = rest_field()
     """Cron expression for the trigger. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         expression: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1010,7 +916,7 @@ class CronTrigger(Trigger, discriminator='Cron'):
         super().__init__(*args, type="Cron", **kwargs)
 
 
-class Dataset(InputData, discriminator='dataset'):
+class Dataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -1027,16 +933,12 @@ class Dataset(InputData, discriminator='dataset'):
     id: str = rest_field()
     """Evaluation input data. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1100,9 +1002,6 @@ class Evaluation(_model_base.Model):
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -1113,8 +1012,7 @@ class Evaluation(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1181,9 +1079,6 @@ class EvaluationSchedule(_model_base.Model):
     sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
     """Sampling strategy for the evaluation. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -1195,8 +1090,7 @@ class EvaluationSchedule(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1228,9 +1122,6 @@ class EvaluatorConfiguration(_model_base.Model):
     data_mapping: Optional[Dict[str, str]] = rest_field(name="dataMapping")
     """Data parameters of the evaluator."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -1238,8 +1129,7 @@ class EvaluatorConfiguration(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         init_params: Optional[Dict[str, Any]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1263,16 +1153,12 @@ class FileContentResponse(_model_base.Model):
     content: bytes = rest_field(format="base64")
     """The content of the file, in bytes. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         content: bytes,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1306,17 +1192,13 @@ class FileDeletionStatus(_model_base.Model):
     object: Literal["file"] = rest_field()
     """The object type, which is always 'file'. Required. Default value is \"file\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1347,16 +1229,12 @@ class FileListResponse(_model_base.Model):
     data: List["_models.OpenAIFile"] = rest_field()
     """The files returned for the request. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         data: List["_models.OpenAIFile"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1370,7 +1248,7 @@ class FileListResponse(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
-class FileSearchToolDefinition(ToolDefinition, discriminator='file_search'):
+class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
 
 
@@ -1386,16 +1264,12 @@ class FileSearchToolDefinition(ToolDefinition, discriminator='file_search'):
     file_search: Optional["_models.FileSearchToolDefinitionDetails"] = rest_field()
     """Options overrides for the file search tool."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_search: Optional["_models.FileSearchToolDefinitionDetails"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1414,7 +1288,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
     :ivar max_num_results: The maximum number of results the file search tool should output. The
      default is 20 for gpt-4* models and 5 for gpt-3.5-turbo. This number should be between 1 and 50
      inclusive.
-    
+
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information.
     :vartype max_num_results: int
@@ -1427,16 +1301,12 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         max_num_results: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1462,16 +1332,12 @@ class FileSearchToolResource(_model_base.Model):
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1506,9 +1372,6 @@ class FunctionDefinition(_model_base.Model):
     parameters: Any = rest_field()
     """The parameters the functions accepts, described as a JSON Schema object. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -1516,8 +1379,7 @@ class FunctionDefinition(_model_base.Model):
         name: str,
         parameters: Any,
         description: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1541,16 +1403,12 @@ class FunctionName(_model_base.Model):
     name: str = rest_field()
     """The name of the function to call. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         name: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1563,7 +1421,7 @@ class FunctionName(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionToolDefinition(ToolDefinition, discriminator='function'):
+class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     """The input definition information for a function tool as used to configure an agent.
 
 
@@ -1579,16 +1437,12 @@ class FunctionToolDefinition(ToolDefinition, discriminator='function'):
     function: "_models.FunctionDefinition" = rest_field()
     """The definition of the concrete function that the function tool should call. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         function: "_models.FunctionDefinition",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1620,9 +1474,6 @@ class GetAppInsightsResponse(_model_base.Model):
     properties: "_models.AppInsightsProperties" = rest_field()
     """The properties of the resource. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -1630,8 +1481,7 @@ class GetAppInsightsResponse(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         name: str,
         properties: "_models.AppInsightsProperties",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1664,10 +1514,6 @@ class GetConnectionResponse(_model_base.Model):
     """The properties of the resource. Required."""
 
 
-
-
-
-
 class GetWorkspaceResponse(_model_base.Model):
     """Response from the Workspace - Get operation.
 
@@ -1688,10 +1534,6 @@ class GetWorkspaceResponse(_model_base.Model):
     """The properties of the resource. Required."""
 
 
-
-
-
-
 class IndexResource(_model_base.Model):
     """A Index resource.
 
@@ -1708,17 +1550,13 @@ class IndexResource(_model_base.Model):
     index_name: str = rest_field()
     """The name of an index in an IndexResource attached to this agent. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index_connection_id: str,
         index_name: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1743,10 +1581,6 @@ class ListConnectionsResponse(_model_base.Model):
     """A list of connection list secrets. Required."""
 
 
-
-
-
-
 class MessageAttachment(_model_base.Model):
     """This describes to which tools a file has been attached.
 
@@ -1763,17 +1597,13 @@ class MessageAttachment(_model_base.Model):
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: str,
         tools: List["_types.MessageAttachmentToolDefinition"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1801,16 +1631,12 @@ class MessageContent(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1839,17 +1665,13 @@ class MessageDelta(_model_base.Model):
     content: List["_models.MessageDeltaContent"] = rest_field()
     """The content of the message as an array of text and/or images. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageDeltaContent"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1885,17 +1707,13 @@ class MessageDeltaChunk(_model_base.Model):
     delta: "_models.MessageDelta" = rest_field()
     """The delta containing the fields that have changed on the Message. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         delta: "_models.MessageDelta",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1928,17 +1746,13 @@ class MessageDeltaContent(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The type of content for this content part. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1951,7 +1765,7 @@ class MessageDeltaContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaImageFileContent(MessageDeltaContent, discriminator='image_file'):
+class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_file"):
     """Represents a streamed image file content part within a streaming message delta chunk.
 
 
@@ -1970,17 +1784,13 @@ class MessageDeltaImageFileContent(MessageDeltaContent, discriminator='image_fil
     image_file: Optional["_models.MessageDeltaImageFileContentObject"] = rest_field()
     """The image_file data."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         image_file: Optional["_models.MessageDeltaImageFileContentObject"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2003,16 +1813,12 @@ class MessageDeltaImageFileContentObject(_model_base.Model):
     file_id: Optional[str] = rest_field()
     """The file ID of the image in the message content."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2044,17 +1850,13 @@ class MessageDeltaTextAnnotation(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The type of the text content annotation. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2067,7 +1869,7 @@ class MessageDeltaTextAnnotation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaTextContent(MessageDeltaContent, discriminator='text'):
+class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
     """Represents a streamed text content part within a streaming message delta chunk.
 
 
@@ -2086,17 +1888,13 @@ class MessageDeltaTextContent(MessageDeltaContent, discriminator='text'):
     text: Optional["_models.MessageDeltaTextContentObject"] = rest_field()
     """The text content details."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         text: Optional["_models.MessageDeltaTextContentObject"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2123,17 +1921,13 @@ class MessageDeltaTextContentObject(_model_base.Model):
     annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = rest_field()
     """Annotations for the text."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         value: Optional[str] = None,
         annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2146,7 +1940,7 @@ class MessageDeltaTextContentObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discriminator='file_citation'):
+class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discriminator="file_citation"):
     """Represents a streamed file citation applied to a streaming text content part.
 
 
@@ -2177,9 +1971,6 @@ class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discrim
     end_index: Optional[int] = rest_field()
     """The end index of this annotation in the content text."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2189,8 +1980,7 @@ class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discrim
         text: Optional[str] = None,
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2217,17 +2007,13 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
     quote: Optional[str] = rest_field()
     """The specific quote in the cited file."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: Optional[str] = None,
         quote: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2240,7 +2026,7 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminator='file_path'):
+class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminator="file_path"):
     """Represents a streamed file path annotation applied to a streaming text content part.
 
 
@@ -2271,9 +2057,6 @@ class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminat
     text: Optional[str] = rest_field()
     """The text in the message content that needs to be replaced."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2283,8 +2066,7 @@ class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminat
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
         text: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2308,16 +2090,12 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
     file_id: Optional[str] = rest_field()
     """The file ID for the annotation."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2330,7 +2108,7 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageImageFileContent(MessageContent, discriminator='image_file'):
+class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
 
 
@@ -2346,16 +2124,12 @@ class MessageImageFileContent(MessageContent, discriminator='image_file'):
     image_file: "_models.MessageImageFileDetails" = rest_field()
     """The image file for this thread message content item. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         image_file: "_models.MessageImageFileDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2379,16 +2153,12 @@ class MessageImageFileDetails(_model_base.Model):
     file_id: str = rest_field()
     """The ID for the file associated with this image. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2416,16 +2186,12 @@ class MessageIncompleteDetails(_model_base.Model):
      are: \"content_filter\", \"max_tokens\", \"run_cancelled\", \"run_failed\", and
      \"run_expired\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         reason: Union[str, "_models.MessageIncompleteDetailsReason"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2457,17 +2223,13 @@ class MessageTextAnnotation(_model_base.Model):
     text: str = rest_field()
     """The textual content associated with this text annotation item. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
         text: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2480,7 +2242,7 @@ class MessageTextAnnotation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageTextContent(MessageContent, discriminator='text'):
+class MessageTextContent(MessageContent, discriminator="text"):
     """A representation of a textual item of thread message content.
 
 
@@ -2495,16 +2257,12 @@ class MessageTextContent(MessageContent, discriminator='text'):
     text: "_models.MessageTextDetails" = rest_field()
     """The text and associated annotations for this thread message content item. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         text: "_models.MessageTextDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2532,17 +2290,13 @@ class MessageTextDetails(_model_base.Model):
     annotations: List["_models.MessageTextAnnotation"] = rest_field()
     """A list of annotations associated with this text. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         value: str,
         annotations: List["_models.MessageTextAnnotation"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2555,7 +2309,7 @@ class MessageTextDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator='file_citation'):
+class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="file_citation"):
     """A citation within the message that points to a specific quote from a specific File associated
     with the agent or the message. Generated when the agent uses the 'file_search' tool to search
     files.
@@ -2586,9 +2340,6 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator='fi
     end_index: Optional[int] = rest_field()
     """The last text index associated with this text annotation."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2597,8 +2348,7 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator='fi
         file_citation: "_models.MessageTextFileCitationDetails",
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2627,17 +2377,13 @@ class MessageTextFileCitationDetails(_model_base.Model):
     quote: str = rest_field()
     """The specific quote cited in the associated file. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: str,
         quote: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2650,7 +2396,7 @@ class MessageTextFileCitationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator='file_path'):
+class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_path"):
     """A citation within the message that points to a file located at a specific path.
 
 
@@ -2678,9 +2424,6 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator='file_p
     end_index: Optional[int] = rest_field()
     """The last text index associated with this text annotation."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2689,8 +2432,7 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator='file_p
         file_path: "_models.MessageTextFilePathDetails",
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2714,16 +2456,12 @@ class MessageTextFilePathDetails(_model_base.Model):
     file_id: str = rest_field()
     """The ID of the specific file that the citation is from. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2736,7 +2474,7 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator='microsoft_fabric'):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
 
@@ -2749,14 +2487,10 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator='microsoft_fab
     """The object type, which is always 'microsoft_fabric'. Required. Default value is
      \"microsoft_fabric\"."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2819,9 +2553,6 @@ class OpenAIFile(_model_base.Model):
     """The error message with details in case processing of this file failed. This field is available
      in Azure OpenAI only."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2833,8 +2564,7 @@ class OpenAIFile(_model_base.Model):
         purpose: Union[str, "_models.FilePurpose"],
         status: Optional[Union[str, "_models.FileState"]] = None,
         status_details: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2879,9 +2609,6 @@ class OpenAIPageableListOfAgent(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2890,8 +2617,7 @@ class OpenAIPageableListOfAgent(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2936,9 +2662,6 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -2947,8 +2670,7 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2993,9 +2715,6 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3004,8 +2723,7 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3050,9 +2768,6 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3061,8 +2776,7 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3107,9 +2821,6 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3118,8 +2829,7 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3164,9 +2874,6 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3175,8 +2882,7 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3213,9 +2919,6 @@ class RecurrenceSchedule(_model_base.Model):
     month_days: Optional[List[int]] = rest_field(name="monthDays")
     """List of month days for the schedule."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3224,8 +2927,7 @@ class RecurrenceSchedule(_model_base.Model):
         minutes: List[int],
         week_days: Optional[List[Union[str, "_models.WeekDays"]]] = None,
         month_days: Optional[List[int]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3238,7 +2940,7 @@ class RecurrenceSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurrenceTrigger(Trigger, discriminator='Recurrence'):
+class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     """Recurrence Trigger Definition.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -3265,9 +2967,6 @@ class RecurrenceTrigger(Trigger, discriminator='Recurrence'):
     schedule: Optional["_models.RecurrenceSchedule"] = rest_field()
     """The recurrence schedule."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3275,8 +2974,7 @@ class RecurrenceTrigger(Trigger, discriminator='Recurrence'):
         frequency: Union[str, "_models.Frequency"],
         interval: int,
         schedule: Optional["_models.RecurrenceSchedule"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3304,16 +3002,12 @@ class RequiredAction(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3346,17 +3040,13 @@ class RequiredToolCall(_model_base.Model):
     id: str = rest_field()
     """The ID of the tool call. This ID must be referenced when submitting tool outputs. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
         id: str,  # pylint: disable=redefined-builtin
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3369,7 +3059,7 @@ class RequiredToolCall(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RequiredFunctionToolCall(RequiredToolCall, discriminator='function'):
+class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     """A representation of a requested call to a function tool, needed by the model to continue
     evaluation of a run.
 
@@ -3392,17 +3082,13 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator='function'):
     """Detailed information about the function to be executed by the tool that includes name and
      arguments. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         function: "_models.RequiredFunctionToolCallDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3434,17 +3120,13 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
     """The arguments to use when invoking the named function, as provided by the model. Arguments are
      presented as a JSON document that should be validated and parsed for evaluation. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         name: str,
         arguments: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3477,9 +3159,6 @@ class RunCompletionUsage(_model_base.Model):
     total_tokens: int = rest_field()
     """Total number of tokens used (prompt + completion). Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3487,8 +3166,7 @@ class RunCompletionUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3516,17 +3194,13 @@ class RunError(_model_base.Model):
     message: str = rest_field()
     """The human-readable text associated with the error. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         code: str,
         message: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3628,9 +3302,6 @@ class RunStep(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -3650,8 +3321,7 @@ class RunStep(_model_base.Model):
         failed_at: datetime.datetime,
         metadata: Dict[str, str],
         usage: Optional["_models.RunStepCompletionUsage"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3688,17 +3358,13 @@ class RunStepToolCall(_model_base.Model):
     id: str = rest_field()
     """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
         id: str,  # pylint: disable=redefined-builtin
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3711,7 +3377,7 @@ class RunStepToolCall(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator='azure_ai_search'):
+class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_search"):
     """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Azure AI search.
@@ -3733,17 +3399,13 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator='azure_ai_sear
     azure_ai_search: Dict[str, str] = rest_field()
     """Reserved for future use. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         azure_ai_search: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3756,7 +3418,7 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator='azure_ai_sear
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
-class RunStepBingGroundingToolCall(RunStepToolCall, discriminator='bing_grounding'):
+class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
     """A record of a call to a bing grounding tool, issued by the model in evaluation of a defined
     tool, that represents
     executed search with bing grounding.
@@ -3778,17 +3440,13 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator='bing_groundin
     bing_grounding: Dict[str, str] = rest_field()
     """Reserved for future use. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         bing_grounding: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3816,16 +3474,12 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3838,7 +3492,7 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, discriminator='image'):
+class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, discriminator="image"):
     """A representation of an image output emitted by a code interpreter tool in response to a tool
     call by the model.
 
@@ -3854,16 +3508,12 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
     image: "_models.RunStepCodeInterpreterImageReference" = rest_field()
     """Referential information for the image associated with this output. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         image: "_models.RunStepCodeInterpreterImageReference",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3887,16 +3537,12 @@ class RunStepCodeInterpreterImageReference(_model_base.Model):
     file_id: str = rest_field()
     """The ID of the file associated with this image. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3909,7 +3555,7 @@ class RunStepCodeInterpreterImageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, discriminator='logs'):
+class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, discriminator="logs"):
     """A representation of a log output emitted by a code interpreter tool in response to a tool call
     by the model.
 
@@ -3925,16 +3571,12 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
     logs: str = rest_field()
     """The serialized log output emitted by the code interpreter. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         logs: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -3947,7 +3589,7 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
         super().__init__(*args, type="logs", **kwargs)
 
 
-class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator='code_interpreter'):
+class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interpreter"):
     """A record of a call to a code interpreter tool, issued by the model in evaluation of a defined
     tool, that
     represents inputs and outputs consumed and emitted by the code interpreter.
@@ -3969,17 +3611,13 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator='code_interp
     code_interpreter: "_models.RunStepCodeInterpreterToolCallDetails" = rest_field()
     """The details of the tool call to the code interpreter tool. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         code_interpreter: "_models.RunStepCodeInterpreterToolCallDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4009,17 +3647,13 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     """The outputs produced by the code interpreter tool back to the model in response to the tool
      call. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         input: str,
         outputs: List["_models.RunStepCodeInterpreterToolCallOutput"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4052,9 +3686,6 @@ class RunStepCompletionUsage(_model_base.Model):
     total_tokens: int = rest_field()
     """Total number of tokens used (prompt + completion). Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4062,8 +3693,7 @@ class RunStepCompletionUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4086,16 +3716,12 @@ class RunStepDelta(_model_base.Model):
     step_details: Optional["_models.RunStepDeltaDetail"] = rest_field()
     """The details of the run step."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         step_details: Optional["_models.RunStepDeltaDetail"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4131,17 +3757,13 @@ class RunStepDeltaChunk(_model_base.Model):
     delta: "_models.RunStepDelta" = rest_field()
     """The delta containing the fields that have changed on the run step. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         delta: "_models.RunStepDelta",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4176,17 +3798,13 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
      by a
      different object type."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         input: Optional[str] = None,
         outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4223,17 +3841,13 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
     """The type of the streaming run step tool call's Code Interpreter output. Required. Default value
      is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4246,7 +3860,7 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, discriminator='image'):
+class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, discriminator="image"):
     """Represents an image output as produced the Code interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
 
@@ -4265,17 +3879,13 @@ class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, 
     image: Optional["_models.RunStepDeltaCodeInterpreterImageOutputObject"] = rest_field()
     """The image data for the Code Interpreter tool call output."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         image: Optional["_models.RunStepDeltaCodeInterpreterImageOutputObject"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4298,16 +3908,12 @@ class RunStepDeltaCodeInterpreterImageOutputObject(_model_base.Model):  # pylint
     file_id: Optional[str] = rest_field()
     """The file ID for the image."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_id: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4320,7 +3926,7 @@ class RunStepDeltaCodeInterpreterImageOutputObject(_model_base.Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, discriminator='logs'):
+class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, discriminator="logs"):
     """Represents a log output as produced by the Code Interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
 
@@ -4339,17 +3945,13 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
     logs: Optional[str] = rest_field()
     """The text output from the Code Interpreter tool call."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         index: int,
         logs: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4389,9 +3991,6 @@ class RunStepDeltaToolCall(_model_base.Model):
     """The type of the tool call detail item in a streaming run step's details. Required. Default
      value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4399,8 +3998,7 @@ class RunStepDeltaToolCall(_model_base.Model):
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4413,7 +4011,7 @@ class RunStepDeltaToolCall(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator='code_interpreter'):
+class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="code_interpreter"):
     """Represents a Code Interpreter tool call within a streaming run step's tool call details.
 
 
@@ -4435,9 +4033,6 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator='c
     code_interpreter: Optional["_models.RunStepDeltaCodeInterpreterDetailItemObject"] = rest_field()
     """The Code Interpreter data for the tool call."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4445,8 +4040,7 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator='c
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         code_interpreter: Optional["_models.RunStepDeltaCodeInterpreterDetailItemObject"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4474,16 +4068,12 @@ class RunStepDeltaDetail(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type for the run step detail object. Required. Default value is None."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4496,7 +4086,7 @@ class RunStepDeltaDetail(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator='file_search'):
+class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_search"):
     """Represents a file search tool call within a streaming run step's tool call details.
 
 
@@ -4516,9 +4106,6 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator='file_s
     file_search: Optional[Dict[str, str]] = rest_field()
     """Reserved for future use."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4526,8 +4113,7 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator='file_s
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         file_search: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4558,9 +4144,6 @@ class RunStepDeltaFunction(_model_base.Model):
     output: Optional[str] = rest_field()
     """The output of the function, null if outputs have not yet been submitted."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4568,8 +4151,7 @@ class RunStepDeltaFunction(_model_base.Model):
         name: Optional[str] = None,
         arguments: Optional[str] = None,
         output: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4582,7 +4164,7 @@ class RunStepDeltaFunction(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator='function'):
+class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function"):
     """Represents a function tool call within a streaming run step's tool call details.
 
 
@@ -4602,9 +4184,6 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator='function
     function: Optional["_models.RunStepDeltaFunction"] = rest_field()
     """The function data for the tool call."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4612,8 +4191,7 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator='function
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         function: Optional["_models.RunStepDeltaFunction"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4626,7 +4204,7 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator='function
         super().__init__(*args, type="function", **kwargs)
 
 
-class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator='message_creation'):
+class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_creation"):
     """Represents a message creation within a streaming run step delta.
 
 
@@ -4643,16 +4221,12 @@ class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator='message_cre
     message_creation: Optional["_models.RunStepDeltaMessageCreationObject"] = rest_field()
     """The message creation data."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         message_creation: Optional["_models.RunStepDeltaMessageCreationObject"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4675,16 +4249,12 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
     message_id: Optional[str] = rest_field()
     """The ID of the newly-created message."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         message_id: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4697,7 +4267,7 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator='tool_calls'):
+class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
     """Represents an invocation of tool calls as part of a streaming run step.
 
 
@@ -4713,16 +4283,12 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator='tool_calls')
     tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = rest_field()
     """The collection of tool calls for the tool call detail item."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4750,16 +4316,12 @@ class RunStepDetails(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Known values are: \"message_creation\" and \"tool_calls\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4789,17 +4351,13 @@ class RunStepError(_model_base.Model):
     message: str = rest_field()
     """The human-readable text associated with this error. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         code: Union[str, "_models.RunStepErrorCode"],
         message: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4812,7 +4370,7 @@ class RunStepError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepFileSearchToolCall(RunStepToolCall, discriminator='file_search'):
+class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     """A record of a call to a file search tool, issued by the model in evaluation of a defined tool,
     that represents
     executed file search.
@@ -4833,17 +4391,13 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator='file_search'):
     file_search: Dict[str, str] = rest_field()
     """Reserved for future use. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         file_search: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4856,7 +4410,7 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator='file_search'):
         super().__init__(*args, type="file_search", **kwargs)
 
 
-class RunStepFunctionToolCall(RunStepToolCall, discriminator='function'):
+class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     """A record of a call to a function tool, issued by the model in evaluation of a defined tool,
     that represents the inputs
     and output consumed and emitted by the specified function.
@@ -4876,17 +4430,13 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator='function'):
     function: "_models.RunStepFunctionToolCallDetails" = rest_field()
     """The detailed information about the function called by the model. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         function: "_models.RunStepFunctionToolCallDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4921,9 +4471,6 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
     """The output of the function, only populated for function calls that have already have had their
      outputs submitted. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -4931,8 +4478,7 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
         name: str,
         arguments: str,
         output: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4945,7 +4491,7 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMessageCreationDetails(RunStepDetails, discriminator='message_creation'):
+class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):
     """The detailed information associated with a message creation run step.
 
 
@@ -4963,16 +4509,12 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator='message_creat
     message_creation: "_models.RunStepMessageCreationReference" = rest_field()
     """Information about the message creation associated with this run step. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         message_creation: "_models.RunStepMessageCreationReference",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -4996,16 +4538,12 @@ class RunStepMessageCreationReference(_model_base.Model):
     message_id: str = rest_field()
     """The ID of the message created by this run step. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         message_id: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5018,7 +4556,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator='microsoft_fabric'):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -5040,17 +4578,13 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator='microsoft_f
     microsoft_fabric: Dict[str, str] = rest_field()
     """Reserved for future use. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         microsoft_fabric: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5063,7 +4597,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator='microsoft_f
         super().__init__(*args, type="microsoft_fabric", **kwargs)
 
 
-class RunStepSharepointToolCall(RunStepToolCall, discriminator='sharepoint'):
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
@@ -5084,17 +4618,13 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator='sharepoint'):
     share_point: Dict[str, str] = rest_field(name="sharepoint")
     """Reserved for future use. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         share_point: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5107,7 +4637,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator='sharepoint'):
         super().__init__(*args, type="sharepoint", **kwargs)
 
 
-class RunStepToolCallDetails(RunStepDetails, discriminator='tool_calls'):
+class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     """The detailed information associated with a run step calling tools.
 
 
@@ -5124,16 +4654,12 @@ class RunStepToolCallDetails(RunStepDetails, discriminator='tool_calls'):
     tool_calls: List["_models.RunStepToolCall"] = rest_field()
     """A list of tool call details for this run step. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         tool_calls: List["_models.RunStepToolCall"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5157,16 +4683,12 @@ class SamplingStrategy(_model_base.Model):
     rate: float = rest_field()
     """Sampling rate. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         rate: float,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5179,7 +4701,7 @@ class SamplingStrategy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SharepointToolDefinition(ToolDefinition, discriminator='sharepoint'):
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
     """The input definition information for a sharepoint tool as used to configure an agent.
 
 
@@ -5191,14 +4713,10 @@ class SharepointToolDefinition(ToolDefinition, discriminator='sharepoint'):
     type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5211,7 +4729,7 @@ class SharepointToolDefinition(ToolDefinition, discriminator='sharepoint'):
         super().__init__(*args, type="sharepoint", **kwargs)
 
 
-class SubmitToolOutputsAction(RequiredAction, discriminator='submit_tool_outputs'):
+class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
     """The details for required tool calls that must be submitted for an agent thread run to continue.
 
 
@@ -5229,16 +4747,12 @@ class SubmitToolOutputsAction(RequiredAction, discriminator='submit_tool_outputs
     submit_tool_outputs: "_models.SubmitToolOutputsDetails" = rest_field()
     """The details describing tools that should be called to submit tool outputs. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         submit_tool_outputs: "_models.SubmitToolOutputsDetails",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5263,16 +4777,12 @@ class SubmitToolOutputsDetails(_model_base.Model):
     tool_calls: List["_models.RequiredToolCall"] = rest_field()
     """The list of tool calls that must be resolved for the agent thread run to continue. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         tool_calls: List["_models.RequiredToolCall"],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5306,12 +4816,10 @@ class SystemData(_model_base.Model):
     """The identity that created the resource."""
     created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
     """The identity type that created the resource."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", visibility=["read"], format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
-
-
-
-
 
 
 class ThreadDeletionStatus(_model_base.Model):
@@ -5337,17 +4845,13 @@ class ThreadDeletionStatus(_model_base.Model):
     """The object type, which is always 'thread.deleted'. Required. Default value is
      \"thread.deleted\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5442,9 +4946,6 @@ class ThreadMessage(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -5462,8 +4963,7 @@ class ThreadMessage(_model_base.Model):
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5484,8 +4984,8 @@ class ThreadMessageOptions(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar role: The role of the entity that is creating the message. Allowed values include:
-    
-    
+
+
      * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
      * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
@@ -5525,9 +5025,6 @@ class ThreadMessageOptions(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -5536,8 +5033,7 @@ class ThreadMessageOptions(_model_base.Model):
         content: str,
         attachments: Optional[List["_models.MessageAttachment"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5705,9 +5201,6 @@ class ThreadRun(_model_base.Model):
     parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
     """Determines if tools can be executed in parallel within the run."""
 
-
-
-
     @overload
     def __init__(  # pylint: disable=too-many-locals
         self,
@@ -5739,8 +5232,7 @@ class ThreadRun(_model_base.Model):
         top_p: Optional[float] = None,
         tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
         parallel_tool_calls: Optional[bool] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5771,17 +5263,13 @@ class ToolOutput(_model_base.Model):
     output: Optional[str] = rest_field()
     """The output from the tool to be submitted."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         tool_call_id: Optional[str] = None,
         output: Optional[str] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5834,9 +5322,6 @@ class ToolResources(_model_base.Model):
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
     """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -5847,8 +5332,7 @@ class ToolResources(_model_base.Model):
         microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
         share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5888,17 +5372,13 @@ class TruncationObject(_model_base.Model):
     last_messages: Optional[int] = rest_field()
     """The number of most recent messages from the thread when constructing the context for the run."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: Union[str, "_models.TruncationStrategy"],
         last_messages: Optional[int] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5921,16 +5401,12 @@ class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
     file_ids: Optional[List[str]] = rest_field()
     """A list of file IDs to override the current list of the agent."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         file_ids: Optional[List[str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -5953,16 +5429,12 @@ class UpdateFileSearchToolResourceOptions(_model_base.Model):
     vector_store_ids: Optional[List[str]] = rest_field()
     """A list of vector store IDs to override the current list of the agent."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6023,9 +5495,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
     """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
      names."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -6036,8 +5505,7 @@ class UpdateToolResourcesOptions(_model_base.Model):
         microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
         share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6115,9 +5583,6 @@ class VectorStore(_model_base.Model):
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -6132,8 +5597,7 @@ class VectorStore(_model_base.Model):
         metadata: Dict[str, str],
         expires_after: Optional["_models.VectorStoreExpirationPolicy"] = None,
         expires_at: Optional[datetime.datetime] = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6163,16 +5627,12 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Known values are: \"auto\" and \"static\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6185,7 +5645,7 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator='auto'):
+class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="auto"):
     """The default strategy. This strategy currently uses a max_chunk_size_tokens of 800 and
     chunk_overlap_tokens of 400.
 
@@ -6198,14 +5658,10 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     type: Literal[VectorStoreChunkingStrategyRequestType.AUTO] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'auto'. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6233,16 +5689,12 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The object type. Required. Known values are: \"other\" and \"static\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         type: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6255,7 +5707,7 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyResponse, discriminator='other'):
+class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyResponse, discriminator="other"):
     """This is returned when the chunking strategy is unknown. Typically, this is because the file was
     indexed before the chunking_strategy concept was introduced in the API.
 
@@ -6267,14 +5719,10 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     type: Literal[VectorStoreChunkingStrategyResponseType.OTHER] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'other'. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6310,17 +5758,13 @@ class VectorStoreDeletionStatus(_model_base.Model):
     """The object type, which is always 'vector_store.deleted'. Required. Default value is
      \"vector_store.deleted\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6351,17 +5795,13 @@ class VectorStoreExpirationPolicy(_model_base.Model):
     days: int = rest_field()
     """The anchor timestamp after which the expiration policy applies. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         anchor: Union[str, "_models.VectorStoreExpirationPolicyAnchor"],
         days: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6429,9 +5869,6 @@ class VectorStoreFile(_model_base.Model):
     chunking_strategy: "_models.VectorStoreChunkingStrategyResponse" = rest_field()
     """The strategy used to chunk the file. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -6443,8 +5880,7 @@ class VectorStoreFile(_model_base.Model):
         status: Union[str, "_models.VectorStoreFileStatus"],
         last_error: "_models.VectorStoreFileError",
         chunking_strategy: "_models.VectorStoreChunkingStrategyResponse",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6499,9 +5935,6 @@ class VectorStoreFileBatch(_model_base.Model):
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -6511,8 +5944,7 @@ class VectorStoreFileBatch(_model_base.Model):
         vector_store_id: str,
         status: Union[str, "_models.VectorStoreFileBatchStatus"],
         file_counts: "_models.VectorStoreFileCount",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6553,9 +5985,6 @@ class VectorStoreFileCount(_model_base.Model):
     total: int = rest_field()
     """The total number of files. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
@@ -6565,8 +5994,7 @@ class VectorStoreFileCount(_model_base.Model):
         failed: int,
         cancelled: int,
         total: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6602,17 +6030,13 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
     """The object type, which is always 'vector_store.deleted'. Required. Default value is
      \"vector_store.file.deleted\"."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6643,17 +6067,13 @@ class VectorStoreFileError(_model_base.Model):
     message: str = rest_field()
     """A human-readable description of the error. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         code: Union[str, "_models.VectorStoreFileErrorCode"],
         message: str,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6686,17 +6106,13 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     """The number of tokens that overlap between chunks. The default value is 400.
      Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         max_chunk_size_tokens: int,
         chunk_overlap_tokens: int,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6709,7 +6125,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator='static'):
+class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="static"):
     """A statically configured chunking strategy.
 
     All required parameters must be populated in order to send to server.
@@ -6725,16 +6141,12 @@ class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyReques
     static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field()
     """The options for the static chunking strategy. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         static: "_models.VectorStoreStaticChunkingStrategyOptions",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6747,7 +6159,9 @@ class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyReques
         super().__init__(*args, type=VectorStoreChunkingStrategyRequestType.STATIC, **kwargs)
 
 
-class VectorStoreStaticChunkingStrategyResponse(VectorStoreChunkingStrategyResponse, discriminator='static'):  # pylint: disable=name-too-long
+class VectorStoreStaticChunkingStrategyResponse(
+    VectorStoreChunkingStrategyResponse, discriminator="static"
+):  # pylint: disable=name-too-long
     """A statically configured chunking strategy.
 
 
@@ -6762,16 +6176,12 @@ class VectorStoreStaticChunkingStrategyResponse(VectorStoreChunkingStrategyRespo
     static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field()
     """The options for the static chunking strategy. Required."""
 
-
-
-
     @overload
     def __init__(
         self,
         *,
         static: "_models.VectorStoreStaticChunkingStrategyOptions",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -6794,7 +6204,3 @@ class WorkspaceProperties(_model_base.Model):
 
     application_insights: str = rest_field(name="applicationInsights")
     """Authentication type of the connection target. Required."""
-
-
-
-

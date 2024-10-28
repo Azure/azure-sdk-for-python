@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,7 +12,16 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, StreamClosedError, StreamConsumedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
@@ -30,43 +40,35 @@ else:
 
 if TYPE_CHECKING:
     from .. import _types
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_agents_create_agent_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_agent_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/assistants"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_agents_request(
@@ -80,303 +82,226 @@ def build_agents_list_agents_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/assistants"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_agent_request(
-    assistant_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, 'str'),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_agent_request(
-    assistant_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_update_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, 'str'),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_agent_request(
-    assistant_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_delete_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, 'str'),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_thread_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_thread_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_thread_request(
-    thread_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_thread_request(
-    thread_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_update_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_thread_request(
-    thread_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_message_request(
-    thread_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_message_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/messages"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_messages_request(
@@ -392,149 +317,114 @@ def build_agents_list_messages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/messages"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if run_id is not None:
-        _params['runId'] = _SERIALIZER.query("run_id", run_id, 'str')
+        _params["runId"] = _SERIALIZER.query("run_id", run_id, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_message_request(
-    thread_id: str,
-    message_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_message_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/messages/{messageId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "messageId": _SERIALIZER.url("message_id", message_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_message_request(
-    thread_id: str,
-    message_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_update_message_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/messages/{messageId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "messageId": _SERIALIZER.url("message_id", message_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_run_request(
-    thread_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_run_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_runs_request(
@@ -549,251 +439,188 @@ def build_agents_list_runs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_run_request(
-    thread_id: str,
-    run_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_run_request(
-    thread_id: str,
-    run_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_update_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_submit_tool_outputs_to_run_request(  # pylint: disable=name-too-long
-    thread_id: str,
-    run_id: str,
-    **kwargs: Any
+    thread_id: str, run_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}/submit_tool_outputs"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_cancel_run_request(
-    thread_id: str,
-    run_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_cancel_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}/cancel"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_thread_and_run_request(  # pylint: disable=name-too-long
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/runs"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_run_step_request(
-    thread_id: str,
-    run_id: str,
-    step_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_run_step_request(thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}/steps/{stepId}"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
-        "stepId": _SERIALIZER.url("step_id", step_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+        "stepId": _SERIALIZER.url("step_id", step_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_run_steps_request(
@@ -809,196 +636,147 @@ def build_agents_list_run_steps_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/threads/{threadId}/runs/{runId}/steps"
     path_format_arguments = {
-        "threadId": _SERIALIZER.url("thread_id", thread_id, 'str'),
-        "runId": _SERIALIZER.url("run_id", run_id, 'str'),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_files_request(
-    *,
-    purpose: Optional[Union[str, _models.FilePurpose]] = None,
-    **kwargs: Any
+    *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/files"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if purpose is not None:
-        _params['purpose'] = _SERIALIZER.query("purpose", purpose, 'str')
+        _params["purpose"] = _SERIALIZER.query("purpose", purpose, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_upload_file_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_upload_file_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/files"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_file_request(
-    file_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/files/{fileId}"
     path_format_arguments = {
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str'),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_file_request(
-    file_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/files/{fileId}"
     path_format_arguments = {
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str'),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_file_content_request(
-    file_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_file_content_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/files/{fileId}/content"
     path_format_arguments = {
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str'),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_vector_stores_request(
@@ -1012,165 +790,124 @@ def build_agents_list_vector_stores_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_vector_store_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_vector_store_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_vector_store_request(
-    vector_store_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_get_vector_store_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_modify_vector_store_request(
-    vector_store_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_modify_vector_store_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_vector_store_request(
-    vector_store_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_delete_vector_store_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_vector_store_files_request(  # pylint: disable=name-too-long
@@ -1186,252 +923,200 @@ def build_agents_list_vector_store_files_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/files"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
-        _params['filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_create_vector_store_file_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    **kwargs: Any
+    vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/files"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_get_vector_store_file_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    file_id: str,
-    **kwargs: Any
+    vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_delete_vector_store_file_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    file_id: str,
-    **kwargs: Any
+    vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
-        "fileId": _SERIALIZER.url("file_id", file_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_create_vector_store_file_batch_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    **kwargs: Any
+    vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/file_batches"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_get_vector_store_file_batch_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    batch_id: str,
-    **kwargs: Any
+    vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
-        "batchId": _SERIALIZER.url("batch_id", batch_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_cancel_vector_store_file_batch_request(  # pylint: disable=name-too-long
-    vector_store_id: str,
-    batch_id: str,
-    **kwargs: Any
+    vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/cancel"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
-        "batchId": _SERIALIZER.url("batch_id", batch_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_list_vector_store_file_batch_files_request(  # pylint: disable=name-too-long
@@ -1448,68 +1133,54 @@ def build_agents_list_vector_store_file_batch_files_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/files"
     path_format_arguments = {
-        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, 'str'),
-        "batchId": _SERIALIZER.url("batch_id", batch_id, 'str'),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
-        _params['filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
     if limit is not None:
-        _params['limit'] = _SERIALIZER.query("limit", limit, 'int')
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
-        _params['order'] = _SERIALIZER.query("order", order, 'str')
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     if after is not None:
-        _params['after'] = _SERIALIZER.query("after", after, 'str')
+        _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
-        _params['before'] = _SERIALIZER.query("before", before, 'str')
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_workspace_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_connections_get_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_connections_list_connections_request(  # pylint: disable=name-too-long
@@ -1522,410 +1193,311 @@ def build_connections_list_connections_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/connections"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if category is not None:
-        _params['category'] = _SERIALIZER.query("category", category, 'str')
+        _params["category"] = _SERIALIZER.query("category", category, "str")
     if include_all is not None:
-        _params['includeAll'] = _SERIALIZER.query("include_all", include_all, 'bool')
+        _params["includeAll"] = _SERIALIZER.query("include_all", include_all, "bool")
     if target is not None:
-        _params['target'] = _SERIALIZER.query("target", target, 'str')
+        _params["target"] = _SERIALIZER.query("target", target, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_connection_request(
-    connection_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_connections_get_connection_request(connection_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/connections/{connectionName}"
     path_format_arguments = {
-        "connectionName": _SERIALIZER.url("connection_name", connection_name, 'str'),
+        "connectionName": _SERIALIZER.url("connection_name", connection_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_connections_get_connection_with_secrets_request(  # pylint: disable=name-too-long
-    connection_name: str,
-    **kwargs: Any
+    connection_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/connections/{connectionName}/listsecrets"
     path_format_arguments = {
-        "connectionName": _SERIALIZER.url("connection_name", connection_name, 'str'),
+        "connectionName": _SERIALIZER.url("connection_name", connection_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_diagnostics_get_app_insights_request(  # pylint: disable=name-too-long
-    app_insights_resource_url: str,
-    **kwargs: Any
+    app_insights_resource_url: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/{appInsightsResourceUrl}"
     path_format_arguments = {
-        "appInsightsResourceUrl": _SERIALIZER.url("app_insights_resource_url", app_insights_resource_url, 'str'),
+        "appInsightsResourceUrl": _SERIALIZER.url("app_insights_resource_url", app_insights_resource_url, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_get_request(
-    id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_get_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/runs/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, 'str'),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_create_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('apiVersion', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/runs:run"
 
     # Construct parameters
-    _params['apiVersion'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_evaluations_list_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/runs"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_update_request(
-    id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_update_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/runs/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, 'str'),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_get_schedule_request(
-    name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_get_schedule_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_evaluations_create_or_replace_schedule_request(  # pylint: disable=name-too-long
-    name: str,
-    **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_evaluations_list_schedule_request(
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/schedules"
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_delete_schedule_request(  # pylint: disable=name-too-long
-    name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-07-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluations/schedules/{name}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
-class AgentsOperations:   # pylint: disable=too-many-public-methods
+
+class AgentsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1942,17 +1514,8 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @overload
-    def create_agent(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -2029,13 +1592,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_agent(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -2047,7 +1604,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_agent(
@@ -2111,34 +1667,35 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.Agent] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if model is _Unset:
-                    raise TypeError('missing required argument: model')
-            body = {"description": description, 
-        "instructions": instructions, 
-        "metadata": metadata, 
-        "model": model, 
-        "name": name, 
-        "response_format": response_format, 
-        "temperature": temperature, 
-        "tool_resources": tool_resources, 
-        "tools": tools, 
-        "top_p": top_p}
-            body =  {
-                k: v for k, v in body.items() if v is not None
+                raise TypeError("missing required argument: model")
+            body = {
+                "description": description,
+                "instructions": instructions,
+                "metadata": metadata,
+                "model": model,
+                "name": name,
+                "response_format": response_format,
+                "temperature": temperature,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
             }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -2154,18 +1711,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2182,17 +1739,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Agent,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Agent, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_agents(
@@ -2228,18 +1780,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_agents_request(
             limit=limit,
             order=order,
@@ -2250,18 +1802,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2278,24 +1830,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfAgent,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfAgent, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_agent(
-        self,
-        assistant_id: str,
-        **kwargs: Any
-    ) -> _models.Agent:
+    def get_agent(self, assistant_id: str, **kwargs: Any) -> _models.Agent:
         """Retrieves an existing agent.
 
         :param assistant_id: Identifier of the agent. Required.
@@ -2305,18 +1848,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Agent] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_agent_request(
             assistant_id=assistant_id,
             api_version=self._config.api_version,
@@ -2324,18 +1867,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2352,26 +1895,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Agent,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Agent, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def update_agent(
-        self,
-        assistant_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -2457,12 +1990,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def update_agent(
-        self,
-        assistant_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -2477,7 +2005,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def update_agent(
@@ -2546,32 +2073,33 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.Agent] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"description": description, 
-        "instructions": instructions, 
-        "metadata": metadata, 
-        "model": model, 
-        "name": name, 
-        "response_format": response_format, 
-        "temperature": temperature, 
-        "tool_resources": tool_resources, 
-        "tools": tools, 
-        "top_p": top_p}
-            body =  {
-                k: v for k, v in body.items() if v is not None
+            body = {
+                "description": description,
+                "instructions": instructions,
+                "metadata": metadata,
+                "model": model,
+                "name": name,
+                "response_format": response_format,
+                "temperature": temperature,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
             }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -2588,18 +2116,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2616,24 +2144,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Agent,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Agent, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def delete_agent(
-        self,
-        assistant_id: str,
-        **kwargs: Any
-    ) -> _models.AgentDeletionStatus:
+    def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
         :param assistant_id: Identifier of the agent. Required.
@@ -2643,18 +2162,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_delete_agent_request(
             assistant_id=assistant_id,
             api_version=self._config.api_version,
@@ -2662,18 +2181,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2690,25 +2209,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AgentDeletionStatus,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AgentDeletionStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_thread(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentThread:
         """Creates a new thread. Threads contain messages and can be run by agents.
 
@@ -2758,11 +2268,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_thread(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentThread:
         """Creates a new thread. Threads contain messages and can be run by agents.
 
@@ -2775,7 +2281,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_thread(
@@ -2810,25 +2315,22 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"messages": messages, 
-        "metadata": metadata, 
-        "tool_resources": tool_resources}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -2844,18 +2346,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2872,24 +2374,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AgentThread,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_thread(
-        self,
-        thread_id: str,
-        **kwargs: Any
-    ) -> _models.AgentThread:
+    def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
         """Gets information about an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2899,18 +2392,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentThread] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
@@ -2918,18 +2411,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2946,26 +2439,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AgentThread,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def update_thread(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentThread:
         """Modifies an existing thread.
 
@@ -3016,12 +2499,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def update_thread(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentThread:
         """Modifies an existing thread.
 
@@ -3036,7 +2514,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def update_thread(
@@ -3070,24 +2547,22 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"metadata": metadata, 
-        "tool_resources": tool_resources}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {"metadata": metadata, "tool_resources": tool_resources}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3104,18 +2579,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3132,24 +2607,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AgentThread,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def delete_thread(
-        self,
-        thread_id: str,
-        **kwargs: Any
-    ) -> _models.ThreadDeletionStatus:
+    def delete_thread(self, thread_id: str, **kwargs: Any) -> _models.ThreadDeletionStatus:
         """Deletes an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -3159,18 +2625,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_delete_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
@@ -3178,18 +2644,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3206,26 +2672,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadDeletionStatus,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_message(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
@@ -3288,12 +2744,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_message(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
@@ -3308,7 +2759,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_message(
@@ -3354,30 +2804,26 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if role is _Unset:
-                    raise TypeError('missing required argument: role')
+                raise TypeError("missing required argument: role")
             if content is _Unset:
-                    raise TypeError('missing required argument: content')
-            body = {"attachments": attachments, 
-        "content": content, 
-        "metadata": metadata, 
-        "role": role}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+                raise TypeError("missing required argument: content")
+            body = {"attachments": attachments, "content": content, "metadata": metadata, "role": role}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3394,18 +2840,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3422,17 +2868,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadMessage,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_messages(
@@ -3474,18 +2915,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_messages_request(
             thread_id=thread_id,
             run_id=run_id,
@@ -3498,18 +2939,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3526,25 +2967,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfThreadMessage,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfThreadMessage, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_message(
-        self,
-        thread_id: str,
-        message_id: str,
-        **kwargs: Any
-    ) -> _models.ThreadMessage:
+    def get_message(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
         """Gets an existing message from an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -3556,18 +2987,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_message_request(
             thread_id=thread_id,
             message_id=message_id,
@@ -3576,18 +3007,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3604,27 +3035,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadMessage,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def update_message(
-        self,
-        thread_id: str,
-        message_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
@@ -3673,13 +3093,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def update_message(
-        self,
-        thread_id: str,
-        message_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, message_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
@@ -3696,7 +3110,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def update_message(
@@ -3726,23 +3139,22 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"metadata": metadata}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3760,18 +3172,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3788,26 +3200,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadMessage,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_run(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -3927,12 +3329,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_run(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -3947,7 +3344,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_run(
@@ -4050,39 +3446,40 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if assistant_id is _Unset:
-                    raise TypeError('missing required argument: assistant_id')
-            body = {"additional_instructions": additional_instructions, 
-        "additional_messages": additional_messages, 
-        "assistant_id": assistant_id, 
-        "instructions": instructions, 
-        "max_completion_tokens": max_completion_tokens, 
-        "max_prompt_tokens": max_prompt_tokens, 
-        "metadata": metadata, 
-        "model": model, 
-        "response_format": response_format, 
-        "stream": stream_parameter, 
-        "temperature": temperature, 
-        "tool_choice": tool_choice, 
-        "tools": tools, 
-        "top_p": top_p, 
-        "truncation_strategy": truncation_strategy}
-            body =  {
-                k: v for k, v in body.items() if v is not None
+                raise TypeError("missing required argument: assistant_id")
+            body = {
+                "additional_instructions": additional_instructions,
+                "additional_messages": additional_messages,
+                "assistant_id": assistant_id,
+                "instructions": instructions,
+                "max_completion_tokens": max_completion_tokens,
+                "max_prompt_tokens": max_prompt_tokens,
+                "metadata": metadata,
+                "model": model,
+                "response_format": response_format,
+                "stream": stream_parameter,
+                "temperature": temperature,
+                "tool_choice": tool_choice,
+                "tools": tools,
+                "top_p": top_p,
+                "truncation_strategy": truncation_strategy,
             }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -4099,18 +3496,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4127,17 +3524,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_runs(
@@ -4176,18 +3568,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_runs_request(
             thread_id=thread_id,
             limit=limit,
@@ -4199,18 +3591,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4227,25 +3619,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
+    def get_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
         """Gets an existing run from an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -4257,18 +3639,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_run_request(
             thread_id=thread_id,
             run_id=run_id,
@@ -4277,18 +3659,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4305,27 +3687,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def update_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
@@ -4374,13 +3745,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def update_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
@@ -4397,7 +3762,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def update_run(
@@ -4427,23 +3791,22 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"metadata": metadata}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -4461,18 +3824,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4489,27 +3852,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -4563,13 +3915,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -4588,7 +3934,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def submit_tool_outputs_to_run(
@@ -4621,26 +3966,24 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if tool_outputs is _Unset:
-                    raise TypeError('missing required argument: tool_outputs')
-            body = {"stream": stream_parameter, 
-        "tool_outputs": tool_outputs}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+                raise TypeError("missing required argument: tool_outputs")
+            body = {"stream": stream_parameter, "tool_outputs": tool_outputs}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -4658,18 +4001,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4686,25 +4029,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def cancel_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
+    def cancel_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
         """Cancels a run of an in progress thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -4716,18 +4049,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_cancel_run_request(
             thread_id=thread_id,
             run_id=run_id,
@@ -4736,18 +4069,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4764,25 +4097,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_thread_and_run(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
 
@@ -4896,11 +4220,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_thread_and_run(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
 
@@ -4913,7 +4233,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_thread_and_run(
@@ -5012,39 +4331,40 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if assistant_id is _Unset:
-                    raise TypeError('missing required argument: assistant_id')
-            body = {"assistant_id": assistant_id, 
-        "instructions": instructions, 
-        "max_completion_tokens": max_completion_tokens, 
-        "max_prompt_tokens": max_prompt_tokens, 
-        "metadata": metadata, 
-        "model": model, 
-        "response_format": response_format, 
-        "stream": stream_parameter, 
-        "temperature": temperature, 
-        "thread": thread, 
-        "tool_choice": tool_choice, 
-        "tool_resources": tool_resources, 
-        "tools": tools, 
-        "top_p": top_p, 
-        "truncation_strategy": truncation_strategy}
-            body =  {
-                k: v for k, v in body.items() if v is not None
+                raise TypeError("missing required argument: assistant_id")
+            body = {
+                "assistant_id": assistant_id,
+                "instructions": instructions,
+                "max_completion_tokens": max_completion_tokens,
+                "max_prompt_tokens": max_prompt_tokens,
+                "metadata": metadata,
+                "model": model,
+                "response_format": response_format,
+                "stream": stream_parameter,
+                "temperature": temperature,
+                "thread": thread,
+                "tool_choice": tool_choice,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
+                "truncation_strategy": truncation_strategy,
             }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -5060,18 +4380,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5088,26 +4408,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ThreadRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_run_step(
-        self,
-        thread_id: str,
-        run_id: str,
-        step_id: str,
-        **kwargs: Any
-    ) -> _models.RunStep:
+    def get_run_step(self, thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> _models.RunStep:
         """Gets a single run step from a thread run.
 
         :param thread_id: Identifier of the thread. Required.
@@ -5121,18 +4430,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RunStep] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.RunStep] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_run_step_request(
             thread_id=thread_id,
             run_id=run_id,
@@ -5142,18 +4451,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5170,17 +4479,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.RunStep,
-                response.json()
-            )
+            deserialized = _deserialize(_models.RunStep, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_run_steps(
@@ -5222,18 +4526,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_run_steps_request(
             thread_id=thread_id,
             run_id=run_id,
@@ -5246,18 +4550,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5274,24 +4578,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfRunStep,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfRunStep, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def list_files(
-        self,
-        *,
-        purpose: Optional[Union[str, _models.FilePurpose]] = None,
-        **kwargs: Any
+        self, *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
     ) -> _models.FileListResponse:
         """Gets a list of previously uploaded files.
 
@@ -5304,18 +4600,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileListResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.FileListResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_files_request(
             purpose=purpose,
             api_version=self._config.api_version,
@@ -5323,18 +4619,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5351,24 +4647,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.FileListResponse,
-                response.json()
-            )
+            deserialized = _deserialize(_models.FileListResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
-    def upload_file(
-        self,
-        body: JSON,
-        **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -5380,12 +4667,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def upload_file(
-        self,
-        *,
-        file: FileType,
-        purpose: Union[str, _models.FilePurpose],
-        filename: Optional[str] = None,
-        **kwargs: Any
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -5402,7 +4684,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def upload_file(
@@ -5432,35 +4713,28 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if file is _Unset:
-                    raise TypeError('missing required argument: file')
+                raise TypeError("missing required argument: file")
             if purpose is _Unset:
-                    raise TypeError('missing required argument: purpose')
-            body = {"file": file, 
-        "filename": filename, 
-        "purpose": purpose}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
-        _body = (
-            body.as_dict()
-            if isinstance(body, _model_base.Model) else
-            body
-        )
-        _file_fields: List[str] = ['file']
-        _data_fields: List[str] = ['purpose', 'filename']
+                raise TypeError("missing required argument: purpose")
+            body = {"file": file, "filename": filename, "purpose": purpose}
+            body = {k: v for k, v in body.items() if v is not None}
+        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _file_fields: List[str] = ["file"]
+        _data_fields: List[str] = ["purpose", "filename"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_agents_upload_file_request(
@@ -5471,18 +4745,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5499,24 +4773,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def delete_file(
-        self,
-        file_id: str,
-        **kwargs: Any
-    ) -> _models.FileDeletionStatus:
+    def delete_file(self, file_id: str, **kwargs: Any) -> _models.FileDeletionStatus:
         """Delete a previously uploaded file.
 
         :param file_id: The ID of the file to delete. Required.
@@ -5526,18 +4791,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileDeletionStatus] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_delete_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
@@ -5545,18 +4810,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5573,24 +4838,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.FileDeletionStatus,
-                response.json()
-            )
+            deserialized = _deserialize(_models.FileDeletionStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_file(
-        self,
-        file_id: str,
-        **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def get_file(self, file_id: str, **kwargs: Any) -> _models.OpenAIFile:
         """Returns information about a specific file. Does not retrieve file content.
 
         :param file_id: The ID of the file to retrieve. Required.
@@ -5600,18 +4856,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
@@ -5619,18 +4875,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5647,24 +4903,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_file_content(
-        self,
-        file_id: str,
-        **kwargs: Any
-    ) -> _models.FileContentResponse:
+    def get_file_content(self, file_id: str, **kwargs: Any) -> _models.FileContentResponse:
         """Returns information about a specific file. Does not retrieve file content.
 
         :param file_id: The ID of the file to retrieve. Required.
@@ -5674,18 +4921,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileContentResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.FileContentResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_file_content_request(
             file_id=file_id,
             api_version=self._config.api_version,
@@ -5693,18 +4940,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5721,17 +4968,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.FileContentResponse,
-                response.json()
-            )
+            deserialized = _deserialize(_models.FileContentResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_vector_stores(
@@ -5767,18 +5009,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_vector_stores_request(
             limit=limit,
             order=order,
@@ -5789,18 +5031,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5817,25 +5059,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfVectorStore,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStore, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_vector_store(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
 
@@ -5888,11 +5121,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
 
@@ -5905,7 +5134,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_vector_store(
@@ -5943,27 +5171,28 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.VectorStore] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, 
-        "expires_after": expires_after, 
-        "file_ids": file_ids, 
-        "metadata": metadata, 
-        "name": name}
-            body =  {
-                k: v for k, v in body.items() if v is not None
+            body = {
+                "chunking_strategy": chunking_strategy,
+                "expires_after": expires_after,
+                "file_ids": file_ids,
+                "metadata": metadata,
+                "name": name,
             }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -5979,18 +5208,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6007,24 +5236,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStore,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStore, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_vector_store(
-        self,
-        vector_store_id: str,
-        **kwargs: Any
-    ) -> _models.VectorStore:
+    def get_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStore:
         """Returns the vector store object matching the specified ID.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -6034,18 +5254,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStore] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
@@ -6053,18 +5273,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6081,26 +5301,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStore,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStore, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def modify_vector_store(
-        self,
-        vector_store_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
@@ -6150,12 +5360,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def modify_vector_store(
-        self,
-        vector_store_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
@@ -6170,7 +5375,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def modify_vector_store(
@@ -6203,25 +5407,22 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.VectorStore] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"expires_after": expires_after, 
-        "metadata": metadata, 
-        "name": name}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {"expires_after": expires_after, "metadata": metadata, "name": name}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -6238,18 +5439,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6266,24 +5467,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStore,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStore, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def delete_vector_store(
-        self,
-        vector_store_id: str,
-        **kwargs: Any
-    ) -> _models.VectorStoreDeletionStatus:
+    def delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
         """Deletes the vector store object matching the specified ID.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -6294,18 +5486,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_delete_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
@@ -6313,18 +5505,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6341,17 +5533,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreDeletionStatus,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreDeletionStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_vector_store_files(
@@ -6394,18 +5581,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_vector_store_files_request(
             vector_store_id=vector_store_id,
             filter=filter,
@@ -6418,18 +5605,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6446,26 +5633,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfVectorStoreFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_vector_store_file(
-        self,
-        vector_store_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -6510,12 +5687,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store_file(
-        self,
-        vector_store_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
@@ -6530,7 +5702,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_vector_store_file(
@@ -6558,26 +5729,24 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.VectorStoreFile] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if file_id is _Unset:
-                    raise TypeError('missing required argument: file_id')
-            body = {"chunking_strategy": chunking_strategy, 
-        "file_id": file_id}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+                raise TypeError("missing required argument: file_id")
+            body = {"chunking_strategy": chunking_strategy, "file_id": file_id}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -6594,18 +5763,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6622,25 +5791,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_vector_store_file(
-        self,
-        vector_store_id: str,
-        file_id: str,
-        **kwargs: Any
-    ) -> _models.VectorStoreFile:
+    def get_vector_store_file(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFile:
         """Retrieves a vector store file.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -6652,18 +5811,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
@@ -6672,18 +5831,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6700,24 +5859,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def delete_vector_store_file(
-        self,
-        vector_store_id: str,
-        file_id: str,
-        **kwargs: Any
+        self, vector_store_id: str, file_id: str, **kwargs: Any
     ) -> _models.VectorStoreFileDeletionStatus:
         """Delete a vector store file. This will remove the file from the vector store but the file itself
         will not be deleted.
@@ -6733,18 +5884,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
@@ -6753,18 +5904,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6781,26 +5932,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFileDeletionStatus,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFileDeletionStatus, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
@@ -6845,12 +5986,7 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
@@ -6865,7 +6001,6 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace
     def create_vector_store_file_batch(
@@ -6893,26 +6028,24 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if file_ids is _Unset:
-                    raise TypeError('missing required argument: file_ids')
-            body = {"chunking_strategy": chunking_strategy, 
-        "file_ids": file_ids}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+                raise TypeError("missing required argument: file_ids")
+            body = {"chunking_strategy": chunking_strategy, "file_ids": file_ids}
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -6929,18 +6062,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6957,24 +6090,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFileBatch,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def get_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        batch_id: str,
-        **kwargs: Any
+        self, vector_store_id: str, batch_id: str, **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
         """Retrieve a vector store file batch.
 
@@ -6987,18 +6112,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_get_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
@@ -7007,18 +6132,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7035,24 +6160,16 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFileBatch,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def cancel_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        batch_id: str,
-        **kwargs: Any
+        self, vector_store_id: str, batch_id: str, **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
         """Cancel a vector store file batch. This attempts to cancel the processing of files in this batch
         as soon as possible.
@@ -7066,18 +6183,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_cancel_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
@@ -7086,18 +6203,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7114,17 +6231,12 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.VectorStoreFileBatch,
-                response.json()
-            )
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_vector_store_file_batch_files(
@@ -7170,18 +6282,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        
         _request = build_agents_list_vector_store_file_batch_files_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
@@ -7195,18 +6307,18 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7223,18 +6335,15 @@ class AgentsOperations:   # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.OpenAIPageableListOfVectorStoreFile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class ConnectionsOperations: 
+class ConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7251,14 +6360,8 @@ class ConnectionsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @distributed_trace
-    def _get_workspace(
-        self,
-        **kwargs: Any
-    ) -> _models._models.GetWorkspaceResponse:
+    def _get_workspace(self, **kwargs: Any) -> _models._models.GetWorkspaceResponse:
         """Gets the properties of the specified machine learning workspace.
 
         :return: GetWorkspaceResponse. The GetWorkspaceResponse is compatible with MutableMapping
@@ -7266,36 +6369,36 @@ class ConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.GetWorkspaceResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models._models.GetWorkspaceResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_connections_get_workspace_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7313,16 +6416,13 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.GetWorkspaceResponse,  # pylint: disable=protected-access
-                response.json()
+                _models._models.GetWorkspaceResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def _list_connections(
@@ -7348,18 +6448,18 @@ class ConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ListConnectionsResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models._models.ListConnectionsResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_connections_list_connections_request(
             category=category,
             include_all=include_all,
@@ -7369,18 +6469,18 @@ class ConnectionsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7398,23 +6498,16 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ListConnectionsResponse,  # pylint: disable=protected-access
-                response.json()
+                _models._models.ListConnectionsResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def _get_connection(
-        self,
-        connection_name: str,
-        **kwargs: Any
-    ) -> _models._models.GetConnectionResponse:
+    def _get_connection(self, connection_name: str, **kwargs: Any) -> _models._models.GetConnectionResponse:
         """Get the details of a single connection, without credentials.
 
         :param connection_name: Connection Name. Required.
@@ -7424,18 +6517,18 @@ class ConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_connections_get_connection_request(
             connection_name=connection_name,
             api_version=self._config.api_version,
@@ -7443,18 +6536,18 @@ class ConnectionsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7472,56 +6565,30 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.GetConnectionResponse,  # pylint: disable=protected-access
-                response.json()
+                _models._models.GetConnectionResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def _get_connection_with_secrets(
-        self,
-        connection_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models._models.GetConnectionResponse:
-        ...
+        self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.GetConnectionResponse: ...
     @overload
     def _get_connection_with_secrets(
-        self,
-        connection_name: str,
-        *,
-        ignored: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models._models.GetConnectionResponse:
-        ...
+        self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.GetConnectionResponse: ...
     @overload
     def _get_connection_with_secrets(
-        self,
-        connection_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models._models.GetConnectionResponse:
-        ...
+        self, connection_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.GetConnectionResponse: ...
 
     @distributed_trace
     def _get_connection_with_secrets(
-        self,
-        connection_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        ignored: str = _Unset,
-        **kwargs: Any
+        self, connection_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, ignored: str = _Unset, **kwargs: Any
     ) -> _models._models.GetConnectionResponse:
         """Get the details of a single connection, including credentials (if available).
 
@@ -7536,25 +6603,24 @@ class ConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if ignored is _Unset:
-                    raise TypeError('missing required argument: ignored')
+                raise TypeError("missing required argument: ignored")
             body = {"ignored": ignored}
-            body =  {
-                k: v for k, v in body.items() if v is not None
-            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -7571,18 +6637,18 @@ class ConnectionsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7600,17 +6666,16 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.GetConnectionResponse,  # pylint: disable=protected-access
-                response.json()
+                _models._models.GetConnectionResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class DiagnosticsOperations: 
+class DiagnosticsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7627,15 +6692,8 @@ class DiagnosticsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @distributed_trace
-    def get_app_insights(
-        self,
-        app_insights_resource_url: str,
-        **kwargs: Any
-    ) -> _models.GetAppInsightsResponse:
+    def get_app_insights(self, app_insights_resource_url: str, **kwargs: Any) -> _models.GetAppInsightsResponse:
         # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
@@ -7649,18 +6707,18 @@ class DiagnosticsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.GetAppInsightsResponse] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.GetAppInsightsResponse] = kwargs.pop("cls", None)
 
-        
         _request = build_diagnostics_get_app_insights_request(
             app_insights_resource_url=app_insights_resource_url,
             api_version=self._config.api_version,
@@ -7668,18 +6726,18 @@ class DiagnosticsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7696,18 +6754,15 @@ class DiagnosticsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.GetAppInsightsResponse,
-                response.json()
-            )
+            deserialized = _deserialize(_models.GetAppInsightsResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class EvaluationsOperations: 
+class EvaluationsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7724,15 +6779,8 @@ class EvaluationsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @distributed_trace
-    def get(
-        self,
-        id: str,
-        **kwargs: Any
-    ) -> _models.Evaluation:
+    def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
         """Resource read operation template.
 
         :param id: Identifier of the evaluation. Required.
@@ -7742,18 +6790,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Evaluation] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
-        
         _request = build_evaluations_get_request(
             id=id,
             api_version=self._config.api_version,
@@ -7761,18 +6809,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7787,30 +6835,23 @@ class EvaluationsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Evaluation,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Evaluation, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create(
-        self,
-        evaluation: _models.Evaluation,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Run the evaluation.
 
@@ -7825,13 +6866,7 @@ class EvaluationsOperations:
         """
 
     @overload
-    def create(
-        self,
-        evaluation: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Evaluation:
+    def create(self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
         """Run the evaluation.
 
         :param evaluation: Evaluation to run. Required.
@@ -7846,11 +6881,7 @@ class EvaluationsOperations:
 
     @overload
     def create(
-        self,
-        evaluation: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Run the evaluation.
 
@@ -7864,13 +6895,8 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
-    def create(
-        self,
-        evaluation: Union[_models.Evaluation, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Evaluation:
+    def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Run the evaluation.
 
         :param evaluation: Evaluation to run. Is one of the following types: Evaluation, JSON,
@@ -7881,17 +6907,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.Evaluation] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7908,18 +6935,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7936,25 +6963,16 @@ class EvaluationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Evaluation,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Evaluation, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def list(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.Evaluation"]:
         """Resource list operation template.
 
@@ -7970,17 +6988,19 @@ class EvaluationsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.Evaluation]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_evaluations_list_request(
                     top=top,
                     skip=skip,
@@ -7990,25 +7010,39 @@ class EvaluationsOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-                    "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-                    "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8018,17 +7052,15 @@ class EvaluationsOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.Evaluation], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8038,11 +7070,7 @@ class EvaluationsOperations:
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def update(
@@ -8069,12 +7097,7 @@ class EvaluationsOperations:
 
     @overload
     def update(
-        self,
-        id: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, id: str, resource: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Evaluation:
         """Resource update operation template.
 
@@ -8092,12 +7115,7 @@ class EvaluationsOperations:
 
     @overload
     def update(
-        self,
-        id: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, id: str, resource: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Evaluation:
         """Resource update operation template.
 
@@ -8113,13 +7131,9 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def update(
-        self,
-        id: str,
-        resource: Union[_models.Evaluation, JSON, IO[bytes]],
-        **kwargs: Any
+        self, id: str, resource: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Evaluation:
         """Resource update operation template.
 
@@ -8133,17 +7147,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.Evaluation] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -8161,18 +7176,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8187,29 +7202,22 @@ class EvaluationsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Evaluation,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Evaluation, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def get_schedule(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.EvaluationSchedule:
+    def get_schedule(self, name: str, **kwargs: Any) -> _models.EvaluationSchedule:
         """Resource read operation template.
 
         :param name: Name of the schedule, which also serves as the unique identifier for the
@@ -8220,18 +7228,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
 
-        
         _request = build_evaluations_get_schedule_request(
             name=name,
             api_version=self._config.api_version,
@@ -8239,18 +7247,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8265,31 +7273,23 @@ class EvaluationsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EvaluationSchedule,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EvaluationSchedule, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     def create_or_replace_schedule(
-        self,
-        name: str,
-        resource: _models.EvaluationSchedule,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, resource: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
@@ -8308,12 +7308,7 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self,
-        name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
@@ -8332,12 +7327,7 @@ class EvaluationsOperations:
 
     @overload
     def create_or_replace_schedule(
-        self,
-        name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
@@ -8354,13 +7344,9 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def create_or_replace_schedule(
-        self,
-        name: str,
-        resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]],
-        **kwargs: Any
+        self, name: str, resource: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationSchedule:
         """Create or replace operation template.
 
@@ -8375,17 +7361,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8403,18 +7390,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8429,30 +7416,23 @@ class EvaluationsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EvaluationSchedule,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EvaluationSchedule, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
     def list_schedule(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.EvaluationSchedule"]:
         """Resource list operation template.
 
@@ -8468,17 +7448,19 @@ class EvaluationsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.EvaluationSchedule]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.EvaluationSchedule]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_evaluations_list_schedule_request(
                     top=top,
                     skip=skip,
@@ -8488,25 +7470,39 @@ class EvaluationsOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-                    "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-                    "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8516,17 +7512,15 @@ class EvaluationsOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.EvaluationSchedule], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8536,18 +7530,10 @@ class EvaluationsOperations:
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_schedule(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    def delete_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resource delete operation template.
 
         :param name: Name of the schedule, which also serves as the unique identifier for the
@@ -8558,18 +7544,18 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_evaluations_delete_schedule_request(
             name=name,
             api_version=self._config.api_version,
@@ -8577,18 +7563,18 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8598,10 +7584,9 @@ class EvaluationsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if cls:
-            return cls(pipeline_response, None, response_headers) # type: ignore
-
-
+            return cls(pipeline_response, None, response_headers)  # type: ignore

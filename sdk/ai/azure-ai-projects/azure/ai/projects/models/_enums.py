@@ -11,26 +11,25 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the mode in which the model will handle the return format of a tool call.
-    """
+    """Represents the mode in which the model will handle the return format of a tool call."""
 
     AUTO = "auto"
     """Default value. Let the model handle the return format."""
     NONE = "none"
     """Setting the value to ``none``\\ , will result in a 400 Bad request."""
 
+
 class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the tool choice will be used.
-    """
+    """Specifies how the tool choice will be used."""
 
     NONE = "none"
     """The model will not call a function and instead generates a message."""
     AUTO = "auto"
     """The model can pick between generating a message or calling a function."""
 
+
 class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available tool types for agents named tools.
-    """
+    """Available tool types for agents named tools."""
 
     FUNCTION = "function"
     """Tool type ``function``"""
@@ -47,21 +46,22 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
 
+
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
-    
+
     .. code-block::
-    
+
        event: thread.created
        data: {"id": "thread_123", "object": "thread", ...}
-    
+
     We emit events whenever a new object is created, transitions to a new state, or is being
     streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
     is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
     to create a message during a run, we emit a ``thread.message.created event``\\ , a
     ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
     ``thread.message.completed`` event.
-    
+
     We may add additional events over time, so we recommend handling unknown events gracefully
     in your code.
     """
@@ -122,18 +122,18 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DONE = "done"
     """Event sent when the stream is done."""
 
+
 class ApiResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible API response formats.
-    """
+    """Possible API response formats."""
 
     TEXT = "text"
     """``text`` format should be used for requests involving any sort of ToolCall."""
     JSON_OBJECT = "json_object"
     """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
 
+
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Authentication type used by Azure AI service to connect to another service.
-    """
+    """Authentication type used by Azure AI service to connect to another service."""
 
     API_KEY = "ApiKey"
     """API Key authentication"""
@@ -142,9 +142,9 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
 
+
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Type (or category) of the connection.
-    """
+    """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI service"""
@@ -155,23 +155,23 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AI_SERVICES = "AIServices"
     """Azure AI Services"""
 
+
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal event indicating the successful end of a stream.
-    """
+    """Terminal event indicating the successful end of a stream."""
 
     DONE = "done"
     """Event sent when the stream is done."""
 
+
 class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal event indicating a server side error while streaming.
-    """
+    """Terminal event indicating a server side error while streaming."""
 
     ERROR = "error"
     """Event sent when an error occurs, such as an internal server error or a timeout."""
 
+
 class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible values denoting the intended usage of a file.
-    """
+    """The possible values denoting the intended usage of a file."""
 
     FINE_TUNE = "fine-tune"
     """Indicates a file is used for fine tuning input."""
@@ -188,9 +188,9 @@ class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VISION = "vision"
     """Indicates a file is used as input to a vision operation."""
 
+
 class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the file.
-    """
+    """The state of the file."""
 
     UPLOADED = "uploaded"
     """The file has been uploaded but it's not yet processed. This state is not returned by Azure
@@ -216,15 +216,16 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     deletion. It can be categorized as a
     terminal state."""
 
+
 class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Frequency of the schedule - day, week, month, hour, minute.
-    """
+    """Frequency of the schedule - day, week, month, hour, minute."""
 
     MONTH = "Month"
     WEEK = "Week"
     DAY = "Day"
     HOUR = "Hour"
     MINUTE = "Minute"
+
 
 class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
@@ -236,18 +237,18 @@ class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAX_PROMPT_TOKENS = "max_prompt_tokens"
     """Maximum prompt tokens exceeded"""
 
+
 class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available sorting options when requesting a list of response objects.
-    """
+    """The available sorting options when requesting a list of response objects."""
 
     ASCENDING = "asc"
     """Specifies an ascending sort order."""
     DESCENDING = "desc"
     """Specifies a descending sort order."""
 
+
 class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A set of reasons describing why a message is marked as incomplete.
-    """
+    """A set of reasons describing why a message is marked as incomplete."""
 
     CONTENT_FILTER = "content_filter"
     """The run generating the message was terminated due to content filter flagging."""
@@ -260,18 +261,18 @@ class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMet
     RUN_EXPIRED = "run_expired"
     """The run generating the message expired."""
 
+
 class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible values for roles attributed to messages in a thread.
-    """
+    """The possible values for roles attributed to messages in a thread."""
 
     USER = "user"
     """The role representing the end-user."""
     AGENT = "assistant"
     """The role representing the agent."""
 
+
 class MessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible execution status values for a thread message.
-    """
+    """The possible execution status values for a thread message."""
 
     IN_PROGRESS = "in_progress"
     """A run is currently creating this message."""
@@ -280,9 +281,9 @@ class MessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLETED = "completed"
     """This message was successfully completed by a run."""
 
+
 class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Message operation related streaming events.
-    """
+    """Message operation related streaming events."""
 
     THREAD_MESSAGE_CREATED = "thread.message.created"
     """Event sent when a new message is created. The data of this event is of type ThreadMessage"""
@@ -297,9 +298,9 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
 
+
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible values for the status of an agent thread run.
-    """
+    """Possible values for the status of an agent thread run."""
 
     QUEUED = "queued"
     """Represents a run that is queued to start."""
@@ -318,18 +319,18 @@ class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPIRED = "expired"
     """Represents a run that expired before it could otherwise finish."""
 
+
 class RunStepErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible error code values attributable to a failed run step.
-    """
+    """Possible error code values attributable to a failed run step."""
 
     SERVER_ERROR = "server_error"
     """Represents a server error."""
     RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
     """Represents an error indicating configured rate limits were exceeded."""
 
+
 class RunStepStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible values for the status of a run step.
-    """
+    """Possible values for the status of a run step."""
 
     IN_PROGRESS = "in_progress"
     """Represents a run step still in progress."""
@@ -342,9 +343,9 @@ class RunStepStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPIRED = "expired"
     """Represents a run step that expired before otherwise finishing."""
 
+
 class RunStepStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Run step operation related streaming events.
-    """
+    """Run step operation related streaming events."""
 
     THREAD_RUN_STEP_CREATED = "thread.run.step.created"
     """Event sent when a new thread run step is created. The data of this event is of type RunStep"""
@@ -363,18 +364,18 @@ class RunStepStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREAD_RUN_STEP_EXPIRED = "thread.run.step.expired"
     """Event sent when a run step is expired. The data of this event is of type RunStep"""
 
+
 class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible types of run steps.
-    """
+    """The possible types of run steps."""
 
     MESSAGE_CREATION = "message_creation"
     """Represents a run step to create a message."""
     TOOL_CALLS = "tool_calls"
     """Represents a run step that calls tools."""
 
+
 class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Run operation related streaming events.
-    """
+    """Run operation related streaming events."""
 
     THREAD_RUN_CREATED = "thread.run.created"
     """Event sent when a new run is created. The data of this event is of type ThreadRun"""
@@ -398,16 +399,16 @@ class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREAD_RUN_EXPIRED = "thread.run.expired"
     """Event sent when a run is expired. The data of this event is of type ThreadRun"""
 
+
 class ThreadStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Thread operation related streaming events.
-    """
+    """Thread operation related streaming events."""
 
     THREAD_CREATED = "thread.created"
     """Event sent when a new thread is created. The data of this event is of type AgentThread"""
 
+
 class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible truncation strategies for the thread.
-    """
+    """Possible truncation strategies for the thread."""
 
     AUTO = "auto"
     """Default value. Messages in the middle of the thread will be dropped to fit the context length
@@ -415,30 +416,30 @@ class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LAST_MESSAGES = "last_messages"
     """The thread will truncate to the ``lastMessages`` count of recent messages."""
 
+
 class VectorStoreChunkingStrategyRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of chunking strategy.
-    """
+    """Type of chunking strategy."""
 
     AUTO = "auto"
     STATIC = "static"
 
+
 class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of chunking strategy.
-    """
+    """Type of chunking strategy."""
 
     OTHER = "other"
     STATIC = "static"
 
+
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the relationship between the days and the expiration of this vector store.
-    """
+    """Describes the relationship between the days and the expiration of this vector store."""
 
     LAST_ACTIVE_AT = "last_active_at"
     """The expiration policy is based on the last time the vector store was active."""
 
+
 class VectorStoreFileBatchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the vector store file batch.
-    """
+    """The status of the vector store file batch."""
 
     IN_PROGRESS = "in_progress"
     """The vector store is still processing this file batch."""
@@ -449,9 +450,9 @@ class VectorStoreFileBatchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"
     """The vector store file batch failed to process."""
 
+
 class VectorStoreFileErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code variants for vector store file processing.
-    """
+    """Error code variants for vector store file processing."""
 
     INTERNAL_ERROR = "internal_error"
     """An internal error occurred."""
@@ -462,9 +463,9 @@ class VectorStoreFileErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNHANDLED_MIME_TYPE = "unhandled_mime_type"
     """The file has an unhandled mime type."""
 
+
 class VectorStoreFileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Vector store file status.
-    """
+    """Vector store file status."""
 
     IN_PROGRESS = "in_progress"
     """The file is currently being processed."""
@@ -475,9 +476,9 @@ class VectorStoreFileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     """The file was cancelled."""
 
+
 class VectorStoreFileStatusFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Query parameter filter for vector store file retrieval endpoint.
-    """
+    """Query parameter filter for vector store file retrieval endpoint."""
 
     IN_PROGRESS = "in_progress"
     """Retrieve only files that are currently being processed"""
@@ -488,9 +489,9 @@ class VectorStoreFileStatusFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     """Retrieve only files that were cancelled"""
 
+
 class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Vector store possible status.
-    """
+    """Vector store possible status."""
 
     EXPIRED = "expired"
     """expired status indicates that this vector store has expired and is no longer available for use."""
@@ -499,9 +500,9 @@ class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLETED = "completed"
     """completed status indicates that this vector store is ready for use."""
 
+
 class WeekDays(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WeekDay of the schedule - Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.
-    """
+    """WeekDay of the schedule - Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday."""
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
