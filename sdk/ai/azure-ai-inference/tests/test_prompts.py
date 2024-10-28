@@ -20,28 +20,69 @@ class TestPrompts(AzureRecordedTestCase):
         prompty_file_path = os.path.join(script_dir, "sample1.prompty")
         prompt_template = PromptTemplate.from_prompty(prompty_file_path)
         assert prompt_template.model_name == "gpt-4o-mini"
-        assert prompt_template.config["temperature"] == 1
-        assert prompt_template.config["frequency_penalty"] == 0.5
-        assert prompt_template.config["presence_penalty"] == 0.5
-        input_variables = {
-            "input": "please tell me a joke about cats",
-        }
-        messages = prompt_template.render(input_variables=input_variables)
+        assert prompt_template.parameters["temperature"] == 1
+        assert prompt_template.parameters["frequency_penalty"] == 0.5
+        assert prompt_template.parameters["presence_penalty"] == 0.5
+
+        input = "What's the checkin and checkout time?"
+        rules = [
+            { "rule": "The checkin time is 3pm" },
+            { "rule": "The checkout time is 11am" },
+            { "rule": "Breakfast is served from 7am to 10am" },
+        ]
+        messages = prompt_template.render(input=input, rules=rules)
         assert len(messages) == 2
         assert messages[0]["role"] == "system"
+        assert "Breakfast is served from 7am to 10am" in messages[0]["content"]
         assert messages[1]["role"] == "user"
-        assert messages[1]["content"] == "please tell me a joke about cats"
+        assert messages[1]["content"] == "What's the checkin and checkout time?"
 
     def test_prompt_template_from_message(self, **kwargs):
+        prompt_template_str = "system prompt template text\nuser:\n{{input}}"
         prompt_template = PromptTemplate.from_message(
             api = "chat",
-            model_name = "gpt-4o-mini",
-            prompt_template = "system prompt template {input}"
+            prompt_template = prompt_template_str
         )
-        assert prompt_template.model_name == "gpt-4o-mini"
-        input_variables = {
-            "input": "please tell me a joke about cats",
-        }
-        messages = prompt_template.render(input_variables=input_variables)
+        input = "user question input text"
+        messages = prompt_template.render(input=input)
         assert len(messages) == 1
         assert messages[0]["role"] == "system"
+        assert "system prompt template text\nuser:\nuser question input text" == messages[0]["content"]
+
+    def test_prompt_template_from_message_with_tags(self, **kwargs):
+        prompt_template_str = """
+            system:
+            You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
+
+            # context
+            {{#rules}}
+            {{rule}}
+            {{/rules}}
+
+            {{#chat_history}}
+            {{role}}:
+            {{content}}
+            {{/chat_history}}
+
+            user:
+            {{input}}
+        """
+        prompt_template = PromptTemplate.from_message(
+            api = "chat",
+            prompt_template = prompt_template_str
+        )
+        input = "When I arrived, can I still have breakfast?"
+        rules = [
+            { "rule": "The checkin time is 3pm" },
+            { "rule": "The checkout time is 11am" },
+            { "rule": "Breakfast is served from 7am to 10am" },
+        ]
+        chat_history = [
+            { "role": "user", "content": "I'll arrive at 2pm. What's the checkin and checkout time?" },
+            { "role": "system", "content": "The check-in time is 3 PM, and the checkout time is 11 AM." },
+        ]
+        messages = prompt_template.render(input=input, rules=rules, chat_history=chat_history)
+        assert len(messages) == 1
+        assert messages[0]["role"] == "system"
+        assert "You are an AI assistant in a hotel." in messages[0]["content"]
+        assert "When I arrived, can I still have breakfast?" in messages[0]["content"]

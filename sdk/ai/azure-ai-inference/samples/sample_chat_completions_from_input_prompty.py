@@ -44,13 +44,17 @@ def sample_chat_completions_from_input_prompty():
     path = "./sample1.prompty"
     prompt_template = PromptTemplate.from_prompty(file_path=path)
 
-    input = "What's the checkin and checkout time?"
+    input = "When I arrived, can I still have breakfast?"
     rules = [
         { "rule": "The checkin time is 3pm" },
         { "rule": "The checkout time is 11am" },
         { "rule": "Breakfast is served from 7am to 10am" },
     ]
-    messages = prompt_template.render(input=input, rules=rules)
+    chat_history = [
+        { "role": "user", "content": "I'll arrive at 2pm. What's the checkin and checkout time?" },
+        { "role": "system", "content": "The check-in time is 3 PM, and the checkout time is 11 AM." },
+    ]
+    messages = prompt_template.render(input=input, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
