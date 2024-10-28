@@ -95,10 +95,10 @@ class ContentSafetyMultimodalEvaluator:
     def __init__(self, credential, azure_ai_project, parallel: bool = False):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
-            ViolenceMultimodalEvaluator(credential, azure_ai_project),
-            SexualMultimodalEvaluator(credential, azure_ai_project),
-            SelfHarmMultimodalEvaluator(credential, azure_ai_project),
-            HateUnfairnessMultimodalEvaluator(credential, azure_ai_project),
+            ViolenceMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),
+            SexualMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),
+            SelfHarmMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),
+            HateUnfairnessMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),
         ]
 
     def __call__(self, *, conversation, **kwargs):

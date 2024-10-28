@@ -328,20 +328,14 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
     if metric == "protected_material":
         return "image"
 
-    # Ensure there are messages
-    if assistant_messages:
-        # Iterate through each message
-        for item in assistant_messages:
-            # Ensure "content" exists in the message and is iterable
-            if "content" in item:
-                for content in item["content"]:
-                    # Check if the content type is "image_url"
-                    if content.get("type") == "image_url":
-                        return "image"
-        # Default return if no image was found
-        return "text"
-
-    # Default return if no messages
+    # Iterate through each message
+    for item in assistant_messages:
+        # Ensure "content" exists in the message and is iterable
+        content = item.get("content", [])
+        for message in content:
+            if message.get("type", "") == "image_url":
+                return "image"
+    # Default return if no image was found
     return "text"
 
 

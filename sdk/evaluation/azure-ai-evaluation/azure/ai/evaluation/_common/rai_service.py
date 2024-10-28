@@ -18,6 +18,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .constants import (
@@ -492,20 +493,18 @@ def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dic
         task = Tasks.PROTECTED_MATERIAL
         include_metric = False
 
-    return (
-        {
+    if include_metric:
+        return {
             "ContentType": content_type,
             "Contents": [{"messages": messages}],
             "AnnotationTask": task,
             "MetricList": [metric],
         }
-        if include_metric
-        else {
-            "ContentType": content_type,
-            "Contents": [{"messages": messages}],
-            "AnnotationTask": task,
-        }
-    )
+    return {
+        "ContentType": content_type,
+        "Contents": [{"messages": messages}],
+        "AnnotationTask": task,
+    }
 
 
 async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
@@ -546,8 +545,9 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
             url, json=payload, headers=headers
         )
     if response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["Contents"], response.text))
-        response.raise_for_status()
+        raise HttpResponseError(
+            message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+        )
     result = response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id

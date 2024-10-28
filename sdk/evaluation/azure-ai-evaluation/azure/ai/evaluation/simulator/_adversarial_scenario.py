@@ -22,8 +22,6 @@ class AdversarialScenarioJailbreak(Enum):
     """Adversarial scenario types for XPIA Jailbreak"""
 
     ADVERSARIAL_INDIRECT_JAILBREAK = "adv_xpia"
-    ADVERSARIAL_IMAGE_GEN = "adv_image_gen"
-    ADVERSARIAL_IMAGE_UNDERSTANDING = "adv_image_understanding"
 
 
 class _UnstableAdversarialScenario(Enum):
