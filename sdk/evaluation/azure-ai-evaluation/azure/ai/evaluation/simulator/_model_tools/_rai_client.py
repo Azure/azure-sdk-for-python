@@ -75,13 +75,14 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         if response.status_code != 200:
             msg = (
-                f"Unable to connect to your Azure AI project. Please verify that the project is correctly configured. "
-                f"Status code: {response.status_code}"
+                f"Failed to connect to your Azure AI project. Please check if the project scope is configured "
+                f"correctly, and make sure you have the necessary access permissions. "
+                f"Status code: {response.status_code}."
             )
             raise EvaluationException(
                 message=msg,
                 target=ErrorTarget.RAI_CLIENT,
-                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                category=ErrorCategory.PROJECT_ACCESS_ERROR,
                 blame=ErrorBlame.USER_ERROR,
             )
 
