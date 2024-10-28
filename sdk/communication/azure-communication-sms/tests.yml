@@ -13,8 +13,5 @@ extends:
             - $(sub-config-communication-services-sms-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
-      EnvVars:
-        AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'False'
       TestResourceDirectories:
         - communication/test-resources/
