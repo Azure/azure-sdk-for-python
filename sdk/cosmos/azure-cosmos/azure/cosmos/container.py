@@ -30,7 +30,7 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState
-import azure.cosmos._change_feed.change_feed_utils as change_feed_utils
+from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._base import (
     build_options,
@@ -351,8 +351,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -391,8 +392,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -423,8 +425,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -460,8 +463,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -496,8 +500,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :param Any args: args
@@ -506,11 +511,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
 
         # pylint: disable=too-many-statements
-        change_feed_utils.add_args_to_kwargs(args, kwargs)
-        change_feed_utils.validate_kwargs(kwargs)
+        add_args_to_kwargs(args, kwargs)
+        validate_kwargs(kwargs)
         feed_options = build_options(kwargs)
 
-        change_feed_state_context = dict()
+        change_feed_state_context = {}
         if "change_feed_mode" in kwargs:
             change_feed_state_context["changeFeedMode"] = kwargs["change_feed_mode"]
         if "partition_key_range_id" in kwargs:

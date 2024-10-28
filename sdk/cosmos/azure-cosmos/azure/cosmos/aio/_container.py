@@ -21,7 +21,6 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import warnings
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload
 from typing_extensions import Literal
@@ -31,7 +30,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState
-import azure.cosmos._change_feed.change_feed_utils as change_feed_utils
+from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
@@ -530,8 +529,9 @@ class ContainerProxy:
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -567,8 +567,9 @@ class ContainerProxy:
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -597,8 +598,9 @@ class ContainerProxy:
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -633,8 +635,9 @@ class ContainerProxy:
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -669,19 +672,20 @@ class ContainerProxy:
         :type priority: Optional[Literal["High", "Low"]]
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token.
-        :type change_feed_mode: change_feed_mode[LATEST_VERSION, ALL_VERSIONS_AND_DELETES]
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+                                      or 'continuation' token.
+        :type change_feed_mode: Optional[ChangeFeedState]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         # pylint: disable=too-many-statements
-        change_feed_utils.add_args_to_kwargs(args, kwargs)
-        change_feed_utils.validate_kwargs(kwargs)
+        add_args_to_kwargs(args, kwargs)
+        validate_kwargs(kwargs)
         feed_options = _build_options(kwargs)
 
-        change_feed_state_context = dict()
+        change_feed_state_context = {}
         if "change_feed_mode" in kwargs:
             change_feed_state_context["changeFeedMode"] = kwargs["change_feed_mode"]
         if "partition_key_range_id" in kwargs:

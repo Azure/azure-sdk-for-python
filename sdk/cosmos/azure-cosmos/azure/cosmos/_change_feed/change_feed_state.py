@@ -109,7 +109,8 @@ class ChangeFeedState(ABC):
 
             if version == ChangeFeedStateVersion.V2.value:
                 change_feed_mode = change_feed_state_context.get("changeFeedMode")
-                return ChangeFeedStateV2.from_continuation(container_link, container_rid, continuation_json, change_feed_mode)
+                return ChangeFeedStateV2.from_continuation(
+                    container_link, container_rid, continuation_json, change_feed_mode)
 
             raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
 
@@ -226,7 +227,8 @@ class ChangeFeedStateV2(ChangeFeedState):
         elif change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             self._change_feed_mode = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
         else:
-            raise ValueError(f"Invalid change_feed_mode was used: '{change_feed_mode}'. Supported change_feed_modes are 'LatestVersion' and 'AllVersionsAndDeletes'.")
+            raise ValueError(f"Invalid change_feed_mode was used: '{change_feed_mode}'."
+                             f" Supported change_feed_modes are 'LatestVersion' and 'AllVersionsAndDeletes'.")
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)
 
@@ -243,7 +245,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             self.continuation_property_name: self._continuation.to_dict() if self._continuation is not None else None
         }
 
-    def populate_change_feed_start_from_request_headers(
+    def set_start_from_request_headers(
             self,
             request_headers: Dict[str, Any]) -> None:
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
@@ -260,7 +262,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                     self._continuation.current_token.feed_range)
             change_feed_start_from_feed_range_and_etag.populate_request_headers(request_headers)
 
-    def populate_partition_key_range_id_request_headers(
+    def set_pk_range_id_request_headers(
             self,
             over_lapping_ranges,
             request_headers: Dict[str, Any]) -> None:
@@ -279,20 +281,21 @@ class ChangeFeedStateV2(ChangeFeedState):
             request_headers[http_constants.HttpHeaders.StartEpkString] = self._continuation.current_token.feed_range.min
             request_headers[http_constants.HttpHeaders.EndEpkString] = self._continuation.current_token.feed_range.max
 
-    def populate_change_feed_mode_request_headers(
+    def set_change_feed_mode_request_headers(
             self,
             request_headers: Dict[str, Any]) -> None:
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
         if self._change_feed_mode == http_constants.HttpHeaders.FullFidelityFeedHeaderValue:
             request_headers[http_constants.HttpHeaders.AIM] = self._change_feed_mode
-            request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = http_constants.HttpHeaders.Separate_meta_with_crts
+            request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] =\
+                http_constants.HttpHeaders.Separate_meta_with_crts
 
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
             request_headers: Dict[str, Any]) -> None:
-        self.populate_change_feed_start_from_request_headers(request_headers)
+        self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
         over_lapping_ranges = \
@@ -300,16 +303,16 @@ class ChangeFeedStateV2(ChangeFeedState):
                 self._container_link,
                 [self._continuation.current_token.feed_range])
 
-        self.populate_partition_key_range_id_request_headers(over_lapping_ranges, request_headers)
+        self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
-        self.populate_change_feed_mode_request_headers(request_headers)
+        self.set_change_feed_mode_request_headers(request_headers)
 
 
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
             request_headers: Dict[str, Any]) -> None:
-        self.populate_change_feed_start_from_request_headers(request_headers)
+        self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
         over_lapping_ranges = \
@@ -317,9 +320,9 @@ class ChangeFeedStateV2(ChangeFeedState):
                 self._container_link,
                 [self._continuation.current_token.feed_range])
 
-        self.populate_partition_key_range_id_request_headers(over_lapping_ranges, request_headers)
+        self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
-        self.populate_change_feed_mode_request_headers(request_headers)
+        self.set_change_feed_mode_request_headers(request_headers)
 
     def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
         pass

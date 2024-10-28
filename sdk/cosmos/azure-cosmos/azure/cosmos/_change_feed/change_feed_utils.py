@@ -33,21 +33,25 @@ def add_args_to_kwargs(
         kwargs: Dict[str, Any]
     ) -> None:
     """Add positional arguments(args) to keyword argument dictionary(kwargs).
-    Since 'query_items_change_feed' method only allows the following 4 positional arguments in the exact order and types,
-    if the order and types don't match, errors will be raised.
+    Since 'query_items_change_feed' method only allows the following 4 positional arguments in the exact order
+    and types, if the order and types don't match, errors will be raised.
     If the positional arguments are in the correct orders and types, the arguments will be added to keyword arguments.
 
     4 positional arguments:
-        - str 'partition_key_range_id': [Deprecated] ChangeFeed requests can be executed against specific partition key ranges.
-            This is used to process the change feed in parallel across multiple consumers.
+        - str 'partition_key_range_id': [Deprecated] ChangeFeed requests can be executed against specific partition
+            key ranges. This is used to process the change feed in parallel across multiple consumers.
         - bool 'is_start_from_beginning': [Deprecated] Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
         - str 'continuation': e_tag value to be used as continuation for reading change feed.
         - int 'max_item_count': Max number of items to be returned in the enumeration operation.
 
-    :keyword args: Positional arguments
+    :param args: Positional arguments. Arguments must be in the following order:
+        1. partition_key_range_id
+        2. is_start_from_beginning
+        3. continuation
+        4. max_item_count
     :type args: Tuple[Any, ...]
-    :keyword kwargs: Keyword arguments
+    :param kwargs: Keyword arguments
     :type kwargs: dict[str, Any]
     """
     if len(args) > 4:
@@ -77,7 +81,22 @@ def validate_kwargs(
     The values of keyword arguments must match the expect type and conditions. If the conditions do not match,
     errors will be raised with the error messages and possible ways to correct the errors.
 
-    :keyword kwargs: Keyword arguments
+    :param kwargs: Keyword arguments to verify for query_items_change_feed API
+    :keyword change_feed_mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
+        If the value was 'ALL_VERSIONS_AND_DELETES', the following keywords cannot be used:
+            - 'partition_key_range_id'
+            - 'is_start_from_beginning'
+            - 'start_time'
+    :type change_feed_mode: ChangeFeedState
+    :keyword partition_key_range_id: Deprecated Warning.
+    :type partition_key_range_id: str
+    :keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
+    :type is_start_from_beginning: bool
+    :keyword start_time: Must be in supported types.
+    :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+
+
+
     :type kwargs: dict[str, Any]
     """
     # Filter items with value None
@@ -88,18 +107,22 @@ def validate_kwargs(
         change_feed_mode = kwargs["change_feed_mode"]
         if change_feed_mode not in ChangeFeedMode:
             raise ValueError(
-                f"Invalid change_feed_mode was used: '{kwargs['change_feed_mode']}'. Supported 'change_feed_modes' are {ChangeFeedMode.to_string()}.")
+                f"Invalid change_feed_mode was used: '{kwargs['change_feed_mode']}'."
+                f" Supported 'change_feed_modes' are {ChangeFeedMode.to_string()}.")
 
         if change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             if "partition_key_range_id" in kwargs:
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported with 'partition_key_range_id'. Please use 'feed_range' instead.")
-            elif "is_start_from_beginning" in kwargs:
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported with 'partition_key_range_id'."
+                    f" Please use 'feed_range' instead.")
+            if "is_start_from_beginning" in kwargs:
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'is_start_from_beginning'. Please use 'continuation' instead.")
-            elif "start_time" in kwargs:
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'is_start_from_beginning'."
+                    f" Please use 'continuation' instead.")
+            if "start_time" in kwargs:
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'start_time'. Please use 'continuation' instead.")
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'start_time'."
+                    f" Please use 'continuation' instead.")
 
 
     if "partition_key_range_id" in kwargs:
@@ -119,7 +142,8 @@ def validate_kwargs(
 
         if not isinstance(kwargs["is_start_from_beginning"], bool):
             raise TypeError(
-                f"'is_start_from_beginning' must be 'bool' type, but given '{type(kwargs["is_start_from_beginning"]).__name__}'.")
+                f"'is_start_from_beginning' must be 'bool' type,"
+                f" but given '{type(kwargs["is_start_from_beginning"]).__name__}'.")
 
     elif "start_time" in kwargs:
         start_time = kwargs['start_time']
