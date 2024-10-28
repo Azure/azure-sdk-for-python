@@ -69,26 +69,25 @@ def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str
     return session_tokens
 
 # ex inputs:
-# ["1:1#51", "1:1#55", "1:1#57"] -> ["1:1#57"]
+# ["1:1#51", "1:1#55", "1:1#57", "2:1#42", "2:1#45", "2:1#47"] -> ["1:1#57"]
 def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[str]:
-    i = 0
-    while i < len(session_tokens):
-        j = i + 1
-        while j < len(session_tokens):
-            pk_range_id1, vector_session_token1 = parse_session_token(session_tokens[i])
-            pk_range_id2, vector_session_token2 = parse_session_token(session_tokens[j])
-            if pk_range_id1 == pk_range_id2:
-                vector_session_token = vector_session_token1.merge(vector_session_token2)
-                session_tokens.append(pk_range_id1 + ":" + vector_session_token.session_token)
-                remove_session_tokens = [session_tokens[i], session_tokens[j]]
-                for token in remove_session_tokens:
-                    session_tokens.remove(token)
-                i = -1
-                break
-            j += 1
-        i += 1
+    pk_session_tokens: Dict[str, List[str]] = {}
+    for session_token in session_tokens:
+        pk_range_id, _ = parse_session_token(session_token)
+        if pk_range_id in pk_session_tokens:
+            pk_session_tokens[pk_range_id].append(session_token)
+        else:
+            pk_session_tokens[pk_range_id] = [session_token]
 
-    return session_tokens
+    processed_session_tokens = []
+    for session_tokens_same_pk in pk_session_tokens.values():
+        pk_range_id, vector_session_token = parse_session_token(session_tokens_same_pk[0])
+        for session_token in session_tokens_same_pk[1:]:
+            _, vector_session_token_1 = parse_session_token(session_token)
+            vector_session_token = vector_session_token.merge(vector_session_token_1)
+        processed_session_tokens.append(pk_range_id + ":" + vector_session_token.session_token)
+
+    return processed_session_tokens
 
 # ex inputs:
 # merge scenario

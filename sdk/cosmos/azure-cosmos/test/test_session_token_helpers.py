@@ -39,18 +39,24 @@ def create_split_ranges():
                     # split with one child
                    ([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52")],
                     ("AA", "DD"), "0:1#51#3=52,1:1#55#3=52"),
-                    # several ranges being equal to one range
-                    # Highest GLSN, which is the 55 in this ex. "1:1#55#3=52", is the one that will be used
+                    # Highest GLSN, which is 55 in this         # cspell:disable-line
+                    # ex. "1:1#55#3=52", is the one that will be returned because
+                    # it is higher than all of the other feed range contained in the same
+                    # range
                    ([(("AA", "DD"), "0:1#42#3=52"), (("AA", "BB"), "1:1#51#3=52"),
                     (("BB", "CC"),"1:1#53#3=52"), (("CC", "DD"),"1:1#55#3=52")],
                     ("AA", "DD"), "1:1#55#3=52"),
-                    # several ranges being equal to one range
+                    # Highest GLSN, which is 60 in this            # cspell:disable-line
+                    # ex. "1:1#60#3=52", is the one that will be returned because
+                    # it is higher than all of the other feed range contained in the same
+                    # range with some of them overlapping with each other
                    ([(("AA", "DD"), "0:1#60#3=52"), (("AA", "BB"), "1:1#51#3=52"),
                     (("BB", "CC"),"1:1#53#3=52"), (("CC", "DD"),"1:1#55#3=52")],
                     ("AA", "DD"), "0:1#60#3=52"),
-                    # several ranges being equal to one range
-                    # AA-DD can be created from the other ranges but the GLSN's are not all larger than the one
-                    # in the AA-DD range so we just compound
+                    # AA-DD can be created from the other ranges
+                    # but the GLSN's are not all larger than the one  # cspell:disable-line
+                    # in the AA-DD range so we just compound as cannot make
+                    # conclusions in this case
                    ([(("AA", "DD"), "0:1#60#3=52"), (("AA", "BB"), "1:1#51#3=52"),
                     (("BB", "CC"),"1:1#66#3=52"), (("CC", "DD"),"1:1#55#3=52")],
                     ("AA", "DD"), "0:1#60#3=52,1:1#66#3=52"),
