@@ -25,14 +25,14 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_timezone_by_coordinates(self):
         async with self.client:
-            result = await self.client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
+            result = await self.client.get_timezone(coordinates=[25.0338053, 121.5640089])
             assert result is not None and "TimeZones" in result
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy_async
     async def test_get_timezone_by_id(self):
         async with self.client:
-            result = await self.client.get_timezone_by_id(timezone_id="sr-Latn-RS")
+            result = await self.client.get_timezone(timezone_id="sr-Latn-RS")
             assert result is not None and "TimeZones" in result
 
     @MapsTimeZonePreparer()

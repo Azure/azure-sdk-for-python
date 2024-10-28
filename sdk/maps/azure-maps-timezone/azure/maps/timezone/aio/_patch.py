@@ -10,14 +10,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import datetime
 import sys
 from typing import Union, Any, List, Optional, cast
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.tracing.decorator_async import distributed_trace_async
-
 from ._client import TimezoneClient as TimezoneClientGenerated
-
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -88,15 +86,39 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
     ) -> JSON:
         """Unified method to get timezone information by either timezone_id or coordinates.
 
-        :param format: Desired format of the response, default is 'json'
-        :param timezone_id: IANA time zone ID (optional)
-        :param coordinates: Coordinates (latitude, longitude) as a list (optional)
-        :param accept_language: Preferred language for the response (optional)
-        :param options: Options for the type of information returned (optional)
-        :param time_stamp: Reference timestamp (optional)
-        :param dst_from: Start date for daylight savings time transitions (optional)
-        :param dst_lasting_years: Number of years for DST transitions (optional)
-        :return: JSON response with timezone information
+        :param format: Desired format of the response. Only ``json`` format is supported. "json"
+         Default value is "json".
+        :type format: str
+        :keyword timezone_id: The IANA time zone ID. Required.
+        :paramtype timezone_id: str
+        :keyword coordinates: Coordinates of the point for which time zone information is requested.
+         This parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
+         endpoint is called directly, coordinates are passed in as a single string containing
+         coordinates, separated by commas. Required.
+        :paramtype coordinates: list[float]
+        :keyword accept_language: Specifies the language code in which the timezone names should be
+         returned. If no language code is provided, the response will be in "EN". Please refer to
+         `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for
+         details. Default value is None.
+        :paramtype accept_language: str
+        :keyword options: Alternatively, use alias "o". Options available for types of information
+         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
+         value is None.
+        :paramtype options: str
+        :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
+         API will use the machine time serving the request. Default value is None.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword dst_from: Alternatively, use alias "tf". The start date from which
+         daylight savings time (DST) transitions are requested, only applies when "options" = all or
+         "options" = transitions. Default value is None.
+        :paramtype dst_from: ~datetime.datetime
+        :keyword dst_lasting_years: Alternatively, use alias "ty". The number of
+         years from "transitionsFrom" for which DST transitions are requested, only applies when
+         "options" = all or "options" = transitions. Default value is None.
+        :paramtype dst_lasting_years: int
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = cast(JSON, {})
         if timezone_id:

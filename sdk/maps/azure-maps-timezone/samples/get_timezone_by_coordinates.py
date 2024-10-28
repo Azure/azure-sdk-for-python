@@ -28,7 +28,7 @@ def get_timezone_by_coordinates():
 
     timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
+        result = timezone_client.get_timezone(coordinates=[25.0338053, 121.5640089])
         print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
