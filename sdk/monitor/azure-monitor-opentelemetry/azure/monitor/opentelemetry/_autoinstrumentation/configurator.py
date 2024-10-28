@@ -15,12 +15,12 @@ from opentelemetry.environment_variables import (
 )
 from opentelemetry.sdk._configuration import _OTelSDKConfigurator
 
-from azure.monitor.opentelemetry.exporter import (
+from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
-)  # pylint: disable=import-error,no-name-in-module
-from azure.monitor.opentelemetry.exporter._utils import (
+)
+from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
-)  # pylint: disable=import-error,no-name-in-module
+)
 from azure.monitor.opentelemetry._constants import (
     _PREVIEW_ENTRY_POINT_WARNING,
     LOG_EXPORTER_NAMES_ARG,

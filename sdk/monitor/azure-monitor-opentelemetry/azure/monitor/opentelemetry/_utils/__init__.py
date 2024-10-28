@@ -12,9 +12,9 @@ from pathlib import Path
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # pylint: disable=import-error,no-name-in-module
     ConnectionStringParser,
 )
-from azure.monitor.opentelemetry.exporter._utils import (
+from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_on_app_service,
-)  # pylint: disable=import-error,no-name-in-module
+)
 from azure.monitor.opentelemetry._constants import (
     _LOG_PATH_LINUX,
     _LOG_PATH_WINDOWS,
