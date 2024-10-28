@@ -92,7 +92,8 @@ class Simulator:
         api_call_delay_sec: float = 1,
         query_response_generating_prompty_kwargs: Dict[str, Any] = {},
         user_simulator_prompty_kwargs: Dict[str, Any] = {},
-        conversation_turns: List[List[str]] = [],
+        conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
+        concurrent_async_tasks: int = 5,
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -119,7 +120,10 @@ class Simulator:
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
         :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
         :keyword conversation_turns: Predefined conversation turns to simulate.
-        :paramtype conversation_turns: List[List[str]]
+        :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
+        :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
+            Defaults to 5.
+        :paramtype concurrent_async_tasks: int
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
 
@@ -134,12 +138,12 @@ class Simulator:
         if conversation_turns and (text or tasks):
             raise ValueError("Cannot specify both conversation_turns and text/tasks")
 
-        if num_queries > len(tasks):
+        if text and num_queries > len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' > len('tasks') ({num_queries} > {len(tasks)}). "
                 f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
             )
-        elif num_queries < len(tasks):
+        elif text and num_queries < len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
@@ -157,6 +161,7 @@ class Simulator:
                 user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
                 api_call_delay_sec=api_call_delay_sec,
                 prompty_model_config=prompty_model_config,
+                concurrent_async_tasks=concurrent_async_tasks,
             )
 
         query_responses = await self._generate_query_responses(
@@ -183,11 +188,12 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int,
-        conversation_turns: List[List[str]],
+        conversation_turns: List[List[Union[str, Dict[str, Any]]]],
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
         api_call_delay_sec: float,
         prompty_model_config: Any,
+        concurrent_async_tasks: int,
     ) -> List[JsonLineChatProtocol]:
         """
         Simulates conversations using predefined conversation turns.
@@ -197,7 +203,7 @@ class Simulator:
         :keyword max_conversation_turns: Maximum number of turns for the simulation.
         :paramtype max_conversation_turns: int
         :keyword conversation_turns: A list of predefined conversation turns.
-        :paramtype conversation_turns: List[List[str]]
+        :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
@@ -206,42 +212,60 @@ class Simulator:
         :paramtype api_call_delay_sec: float
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Any
+        :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
+        :paramtype concurrent_async_tasks: int
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
         """
-        simulated_conversations = []
         progress_bar = tqdm(
             total=int(len(conversation_turns) * (max_conversation_turns / 2)),
             desc="Simulating with predefined conversation turns: ",
             ncols=100,
             unit="messages",
         )
+        semaphore = asyncio.Semaphore(concurrent_async_tasks)
+        progress_bar_lock = asyncio.Lock()
 
-        for simulation in conversation_turns:
-            current_simulation = ConversationHistory()
-            for simulated_turn in simulation:
-                user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
-                current_simulation.add_to_history(user_turn)
-                assistant_response, assistant_context = await self._get_target_response(
-                    target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
-                )
-                assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
-                current_simulation.add_to_history(assistant_turn)
-                progress_bar.update(1)  # Update progress bar for both user and assistant turns
+        async def run_simulation(simulation: List[Union[str, Dict[str, Any]]]) -> JsonLineChatProtocol:
+            async with semaphore:
+                current_simulation = ConversationHistory()
+                for simulated_turn in simulation:
+                    if isinstance(simulated_turn, str):
+                        user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
+                    elif isinstance(simulated_turn, dict):
+                        user_turn = Turn(
+                            role=ConversationRole.USER,
+                            content=str(simulated_turn.get("content")),
+                            context=str(simulated_turn.get("context")),
+                        )
+                    else:
+                        raise ValueError(
+                            "Each simulated turn must be a string or a dict with 'content' and 'context' keys"
+                        )
+                    current_simulation.add_to_history(user_turn)
+                    assistant_response, assistant_context = await self._get_target_response(
+                        target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
+                    )
+                    assistant_turn = Turn(
+                        role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+                    )
+                    current_simulation.add_to_history(assistant_turn)
+                    async with progress_bar_lock:
+                        progress_bar.update(1)
 
-            if len(current_simulation) < max_conversation_turns:
-                await self._extend_conversation_with_simulator(
-                    current_simulation=current_simulation,
-                    max_conversation_turns=max_conversation_turns,
-                    user_simulator_prompty=user_simulator_prompty,
-                    user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
-                    api_call_delay_sec=api_call_delay_sec,
-                    prompty_model_config=prompty_model_config,
-                    target=target,
-                    progress_bar=progress_bar,
-                )
-            simulated_conversations.append(
-                JsonLineChatProtocol(
+                if len(current_simulation) < max_conversation_turns:
+                    await self._extend_conversation_with_simulator(
+                        current_simulation=current_simulation,
+                        max_conversation_turns=max_conversation_turns,
+                        user_simulator_prompty=user_simulator_prompty,
+                        user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+                        api_call_delay_sec=api_call_delay_sec,
+                        prompty_model_config=prompty_model_config,
+                        target=target,
+                        progress_bar=progress_bar,
+                        progress_bar_lock=progress_bar_lock,
+                    )
+                return JsonLineChatProtocol(
                     {
                         "messages": current_simulation.to_list(),
                         "finish_reason": ["stop"],
@@ -249,10 +273,11 @@ class Simulator:
                         "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
                     }
                 )
-            )
 
+        tasks = [asyncio.create_task(run_simulation(simulation)) for simulation in conversation_turns]
+        results = await asyncio.gather(*tasks)
         progress_bar.close()
-        return simulated_conversations
+        return results
 
     async def _extend_conversation_with_simulator(
         self,
@@ -265,6 +290,7 @@ class Simulator:
         prompty_model_config: Dict[str, Any],
         target: Callable,
         progress_bar: tqdm,
+        progress_bar_lock: asyncio.Lock,
     ):
         """
         Extends an ongoing conversation using a user simulator until the maximum number of turns is reached.
@@ -285,6 +311,8 @@ class Simulator:
         :paramtype target: Callable,
         :keyword progress_bar: Progress bar for tracking simulation progress.
         :paramtype progress_bar: tqdm,
+        :keyword progress_bar_lock: Lock for updating the progress bar safely.
+        :paramtype progress_bar_lock: asyncio.Lock
         """
         user_flow = self._load_user_simulation_flow(
             user_simulator_prompty=user_simulator_prompty,  # type: ignore
@@ -305,9 +333,12 @@ class Simulator:
             assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=current_simulation
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+            assistant_turn = Turn(
+                role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+            )
             current_simulation.add_to_history(assistant_turn)
-            progress_bar.update(1)
+            async with progress_bar_lock:
+                progress_bar.update(1)
 
     def _load_user_simulation_flow(
         self,
@@ -642,7 +673,9 @@ class Simulator:
             assistant_response, assistant_context = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=conversation_history
             )
-            assistant_turn = Turn(role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context)
+            assistant_turn = Turn(
+                role=ConversationRole.ASSISTANT, content=assistant_response, context=assistant_context
+            )
             conversation_history.add_to_history(assistant_turn)
             progress_bar.update(1)
 

@@ -62,9 +62,6 @@ if __name__ == "__main__":
     # Running Relevance Evaluator on single input row
     relevance_score = relevance_eval(
         response="The Alpine Explorer Tent is the most waterproof.",
-        context="From the our product list,"
-        " the alpine explorer tent is the most waterproof."
-        " The Adventure Dining Table has higher weight.",
         query="Which tent is the most waterproof?",
     )
 
@@ -289,9 +286,7 @@ async def callback(
     formatted_response = {
         "content": response,
         "role": "assistant",
-        "context": {
-            "citations": None,
-        },
+        "context": "",
     }
     messages["messages"].append(formatted_response)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}

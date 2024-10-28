@@ -68,9 +68,10 @@ class ContentSafetyEvaluator(EvaluatorBase):
         }
     """
 
+    # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
-        self._parallel = kwargs.pop("parallel", True)
+        self._parallel = kwargs.pop("parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
@@ -118,6 +119,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         response = eval_input.get("response", None)
         conversation = eval_input.get("conversation", None)
         results: Dict[str, Union[str, float]] = {}
+        # TODO fix this to not explode on empty optional inputs (PF SKD error)
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 # pylint: disable=no-value-for-parameter
