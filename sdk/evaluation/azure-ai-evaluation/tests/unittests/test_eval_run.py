@@ -312,7 +312,7 @@ class TestEvalRun:
         with tempfile.TemporaryDirectory() as tmpdir:
             for value in data_convo["messages"]:
                 ev_utils._store_multimodal_content(value, tmpdir)
-    
+
     def test_store_multi_modal_image_urls(self, token_mock, caplog):
         data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
         data_file = os.path.join(data_path, "generated_conv_image_urls.jsonl")
@@ -320,7 +320,7 @@ class TestEvalRun:
         with tempfile.TemporaryDirectory() as tmpdir:
             for value in data_convo["messages"]:
                 ev_utils._store_multimodal_content(value, tmpdir)
-    
+
     def test_store_multi_modal_images(self, token_mock, caplog):
         data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
         data_file = os.path.join(data_path, "generated_conv_images.jsonl")
@@ -328,7 +328,7 @@ class TestEvalRun:
         with tempfile.TemporaryDirectory() as tmpdir:
             for value in data_convo["messages"]:
                 ev_utils._store_multimodal_content(value, tmpdir)
-                    
+
     def test_log_metrics_and_instance_results_logs_error(self, token_mock, caplog):
         """Test that we are logging the error when there is no trace destination."""
         logger = logging.getLogger(ev_utils.__name__)
