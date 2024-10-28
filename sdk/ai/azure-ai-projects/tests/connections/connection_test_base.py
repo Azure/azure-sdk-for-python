@@ -5,18 +5,18 @@
 import sys
 import logging
 import functools
+from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
 """
 Set these environment variables before running the test:
-set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=
+set AZURE_AI_PROJECTS_CONNECTIONS_TESTS_PROJECT_CONNECTION_STRING=
 """
 servicePreparerConnectionsTests = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_connections_test",
-    azure_ai_projects_connections_test_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
+    "azure_ai_projects_connections_tests",
+    azure_ai_projects_connections_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
 )
 
 
@@ -37,7 +37,7 @@ if LOGGING_ENABLED:
 class ConnectionsTestBase(AzureRecordedTestCase):
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
-        conn_str = kwargs.pop("azure_ai_projects_connections_test_project_connection_string")
+        conn_str = kwargs.pop("azure_ai_projects_connections_tests_project_connection_string")
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,

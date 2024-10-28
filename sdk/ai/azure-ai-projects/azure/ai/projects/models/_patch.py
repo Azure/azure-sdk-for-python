@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    ConnectionsListSecretsResponse,
+    GetConnectionResponse,
     MessageDeltaChunk,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -96,7 +96,7 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(self, *, connection: GetConnectionResponse, token_credential: TokenCredential = None) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type

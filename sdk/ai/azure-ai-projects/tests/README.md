@@ -40,17 +40,6 @@ set AZURE_AI_PROJECTS_DATA_PATH=<your_blob_containing_product_info_1.md_from_sam
 
 ## Setup for running tests in the `connections` and `inference` folders
 
-You need an Azure AI Project that has the following:
-
-TODO
-
-Copy the `Project connection string` from the Azure AI Studio and set the following environment variable:
-
-```bash
-set AZURE_AI_PROJECTS_CONNECTIONS_TEST_PROJECT_CONNECTION_STRING=<your_connection_string>
-set AZURE_AI_PROJECTS_CONNECTIONS_TEST_MODEL_DEPLOYMENT_NAME=<your-azure-openai-model-deployment-name>
-```
-
 ## Configure test proxy
 
 Configure the test proxy to run live service tests without recordings:
