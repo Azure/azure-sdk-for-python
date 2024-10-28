@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed the issue that `_models_py3.py` would raise `SyntaxError` when importing due to invalid sequence error in python 3.12.
 
 ### Other Changes
 
