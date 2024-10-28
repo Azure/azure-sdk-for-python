@@ -57,7 +57,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=too-many-lines,disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool, None]], Tuple[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
@@ -575,7 +575,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Ignored if no query is provided.
         :type parameters: [List[Dict[str, object]]]
         :param partition_key: partition key at which the query request is targeted.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
+            Tuple[Union[str, int, float, bool, None]]]
         :param bool enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.

@@ -227,7 +227,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
+            is_tuple_or_list = True in (isinstance(options["partitionKey"], list),
+                                            isinstance(options["partitionKey"], tuple))
+
+            if is_tuple_or_list and options["partitionKey"]:
                 pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 pk_val = json.dumps([options["partitionKey"]])

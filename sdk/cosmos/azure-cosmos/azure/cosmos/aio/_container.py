@@ -58,7 +58,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool, None]], Tuple[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:
@@ -412,7 +412,8 @@ class ContainerProxy:
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is provided,
             a cross-partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
+            Tuple[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
