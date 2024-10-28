@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Type, TypeVar, Union, cast, get_args, get_origin
+from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
@@ -24,7 +25,7 @@ _nltk_data_download_lock = threading.Lock()
 T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
-def get_harm_severity_level(harm_score: int) -> Union[str, float]:
+def get_harm_severity_level(harm_score: Union[float, int]) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
@@ -272,3 +273,42 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         validate_annotation(v, annotations[k])
 
     return cast(T_TypedDict, o)
+
+
+def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    """Parse the output of prompt-based quality evaluators that return a score and reason.
+
+    Current supported evaluators:
+        - Fluency
+        - Relevance
+        - Retrieval
+        - Groundedness
+        - Coherence
+
+    :param llm_output: The output of the prompt-based quality evaluator.
+    :type llm_output: str
+    :return: The score and reason.
+    :rtype: Tuple[float, str]
+    """
+    score = math.nan
+    reason = ""
+    if llm_output:
+        score_pattern = r"<S2>(.*?)</S2>"
+        reason_pattern = r"<S1>(.*?)</S1>"
+        score_match = re.findall(score_pattern, llm_output, re.DOTALL)
+        reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+        if score_match:
+            score = float(score_match[0].strip())
+        if reason_match:
+            reason = reason_match[0].strip()
+
+    return score, reason
+
+
+def remove_optional_singletons(eval_class, singletons):
+    required_singletons = singletons.copy()
+    if hasattr(eval_class, "_OPTIONAL_PARAMS"):  # pylint: disable=protected-access
+        for param in eval_class._OPTIONAL_PARAMS:  # pylint: disable=protected-access
+            if param in singletons:
+                del required_singletons[param]
+    return required_singletons
