@@ -27,6 +27,7 @@ from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
 from azure.ai.projects.models import MessageAttachment, MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
 from azure.identity import DefaultAzureCredential
+from pathlib import Path
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -37,13 +38,6 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with project_client:
-
-    def save_file(client: AIProjectClient, file_id: str, file_name_path: str):
-        file_name = file_name_path.split("/")[-1]
-        file_content = client.agents.get_file_content(file_id)
-        with open(f"./{file_name}", "wb") as file:
-            file.write(file_content.content)
-        print(f"File saved: {file_name}")
 
     # upload a file and wait for it to be processed
     file = project_client.agents.upload_file_and_poll(file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS)
@@ -83,20 +77,17 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = project_client.agents.list_messages(thread_id=thread.id)
+    messages = project_client.agents.get_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
-    conversation = project_client.agents.parse_conversation(messages=messages)
-    print(f"Conversation: {conversation}")
-
-    last_msg = conversation.get_last_text_message_by_sender("assistant")
+    last_msg = messages.get_last_text_message_by_sender("assistant")
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 
-    for image_content in conversation.image_contents:
+    for image_content in messages.image_contents:
         print(f"Image File ID: {image_content.image_file.file_id}")
 
-    for annotation in conversation.file_annotations:
+    for annotation in messages.file_annotations:
         print(f"File Annotations:")
         if isinstance(annotation, MessageTextFileCitationAnnotation):
             annotation_type = "File Citation"
@@ -109,6 +100,6 @@ with project_client:
             print(f"Type: {annotation_type}")
             print(f"Text: {annotation.text}")
             print(f"File ID: {annotation.file_path.file_id}")
-            save_file(project_client, annotation.file_path.file_id, annotation.text)
+            project_client.agents.save_file(file_id=file.id, file_name=Path(annotation.text).name)
         print(f"Start Index: {annotation.start_index}")
         print(f"End Index: {annotation.end_index}")

@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import sys, io, logging, os, time
 from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
+from pathlib import Path
 
 # from zoneinfo import ZoneInfo
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -2016,17 +2017,88 @@ class AgentsOperations(AgentsOperationsGenerated):
         return vector_store_file_batch
     
     @distributed_trace
-    def parse_conversation(
-            self,
-            messages: _models.OpenAIPageableListOfThreadMessage
-    ) -> _models.Conversation:
-        """Parses the OpenAIPageableListOfThreadMessage response and returns a Conversation object.
+    def get_messages(
+        self,
+        thread_id: str,
+        *,
+        run_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Messages:
+        """Parses the OpenAIPageableListOfThreadMessage response and returns a Messages object.
         
         :param messages: The OpenAIPageableListOfThreadMessage response.
         :type messages: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
 
+        :return: Messages. The Messages is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Messages
         """
-        return _models.Conversation(pageable_list=messages)
+        messages = super().list_messages(thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs)
+        return _models.Messages(pageable_list=messages)
+
+    @distributed_trace
+    def save_file(
+        self, 
+        file_id: str, 
+        file_name: str, 
+        target_dir: Optional[Union[str, Path]] = None
+    ) -> None:
+        """
+        Saves file content retrieved using a file identifier to the specified local directory.
+
+        :param file_id: The unique identifier for the file to retrieve.
+        :type file_id: str
+        :param file_name: The name of the file to be saved.
+        :type file_name: str
+        :param target_dir: The directory where the file should be saved. Defaults to the current working directory.
+        :type target_dir: Union[str, Path]
+        """
+        # Determine target directory
+        path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
+        logger.debug(f"Using target directory: {path}")
+
+        if not path.exists():
+            logger.debug(f"Creating non-existent target directory: {path}")
+            path.mkdir(parents=True, exist_ok=True)
+        elif not path.is_dir():
+            error_msg = f"The target path '{path}' is not a directory."
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        # Ensure file_name is properly sanitized
+        file_name = Path(file_name).name
+        if not file_name:
+            error_msg = "The provided file name is invalid."
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        # Get file content
+        try:
+            file_content = self.get_file_content(file_id)
+            if not file_content:
+                error_msg = f"No content retrieved for file ID '{file_id}'."
+                logger.error(error_msg)
+                raise RuntimeError(error_msg)
+        except Exception as e:
+            error_msg = f"Failed to retrieve file content for file ID '{file_id}': {e}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg) from e
+
+        # Path to save the file
+        target_file_path = path / file_name
+
+        # Write file content
+        try:
+            with target_file_path.open("wb") as file:
+                file.write(file_content.content)
+            logger.debug(f"File '{file_name}' saved successfully at '{target_file_path}'.")
+        except IOError as e:
+            error_msg = f"Failed to write to file '{target_file_path}': {e}"
+            logger.error(error_msg)
+            raise
 
 
 __all__: List[str] = [

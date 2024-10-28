@@ -997,24 +997,33 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             pass
 
 
-class Conversation:
+class Messages:
+    """
+    Represents a collection of messages
+
+    :param pageable_list: The pageable list of messages.
+    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
+
+    :return: A collection of messages.
+    :rtype: ~azure.ai.projects.models.Messages
+    """
     def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
         self._messages = pageable_list.data
 
     @property
     def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the conversation."""
+        """Returns all messages in the messages."""
         return self._messages
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
-        """Returns all text message contents in the conversation."""
+        """Returns all text message contents in the messages."""
         texts = [content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)]
         return texts
 
     @property
     def image_contents(self) -> List[MessageImageFileContent]:
-        """Returns all image file contents from image message contents in the conversation."""
+        """Returns all image file contents from image message contents in the messages."""
         return [
             content for msg in self._messages
             for content in msg.content
@@ -1024,7 +1033,7 @@ class Conversation:
     @property
     def file_annotations(self) -> List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]]:
         """
-        Returns all file-related annotations from text message annotations in the conversation.
+        Returns all file-related annotations from text message annotations in the messages.
         The returned list contains instances of MessageTextFileCitationAnnotation and MessageTextFilePathAnnotation.
         """
         annotations: List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]] = []
@@ -1037,14 +1046,28 @@ class Conversation:
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
-        """Returns the last message from the specified sender."""
+        """Returns the last message from the specified sender.
+        
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last message from the specified sender.
+        :rtype: ~azure.ai.projects.models.ThreadMessage
+        """
         for msg in (self._messages):
             if msg.role == sender:
                 return msg
         return None
 
     def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
-        """Returns the last text message from the specified sender."""
+        """Returns the last text message from the specified sender.
+        
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last text message from the specified sender.
+        :rtype: ~azure.ai.projects.models.MessageTextContent
+        """
         for msg in (self._messages):
             if msg.role == sender:
                 for content in (msg.content):
@@ -1061,7 +1084,7 @@ __all__: List[str] = [
     "AsyncFunctionTool",
     "AsyncToolSet",
     "CodeInterpreterTool",
-    "Conversation",
+    "Messages",
     "FileSearchTool",
     "FunctionTool",
     "SASTokenCredential",
