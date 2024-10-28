@@ -22,6 +22,7 @@ outputs = asyncio.run(custom_simulator(
     max_conversation_turns=1,
 ))
 ```
+- Adding evaluator for multimodal use cases
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
