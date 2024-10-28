@@ -1038,16 +1038,16 @@ class Conversation:
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
         """Returns the last message from the specified sender."""
-        for msg in reversed(self._messages):
+        for msg in (self._messages):
             if msg.role == sender:
                 return msg
         return None
 
     def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
         """Returns the last text message from the specified sender."""
-        for msg in reversed(self._messages):
+        for msg in (self._messages):
             if msg.role == sender:
-                for content in reversed(msg.content):
+                for content in (msg.content):
                     if isinstance(content, MessageTextContent):
                         return content
         return None
