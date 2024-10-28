@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
 
-T = Union[str, float]
+T = Union[str, float, bool]
 
 
 class RaiServiceEvaluatorBase(EvaluatorBase[T]):
@@ -52,10 +52,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
@@ -71,7 +68,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:

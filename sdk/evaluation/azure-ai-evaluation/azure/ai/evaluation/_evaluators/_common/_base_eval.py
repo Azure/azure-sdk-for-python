@@ -87,7 +87,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
+    def __call__(self, *args, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """Evaluate a given input. This method serves as a wrapper and is meant to be overridden by child classes for
         one main reason - to overwrite the method headers and docstring to include additional inputs as needed.
         The actual behavior of this function shouldn't change beyond adding more inputs to the

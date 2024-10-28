@@ -74,7 +74,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate groundedness for a conversation
 
@@ -90,10 +89,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate groundedness. Accepts either a response and context a single evaluation,
@@ -111,4 +107,4 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

@@ -89,8 +89,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
-    ) -> Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]:
         """Evaluate cross domain injected attacks are present in a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -105,10 +104,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """
@@ -123,6 +119,6 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The cross domain injection attack score
-        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]]
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

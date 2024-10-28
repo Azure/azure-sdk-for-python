@@ -74,7 +74,6 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate fluency for a conversation
 
@@ -90,10 +89,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """
@@ -112,4 +108,4 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

@@ -102,7 +102,6 @@ class ContentSafetyEvaluator(EvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a collection of content safety metrics for a conversation
 
@@ -118,10 +117,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
@@ -138,7 +134,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:

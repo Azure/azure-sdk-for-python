@@ -57,10 +57,11 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     @overload
     def __call__(
         self,
-        *,
+        *args,
         query: str,
         response: str,
         context: str,
+        **kwargs,
     ) -> Dict[str, float]:
         """Evaluate groundedness for given input of query, response, context
 
@@ -79,7 +80,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     @overload
     def __call__(
         self,
-        *,
+        *args,
         conversation: Conversation,
         **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
@@ -97,11 +98,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
@@ -121,4 +118,4 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

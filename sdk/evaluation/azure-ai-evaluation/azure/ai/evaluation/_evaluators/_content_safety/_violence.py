@@ -82,7 +82,6 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
     ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a conversation for violent content
 
@@ -98,10 +97,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """
@@ -119,4 +115,4 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
 
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

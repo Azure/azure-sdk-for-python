@@ -73,7 +73,6 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         self,
         *,
         conversation: Conversation,
-        **kwargs,
     ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
         """Evaluate coherence for a conversation
 
@@ -89,10 +88,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     @override
     def __call__(
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
@@ -110,4 +106,4 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
