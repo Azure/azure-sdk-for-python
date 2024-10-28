@@ -196,6 +196,7 @@ def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[Abst
 _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
     "opencensus": _get_opencensus_span,
     "opentelemetry": _get_opentelemetry_span,
+    "none": lambda: None,
 }
 
 
@@ -207,6 +208,7 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
 
     * "opencensus"
     * "opentelemetry"
+    * "none"
 
     :param value: the value to convert
     :type value: string

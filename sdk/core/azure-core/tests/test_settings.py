@@ -26,6 +26,7 @@
 import logging
 import os
 import sys
+from unittest.mock import patch, MagicMock
 import pytest
 
 # module under test
@@ -171,6 +172,31 @@ class TestConverters(object):
     def test_convert_azure_cloud(self):
         with pytest.raises(ValueError):
             m.convert_azure_cloud(10)
+
+    def test_convert_tracing_implementation(self):
+        assert m.convert_tracing_impl(None) is None
+        assert m.convert_tracing_impl("none") is None
+
+        # The following should all be None since the dependencies are not installed/imported.
+        assert m.convert_tracing_impl("opentelemetry") is None
+        assert m.convert_tracing_impl("opencensus") is None
+
+    def test_convert_tracing_implementation_invalid(self):
+        with pytest.raises(ValueError):
+            m.convert_tracing_impl("foo")
+
+    def test_implicit_tracing_implementation(self):
+        mock_span_module = MagicMock()
+        mock_opentelemetry_span = MagicMock(name="OpenTelemetrySpan")
+        mock_span_module.OpenTelemetrySpan = mock_opentelemetry_span
+        mock_modules = {"azure.core.tracing.ext.opentelemetry_span": mock_span_module, "opentelemetry": MagicMock()}
+        with patch.dict(sys.modules, mock_modules):
+            assert m.convert_tracing_impl(None) is mock_opentelemetry_span
+            assert m.convert_tracing_impl("opentelemetry") is mock_opentelemetry_span
+
+            # Even with OpenTelemetry tracing dependencies installed, the tracing implementation should be None
+            # if the user explicitly sets it to "none".
+            assert m.convert_tracing_impl("none") is None
 
 
 _standard_settings = ["log_level", "tracing_enabled"]

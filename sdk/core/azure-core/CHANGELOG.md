@@ -9,6 +9,7 @@
 ### Other Changes
 
 - Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
+- To avoid implicit tracing enablement in some scenarios, `settings.tracing_implementation` can now be set to `"none"` to ensure tracing is disabled. #38137
 
 ## 1.31.0 (2024-09-12)
 
