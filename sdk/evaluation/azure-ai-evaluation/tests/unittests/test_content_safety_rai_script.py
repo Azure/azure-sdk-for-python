@@ -258,7 +258,7 @@ class TestContentSafetyEvaluator:
         )
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
         assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
-        assert result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"] == ""
+        assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"])
 
         metric_name = EvaluationMetrics.VIOLENCE
         response_value = {
