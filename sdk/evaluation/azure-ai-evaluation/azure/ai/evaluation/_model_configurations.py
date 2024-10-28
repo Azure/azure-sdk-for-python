@@ -62,7 +62,7 @@ class Message(TypedDict):
 
 
 class Conversation(TypedDict):
-    messages: List[Message]
+    messages: Union[List[Message], List[Dict]]
     context: NotRequired[Dict[str, Any]]
 
 
