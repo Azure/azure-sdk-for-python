@@ -105,7 +105,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         pk_range_id2, session_token2 = parse_session_token(session_tokens[1])
         pk_range_ids = [pk_range_id1, pk_range_id2]
 
-        assert 320 <= (session_token1.global_lsn + session_token2.global_lsn)
+        assert 320 == (session_token1.global_lsn + session_token2.global_lsn)
         assert '1' in pk_range_ids
         assert '2' in pk_range_ids
         await self.database.delete_container(container.id)
@@ -173,8 +173,8 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         target_session_token = ""
         for i in range(100):
             item = create_item(hpk)
-            await container.create_item(item, session_token=previous_session_token)
-            session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
+            response = await container.create_item(item, session_token=previous_session_token)
+            session_token = response.get_response_headers()[HttpHeaders.SessionToken]
             pk = item['pk'] if not hpk else [item['state'], item['city'], item['zipcode']]
             pk_feed_range = await container.feed_range_from_partition_key(pk)
             pk_feed_range_epk = FeedRangeInternalEpk.from_json(pk_feed_range)
@@ -199,8 +199,8 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
 
         for i in range(100):
             item = create_item(hpk)
-            await container.create_item(item, session_token=previous_session_token)
-            session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
+            response = await container.create_item(item, session_token=previous_session_token)
+            session_token = response.get_response_headers()[HttpHeaders.SessionToken]
             if hpk:
                 pk = [item['state'], item['city'], item['zipcode']]
                 curr_feed_range = await container.feed_range_from_partition_key(pk)

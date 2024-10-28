@@ -51,7 +51,7 @@ def storing_session_tokens_pk(container):
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
-    # The cache is a list of tuples here for simplicity but in a real-world scenario, it would be some service.
+    # The cache is a Dict here for simplicity but in a real-world scenario, it would be some service.
     feed_ranges_and_session_tokens = []
     previous_session_token = ""
 

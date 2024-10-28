@@ -47,6 +47,12 @@ test_subset_ranges = [(Range("", "FF", True, False),
                        False),
                       (Range("3F", "7F", True, False),
                        Range("", "2F", True, False),
+                       False),
+                      (Range("3F", "3F", True, True),
+                       Range("3F", "3F", True, True),
+                       True),
+                      (Range("3F", "3F", True, True),
+                       Range("4F", "4F", True, True),
                        False)
                       ]
 

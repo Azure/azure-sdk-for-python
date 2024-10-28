@@ -30,17 +30,20 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 # pylint: disable=protected-access
 
 
-# ex inputs:
+# ex inputs and outputs:
 # 1. "1:1#51", "1:1#55" -> "1:1#55"
 # 2. "0:1#57", "1:1#52" -> "0:1#57"
+# 3. "1:1#57#3=54", "2:1#52#3=51" -> "1:1#57#3=54"
+# 4. "1:1#57#3=54", "1:1#58#3=53" -> "1:1#58#3=54"
 def merge_session_tokens_with_same_range(session_token1: str, session_token2: str) -> str:
     pk_range_id1, vector_session_token1 = parse_session_token(session_token1)
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
     # The partition key range id could be different in this scenario
-    # Ex. get_updated_session_token([("AA", "BB"), "1:1#51"], ("AA", "DD")) -> "1:1#51"
+    #
+    # Ex. get_updated_session_token([(("AA", "BB"), "1:1#51")], ("AA", "DD")) -> "1:1#51"
     # Then we input this back into get_updated_session_token after a merge happened
-    # get_updated_session_token([("AA", "DD"), "1:1#51", ("AA", "DD"), "0:1#55"], ("AA", "DD")) -> "0:1#55"
+    # get_updated_session_token([(("AA", "DD"), "1:1#51"), (("AA", "DD"), "0:1#55")], ("AA", "DD")) -> "0:1#55"
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
             if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
@@ -88,12 +91,14 @@ def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[s
     return session_tokens
 
 # ex inputs:
-# 1. [(("AA", "BB"), "1:1#51"), (("BB", "DD"), "2:1#51"), (("AA", "DD"), "0:1#55")] ->
-# [("AA", "DD"), "0:1#55"]
+# merge scenario
+# 1. [(("AA", "BB"), "1:1#51"), (("BB", "DD"), "2:1#51"), (("AA", "DD"), "3:1#55")] ->
+# [("AA", "DD"), "3:1#55"]
+# split scenario
 # 2. [(("AA", "BB"), "1:1#57"), (("BB", "DD"), "2:1#58"), (("AA", "DD"), "0:1#55")] ->
 # [("AA", "DD"), "1:1#57,2:1#58"]
-# 3. [(("AA", "BB"), "1:1#57"), (("BB", "DD"), "2:1#52"), (("AA", "DD"), "0:1#55")] ->
-# [("AA", "DD"), "1:1#57,2:1#52,0:1#55"]
+# 3. [(("AA", "BB"), "4:1#57"), (("BB", "DD"), "1:1#52"), (("AA", "DD"), "3:1#55")] ->
+# [("AA", "DD"), "4:1#57,1:1#52,3:1#55"]
 # goal here is to detect any obvious merges or splits that happened
 # compound session tokens are not considered will just pass them along
 def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> List[Tuple[Range, str]]:
@@ -188,7 +193,7 @@ def get_latest_session_token(feed_ranges_to_session_tokens: List[Tuple[Dict[str,
         session_token = overlapping_ranges[i][1]
         session_token_1 = overlapping_ranges[j][1]
         if (not is_compound_session_token(session_token) and
-                not is_compound_session_token(overlapping_ranges[j][1]) and
+                not is_compound_session_token(session_token_1) and
                 cur_feed_range == overlapping_ranges[j][0]):
             session_token = merge_session_tokens_with_same_range(session_token, session_token_1)
             feed_ranges_to_remove = [overlapping_ranges[i], overlapping_ranges[j]]
