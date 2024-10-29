@@ -35062,9 +35062,6 @@ class Workspace(Resource):
          the workspace. Possible values include: "AccessKey", "Identity", "UserDelegationSAS".
         :paramtype system_datastores_auth_mode: str or
          ~azure.mgmt.machinelearningservices.models.SystemDatastoresAuthMode
-        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
-         the workspace.
-        :paramtype system_datastores_auth_mode: str
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
