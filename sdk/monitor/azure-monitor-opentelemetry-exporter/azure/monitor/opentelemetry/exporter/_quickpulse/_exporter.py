@@ -80,7 +80,7 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 class _QuickpulseExporter(MetricExporter):
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Metric exporter for Quickpulse.
 
         :param str connection_string: The connection string used for your Application Insights resource.
@@ -157,9 +157,9 @@ class _QuickpulseExporter(MetricExporter):
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             else:
-                header = post_response._response_headers.get(
+                header = post_response._response_headers.get(  # pylint: disable=protected-access
                     _QUICKPULSE_SUBSCRIBED_HEADER_NAME
-                )  # pylint: disable=protected-access
+                )
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
@@ -251,9 +251,9 @@ class _QuickpulseMetricReader(MetricReader):
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get(
+                    header = ping_response._response_headers.get(  # pylint: disable=protected-access
                         _QUICKPULSE_SUBSCRIBED_HEADER_NAME
-                    )  # pylint: disable=protected-access
+                    )
                     if header and header == "true":
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)

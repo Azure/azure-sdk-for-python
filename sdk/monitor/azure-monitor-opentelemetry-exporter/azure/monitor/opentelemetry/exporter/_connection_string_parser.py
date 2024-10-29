@@ -10,7 +10,7 @@ INSTRUMENTATION_KEY = "instrumentationkey"
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122
-uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
+uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
 
 
 class ConnectionStringParser:
