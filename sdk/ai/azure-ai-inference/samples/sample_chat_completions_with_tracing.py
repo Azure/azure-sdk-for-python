@@ -18,7 +18,7 @@ USAGE:
     python sample_chat_completions_with_tracing.py
 
     Set these two environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
@@ -29,10 +29,9 @@ USAGE:
 import os
 from opentelemetry import trace
 
-# opentelemetry-sdk is required for the opentelemetry.sdk imports.
-# You can install it with command "pip install opentelemetry-sdk".
-# from opentelemetry.sdk.trace import TracerProvider
-# from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+# Install opentelemetry with command "pip install opentelemetry-sdk".
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason
 from azure.core.credentials import AzureKeyCredential
@@ -45,17 +44,16 @@ settings.tracing_implementation = "opentelemetry"
 
 # Setup tracing to console
 # Requires opentelemetry-sdk
-# exporter = ConsoleSpanExporter()
-# trace.set_tracer_provider(TracerProvider())
-# tracer = trace.get_tracer(__name__)
-# trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+exporter = ConsoleSpanExporter()
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 
 # [START trace_function]
 from opentelemetry.trace import get_tracer
 
 tracer = get_tracer(__name__)
-
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
