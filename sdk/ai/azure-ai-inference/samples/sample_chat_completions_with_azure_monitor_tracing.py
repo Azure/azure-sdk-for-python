@@ -132,10 +132,9 @@ def chat_completion_with_function_call(key, endpoint):
 
 
 def main():
-    # There is no need to pass APPLICATIONINSIGHTS_CONNECTION_STRING explicitly,
-    # as it is read from this environment variable by the configure_azure_monitor function
-    # It's provided here for clarity.
-    configure_azure_monitor(connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+    # Make sure to set APPLICATIONINSIGHTS_CONNECTION_STRING environment variable before running this sample.
+    # Or pass the value as an argument to the configure_azure_monitor function.
+    configure_azure_monitor()
 
     try:
         endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
