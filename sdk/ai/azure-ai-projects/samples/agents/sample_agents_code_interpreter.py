@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_code_interpreter_attachment.py
+FILE: sample_agents_code_interpreter.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_code_interpreter_attachment.py
+    python sample_agents_code_interpreter.py
 
     Before running the sample:
 
@@ -84,23 +84,15 @@ with project_client:
     for image_content in messages.image_contents:
         print(f"Image File ID: {image_content.image_file.file_id}")
         project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name="image_file.png")
-        print(f"Saved image file")
+        print(f"Saved image file to: {Path.cwd() / 'image_file.png'}")
 
-    for annotation in messages.file_annotations:
-        print(f"File Annotations:")
-        if isinstance(annotation, MessageTextFileCitationAnnotation):
-            annotation_type = "File Citation"
-            print(f"Type: {annotation_type}")
-            print(f"Text: {annotation.text}")
-            print(f"File ID: {annotation.file_citation.file_id}")
-            print(f"Quote: {annotation.file_citation.quote}")
-        elif isinstance(annotation, MessageTextFilePathAnnotation):
-            annotation_type = "File Path"
-            print(f"Type: {annotation_type}")
-            print(f"Text: {annotation.text}")
-            print(f"File ID: {annotation.file_path.file_id}")
-        print(f"Start Index: {annotation.start_index}")
-        print(f"End Index: {annotation.end_index}")
+    for file_path_annotation in messages.file_path_annotations:
+        print(f"File Paths:")
+        print(f"Type: {file_path_annotation.type}")
+        print(f"Text: {file_path_annotation.text}")
+        print(f"File ID: {file_path_annotation.file_path.file_id}")
+        print(f"Start Index: {file_path_annotation.start_index}")
+        print(f"End Index: {file_path_annotation.end_index}")
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")

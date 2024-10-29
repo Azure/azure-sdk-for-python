@@ -1031,18 +1031,27 @@ class Messages:
         ]
 
     @property
-    def file_annotations(self) -> List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]]:
-        """
-        Returns all file-related annotations from text message annotations in the messages.
-        The returned list contains instances of MessageTextFileCitationAnnotation and MessageTextFilePathAnnotation.
-        """
-        annotations: List[Union[MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation]] = []
-        for msg in self._messages:
-            for content in msg.content:
-                if isinstance(content, MessageTextContent):
-                    for annotation in content.text.annotations:
-                        if isinstance(annotation, (MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation)):
-                            annotations.append(annotation)
+    def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
+        """Returns all file citation annotations from text message annotations in the messages."""
+        annotations = [
+            annotation for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFileCitationAnnotation)
+        ]
+        return annotations
+
+    @property
+    def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
+        """Returns all file path annotations from text message annotations in the messages."""
+        annotations = [
+            annotation for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFilePathAnnotation)
+        ]
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
