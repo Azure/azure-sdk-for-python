@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_connections.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to enumerate connections
     and get connection properties.

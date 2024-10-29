@@ -699,11 +699,11 @@ class ConnectionListResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionProperties(_model_base.Model):
+class InternalConnectionProperties(_model_base.Model):
     """Connection properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
+    InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth, InternalConnectionPropertiesSASAuth
 
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
@@ -717,7 +717,7 @@ class ConnectionProperties(_model_base.Model):
      and \"SAS\"."""
 
 
-class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
+class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
     """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
     ).
 
@@ -741,7 +741,7 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     """The connection URL to be used for this service. Required."""
 
 
-class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
+class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.
 
 
@@ -767,7 +767,7 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
     """The connection URL to be used for this service. Required."""
 
 
-class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
+class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
     """Connection properties for connections with SAS authentication.
 
 
@@ -1052,8 +1052,6 @@ class EvaluationSchedule(_model_base.Model):
     :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar trigger: Trigger for the evaluation. Required.
     :vartype trigger: ~azure.ai.projects.models.Trigger
-    :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
-    :vartype sampling_strategy: ~azure.ai.projects.models.SamplingStrategy
     """
 
     name: str = rest_field(visibility=["read"])
@@ -1076,8 +1074,6 @@ class EvaluationSchedule(_model_base.Model):
     """Evaluators to be used for the evaluation. Required."""
     trigger: "_models.Trigger" = rest_field()
     """Trigger for the evaluation. Required."""
-    sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
-    """Sampling strategy for the evaluation. Required."""
 
     @overload
     def __init__(
@@ -1086,7 +1082,6 @@ class EvaluationSchedule(_model_base.Model):
         data: "_models.ApplicationInsightsConfiguration",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         trigger: "_models.Trigger",
-        sampling_strategy: "_models.SamplingStrategy",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -1129,35 +1124,6 @@ class EvaluatorConfiguration(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         init_params: Optional[Dict[str, Any]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FileContentResponse(_model_base.Model):
-    """A response from a file get content operation.
-
-
-    :ivar content: The content of the file, in bytes. Required.
-    :vartype content: bytes
-    """
-
-    content: bytes = rest_field(format="base64")
-    """The content of the file, in bytes. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: bytes,
     ) -> None: ...
 
     @overload
@@ -1503,14 +1469,14 @@ class GetConnectionResponse(_model_base.Model):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models._models.ConnectionProperties
+    :vartype properties: ~azure.ai.projects.models._models.InternalConnectionProperties
     """
 
     id: str = rest_field()
     """A unique identifier for the connection. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
-    properties: "_models._models.ConnectionProperties" = rest_field()
+    properties: "_models._models.InternalConnectionProperties" = rest_field()
     """The properties of the resource. Required."""
 
 
@@ -4672,35 +4638,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
-class SamplingStrategy(_model_base.Model):
-    """SamplingStrategy Definition.
-
-
-    :ivar rate: Sampling rate. Required.
-    :vartype rate: float
-    """
-
-    rate: float = rest_field()
-    """Sampling rate. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        rate: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
     """The input definition information for a sharepoint tool as used to configure an agent.
 
@@ -4987,10 +4924,10 @@ class ThreadMessageOptions(_model_base.Model):
 
 
      * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-     cases to represent user-generated messages.
+       cases to represent user-generated messages.
      * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: "user" and "assistant".
+       messages from the agent into the
+       conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -5009,11 +4946,11 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``\ : Indicates the message is sent by an actual user and should be used in most cases
-     to represent user-generated messages.
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
+       cases to represent user-generated messages.
      * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: \"user\" and \"assistant\"."""
+       messages from the agent into the
+       conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
@@ -6095,7 +6032,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     :vartype max_chunk_size_tokens: int
     :ivar chunk_overlap_tokens: The number of tokens that overlap between chunks. The default value
      is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required.
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required.
     :vartype chunk_overlap_tokens: int
     """
 
@@ -6104,7 +6041,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
      and the maximum value is 4096. Required."""
     chunk_overlap_tokens: int = rest_field()
     """The number of tokens that overlap between chunks. The default value is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required."""
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
 
     @overload
     def __init__(
