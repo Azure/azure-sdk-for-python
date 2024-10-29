@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from typing_extensions import ParamSpec, TypeAlias
+from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -131,11 +131,18 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :rtype: List[str]
         """
 
+        overloads = get_overloads(self.__call__)
+        if not overloads:
+            call_signatures = [inspect.signature(self.__call__)]
+        else:
+            call_signatures = [inspect.signature(overload) for overload in overloads]
         call_signature = inspect.signature(self.__call__)
         singletons = []
-        for param in call_signature.parameters:
-            if param not in self._not_singleton_inputs:
-                singletons.append(param)
+        for call_signature in call_signatures:
+            params = call_signature.parameters
+            if any([not_singleton_input in params for not_singleton_input in self._not_singleton_inputs]):
+                continue
+            singletons.extend(params)
         return singletons
 
     def _derive_conversation_converter(self) -> Callable[[Dict], List[DerivedEvalInput]]:
