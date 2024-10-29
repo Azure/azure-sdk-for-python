@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union, List, Optional
+from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
@@ -10,7 +10,7 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 
 
-class CoherenceEvaluator(PromptyEvaluatorBase):
+class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize a coherence evaluator configured for a specific Azure OpenAI model.
 
@@ -56,7 +56,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: str,
         response: str,
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate coherence for given input of query, response
 
         :keyword query: The query to be evaluated.
@@ -66,14 +66,13 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         :return: The coherence score.
         :rtype: Dict[str, float]
         """
-        ...
 
     @overload
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate coherence for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -83,7 +82,6 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         :return: The coherence score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        ...
 
     @override
     def __call__(

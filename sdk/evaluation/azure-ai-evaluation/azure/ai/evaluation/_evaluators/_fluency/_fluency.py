@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
@@ -11,7 +11,7 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 
 
-class FluencyEvaluator(PromptyEvaluatorBase):
+class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize a fluency evaluator configured for a specific Azure OpenAI model.
 
@@ -54,7 +54,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         self,
         *,
         response: str,
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate fluency in given query/response
 
         :keyword response: The response to be evaluated.
@@ -62,14 +62,13 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score
         :rtype: Dict[str, float]
         """
-        ...
 
     @overload
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate fluency for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -79,7 +78,6 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         :return: The fluency score
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        ...
 
     @override
     def __call__(

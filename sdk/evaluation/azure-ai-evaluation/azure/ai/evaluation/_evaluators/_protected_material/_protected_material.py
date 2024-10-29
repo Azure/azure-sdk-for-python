@@ -13,7 +13,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
+class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
     Initialize a protected material evaluator to detect whether protected material
     is present in the AI system's response. The evaluator outputs a Boolean label (`True` or `False`)
@@ -81,7 +81,6 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         :return: The protected material score.
         :rtype: Dict[str, Union[str, bool]]
         """
-        ...
 
     @overload
     def __call__(
@@ -98,7 +97,6 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         :return: The protected material score.
         :rtype: Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]
         """
-        ...
 
     @override
     def __call__(

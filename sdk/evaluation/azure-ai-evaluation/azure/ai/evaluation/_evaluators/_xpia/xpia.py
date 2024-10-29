@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
+class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.
@@ -82,7 +82,6 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         :return: The cross domain injection attack score
         :rtype: Dict[str, Union[str, bool]]
         """
-        ...
 
     @overload
     def __call__(
@@ -99,7 +98,6 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         :return: The cross domain injection attack score
         :rtype: Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]
         """
-        ...
 
     @override
     def __call__(

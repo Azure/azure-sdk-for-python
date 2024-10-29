@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, Union, List, Optional
+from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
@@ -56,11 +56,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     @overload
     def __call__(
         self,
-        *args,
+        *,
         query: str,
         response: str,
-        **kwargs,
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate groundedness for given input of query, response, context
 
         :keyword query: The query to be evaluated.
@@ -71,15 +70,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, float]
         """
 
-        ...
-
     @overload
     def __call__(
         self,
-        *args,
+        *,
         conversation: Conversation,
-        **kwargs,
-    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate relevance for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -89,7 +85,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        ...
 
     @override
     def __call__(
@@ -110,6 +105,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)

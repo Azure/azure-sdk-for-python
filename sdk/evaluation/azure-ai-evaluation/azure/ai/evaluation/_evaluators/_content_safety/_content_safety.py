@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import overload, override
@@ -18,7 +18,7 @@ from ._violence import ViolenceEvaluator
 
 
 @experimental
-class ContentSafetyEvaluator(EvaluatorBase):
+class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
 
@@ -95,14 +95,13 @@ class ContentSafetyEvaluator(EvaluatorBase):
         :return: The content safety scores.
         :rtype: Dict[str, Union[str, float]]
         """
-        ...
 
     @overload
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a collection of content safety metrics for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -110,9 +109,8 @@ class ContentSafetyEvaluator(EvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The content safety scores.
-        :rtype: Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]
+        :rtype: Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]
         """
-        ...
 
     @override
     def __call__(
@@ -132,7 +130,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The evaluation result.
-        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
 

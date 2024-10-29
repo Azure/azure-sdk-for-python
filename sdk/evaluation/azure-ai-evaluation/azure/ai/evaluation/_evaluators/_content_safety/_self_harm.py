@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
@@ -12,7 +12,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class SelfHarmEvaluator(RaiServiceEvaluatorBase):
+class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
     Initialize a self harm evaluator for self harm score.
 
@@ -75,14 +75,13 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase):
         :return: The self-harm score
         :rtype: Dict[str, Union[str, float]]
         """
-        ...
 
     @overload
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate a conversation for self-harm content
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -90,9 +89,8 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The self-harm score
-        :rtype: Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]
+        :rtype: Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]
         """
-        ...
 
     @override
     def __call__(
@@ -112,6 +110,6 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase):
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
-        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)

@@ -17,7 +17,7 @@ except ImportError:
     USER_AGENT = "None"
 
 
-class GroundednessEvaluator(PromptyEvaluatorBase):
+class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
@@ -70,7 +70,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         response: str,
         context: str,
         query: Optional[str] = None,
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate groundedness for given input of response, context
 
         :keyword response: The response to be evaluated.
@@ -83,14 +83,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The groundedness score.
         :rtype: Dict[str, float]
         """
-        ...
 
     @overload
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate groundedness for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -100,7 +99,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         :return: The groundedness score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        ...
 
     @override
     def __call__(
@@ -125,7 +123,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
 
         if kwargs.get("query", None):

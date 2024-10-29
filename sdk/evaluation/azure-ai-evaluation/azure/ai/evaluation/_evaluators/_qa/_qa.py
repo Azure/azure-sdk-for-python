@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -58,7 +58,7 @@ class QAEvaluator:
     def __init__(self, model_config, parallel: bool = True):
         self._parallel = parallel
 
-        self._evaluators: List[Callable[..., Dict[str, float]]] = [
+        self._evaluators: List[Union[Callable[..., Dict[str, Union[str, float]]], Callable[..., Dict[str, float]]]] = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -82,7 +82,7 @@ class QAEvaluator:
         :keyword parallel: Whether to evaluate in parallel. Defaults to True.
         :paramtype parallel: bool
         :return: The scores for QA scenario.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Union[str, float]]
         """
         results: Dict[str, float] = {}
         if self._parallel:
