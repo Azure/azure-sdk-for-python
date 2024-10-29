@@ -259,6 +259,8 @@ class PathProperties(DictMixin):
         encryption scope has been defined at the file system, this value will override it if the
         file system level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar str encryption_context: Specifies the encryption context to set on the file.
+    :ivar str client_transaction_id:
+        UUID that identifies a request and provides idempotency on retries. Max length is 32.
     """
 
     def __init__(self, **kwargs):
@@ -274,6 +276,7 @@ class PathProperties(DictMixin):
         self.expiry_time = kwargs.get('expiry_time', None)
         self.encryption_scope = kwargs.get('x-ms-encryption-scope', None)
         self.encryption_context = kwargs.get('x-ms-encryption-context', None)
+        self.client_transaction_id = kwargs.get('x-ms-client-transaction-id', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -290,6 +293,7 @@ class PathProperties(DictMixin):
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
         path_prop.encryption_scope = generated.encryption_scope
         path_prop.encryption_context = generated.encryption_context
+        path_prop.client_transaction_id = generated.client_transaction_id
         return path_prop
 
 

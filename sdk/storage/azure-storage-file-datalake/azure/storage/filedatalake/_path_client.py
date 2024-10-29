@@ -313,6 +313,7 @@ class PathClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a lease_id and a lease_duration.")
         options = self._create_path_options(
             resource_type,
+            self.scheme,
             content_settings=content_settings,
             metadata=metadata,
             client_transaction_id=client_transaction_id,

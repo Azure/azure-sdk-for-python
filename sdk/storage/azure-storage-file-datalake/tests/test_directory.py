@@ -1641,7 +1641,7 @@ class TestDirectory(StorageRecordedTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        create_transaction_id = str(uuid.uuid4())
+        create_transaction_id = str(uuid.uuid4())[:32]
 
         try:
             # Act
