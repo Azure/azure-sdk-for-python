@@ -41,7 +41,6 @@ _QUICKPULSE_DERIVED_METRIC_INFOS: Dict[TelemetryType, List[DerivedMetricInfo]] =
 _QUICKPULSE_PROJECTION_MAP: Dict[str, Tuple[AggregationType, float, int]] = {}
 
 
-
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
     global _GLOBAL_QUICKPULSE_STATE

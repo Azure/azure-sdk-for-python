@@ -173,7 +173,9 @@ class _QuickpulseExporter(MetricExporter):
                         _QUICKPULSE_ETAG_HEADER_NAME  # pylint: disable=protected-access
                     )
                     if etag and etag != configuration_etag:
-                        config = post_response._pipeline_response.http_response.content  # pylint: disable=protected-access
+                        config = (
+                            post_response._pipeline_response.http_response.content  # pylint: disable=protected-access
+                        )
                         # Content will only be populated if configuration has changed (etag is different)
                         if config:
                             # Update and apply configuration changes
