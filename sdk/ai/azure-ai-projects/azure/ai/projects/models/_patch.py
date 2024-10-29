@@ -1093,6 +1093,7 @@ __all__: List[str] = [
     "AsyncFunctionTool",
     "AsyncToolSet",
     "CodeInterpreterTool",
+    "ConnectionProperties",
     "Messages",
     "FileSearchTool",
     "FunctionTool",
