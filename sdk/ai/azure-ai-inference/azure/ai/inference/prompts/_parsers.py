@@ -10,7 +10,13 @@ import base64
 import re
 from typing import Dict, List, Type, Union
 from pydantic import BaseModel
-from azure.ai.inference.models import ChatRequestMessage, SystemMessage, UserMessage, AssistantMessage, ToolMessage
+from azure.ai.inference.models import (
+    ChatRequestMessage,
+    SystemMessage,
+    UserMessage,
+    AssistantMessage,
+    ToolMessage,
+)
 from ._core import Invoker, Prompty, SimpleModel
 
 

@@ -48,7 +48,7 @@ def load(prompt_path: str, configuration: str = "default") -> Prompty:
 
     # load global configuration
     if "model" not in attributes:
-        attributes["model"] = { "api": "chat" }
+        attributes["model"] = {"api": "chat"}
 
     # pull model settings out of attributes
     try:

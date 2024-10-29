@@ -24,10 +24,10 @@ class TestPrompts(AzureRecordedTestCase):
         assert prompt_template.parameters["frequency_penalty"] == 0.5
         assert prompt_template.parameters["presence_penalty"] == 0.5
 
-        input = "What's the checkin and checkout time?"
+        input = "What's the check-in and check-out time?"
         rules = [
-            { "rule": "The checkin time is 3pm" },
-            { "rule": "The checkout time is 11am" },
+            { "rule": "The check-in time is 3pm" },
+            { "rule": "The check-out time is 11am" },
             { "rule": "Breakfast is served from 7am to 10am" },
         ]
         messages = prompt_template.render(input=input, rules=rules)
@@ -35,7 +35,7 @@ class TestPrompts(AzureRecordedTestCase):
         assert messages[0]["role"] == "system"
         assert "Breakfast is served from 7am to 10am" in messages[0]["content"]
         assert messages[1]["role"] == "user"
-        assert messages[1]["content"] == "What's the checkin and checkout time?"
+        assert messages[1]["content"] == "What's the check-in and check-out time?"
 
     def test_prompt_template_from_message(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
@@ -73,13 +73,13 @@ class TestPrompts(AzureRecordedTestCase):
         )
         input = "When I arrived, can I still have breakfast?"
         rules = [
-            { "rule": "The checkin time is 3pm" },
-            { "rule": "The checkout time is 11am" },
+            { "rule": "The check-in time is 3pm" },
+            { "rule": "The check-out time is 11am" },
             { "rule": "Breakfast is served from 7am to 10am" },
         ]
         chat_history = [
-            { "role": "user", "content": "I'll arrive at 2pm. What's the checkin and checkout time?" },
-            { "role": "system", "content": "The check-in time is 3 PM, and the checkout time is 11 AM." },
+            { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
+            { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
         ]
         messages = prompt_template.render(input=input, rules=rules, chat_history=chat_history)
         assert len(messages) == 1
