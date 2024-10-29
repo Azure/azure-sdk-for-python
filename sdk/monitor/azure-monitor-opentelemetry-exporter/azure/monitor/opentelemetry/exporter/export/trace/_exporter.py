@@ -78,8 +78,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         super().__init__(**kwargs)
 
     def export(
-        self, spans: Sequence[ReadableSpan], **kwargs: Any
-    ) -> SpanExportResult:  # pylint: disable=unused-argument
+        self, spans: Sequence[ReadableSpan], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> SpanExportResult:
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
