@@ -1089,6 +1089,7 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
+    @pytest.mark.skip('The CreateVectorStoreFile API is not supported yet.')
     def test_create_vector_store_file(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
@@ -1106,6 +1107,7 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
+    @pytest.mark.skip('The CreateFileBatch API is not supported yet.')
     def test_create_vector_store_batch(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
@@ -1140,6 +1142,8 @@ class TestagentClient(AzureRecordedTestCase):
         messages = ai_client.agents.list_messages(thread_id=thread.id)
         assert len(messages)
 
+    # TODO: Test for codeInterpreter and Attachement
+    # sample for codeInterpreter
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - Streaming APIs

@@ -8,6 +8,7 @@ import time
 import functools
 import datetime
 import logging
+import pytest
 import sys
 
 from azure.ai.projects.aio import AIProjectClient
@@ -1100,6 +1101,7 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
+    @pytest.mark.skip('The CreateVectorStoreFile API is not supported yet.')
     async def test_create_vector_store_file(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
@@ -1117,6 +1119,7 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
+    @pytest.mark.skip('The CreateFileBatch API is not supported yet.')
     async def test_create_vector_store_batch(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client

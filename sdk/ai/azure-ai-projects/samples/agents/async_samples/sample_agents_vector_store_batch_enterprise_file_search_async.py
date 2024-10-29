@@ -43,14 +43,14 @@ async def main():
 
     async with project_client:
 
-        azure_client = MLClient.from_config(credential)
-        # We will upload the local file to Azure and will use if for vector store creation.
+        ml_client = MLClient.from_config(credential)
+        # We will upload the local file to Azure and will use it for vector store creation.
         local_data = Data(name="products", path="../product_info_1.md", type=AssetTypes.URI_FILE)
         # The new data object will contain the Azure ID of an uploaded file,
         # which is the uri starting from azureml://.
-        data_ul = azure_client.data.create_or_update(local_data)
+        uploaded_data = ml_client.data.create_or_update(local_data)
         # create a vector store with no file and wait for it to be processed
-        ds = VectorStorageDataSource(storage_uri=data_ul.path, asset_type="uri_asset")
+        ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type="uri_asset")
         vector_store = await project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
 

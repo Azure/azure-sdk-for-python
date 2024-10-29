@@ -6,29 +6,24 @@
 FILE: sample_agents_vector_store_batch_file_search_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to add files to agent during the vector store creation.
 
 USAGE:
     python sample_agents_vector_store_file_search.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity azure-ai-ml
+    pip install azure.ai.projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
 import os
-from azure.ai.ml._ml_client import MLClient
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import Data
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models._models import VectorStorageConfiguration, VectorStorageDataSource
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -42,18 +37,13 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    azure_client = MLClient.from_config(credential)
-    # We will upload the local file to Azure and will use if for vector store creation.
-    local_data = Data(name="products", path="./product_info_1.md", type=AssetTypes.URI_FILE)
-    # The new data object will contain the Azure ID of an uploaded file,
-    # which is the uri starting from azureml://.
-    data_ul = azure_client.data.create_or_update(local_data)
+    # upload a file and wait for it to be processed
+    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+    print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
-    ds = VectorStorageDataSource(storage_uri=data_ul.path, asset_type="uri_asset")
-    vc = VectorStorageConfiguration(data_sources=[ds])
     vector_store = project_client.agents.create_vector_store_and_poll(
-        store_configuration=vc, name="sample_vector_store"
+        file_ids=[], name="sample_vector_store"
     )
     print(f"Created vector store, vector store ID: {vector_store.id}")
 

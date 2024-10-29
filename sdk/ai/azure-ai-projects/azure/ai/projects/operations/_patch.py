@@ -1767,7 +1767,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
-        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -1785,9 +1785,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
-        :paramtype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -1833,7 +1832,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
-        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
+        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -1849,9 +1848,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
-        :paramtype store_configuration:~azure.ai.projects.models.VectorStorageConfiguration
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -1873,8 +1871,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not None:
             vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
         elif (
-            file_ids is not None or store_configuration is not None or (name is not None and expires_after is not None)
+            file_ids is not None or data_sources is not None or (name is not None and expires_after is not None)
         ):
+            store_configuration = _models.VectorStorageConfiguration(
+                data_sources=data_sources) if data_sources else None
             vector_store = self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,

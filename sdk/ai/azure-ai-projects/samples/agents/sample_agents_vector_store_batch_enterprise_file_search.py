@@ -8,23 +8,26 @@ from azure.ai.projects.models._models import VectorStorageDataSource
 FILE: sample_agents_vector_store_batch_file_search_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to create the vector store with the list of files.
 
 USAGE:
     python sample_agents_vector_store_batch_file_search.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure.ai.projects azure-identity azure-ai-ml
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
 import os
+from azure.ai.ml import MLClient
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.entities import Data
+
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
 
@@ -32,23 +35,28 @@ from azure.identity import DefaultAzureCredential
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
+credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:
 
-    # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {file.id}")
+    ml_client = MLClient.from_config(credential)
+    # We will upload the local file to Azure and will use it for vector store creation.
+    local_data = Data(name="products", path="./product_info_1.md", type=AssetTypes.URI_FILE)
+    # The new data object will contain the Azure ID of an uploaded file,
+    # which is the uri starting from azureml://.
+    uploaded_data = ml_client.data.create_or_update(local_data)
 
     # create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    # add the file to the vector store or you can supply file ids in the vector store creation
+    ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type="uri_asset")
+    # add the file to the vector store or you can supply data sources in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, file_ids=[file.id]
+        vector_store_id=vector_store.id, data_sources=[ds]
     )
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 

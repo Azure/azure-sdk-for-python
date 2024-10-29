@@ -13,17 +13,21 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure.ai.projects azure-identity azure-ai-ml
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
 import os
+from azure.ai.ml import MLClient
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models._models import VectorStorageDataSource
 
 
 async def main():
@@ -37,15 +41,16 @@ async def main():
 
     async with project_client:
 
-        # upload a file and wait for it to be processed
-        file = await project_client.agents.upload_file_and_poll(
-            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
-        )
-        print(f"Uploaded file, file ID: {file.id}")
-
+        ml_client = MLClient.from_config(credential)
+        # We will upload the local file to Azure and will use it for vector store creation.
+        local_data = Data(name="products", path="../product_info_1.md", type=AssetTypes.URI_FILE)
+        # The new data object will contain the Azure ID of an uploaded file,
+        # which is the uri starting from azureml://.
+        uploaded_data = ml_client.data.create_or_update(local_data)
         # create a vector store with no file and wait for it to be processed
+        ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type="uri_asset")
         vector_store = await project_client.agents.create_vector_store_and_poll(
-            file_ids=[], name="sample_vector_store"
+            data_sources=[ds], name="sample_vector_store"
         )
         print(f"Created vector store, vector store ID: {vector_store.id}")
 
