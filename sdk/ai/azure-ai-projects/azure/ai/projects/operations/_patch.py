@@ -10,8 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import sys, io, logging, os, time
 from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
+from pathlib import Path
 
-# from zoneinfo import ZoneInfo
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
@@ -358,6 +358,7 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
 
 class AgentsOperations(AgentsOperationsGenerated):
+
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -1973,7 +1974,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_vector_store_file_batch_and_poll(
         self,
         vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = None,
+        body: Union[JSON, IO[bytes], None] = None,
         *,
         file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -2013,6 +2014,130 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
+    
+    @distributed_trace
+    def get_file_content_stream(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
+        """
+        Returns file content as byte stream for given file_id.
+
+        :param file_id: The ID of the file to retrieve. Required.
+        :type file_id: str
+        :return: An iterator that yields bytes from the file content.
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
+        """
+        kwargs['stream'] = True
+        response = super().get_file_content(file_id, **kwargs)
+        return cast(Iterator[bytes], response)
+
+    @distributed_trace
+    def get_messages(
+        self,
+        thread_id: str,
+        *,
+        run_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ThreadMessages:
+        """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
+        
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
+        :paramtype run_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.ListSortOrder
+        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
+         list. Default value is None.
+        :paramtype after: str
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+
+        :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadMessages
+        """
+        messages = super().list_messages(thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs)
+        return _models.ThreadMessages(pageable_list=messages)
+
+    @distributed_trace
+    def save_file(
+        self, 
+        file_id: str, 
+        file_name: str, 
+        target_dir: Optional[Union[str, Path]] = None
+    ) -> None:
+        """
+        Saves file content retrieved using a file identifier to the specified local directory.
+
+        :param file_id: The unique identifier for the file to retrieve.
+        :type file_id: str
+        :param file_name: The name of the file to be saved.
+        :type file_name: str
+        :param target_dir: The directory where the file should be saved. Defaults to the current working directory.
+        :type target_dir: Union[str, Path]
+        """
+        # Determine target directory
+        path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
+        logger.debug(f"Using target directory: {path}")
+
+        if not path.exists():
+            logger.debug(f"Creating non-existent target directory: {path}")
+            path.mkdir(parents=True, exist_ok=True)
+        elif not path.is_dir():
+            error_msg = f"The target path '{path}' is not a directory."
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        # Ensure file_name is properly sanitized
+        file_name = Path(file_name).name
+        if not file_name:
+            error_msg = "The provided file name is invalid."
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        # Get file content
+        try:
+            file_content_stream = self.get_file_content_stream(file_id)
+            if not file_content_stream:
+                error_msg = f"No content retrievable for file ID '{file_id}'."
+                logger.error(error_msg)
+                raise RuntimeError(error_msg)
+        except Exception as e:
+            error_msg = f"Failed to retrieve file content for file ID '{file_id}': {e}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg) from e
+
+        # Path to save the file
+        target_file_path = path / file_name
+
+        # Write file content directly from the generator, ensuring each chunk is bytes
+        try:
+            with target_file_path.open("wb") as file:
+                for chunk in file_content_stream:
+                    if isinstance(chunk, (bytes, bytearray)):
+                        file.write(chunk)
+                    else:
+                        raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
+            logger.debug(f"File '{file_name}' saved successfully at '{target_file_path}'.")
+        except TypeError as e:
+            logger.error(f"Failed due to unexpected chunk type: {e}")
+            raise
+        except IOError as e:
+            error_msg = f"Failed to write to file '{target_file_path}': {e}"
+            logger.error(error_msg)
+            raise
 
 
 __all__: List[str] = [

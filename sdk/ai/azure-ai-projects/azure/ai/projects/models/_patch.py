@@ -35,10 +35,16 @@ from ._models import (
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
+    OpenAIPageableListOfThreadMessage,
+    ThreadMessage,
+    MessageTextContent,
+    MessageImageFileContent,
+    MessageTextFileCitationAnnotation,
+    MessageTextFilePathAnnotation,
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin, Union
 
 logger = logging.getLogger(__name__)
 
@@ -379,20 +385,33 @@ class AsyncFunctionTool(FunctionTool):
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
+
+    :param vector_store_ids: A list of vector store IDs to search for files.
+    :type vector_store_ids: list[str]
     """
+    def __init__(self, vector_store_ids: Optional[List[str]] = None):
+        if vector_store_ids is None:
+            self.vector_store_ids = set()
+        else:
+            self.vector_store_ids = set(vector_store_ids)
 
-    def __init__(self, vector_store_ids: List[str] = []):
-        self.vector_store_ids = vector_store_ids
-
-    def add_vector_store(self, store_id: str):
+    def add_vector_store(self, store_id: str) -> None:
         """
         Add a vector store ID to the list of vector stores to search for files.
-        """
-        self.vector_store_ids.append(store_id)
 
-    def remove_vector_store(self, store_id: str):
+        :param store_id: The ID of the vector store to search for files.
+        :type store_id: str
+
+        """
+        self.vector_store_ids.add(store_id)
+
+    def remove_vector_store(self, store_id: str) -> None:
         """
         Remove a vector store ID from the list of vector stores to search for files.
+
+        :param store_id: The ID of the vector store to remove.
+        :type store_id: str
+
         """
         self.vector_store_ids.remove(store_id)
 
@@ -408,7 +427,7 @@ class FileSearchTool(Tool):
         """
         Get the file search resources.
         """
-        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=self.vector_store_ids))
+        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -417,24 +436,31 @@ class FileSearchTool(Tool):
 class CodeInterpreterTool(Tool):
     """
     A tool that interprets code files uploaded to the agent.
+
+    :param file_ids: A list of file IDs to interpret.
+    :type file_ids: list[str]
     """
+    def __init__(self, file_ids: Optional[List[str]] = None):
+        if file_ids is None:
+            self.file_ids = set()
+        else:
+            self.file_ids = set(file_ids)
 
-    def __init__(self):
-        self.file_ids = []
-
-    def add_file(self, file_id: str):
+    def add_file(self, file_id: str) -> None:
         """
         Add a file ID to the list of files to interpret.
 
         :param file_id: The ID of the file to interpret.
-        """
-        self.file_ids.append(file_id)
+        :type file_id: str
+       """
+        self.file_ids.add(file_id)
 
-    def remove_file(self, file_id: str):
+    def remove_file(self, file_id: str) -> None:
         """
         Remove a file ID from the list of files to interpret.
 
         :param file_id: The ID of the file to remove.
+        :type file_id: str
         """
         self.file_ids.remove(file_id)
 
@@ -450,7 +476,7 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=self.file_ids))
+        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -991,6 +1017,94 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             pass
 
 
+class ThreadMessages:
+    """
+    Represents a collection of messages in a thread.
+
+    :param pageable_list: The pageable list of messages.
+    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
+
+    :return: A collection of messages.
+    :rtype: ~azure.ai.projects.models.ThreadMessages
+    """
+    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
+        self._messages = pageable_list.data
+
+    @property
+    def messages(self) -> List[ThreadMessage]:
+        """Returns all messages in the messages."""
+        return self._messages
+
+    @property
+    def text_messages(self) -> List[MessageTextContent]:
+        """Returns all text message contents in the messages."""
+        texts = [content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)]
+        return texts
+
+    @property
+    def image_contents(self) -> List[MessageImageFileContent]:
+        """Returns all image file contents from image message contents in the messages."""
+        return [
+            content for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageImageFileContent)
+        ]
+
+    @property
+    def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
+        """Returns all file citation annotations from text message annotations in the messages."""
+        annotations = [
+            annotation for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFileCitationAnnotation)
+        ]
+        return annotations
+
+    @property
+    def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
+        """Returns all file path annotations from text message annotations in the messages."""
+        annotations = [
+            annotation for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFilePathAnnotation)
+        ]
+        return annotations
+
+    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
+        """Returns the last message from the specified sender.
+        
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last message from the specified sender.
+        :rtype: ~azure.ai.projects.models.ThreadMessage
+        """
+        for msg in (self._messages):
+            if msg.role == sender:
+                return msg
+        return None
+
+    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
+        """Returns the last text message from the specified sender.
+        
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last text message from the specified sender.
+        :rtype: ~azure.ai.projects.models.MessageTextContent
+        """
+        for msg in (self._messages):
+            if msg.role == sender:
+                for content in (msg.content):
+                    if isinstance(content, MessageTextContent):
+                        return content
+        return None
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -1000,6 +1114,7 @@ __all__: List[str] = [
     "AsyncToolSet",
     "CodeInterpreterTool",
     "ConnectionProperties",
+    "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
     "SASTokenCredential",

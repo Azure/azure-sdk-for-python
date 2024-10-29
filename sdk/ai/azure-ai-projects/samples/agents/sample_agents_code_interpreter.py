@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_code_interpreter_attachment.py
+FILE: sample_agents_code_interpreter.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_code_interpreter_attachment.py
+    python sample_agents_code_interpreter.py
 
     Before running the sample:
 
@@ -25,9 +25,9 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import MessageAttachment
+from azure.ai.projects.models import MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
 from azure.identity import DefaultAzureCredential
-
+from pathlib import Path
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -38,11 +38,12 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with project_client:
+
     # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
+    file = project_client.agents.upload_file_and_poll(file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
-    code_interpreter = CodeInterpreterTool()
+    code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
     # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
     agent = project_client.agents.create_agent(
@@ -50,16 +51,16 @@ with project_client:
         name="my-assistant",
         instructions="You are helpful assistant",
         tools=code_interpreter.definitions,
+        tool_resources=code_interpreter.resources,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # create a message with the attachment
-    attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
+    # create a message
     message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+        thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?"
     )
     print(f"Created message, message ID: {message.id}")
 
@@ -73,8 +74,25 @@ with project_client:
     project_client.agents.delete_file(file.id)
     print("Deleted file")
 
+    messages = project_client.agents.get_messages(thread_id=thread.id)
+    print(f"Messages: {messages}")
+
+    last_msg = messages.get_last_text_message_by_sender("assistant")
+    if last_msg:
+        print(f"Last Message: {last_msg.text.value}")
+
+    for image_content in messages.image_contents:
+        print(f"Image File ID: {image_content.image_file.file_id}")
+        project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name="image_file.png")
+        print(f"Saved image file to: {Path.cwd() / 'image_file.png'}")
+
+    for file_path_annotation in messages.file_path_annotations:
+        print(f"File Paths:")
+        print(f"Type: {file_path_annotation.type}")
+        print(f"Text: {file_path_annotation.text}")
+        print(f"File ID: {file_path_annotation.file_path.file_id}")
+        print(f"Start Index: {file_path_annotation.start_index}")
+        print(f"End Index: {file_path_annotation.end_index}")
+
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
-
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
