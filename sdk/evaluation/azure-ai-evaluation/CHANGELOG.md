@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2024-10-28)
 
 ### Features Added
 - Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
