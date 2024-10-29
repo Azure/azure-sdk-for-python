@@ -33,7 +33,8 @@ from ._models import (
     FileSearchToolDefinition,
     FileSearchToolResource,
     BingGroundingToolDefinition,
-    ConnectionListResource,
+    ToolConnection,
+    ToolConnectionList,
     AzureAISearchResource,
     AzureAISearchToolDefinition,
     CodeInterpreterToolDefinition,
@@ -379,6 +380,7 @@ class AsyncFunctionTool(FunctionTool):
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
 
+
 class AzureAISearchTool(Tool):
     """
     A tool that searches for information using Azure AI Search.
@@ -425,24 +427,25 @@ class BingGroundingTool(Tool):
         Add a connection ID to the list of connections used to search.
         """
         # TODO
-        self.connection_ids.append(connection_id)
+        self.connection_ids.append(ToolConnection(connection_id=connection_id))
 
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Bing grounding tool definitions.
         """
-        return [BingGroundingToolDefinition()]
+        return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
     @property
     def resources(self) -> ToolResources:
         """
         Get the Bing grounding resources.
         """
-        return ToolResources(bing_grounding=ConnectionListResource(connection_list=self.connection_ids))
+        return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
         pass
+
 
 """
     def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
