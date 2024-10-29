@@ -112,7 +112,7 @@ def validate_kwargs(
                 raise ValueError(
                     f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported if 'partition_key_range_id'"
                     f" was used. Please use 'feed_range' instead.")
-            if "is_start_from_beginning" in kwargs and kwargs["is_start_from_beginning"] != False:
+            if "is_start_from_beginning" in kwargs and kwargs["is_start_from_beginning"] is not False:
                 raise ValueError(
                     f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is only supported if 'is_start_from_beginning'"
                     f" is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")

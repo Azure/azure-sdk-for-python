@@ -108,8 +108,7 @@ class ChangeFeedState(ABC):
                 raise ValueError("Invalid base64 encoded continuation string [Missing version]")
 
             if version == ChangeFeedStateVersion.V2.value:
-                return ChangeFeedStateV2.from_continuation(
-                    container_link, container_rid, continuation_json)
+                return ChangeFeedStateV2.from_continuation(container_link, container_rid, continuation_json)
 
             raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
 
