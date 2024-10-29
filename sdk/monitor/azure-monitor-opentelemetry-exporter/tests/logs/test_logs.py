@@ -42,6 +42,7 @@ def throw(exc_type, *args, **kwargs):
 
     return func
 
+
 class NotSerializeableClass:
     def __str__(self) -> str:
         return "This class is not serializeable"
@@ -52,114 +53,93 @@ class NotSerializeableClass:
 # pylint: disable=too-many-lines
 class TestAzureLogExporter(unittest.TestCase):
     _exporter_class = AzureMonitorLogExporter
+
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
-        os.environ[
-            "APPINSIGHTS_INSTRUMENTATIONKEY"
-        ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = cls._exporter_class()
         cls._log_data = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "WARNING",
-                trace_flags = None,
-                severity_number = SeverityNumber.WARN,
-                body = "Test message",
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute"
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_empty = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "WARNING",
-                trace_flags = None,
-                severity_number = SeverityNumber.WARN,
-                body = "",
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute"
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_none = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "WARNING",
-                trace_flags = None,
-                severity_number = SeverityNumber.WARN,
-                body = None,
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute"
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body=None,
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_complex_body = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "WARNING",
-                trace_flags = None,
-                severity_number = SeverityNumber.WARN,
-                body = {"foo": {"bar" : "baz", "qux": 42}},
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute"
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body={"foo": {"bar": "baz", "qux": 42}},
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_complex_body_not_serializeable = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "WARNING",
-                trace_flags = None,
-                severity_number = SeverityNumber.WARN,
-                body = NotSerializeableClass(),
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute"
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body=NotSerializeableClass(),
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "INFO",
-                trace_flags = None,
-                severity_number = SeverityNumber.INFO,
-                body = "Test Event",
-                resource = Resource.create(attributes={"asd":"test_resource"}),
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body="Test Event",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "event_key": "event_attribute",
                     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
@@ -169,14 +149,14 @@ class TestAzureLogExporter(unittest.TestCase):
         )
         cls._log_data_event_complex_body = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "INFO",
-                trace_flags = None,
-                severity_number = SeverityNumber.INFO,
-                body = {"foo": {"bar" : "baz", "qux": 42}},
-                resource = Resource.create(attributes={"asd":"test_resource"}),
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body={"foo": {"bar": "baz", "qux": 42}},
+                resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "event_key": "event_attribute",
                     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
@@ -186,14 +166,14 @@ class TestAzureLogExporter(unittest.TestCase):
         )
         cls._log_data_event_complex_body_not_serializeable = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "INFO",
-                trace_flags = None,
-                severity_number = SeverityNumber.INFO,
-                body = NotSerializeableClass(),
-                resource = Resource.create(attributes={"asd":"test_resource"}),
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body=NotSerializeableClass(),
+                resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "event_key": "event_attribute",
                     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
@@ -203,85 +183,67 @@ class TestAzureLogExporter(unittest.TestCase):
         )
         cls._exc_data = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "EXCEPTION",
-                trace_flags = None,
-                severity_number = SeverityNumber.FATAL,
-                body = "Test message",
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="EXCEPTION",
+                trace_flags=None,
+                severity_number=SeverityNumber.FATAL,
+                body="Test message",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "test": "attribute",
                     EXCEPTION_TYPE: "ZeroDivisionError",
                     EXCEPTION_MESSAGE: "division by zero",
-                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
+                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
                 },
             ),
             InstrumentationScope("test_name"),
         )
         cls._exc_data_with_exc_body = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "EXCEPTION",
-                trace_flags = None,
-                severity_number = SeverityNumber.FATAL,
-                body = Exception("test exception message"),
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="EXCEPTION",
+                trace_flags=None,
+                severity_number=SeverityNumber.FATAL,
+                body=Exception("test exception message"),
+                resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "test": "attribute",
                     EXCEPTION_TYPE: "ZeroDivisionError",
                     EXCEPTION_MESSAGE: "division by zero",
-                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
+                    EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
                 },
             ),
             InstrumentationScope("test_name"),
         )
         cls._exc_data_blank_exception = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "EXCEPTION",
-                trace_flags = None,
-                severity_number = SeverityNumber.FATAL,
-                body = "test exception",
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute",
-                    EXCEPTION_TYPE: "",
-                    EXCEPTION_MESSAGE: "",
-                    EXCEPTION_STACKTRACE: ""
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="EXCEPTION",
+                trace_flags=None,
+                severity_number=SeverityNumber.FATAL,
+                body="test exception",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute", EXCEPTION_TYPE: "", EXCEPTION_MESSAGE: "", EXCEPTION_STACKTRACE: ""},
             ),
             InstrumentationScope("test_name"),
         )
         cls._exc_data_empty = _logs.LogData(
             _logs.LogRecord(
-                timestamp = 1646865018558419456,
-                trace_id = 125960616039069540489478540494783893221,
-                span_id = 2909973987304607650,
-                severity_text = "EXCEPTION",
-                trace_flags = None,
-                severity_number = SeverityNumber.FATAL,
-                body = "",
-                resource = Resource.create(
-                    attributes={"asd":"test_resource"}
-                ),
-                attributes={
-                    "test": "attribute",
-                    EXCEPTION_TYPE: "",
-                    EXCEPTION_MESSAGE: "",
-                    EXCEPTION_STACKTRACE: ""
-                },
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="EXCEPTION",
+                trace_flags=None,
+                severity_number=SeverityNumber.FATAL,
+                body="",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute", EXCEPTION_TYPE: "", EXCEPTION_MESSAGE: "", EXCEPTION_STACKTRACE: ""},
             ),
             InstrumentationScope("test_name"),
         )
@@ -364,20 +326,34 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         old_resource = self._log_data.log_record.resource
         resource = Resource(
-            {"service.name": "testServiceName",
-             "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
         self._log_data.log_record.resource = resource
         envelope = exporter._log_to_envelope(self._log_data)
 
-        self.assertEqual(envelope.instrumentation_key,
-                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(envelope.instrumentation_key, "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
+            azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
+        )
 
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
@@ -391,22 +367,24 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_partA_default(self):
         exporter = self._exporter
         old_resource = self._log_data.log_record.resource
-        resource = Resource(
-            {"service.name": "testServiceName"})
+        resource = Resource({"service.name": "testServiceName"})
         self._log_data.log_record.resource = resource
         envelope = exporter._log_to_envelope(self._log_data)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE))
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
+        )
         self._log_data.log_record.resource = old_resource
 
     def test_log_to_envelope_log(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data)
         record = self._log_data.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, record.body)
         self.assertEqual(envelope.data.base_data.severity_level, 2)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -414,68 +392,76 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_log_none(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_none)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
-        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, "")
 
     def test_log_to_envelope_log_empty(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
-        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, "")
 
     def test_log_to_envelope_log_complex_body(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_complex_body)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
-        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, json.dumps(self._log_data_complex_body.log_record.body))
 
     def test_log_to_envelope_log_complex_body_not_serializeable(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_complex_body_not_serializeable)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
-        self.assertEqual(envelope.data.base_type, 'MessageData')
-        self.assertEqual(envelope.data.base_data.message, str(self._log_data_complex_body_not_serializeable.log_record.body))
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+        self.assertEqual(
+            envelope.data.base_data.message, str(self._log_data_complex_body_not_serializeable.log_record.body)
+        )
 
     def test_log_to_envelope_exception_with_string_message(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
         record = self._log_data.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
         self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "Test message")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
-        self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
+        self.assertEqual(
+            envelope.data.base_data.exceptions[0].stack,
+            'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+        )
 
     def test_log_to_envelope_exception_with_exc_message(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
         record = self._log_data.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
         self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "test exception message")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
-        self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
+        self.assertEqual(
+            envelope.data.base_data.exceptions[0].stack,
+            'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n',
+        )
 
     def test_log_to_envelope_exception_empty(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data_empty)
         record = self._log_data.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
@@ -488,9 +474,9 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data_blank_exception)
         record = self._log_data.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
@@ -503,9 +489,9 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_event)
         record = self._log_data_event.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, record.body)
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
@@ -513,9 +499,9 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_event_complex_body)
         record = self._log_data_event_complex_body.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, json.dumps(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
@@ -523,9 +509,9 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_event_complex_body_not_serializeable)
         record = self._log_data_event_complex_body_not_serializeable.log_record
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
-        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, str(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
@@ -604,23 +590,20 @@ class TestAzureLogExporterUtils(unittest.TestCase):
             _get_log_export_result(ExportResult.FAILED_RETRYABLE),
             LogExportResult.FAILURE,
         )
-        self.assertEqual(
-            _get_log_export_result(None),
-            LogExportResult.FAILURE
-        )
+        self.assertEqual(_get_log_export_result(None), LogExportResult.FAILURE)
 
     def test_get_severity_level(self):
         for sev_num in SeverityNumber:
             num = sev_num.value
             level = _get_severity_level(sev_num)
             print(num)
-            if num in range(0,9):
+            if num in range(0, 9):
                 self.assertEqual(level, 0)
-            elif num in range(9,13):
+            elif num in range(9, 13):
                 self.assertEqual(level, 1)
-            elif num in range(13,17):
+            elif num in range(13, 17):
                 self.assertEqual(level, 2)
-            elif num in range(17,21):
+            elif num in range(17, 21):
                 self.assertEqual(level, 3)
             else:
                 self.assertEqual(level, 4)

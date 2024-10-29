@@ -19,6 +19,7 @@ _STATSBEAT_STATE = {
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
 
+
 def is_statsbeat_enabled():
     disabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL)
     return disabled is None or disabled.lower() != "true"
