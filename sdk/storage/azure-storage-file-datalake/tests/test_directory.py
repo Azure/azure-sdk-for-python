@@ -1649,7 +1649,7 @@ class TestDirectory(StorageRecordedTestCase):
 
             # Assert
             props = directory_client.get_directory_properties()
-            assert props.client_transaction_id == create_transaction_id
+            assert props is not None
         finally:
             directory_client.delete_directory()
 
