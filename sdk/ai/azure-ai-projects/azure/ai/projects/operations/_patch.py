@@ -2044,8 +2044,26 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.ThreadMessages:
         """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
         
-        :param messages: The OpenAIPageableListOfThreadMessage response.
-        :type messages: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
+        :paramtype run_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.ListSortOrder
+        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
+         list. Default value is None.
+        :paramtype after: str
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
 
         :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadMessages
