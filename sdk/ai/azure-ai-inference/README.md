@@ -570,7 +570,7 @@ pip install opentelemetry-exporter-otlp
 
 #### Configuration
 
-Enable Azure SDK tracing with by setting `AZURE_SDK_TRACING_IMPLEMENTATION` environment variable to `opentelemetry`.
+To enable Azure SDK tracing set `AZURE_SDK_TRACING_IMPLEMENTATION` environment variable to `opentelemetry`.
 
 Or configure it in the code with the following snippet:
 
