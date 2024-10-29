@@ -27,7 +27,7 @@ import base64
 import collections
 import json
 from abc import ABC, abstractmethod
-from enum import Enum, StrEnum
+from enum import Enum
 from typing import Optional, Union, List, Any, Dict, Deque
 import logging
 
@@ -49,7 +49,7 @@ class ChangeFeedStateVersion(Enum):
     V1 = "v1"
     V2 = "v2"
 
-class ChangeFeedMode(StrEnum):
+class ChangeFeedMode(str, Enum):
     LATEST_VERSION = "LatestVersion"
     ALL_VERSIONS_AND_DELETES = "AllVersionsAndDeletes"
 
