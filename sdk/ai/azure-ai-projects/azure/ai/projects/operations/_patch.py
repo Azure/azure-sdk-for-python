@@ -12,9 +12,6 @@ from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 from pathlib import Path
 
-from azure.core.exceptions import (
-    HttpResponseError,
-)
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
@@ -2030,13 +2027,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
         """
         kwargs['stream'] = True
-        
-        try:
-            response = super().get_file_content(file_id, **kwargs)
-            stream_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
-            return stream_iterator
-        except HttpResponseError as e:
-            raise e
+        response = super().get_file_content(file_id, **kwargs)
+        return cast(Iterator[bytes], response)
 
     @distributed_trace
     def get_messages(

@@ -391,39 +391,29 @@ class FileSearchTool(Tool):
     """
     def __init__(self, vector_store_ids: Optional[List[str]] = None):
         if vector_store_ids is None:
-            self.vector_store_ids = []
+            self.vector_store_ids = set()
         else:
-            self.vector_store_ids = vector_store_ids
+            self.vector_store_ids = set(vector_store_ids)
 
-    def add_vector_store(self, store_id: str) -> bool:
+    def add_vector_store(self, store_id: str) -> None:
         """
         Add a vector store ID to the list of vector stores to search for files.
 
         :param store_id: The ID of the vector store to search for files.
         :type store_id: str
 
-        :return: True if the vector store ID was added, False if the vector store ID already exists.
-        :rtype: bool
         """
-        if store_id not in self.vector_store_ids:
-            self.vector_store_ids.append(store_id)
-            return True
-        return False
+        self.vector_store_ids.add(store_id)
 
-    def remove_vector_store(self, store_id: str) -> bool:
+    def remove_vector_store(self, store_id: str) -> None:
         """
         Remove a vector store ID from the list of vector stores to search for files.
 
         :param store_id: The ID of the vector store to remove.
         :type store_id: str
 
-        :return: True if the vector store ID was removed, False if the vector store ID does not exist.
-        :rtype: bool
         """
-        if store_id in self.vector_store_ids:
-            self.vector_store_ids.remove(store_id)
-            return True
-        return False
+        self.vector_store_ids.remove(store_id)
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -437,7 +427,7 @@ class FileSearchTool(Tool):
         """
         Get the file search resources.
         """
-        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=self.vector_store_ids))
+        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -452,39 +442,27 @@ class CodeInterpreterTool(Tool):
     """
     def __init__(self, file_ids: Optional[List[str]] = None):
         if file_ids is None:
-            self.file_ids = []
+            self.file_ids = set()
         else:
-            self.file_ids = file_ids
+            self.file_ids = set(file_ids)
 
-    def add_file(self, file_id: str) -> bool:
+    def add_file(self, file_id: str) -> None:
         """
         Add a file ID to the list of files to interpret.
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+       """
+        self.file_ids.add(file_id)
 
-        :return: True if the file ID was added, False if the file ID already exists.
-        :rtype: bool
-        """
-        if file_id not in self.file_ids:
-            self.file_ids.append(file_id)
-            return True
-        return False
-
-    def remove_file(self, file_id: str) -> bool:
+    def remove_file(self, file_id: str) -> None:
         """
         Remove a file ID from the list of files to interpret.
 
         :param file_id: The ID of the file to remove.
         :type file_id: str
-
-        :return: True if the file ID was removed, False if the file ID does not exist.
-        :rtype: bool
         """
-        if file_id in self.file_ids:
-            self.file_ids.remove(file_id)
-            return True
-        return False
+        self.file_ids.remove(file_id)
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -498,7 +476,7 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=self.file_ids))
+        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
