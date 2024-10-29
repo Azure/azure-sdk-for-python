@@ -1,26 +1,39 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Refined error messages for serviced-based evaluators and simulators.
+- Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
+
 ## 1.0.0b5 (2024-10-28)
 
 ### Features Added
 - Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
 - Groundedness detection in Non Adversarial Simulator via query/context pairs
-  ```python
-  import importlib.resources as pkg_resources
-  package = "azure.ai.evaluation.simulator._data_sources"
-  resource_name = "grounding.json"
-  custom_simulator = Simulator(model_config=model_config)
-  conversation_turns = []
-  with pkg_resources.path(package, resource_name) as grounding_file:
-      with open(grounding_file, "r") as file:
-          data = json.load(file)
-  for item in data:
-      conversation_turns.append([item])
-  outputs = asyncio.run(custom_simulator(
-      target=callback,
-      conversation_turns=conversation_turns,
-      max_conversation_turns=1))
-  ```
+```python
+import importlib.resources as pkg_resources
+package = "azure.ai.evaluation.simulator._data_sources"
+resource_name = "grounding.json"
+custom_simulator = Simulator(model_config=model_config)
+conversation_turns = []
+with pkg_resources.path(package, resource_name) as grounding_file:
+    with open(grounding_file, "r") as file:
+        data = json.load(file)
+for item in data:
+    conversation_turns.append([item])
+outputs = asyncio.run(custom_simulator(
+    target=callback,
+    conversation_turns=conversation_turns,
+    max_conversation_turns=1,
+))
+```
 - Adding evaluator for multimodal use cases
 
 ### Breaking Changes
@@ -30,13 +43,13 @@
 - `FluencyEvaluator` no longer takes `query` as an input. It now only takes `response` in single-turn evaluation.
 - AdversarialScenario enum does not include `ADVERSARIAL_INDIRECT_JAILBREAK`, invoking IndirectJailbreak or XPIA should be done with `IndirectAttackSimulator`
 - Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
-  ```json
-  {"question": <user_message>, "answer": <assistant_message>}
-  ```
-  `to_eval_qr_json_lines` now has:
-  ```json
-  {"query": <user_message>, "response": <assistant_message>}
-  ```
+```json
+{"question": <user_message>, "answer": <assistant_message>}
+```
+`to_eval_qr_json_lines` now has:
+```json
+{"query": <user_message>, "response": assistant_message}
+```
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
@@ -45,10 +58,7 @@
 - Non adversarial simulator now accepts context from the callback
 
 ### Other Changes
-- Enhanced error messages across the SDK to provide more context and actionable information.
-  - Improved validation and error messaging for input parameters in the `evaluate` API.
-  - Refined error messages for storage access permission issues.
-  - Refined error messages for serviced-based evaluators and simulators.
+- Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
 - `GroundednessEvaluator` now supports `query` as an optional input in single-turn evaluation. If `query` is provided, a different prompt template will be used for the evaluation.
 - To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
   - `CoherenceEvaluator`
@@ -58,6 +68,7 @@
   - `SimilarityEvaluator`
   - `RetrievalEvaluator`
 - The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
+
     | Evaluator | New Token Limit |
     | --- | --- |
     | `CoherenceEvaluator` | 800 |
@@ -65,7 +76,7 @@
     | `FluencyEvaluator` | 800 |
     | `GroundednessEvaluator` | 800 |
     | `RetrievalEvaluator` | 1600 |
-- Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
+- Improved the error message for storage access permission issues to provide clearer guidance for users.
 
 ## 1.0.0b4 (2024-10-16)
 
