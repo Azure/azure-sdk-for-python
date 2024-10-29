@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Sequence
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
+from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
@@ -36,7 +37,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     RequestData,
     TelemetryExceptionData,
     TelemetryExceptionDetails,
-    TelemetryItem
+    TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
@@ -76,7 +77,9 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
 
-    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
+    def export(
+        self, spans: Sequence[ReadableSpan], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> SpanExportResult:
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
@@ -89,7 +92,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             resource = None
             try:
                 tracer_provider = self._tracer_provider or get_tracer_provider()
-                resource = tracer_provider.resource # type: ignore
+                resource = tracer_provider.resource  # type: ignore
                 envelopes.append(self._get_otel_resource_envelope(resource))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
@@ -119,7 +122,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             attributes = resource.attributes
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
-        envelope.tags.update(_utils._populate_part_a_fields(resource)) # pylint: disable=W0212
+        envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
         envelope.instrumentation_key = self._instrumentation_key
         data_point = MetricDataPoint(
             name=str("_OTELRESOURCE_")[:1024],
@@ -171,6 +174,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         """
         return cls(connection_string=conn_str, **kwargs)
 
+
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-locals
@@ -191,9 +195,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
     if span.parent and span.parent.span_id:
-        envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(
-            span.parent.span_id
-        )
+        envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
     # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
@@ -217,7 +219,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 total = 0
                 for link in span.links:
                     attributes = link.attributes
-                    enqueued_time  = attributes.get("enqueuedTime")
+                    enqueued_time = attributes.get("enqueuedTime")
                     if isinstance(enqueued_time, int):
                         difference = (start_time / 1000000) - enqueued_time
                         total += difference
@@ -283,7 +285,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
-                    status_code = int(status_code) # type: ignore
+                    status_code = int(status_code)  # type: ignore
                 except ValueError:
                     status_code = 0
             else:
@@ -306,7 +308,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         span.attributes.get(SpanAttributes.MESSAGING_DESTINATION),
                     )
                 else:
-                    data.source = span.attributes.get(SpanAttributes.MESSAGING_DESTINATION, '')
+                    data.source = span.attributes.get(SpanAttributes.MESSAGING_DESTINATION, "")
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME):
@@ -323,17 +325,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         time = 0
         if span.end_time and span.start_time:
             time = span.end_time - span.start_time
-        data = RemoteDependencyData( # type: ignore
+        data = RemoteDependencyData(  # type: ignore
             name=span.name,
             id="{:016x}".format(span.context.span_id),
             result_code="0",
             duration=_utils.ns_to_duration(time),
-            success=span.status.is_ok, # Success depends only on span status
+            success=span.status.is_ok,  # Success depends only on span status
             properties={},
         )
-        envelope.data = MonitorBase(
-            base_data=data, base_type="RemoteDependencyData"
-        )
+        envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         target = None
         if SpanAttributes.PEER_SERVICE in span.attributes:
             target = span.attributes[SpanAttributes.PEER_SERVICE]
@@ -348,8 +348,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # This logic assumes default ports never conflict across dependency types
                 # type: ignore
                 if port != trace_utils._get_default_port_http(
-                    str(span.attributes.get(SpanAttributes.HTTP_SCHEME))) and \
-                    port != trace_utils._get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
+                    str(span.attributes.get(SpanAttributes.HTTP_SCHEME))
+                ) and port != trace_utils._get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
@@ -382,7 +382,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
                 if status_code:
                     try:
-                        status_code = int(status_code) # type: ignore
+                        status_code = int(status_code)  # type: ignore
                     except ValueError:
                         status_code = 0
                 else:
@@ -425,6 +425,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     target,  # type: ignore
                     span.attributes,
                 )
+            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
             else:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
@@ -463,14 +465,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
     data.properties = _utils._filter_custom_properties(
-        span.attributes,
-        lambda key, val: not _is_standard_attribute(key)
+        span.attributes, lambda key, val: not _is_standard_attribute(key)
     )
 
     # Standard metrics special properties
     # Only add the property if span was generated from instrumentation that supports metrics collection
-    if span.instrumentation_scope is not None and \
-        span.instrumentation_scope.name in _INSTRUMENTATION_SUPPORTING_METRICS_LIST:
+    if (
+        span.instrumentation_scope is not None
+        and span.instrumentation_scope.name in _INSTRUMENTATION_SUPPORTING_METRICS_LIST
+    ):
         data.properties["_MS.ProcessedByMetricExtractors"] = "True"
 
     if span.links:
@@ -486,6 +489,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     return envelope
 
+
 # pylint: disable=protected-access
 def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryItem]:
     envelopes = []
@@ -494,17 +498,14 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
         envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
         if span.context and span.context.span_id:
-            envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(
-                span.context.span_id
-            )
+            envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.context.span_id)
 
         # sampleRate
         if span.attributes and _SAMPLE_RATE_KEY in span.attributes:
             envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
         properties = _utils._filter_custom_properties(
-            event.attributes,
-            lambda key, val: not _is_standard_attribute(key)
+            event.attributes, lambda key, val: not _is_standard_attribute(key)
         )
         if event.name == "exception":
             envelope.name = _EXCEPTION_ENVELOPE_NAME
@@ -529,14 +530,14 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 exceptions=[exc_details],
             )
             # pylint: disable=line-too-long
-            envelope.data = MonitorBase(base_data=data, base_type='ExceptionData')
+            envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
         else:
             envelope.name = _MESSAGE_ENVELOPE_NAME
-            data = MessageData( # type: ignore
+            data = MessageData(  # type: ignore
                 message=str(event.name)[:32768],
                 properties=properties,
             )
-            envelope.data = MonitorBase(base_data=data, base_type='MessageData')
+            envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
         envelopes.append(envelope)
 
