@@ -140,7 +140,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         singletons = []
         for call_signature in call_signatures:
             params = call_signature.parameters
-            if any([not_singleton_input in params for not_singleton_input in self._not_singleton_inputs]):
+            if any(not_singleton_input in params for not_singleton_input in self._not_singleton_inputs):
                 continue
             # exclude self since it is not a singleton input
             singletons.extend([p for p in params if p != "self"])
