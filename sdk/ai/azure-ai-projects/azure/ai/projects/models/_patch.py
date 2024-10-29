@@ -385,22 +385,45 @@ class AsyncFunctionTool(FunctionTool):
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
+
+    :param vector_store_ids: A list of vector store IDs to search for files.
+    :type vector_store_ids: list[str]
     """
+    def __init__(self, vector_store_ids: Optional[List[str]] = None):
+        if vector_store_ids is None:
+            self.vector_store_ids = []
+        else:
+            self.vector_store_ids = vector_store_ids
 
-    def __init__(self, vector_store_ids: List[str] = []):
-        self.vector_store_ids = vector_store_ids
-
-    def add_vector_store(self, store_id: str):
+    def add_vector_store(self, store_id: str) -> bool:
         """
         Add a vector store ID to the list of vector stores to search for files.
-        """
-        self.vector_store_ids.append(store_id)
 
-    def remove_vector_store(self, store_id: str):
+        :param store_id: The ID of the vector store to search for files.
+        :type store_id: str
+
+        :return: True if the vector store ID was added, False if the vector store ID already exists.
+        :rtype: bool
+        """
+        if store_id not in self.vector_store_ids:
+            self.vector_store_ids.append(store_id)
+            return True
+        return False
+
+    def remove_vector_store(self, store_id: str) -> bool:
         """
         Remove a vector store ID from the list of vector stores to search for files.
+
+        :param store_id: The ID of the vector store to remove.
+        :type store_id: str
+
+        :return: True if the vector store ID was removed, False if the vector store ID does not exist.
+        :rtype: bool
         """
-        self.vector_store_ids.remove(store_id)
+        if store_id in self.vector_store_ids:
+            self.vector_store_ids.remove(store_id)
+            return True
+        return False
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -423,26 +446,45 @@ class FileSearchTool(Tool):
 class CodeInterpreterTool(Tool):
     """
     A tool that interprets code files uploaded to the agent.
+
+    :param file_ids: A list of file IDs to interpret.
+    :type file_ids: list[str]
     """
+    def __init__(self, file_ids: Optional[List[str]] = None):
+        if file_ids is None:
+            self.file_ids = []
+        else:
+            self.file_ids = file_ids
 
-    def __init__(self, file_ids: List[str] = []):
-        self.file_ids = file_ids
-
-    def add_file(self, file_id: str):
+    def add_file(self, file_id: str) -> bool:
         """
         Add a file ID to the list of files to interpret.
 
         :param file_id: The ID of the file to interpret.
-        """
-        self.file_ids.append(file_id)
+        :type file_id: str
 
-    def remove_file(self, file_id: str):
+        :return: True if the file ID was added, False if the file ID already exists.
+        :rtype: bool
+        """
+        if file_id not in self.file_ids:
+            self.file_ids.append(file_id)
+            return True
+        return False
+
+    def remove_file(self, file_id: str) -> bool:
         """
         Remove a file ID from the list of files to interpret.
 
         :param file_id: The ID of the file to remove.
+        :type file_id: str
+
+        :return: True if the file ID was removed, False if the file ID does not exist.
+        :rtype: bool
         """
-        self.file_ids.remove(file_id)
+        if file_id in self.file_ids:
+            self.file_ids.remove(file_id)
+            return True
+        return False
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -997,15 +1039,15 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             pass
 
 
-class Messages:
+class ThreadMessages:
     """
-    Represents a collection of messages
+    Represents a collection of messages in a thread.
 
     :param pageable_list: The pageable list of messages.
     :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
 
     :return: A collection of messages.
-    :rtype: ~azure.ai.projects.models.Messages
+    :rtype: ~azure.ai.projects.models.ThreadMessages
     """
     def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
         self._messages = pageable_list.data
@@ -1094,7 +1136,7 @@ __all__: List[str] = [
     "AsyncToolSet",
     "CodeInterpreterTool",
     "ConnectionProperties",
-    "Messages",
+    "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
     "SASTokenCredential",

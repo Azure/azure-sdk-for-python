@@ -2049,17 +2049,17 @@ class AgentsOperations(AgentsOperationsGenerated):
         after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.Messages:
-        """Parses the OpenAIPageableListOfThreadMessage response and returns a Messages object.
+    ) -> _models.ThreadMessages:
+        """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
         
         :param messages: The OpenAIPageableListOfThreadMessage response.
         :type messages: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
 
-        :return: Messages. The Messages is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Messages
+        :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadMessages
         """
         messages = super().list_messages(thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs)
-        return _models.Messages(pageable_list=messages)
+        return _models.ThreadMessages(pageable_list=messages)
 
     @distributed_trace
     def save_file(
