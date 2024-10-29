@@ -2,7 +2,7 @@
 
 ## 1.5.0 (2024-10-31)
 
-### Features
+### Features Added
 
 - Added helper function `get_arm_endpoints` to get the ARM endpoint and credential scopes from the cloud setting.
 
