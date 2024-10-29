@@ -1,0 +1,7 @@
+{
+    "ignoreWords": [],
+    "ignorePaths": [
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/simulator/_data_sources/grounding.json"
+    ]
+}

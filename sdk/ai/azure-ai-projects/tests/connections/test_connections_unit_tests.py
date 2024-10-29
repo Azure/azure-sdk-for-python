@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable
 import datetime
 from azure.ai.projects.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 from connection_test_base import ConnectionsTestBase
+
 
 class FakeTokenCredential(TokenCredential):
     def get_token(self, *scopes, **kwargs):
@@ -57,7 +59,7 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
             sas_token=sas_token,
             credential=FakeTokenCredential(),
             subscription_id="fake_subscription_id",
-            resource_group_name="fake_resouce_group",
+            resource_group_name="fake_resource_group",
             project_name="fake_project_name",
             connection_name="fake_connection_name",
         )
@@ -95,4 +97,3 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
 
         print(f"[TEST]   Actual expiration date: {sas_token_credential._expires_on}")
         assert sas_token_credential._expires_on == expiration_datatime_utc
-

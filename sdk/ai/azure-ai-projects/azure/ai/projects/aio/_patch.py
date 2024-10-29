@@ -6,14 +6,17 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+import uuid
+from os import PathLike
+from pathlib import Path
+from typing import List, Any, Union, Dict
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from typing_extensions import Self
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations
+from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, DiagnosticsOperations
 from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
@@ -45,9 +48,44 @@ class AIProjectClient(ClientGenerated):
         if "credential_scopes" in kwargs:
             raise ValueError("No support for overriding the credential scopes")
 
+        kwargs0 = kwargs.copy()
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
+
+        # For getting AppInsights connection string from the AppInsights resource.
+        # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
+        # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
+        _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
+        self._config0 = AIProjectClientConfiguration(
+            endpoint=endpoint,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            project_name=project_name,
+            credential=credential,
+            api_version="2020-02-02",
+            credential_scopes=["https://management.azure.com"],
+            **kwargs0,
+        )
+
+        _policies0 = kwargs0.pop("policies", None)
+        if _policies0 is None:
+            _policies0 = [
+                policies.RequestIdPolicy(**kwargs0),
+                self._config0.headers_policy,
+                self._config0.user_agent_policy,
+                self._config0.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs0),
+                self._config0.redirect_policy,
+                self._config0.retry_policy,
+                self._config0.authentication_policy,
+                self._config0.custom_hook_policy,
+                self._config0.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs0),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs0) if self._config0.redirect_policy else None,
+                self._config0.http_logging_policy,
+            ]
+        self._client0 = AsyncPipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
 
         # For Endpoints operations (enumerating connections, getting SAS tokens)
         _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
@@ -120,7 +158,7 @@ class AIProjectClient(ClientGenerated):
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://management.azure.com"],  # TODO: Update once service changes are ready
+            credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
@@ -146,23 +184,29 @@ class AIProjectClient(ClientGenerated):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+        self.diagnostics = DiagnosticsOperations(
+            self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self
+        )
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
 
     async def close(self) -> None:
+        await self._client0.close()
         await self._client1.close()
         await self._client2.close()
         await self._client3.close()
 
     async def __aenter__(self) -> Self:
+        await self._client0.__aenter__()
         await self._client1.__aenter__()
         await self._client2.__aenter__()
         await self._client3.__aenter__()
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client0.__aexit__(*exc_details)
         await self._client1.__aexit__(*exc_details)
         await self._client2.__aexit__(*exc_details)
         await self._client3.__aexit__(*exc_details)
@@ -184,6 +228,51 @@ class AIProjectClient(ClientGenerated):
         resource_group_name = parts[2]
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
+
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> str:
+        """Upload a file to the Azure AI Studio project.
+           This method required *azure-ai-ml* to be installed.
+
+        :param file_path: The path to the file to upload.
+        :type file_path: Union[str, Path, PathLike]
+        :return: The asset id of uploaded file.
+        :rtype: str
+        """
+        try:
+            from azure.ai.ml import MLClient
+            from azure.ai.ml.entities import Data
+            from azure.ai.ml.constants import AssetTypes
+        except ImportError:
+            raise ImportError(
+                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
+            )
+
+        data = Data(
+            path=file_path,
+            type=AssetTypes.URI_FILE,
+            name=str(uuid.uuid4()),  # generating random name
+            is_anonymous=True,
+            version="1",
+        )
+
+        ml_client = MLClient(
+            self._config3.credential,
+            self._config3.subscription_id,
+            self._config3.resource_group_name,
+            self._config3.project_name,
+        )
+
+        data_asset = ml_client.data.create_or_update(data)
+
+        return data_asset.id
+
+    @property
+    def scope(self) -> Dict[str, str]:
+        return {
+            "subscription_id": self._config3.subscription_id,
+            "resource_group_name": self._config3.resource_group_name,
+            "project_name": self._config3.project_name,
+        }
 
 
 __all__: List[str] = [

@@ -7,15 +7,19 @@ from devtools_testutils import recorded_by_proxy
 from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestInference(InferenceTestBase):
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_azure_openai_client(self, **kwargs):
-        model = kwargs.pop("azure_ai_projects_connections_test_model_deployment_name")
+        model = kwargs.pop("azure_ai_projects_inference_tests_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
-            with project_client.inference.get_azure_openai_client() as azure_openai_client:
+            # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+            with project_client.inference.get_azure_openai_client(
+                api_version="2024-10-01-preview"
+            ) as azure_openai_client:
                 response = azure_openai_client.chat.completions.create(
                     messages=[
                         {
@@ -26,7 +30,7 @@ class TestInference(InferenceTestBase):
                     model=model,
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()
@@ -41,7 +45,7 @@ class TestInference(InferenceTestBase):
                     ]
                 )
                 pprint.pprint(response)
-                contains=["5280", "5,280"]
+                contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()

@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +19,7 @@ from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    ConnectionsListSecretsResponse,
+    GetConnectionResponse,
     MessageDeltaChunk,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -99,7 +101,7 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(self, *, connection: GetConnectionResponse, token_credential: TokenCredential = None) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
@@ -145,12 +147,11 @@ class ConnectionProperties:
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
         if self.key:
-            out += f' "key": "{self.key}",\n'
+            out += f' "key": "REDACTED"\n'
         else:
-            out += f' "key": null,\n'
+            out += f' "key": null\n'
         if self.token_credential:
-            access_token = self.token_credential.get_token("https://cognitiveservices.azure.com/.default")
-            out += f' "token_credential": "{access_token.token}", expires on {access_token.expires_on} ({datetime.datetime.fromtimestamp(access_token.expires_on, datetime.timezone.utc)})\n'
+            out += f' "token_credential": "REDACTED"\n'
         else:
             out += f' "token_credential": null\n'
         out += "}\n"
@@ -287,8 +288,8 @@ class FunctionTool(Tool):
         self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(self._functions)
 
-    def _create_function_dict(self, funcs: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in funcs}
+    def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
+        func_dict = {func.__name__: func for func in functions}
         return func_dict
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
@@ -1086,6 +1087,7 @@ __all__: List[str] = [
     "AsyncFunctionTool",
     "AsyncToolSet",
     "CodeInterpreterTool",
+    "ConnectionProperties",
     "FileSearchTool",
     "FunctionTool",
     "BingGroundingTool",

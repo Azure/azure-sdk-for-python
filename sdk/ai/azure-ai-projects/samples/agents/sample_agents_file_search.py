@@ -40,7 +40,9 @@ with project_client:
     openai_file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {openai_file.id}")
 
-    openai_vectorstore = project_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
+    openai_vectorstore = project_client.agents.create_vector_store_and_poll(
+        file_ids=[openai_file.id], name="my_vectorstore"
+    )
     print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
     # Create file search tool with resources
