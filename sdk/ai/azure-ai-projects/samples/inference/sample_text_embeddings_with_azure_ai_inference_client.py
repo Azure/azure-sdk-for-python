@@ -16,7 +16,7 @@ USAGE:
 
     pip install azure.ai.projects azure-identity
 
-    Set this environment variable with your own values:
+    Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import os
