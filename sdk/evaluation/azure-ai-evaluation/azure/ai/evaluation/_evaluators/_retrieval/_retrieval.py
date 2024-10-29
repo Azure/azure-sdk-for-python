@@ -204,9 +204,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        query = kwargs.get("query", None)
-        context = kwargs.get("context", None)
-        conversation = kwargs.get("conversation", None)
+        query = kwargs.pop("query", None)
+        context = kwargs.pop("context", None)
+        conversation = kwargs.pop("conversation", None)
 
         if (query is None or context is None) and conversation is None:
             msg = "Either a pair of 'query'/'context' or 'conversation' must be provided."

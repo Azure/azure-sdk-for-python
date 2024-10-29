@@ -142,7 +142,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             params = call_signature.parameters
             if any([not_singleton_input in params for not_singleton_input in self._not_singleton_inputs]):
                 continue
-            singletons.extend(params)
+            # exclude self since it is not a singleton input
+            singletons.extend([p for p in params if p != "self"])
         return singletons
 
     def _derive_conversation_converter(self) -> Callable[[Dict], List[DerivedEvalInput]]:
