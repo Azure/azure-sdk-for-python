@@ -699,11 +699,11 @@ class ConnectionListResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionProperties(_model_base.Model):
+class InternalConnectionProperties(_model_base.Model):
     """Connection properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
+    InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth, InternalConnectionPropertiesSASAuth
 
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
@@ -717,7 +717,7 @@ class ConnectionProperties(_model_base.Model):
      and \"SAS\"."""
 
 
-class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
+class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
     """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
     ).
 
@@ -741,7 +741,7 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     """The connection URL to be used for this service. Required."""
 
 
-class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
+class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.
 
 
@@ -767,7 +767,7 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
     """The connection URL to be used for this service. Required."""
 
 
-class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
+class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
     """Connection properties for connections with SAS authentication.
 
 
@@ -1503,14 +1503,14 @@ class GetConnectionResponse(_model_base.Model):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models._models.ConnectionProperties
+    :vartype properties: ~azure.ai.projects.models._models.InternalConnectionProperties
     """
 
     id: str = rest_field()
     """A unique identifier for the connection. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
-    properties: "_models._models.ConnectionProperties" = rest_field()
+    properties: "_models._models.InternalConnectionProperties" = rest_field()
     """The properties of the resource. Required."""
 
 

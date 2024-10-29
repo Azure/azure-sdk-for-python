@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_get_azure_openai_client_async.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
     AsyncAzureOpenAI client from the azure.ai.inference package.

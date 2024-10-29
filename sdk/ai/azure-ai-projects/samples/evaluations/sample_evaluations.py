@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a synchronous client.

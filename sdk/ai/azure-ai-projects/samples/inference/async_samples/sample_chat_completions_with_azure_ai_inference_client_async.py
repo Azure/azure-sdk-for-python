@@ -4,11 +4,10 @@
 # ------------------------------------
 
 """
-FILE: sample_get_chat_completions_client_async.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    async ChatCompletionsClient from the azure.ai.inference package.
+    async ChatCompletionsClient from the azure.ai.inference package. For more information
+    on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
     python sample_get_chat_completions_client_async.py
