@@ -14,7 +14,7 @@ from ._mustache import render
 
 
 class PromptTemplate:
-    """The helper class which takes varient of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
+    """The helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
 
     :param prompty: Prompty object which contains both model config and prompt template.
     :type prompty: Prompty

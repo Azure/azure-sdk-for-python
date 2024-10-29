@@ -1,0 +1,10 @@
+{
+    "ignoreWords": [
+        "dels",
+        "fmatter",
+        "fspath",
+        "ldel",
+        "prompty",
+        "rdel"
+    ]
+}
