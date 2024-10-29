@@ -310,6 +310,8 @@ class _QuickpulseMetricReader(MetricReader):
                 # And resume pinging
                 if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
                     _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+                    # Reset etag to default
+                    _set_quickpulse_etag("")
                     self._elapsed_num_seconds = 0
 
         self._elapsed_num_seconds += 1
