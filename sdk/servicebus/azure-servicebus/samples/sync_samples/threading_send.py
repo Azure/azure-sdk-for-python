@@ -11,6 +11,7 @@ Example to show sending message(s) to a Service Bus Queue.
 
 import os
 import sys
+import time
 import logging
 import threading
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
@@ -33,6 +34,11 @@ def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
     print(f"Sent a single message on {threading.current_thread().name}")
+    time.sleep(12*60)
+    print(f"Sending a single message after sleep {threading.current_thread().name}")
+    sender.send_messages(message)
+    print(f"Sent a single message after sleep {threading.current_thread().name}")
+
 
 
 def send_a_list_of_messages(sender):
@@ -65,8 +71,8 @@ with servicebus_client:
             exe.submit(send_single_message, sender)
             exe.submit(send_single_message, sender)
             exe.submit(send_single_message, sender)
-            exe.submit(send_a_list_of_messages, sender)
-            exe.submit(send_batch_message, sender)
-            exe.submit(send_batch_message, sender)
+            # exe.submit(send_a_list_of_messages, sender)
+            # exe.submit(send_batch_message, sender)
+            # exe.submit(send_batch_message, sender)
 
 print("Send message is done.")

@@ -215,6 +215,8 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)
 
+        self._lock = threading.Lock()
+
     def __enter__(self):
         """Run Client in a context manager.
 
@@ -305,48 +307,49 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
-        # pylint: disable=protected-access
-        if self._session:
-            return  # already open.
-        if connection:
-            self._connection = connection
-            self._external_connection = True
-        elif not self._connection:
-            self._connection = Connection(
-                "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
-                sasl_credential=self._auth.sasl,
-                ssl_opts=self._ssl_opts,
-                container_id=self._name,
-                max_frame_size=self._max_frame_size,
-                channel_max=self._channel_max,
-                idle_timeout=self._idle_timeout,
-                properties=self._properties,
-                network_trace=self._network_trace,
-                transport_type=self._transport_type,
-                http_proxy=self._http_proxy,
-                custom_endpoint_address=self._custom_endpoint_address,
-                socket_timeout=self._socket_timeout,
-                use_tls=self._use_tls,
-            )
-            self._connection.open()
-        if not self._session:
-            self._session = self._connection.create_session(
-                incoming_window=self._incoming_window,
-                outgoing_window=self._outgoing_window,
-            )
-            self._session.begin()
-        if self._keep_alive_interval:
-            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-            self._keep_alive_thread.daemon = True
-            self._keep_alive_thread.start()
-        if self._auth.auth_type == AUTH_TYPE_CBS:
-            self._cbs_authenticator = CBSAuthenticator(
-                session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
-            )
-            self._cbs_authenticator.open()
-        self._network_trace_params["amqpConnection"] = self._connection._container_id
-        self._network_trace_params["amqpSession"] = self._session.name
-        self._shutdown = False
+        with self._lock:
+            # pylint: disable=protected-access
+            if self._session:
+                return  # already open.
+            if connection:
+                self._connection = connection
+                self._external_connection = True
+            elif not self._connection:
+                self._connection = Connection(
+                    "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
+                    sasl_credential=self._auth.sasl,
+                    ssl_opts={"ca_certs": self._connection_verify or certifi.where()},
+                    container_id=self._name,
+                    max_frame_size=self._max_frame_size,
+                    channel_max=self._channel_max,
+                    idle_timeout=self._idle_timeout,
+                    properties=self._properties,
+                    network_trace=self._network_trace,
+                    transport_type=self._transport_type,
+                    http_proxy=self._http_proxy,
+                    custom_endpoint_address=self._custom_endpoint_address,
+                    socket_timeout=self._socket_timeout,
+                    use_tls=self._use_tls,
+                )
+                self._connection.open()
+            if not self._session:
+                self._session = self._connection.create_session(
+                    incoming_window=self._incoming_window,
+                    outgoing_window=self._outgoing_window,
+                )
+                self._session.begin()
+            if self._keep_alive_interval:
+                self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+                self._keep_alive_thread.daemon = True
+                self._keep_alive_thread.start()
+            if self._auth.auth_type == AUTH_TYPE_CBS:
+                self._cbs_authenticator = CBSAuthenticator(
+                    session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
+                )
+                self._cbs_authenticator.open()
+            self._network_trace_params["amqpConnection"] = self._connection._container_id
+            self._network_trace_params["amqpSession"] = self._session.name
+            self._shutdown = False
 
     def close(self):
         """Close the client. This includes closing the Session

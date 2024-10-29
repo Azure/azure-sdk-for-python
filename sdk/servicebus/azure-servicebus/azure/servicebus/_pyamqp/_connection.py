@@ -10,6 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
+import threading
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport import Transport
@@ -203,6 +204,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
 
+        self._connection_lock = threading.RLock()
+
     def __enter__(self) -> "Connection":
         self.open()
         return self
@@ -216,11 +219,18 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
         if new_state is None:
             return
-        previous_state = self.state
-        self.state = new_state
-        _LOGGER.info("Connection state changed: %r -> %r", previous_state, new_state, extra=self._network_trace_params)
-        for session in self._outgoing_endpoints.values():
-            session._on_connection_state_change()  # pylint:disable=protected-access
+        
+        with self._connection_lock:
+            previous_state = self.state
+            self.state = new_state
+            _LOGGER.info(
+                "Connection state changed: %r -> %r",
+                previous_state,
+                new_state,
+                extra=self._network_trace_params
+            )
+            for session in self._outgoing_endpoints.values():
+                session._on_connection_state_change()  # pylint:disable=protected-access
 
     def _connect(self) -> None:
         """Initiate the connection.
@@ -231,45 +241,48 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
         :raises ValueError: If a reciprocating protocol header is not received during negotiation.
         """
-        try:
-            if not self.state:
-                self._transport.connect()
-                self._set_state(ConnectionState.START)
-            self._transport.negotiate()
-            self._outgoing_header()
-            self._set_state(ConnectionState.HDR_SENT)
-            if not self._allow_pipelined_open:
-                # TODO: List/tuple expected as variable args
-                self._read_frame(wait=True)
-                if self.state != ConnectionState.HDR_EXCH:
-                    self._disconnect()
-                    raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
-            else:
+        with self._connection_lock:
+            try:
+                if not self.state:
+                    self._transport.connect()
+                    self._set_state(ConnectionState.START)
+                self._transport.negotiate()
+                self._outgoing_header()
                 self._set_state(ConnectionState.HDR_SENT)
-        except (OSError, IOError, SSLError, socket.error) as exc:
-            # FileNotFoundError is being raised for exception parity with uamqp when invalid
-            # `connection_verify` file path is passed in. Remove later when resolving issue #27128.
-            if isinstance(exc, FileNotFoundError) and exc.filename and "ca_certs" in exc.filename:
-                raise
-            raise AMQPConnectionError(
-                ErrorCondition.SocketError,
-                description="Failed to initiate the connection due to exception: " + str(exc),
-                error=exc,
-            ) from exc
+                if not self._allow_pipelined_open:
+                    # TODO: List/tuple expected as variable args
+                    self._read_frame(wait=True)
+                    if self.state != ConnectionState.HDR_EXCH:
+                        self._disconnect()
+                        raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
+                else:
+                    self._set_state(ConnectionState.HDR_SENT)
+            except (OSError, IOError, SSLError, socket.error) as exc:
+                # FileNotFoundError is being raised for exception parity with uamqp when invalid
+                # `connection_verify` file path is passed in. Remove later when resolving issue #27128.
+                if isinstance(exc, FileNotFoundError) and exc.filename and "ca_certs" in exc.filename:
+                    raise
+                raise AMQPConnectionError(
+                    ErrorCondition.SocketError,
+                    description="Failed to initiate the connection due to exception: " + str(exc),
+                    error=exc,
+                ) from exc
 
     def _disconnect(self) -> None:
         """Disconnect the transport and set state to END."""
-        if self.state == ConnectionState.END:
-            return
-        self._set_state(ConnectionState.END)
-        self._transport.close()
+        with self._connection_lock:
+            if self.state == ConnectionState.END:
+                return
+            self._set_state(ConnectionState.END)
+            self._transport.close()
 
     def _can_read(self) -> bool:
         """Whether the connection is in a state where it is legal to read for incoming frames.
         :return: True if the connection is in a state where it is legal to read for incoming frames.
         :rtype: bool
         """
-        return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
+        with self._connection_lock:
+            return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
     def _read_frame(self, wait: Union[bool, float] = True, **kwargs: Any) -> bool:
         """Read an incoming frame from the transport.
@@ -297,7 +310,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :return: Whether the connection is in a state where it is legal to write outgoing frames.
         :rtype: bool
         """
-        return self.state not in _CLOSING_STATES
+        with self._connection_lock:
+            return self.state not in _CLOSING_STATES
 
     def _send_frame(self, channel: int, frame: NamedTuple, **kwargs: Any) -> None:
         """Send a frame over the connection.
@@ -837,14 +851,18 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
         self._connect()
         self._outgoing_open()
-        if self.state == ConnectionState.HDR_EXCH:
-            self._set_state(ConnectionState.OPEN_SENT)
-        elif self.state == ConnectionState.HDR_SENT:
-            self._set_state(ConnectionState.OPEN_PIPE)
-        if wait:
-            self._wait_for_response(wait, ConnectionState.OPENED)
-        elif not self._allow_pipelined_open:
-            raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
+        with self._connection_lock:
+            if self.state == ConnectionState.HDR_EXCH:
+                self._set_state(ConnectionState.OPEN_SENT)
+            elif self.state == ConnectionState.HDR_SENT:
+                self._set_state(ConnectionState.OPEN_PIPE)
+            if wait:
+                self._wait_for_response(wait, ConnectionState.OPENED)
+            elif not self._allow_pipelined_open:
+                raise ValueError(
+                    "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
+                )
+
 
     def close(self, error: Optional[AMQPError] = None, wait: bool = False) -> None:
         """Close the connection and disconnect the transport.
