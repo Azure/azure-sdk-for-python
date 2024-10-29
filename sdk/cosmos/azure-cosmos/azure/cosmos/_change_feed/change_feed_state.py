@@ -58,7 +58,8 @@ class ChangeFeedMode(StrEnum):
 
     @classmethod
     def to_string(cls):
-        return f"[{', '.join(f"'{item.value}'" for item in cls)}]"
+        values_str = ', '.join(f"'{item}'" for item in cls)
+        return f"[{values_str}]"
 
 class ChangeFeedState(ABC):
     version_property_name = "v"
