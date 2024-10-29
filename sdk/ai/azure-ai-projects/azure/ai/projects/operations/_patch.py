@@ -133,7 +133,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(
-                endpoint=connection.authentication_type, credential=AzureKeyCredential(connection.key)
+                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
             )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
