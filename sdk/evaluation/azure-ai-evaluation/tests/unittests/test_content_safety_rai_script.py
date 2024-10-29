@@ -155,9 +155,8 @@ class TestContentSafetyEvaluator:
     async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
-        assert (
-            "The needed capability 'does not exist' is not supported by the RAI service in this region"
-            in str(exc_info._excinfo[1])
+        assert "The needed capability 'does not exist' is not supported by the RAI service in this region" in str(
+            exc_info._excinfo[1]
         )
         assert client_mock._mock_await_count == 1
 
