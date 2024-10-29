@@ -1,6 +1,11 @@
 # Release History
+## 1.23.0 (unreleased)
 
-## 1.22.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+
+## 1.22.0 (2024-11-05)
 
 ### Features Added
   - Update TLS version from 1.0 to 1.2
