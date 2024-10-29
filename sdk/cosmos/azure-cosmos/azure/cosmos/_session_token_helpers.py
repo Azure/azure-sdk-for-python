@@ -69,7 +69,7 @@ def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str
     return session_tokens
 
 # ex inputs:
-# ["1:1#51", "1:1#55", "1:1#57", "2:1#42", "2:1#45", "2:1#47"] -> ["1:1#57"]
+# ["1:1#51", "1:1#55", "1:1#57", "2:1#42", "2:1#45", "2:1#47"] -> ["1:1#57", "2:1#47"]
 def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[str]:
     pk_session_tokens: Dict[str, List[str]] = {}
     for session_token in session_tokens:
