@@ -387,7 +387,7 @@ class TestChangeFeedAsync:
                 partition_key_range_id="TestPartitionKeyRangeId",
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported with 'partition_key_range_id'. Please use 'feed_range' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id' was used. Please use 'feed_range' instead."
 
         # Error if is_start_from_beginning was in invalid type
         with pytest.raises(TypeError) as e:
@@ -402,7 +402,7 @@ class TestChangeFeedAsync:
                 is_start_from_beginning="Now",
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'is_start_from_beginning'. Please use 'continuation' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning' is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead."
 
         # Error if 'is_start_from_beginning' was used with 'start_time'
         with pytest.raises(ValueError) as e:
@@ -431,7 +431,7 @@ class TestChangeFeedAsync:
                 start_time=round_time(),
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'start_time'. Please use 'continuation' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
 
         # Error if too many positional arguments
         with pytest.raises(ValueError) as e:

@@ -27,9 +27,9 @@ import base64
 import collections
 import json
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Optional, Union, List, Any, Dict, Deque
-import warnings
+import logging
 
 from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
@@ -49,7 +49,7 @@ class ChangeFeedStateVersion(Enum):
     V1 = "v1"
     V2 = "v2"
 
-class ChangeFeedMode(Enum):
+class ChangeFeedMode(StrEnum):
     LATEST_VERSION = "LatestVersion"
     ALL_VERSIONS_AND_DELETES = "AllVersionsAndDeletes"
 
@@ -108,9 +108,8 @@ class ChangeFeedState(ABC):
                 raise ValueError("Invalid base64 encoded continuation string [Missing version]")
 
             if version == ChangeFeedStateVersion.V2.value:
-                change_feed_mode = change_feed_state_context.get("changeFeedMode")
                 return ChangeFeedStateV2.from_continuation(
-                    container_link, container_rid, continuation_json, change_feed_mode)
+                    container_link, container_rid, continuation_json)
 
             raise ValueError("Invalid base64 encoded continuation string [Invalid version]")
 
@@ -222,13 +221,10 @@ class ChangeFeedStateV2(ChangeFeedState):
         else:
             self._continuation = continuation
 
-        if change_feed_mode is None or change_feed_mode == ChangeFeedMode.LATEST_VERSION:
-            self._change_feed_mode = http_constants.HttpHeaders.IncrementalFeedHeaderValue
-        elif change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
-            self._change_feed_mode = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
+        if change_feed_mode is None:
+            self._change_feed_mode = ChangeFeedMode.LATEST_VERSION
         else:
-            raise ValueError(f"Invalid change_feed_mode was used: '{change_feed_mode}'."
-                             f" Supported change_feed_modes are 'LatestVersion' and 'AllVersionsAndDeletes'.")
+            self._change_feed_mode = change_feed_mode
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)
 
@@ -284,12 +280,12 @@ class ChangeFeedStateV2(ChangeFeedState):
     def set_change_feed_mode_request_headers(
             self,
             request_headers: Dict[str, Any]) -> None:
-
-        request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
-        if self._change_feed_mode == http_constants.HttpHeaders.FullFidelityFeedHeaderValue:
-            request_headers[http_constants.HttpHeaders.AIM] = self._change_feed_mode
-            request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] =\
+        if self._change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
+            request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
+            request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = \
                 http_constants.HttpHeaders.Separate_meta_with_crts
+        else:
+            request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
     def populate_request_headers(
             self,
@@ -365,8 +361,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             container_rid: str,
-            continuation_json: Dict[str, Any],
-            change_feed_mode: ChangeFeedMode) -> 'ChangeFeedStateV2':
+            continuation_json: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
         container_rid_from_continuation = continuation_json.get(ChangeFeedStateV2.container_rid_property_name)
         if container_rid_from_continuation is None:
@@ -384,6 +379,12 @@ class ChangeFeedStateV2(ChangeFeedState):
         if continuation_data is None:
             raise ValueError(f"Invalid continuation: [Missing {ChangeFeedStateV2.continuation_property_name}]")
         continuation = FeedRangeCompositeContinuation.from_json(continuation_data)
+
+        change_feed_mode = continuation_json.get(ChangeFeedStateV2.change_feed_mode_property_name)
+        if change_feed_mode is None:
+            raise ValueError(f"Invalid continuation:"
+                             f" [Missing {ChangeFeedStateV2.change_feed_mode_property_name}]")
+
         return cls(
             container_link=container_link,
             container_rid=container_rid,
@@ -411,7 +412,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
-            warnings.warn("'feed_range' empty. Use full range by default.", UserWarning)
+            logging.info("'feed_range' empty. Use full range by default.")
             feed_range = FeedRangeInternalEpk(
                 Range(
                 "",

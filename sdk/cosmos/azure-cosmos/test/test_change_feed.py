@@ -13,7 +13,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode, ChangeFeedStateV2
 
 ID = 'id'
 CURRENT = 'current'
@@ -344,7 +344,7 @@ class TestChangeFeed:
                 partition_key_range_id="TestPartitionKeyRangeId",
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported with 'partition_key_range_id'. Please use 'feed_range' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id' was used. Please use 'feed_range' instead."
 
         # Error if is_start_from_beginning was in invalid type
         with pytest.raises(TypeError) as e:
@@ -359,7 +359,7 @@ class TestChangeFeed:
                 is_start_from_beginning=True,
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'is_start_from_beginning'. Please use 'continuation' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning' is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead."
 
         # Error if 'is_start_from_beginning' was used with 'start_time'
         with pytest.raises(ValueError) as e:
@@ -388,7 +388,7 @@ class TestChangeFeed:
                 start_time=round_time(),
                 change_feed_mode=change_feed_mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode does not support 'start_time'. Please use 'continuation' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
 
         # Error if too many positional arguments
         with pytest.raises(ValueError) as e:
@@ -429,6 +429,20 @@ class TestChangeFeed:
                 continuation="123",
             )
         assert str(e.value) == "'continuation' is in both positional and keyword argument list. Please remove one of them."
+
+        # Error if continuation is missing 'change_feed_mode'
+        with pytest.raises(ValueError) as e:
+            continuation_json = {
+                "containerRid": "",
+                "startFrom": {'Type': 'Now'},
+                "continuation": {'Range': {'isMaxInclusive': False, 'isMinInclusive': True, 'max': 'FF', 'min': ''}, 'continuation': [{'range': {'isMaxInclusive': False, 'isMinInclusive': True, 'max': '1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 'min': ''}, 'token': '"1"'}, {'range': {'isMaxInclusive': False, 'isMinInclusive': True, 'max': 'FF', 'min': '1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'}, 'token': '"1"'}], 'rid': 'ksMfAMrReEg=', 'v': 'v2'},
+            }
+            ChangeFeedStateV2.from_continuation(
+                container_link="",
+                container_rid="",
+                continuation_json=continuation_json,
+            )
+        assert str(e.value) == "Invalid continuation: [Missing mode]"
 
 if __name__ == "__main__":
     unittest.main()

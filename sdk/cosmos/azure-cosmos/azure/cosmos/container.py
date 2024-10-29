@@ -29,7 +29,7 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedState
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._base import (
@@ -329,7 +329,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -353,7 +353,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -369,7 +369,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
 
@@ -391,7 +391,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -406,7 +406,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -423,7 +423,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -438,7 +438,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -460,7 +460,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -496,7 +496,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :param Any args: args

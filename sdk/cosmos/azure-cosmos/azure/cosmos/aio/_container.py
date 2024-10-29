@@ -29,7 +29,7 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedState
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -508,7 +508,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -532,7 +532,7 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -547,7 +547,7 @@ class ContainerProxy:
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -569,7 +569,7 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -583,7 +583,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -600,7 +600,7 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -615,7 +615,7 @@ class ContainerProxy:
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedState] = None,
+            change_feed_mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -637,7 +637,7 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -673,7 +673,7 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
                                       or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedState]
+        :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :param Any args: args
         :returns: An Iterable of items (dicts).

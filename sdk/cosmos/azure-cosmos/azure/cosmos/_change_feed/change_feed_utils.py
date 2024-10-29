@@ -83,20 +83,17 @@ def validate_kwargs(
 
     :param kwargs: Keyword arguments to verify for query_items_change_feed API
     :keyword change_feed_mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
-        If the value was 'ALL_VERSIONS_AND_DELETES', the following keywords cannot be used:
-            - 'partition_key_range_id'
-            - 'is_start_from_beginning'
-            - 'start_time'
-    :type change_feed_mode: ChangeFeedState
+        If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right condition:
+            - 'partition_key_range_id': Cannot be used at any time
+            - 'is_start_from_beginning': Must be 'False'
+            - 'start_time': Must be "Now"
+    :type change_feed_mode: ChangeFeedMode
     :keyword partition_key_range_id: Deprecated Warning.
     :type partition_key_range_id: str
     :keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
     :type is_start_from_beginning: bool
     :keyword start_time: Must be in supported types.
     :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-
-
-
     :type kwargs: dict[str, Any]
     """
     # Filter items with value None
@@ -113,17 +110,16 @@ def validate_kwargs(
         if change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             if "partition_key_range_id" in kwargs:
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported with 'partition_key_range_id'."
-                    f" Please use 'feed_range' instead.")
-            if "is_start_from_beginning" in kwargs:
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported if 'partition_key_range_id'"
+                    f" was used. Please use 'feed_range' instead.")
+            if "is_start_from_beginning" in kwargs and kwargs["is_start_from_beginning"] != False:
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'is_start_from_beginning'."
-                    f" Please use 'continuation' instead.")
-            if "start_time" in kwargs:
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is only supported if 'is_start_from_beginning'"
+                    f" is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")
+            if "start_time" in kwargs and kwargs["start_time"] != "Now":
                 raise ValueError(
-                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode does not support 'start_time'."
-                    f" Please use 'continuation' instead.")
-
+                    f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is only supports if 'start_time' is 'Now'."
+                    f" Please use 'start_time=\"Now\"' or 'continuation' instead.")
 
     if "partition_key_range_id" in kwargs:
         warnings.warn(
