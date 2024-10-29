@@ -80,7 +80,7 @@ from ...operations._operations import (
     build_diagnostics_get_app_insights_request,
     build_evaluations_create_or_replace_schedule_request,
     build_evaluations_create_request,
-    build_evaluations_delete_schedule_request,
+    build_evaluations_disable_schedule_request,
     build_evaluations_get_request,
     build_evaluations_get_schedule_request,
     build_evaluations_list_request,
@@ -6141,11 +6141,10 @@ class EvaluationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_schedule(self, name: str, **kwargs: Any) -> None:
-        """Resource delete operation template.
+    async def disable_schedule(self, name: str, **kwargs: Any) -> None:
+        """Disable the evaluation schedule.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
+        :param name: Name of the evaluation schedule. Required.
         :type name: str
         :return: None
         :rtype: None
@@ -6164,7 +6163,7 @@ class EvaluationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluations_delete_schedule_request(
+        _request = build_evaluations_disable_schedule_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6191,10 +6190,5 @@ class EvaluationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore

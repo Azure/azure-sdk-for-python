@@ -1052,8 +1052,6 @@ class EvaluationSchedule(_model_base.Model):
     :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar trigger: Trigger for the evaluation. Required.
     :vartype trigger: ~azure.ai.projects.models.Trigger
-    :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
-    :vartype sampling_strategy: ~azure.ai.projects.models.SamplingStrategy
     """
 
     name: str = rest_field(visibility=["read"])
@@ -1076,8 +1074,6 @@ class EvaluationSchedule(_model_base.Model):
     """Evaluators to be used for the evaluation. Required."""
     trigger: "_models.Trigger" = rest_field()
     """Trigger for the evaluation. Required."""
-    sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
-    """Sampling strategy for the evaluation. Required."""
 
     @overload
     def __init__(
@@ -1086,7 +1082,6 @@ class EvaluationSchedule(_model_base.Model):
         data: "_models.ApplicationInsightsConfiguration",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         trigger: "_models.Trigger",
-        sampling_strategy: "_models.SamplingStrategy",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -4670,35 +4665,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
-
-
-class SamplingStrategy(_model_base.Model):
-    """SamplingStrategy Definition.
-
-
-    :ivar rate: Sampling rate. Required.
-    :vartype rate: float
-    """
-
-    rate: float = rest_field()
-    """Sampling rate. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        rate: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
