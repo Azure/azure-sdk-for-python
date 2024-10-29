@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# cspell:ignore toint
 from datetime import datetime, timezone
 
 from azure.monitor.query import LogsQueryClient

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# cspell:ignore wbits
 import json
 import random
 import string
@@ -20,7 +21,7 @@ from azure.monitor.ingestion._helpers import (
 
 ALPHANUMERIC_CHARACTERS = string.ascii_letters + string.digits
 
-random.seed(42)  # For repeatibility
+random.seed(42)  # For repeatability
 
 
 def _get_random_string(length: int):
