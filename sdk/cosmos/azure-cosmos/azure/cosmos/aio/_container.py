@@ -686,19 +686,19 @@ class ContainerProxy:
 
         change_feed_state_context = {}
         if "change_feed_mode" in kwargs:
-            change_feed_state_context["changeFeedMode"] = kwargs["change_feed_mode"]
+            change_feed_state_context["changeFeedMode"] = kwargs.pop("change_feed_mode")
         if "partition_key_range_id" in kwargs:
-            change_feed_state_context["partitionKeyRangeId"] = kwargs["partition_key_range_id"]
-        if "is_start_from_beginning" in kwargs and kwargs['is_start_from_beginning'] is True:
+            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
+        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
             change_feed_state_context["startTime"] = "Beginning"
         elif "start_time" in kwargs:
-            change_feed_state_context["startTime"] = kwargs["start_time"]
+            change_feed_state_context["startTime"] = kwargs.pop("start_time")
         if "partition_key" in kwargs:
-            partition_key = kwargs["partition_key"]
+            partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
         if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs['feed_range']
+            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
@@ -713,7 +713,8 @@ class ContainerProxy:
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook)
+            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
