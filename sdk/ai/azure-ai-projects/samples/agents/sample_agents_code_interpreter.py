@@ -25,7 +25,7 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import MessageAttachment, MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
+from azure.ai.projects.models import MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
@@ -60,7 +60,7 @@ with project_client:
 
     # create a message
     message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit and provide file to me?"
+        thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?"
     )
     print(f"Created message, message ID: {message.id}")
 
@@ -74,9 +74,6 @@ with project_client:
     project_client.agents.delete_file(file.id)
     print("Deleted file")
 
-    project_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
-
     messages = project_client.agents.get_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
@@ -86,6 +83,8 @@ with project_client:
 
     for image_content in messages.image_contents:
         print(f"Image File ID: {image_content.image_file.file_id}")
+        project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name="image_file.png")
+        print(f"Saved image file")
 
     for annotation in messages.file_annotations:
         print(f"File Annotations:")
@@ -100,6 +99,8 @@ with project_client:
             print(f"Type: {annotation_type}")
             print(f"Text: {annotation.text}")
             print(f"File ID: {annotation.file_path.file_id}")
-            project_client.agents.save_file(file_id=file.id, file_name=Path(annotation.text).name)
         print(f"Start Index: {annotation.start_index}")
         print(f"End Index: {annotation.end_index}")
+
+    project_client.agents.delete_agent(agent.id)
+    print("Deleted agent")

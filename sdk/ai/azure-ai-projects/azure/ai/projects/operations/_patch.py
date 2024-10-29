@@ -2077,7 +2077,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         # Get file content
         try:
-            file_content = self.get_file_content(file_id)
+            file_content = self.get_file_content(file_id, stream=True)
             if not file_content:
                 error_msg = f"No content retrieved for file ID '{file_id}'."
                 logger.error(error_msg)
@@ -2090,11 +2090,18 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Path to save the file
         target_file_path = path / file_name
 
-        # Write file content
+        # Write file content directly from the generator, ensuring each chunk is bytes
         try:
             with target_file_path.open("wb") as file:
-                file.write(file_content.content)
+                for chunk in file_content:  # file_content should be an iterable of bytes
+                    if isinstance(chunk, (bytes, bytearray)):
+                        file.write(chunk)  # write expects a buffer of bytes or bytearray
+                    else:
+                        raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
             logger.debug(f"File '{file_name}' saved successfully at '{target_file_path}'.")
+        except TypeError as e:
+            logger.error(f"Failed due to unexpected chunk type: {e}")
+            raise
         except IOError as e:
             error_msg = f"Failed to write to file '{target_file_path}': {e}"
             logger.error(error_msg)
