@@ -68,7 +68,7 @@ outputs = asyncio.run(custom_simulator(
   - `SimilarityEvaluator`
   - `RetrievalEvaluator`
 - The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
-
+    
     | Evaluator | New Token Limit |
     | --- | --- |
     | `CoherenceEvaluator` | 800 |
