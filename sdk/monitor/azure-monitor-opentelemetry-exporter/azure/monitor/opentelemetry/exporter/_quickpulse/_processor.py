@@ -20,7 +20,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         pass
 
     def force_flush(self, timeout_millis: int = 30000):
-        super().force_flush(timeout_millis=timeout_millis)
+        super().force_flush(timeout_millis=timeout_millis)  # type: ignore
 
 
 # pylint: disable=protected-access

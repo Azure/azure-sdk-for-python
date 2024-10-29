@@ -155,6 +155,7 @@ class _ExceptionData(_TelemetryData):
     stack_trace: str
 
     @staticmethod
+    @no_type_check
     def _from_log_record(log_record: LogRecord):
         return _ExceptionData(
             message=str(log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
@@ -168,6 +169,7 @@ class _TraceData(_TelemetryData):
     message: str
 
     @staticmethod
+    @no_type_check
     def _TraceData(log_record: LogRecord):
         return _TraceData(
             message=str(log_record.body),
