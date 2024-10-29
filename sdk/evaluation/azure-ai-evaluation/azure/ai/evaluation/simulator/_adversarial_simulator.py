@@ -276,6 +276,9 @@ class AdversarialSimulator:
             "target_population",
             "topic",
             "ch_template_placeholder",
+            "chatbot_name",
+            "name",
+            "group",
         ):
             template_parameters.pop(key, None)
         if conversation_category:
