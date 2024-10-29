@@ -1,10 +1,10 @@
 # Release History
 
-## 9.1.1 (2024-10-25)
+## 10.0.0 (2024-10-29)
 
-### Other Changes
+### Breaking Changes
 
-  - This package is converted to single-api package which only contain one kind of api version. After this change, the package size will be much smaller then before. Since most of users actually only use the API of default api-version, you won't even feel the change.
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
 
 ## 9.1.0 (2024-07-03)
 
