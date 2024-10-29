@@ -21,19 +21,15 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
-        response = self.client.container_apps.list_by_subscription(
-            api_version="2024-03-01",
-        )
+        response = self.client.container_apps.list_by_subscription()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_resource_group(self, resource_group):
         response = self.client.container_apps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
         )
         result = [r for r in response]
         assert result == []

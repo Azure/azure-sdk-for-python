@@ -23,9 +23,12 @@ def run_black(glob_string, service_dir):
     results = []
     logging.info("Running black for {}".format(service_dir))
 
-    discovered_packages = discover_targeted_packages(
-        glob_string, os.path.join(root_dir, "sdk", service_dir)
-    )
+    if service_dir and service_dir != "auto":
+        target_dir = os.path.join(root_dir, "sdk", service_dir)
+    else:
+        target_dir = root_dir
+
+    discovered_packages = discover_targeted_packages(glob_string, target_dir)
 
     for package in discovered_packages:
         package_name = os.path.basename(package)
@@ -43,7 +46,7 @@ def run_black(glob_string, service_dir):
                     "-e",
                     "black",
                     "--",
-                    os.path.join("sdk", service_dir, package_name),
+                    package,
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
