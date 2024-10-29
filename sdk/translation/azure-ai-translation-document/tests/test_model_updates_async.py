@@ -15,6 +15,7 @@ from azure.ai.translation.document.aio import DocumentTranslationClient
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
+
 class TestModelUpdates(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -24,6 +25,7 @@ class TestModelUpdates(AsyncDocumentTranslationTest):
         variables = kwargs.pop("variables", {})
 
         docs_count = 2
-        await self._prepare_and_validate_start_translation_details_async(client, docs_count, wait=False, variables=variables)
-        return variables    
-    
+        await self._prepare_and_validate_start_translation_details_async(
+            client, docs_count, wait=False, variables=variables
+        )
+        return variables

@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
 
 from tqdm import tqdm
 
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -21,7 +22,6 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from ._constants import SupportedLanguages
 from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
 from ._conversation._conversation import simulate_conversation
-from ._helpers import experimental
 from ._model_tools import (
     AdversarialTemplateHandler,
     ManagedIdentityAPITokenManager,
@@ -276,6 +276,9 @@ class AdversarialSimulator:
             "target_population",
             "topic",
             "ch_template_placeholder",
+            "chatbot_name",
+            "name",
+            "group",
         ):
             template_parameters.pop(key, None)
         if conversation_category:

@@ -131,11 +131,11 @@ class Hub(Workspace):
         return HubSchema
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Hub"]:
+    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None) -> Optional["Hub"]:
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj, v2_service_context)
 
         default_resource_group = None
 

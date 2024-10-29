@@ -25,7 +25,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.volume_groups.list_by_net_app_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2024-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -84,6 +84,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                                 "replication": {
                                     "remoteVolumeResourceId": "str",
                                     "endpointType": "str",
+                                    "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                                     "remoteVolumeRegion": "str",
                                     "replicationId": "str",
                                     "replicationSchedule": "str",
@@ -95,6 +96,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                             "defaultGroupQuotaInKiBs": 0,
                             "defaultUserQuotaInKiBs": 0,
                             "deleteBaseSnapshot": bool,
+                            "effectiveNetworkFeatures": "Basic",
                             "enableSubvolumes": "Disabled",
                             "encrypted": bool,
                             "encryptionKeySource": "Microsoft.NetApp",
@@ -167,7 +169,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                         }
                     ],
                 },
-                api_version="2024-03-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -182,7 +184,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 account_name="str",
                 volume_group_name="str",
-                api_version="2024-03-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
