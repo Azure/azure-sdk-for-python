@@ -271,10 +271,11 @@ feed_range_from_pk = container.feed_range_from_partition_key(["GA", "Atlanta", 3
 # Figure out if a feed range is a subset of another feed range.
 # This example sees in which feed range from the container a feed range from a partition key is part of.
 # [START is_feed_range_subset]
-parent_feed_range: Dict[str, Any] = next(
-    (feed_range for feed_range in feed_ranges if container.is_feed_range_subset(feed_range, feed_range_from_pk)),
-    {}
-)
+parent_feed_range = {}
+for feed_range in feed_ranges:
+    if container.is_feed_range_subset(feed_range, feed_range_from_pk):
+        parent_feed_range = feed_range
+        break
 # [END is_feed_range_subset]
 
 # Query a sorted list of items that were changed for one feed range
