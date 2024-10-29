@@ -6,7 +6,7 @@ This guide walks you through how to investigate failures, common errors in the `
 
 - [Handle Evaluate API Errors](#handle-evaluate-api-errors)
   - [Troubleshoot Remote Tracking Issues](#troubleshoot-remote-tracking-issues)
-  - [Safety Metric Supported Regions](#safety-metric-supported-regions)
+  - [Troubleshoot Safety Evaluator Issues](#troubleshoot-safety-evaluator-issues)
 - [Handle Simulation Errors](#handle-simulation-errors)
   - [Adversarial Simulation Supported Regions](#adversarial-simulation-supported-regions)
 - [Logging](#logging)
@@ -31,9 +31,10 @@ This guide walks you through how to investigate failures, common errors in the `
 
 - Additionally, if you're using a virtual network or private link, and your evaluation run upload fails because of that, check out this [guide](https://docs.microsoft.com/azure/machine-learning/how-to-enable-studio-virtual-network#access-data-using-the-studio).
 
-### Safety Metric Supported Regions
+### Troubleshoot Safety Evaluator Issues
 
-Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaisafetyeval-regionsupport).
+- Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaisafetyeval-regionsupport).
+- If you encounter a 403 Unauthorized error when using safety evaluators, verify that you have the `Contributor` role assigned to your Azure AI project. `Contributor` role is currently required to run safety evaluations.
 
 ## Handle Simulation Errors
 
