@@ -38,16 +38,16 @@ class PromptTemplate:
         cls,
         prompt_template: str,
         api: str = "chat",
-        model_name: str | None = None
+        model_name: str = None
     ):
         return PromptTemplate(api=api, prompt_template=prompt_template, model_name=model_name, prompty=None)
 
     def __init__(
             self,
-            prompty: Prompty | None = None,
-            api: str | None = None,
-            prompt_template: str | None = None,
-            model_name: str | None = None,
+            prompty: Prompty = None,
+            api: str = None,
+            prompt_template: str = None,
+            model_name: str = None,
     ) -> None:
         self.prompty = prompty
         if self.prompty is not None:
@@ -65,7 +65,7 @@ class PromptTemplate:
         else:
             raise ValueError("Please invalid arguments for PromptConfig")
 
-    def render(self, data: dict[str, Any] | None = None, **kwargs) -> List[Dict[str, Any]]:
+    def render(self, data: dict[str, Any] = None, **kwargs) -> List[Dict[str, Any]]:
         if data is None:
             data = kwargs
 
