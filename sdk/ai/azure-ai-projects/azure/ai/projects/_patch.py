@@ -150,6 +150,7 @@ class AIProjectClient(ClientGenerated):
         self._client2 = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
+        # cSpell:disable-next-line
         _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config3 = AIProjectClientConfiguration(
             endpoint=endpoint,

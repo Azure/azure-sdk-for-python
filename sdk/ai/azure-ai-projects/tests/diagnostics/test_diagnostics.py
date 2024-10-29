@@ -17,5 +17,9 @@ class TestDiagnostics(DiagnosticsTestBase):
             assert project_client.diagnostics.connection_string == None
             assert project_client.diagnostics.enable() == True
             assert project_client.diagnostics.connection_string is not None
-            assert bool(DiagnosticsTestBase.REGEX_APPINSIGHTS_CONNECTION_STRING.match(project_client.diagnostics.connection_string))
+            assert bool(
+                DiagnosticsTestBase.REGEX_APPINSIGHTS_CONNECTION_STRING.match(
+                    project_client.diagnostics.connection_string
+                )
+            )
             assert project_client.diagnostics.enable() == True

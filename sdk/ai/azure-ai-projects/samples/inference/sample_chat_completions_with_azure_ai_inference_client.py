@@ -11,6 +11,7 @@ DESCRIPTION:
 
 USAGE:
     python sample_get_chat_completions_client.py
+    python sample_get_chat_completions_client.py
 
     Before running the sample:
 

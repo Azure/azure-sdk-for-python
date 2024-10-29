@@ -17,7 +17,9 @@ class TestInference(InferenceTestBase):
         model = kwargs.pop("azure_ai_projects_inference_tests_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-            with project_client.inference.get_azure_openai_client(api_version="2024-10-01-preview") as azure_openai_client:
+            with project_client.inference.get_azure_openai_client(
+                api_version="2024-10-01-preview"
+            ) as azure_openai_client:
                 response = azure_openai_client.chat.completions.create(
                     messages=[
                         {

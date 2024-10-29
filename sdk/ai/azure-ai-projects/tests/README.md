@@ -29,6 +29,13 @@ az login
 ```
 
 ## Setup for running tests in the `agents` folder
+**Note:** The environment variables required by the test are defined in `agentClientPreparer`. **It is important project name to be the part of environment variable!** For example, the project is `azure_ai_projects` and the variable may be called `azure_ai_projects_connection_string`. The variables without `azure_ai_projects` substrings will be ignored according to logic of `EnvironmentVariableLoader`. The values of these variables will be supplied to kwargs of the unit tests, decorated by `EnvironmentVariableLoader` function.
+
+```bash
+set PROJECT_CONNECTION_STRING_AGENTS_TESTS=<your_connection_string>
+set AZURE_AI_PROJECTS_CONNECTION_STRING=<your_connection_string>
+set AZURE_AI_PROJECTS_DATA_PATH=<your_blob_containing_product_info_1.md_from_samples>
+```
 
 ## Setup for running tests in the `evaluations` folder
 
