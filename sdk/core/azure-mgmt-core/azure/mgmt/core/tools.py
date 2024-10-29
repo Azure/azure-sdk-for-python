@@ -226,7 +226,7 @@ def get_arm_info(cloud_setting: AzureClouds) -> Dict[str, Any]:
     :param cloud_setting: The cloud setting for which to get the ARM endpoint.
     :type cloud_setting: AzureClouds
     :return: The ARM endpoint and ARM authentication scopes.
-    :rtype: dict[str, str]
+    :rtype: dict[str, Any]
     """
     if cloud_setting == AzureClouds.AZURE_CHINA_CLOUD:
         return {
@@ -236,11 +236,11 @@ def get_arm_info(cloud_setting: AzureClouds) -> Dict[str, Any]:
     if cloud_setting == AzureClouds.AZURE_US_GOVERNMENT:
         return {
             "resource_manager": "https://management.usgovcloudapi.net/",
-            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+            "credential_scopes": ["https://management.core.usgovcloudapi.net/.default"],
         }
     if cloud_setting == AzureClouds.AZURE_PUBLIC_CLOUD:
         return {
             "resource_manager": "https://management.azure.com/",
-            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+            "credential_scopes": ["https://management.azure.com/.default"],
         }
     raise ValueError("Unknown cloud setting: {}".format(cloud_setting))
