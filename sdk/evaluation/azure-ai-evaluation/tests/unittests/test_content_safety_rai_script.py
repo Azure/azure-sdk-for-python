@@ -146,7 +146,8 @@ class TestContentSafetyEvaluator:
     async def test_ensure_service_availability_service_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token")
-        assert "RAI service is not available in this region. Status Code: 9001" in str(exc_info._excinfo[1])
+        assert "RAI service is unavailable in this region" in str(exc_info._excinfo[1])
+        assert "Status Code: 9001" in str(exc_info._excinfo[1])
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
@@ -154,7 +155,9 @@ class TestContentSafetyEvaluator:
     async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
-        assert "Capability 'does not exist' is not available in this region" in str(exc_info._excinfo[1])
+        assert "The needed capability 'does not exist' is not supported by the RAI service in this region" in str(
+            exc_info._excinfo[1]
+        )
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
@@ -359,7 +362,7 @@ class TestContentSafetyEvaluator:
 
         with pytest.raises(Exception) as exc_info:
             _ = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
-        assert "Failed to retrieve the discovery service URL" in str(exc_info._excinfo[1])
+        assert "Failed to connect to your Azure AI project." in str(exc_info._excinfo[1])
 
     @pytest.mark.asyncio
     @patch(
