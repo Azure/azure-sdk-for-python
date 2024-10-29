@@ -220,12 +220,12 @@ def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseExcepti
     return False
 
 
-def get_arm_info(cloud_setting: AzureClouds) -> Dict[str, Any]:
-    """Get the ARM endpoint and ARM authentication endpoint for the given cloud setting.
+def get_arm_endpoints(cloud_setting: AzureClouds) -> Dict[str, Any]:
+    """Get the ARM endpoint and ARM credential scopes for the given cloud setting.
 
     :param cloud_setting: The cloud setting for which to get the ARM endpoint.
     :type cloud_setting: AzureClouds
-    :return: The ARM endpoint and ARM authentication scopes.
+    :return: The ARM endpoint and ARM credential scopes.
     :rtype: dict[str, Any]
     """
     if cloud_setting == AzureClouds.AZURE_CHINA_CLOUD:
