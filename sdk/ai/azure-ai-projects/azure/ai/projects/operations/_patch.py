@@ -12,7 +12,9 @@ from io import IOBase
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 from pathlib import Path
 
-# from zoneinfo import ZoneInfo
+from azure.core.exceptions import (
+    HttpResponseError,
+)
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
@@ -1975,7 +1977,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_vector_store_file_batch_and_poll(
         self,
         vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = None,
+        body: Union[JSON, IO[bytes], None] = None,
         *,
         file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -2016,6 +2018,26 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return vector_store_file_batch
     
+    @distributed_trace
+    def get_file_content_stream(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
+        """
+        Returns file content as byte stream for given file_id.
+
+        :param file_id: The ID of the file to retrieve. Required.
+        :type file_id: str
+        :return: An iterator that yields bytes from the file content.
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
+        """
+        kwargs['stream'] = True
+        
+        try:
+            response = super().get_file_content(file_id, **kwargs)
+            stream_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+            return stream_iterator
+        except HttpResponseError as e:
+            raise e
+
     @distributed_trace
     def get_messages(
         self,
@@ -2077,9 +2099,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         # Get file content
         try:
-            file_content = self.get_file_content(file_id, stream=True)
-            if not file_content:
-                error_msg = f"No content retrieved for file ID '{file_id}'."
+            file_content_stream = self.get_file_content_stream(file_id)
+            if not file_content_stream:
+                error_msg = f"No content retrievable for file ID '{file_id}'."
                 logger.error(error_msg)
                 raise RuntimeError(error_msg)
         except Exception as e:
@@ -2093,9 +2115,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Write file content directly from the generator, ensuring each chunk is bytes
         try:
             with target_file_path.open("wb") as file:
-                for chunk in file_content:  # file_content should be an iterable of bytes
+                for chunk in file_content_stream:
                     if isinstance(chunk, (bytes, bytearray)):
-                        file.write(chunk)  # write expects a buffer of bytes or bytearray
+                        file.write(chunk)
                     else:
                         raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
             logger.debug(f"File '{file_name}' saved successfully at '{target_file_path}'.")
