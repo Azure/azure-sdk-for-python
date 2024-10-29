@@ -45,14 +45,12 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         policy = _QuickpulseRedirectPolicy()
         self.assertIsNone(policy.get_redirect_location(pipeline_resp_mock))
         redirect_location = policy.get_redirect_location(pipeline_resp_mock)
- 
+
     def test_get_redirect_location_invalid_url(self):
         policy = _QuickpulseRedirectPolicy()
         pipeline_resp_mock = mock.Mock()
         http_resp_mock = mock.Mock()
-        headers = {
-            "x-ms-qps-service-endpoint-redirect-v2": "invalid_url"
-        }
+        headers = {"x-ms-qps-service-endpoint-redirect-v2": "invalid_url"}
         http_resp_mock.headers = headers
         pipeline_resp_mock.http_response = http_resp_mock
         policy = _QuickpulseRedirectPolicy()
@@ -64,7 +62,7 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         policy._qp_client_ref = qp_client_ref
         redirect_location = policy.get_redirect_location(pipeline_resp_mock)
         self.assertEqual(redirect_location, "invalid_url")
-        self.assertEqual(client_mock._base_url,"previous_url")
+        self.assertEqual(client_mock._base_url, "previous_url")
 
     def test_get_redirect_location_no_client(self):
         policy = _QuickpulseRedirectPolicy()

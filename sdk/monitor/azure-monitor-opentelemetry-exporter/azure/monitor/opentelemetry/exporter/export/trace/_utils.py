@@ -54,7 +54,7 @@ def _is_sql_db(db_system: str) -> bool:
         # spell-checker:ignore HSQLDB
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
-      )
+    )
 
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
