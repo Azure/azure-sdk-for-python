@@ -45,7 +45,6 @@ def main():
         "f1_score": f1_evaluator_config,
     }
 
-    sampling_strategy = SamplingStrategy(rate=0.2)
     name = "CANARY-ONLINE-EVAL-TEST-WS-ENV-104"
     description = "Testing Online eval command job in CANARY environment"
     tags = {"tag1": "value1", "tag2": "value2"}
@@ -57,7 +56,6 @@ def main():
         data=app_insights_config,
         evaluators=evaluators,
         trigger=recurrence_trigger,
-        sampling_strategy=sampling_strategy,
         description=description,
         tags=tags,
         properties=properties,
@@ -75,8 +73,8 @@ def main():
     for evaluation_schedule in ai_client.evaluations.list_schedule():
         print(evaluation_schedule)
 
-    # Sample for delete an evaluation schedule with name
-    ai_client.evaluations.delete_schedule(name)
+    # Sample for disable an evaluation schedule with name
+    ai_client.evaluations.disable_schedule(name)
 
 
 if __name__ == "__main__":
