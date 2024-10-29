@@ -1137,35 +1137,6 @@ class EvaluatorConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FileContentResponse(_model_base.Model):
-    """A response from a file get content operation.
-
-
-    :ivar content: The content of the file, in bytes. Required.
-    :vartype content: bytes
-    """
-
-    content: bytes = rest_field(format="base64")
-    """The content of the file, in bytes. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: bytes,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class FileDeletionStatus(_model_base.Model):
     """A status response from a file deletion operation.
 
