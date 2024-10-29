@@ -80,7 +80,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
         *args,
         **kwargs,

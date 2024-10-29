@@ -127,7 +127,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *,
         conversation: Conversation,
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]:
-        """Evaluate groundednessf for a conversation for a multi-turn evaluation. If the conversation has
+        """Evaluate groundedness for a conversation for a multi-turn evaluation. If the conversation has
         more than one turn, the evaluator will aggregate the results of each turn, with the per-turn results
         available in the output under the "evaluation_per_turn" key.
 
@@ -140,7 +140,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         """
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
         *args,
         **kwargs,

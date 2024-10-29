@@ -84,7 +84,7 @@ class QAEvaluator:
         :return: The scores for QA scenario.
         :rtype: Dict[str, Union[str, float]]
         """
-        results: Dict[str, float] = {}
+        results: Dict[str, Union[str, float]] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {

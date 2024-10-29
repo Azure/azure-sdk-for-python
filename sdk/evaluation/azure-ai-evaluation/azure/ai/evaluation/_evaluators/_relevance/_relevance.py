@@ -87,7 +87,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         """
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
         *args,
         **kwargs,

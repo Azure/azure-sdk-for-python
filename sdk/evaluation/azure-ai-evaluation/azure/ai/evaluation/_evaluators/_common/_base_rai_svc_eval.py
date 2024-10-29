@@ -50,7 +50,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._credential = credential
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
         *args,
         **kwargs,
@@ -105,7 +105,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
-        return await evaluate_with_rai_service(
+        return await evaluate_with_rai_service(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
             project_scope=self._azure_ai_project,
