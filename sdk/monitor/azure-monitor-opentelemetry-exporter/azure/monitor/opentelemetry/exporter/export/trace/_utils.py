@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from typing import Optional, Tuple
+from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
@@ -75,6 +75,7 @@ def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     return None
 
 
+@no_type_check
 def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
     url = None
     if attributes:
@@ -108,19 +109,20 @@ def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] =
                         peer_port,
                         http_target,
                     )
-    return url
+    return url  # type: ignore
 
 
+@no_type_check
 def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str]:
     target = ""
     if attributes:
         if SpanAttributes.PEER_SERVICE in attributes:
-            target = attributes[SpanAttributes.PEER_SERVICE]
+            target = attributes[SpanAttributes.PEER_SERVICE]  # type: ignore
         else:
             if SpanAttributes.NET_PEER_NAME in attributes:
-                target = attributes[SpanAttributes.NET_PEER_NAME]
+                target = attributes[SpanAttributes.NET_PEER_NAME]  # type: ignore
             elif SpanAttributes.NET_PEER_IP in attributes:
-                target = attributes[SpanAttributes.NET_PEER_IP]
+                target = attributes[SpanAttributes.NET_PEER_IP]  # type: ignore
             if SpanAttributes.NET_PEER_PORT in attributes:
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
@@ -130,9 +132,10 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                     str(attributes.get(SpanAttributes.HTTP_SCHEME))) and \
                     port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
-    return target
+    return target  # type: ignore
 
 
+@no_type_check
 def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
     target: Optional[str],
@@ -174,6 +177,7 @@ def _get_target_and_path_for_http_dependency(
     return (target, path)
 
 
+@no_type_check
 def _get_target_for_db_dependency(
     target: Optional[str],
     db_system: Optional[str],
@@ -191,6 +195,7 @@ def _get_target_for_db_dependency(
     return target
 
 
+@no_type_check
 def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
         if not target:
@@ -198,10 +203,10 @@ def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attr
                 target = str(attributes[SpanAttributes.MESSAGING_DESTINATION])
             elif SpanAttributes.MESSAGING_SYSTEM in attributes:
                 target = str(attributes[SpanAttributes.MESSAGING_SYSTEM])
-    
     return target
 
 
+@no_type_check
 def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
         if not target:

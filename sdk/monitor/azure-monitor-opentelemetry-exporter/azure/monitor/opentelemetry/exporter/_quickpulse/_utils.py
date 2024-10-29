@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 from datetime import datetime, timedelta, timezone
 import json
-import sys
 from typing import Dict, List, Optional, Tuple, Union
 
 from opentelemetry.sdk._logs import LogData
@@ -82,15 +81,15 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
     # Process filtered metrics
     for metric in _get_metrics_from_projections():
         metric_point = MetricPoint(
-            name=metric[0],
+            name=metric[0],  # type: ignore
             weight=1,
-            value=metric[1],
+            value=metric[1],  # type: ignore
         )
         metric_points.append(metric_point)
 
     # Reset projection map for next collection cycle
     _reset_quickpulse_projection_map()
-    
+
 
     return [
         MonitoringDataPoint(
@@ -230,7 +229,7 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
 # Derives metrics from projections if applicable to current filters in config
 def _derive_metrics_from_telemetry_data(data: _TelemetryData):
     metric_infos_dict = _get_quickpulse_derived_metric_infos()
-    metric_infos = []
+    metric_infos = []  # type: ignore
     if isinstance(data, _RequestData):
         metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)
     elif isinstance(data, _DependencyData):
@@ -256,11 +255,12 @@ def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _Telemetr
     return match
 
 
+# pylint: disable=unused-argument
 def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
-    # All of the filters need to match for this to return true (and operation).
-    for filter in filters:
-        # TODO: apply filter logic
-        pass
+    # # All of the filters need to match for this to return true (and operation).
+    # for filter in filters:
+    #     # TODO: apply filter logic
+    #     pass
     return True
 
 
@@ -291,7 +291,7 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
         if metric_info.projection == _QUICKPULSE_PROJECTION_COUNT:
             value = 1
         elif metric_info.projection == _QUICKPULSE_PROJECTION_DURATION:
-            if isinstance(data, _RequestData) or isinstance(data, _DependencyData):
+            if isinstance(data, (_DependencyData, _RequestData)):
                 value = data.duration
             else:
                 continue
@@ -302,7 +302,7 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
                 value = float(dim_value)
             except ValueError:
                 continue
-            
+
         aggregate: Optional[Tuple[float, int]] = _calculate_aggregation(
             AggregationType(metric_info.aggregation),
             metric_info.id,
@@ -352,4 +352,4 @@ def _get_metrics_from_projections() -> List[Tuple[str, float]]:
         elif aggregation_type == AggregationType.SUM:
             metric_value = projection[1]
         metrics.append((id, metric_value))
-    return metrics
+    return metrics  # type: ignore

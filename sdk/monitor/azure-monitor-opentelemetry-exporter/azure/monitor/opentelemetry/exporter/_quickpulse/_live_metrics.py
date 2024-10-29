@@ -202,7 +202,7 @@ class _QuickpulseManager(metaclass=Singleton):
                     data = _TelemetryData._from_span(span)
                     _derive_metrics_from_telemetry_data(data)
                     # TODO: derive exception metrics from span events
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording span.")
 
 
@@ -226,7 +226,7 @@ class _QuickpulseManager(metaclass=Singleton):
                         # Derive metrics for quickpulse filtering
                         data = _TelemetryData._from_log_record(log_record)
                         _derive_metrics_from_telemetry_data(data)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording log record.")
 
 
