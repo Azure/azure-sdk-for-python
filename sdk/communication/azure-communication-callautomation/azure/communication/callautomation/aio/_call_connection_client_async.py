@@ -415,7 +415,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @overload
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: List['CommunicationIdentifier'],
         *,
@@ -456,7 +456,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @overload
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Literal["all"] = 'all',
         *,
@@ -498,7 +498,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         **kwargs
@@ -516,7 +516,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     async def _play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
@@ -577,7 +577,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
         loop: bool = False,
