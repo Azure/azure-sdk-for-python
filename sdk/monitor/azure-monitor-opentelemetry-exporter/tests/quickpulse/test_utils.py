@@ -65,8 +65,8 @@ class TestUtils(unittest.TestCase):
             0,
             2,
             10,
-            [1,1,0],
-            [0,10,20],
+            [1, 1, 0],
+            [0, 10, 20],
             0,
             5,
         )
@@ -79,11 +79,7 @@ class TestUtils(unittest.TestCase):
         resource_metric.scope_metrics = [scope_metric]
         metric_data = mock.Mock()
         metric_data.resource_metrics = [resource_metric]
-        metric_point = MetricPoint(
-            name=_COMMITTED_BYTES_NAME[1],
-            weight=1,
-            value=5
-        )
+        metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=5)
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now
@@ -114,11 +110,7 @@ class TestUtils(unittest.TestCase):
         resource_metric.scope_metrics = [scope_metric]
         metric_data = mock.Mock()
         metric_data.resource_metrics = [resource_metric]
-        metric_point = MetricPoint(
-            name=_COMMITTED_BYTES_NAME[1],
-            weight=1,
-            value=7
-        )
+        metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=7)
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now
@@ -237,7 +229,9 @@ class TestUtils(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._init_derived_metric_projection")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.DerivedMetricInfo")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._clear_quickpulse_projection_map")
-    def test_update_filter_configuration(self, clear_mock, dict_mock, init_projection_mock, set_metric_info_mock, etag_mock):
+    def test_update_filter_configuration(
+        self, clear_mock, dict_mock, init_projection_mock, set_metric_info_mock, etag_mock
+    ):
         etag = "new-etag"
         test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
         test_config_dict = json.loads(test_config_bytes.decode()).get("Metrics")[0]
@@ -343,7 +337,7 @@ class TestUtils(unittest.TestCase):
         metric_info.id = "mock_id"
         metric_info.projection = "Count()"
         metric_info.aggregation = AggregationType.SUM
-        aggregation_mock.return_value = (1,2)
+        aggregation_mock.return_value = (1, 2)
         _create_projections([metric_info], data_mock)
         aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 1)
         set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 1, 2)
@@ -363,7 +357,7 @@ class TestUtils(unittest.TestCase):
         metric_info.id = "mock_id"
         metric_info.projection = "Duration"
         metric_info.aggregation = AggregationType.SUM
-        aggregation_mock.return_value = (6.0,2)
+        aggregation_mock.return_value = (6.0, 2)
         _create_projections([metric_info], data_mock)
         aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 5.0)
         set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 6.0, 2)
@@ -379,7 +373,7 @@ class TestUtils(unittest.TestCase):
         metric_info.id = "mock_id"
         metric_info.projection = "CustomDimensions.test-key"
         metric_info.aggregation = AggregationType.SUM
-        aggregation_mock.return_value = (8.2,2)
+        aggregation_mock.return_value = (8.2, 2)
         _create_projections([metric_info], data_mock)
         aggregation_mock.assert_called_once_with(AggregationType.SUM, "mock_id", 6.7)
         set_map_mock.assert_called_once_with("mock_id", AggregationType.SUM, 8.2, 2)
@@ -425,5 +419,10 @@ class TestUtils(unittest.TestCase):
         metric_tuples = _get_metrics_from_projections()
         self.assertEqual(
             metric_tuples,
-            [("test-id", 3.0),("test-id2", 5.0),("test-id3", 2.0),("test-id4", 4.0),]
+            [
+                ("test-id", 3.0),
+                ("test-id2", 5.0),
+                ("test-id3", 2.0),
+                ("test-id4", 4.0),
+            ],
         )

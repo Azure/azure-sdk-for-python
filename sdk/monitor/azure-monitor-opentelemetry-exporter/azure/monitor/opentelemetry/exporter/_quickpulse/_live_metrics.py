@@ -49,7 +49,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_quickpulse_last_process_time,
     _set_quickpulse_process_elapsed_time,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._types import  _TelemetryData
+from azure.monitor.opentelemetry.exporter._quickpulse._types import _TelemetryData
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _derive_metrics_from_telemetry_data,
     _get_log_record_document,
@@ -71,6 +71,7 @@ _logger = logging.getLogger(__name__)
 PROCESS = psutil.Process()
 NUM_CPUS = psutil.cpu_count()
 
+
 def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     """Live metrics entry point.
 
@@ -91,7 +92,7 @@ class _QuickpulseManager(metaclass=Singleton):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         self._exporter = _QuickpulseExporter(**kwargs)
         part_a_fields = {}
-        resource = kwargs.get('resource')
+        resource = kwargs.get("resource")
         if not resource:
             resource = Resource.create({})
         part_a_fields = _populate_part_a_fields(resource)
@@ -115,42 +116,28 @@ class _QuickpulseManager(metaclass=Singleton):
         self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
 
         self._request_duration = self._meter.create_histogram(
-            _REQUEST_DURATION_NAME[0],
-            "ms",
-            "live metrics avg request duration in ms"
+            _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
         self._dependency_duration = self._meter.create_histogram(
-            _DEPENDENCY_DURATION_NAME[0],
-            "ms",
-            "live metrics avg dependency duration in ms"
+            _DEPENDENCY_DURATION_NAME[0], "ms", "live metrics avg dependency duration in ms"
         )
         # We use a counter to represent rates per second because collection
         # interval is one second so we simply need the number of requests
         # within the collection interval
         self._request_rate_counter = self._meter.create_counter(
-            _REQUEST_RATE_NAME[0],
-            "req/sec",
-            "live metrics request rate per second"
+            _REQUEST_RATE_NAME[0], "req/sec", "live metrics request rate per second"
         )
         self._request_failed_rate_counter = self._meter.create_counter(
-            _REQUEST_FAILURE_RATE_NAME[0],
-            "req/sec",
-            "live metrics request failed rate per second"
+            _REQUEST_FAILURE_RATE_NAME[0], "req/sec", "live metrics request failed rate per second"
         )
         self._dependency_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_RATE_NAME[0],
-            "dep/sec",
-            "live metrics dependency rate per second"
+            _DEPENDENCY_RATE_NAME[0], "dep/sec", "live metrics dependency rate per second"
         )
         self._dependency_failure_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_FAILURE_RATE_NAME[0],
-            "dep/sec",
-            "live metrics dependency failure rate per second"
+            _DEPENDENCY_FAILURE_RATE_NAME[0], "dep/sec", "live metrics dependency failure rate per second"
         )
         self._exception_rate_counter = self._meter.create_counter(
-            _EXCEPTION_RATE_NAME[0],
-            "exc/sec",
-            "live metrics exception rate per second"
+            _EXCEPTION_RATE_NAME[0], "exc/sec", "live metrics exception rate per second"
         )
         self._process_memory_gauge_old = self._meter.create_observable_gauge(
             _COMMITTED_BYTES_NAME[0],
@@ -168,7 +155,6 @@ class _QuickpulseManager(metaclass=Singleton):
             _PROCESS_TIME_NORMALIZED_NAME[0],
             [_get_process_time_normalized],
         )
-
 
     def _record_span(self, span: ReadableSpan) -> None:
         # Only record if in post state
@@ -204,7 +190,6 @@ class _QuickpulseManager(metaclass=Singleton):
                     # TODO: derive exception metrics from span events
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording span.")
-
 
     def _record_log_record(self, log_data: LogData) -> None:
         # Only record if in post state
@@ -267,5 +252,6 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
 # pylint: disable=unused-argument
 def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(_get_quickpulse_last_process_cpu(), {})
+
 
 # cSpell:enable

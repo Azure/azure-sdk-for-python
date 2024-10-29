@@ -18,10 +18,12 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     TelemetryType,
 )
 
+
 class _QuickpulseState(Enum):
     """Current state of quickpulse service.
     The numerical value represents the ping/post interval in ms for those states.
     """
+
     OFFLINE = 0
     PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
     PING_LONG = _LONG_PING_INTERVAL_SECONDS
@@ -84,10 +86,7 @@ def is_quickpulse_enabled() -> bool:
 
 
 def _is_ping_state() -> bool:
-    return _get_global_quickpulse_state() in (
-        _QuickpulseState.PING_SHORT,
-        _QuickpulseState.PING_LONG
-    )
+    return _get_global_quickpulse_state() in (_QuickpulseState.PING_SHORT, _QuickpulseState.PING_LONG)
 
 
 def _is_post_state():
@@ -113,7 +112,9 @@ def _get_and_clear_quickpulse_documents() -> List[DocumentIngress]:
     _QUICKPULSE_DOCUMENTS = []
     return documents
 
+
 # Filtering
+
 
 # Used for etag configuration
 def _set_quickpulse_etag(etag: str) -> None:

@@ -11,6 +11,7 @@ from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 
+
 @dataclass
 class _TelemetryData:
     custom_dimensions: Dict[str, str]
@@ -42,7 +43,7 @@ class _RequestData(_TelemetryData):
     @staticmethod
     @no_type_check
     def _from_span(span: ReadableSpan):
-    # Logic should match that of exporter to Breeze
+        # Logic should match that of exporter to Breeze
         url = ""
         duration_ms = 0
         response_code = 0
@@ -57,7 +58,7 @@ class _RequestData(_TelemetryData):
             status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
-                    status_code = int(status_code) # type: ignore
+                    status_code = int(status_code)  # type: ignore
                 except ValueError:
                     status_code = 0
             else:
@@ -146,6 +147,7 @@ class _DependencyData(_TelemetryData):
             data=data,
             custom_dimensions=attributes,
         )
+
 
 @dataclass
 class _ExceptionData(_TelemetryData):

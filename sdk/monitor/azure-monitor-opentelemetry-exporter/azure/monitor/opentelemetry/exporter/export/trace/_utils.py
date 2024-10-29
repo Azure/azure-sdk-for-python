@@ -54,7 +54,7 @@ def _is_sql_db(db_system: str) -> bool:
         # spell-checker:ignore HSQLDB
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
-      )
+    )
 
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
@@ -129,8 +129,8 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 # This logic assumes default ports never conflict across dependency types
                 # type: ignore
                 if port != _get_default_port_http(
-                    str(attributes.get(SpanAttributes.HTTP_SCHEME))) and \
-                    port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                    str(attributes.get(SpanAttributes.HTTP_SCHEME))
+                ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
     return target  # type: ignore
 
@@ -140,7 +140,7 @@ def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
     target: Optional[str],
     url: Optional[str],
-    scheme: Optional[str]=None,
+    scheme: Optional[str] = None,
 ) -> Tuple[Optional[str], str]:
     target_from_url = None
     path = ""

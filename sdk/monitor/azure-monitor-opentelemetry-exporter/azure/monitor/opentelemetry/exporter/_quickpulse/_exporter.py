@@ -70,6 +70,7 @@ class _Response:
     """Response that encapsulates pipeline response and response headers from
     QuickPulse client.
     """
+
     def __init__(self, pipeline_response, deserialized, response_headers):
         self._pipeline_response = pipeline_response
         self._deserialized = deserialized
@@ -90,11 +91,11 @@ class _QuickpulseExporter(MetricExporter):
             ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
+        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._credential = kwargs.get('credential')
+        self._credential = kwargs.get("credential")
         config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
@@ -110,9 +111,7 @@ class _QuickpulseExporter(MetricExporter):
             # DistributedTracingPolicy(),
         ]
         self._client = QuickpulseClient(
-            credential=self._credential, # type: ignore
-            endpoint=self._live_endpoint,
-            policies=policies
+            credential=self._credential, endpoint=self._live_endpoint, policies=policies  # type: ignore
         )
         # Create a weakref of the client to the redirect policy so the endpoint can be
         # dynamically modified if redirect does occur
@@ -120,7 +119,7 @@ class _QuickpulseExporter(MetricExporter):
 
         MetricExporter.__init__(
             self,
-            preferred_temporality=_QUICKPULSE_METRIC_TEMPORALITIES, # type: ignore
+            preferred_temporality=_QUICKPULSE_METRIC_TEMPORALITIES,  # type: ignore
         )
 
     def export(
@@ -162,13 +161,17 @@ class _QuickpulseExporter(MetricExporter):
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             else:
-                header = post_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
+                header = post_response._response_headers.get(
+                    _QUICKPULSE_SUBSCRIBED_HEADER_NAME
+                )  # pylint: disable=protected-access
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
                 else:
                     # Check if etag has changed
-                    etag = post_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)  # pylint: disable=protected-access
+                    etag = post_response._response_headers.get(
+                        _QUICKPULSE_ETAG_HEADER_NAME
+                    )  # pylint: disable=protected-access
                     if etag and etag != configuration_etag:
                         config = post_response._pipeline_response.http_response.content
                         # Content will only be populated if configuration has changed (etag is different)
@@ -197,7 +200,6 @@ class _QuickpulseExporter(MetricExporter):
         """
         return True
 
-
     def shutdown(
         self,
         timeout_millis: float = 30_000,  # pylint: disable=unused-argument
@@ -210,7 +212,6 @@ class _QuickpulseExporter(MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-
 
     def _ping(self, monitoring_data_point: MonitoringDataPoint) -> Optional[_Response]:
         ping_response = None
@@ -284,8 +285,10 @@ class _QuickpulseMetricReader(MetricReader):
                             # config = ping_response._pipeline_response.http_response.content
                         else:
                             # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                            if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
-                                self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                            if (
+                                _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT
+                                and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS
+                            ):
                                 _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
@@ -296,10 +299,12 @@ class _QuickpulseMetricReader(MetricReader):
                 else:
                     # Erroneous ping responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                    if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
-                        self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                    if (
+                        _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT
+                        and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS
+                    ):
                         _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
-                    # Reset etag to default if error
+                        # Reset etag to default if error
                         _set_quickpulse_etag("")
         else:
             try:

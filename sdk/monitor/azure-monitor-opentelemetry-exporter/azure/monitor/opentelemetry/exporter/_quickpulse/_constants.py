@@ -17,7 +17,10 @@ _REQUEST_FAILURE_RATE_NAME = ("azuremonitor.requestsfailedsec", "\\ApplicationIn
 _REQUEST_DURATION_NAME = ("azuremonitor.requestduration", "\\ApplicationInsights\\Request Duration")
 # Dependency
 _DEPENDENCY_RATE_NAME = ("azuremonitor.dependencycallssec", "\\ApplicationInsights\\Dependency Calls/Sec")
-_DEPENDENCY_FAILURE_RATE_NAME = ("azuremonitor.dependencycallsfailedsec", "\\ApplicationInsights\\Dependency Calls Failed/Sec")  # pylint: disable=line-too-long
+_DEPENDENCY_FAILURE_RATE_NAME = (
+    "azuremonitor.dependencycallsfailedsec",
+    "\\ApplicationInsights\\Dependency Calls Failed/Sec",
+)  # pylint: disable=line-too-long
 _DEPENDENCY_DURATION_NAME = ("azuremonitor.dependencycallduration", "\\ApplicationInsights\\Dependency Call Duration")
 # Exception
 _EXCEPTION_RATE_NAME = ("azuremonitor.exceptionssec", "\\ApplicationInsights\\Exceptions/Sec")

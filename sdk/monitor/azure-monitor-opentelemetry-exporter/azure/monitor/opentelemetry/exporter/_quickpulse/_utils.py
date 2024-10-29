@@ -75,7 +75,7 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
                         metric_point = MetricPoint(
                             name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],  # type: ignore
                             weight=1,
-                            value=value
+                            value=value,
                         )
                         metric_points.append(metric_point)
     # Process filtered metrics
@@ -89,7 +89,6 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
 
     # Reset projection map for next collection cycle
     _reset_quickpulse_projection_map()
-
 
     return [
         MonitoringDataPoint(
@@ -106,6 +105,7 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
             documents=documents,
         )
     ]
+
 
 # mypy: disable-error-code="assignment,union-attr"
 def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, RequestDocument]:
@@ -138,6 +138,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
         )
     return document
 
+
 # mypy: disable-error-code="assignment"
 def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
     exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)  # type: ignore
@@ -154,6 +155,7 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
             message=log_data.log_record.body,
         )
     return document
+
 
 # mypy: disable-error-code="assignment"
 # pylint: disable=no-else-return
@@ -198,6 +200,7 @@ def _ns_to_iso8601_string(nanoseconds: int) -> str:
 
 
 # Filtering
+
 
 def _update_filter_configuration(etag: str, config_bytes: bytes):
     # Clear projection map
@@ -266,6 +269,7 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
 
 # Projections
 
+
 # Initialize metric projections per DerivedMetricInfo
 def _init_derived_metric_projection(filter_info: DerivedMetricInfo):
     derived_metric_agg_value = 0
@@ -283,6 +287,7 @@ def _init_derived_metric_projection(filter_info: DerivedMetricInfo):
         derived_metric_agg_value,
         0,
     )
+
 
 # Create projections based off of DerivedMetricInfos and current data being processed
 def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryData):
