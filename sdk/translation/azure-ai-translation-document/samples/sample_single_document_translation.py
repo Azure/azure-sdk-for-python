@@ -44,7 +44,7 @@ def sample_single_document_translation():
     document_content = (file_name, file_contents, file_type)
     document_translate_content = DocumentTranslateContent(document=document_content)
 
-    response_stream = client.document_translate(body=document_translate_content, target_language=target_languages)
+    response_stream = client.translate(body=document_translate_content, target_language=target_languages)
     translated_response = response_stream.decode("utf-8-sig")  # type: ignore[attr-defined]
     print(f"Translated response: {translated_response}")
 

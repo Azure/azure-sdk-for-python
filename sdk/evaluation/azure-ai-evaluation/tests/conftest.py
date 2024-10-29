@@ -40,7 +40,7 @@ CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json")
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 
 
-class SanitizedValues(str, Enum):
+class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
     RESOURCE_GROUP_NAME = "00000"
     WORKSPACE_NAME = "00000"
@@ -82,7 +82,7 @@ def add_sanitizers(
     def azure_workspace_triad_sanitizer():
         """Sanitize subscription, resource group, and workspace."""
         add_general_regex_sanitizer(
-            regex=r"/subscriptions/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+            regex=r"/subscriptions/([-\w\._\(\)]+)",
             value=mock_project_scope["subscription_id"],
             group_for_replace="1",
         )
@@ -461,7 +461,6 @@ def user_object_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
         return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")
@@ -474,7 +473,6 @@ def tenant_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
         return SanitizedValues.TENANT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")

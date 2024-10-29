@@ -1,7 +1,16 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
 
-## 1.0.0b5 (Unreleased)
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2024-10-28)
 
 ### Features Added
 - Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
@@ -23,6 +32,7 @@ outputs = asyncio.run(custom_simulator(
     max_conversation_turns=1,
 ))
 ```
+- Adding evaluator for multimodal use cases
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
