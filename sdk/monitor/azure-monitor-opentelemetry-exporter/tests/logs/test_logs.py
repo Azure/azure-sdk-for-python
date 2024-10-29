@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
 import os
 import platform
 import shutil
@@ -40,6 +41,11 @@ def throw(exc_type, *args, **kwargs):
         raise exc_type(*args, **kwargs)
 
     return func
+
+
+class NotSerializeableClass:
+    def __str__(self) -> str:
+        return "This class is not serializeable"
 
 
 # pylint: disable=import-error
@@ -96,6 +102,34 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
+        cls._log_data_complex_body = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body={"foo": {"bar": "baz", "qux": 42}},
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_complex_body_not_serializeable = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body=NotSerializeableClass(),
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
+            ),
+            InstrumentationScope("test_name"),
+        )
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
@@ -105,6 +139,40 @@ class TestAzureLogExporter(unittest.TestCase):
                 trace_flags=None,
                 severity_number=SeverityNumber.INFO,
                 body="Test Event",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_event_complex_body = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body={"foo": {"bar": "baz", "qux": 42}},
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_event_complex_body_not_serializeable = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body=NotSerializeableClass(),
                 resource=Resource.create(attributes={"asd": "test_resource"}),
                 attributes={
                     "event_key": "event_attribute",
@@ -326,14 +394,30 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_none)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "n/a")
+        self.assertEqual(envelope.data.base_data.message, "")
 
     def test_log_to_envelope_log_empty(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "n/a")
+        self.assertEqual(envelope.data.base_data.message, "")
+
+    def test_log_to_envelope_log_complex_body(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_complex_body)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+        self.assertEqual(envelope.data.base_data.message, json.dumps(self._log_data_complex_body.log_record.body))
+
+    def test_log_to_envelope_log_complex_body_not_serializeable(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_complex_body_not_serializeable)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+        self.assertEqual(
+            envelope.data.base_data.message, str(self._log_data_complex_body_not_serializeable.log_record.body)
+        )
 
     def test_log_to_envelope_exception_with_string_message(self):
         exporter = self._exporter
@@ -409,6 +493,26 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, record.body)
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
+    def test_log_to_envelope_event_complex_body(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_event_complex_body)
+        record = self._log_data_event_complex_body.log_record
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, "EventData")
+        self.assertEqual(envelope.data.base_data.name, json.dumps(record.body))
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
+    def test_log_to_envelope_event_complex_body_not_serializeable(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_event_complex_body_not_serializeable)
+        record = self._log_data_event_complex_body_not_serializeable.log_record
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, "EventData")
+        self.assertEqual(envelope.data.base_data.name, str(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
     def test_log_to_envelope_timestamp(self):

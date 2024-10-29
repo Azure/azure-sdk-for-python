@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
 import logging
 from typing import Optional, Sequence, Any
 
@@ -135,12 +136,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Event telemetry
     if _log_data_is_event(log_data):
-        if not log_record.body:
-            log_record.body = "n/a"
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
         data = TelemetryEventData(
-            name=str(log_record.body)[:32768],
+            name=_map_body_to_message(log_record.body),
             properties=properties,
         )
         envelope.data = MonitorBase(base_data=data, base_type="EventData")
@@ -152,7 +151,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             exc_type = "Exception"
         # Log body takes priority for message
         if log_record.body:
-            message = str(log_record.body)
+            message = _map_body_to_message(log_record.body)
         elif exc_message:
             message = exc_message  # type: ignore
         else:
@@ -164,21 +163,19 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             stack=str(stack_trace)[:32768],
         )
         data = TelemetryExceptionData(  # type: ignore
-            severity_level=severity_level,
+            severity_level=severity_level,  # type: ignore
             properties=properties,
             exceptions=[exc_details],
         )
         # pylint: disable=line-too-long
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
-        if not log_record.body:
-            log_record.body = "n/a"
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
         data = MessageData(  # type: ignore
-            message=str(log_record.body)[:32768],
-            severity_level=severity_level,
+            message=_map_body_to_message(log_record.body),
+            severity_level=severity_level,  # type: ignore
             properties=properties,
         )
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
@@ -199,6 +196,22 @@ def _get_severity_level(severity_number: Optional[SeverityNumber]):
     if severity_number is None or severity_number.value < 9:
         return 0
     return int((severity_number.value - 1) / 4 - 1)
+
+
+def _map_body_to_message(log_body: Any) -> str:
+    if not log_body:
+        return ""
+
+    if isinstance(log_body, str):
+        return log_body[:32768]
+
+    if isinstance(log_body, Exception):
+        return str(log_body)[:32768]
+
+    try:
+        return json.dumps(log_body)[:32768]
+    except:  # pylint: disable=bare-except
+        return str(log_body)[:32768]
 
 
 def _is_ignored_attribute(key: str) -> bool:

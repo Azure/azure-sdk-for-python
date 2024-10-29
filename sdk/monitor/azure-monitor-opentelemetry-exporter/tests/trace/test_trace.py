@@ -685,6 +685,41 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "messaging")
 
+    def test_span_to_envelope_client_gen_ai(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        # SpanKind.CLIENT messaging
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.RemoteDependency")
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.type, "az.ai.inference")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter
         start_time = 1575494316027613500
