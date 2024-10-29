@@ -521,7 +521,7 @@ class TestEvaluate:
 
         mapping = None
         if evaluation_config:
-            mapping = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            mapping = evaluation_config.get("question_ev", evaluation_config.get("default", {})).get("column_mapping")
         if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
