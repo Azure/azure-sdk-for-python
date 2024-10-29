@@ -34,13 +34,15 @@ from azure.core.credentials import AzureKeyCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 
- # [START trace_function]
+# [START trace_function]
 from opentelemetry.trace import get_tracer
+
 tracer = get_tracer(__name__)
+
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("get_temperature") # type: ignore
+@tracer.start_as_current_span("get_temperature")  # type: ignore
 def get_temperature(city: str) -> str:
 
     # Adding attributes to the current span
@@ -53,7 +55,9 @@ def get_temperature(city: str) -> str:
         return "80"
     else:
         return "Unavailable"
- # [END trace_function]
+
+
+# [END trace_function]
 
 
 def get_weather(city: str) -> str:
@@ -67,7 +71,13 @@ def get_weather(city: str) -> str:
 
 def chat_completion_with_function_call(key, endpoint):
     import json
-    from azure.ai.inference.models import ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+    from azure.ai.inference.models import (
+        ToolMessage,
+        AssistantMessage,
+        ChatCompletionsToolCall,
+        ChatCompletionsToolDefinition,
+        FunctionDefinition,
+    )
 
     weather_description = ChatCompletionsToolDefinition(
         function=FunctionDefinition(
@@ -104,7 +114,7 @@ def chat_completion_with_function_call(key, endpoint):
     )
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), model="gpt-4o-mini")
-    messages=[
+    messages = [
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="What is the weather and temperature in Seattle?"),
     ]
@@ -145,6 +155,7 @@ def main():
         exit()
 
     chat_completion_with_function_call(key, endpoint)
+
 
 if __name__ == "__main__":
     main()

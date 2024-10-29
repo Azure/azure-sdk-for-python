@@ -23,17 +23,19 @@ except KeyError:
 
 is_content_tracing_enabled = os.environ["AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"]
 if not is_content_tracing_enabled:
-    print(f"Content tracing is disabled. Set 'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to 'true' to record prompts and completions.")
+    print(
+        f"Content tracing is disabled. Set 'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to 'true' to record prompts and completions."
+    )
 
 tracer = trace.get_tracer(__name__)
 with tracer.start_as_current_span(name="MyApplication"):
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), model="gpt-4o-mini")
 
     # Call will be traced
-    response = client.complete(messages=[
-        UserMessage(content="Tell me a joke"),
-    ])
+    response = client.complete(
+        messages=[
+            UserMessage(content="Tell me a joke"),
+        ]
+    )
 
     print(response.choices[0].message.content)
-
-

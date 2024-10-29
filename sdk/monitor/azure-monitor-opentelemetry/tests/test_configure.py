@@ -487,9 +487,7 @@ class TestConfigure(unittest.TestCase):
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
 
-    @patch(
-        "azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations"
-    )
+    @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("azure_sdk"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.iter_entry_points")

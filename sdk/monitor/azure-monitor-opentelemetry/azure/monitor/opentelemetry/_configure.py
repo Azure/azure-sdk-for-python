@@ -231,13 +231,11 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
         return
 
     if not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
-        _logger.debug(
-            "Instrumentation skipped for library azure_sdk"
-        )
+        _logger.debug("Instrumentation skipped for library azure_sdk")
         return
 
     try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor # pylint: disable=import-error,no-name-in-module
+        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug(
             "Failed to import AIInferenceInstrumentor from azure-ai-inference",
