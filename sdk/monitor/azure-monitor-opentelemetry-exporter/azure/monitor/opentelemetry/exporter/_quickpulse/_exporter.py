@@ -170,10 +170,10 @@ class _QuickpulseExporter(MetricExporter):
                 else:
                     # Check if etag has changed
                     etag = post_response._response_headers.get(
-                        _QUICKPULSE_ETAG_HEADER_NAME
-                    )  # pylint: disable=protected-access
+                        _QUICKPULSE_ETAG_HEADER_NAME  # pylint: disable=protected-access
+                    )
                     if etag and etag != configuration_etag:
-                        config = post_response._pipeline_response.http_response.content
+                        config = post_response._pipeline_response.http_response.content  # pylint: disable=protected-access
                         # Content will only be populated if configuration has changed (etag is different)
                         if config:
                             # Update and apply configuration changes
@@ -261,6 +261,7 @@ class _QuickpulseMetricReader(MetricReader):
         self._worker.start()
 
     # pylint: disable=protected-access
+    # pylint: disable=too-many-nested-blocks
     def _ticker(self) -> None:
         if _is_ping_state():
             # Send a ping if elapsed number of request meets the threshold

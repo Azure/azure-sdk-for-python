@@ -143,6 +143,7 @@ def _get_quickpulse_derived_metric_infos() -> Dict[TelemetryType, List[DerivedMe
 # Used for initializing and setting projections when span/logs are recorded
 def _set_quickpulse_projection_map(metric_id: str, aggregation_type: AggregationType, value: float, count: int):
     # pylint: disable=global-statement
+    # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_PROJECTION_MAP
     _QUICKPULSE_PROJECTION_MAP[metric_id] = (aggregation_type, value, count)
 
@@ -172,5 +173,6 @@ def _reset_quickpulse_projection_map():
 # clears the projection map, usually called when config changes
 def _clear_quickpulse_projection_map():
     # pylint: disable=global-statement
+    # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_PROJECTION_MAP
     _QUICKPULSE_PROJECTION_MAP.clear()
