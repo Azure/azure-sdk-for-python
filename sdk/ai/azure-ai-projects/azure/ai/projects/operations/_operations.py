@@ -4911,13 +4911,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_file_content(self, file_id: str, **kwargs: Any) -> _models.FileContentResponse:
-        """Returns information about a specific file. Does not retrieve file content.
+    def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+        """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: FileContentResponse. The FileContentResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.FileContentResponse
+        :return: bytes
+        :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4931,7 +4931,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileContentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
         _request = build_agents_get_file_content_request(
             file_id=file_id,
@@ -4968,7 +4968,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FileContentResponse, response.json())
+            deserialized = _deserialize(bytes, response.json(), format="base64")
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
