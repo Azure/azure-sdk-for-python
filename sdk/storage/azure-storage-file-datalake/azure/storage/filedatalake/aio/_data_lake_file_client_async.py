@@ -391,7 +391,10 @@ class DataLakeFileClient(PathClient):
         except AttributeError:
             expiration_time = str(expires_on)
         await self._datalake_client_for_blob_operation.path.set_expiry(
-            expiry_options, expires_on=expiration_time, **kwargs)
+            expiry_options,
+            expires_on=expiration_time,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def upload_data(
