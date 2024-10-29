@@ -7,7 +7,6 @@ from ._core import Prompty
 
 from ._renderers import MustacheRenderer
 from ._parsers import PromptyChatParser
-from ._utils import load
 from ._patch import patch_sdk as _patch_sdk, PromptTemplate
 
 # Register the Mustache renderer and parser
@@ -15,7 +14,6 @@ InvokerFactory().register_renderer("mustache", MustacheRenderer)
 InvokerFactory().register_parser("prompty.chat", PromptyChatParser)
 
 __all__ = [
-    "load",
     "Prompty",
     "PromptTemplate",
 ]

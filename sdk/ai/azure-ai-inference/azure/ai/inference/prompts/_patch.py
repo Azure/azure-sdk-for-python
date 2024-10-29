@@ -7,9 +7,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import azure.ai.inference.prompts as prompts
+from typing import Any, Dict, List
 from ._core import Prompty
-from ._utils import prepare
+from ._utils import load, prepare
 from ._mustache import render
 
 
@@ -26,15 +26,16 @@ class PromptTemplate:
     :type model_name: str
     """
 
-    @staticmethod
-    def from_prompty(file_path: str):
+    @classmethod
+    def from_prompty(cls, file_path: str):
         if not file_path:
             raise ValueError("Please provide file_path")
-        prompty = prompts.load(file_path)
+        prompty = load(file_path)
         return PromptTemplate(prompty=prompty)        
     
-    @staticmethod
+    @classmethod
     def from_message(
+        cls,
         prompt_template: str,
         api: str = "chat",
         model_name: str | None = None
@@ -64,7 +65,7 @@ class PromptTemplate:
         else:
             raise ValueError("Please invalid arguments for PromptConfig")
 
-    def render(self, data: dict[str, any] | None = None, **kwargs):
+    def render(self, data: dict[str, Any] | None = None, **kwargs) -> List[Dict[str, Any]]:
         if data is None:
             data = kwargs
 
@@ -74,6 +75,8 @@ class PromptTemplate:
         elif "prompt_template" in self._parameters:
             system_prompt = render(self._parameters["prompt_template"], data)
             return [{"role": "system", "content": system_prompt}]
+        else:
+            raise ValueError("Please provide valid prompt template")
 
 
 def patch_sdk():
