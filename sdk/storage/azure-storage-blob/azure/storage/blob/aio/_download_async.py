@@ -19,7 +19,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceRequestError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -46,7 +46,14 @@ T = TypeVar('T', bytes, str)
 async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = b"".join([d async for d in data])
+    try:
+        content = b"".join([d async for d in data])
+
+    # This happens when validate_content=True, the body is already read and the stream is closed.
+    except ServiceRequestError:
+        await data.response.read()
+        content = cast(bytes, data.response.content)
+
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
