@@ -3517,7 +3517,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+    async def _get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
         """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
