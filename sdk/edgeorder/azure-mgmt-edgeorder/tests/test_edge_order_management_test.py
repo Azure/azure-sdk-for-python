@@ -24,7 +24,6 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         response = self.client.list_operations()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -32,14 +31,13 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         response = self.client.list_addresses_at_subscription_level()
         result = [r for r in response]
         assert response
-        
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_product_families_metadata(self, resource_group):
         response = self.client.list_product_families_metadata()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -47,7 +45,6 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         response = self.client.list_order_at_subscription_level()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -55,7 +52,6 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         response = self.client.list_order_items_at_subscription_level()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -65,7 +61,7 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_order_at_resource_group_level(self, resource_group):
@@ -74,7 +70,6 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -84,4 +79,3 @@ class TestEdgeOrderManagement(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert response
-        

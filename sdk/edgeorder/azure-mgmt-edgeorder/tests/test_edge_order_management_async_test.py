@@ -25,7 +25,6 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         response = self.client.list_operations()
         result = [r async for r in response]
         assert result
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -40,7 +39,6 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         response = self.client.list_product_families_metadata()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -48,7 +46,6 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         response = self.client.list_order_at_subscription_level()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -56,7 +53,6 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         response = self.client.list_order_items_at_subscription_level()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -66,7 +62,7 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_order_at_resource_group_level(self, resource_group):
@@ -75,7 +71,6 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -85,4 +80,3 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        
