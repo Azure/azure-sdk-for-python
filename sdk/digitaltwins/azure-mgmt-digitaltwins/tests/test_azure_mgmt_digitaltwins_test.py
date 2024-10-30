@@ -104,12 +104,12 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
         TSDB_CONNECTION_BODY = {
             "properties": {
                 "connectionType": "AzureDataExplorer",
-                "adxEndpointUri": "https://testclusterZikfikxz.eastus.kusto.windows.net",
+                "adxEndpointUri": f"https://{RESOURCE_NAME}.eastus.kusto.windows.net",
                 "adxDatabaseName": "myDatabase",
                 "eventHubEndpointUri": "sb://mysb.servicebus.windows.net/",
                 "eventHubEntityPath": "abcabc",
-                "adxResourceId": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testResourceGroup/providers/Microsoft.Kusto/clusters/testclusterZikfikxz",
-                "eventHubNamespaceResourceId": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testResourceGroup/providers/Microsoft.EventHub/namespaces/myEH",
+                "adxResourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/{RESOURCE_GROUP_NAME}/providers/Microsoft.Kusto/clusters/{RESOURCE_NAME}",
+                "eventHubNamespaceResourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/{RESOURCE_GROUP_NAME}/providers/Microsoft.EventHub/namespaces/myEH",
                 "identity": {"type": "UserAssigned", "userAssignedIdentity": msi_id},
             }
         }
@@ -137,6 +137,9 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
         ).result()
 
     def create_digital_twins_and_validate(self, resource_group_name, resource_name):
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
+        RESOURCE_GROUP_NAME = resource_group_name
+
         # Setup User Assigned Identity
         identity_name = self.get_resource_name("identityResource")
         if self.is_live:
@@ -145,7 +148,7 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
             )
             msi_id = msi.id
         else:
-            msi_id = f"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity_name}"
+            msi_id = f"/subscriptions/{SUBSCRIPTION_ID}/resourcegroups/{RESOURCE_GROUP_NAME}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity_name}"
 
         # Create digital twin with UserAssigned
         BODY = {
