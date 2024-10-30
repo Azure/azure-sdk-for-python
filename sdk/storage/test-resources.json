@@ -559,6 +559,18 @@
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value]"
         },
+        "OAUTH_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "AZURE_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "AZURE_STORAGE_ACCESS_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value]"
+        },
         "AZURE_STORAGE_CONNECTION_STRING": {
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
