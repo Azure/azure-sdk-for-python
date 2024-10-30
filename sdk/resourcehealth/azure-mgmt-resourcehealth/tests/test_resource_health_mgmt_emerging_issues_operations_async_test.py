@@ -25,4 +25,3 @@ class TestResourceHealthMgmtEmergingIssuesOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.emerging_issues.list()
         result = [r async for r in response]
         assert response
-        

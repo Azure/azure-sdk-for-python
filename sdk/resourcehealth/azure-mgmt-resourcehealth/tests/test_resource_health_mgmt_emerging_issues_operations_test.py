@@ -24,4 +24,3 @@ class TestResourceHealthMgmtEmergingIssuesOperations(AzureMgmtRecordedTestCase):
         response = self.client.emerging_issues.list()
         result = [r for r in response]
         assert response
-        
