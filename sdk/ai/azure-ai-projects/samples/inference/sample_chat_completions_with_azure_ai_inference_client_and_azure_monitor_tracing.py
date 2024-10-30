@@ -39,7 +39,7 @@ with AIProjectClient.from_connection_string(
         print("Application Insights was not enabled for this project.")
         print("Enable it via the 'Tracing' tab in your AI Studio project page.")
         exit()
-    configure_azure_monitor(application_insights_connection_string)
+    configure_azure_monitor(connection_string=application_insights_connection_string)
 
     # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
     with project_client.inference.get_chat_completions_client() as client:

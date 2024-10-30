@@ -24,8 +24,10 @@ class TestDiagnosticsAsync(DiagnosticsTestBase):
     async def test_diagnostics_enable_console_tracing_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             project_client.diagnostics.enable(destination=sys.stdout)
+            #TODO: Create inference client and do chat completions. How do I know if traces were emitted?
 
     @servicePreparerDiagnosticsTests()
     async def test_diagnostics_enable_otlp_tracing(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             project_client.diagnostics.enable(destination="https://some.otlp.collector.endpoint")
+            #TODO: Create inference client and do chat completions. Test proxy will log attempt at telemetry call.
