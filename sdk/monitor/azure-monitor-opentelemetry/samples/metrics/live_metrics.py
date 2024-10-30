@@ -14,10 +14,12 @@ from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 
 configure_azure_monitor(
-    resource=Resource.create({
-        "service.name": "live_metrics_service",
-        "service.instance.id": "qp_instance_id",
-    }),
+    resource=Resource.create(
+        {
+            "service.name": "live_metrics_service",
+            "service.instance.id": "qp_instance_id",
+        }
+    ),
     logger_name=__name__,
     enable_live_metrics=True,  # Enable live metrics configuration
 )

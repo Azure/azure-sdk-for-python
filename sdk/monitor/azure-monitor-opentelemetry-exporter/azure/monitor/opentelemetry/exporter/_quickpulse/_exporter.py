@@ -67,6 +67,7 @@ class _Response:
     """Response that encapsulates pipeline response and response headers from
     QuickPulse client.
     """
+
     def __init__(self, pipeline_response, deserialized, response_headers):
         self._pipeline_response = pipeline_response
         self._deserialized = deserialized
@@ -79,7 +80,7 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 class _QuickpulseExporter(MetricExporter):
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Metric exporter for Quickpulse.
 
         :param str connection_string: The connection string used for your Application Insights resource.
@@ -87,11 +88,11 @@ class _QuickpulseExporter(MetricExporter):
             ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
+        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._credential = kwargs.get('credential')
+        self._credential = kwargs.get("credential")
         config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
@@ -107,9 +108,7 @@ class _QuickpulseExporter(MetricExporter):
             # DistributedTracingPolicy(),
         ]
         self._client = QuickpulseClient(
-            credential=self._credential, # type: ignore
-            endpoint=self._live_endpoint,
-            policies=policies
+            credential=self._credential, endpoint=self._live_endpoint, policies=policies  # type: ignore
         )
         # Create a weakref of the client to the redirect policy so the endpoint can be
         # dynamically modified if redirect does occur
@@ -117,7 +116,7 @@ class _QuickpulseExporter(MetricExporter):
 
         MetricExporter.__init__(
             self,
-            preferred_temporality=_QUICKPULSE_METRIC_TEMPORALITIES, # type: ignore
+            preferred_temporality=_QUICKPULSE_METRIC_TEMPORALITIES,  # type: ignore
         )
 
     def export(
@@ -158,7 +157,9 @@ class _QuickpulseExporter(MetricExporter):
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             else:
-                header = post_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
+                header = post_response._response_headers.get(  # pylint: disable=protected-access
+                    _QUICKPULSE_SUBSCRIBED_HEADER_NAME
+                )
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
@@ -184,7 +185,6 @@ class _QuickpulseExporter(MetricExporter):
         """
         return True
 
-
     def shutdown(
         self,
         timeout_millis: float = 30_000,  # pylint: disable=unused-argument
@@ -197,7 +197,6 @@ class _QuickpulseExporter(MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-
 
     def _ping(self, monitoring_data_point: MonitoringDataPoint) -> Optional[_Response]:
         ping_response = None
@@ -252,22 +251,28 @@ class _QuickpulseMetricReader(MetricReader):
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
+                    header = ping_response._response_headers.get(  # pylint: disable=protected-access
+                        _QUICKPULSE_SUBSCRIBED_HEADER_NAME
+                    )
                     if header and header == "true":
                         # Switch state to post if subscribed
                         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
                         self._elapsed_num_seconds = 0
                     else:
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                        if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
-                            self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                        if (
+                            _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT
+                            and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS
+                        ):
                             _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                 # TODO: Implement redirect
                 else:
                     # Erroneous ping responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                    if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
-                        self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                    if (
+                        _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT
+                        and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS
+                    ):
                         _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
         else:
             try:
