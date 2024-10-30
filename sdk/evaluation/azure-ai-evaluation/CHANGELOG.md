@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.
 
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.

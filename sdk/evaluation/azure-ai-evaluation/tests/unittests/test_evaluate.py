@@ -396,14 +396,17 @@ class TestEvaluate:
 
         assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
-        output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+    @pytest.mark.parametrize("use_relative_path", [True, False])
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        if use_relative_path:
+            output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+        else:
+            output_path = "eval_test_results.jsonl"
+
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
             output_path=output_path,
-            _use_pf_client=use_pf_client,
         )
 
         assert result is not None
