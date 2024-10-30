@@ -487,6 +487,24 @@ class TestConfigure(unittest.TestCase):
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("azure_sdk"))
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
+    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    def test_setup_instrumentations_additional_azure(
+        self,
+        iter_mock,
+        enabled_mock,
+        additional_instrumentations_mock,
+    ):
+        ep_mock = Mock()
+        ep_mock.name = "azure_sdk"
+        iter_mock.return_value = (ep_mock,)
+
+        enabled_mock.return_value = True
+        _setup_instrumentations({})
+        additional_instrumentations_mock.assert_called_once()
+
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")

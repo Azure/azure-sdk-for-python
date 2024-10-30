@@ -17,7 +17,10 @@ _REQUEST_FAILURE_RATE_NAME = ("azuremonitor.requestsfailedsec", "\\ApplicationIn
 _REQUEST_DURATION_NAME = ("azuremonitor.requestduration", "\\ApplicationInsights\\Request Duration")
 # Dependency
 _DEPENDENCY_RATE_NAME = ("azuremonitor.dependencycallssec", "\\ApplicationInsights\\Dependency Calls/Sec")
-_DEPENDENCY_FAILURE_RATE_NAME = ("azuremonitor.dependencycallsfailedsec", "\\ApplicationInsights\\Dependency Calls Failed/Sec")  # pylint: disable=line-too-long
+_DEPENDENCY_FAILURE_RATE_NAME = (
+    "azuremonitor.dependencycallsfailedsec",
+    "\\ApplicationInsights\\Dependency Calls Failed/Sec",
+)  # pylint: disable=line-too-long
 _DEPENDENCY_DURATION_NAME = ("azuremonitor.dependencycallduration", "\\ApplicationInsights\\Dependency Call Duration")
 # Exception
 _EXCEPTION_RATE_NAME = ("azuremonitor.exceptionssec", "\\ApplicationInsights\\Exceptions/Sec")
@@ -44,6 +47,7 @@ _POST_INTERVAL_SECONDS = 1
 _LONG_PING_INTERVAL_SECONDS = 60
 _POST_CANCEL_INTERVAL_SECONDS = 20
 
+
 # Live metrics data types
 class _DocumentIngressDocumentType(Enum):
     Request = "Request"
@@ -51,6 +55,7 @@ class _DocumentIngressDocumentType(Enum):
     Exception = "Exception"
     Event = "Event"
     Trace = "Trace"
+
 
 # Response Headers
 

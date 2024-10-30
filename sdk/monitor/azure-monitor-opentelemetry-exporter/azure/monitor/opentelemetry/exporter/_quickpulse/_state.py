@@ -16,6 +16,7 @@ class _QuickpulseState(Enum):
     """Current state of quickpulse service.
     The numerical value represents the ping/post interval in ms for those states.
     """
+
     OFFLINE = 0
     PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
     PING_LONG = _LONG_PING_INTERVAL_SECONDS
@@ -27,6 +28,7 @@ _QUICKPULSE_DOCUMENTS: List[DocumentIngress] = []
 _QUICKPULSE_LAST_PROCESS_TIME = 0.0
 _QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
 _QUICKPULSE_LAST_PROCESS_CPU = 0.0
+
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
@@ -73,10 +75,7 @@ def is_quickpulse_enabled() -> bool:
 
 
 def _is_ping_state() -> bool:
-    return _get_global_quickpulse_state() in (
-        _QuickpulseState.PING_SHORT,
-        _QuickpulseState.PING_LONG
-    )
+    return _get_global_quickpulse_state() in (_QuickpulseState.PING_SHORT, _QuickpulseState.PING_LONG)
 
 
 def _is_post_state():

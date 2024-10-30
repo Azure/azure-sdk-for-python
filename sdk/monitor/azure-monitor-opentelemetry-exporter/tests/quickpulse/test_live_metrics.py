@@ -64,10 +64,7 @@ class TestLiveMetrics(unittest.TestCase):
             connection_string="test_cs",
             resource=mock_resource,
         )
-        manager_mock.assert_called_with(
-            connection_string="test_cs",
-            resource=mock_resource
-        )
+        manager_mock.assert_called_with(connection_string="test_cs", resource=mock_resource)
 
 
 class TestQuickpulseManager(unittest.TestCase):
@@ -107,13 +104,9 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._base_monitoring_data_point.version, _get_sdk_version())
         self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 1)
         self.assertEqual(
-            qpm._base_monitoring_data_point.instance,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+            qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
-        self.assertEqual(
-            qpm._base_monitoring_data_point.role_name,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
-        )
+        self.assertEqual(qpm._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""))
         self.assertEqual(qpm._base_monitoring_data_point.machine_name, platform.node())
         self.assertEqual(qpm._base_monitoring_data_point.stream_id, "test_trace_id")
         self.assertTrue(isinstance(qpm._reader, _QuickpulseMetricReader))
@@ -145,7 +138,6 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._process_time_gauge.name, _PROCESS_TIME_NORMALIZED_NAME[0])
         self.assertEqual(qpm._process_time_gauge._callbacks, [_get_process_time_normalized])
 
-
     def test_singleton(self):
         resource = Resource.create(
             {
@@ -170,20 +162,14 @@ class TestQuickpulseManager(unittest.TestCase):
         )
         self.assertEqual(qpm, qpm2)
         self.assertEqual(
-            qpm._base_monitoring_data_point.instance,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+            qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+        )
+        self.assertEqual(qpm._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""))
+        self.assertEqual(
+            qpm2._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
         self.assertEqual(
-            qpm._base_monitoring_data_point.role_name,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
-        )
-        self.assertEqual(
-            qpm2._base_monitoring_data_point.instance,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
-        )
-        self.assertEqual(
-            qpm2._base_monitoring_data_point.role_name,
-            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
+            qpm2._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
@@ -302,7 +288,7 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_process_memory(self):
         with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:
-            memory = collections.namedtuple('memory', 'rss')
+            memory = collections.namedtuple("memory", "rss")
             pmem = memory(rss=40)
             process_mock.memory_info.return_value = pmem
             mem = _get_process_memory(None)
@@ -311,7 +297,7 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_process_memory_error(self):
         with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:
-            memory = collections.namedtuple('memory', 'rss')
+            memory = collections.namedtuple("memory", "rss")
             pmem = memory(rss=40)
             process_mock.memory_info.return_value = pmem
             process_mock.memory_info.side_effect = psutil.NoSuchProcess(1)
@@ -324,7 +310,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS")
     def test_process_time(self, process_mock, process_time_mock, elapsed_time_mock):
         current = datetime.now()
-        cpu = collections.namedtuple("cpu", ['user', 'system'])
+        cpu = collections.namedtuple("cpu", ["user", "system"])
         cpu_times = cpu(user=3.6, system=6.8)
         process_mock.cpu_times.return_value = cpu_times
         process_time_mock.return_value = 4.4
@@ -335,5 +321,6 @@ class TestQuickpulseManager(unittest.TestCase):
         obs = next(time)
         num_cpus = psutil.cpu_count()
         self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
+
 
 # cSpell:enable
