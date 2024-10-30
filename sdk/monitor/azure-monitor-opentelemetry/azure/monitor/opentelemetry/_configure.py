@@ -214,6 +214,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 lib_name,
                 exc_info=ex,
             )
+    _setup_additional_azure_sdk_instrumentations(configurations)
 
 
 def _send_attach_warning():
@@ -222,4 +223,31 @@ def _send_attach_warning():
             "Distro detected that automatic attach may have occurred. Check your data to ensure "
             "that telemetry is not being duplicated. This may impact your cost.",
             _DISTRO_DETECTS_ATTACH,
+        )
+
+
+def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, ConfigurationValue]):
+    if _AZURE_SDK_INSTRUMENTATION_NAME not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
+        return
+
+    if not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
+        _logger.debug("Instrumentation skipped for library azure_sdk")
+        return
+
+    try:
+        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug(
+            "Failed to import AIInferenceInstrumentor from azure-ai-inference",
+            exc_info=ex,
+        )
+        return
+
+    try:
+        AIInferenceInstrumentor().instrument()
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.warning(
+            "Exception occurred when instrumenting: %s.",
+            "azure-ai-inference",
+            exc_info=ex,
         )
