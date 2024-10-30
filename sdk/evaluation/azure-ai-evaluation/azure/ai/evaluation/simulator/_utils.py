@@ -44,23 +44,41 @@ class JsonLineList(list):
         for item in self:
             user_message = None
             assistant_message = None
-            context = None
+            user_context = None
+            assistant_context = None
+            template_parameters = item.get("template_parameters", {})
+            category = template_parameters.get("category", None)
             for message in item["messages"]:
                 if message["role"] == "user":
                     user_message = message["content"]
+                    user_context = message.get("context", "")
                 elif message["role"] == "assistant":
                     assistant_message = message["content"]
-                if "context" in message:
-                    context = message.get("context", None)
+                    assistant_context = message.get("context", "")
                 if user_message and assistant_message:
-                    if context:
+                    if user_context or assistant_context:
                         json_lines += (
-                            json.dumps({"query": user_message, "response": assistant_message, "context": context})
+                            json.dumps(
+                                {
+                                    "query": user_message,
+                                    "response": assistant_message,
+                                    "context": str(
+                                        {
+                                            "user_context": user_context,
+                                            "assistant_context": assistant_context,
+                                        }
+                                    ),
+                                    "category": category,
+                                }
+                            )
                             + "\n"
                         )
-                        user_message = assistant_message = context = None
+                        user_message = assistant_message = None
                     else:
-                        json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
+                        json_lines += (
+                            json.dumps({"query": user_message, "response": assistant_message, "category": category})
+                            + "\n"
+                        )
                         user_message = assistant_message = None
 
         return json_lines
