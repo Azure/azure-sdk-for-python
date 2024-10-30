@@ -5,7 +5,7 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     FqdnOutboundRule as RestFqdnOutboundRule,
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
     ManagedNetworkSettings as RestManagedNetwork,

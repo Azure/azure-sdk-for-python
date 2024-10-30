@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     FeatureStoreSettings as RestFeatureStoreSettings,
     ManagedNetworkSettings as RestManagedNetwork,
     ManagedServiceIdentity as RestManagedServiceIdentity,

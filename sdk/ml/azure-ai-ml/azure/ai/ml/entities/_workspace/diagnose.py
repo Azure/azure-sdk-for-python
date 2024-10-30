@@ -5,7 +5,7 @@
 import json
 from typing import Any, Dict, Optional, List
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
     DiagnoseResponseResult as RestDiagnoseResponseResult,
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,

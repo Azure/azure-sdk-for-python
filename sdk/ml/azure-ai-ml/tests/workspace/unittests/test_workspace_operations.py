@@ -6,7 +6,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
     Workspace as RestWorkspace,
 )
