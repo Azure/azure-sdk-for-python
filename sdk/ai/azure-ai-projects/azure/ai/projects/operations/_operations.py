@@ -1473,15 +1473,17 @@ def build_evaluations_list_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_evaluations_disable_schedule_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{name}"
+    _url = "/evaluations/schedules/{name}/disable"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1489,12 +1491,12 @@ def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpR
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class AgentsOperations:  # pylint: disable=too-many-public-methods
@@ -4911,13 +4913,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_file_content(self, file_id: str, **kwargs: Any) -> _models.FileContentResponse:
-        """Returns information about a specific file. Does not retrieve file content.
+    def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+        """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: FileContentResponse. The FileContentResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.FileContentResponse
+        :return: bytes
+        :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4931,7 +4933,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileContentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
         _request = build_agents_get_file_content_request(
             file_id=file_id,
@@ -4968,7 +4970,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FileContentResponse, response.json())
+            deserialized = _deserialize(bytes, response.json(), format="base64")
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7550,11 +7552,10 @@ class EvaluationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Resource delete operation template.
+    def disable_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Disable the evaluation schedule.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
+        :param name: Name of the evaluation schedule. Required.
         :type name: str
         :return: None
         :rtype: None
@@ -7573,7 +7574,7 @@ class EvaluationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluations_delete_schedule_request(
+        _request = build_evaluations_disable_schedule_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7600,10 +7601,5 @@ class EvaluationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore

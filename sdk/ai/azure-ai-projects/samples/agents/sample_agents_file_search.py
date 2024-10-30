@@ -56,7 +56,7 @@ with project_client:
         tools=file_search.definitions,
         tool_resources=file_search.resources,
     )
-    print(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
     thread = project_client.agents.create_thread()
