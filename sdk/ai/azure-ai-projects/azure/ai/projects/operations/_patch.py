@@ -940,7 +940,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
             raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
     
-    def get_toolset(self) -> Optional[_models.ToolSet]:
+    def _get_toolset(self) -> Optional[_models.ToolSet]:
         """
         Get the toolset for the agent.
 
@@ -1342,7 +1342,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                toolset = self.get_toolset()
+                toolset = self._get_toolset()
                 if toolset:
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
@@ -1889,7 +1889,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self.get_toolset()
+            toolset = self._get_toolset()
             if toolset:
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
             else:
@@ -2444,64 +2444,49 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace
     def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
-        Saves file content retrieved using a file identifier to the specified local directory.
+        Synchronously saves file content retrieved using a file identifier to the specified local directory.
 
         :param file_id: The unique identifier for the file to retrieve.
         :type file_id: str
         :param file_name: The name of the file to be saved.
         :type file_name: str
         :param target_dir: The directory where the file should be saved. Defaults to the current working directory.
-        :type target_dir: Union[str, Path]
+        :raises ValueError: If the target path is not a directory or the file name is invalid.
+        :raises RuntimeError: If file content retrieval fails or no content is found.
+        :raises TypeError: If retrieved chunks are not bytes-like objects.
+        :raises IOError: If writing to the file fails.
         """
-        # Determine target directory
-        path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
-        logger.debug(f"Using target directory: {path}")
-
-        if not path.exists():
-            logger.debug(f"Creating non-existent target directory: {path}")
-            path.mkdir(parents=True, exist_ok=True)
-        elif not path.is_dir():
-            error_msg = f"The target path '{path}' is not a directory."
-            logger.error(error_msg)
-            raise ValueError(error_msg)
-
-        # Ensure file_name is properly sanitized
-        file_name = Path(file_name).name
-        if not file_name:
-            error_msg = "The provided file name is invalid."
-            logger.error(error_msg)
-            raise ValueError(error_msg)
-
-        # Get file content
         try:
+            # Determine and validate the target directory
+            path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
+            path.mkdir(parents=True, exist_ok=True)
+            if not path.is_dir():
+                raise ValueError(f"The target path '{path}' is not a directory.")
+
+            # Sanitize and validate the file name
+            sanitized_file_name = Path(file_name).name
+            if not sanitized_file_name:
+                raise ValueError("The provided file name is invalid.")
+
+            # Retrieve the file content
             file_content_stream = self.get_file_content(file_id)
             if not file_content_stream:
-                error_msg = f"No content retrievable for file ID '{file_id}'."
-                logger.error(error_msg)
-                raise RuntimeError(error_msg)
-        except Exception as e:
-            error_msg = f"Failed to retrieve file content for file ID '{file_id}': {e}"
-            logger.error(error_msg)
-            raise RuntimeError(error_msg) from e
+                raise RuntimeError(f"No content retrievable for file ID '{file_id}'.")
 
-        # Path to save the file
-        target_file_path = path / file_name
+            target_file_path = path / sanitized_file_name
 
-        # Write file content directly from the generator, ensuring each chunk is bytes
-        try:
+            # Write the file content to disk
             with target_file_path.open("wb") as file:
                 for chunk in file_content_stream:
                     if isinstance(chunk, (bytes, bytearray)):
                         file.write(chunk)
                     else:
                         raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
-            logger.debug(f"File '{file_name}' saved successfully at '{target_file_path}'.")
-        except TypeError as e:
-            logger.error(f"Failed due to unexpected chunk type: {e}")
-            raise
-        except IOError as e:
-            error_msg = f"Failed to write to file '{target_file_path}': {e}"
-            logger.error(error_msg)
+            
+            logger.debug(f"File '{sanitized_file_name}' saved successfully at '{target_file_path}'.")
+
+        except (ValueError, RuntimeError, TypeError, IOError) as e:
+            logger.error(f"An error occurred in save_file: {e}")
             raise
 
 
