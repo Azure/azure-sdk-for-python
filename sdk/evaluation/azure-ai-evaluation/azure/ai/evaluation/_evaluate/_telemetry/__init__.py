@@ -123,7 +123,7 @@ def log_evaluate_activity(func: Callable[P, EvaluationResult]) -> Callable[P, Ev
             user_agent=USER_AGENT,
         )
 
-        trace_destination = pf_client._config.get_trace_destination() # pylint: disable=protected-access
+        trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
         track_in_cloud = bool(trace_destination) if trace_destination != "none" else False
         evaluate_target = bool(kwargs.get("target", None))
         evaluator_config = bool(kwargs.get("evaluator_config", None))
