@@ -1,5 +1,16 @@
 # Release History
 
+## 6.5.0 (2024-10-30)
+
+### Features Added
+
+  - Method `DigitalTwinsEndpointOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, endpoint_name: str, endpoint_description: IO[bytes], content_type: str)`
+  - Method `DigitalTwinsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, digital_twins_create: IO[bytes], content_type: str)`
+  - Method `DigitalTwinsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, resource_name: str, digital_twins_patch_description: IO[bytes], content_type: str)`
+  - Method `DigitalTwinsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, location: str, digital_twins_instance_check_name: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, private_endpoint_connection_name: str, private_endpoint_connection: IO[bytes], content_type: str)`
+  - Method `TimeSeriesDatabaseConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, time_series_database_connection_name: str, time_series_database_connection_description: IO[bytes], content_type: str)`
+
 ## 6.4.0 (2023-03-20)
 
 ### Features Added
