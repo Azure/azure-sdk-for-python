@@ -1,5 +1,24 @@
 # Release History
 
+## 2.0.0 (2024-10-30)
+
+### Features Added
+
+  - Method `CustomLocationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, parameters: CustomLocation, content_type: str)`
+  - Method `CustomLocationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, resource_name: str, parameters: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Model `CustomLocations` deleted or renamed its instance variable `resource_sync_rules`
+  - Deleted or renamed model `CustomLocationFindTargetResourceGroupProperties`
+  - Deleted or renamed model `CustomLocationFindTargetResourceGroupResult`
+  - Deleted or renamed model `MatchExpressionsProperties`
+  - Deleted or renamed model `PatchableResourceSyncRule`
+  - Deleted or renamed model `ResourceSyncRule`
+  - Deleted or renamed model `ResourceSyncRulePropertiesSelector`
+  - Deleted or renamed method `CustomLocationsOperations.find_target_resource_group`
+  - Deleted or renamed model `ResourceSyncRulesOperations`
+
 ## 1.2.0b1 (2023-02-14)
 
 ### Other Changes
