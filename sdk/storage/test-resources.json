@@ -563,6 +563,10 @@
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
         },
+        "AZURE_STORAGE_ACCOUNT_URL": {
+            "type": "string",
+            "value": "[concat('https://', variables('primaryAccountName'), '.blob.', parameters('endpointSuffix'))]"
+        },
         "SECONDARY_STORAGE_ACCOUNT_NAME": {
             "type": "string",
             "value": "[variables('secondaryAccountName')]"
