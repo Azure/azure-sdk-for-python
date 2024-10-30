@@ -28,9 +28,8 @@ class ContentSafetyMultimodalEvaluator:
     :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID,
         resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param parallel: Specifies whether to use parallel execution for evaluators.
-        If True, evaluators execute in parallel; otherwise, they execute sequentially. Defaults to True.
-    :type parallel: bool
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
 
     :return: A function that evaluates multimodal chat messages and generates content safety metrics.
     :rtype: Callable
@@ -92,8 +91,8 @@ class ContentSafetyMultimodalEvaluator:
 
     """
 
-    def __init__(self, credential, azure_ai_project, parallel: bool = False):
-        self._parallel = parallel
+    def __init__(self, credential, azure_ai_project, **kwargs):
+        self._parallel = kwargs.pop("_parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),
             SexualMultimodalEvaluator(credential=credential, azure_ai_project=azure_ai_project),

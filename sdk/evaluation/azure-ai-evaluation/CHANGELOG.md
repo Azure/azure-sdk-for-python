@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
 
 ### Bugs Fixed
 - Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
