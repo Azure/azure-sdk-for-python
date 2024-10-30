@@ -1,8 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +13,6 @@ import json
 import logging
 import base64
 import asyncio
-
 from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent, ConnectionType
@@ -495,6 +490,8 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
+        if not self.file_ids:
+            return ToolResources()
         return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
 
     def execute(self, tool_call: Any) -> Any:
