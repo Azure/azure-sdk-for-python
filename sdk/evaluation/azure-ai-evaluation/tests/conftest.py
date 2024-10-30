@@ -141,12 +141,21 @@ def add_sanitizers(
         )
         add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
         add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
+    
+    def promptflow_service_isolation_sanitizer():
+        """Sanitize the promptflow service isolation values."""
+        add_general_regex_sanitizer(
+            value="root_run_id",
+            regex=r'"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_[^"]+"',
+            replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"'
+        )
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
     azure_ai_generative_sanitizer()
     live_connection_file_values()
+    promptflow_service_isolation_sanitizer()
 
 
 @pytest.fixture
