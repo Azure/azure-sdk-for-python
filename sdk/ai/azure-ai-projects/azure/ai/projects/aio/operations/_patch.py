@@ -819,7 +819,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return await super().update_agent(body=body, content_type=content_type, **kwargs)
-            return super().update_agent(body=body, **kwargs)
+            return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
             self._toolset = toolset
