@@ -71,7 +71,7 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
-        self._parallel = kwargs.pop("parallel", False)
+        self._parallel = kwargs.pop("_parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
