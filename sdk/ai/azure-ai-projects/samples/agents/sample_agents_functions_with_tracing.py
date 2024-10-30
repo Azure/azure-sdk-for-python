@@ -29,10 +29,10 @@ from azure.ai.projects.tracing import AIAgentsInstrumentor
 from tracing_helpers import configure_tracing
 from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
 from user_functions import user_functions
-# To use console exporter, uncomment following lines and install opentelemetry-sdk
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+# To use console exporter, uncomment following lines and install opentelemetry-sdk
+#from opentelemetry.sdk.trace import TracerProvider
+#from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 
 # Create an AI Project Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -44,13 +44,13 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 scenario = os.path.basename(__file__)
-#tracer = configure_tracing("agent-samples").get_tracer(scenario)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 # To setup tracing to console, comment out the previous line and
 # uncomment the four lines below. Requires opentelemetry-sdk.
-exporter = ConsoleSpanExporter()
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+#exporter = ConsoleSpanExporter()
+#trace.set_tracer_provider(TracerProvider())
+#tracer = trace.get_tracer(__name__)
+#trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.

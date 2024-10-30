@@ -470,16 +470,17 @@ class _AIAgentsInstrumentorPreview:
         max_completion_tokens: Optional[int] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
     ) -> "AbstractSpan":
-        span = start_span(operation_name,
-                        project_name,
-                        thread_id=thread_id,
-                        agent_id=agent_id,
-                        model=model,
-                        temperature=temperature,
-                        top_p=top_p,
-                        max_prompt_tokens=max_prompt_tokens,
-                        max_completion_tokens=max_completion_tokens,
-                        response_format=response_format.value if response_format else None)
+        span = start_span(
+            operation_name,
+            project_name,
+            thread_id=thread_id,
+            agent_id=agent_id,
+            model=model,
+            temperature=temperature,
+            top_p=top_p,
+            max_prompt_tokens=max_prompt_tokens,
+            max_completion_tokens=max_completion_tokens,
+            response_format=response_format.value if response_format else None)
         if span and span.span_instance.is_recording:
             self._add_instructions_event(span, instructions, additional_instructions, thread_id=thread_id, agent_id=agent_id)
 
@@ -1007,8 +1008,8 @@ class _AIAgentsInstrumentorPreview:
 
         return result
 
-    def trace_create_stream(self, operation_name, function, *args, **kwargs):
-        operation_name = OperationName.PROCESS_THREAD_RUN,
+    def trace_create_stream(self, function, *args, **kwargs):
+        operation_name = OperationName.PROCESS_THREAD_RUN
         project_name = args[0]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
@@ -1063,8 +1064,8 @@ class _AIAgentsInstrumentorPreview:
         #span.finish()
         return result
 
-    async def trace_create_stream_async(self, operation_name, function, *args, **kwargs):
-        operation_name = OperationName.PROCESS_THREAD_RUN,
+    async def trace_create_stream_async(self, function, *args, **kwargs):
+        operation_name = OperationName.PROCESS_THREAD_RUN
         project_name = args[0]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
@@ -1118,6 +1119,16 @@ class _AIAgentsInstrumentorPreview:
 
         #span.finish()
         return result
+
+    def handle_run_stream_exit(self, function, *args, **kwargs):
+        agent_run_stream = args[0]
+        exc_type = kwargs.get("exc_type")
+        exc_val = kwargs.get("exc_val")
+        exc_tb = kwargs.get("exc_tb")
+        # TODO: is it a good idea?
+        # if not, we'll need to wrap stream and call exit
+        if agent_run_stream.event_handler and agent_run_stream.event_handler.__class__.__name__ == "_AgentEventHandlerTraceWrapper":
+            agent_run_stream.event_handler.__exit__(exc_type, exc_val, exc_tb)
 
     def wrap_handler(self, handler: "_models.AgentEventHandler", span: "AbstractSpan") -> "_models.AgentEventHandler":
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
@@ -1193,6 +1204,8 @@ class _AIAgentsInstrumentorPreview:
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
             elif class_function_name.startswith("AgentsOperations.create_stream"):
                 return self.trace_create_stream(function, *args, **kwargs)
+            elif class_function_name.startswith("AgentRunStream.__exit__"):
+                return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return
 
@@ -1248,7 +1261,7 @@ class _AIAgentsInstrumentorPreview:
             elif class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
             elif class_function_name.startswith("AgentsOperations.create_stream"):
-                return await self.trace_create_stream_asyn(function, *args, **kwargs)
+                return await self.trace_create_stream_async(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return
 
@@ -1274,6 +1287,8 @@ class _AIAgentsInstrumentorPreview:
             ("azure.ai.projects.operations", "AgentsOperations", "submit_tool_outputs_to_run", TraceType.AGENTS, "submit_tool_outputs_to_run"),
             ("azure.ai.projects.operations", "AgentsOperations", "submit_tool_outputs_to_stream", TraceType.AGENTS, "submit_tool_outputs_to_stream"),
             ("azure.ai.projects.operations", "AgentsOperations", "_handle_submit_tool_outputs", TraceType.AGENTS, "_handle_submit_tool_outputs"),
+            ("azure.ai.projects.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
+            ("azure.ai.projects.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
         async_apis = (
             ("azure.ai.projects.aio.operations", "AgentsOperations", "create_agent", TraceType.AGENTS, "agent_create"),
@@ -1284,6 +1299,7 @@ class _AIAgentsInstrumentorPreview:
             ("azure.ai.projects.aio.operations", "AgentsOperations", "submit_tool_outputs_to_run", TraceType.AGENTS, "submit_tool_outputs_to_run"),
             ("azure.ai.projects.aio.operations", "AgentsOperations", "submit_tool_outputs_to_stream", TraceType.AGENTS, "submit_tool_outputs_to_stream"),
             ("azure.ai.projects.aio.operations", "AgentsOperations", "_handle_submit_tool_outputs", TraceType.AGENTS, "_handle_submit_tool_outputs"),
+            ("azure.ai.projects.aio.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
         )
         return sync_apis, async_apis
 
