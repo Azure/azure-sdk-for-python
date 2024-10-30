@@ -14,13 +14,13 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         qpm = _QuickpulseManager._instance
         if qpm:
             qpm._record_log_record(log_data)
-        super().emit(log_data)
+        super().emit(log_data)  # type: ignore[safe-super]
 
     def shutdown(self):
         pass
 
     def force_flush(self, timeout_millis: int = 30000):
-        super().force_flush(timeout_millis=timeout_millis)
+        super().force_flush(timeout_millis=timeout_millis)  # type: ignore[safe-super]
 
 
 # pylint: disable=protected-access

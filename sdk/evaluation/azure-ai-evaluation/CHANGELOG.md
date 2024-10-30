@@ -1,7 +1,18 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
 
-## 1.0.0b5 (Unreleased)
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Refined error messages for serviced-based evaluators and simulators.
+- Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
+
+## 1.0.0b5 (2024-10-28)
 
 ### Features Added
 - Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
@@ -23,6 +34,7 @@ outputs = asyncio.run(custom_simulator(
     max_conversation_turns=1,
 ))
 ```
+- Adding evaluator for multimodal use cases
 
 ### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
@@ -57,7 +69,7 @@ outputs = asyncio.run(custom_simulator(
   - `RetrievalEvaluator`
 - The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
     
-    | Evaluator | New Token Limit |
+    | Evaluator | New `max_token` for Generation |
     | --- | --- |
     | `CoherenceEvaluator` | 800 |
     | `RelevanceEvaluator` | 800 |

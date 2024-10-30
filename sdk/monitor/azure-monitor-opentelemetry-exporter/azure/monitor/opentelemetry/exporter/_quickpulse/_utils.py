@@ -27,6 +27,8 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     Request as RequestDocument,
     Trace as TraceDocument,
 )
+
+
 def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
     base_monitoring_data_point: MonitoringDataPoint,
@@ -45,9 +47,7 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
                         elif isinstance(point, NumberDataPoint):
                             value = point.value
                         metric_point = MetricPoint(
-                            name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],
-                            weight=1,
-                            value=value
+                            name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()], weight=1, value=value
                         )
                         metric_points.append(metric_point)
     return [
@@ -65,6 +65,7 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
             documents=documents,
         )
     ]
+
 
 # mypy: disable-error-code="assignment,union-attr"
 def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, RequestDocument]:
@@ -96,6 +97,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
             duration=_ns_to_iso8601_string(duration),
         )
     return document
+
 
 # mypy: disable-error-code="assignment"
 def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
