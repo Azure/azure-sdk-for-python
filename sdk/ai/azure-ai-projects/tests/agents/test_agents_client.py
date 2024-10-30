@@ -47,7 +47,7 @@ if LOGGING_ENABLED:
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
-    azure_ai_projects_connection_string_agents_tests="foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_projects_agents_tests_project_connection_string="foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 agentClientPreparer = functools.partial(
@@ -92,12 +92,12 @@ user_functions_live = [fetch_current_datetime_live]
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestagentClient(AzureRecordedTestCase):
+class TestAgentClient(AzureRecordedTestCase):
 
     # helper function: create client using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("azure_ai_projects_connection_string_agents_tests")
+        connection_string = kwargs.pop("azure_ai_projects_agents_tests_project_connection_string")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         # create and return client
@@ -156,18 +156,21 @@ class TestagentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_delete_agent(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
-        print("Created client")
+        # client = self.create_client(**kwargs)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+            print("Created client")
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        
+        # assert not client
         client.close()
 
     # test agent creation with body: JSON
@@ -302,7 +305,6 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
-    # NOTE update_agent with overloads isn't working
     # test update agent with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
@@ -330,7 +332,7 @@ class TestagentClient(AzureRecordedTestCase):
         }
 
         # update agent and confirm changes went through
-        agent =client.agents.update_agent(agent.id, body=body2)
+        agent = client.agents.update_agent(agent.id, body=body2)
         assert agent.name
         assert agent.name == "my-agent2"
 
@@ -636,10 +638,6 @@ class TestagentClient(AzureRecordedTestCase):
         # close client
         client.close()
 
-    """
-    # TODO this test is failing?  client.agents.delete_thread(thread.id) isn't working
-    # status_code = 404, response = <HttpResponse: 404 Resource Not Found, Content-Type: application/json>
-    # error_map = {304: <class 'azure.core.exceptions.ResourceNotModifiedError'>, 401: <class 'azure.core.exceptions.ClientAuthenticatio..., 404: <class 'azure.core.exceptions.ResourceNotFoundError'>, 409: <class 'azure.core.exceptions.ResourceExistsError'>}
     
     # test deleting thread
     @agentClientPreparer()
@@ -656,19 +654,21 @@ class TestagentClient(AzureRecordedTestCase):
 
         # create thread
         thread = client.agents.create_thread()
-        # assert isinstance(thread, AgentThread)
+        assert isinstance(thread, AgentThread)
         assert thread.id
         print("Created thread, thread ID", thread.id)
 
         # delete thread
         deletion_status = client.agents.delete_thread(thread.id)
-        # assert not thread
+        assert deletion_status.id == thread.id
+        assert deletion_status.deleted == True
+        print("Deleted thread, thread ID", deletion_status.id)
 
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-    """
+    
 
     # # **********************************************************************************
     # #

@@ -84,7 +84,7 @@ user_functions_recording = [fetch_current_datetime_recordings]
 user_functions_live = [fetch_current_datetime_live]
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestagentClient(AzureRecordedTestCase):
+class TestAgentClient(AzureRecordedTestCase):
 
     # helper function: create client using environment variables
     def create_client(self, **kwargs):

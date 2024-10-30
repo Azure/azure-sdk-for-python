@@ -19,7 +19,7 @@ The instructions below are for running tests locally, on a Windows machine, agai
         ```
     - Then install the resulting local wheel (update version `1.0.0b1` to the current one):
         ```bash
-        pip install dist\azure_ai_project-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_projects-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
 ## Log in to Azure
