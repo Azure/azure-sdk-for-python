@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,10 +15,9 @@ from .. import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -565,7 +564,7 @@ class CallConnected(_serialization.Model):
         self.correlation_id = None
 
 
-class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CallConnectionProperties(_serialization.Model):
     """Properties of a call connection.
 
     :ivar call_connection_id: The call connection id.
@@ -2533,7 +2532,7 @@ class ExternalStorage(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar recording_storage_kind: Defines the kind of external storage. Required. Known values are:
-     "azureCommunicationServices" and "AzureBlobStorage".
+     "azureCommunicationServices" and "azureBlobStorage".
     :vartype recording_storage_kind: str or
      ~azure.communication.callautomation.models.RecordingStorageKind
     :ivar recording_destination_container_url: Uri of a container or a location within a container.
@@ -2558,7 +2557,7 @@ class ExternalStorage(_serialization.Model):
     ) -> None:
         """
         :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values
-         are: "azureCommunicationServices" and "AzureBlobStorage".
+         are: "azureCommunicationServices" and "azureBlobStorage".
         :paramtype recording_storage_kind: str or
          ~azure.communication.callautomation.models.RecordingStorageKind
         :keyword recording_destination_container_url: Uri of a container or a location within a
