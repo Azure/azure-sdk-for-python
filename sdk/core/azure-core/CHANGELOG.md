@@ -6,6 +6,10 @@
 
 - Added a default implementation to handle token challenges in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy`.
 
+### Bugs Fixed
+
+- Fixed an issue where the `tracing_attributes` keyword argument wasn't being handled at the request/method level. #38164
+
 ### Other Changes
 
 - Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
