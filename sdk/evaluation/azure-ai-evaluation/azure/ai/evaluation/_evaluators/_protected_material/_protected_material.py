@@ -111,9 +111,9 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         Evaluate if protected material is present in your AI system's response.
 
         :keyword query: The query to be evaluated.
-        :paramtype query: str
+        :paramtype query: Optional[str]
         :keyword response: The response to be evaluated.
-        :paramtype response: str
+        :paramtype response: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".

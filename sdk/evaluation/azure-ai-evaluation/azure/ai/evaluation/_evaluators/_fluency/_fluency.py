@@ -91,7 +91,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         the evaluator will aggregate the results of each turn.
 
         :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
-        :paramtype response: str
+        :paramtype response: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
