@@ -559,7 +559,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
         # connect to a session.
         if (
-            receiver._session_id == NEXT_AVAILABLE_SESSION
+            receiver._session_id == NEXT_AVAILABLE_SESSION # pylint: disable=protected-access
             and receiver._max_wait_time  # pylint: disable=protected-access
         ):
             timeout_in_ms = receiver._max_wait_time * 1000  # pylint: disable=protected-access
