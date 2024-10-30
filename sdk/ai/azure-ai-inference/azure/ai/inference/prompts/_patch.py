@@ -7,7 +7,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional, Self
+from typing import Any, Dict, List, Optional
+from typing_extensions import Self
 from ._core import Prompty
 from ._utils import load, prepare
 from ._mustache import render
