@@ -321,7 +321,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None
     """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
     :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-        endpoint URL string of the OpenTelemetry Protocol (OTLP) collector. Required.
+        endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
     :paramtype destination: Union[TextIOWrapper, str]
     """
     if isinstance(destination, str):
@@ -431,7 +431,7 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
         """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
         :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-         endpoint URL string of the OpenTelemetry Protocol (OTLP) collector. Required.
+         endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
         :paramtype destination: Union[TextIOWrapper, str]
         """
         _enable_telemetry(destination=destination, **kwargs)

@@ -25,8 +25,6 @@ import sys
 from azure.ai.projects import AIProjectClient
 from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
-#from azure.monitor.opentelemetry import configure_azure_monitor
-#from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 with AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
