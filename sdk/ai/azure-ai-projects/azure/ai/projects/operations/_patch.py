@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys, io, logging, os, time
-from io import IOBase
+from io import IOBase, TextIOWrapper
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 
 # from zoneinfo import ZoneInfo
@@ -316,45 +316,125 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         return connection_properties_list
 
+# Internal helper function to enable tracing, used by both sync and async clients
+def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+    """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
+    :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
+        endpoint URL string of the OpenTelemetry Protocol (OTLP) collector. Required.
+    :paramtype destination: Union[TextIOWrapper, str]
+    """
+    if isinstance(destination, str):
+        # `destination`` is the OTLP collector URL
+        # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
+        try:
+            from opentelemetry import trace
+            from opentelemetry.sdk.trace import TracerProvider
+            from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError(
+                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+            )
+        try:
+            from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError(
+                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-http'"
+            )
+        from azure.core.settings import settings
+        settings.tracing_implementation = "opentelemetry"
+        trace.set_tracer_provider(TracerProvider())
+        trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
+
+    elif isinstance(destination, TextIOWrapper):
+        if destination is sys.stdout:
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            try:
+                from opentelemetry import trace
+                from opentelemetry.sdk.trace import TracerProvider
+                from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+            except ModuleNotFoundError as _:
+                raise ModuleNotFoundError(
+                    "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+                )
+            from azure.core.settings import settings
+            settings.tracing_implementation = "opentelemetry"
+            trace.set_tracer_provider(TracerProvider())
+            trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+        else:
+            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIOWrapper`")
+    else:
+        raise ValueError("Destination must be a string or a `TextIOWrapper` object")
+
+    # Silently try to load a set of relevant Instrumentors
+    try:
+        from azure.ai.inference.tracing import AIInferenceInstrumentor
+        instrumentor = AIInferenceInstrumentor()
+        if not instrumentor.is_instrumented():
+            instrumentor.instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed")
+
+    try:
+        from opentelemetry.instrumentation.openai import OpenAIInstrumentor
+        OpenAIInstrumentor().instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai` is not installed")
+
+    try:
+        from opentelemetry.instrumentation.langchain import LangchainInstrumentor
+        LangchainInstrumentor().instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed")
+
+
+# TODO: change this to TelemetryOperations
 class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
-    connection_string: Optional[str] = None
-    """ Application Insights connection string. Call `enable()` to populate this property. """
+    _connection_string: Optional[str] = None
+    _get_connection_string_called: bool = False
 
     def __init__(self, *args, **kwargs):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    @distributed_trace
-    def enable(self, **kwargs) -> bool:
-        """Enable Application Insights tracing.
-        This method makes service calls to get the properties of the Applications Insights resource
-        connected to the Azure AI Studio Project. If Application Insights was not enabled for this project,
-        this method will return False. Otherwise, it will return True. In this case the Application Insights
-        connection string can be accessed via the `.diagnostics.connection_string` property.
-
-        :return: True if Application Insights tracing was enabled. False otherwise.
-        :rtype: bool
+    def get_connection_string(self) -> None:
         """
-        if not self.connection_string:
-            # Get the AI Studio Project properties
+        Get the Application Insights connection string associated with the Project's Application Insights resource.
+        On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
+        Subsequent calls return the cached connection string.
+
+        :return: The connection string, or `None` if an Application Insights resource was not enabled for the Project.
+        :rtype: str
+        """
+        if not self._get_connection_string_called:
+            # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()
 
-            # No Application Insights resource was enabled for this Project
-            if not get_workspace_response.properties.application_insights:
-                return False
+            # Continue only if Application Insights resource was enabled for this Project
+            if get_workspace_response.properties.application_insights:
 
-            app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
-                app_insights_resource_url=get_workspace_response.properties.application_insights
-            )
+                # Make a GET call to the Application Insights resource URL to get the connection string
+                app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
+                    app_insights_resource_url=get_workspace_response.properties.application_insights
+                )
 
-            if not app_insights_respose.properties.connection_string:
-                raise ValueError("Application Insights resource does not have a connection string")
+                self._connection_string = app_insights_respose.properties.connection_string
 
-            self.connection_string = app_insights_respose.properties.connection_string
+        self._get_connection_string_called = True
+        return self._connection_string
 
-        return True
+
+    # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
+    # TODO: This could be a class method. But we don't have a class property AIProjectClient.diagnostics
+    def enable(self, *, destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+
+        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
+         endpoint URL string of the OpenTelemetry Protocol (OTLP) collector. Required.
+        :paramtype destination: Union[TextIOWrapper, str]
+        """
+        _enable_telemetry(destination=destination, **kwargs)
 
 
 class AgentsOperations(AgentsOperationsGenerated):

@@ -21,7 +21,7 @@ servicePreparerDiagnosticsTests = functools.partial(
 )
 
 # Set to True to enable SDK logging
-LOGGING_ENABLED = True
+LOGGING_ENABLED = False
 
 if LOGGING_ENABLED:
     # Create a logger for the 'azure' SDK

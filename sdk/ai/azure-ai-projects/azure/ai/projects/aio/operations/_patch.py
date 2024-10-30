@@ -8,10 +8,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ..._vendor import FileType
-import io
+import sys
 import logging
 import os
 import time
+from io import TextIOWrapper
 from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.projects import _types
@@ -27,6 +28,7 @@ from ...models._models import (
     GetWorkspaceResponse,
 )
 from ... import models as _models
+from ...operations._patch import _enable_telemetry
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 logger = logging.getLogger(__name__)
@@ -183,7 +185,7 @@ class InferenceOperations:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
-                    "azure.identity package not installed. Please install it using 'pip install azure.identity'"
+                    "azure.identity package not installed. Please install it using 'pip install azure-identity'"
                 )
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
@@ -310,43 +312,50 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
-    connection_string: Optional[str] = None
-    """ Application Insights connection string. Call `enable()` to populate this property. """
+    _connection_string: Optional[str] = None
+    _get_connection_string_called: bool = False
 
     def __init__(self, *args, **kwargs):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    @distributed_trace_async
-    async def enable(self, **kwargs) -> bool:
-        """Enable Application Insights tracing.
-        This method makes service calls to get the properties of the Applications Insights resource
-        connected to the Azure AI Studio Project. If Application Insights was not enabled for this project,
-        this method will return False. Otherwise, it will return True. In this case the Application Insights
-        connection string can be accessed via the `.diagnostics.connection_string` property.
-
-        :return: True if Application Insights tracing was enabled. False otherwise.
-        :rtype: bool
+    async def get_connection_string(self) -> str:
         """
+        Get the Application Insights connection string associated with the Project's Application Insights resource.
+        On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
+        Subsequent calls return the cached connection string.
 
-        if not self.connection_string:
-            # Get the AI Studio Project properties
+        :return: The connection string, or `None` if an Application Insights resource was not enabled for the Project.
+        :rtype: str
+        """
+        if not self._get_connection_string_called:
+            # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
 
-            # No Application Insights resource was enabled for this Project
-            if not get_workspace_response.properties.application_insights:
-                return False
+            # Continue only if Application Insights resource was enabled for this Project
+            if get_workspace_response.properties.application_insights:
 
-            app_insights_respose: GetAppInsightsResponse = await self.get_app_insights(
-                app_insights_resource_url=get_workspace_response.properties.application_insights
-            )
+                # Make a GET call to the Application Insights resource URL to get the connection string
+                app_insights_respose: GetAppInsightsResponse = await self.get_app_insights(
+                    app_insights_resource_url=get_workspace_response.properties.application_insights
+                )
 
-            if not app_insights_respose.properties.connection_string:
-                raise ValueError("Application Insights resource does not have a connection string")
+                self._connection_string = app_insights_respose.properties.connection_string
 
-            self.connection_string = app_insights_respose.properties.connection_string
+        self._get_connection_string_called = True
+        return self._connection_string
 
-        return True
+
+    # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
+    # TODO: This could be a class method. But we don't have a class property AIProjectClient.diagnostics
+    def enable(self, *, destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+
+        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
+         endpoint URL string of the OpenTelemetry Protocol (OTLP) collector. Required.
+        :paramtype destination: Union[TextIOWrapper, str]
+        """
+        _enable_telemetry(destination=destination, **kwargs)
 
 
 class AgentsOperations(AgentsOperationsGenerated):
