@@ -391,7 +391,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
         output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
-        if output_dir and not os.path.exists(output_dir):
+        if not os.path.exists(output_dir):
             msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
                 message=msg,
