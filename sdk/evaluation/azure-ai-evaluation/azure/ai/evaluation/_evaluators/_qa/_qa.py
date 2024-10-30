@@ -23,6 +23,8 @@ class QAEvaluator:
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
 
     **Usage**
 
@@ -55,8 +57,8 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config, parallel: bool = True):
-        self._parallel = parallel
+    def __init__(self, model_config, **kwargs):
+        self._parallel = kwargs.pop("_parallel", False)
 
         self._evaluators: List[Union[Callable[..., Dict[str, Union[str, float]]], Callable[..., Dict[str, float]]]] = [
             GroundednessEvaluator(model_config),
@@ -79,8 +81,6 @@ class QAEvaluator:
         :paramtype context: str
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
-        :keyword parallel: Whether to evaluate in parallel. Defaults to True.
-        :paramtype parallel: bool
         :return: The scores for QA scenario.
         :rtype: Dict[str, Union[str, float]]
         """
