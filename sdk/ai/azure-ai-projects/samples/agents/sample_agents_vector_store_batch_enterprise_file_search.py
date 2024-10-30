@@ -25,11 +25,7 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    FileSearchTool,
-    VectorStorageDataSource,
-    VectorStorageDataSourceAssetType
-)
+from azure.ai.projects.models import FileSearchTool, VectorStorageDataSource, VectorStorageDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
 
@@ -55,8 +51,7 @@ with project_client:
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    ds = VectorStorageDataSource(storage_uri=uploaded_data.path,
-                                 asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
+    ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
     # add the file to the vector store or you can supply data sources in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
         vector_store_id=vector_store.id, data_sources=[ds]

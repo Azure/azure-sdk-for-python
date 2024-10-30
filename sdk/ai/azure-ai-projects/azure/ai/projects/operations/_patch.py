@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -134,9 +135,7 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(
-                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
-            )
+            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
@@ -1871,11 +1870,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not None:
             vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif (
-            file_ids is not None or data_sources is not None or (name is not None and expires_after is not None)
-        ):
-            store_configuration = _models.VectorStorageConfiguration(
-                data_sources=data_sources) if data_sources else None
+        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
+            store_configuration = (
+                _models.VectorStorageConfiguration(data_sources=data_sources) if data_sources else None
+            )
             vector_store = self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
@@ -2041,7 +2039,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
-    
+
     @distributed_trace
     def get_file_content_stream(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
         """
@@ -2053,7 +2051,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
         """
-        kwargs['stream'] = True
+        kwargs["stream"] = True
         response = super().get_file_content(file_id, **kwargs)
         return cast(Iterator[bytes], response)
 
@@ -2067,10 +2065,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         after: Optional[str] = None,
         before: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ThreadMessages:
         """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
-        
+
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
@@ -2095,16 +2093,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadMessages
         """
-        messages = super().list_messages(thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs)
+        messages = super().list_messages(
+            thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs
+        )
         return _models.ThreadMessages(pageable_list=messages)
 
     @distributed_trace
-    def save_file(
-        self, 
-        file_id: str, 
-        file_name: str, 
-        target_dir: Optional[Union[str, Path]] = None
-    ) -> None:
+    def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Saves file content retrieved using a file identifier to the specified local directory.
 

@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -45,7 +46,21 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin, Union
+from typing import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    List,
+    Dict,
+    Any,
+    Type,
+    Optional,
+    Iterator,
+    Tuple,
+    Set,
+    get_origin,
+    Union,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -390,6 +405,7 @@ class FileSearchTool(Tool):
     :param vector_store_ids: A list of vector store IDs to search for files.
     :type vector_store_ids: list[str]
     """
+
     def __init__(self, vector_store_ids: Optional[List[str]] = None):
         if vector_store_ids is None:
             self.vector_store_ids = set()
@@ -441,6 +457,7 @@ class CodeInterpreterTool(Tool):
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
     """
+
     def __init__(self, file_ids: Optional[List[str]] = None):
         if file_ids is None:
             self.file_ids = set()
@@ -453,7 +470,7 @@ class CodeInterpreterTool(Tool):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
-       """
+        """
         self.file_ids.add(file_id)
 
     def remove_file(self, file_id: str) -> None:
@@ -1028,6 +1045,7 @@ class ThreadMessages:
     :return: A collection of messages.
     :rtype: ~azure.ai.projects.models.ThreadMessages
     """
+
     def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
         self._messages = pageable_list.data
 
@@ -1039,23 +1057,24 @@ class ThreadMessages:
     @property
     def text_messages(self) -> List[MessageTextContent]:
         """Returns all text message contents in the messages."""
-        texts = [content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)]
+        texts = [
+            content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)
+        ]
         return texts
 
     @property
     def image_contents(self) -> List[MessageImageFileContent]:
         """Returns all image file contents from image message contents in the messages."""
         return [
-            content for msg in self._messages
-            for content in msg.content
-            if isinstance(content, MessageImageFileContent)
+            content for msg in self._messages for content in msg.content if isinstance(content, MessageImageFileContent)
         ]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
         """Returns all file citation annotations from text message annotations in the messages."""
         annotations = [
-            annotation for msg in self._messages
+            annotation
+            for msg in self._messages
             for content in msg.content
             if isinstance(content, MessageTextContent)
             for annotation in content.text.annotations
@@ -1067,7 +1086,8 @@ class ThreadMessages:
     def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
         """Returns all file path annotations from text message annotations in the messages."""
         annotations = [
-            annotation for msg in self._messages
+            annotation
+            for msg in self._messages
             for content in msg.content
             if isinstance(content, MessageTextContent)
             for annotation in content.text.annotations
@@ -1077,30 +1097,30 @@ class ThreadMessages:
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
         """Returns the last message from the specified sender.
-        
+
         :param sender: The role of the sender.
         :type sender: str
 
         :return: The last message from the specified sender.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in (self._messages):
+        for msg in self._messages:
             if msg.role == sender:
                 return msg
         return None
 
     def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
         """Returns the last text message from the specified sender.
-        
+
         :param sender: The role of the sender.
         :type sender: str
 
         :return: The last text message from the specified sender.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in (self._messages):
+        for msg in self._messages:
             if msg.role == sender:
-                for content in (msg.content):
+                for content in msg.content:
                     if isinstance(content, MessageTextContent):
                         return content
         return None

@@ -26,9 +26,7 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (CodeInterpreterTool,
-                                      MessageAttachment,
-                                      VectorStorageDataSourceAssetType)
+from azure.ai.projects.models import CodeInterpreterTool, MessageAttachment, VectorStorageDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models._models import VectorStorageDataSource
 
@@ -43,7 +41,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with project_client:
-    
+
     code_interpreter = CodeInterpreterTool()
 
     # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
@@ -64,8 +62,7 @@ with project_client:
     # The new data object will contain the Azure ID of an uploaded file,
     # which is the uri starting from azureml://.
     uploaded_data = ml_client.data.create_or_update(local_data)
-    ds = VectorStorageDataSource(storage_uri=uploaded_data.path,
-                                 asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
+    ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
 
     # create a message with the attachment
     attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)

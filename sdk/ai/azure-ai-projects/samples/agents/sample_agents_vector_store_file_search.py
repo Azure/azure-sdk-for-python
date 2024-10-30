@@ -42,9 +42,7 @@ with project_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
-    vector_store = project_client.agents.create_vector_store_and_poll(
-        file_ids=[], name="sample_vector_store"
-    )
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # create a file search tool

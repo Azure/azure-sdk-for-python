@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1865,11 +1866,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not None:
             vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif (
-            file_ids is not None or data_sources is not None or (name is not None and expires_after is not None)
-        ):
-            store_configuration = _models.VectorStorageConfiguration(
-                data_sources=data_sources) if data_sources else None
+        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
+            store_configuration = (
+                _models.VectorStorageConfiguration(data_sources=data_sources) if data_sources else None
+            )
             vector_store = await self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,

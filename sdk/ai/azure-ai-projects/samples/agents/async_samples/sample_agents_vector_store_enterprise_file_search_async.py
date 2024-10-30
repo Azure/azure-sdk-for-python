@@ -25,11 +25,7 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import (
-    FileSearchTool,
-    VectorStorageDataSource,
-    VectorStorageDataSourceAssetType
-)
+from azure.ai.projects.models import FileSearchTool, VectorStorageDataSource, VectorStorageDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
 
@@ -51,8 +47,9 @@ async def main():
         # which is the uri starting from azureml://.
         uploaded_data = ml_client.data.create_or_update(local_data)
         # create a vector store with no file and wait for it to be processed
-        ds = VectorStorageDataSource(storage_uri=uploaded_data.path,
-                                     asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
+        ds = VectorStorageDataSource(
+            storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        )
         vector_store = await project_client.agents.create_vector_store_and_poll(
             data_sources=[ds], name="sample_vector_store"
         )
