@@ -6,12 +6,15 @@ import json
 import logging
 import math
 import os
-from typing import Optional
+from typing import Dict, List, Union
+from typing_extensions import overload
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
@@ -107,7 +110,7 @@ class _AsyncRetrievalScoreEvaluator:
         }
 
 
-class RetrievalEvaluator:
+class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize an evaluator configured for a specific Azure OpenAI model.
 
@@ -152,10 +155,42 @@ class RetrievalEvaluator:
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    def __init__(self, model_config):
+    def __init__(self, model_config):  # pylint: disable=super-init-not-called
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
 
-    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation=None, **kwargs):
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        context: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluates retrieval for a given a query and context
+
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: Optional[str]
+        :return: The scores for Chat scenario.
+        :rtype: Dict[str, Union[str, float]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+        """Evaluates retrieval for a for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
+
+        :keyword conversation: The conversation to be evaluated.
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The scores for Chat scenario.
+        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
+    def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -169,6 +204,10 @@ class RetrievalEvaluator:
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
+        query = kwargs.pop("query", None)
+        context = kwargs.pop("context", None)
+        conversation = kwargs.pop("conversation", None)
+
         if (query is None or context is None) and conversation is None:
             msg = "Either a pair of 'query'/'context' or 'conversation' must be provided."
             raise EvaluationException(
@@ -192,6 +231,3 @@ class RetrievalEvaluator:
         return async_run_allowing_running_loop(
             self._async_evaluator, query=query, context=context, conversation=conversation, **kwargs
         )
-
-    def _to_async(self):
-        return self._async_evaluator
