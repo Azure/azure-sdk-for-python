@@ -11,7 +11,7 @@
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.
 - Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
-- Changed the randomization pattern for `AdversarialSimulator` such that there is an equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex. 
+- Changed the randomization pattern for `AdversarialSimulator` such that there is an almost equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex. 
 
 ## 1.0.0b5 (2024-10-28)
 
