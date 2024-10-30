@@ -14,6 +14,8 @@ from collections.abc import Iterator, Mapping, Sequence
 from types import MappingProxyType
 from typing import (
     Any,
+    Dict,
+    List,
     Literal,
     Optional,
     Union,
@@ -25,7 +27,7 @@ from typing_extensions import TypeAlias
 logger = logging.getLogger(__name__)
 
 
-Scopes: TypeAlias = list[Union[Literal[False, 0], Mapping[str, Any]]]
+Scopes: TypeAlias = List[Union[Literal[False, 0], Mapping[str, Any]]]
 
 
 # Globals
@@ -380,7 +382,7 @@ def _get_key(
                 # Move into the scope
                 try:
                     # Try subscripting (Normal dictionaries)
-                    scope = cast(dict[str, Any], scope)[child]
+                    scope = cast(Dict[str, Any], scope)[child]
                 except (TypeError, AttributeError):
                     try:
                         scope = getattr(scope, child)
@@ -425,13 +427,13 @@ def _get_partial(name: str, partials_dict: Mapping[str, str]) -> str:
 #
 # The main rendering function
 #
-g_token_cache: dict[str, list[tuple[str, str]]] = {}
+g_token_cache: Dict[str, List[tuple[str, str]]] = {}
 
 EMPTY_DICT: MappingProxyType[str, str] = MappingProxyType({})
 
 
 def render(
-    template: Union[str, list[tuple[str, str]]] = "",
+    template: Union[str, List[tuple[str, str]]] = "",
     data: Mapping[str, Any] = EMPTY_DICT,
     partials_dict: Mapping[str, str] = EMPTY_DICT,
     padding: str = "",
@@ -559,7 +561,7 @@ def render(
             if callable(scope):
                 # Generate template text from tags
                 text = ""
-                tags: list[tuple[str, str]] = []
+                tags: List[tuple[str, str]] = []
                 for token in tokens:
                     if token == ("end", key):
                         break
@@ -604,7 +606,7 @@ def render(
                     ),
                 )
 
-                output += rend
+                output += rend # type: ignore[reportOperatorIssue]
 
             # If the scope is a sequence, an iterator or generator but not
             # derived from a string
@@ -644,7 +646,7 @@ def render(
 
             else:
                 # Otherwise we're just a scope section
-                scopes.insert(0, scope)
+                scopes.insert(0, scope) # type: ignore[reportArgumentType]
 
         # If we're an inverted section
         elif tag == "inverted section":

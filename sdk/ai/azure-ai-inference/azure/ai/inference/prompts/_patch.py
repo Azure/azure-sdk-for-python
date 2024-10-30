@@ -55,25 +55,26 @@ class PromptTemplate:
 
     def __init__(
         self,
-        prompty: Prompty = None,
-        prompt_template: str = None,
+        *,
         api: str = "chat",
+        prompty: Optional[Prompty] = None,
+        prompt_template: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
         self.prompty = prompty
         if self.prompty is not None:
             self.model_name = (
-                prompty.model.configuration["azure_deployment"]
-                if "azure_deployment" in prompty.model.configuration
+                self.prompty.model.configuration["azure_deployment"]
+                if "azure_deployment" in self.prompty.model.configuration
                 else None
             )
-            self.parameters = prompty.model.parameters
-            self._parameters = {}
+            self.parameters = self.prompty.model.parameters
+            self._config = {}
         elif prompt_template is not None:
             self.model_name = model_name
             self.parameters = {}
-            # _parameters is a dict to hold the internal configuration
-            self._parameters = {
+            # _config is a dict to hold the internal configuration
+            self._config = {
                 "api": api if api is not None else "chat",
                 "prompt_template": prompt_template,
             }
@@ -96,8 +97,8 @@ class PromptTemplate:
         if self.prompty is not None:
             parsed = prepare(self.prompty, data)
             return parsed
-        elif "prompt_template" in self._parameters:
-            system_prompt = render(self._parameters["prompt_template"], data)
+        elif "prompt_template" in self._config:
+            system_prompt = render(self._config["prompt_template"], data)
             return [{"role": "system", "content": system_prompt}]
         else:
             raise ValueError("Please provide valid prompt template")
