@@ -2,13 +2,9 @@
 
 ## 11.5.2 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
-### Other Changes
+- Fixed the issue that `encryptionKey` was lost during serialization.  #37521
 
 ## 11.5.1 (2024-07-30)
 
