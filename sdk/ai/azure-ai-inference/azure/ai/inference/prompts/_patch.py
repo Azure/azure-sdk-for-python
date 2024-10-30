@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from typing_extensions import Self
 from ._core import Prompty
 from ._utils import load, prepare
@@ -55,19 +55,19 @@ class PromptTemplate:
 
     def __init__(
         self,
-        prompty: Prompty = None,
-        prompt_template: str = None,
+        prompty: Optional[Prompty] = None,
+        prompt_template: Optional[str] = None,
         api: str = "chat",
         model_name: Optional[str] = None,
     ) -> None:
         self.prompty = prompty
         if self.prompty is not None:
             self.model_name = (
-                prompty.model.configuration["azure_deployment"]
-                if "azure_deployment" in prompty.model.configuration
+                self.prompty.model.configuration["azure_deployment"]
+                if "azure_deployment" in self.prompty.model.configuration
                 else None
             )
-            self.parameters = prompty.model.parameters
+            self.parameters = self.prompty.model.parameters
             self._parameters = {}
         elif prompt_template is not None:
             self.model_name = model_name

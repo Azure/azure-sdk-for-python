@@ -163,7 +163,7 @@ def prepare(
             "parser",
             f"{prompt.template.parser}.{prompt.model.api}",
             prompt,
-            SimpleModel(item=result.item),
+            SimpleModel(item=result.item), # type: ignore[reportPossiblyUnboundVariable]
         )
 
     if isinstance(result, SimpleModel):
