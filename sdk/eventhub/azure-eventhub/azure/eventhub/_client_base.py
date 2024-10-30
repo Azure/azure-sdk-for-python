@@ -569,9 +569,9 @@ class ConsumerProducerMixin:
             exception, self, is_consumer=is_consumer
         )
 
-    def _do_retryable_operation(
+    def _do_retryable_operation(  # pylint:disable=inconsistent-return-statements
         self, operation, timeout=None, **kwargs
-    ):  # pylint:disable=inconsistent-return-statements
+    ):
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0

@@ -403,6 +403,7 @@ if uamqp_installed:
 
         @staticmethod
         def _set_msg_timeout(producer, timeout_time, last_exception, logger):
+            # pylint: disable=protected-access
             if not timeout_time:
                 return
             remaining_time = timeout_time - time.time()
@@ -411,11 +412,9 @@ if uamqp_installed:
                     error = last_exception
                 else:
                     error = OperationTimeoutError("Send operation timed out")
-                logger.info(
-                    "%r send operation timed out. (%r)", producer._name, error
-                )  # pylint: disable=protected-access
+                logger.info("%r send operation timed out. (%r)", producer._name, error)
                 raise error
-            producer._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+            producer._handler._msg_timeout = remaining_time * 1000  # type: ignore
 
         @staticmethod
         def send_messages(producer, timeout_time, last_exception, logger):

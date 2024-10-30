@@ -231,25 +231,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
-        while consumer._callback_task_run:  # pylint: disable=protected-access
-            async with consumer._message_buffer_lock:  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        while consumer._callback_task_run:
+            async with consumer._message_buffer_lock:
                 events = [
-                    consumer._next_message_in_buffer()  # pylint: disable=protected-access
-                    for _ in range(
-                        min(max_batch_size, len(consumer._message_buffer))
-                    )  # pylint: disable=protected-access
+                    consumer._next_message_in_buffer()
+                    for _ in range(min(max_batch_size, len(consumer._message_buffer)))
                 ]
             now_time = time.time()
             if len(events) > 0:
-                await consumer._on_event_received(events if batch else events[0])  # pylint: disable=protected-access
-                consumer._last_callback_called_time = now_time  # pylint: disable=protected-access
+                await consumer._on_event_received(events if batch else events[0])
+                consumer._last_callback_called_time = now_time
             else:
-                if (
-                    max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time
-                ):  # pylint: disable=protected-access
+                if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time:
                     # no events received, and need to callback
-                    await consumer._on_event_received([] if batch else None)  # pylint: disable=protected-access
-                    consumer._last_callback_called_time = now_time  # pylint: disable=protected-access
+                    await consumer._on_event_received([] if batch else None)
+                    consumer._last_callback_called_time = now_time
                 # backoff a bit to avoid throttling CPU when no events are coming
                 await asyncio.sleep(0.05)
 

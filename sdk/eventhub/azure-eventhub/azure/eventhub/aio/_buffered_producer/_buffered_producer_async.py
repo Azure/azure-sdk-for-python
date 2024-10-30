@@ -67,7 +67,7 @@ class BufferedProducer:
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
-                    "Shutting down Partition %r." " There are still %r events in the buffer which will be lost",
+                    "Shutting down Partition %r. There are still %r events in the buffer which will be lost",
                     self.partition_id,
                     self._cur_buffered_len,
                 )

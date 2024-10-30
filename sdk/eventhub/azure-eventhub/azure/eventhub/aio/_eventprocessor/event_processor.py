@@ -298,7 +298,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     await self._consumers[partition_id].receive(self._batch, self._max_batch_size, self._max_wait_time)
                 except asyncio.CancelledError:
                     _LOGGER.info(
-                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r" " is cancelled",
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r is cancelled",
                         self._id,
                         self._eventhub_name,
                         partition_id,

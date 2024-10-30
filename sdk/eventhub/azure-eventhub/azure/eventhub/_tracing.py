@@ -286,7 +286,7 @@ def add_span_attributes(
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is performing the operation.
     :param int message_count: The number of messages being processed.
     """
-
+    # pylint: disable=protected-access
     span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_OPERATION_ATTRIBUTE, operation_type)
@@ -297,18 +297,10 @@ def add_span_attributes(
     if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.PROCESS):
         # Maintain legacy attributes for backwards compatibility.
         if client:
-            span.add_attribute(
-                TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path
-            )  # pylint: disable=protected-access
-            span.add_attribute(
-                TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname
-            )  # pylint: disable=protected-access
+            span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)
+            span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)
 
     elif operation_type == TraceOperationTypes.RECEIVE:
         if client:
-            span.add_attribute(
-                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname
-            )  # pylint: disable=protected-access
-            span.add_attribute(
-                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path
-            )  # pylint: disable=protected-access
+            span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname)
+            span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path)

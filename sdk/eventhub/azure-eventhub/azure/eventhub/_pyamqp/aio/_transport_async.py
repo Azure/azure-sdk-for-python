@@ -442,10 +442,10 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import (
+            from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
                 ClientSession,
                 ClientConnectorError,
-            )  # pylint: disable=networking-import-outside-azure-core-transport
+            )
             from urllib.parse import urlsplit
         except ImportError:
             raise ImportError("Please install aiohttp library to use async websocket transport.") from None
