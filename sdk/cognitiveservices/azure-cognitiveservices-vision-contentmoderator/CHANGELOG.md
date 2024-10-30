@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- This package has been deprecated and will no longer be maintained after 10-30-2024. This package will only receive security fixes until 10-30-2024. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-ai-contentsafety](https://pypi.org/project/azure-ai-contentsafety/).
+- This package has been deprecated and will no longer be maintained after 10-31-2024. This package will only receive security fixes until 10-31-2024. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-ai-contentsafety](https://pypi.org/project/azure-ai-contentsafety/).
 
 ## 1.0.0 (2019-01-02)
 
