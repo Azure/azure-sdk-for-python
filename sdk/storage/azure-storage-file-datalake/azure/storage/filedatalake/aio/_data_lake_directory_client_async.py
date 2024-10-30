@@ -5,27 +5,34 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
-from typing import ( # pylint: disable=unused-import
+import functools
+from typing import (
     Any, Dict, Optional, Union,
-    TYPE_CHECKING)
+    TYPE_CHECKING
+)
 
 try:
     from urllib.parse import quote, unquote
 except ImportError:
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
+
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
-from .._models import DirectoryProperties, FileProperties
 from .._deserialize import deserialize_dir_properties
-from ._path_client_async import PathClient
+from .._models import DirectoryProperties, FileProperties
 from .._shared.base_client_async import AsyncTransportWrapper
+from ._data_lake_file_client_async import DataLakeFileClient
+from ._list_paths_helper import PathPropertiesPaged
+from ._path_client_async import PathClient
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
+    from .._models import PathProperties
 
 
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
@@ -304,7 +311,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
 
     @distributed_trace_async
     async def rename_directory(self, new_name,  # type: str
@@ -610,6 +617,52 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)
         return file_client
+
+    @distributed_trace
+    def get_paths(
+        self, *,
+        recursive: bool = True,
+        max_results: Optional[int] = None,
+        upn: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["PathProperties"]:
+        """Returns an async generator to list the paths under specified file system and directory.
+        The generator will lazily follow the continuation tokens returned by the service.
+
+        :keyword bool recursive: Set True for recursive, False for iterative. The default value is True.
+        :keyword Optional[int] max_results: An optional value that specifies the maximum
+            number of items to return per page. If omitted or greater than 5,000, the
+            response will include up to 5,000 items per page.
+        :keyword Optional[bool] upn:
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
+            Principal Names in the owner, group, and acl fields of
+            :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
+            as Azure Active Directory Object IDs. The default value is None. Note that group and application
+            Object IDs are not translate because they do not have unique friendly names.
+        :keyword Optional[int] timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. The default value is None.
+        :returns: An iterable (auto-paging) response of PathProperties.
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
+        """
+        timeout = kwargs.pop('timeout', None)
+        hostname = self._hosts[self._location_mode]
+        url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
+        client = self._build_generated_client(url)
+        command = functools.partial(
+            client.file_system.list_paths,
+            path=self.path_name,
+            timeout=timeout,
+            **kwargs
+        )
+        return AsyncItemPaged(
+            command, recursive, path=self.path_name, max_results=max_results,
+            upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):

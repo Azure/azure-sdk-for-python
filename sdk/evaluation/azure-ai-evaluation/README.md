@@ -62,9 +62,6 @@ if __name__ == "__main__":
     # Running Relevance Evaluator on single input row
     relevance_score = relevance_eval(
         response="The Alpine Explorer Tent is the most waterproof.",
-        context="From the our product list,"
-        " the alpine explorer tent is the most waterproof."
-        " The Adventure Dining Table has higher weight.",
         query="Which tent is the most waterproof?",
     )
 
@@ -119,11 +116,6 @@ name: ApplicationPrompty
 description: Simulates an application
 model:
   api: chat
-  configuration:
-    type: azure_openai
-    azure_deployment: ${env:AZURE_DEPLOYMENT}
-    api_key: ${env:AZURE_OPENAI_API_KEY}
-    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
   parameters:
     temperature: 0.0
     top_p: 1.0
@@ -144,6 +136,95 @@ Output with a string that continues the conversation, responding to the latest m
 {{ conversation_history }}
 
 ```
+
+Query Response generaing prompty for gpt-4o with `json_schema` support
+Use this file as an override.
+```yaml
+---
+name: TaskSimulatorQueryResponseGPT4o
+description: Gets queries and responses from a blob of text
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_schema
+      json_schema:
+        name: QRJsonSchema
+        schema: 
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  q:
+                    type: string
+                  r:
+                    type: string
+                required:
+                  - q
+                  - r
+
+inputs:
+  text:
+    type: string
+  num_queries:
+    type: integer
+
+
+---
+system:
+You're an AI that helps in preparing a Question/Answer quiz from Text for "Who wants to be a millionaire" tv show
+Both Questions and Answers MUST BE extracted from given Text
+Frame Question in a way so that Answer is RELEVANT SHORT BITE-SIZED info from Text
+RELEVANT info could be: NUMBER, DATE, STATISTIC, MONEY, NAME
+A sentence should contribute multiple QnAs if it has more info in it
+Answer must not be more than 5 words
+Answer must be picked from Text as is
+Question should be as descriptive as possible and must include as much context as possible from Text
+Output must always have the provided number of QnAs
+Output must be in JSON format.
+Output must have {{num_queries}} objects in the format specified below. Any other count is unacceptable.
+Text:
+<|text_start|>
+On January 24, 1984, former Apple CEO Steve Jobs introduced the first Macintosh. In late 2003, Apple had 2.06 percent of the desktop share in the United States.
+Some years later, research firms IDC and Gartner reported that Apple's market share in the U.S. had increased to about 6%.
+<|text_end|>
+Output with 5 QnAs:
+{
+    "qna": [{
+        "q": "When did the former Apple CEO Steve Jobs introduced the first Macintosh?",
+        "r": "January 24, 1984"
+    },
+    {
+        "q": "Who was the former Apple CEO that introduced the first Macintosh on January 24, 1984?",
+        "r": "Steve Jobs"
+    },
+    {
+        "q": "What percent of the desktop share did Apple have in the United States in late 2003?",
+        "r": "2.06 percent"
+    },
+    {
+        "q": "What were the research firms that reported on Apple's market share in the U.S.?",
+        "r": "IDC and Gartner"
+    },
+    {
+        "q": "What was the percentage increase of Apple's market share in the U.S., as reported by research firms IDC and Gartner?",
+        "r": "6%"
+    }]
+}
+Text:
+<|text_start|>
+{{ text }}
+<|text_end|>
+Output with {{ num_queries }} QnAs:
+```
+
 Application code:
 
 ```python
@@ -152,93 +233,96 @@ import asyncio
 from typing import Any, Dict, List, Optional
 from azure.ai.evaluation.simulator import Simulator
 from promptflow.client import load_flow
-from azure.identity import DefaultAzureCredential
 import os
+import wikipedia
 
-azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
-    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
-    "project_name": os.environ.get("PROJECT_NAME")
+# Set up the model configuration without api_key, using DefaultAzureCredential
+model_config = {
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
+    # not providing key would make the SDK pick up `DefaultAzureCredential`
+    # use "api_key": "<your API key>"
+    "api_version": "2024-08-01-preview" # keep this for gpt-4o
 }
 
-import wikipedia
-wiki_search_term = "Leonardo da vinci"
+# Use Wikipedia to get some text for the simulation
+wiki_search_term = "Leonardo da Vinci"
 wiki_title = wikipedia.search(wiki_search_term)[0]
 wiki_page = wikipedia.page(wiki_title)
 text = wiki_page.summary[:1000]
 
-def method_to_invoke_application_prompty(query: str):
+def method_to_invoke_application_prompty(query: str, messages_list: List[Dict], context: Optional[Dict]):
     try:
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, "application.prompty")
-        _flow = load_flow(source=prompty_path, model={
-            "configuration": azure_ai_project
-        })
+        _flow = load_flow(
+            source=prompty_path,
+            model=model_config,
+            credential=DefaultAzureCredential()
+        )
         response = _flow(
             query=query,
             context=context,
             conversation_history=messages_list
         )
         return response
-    except:
-        print("Something went wrong invoking the prompty")
+    except Exception as e:
+        print(f"Something went wrong invoking the prompty: {e}")
         return "something went wrong"
 
 async def callback(
-    messages: List[Dict],
+    messages: Dict[str, List[Dict]],
     stream: bool = False,
     session_state: Any = None,  # noqa: ANN401
     context: Optional[Dict[str, Any]] = None,
 ) -> dict:
     messages_list = messages["messages"]
-    # get last message
+    # Get the last message from the user
     latest_message = messages_list[-1]
     query = latest_message["content"]
-    context = None
-    # call your endpoint or ai application here
-    response = method_to_invoke_application_prompty(query)
-    # we are formatting the response to follow the openAI chat protocol format
+    # Call your endpoint or AI application here
+    response = method_to_invoke_application_prompty(query, messages_list, context)
+    # Format the response to follow the OpenAI chat protocol format
     formatted_response = {
         "content": response,
         "role": "assistant",
-        "context": {
-            "citations": None,
-        },
+        "context": "",
     }
     messages["messages"].append(formatted_response)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
 
-
-
 async def main():
-    simulator = Simulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+    simulator = Simulator(model_config=model_config)
+    current_dir = os.path.dirname(__file__)
+    query_response_override_for_latest_gpt_4o = os.path.join(current_dir, "TaskSimulatorQueryResponseGPT4o.prompty")
     outputs = await simulator(
         target=callback,
         text=text,
+        query_response_generating_prompty=query_response_override_for_latest_gpt_4o, # use this only with latest gpt-4o
         num_queries=2,
-        max_conversation_turns=4,
+        max_conversation_turns=1,
         user_persona=[
             f"I am a student and I want to learn more about {wiki_search_term}",
             f"I am a teacher and I want to teach my students about {wiki_search_term}"
         ],
     )
-    print(json.dumps(outputs))
+    print(json.dumps(outputs, indent=2))
 
 if __name__ == "__main__":
-    os.environ["AZURE_SUBSCRIPTION_ID"] = ""
-    os.environ["RESOURCE_GROUP"] = ""
-    os.environ["PROJECT_NAME"] = ""
-    os.environ["AZURE_OPENAI_API_KEY"] = ""
-    os.environ["AZURE_OPENAI_ENDPOINT"] = ""
-    os.environ["AZURE_DEPLOYMENT"] = ""
+    # Ensure that the following environment variables are set in your environment:
+    # AZURE_OPENAI_ENDPOINT and AZURE_DEPLOYMENT
+    # Example:
+    # os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-endpoint.openai.azure.com/"
+    # os.environ["AZURE_DEPLOYMENT"] = "your-deployment-name"
     asyncio.run(main())
     print("done!")
+
 ```
 
 #### Adversarial Simulator
 
 ```python
-from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
 from azure.identity import DefaultAzureCredential
 from typing import Any, Dict, List, Optional
 import asyncio

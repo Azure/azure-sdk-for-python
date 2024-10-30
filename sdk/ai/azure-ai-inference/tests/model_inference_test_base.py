@@ -49,13 +49,13 @@ ServicePreparerChatCompletions = functools.partial(
 # hosted on Azure OpenAI (AOAI) endpoint.
 # TODO: When we have a MaaS model that supports chat completions with image input,
 # use that instead.
-# AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
+# AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o-0806
 # AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
 #
 ServicePreparerAOAIChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "azure_openai_chat",
-    azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o",
+    azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-0806",
     azure_openai_chat_key="00000000000000000000000000000000",
 )
 
@@ -146,7 +146,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         return endpoint, credential
 
     # See the "Data plane - inference" row in the table here for latest AOAI api-version:
-    # https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+    # https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
     def _load_aoai_chat_credentials(self, *, key_auth: bool, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_openai_chat_endpoint")
         if key_auth:
@@ -158,7 +158,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
             credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
             headers = {}
-        api_version = "2024-06-01"
+        api_version = "2024-08-01-preview"
         return endpoint, credential, credential_scopes, headers, api_version
 
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
@@ -258,6 +258,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
         assert " Python/" in headers["User-Agent"]
         assert headers["Authorization"] == "Bearer key-value"
+        assert headers["api-key"] == "key-value"
         assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD
 
     def _validate_chat_completions_json_request_payload(self) -> None:
@@ -272,6 +273,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
         assert " Python/" in headers["User-Agent"]
         assert headers["Authorization"] == "Bearer key-value"
+        assert headers["api-key"] == "key-value"
         assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD
 
     @staticmethod

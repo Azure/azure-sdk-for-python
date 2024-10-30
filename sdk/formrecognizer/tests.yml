@@ -6,10 +6,8 @@ extends:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
-      UseFederatedAuth: true
       MatrixReplace:
-        # Disable samples tests for now as some of them are haning.
-        # - TestSamples=.*/true
+        - TestSamples=.*/true
       SupportedClouds: 'Public,UsGov,China'
       Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
@@ -18,8 +16,6 @@ extends:
       CloudConfig:
         Prod:
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           Location: 'centraluseuap'
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -33,3 +29,6 @@ extends:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Powershell credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"

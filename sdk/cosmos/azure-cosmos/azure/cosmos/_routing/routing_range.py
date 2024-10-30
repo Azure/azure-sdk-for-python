@@ -22,6 +22,9 @@
 """Internal class for partition key range implementation in the Azure Cosmos
 database service.
 """
+import base64
+import binascii
+import json
 
 
 class PartitionKeyRange(object):
@@ -80,6 +83,74 @@ class Range(object):
             range_as_dict[Range.IsMaxInclusivePath],
         )
         return self
+
+    def to_dict(self):
+        return {
+            self.MinPath: self.min,
+            self.MaxPath: self.max,
+            self.IsMinInclusivePath: self.isMinInclusive,
+            self.IsMaxInclusivePath: self.isMaxInclusive
+        }
+
+    def to_normalized_range(self):
+        if self.isMinInclusive and not self.isMaxInclusive:
+            return self
+
+        normalized_min = self.min
+        normalized_max = self.max
+
+        if not self.isMinInclusive:
+            normalized_min = self.add_to_effective_partition_key(self.min, -1)
+
+        if self.isMaxInclusive:
+            normalized_max = self.add_to_effective_partition_key(self.max, 1)
+
+        return Range(normalized_min, normalized_max, True, False)
+
+    def add_to_effective_partition_key(self, effective_partition_key: str, value: int):
+        if value not in (-1, 1):
+            raise ValueError("Invalid value - only 1 or -1 is allowed")
+
+        byte_array = self.hex_binary_to_byte_array(effective_partition_key)
+        if value == 1:
+            for i in range(len(byte_array) -1, -1, -1):
+                if byte_array[i] < 255:
+                    byte_array[i] += 1
+                    break
+                byte_array[i] = 0
+        else:
+            for i in range(len(byte_array) - 1, -1, -1):
+                if byte_array[i] != 0:
+                    byte_array[i] -= 1
+                    break
+                byte_array[i] = 255
+
+        return binascii.hexlify(byte_array).decode()
+
+    def hex_binary_to_byte_array(self, hex_binary_string: str):
+        if hex_binary_string is None:
+            raise ValueError("hex_binary_string is missing")
+        if len(hex_binary_string) % 2 != 0:
+            raise ValueError("hex_binary_string must not have an odd number of characters")
+
+        return bytearray.fromhex(hex_binary_string)
+
+    @classmethod
+    def from_base64_encoded_json_string(cls, data: str):
+        try:
+            feed_range_json_string = base64.b64decode(data, validate=True).decode('utf-8')
+            feed_range_json = json.loads(feed_range_json_string)
+            return cls.ParseFromDict(feed_range_json)
+        except Exception as exc:
+            raise ValueError(f"Invalid feed_range json string {data}") from exc
+
+    def to_base64_encoded_string(self):
+        data_json = json.dumps(self.to_dict())
+        json_bytes = data_json.encode('utf-8')
+        # Encode the bytes to a Base64 string
+        base64_bytes = base64.b64encode(json_bytes)
+        # Convert the Base64 bytes to a string
+        return base64_bytes.decode('utf-8')
 
     def isSingleValue(self):
         return self.isMinInclusive and self.isMaxInclusive and self.min == self.max

@@ -49,8 +49,8 @@ class TestUtils(unittest.TestCase):
             0,
             2,
             10,
-            [1,1,0],
-            [0,10,20],
+            [1, 1, 0],
+            [0, 10, 20],
             0,
             5,
         )
@@ -63,11 +63,7 @@ class TestUtils(unittest.TestCase):
         resource_metric.scope_metrics = [scope_metric]
         metric_data = mock.Mock()
         metric_data.resource_metrics = [resource_metric]
-        metric_point = MetricPoint(
-            name=_COMMITTED_BYTES_NAME[1],
-            weight=1,
-            value=5
-        )
+        metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=5)
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now
@@ -98,11 +94,7 @@ class TestUtils(unittest.TestCase):
         resource_metric.scope_metrics = [scope_metric]
         metric_data = mock.Mock()
         metric_data.resource_metrics = [resource_metric]
-        metric_point = MetricPoint(
-            name=_COMMITTED_BYTES_NAME[1],
-            weight=1,
-            value=7
-        )
+        metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=7)
         documents = [mock.Mock()]
         date_now = datetime.now()
         datetime_mock.now.return_value = date_now

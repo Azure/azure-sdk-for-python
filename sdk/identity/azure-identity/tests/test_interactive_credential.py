@@ -183,7 +183,6 @@ def test_scopes_round_trip(get_token_method):
     "authority,expected_scope",
     (
         (KnownAuthorities.AZURE_CHINA, "https://management.core.chinacloudapi.cn//.default"),
-        (KnownAuthorities.AZURE_GERMANY, "https://management.core.cloudapi.de//.default"),
         (KnownAuthorities.AZURE_GOVERNMENT, "https://management.core.usgovcloudapi.net//.default"),
         (KnownAuthorities.AZURE_PUBLIC_CLOUD, "https://management.core.windows.net//.default"),
     ),

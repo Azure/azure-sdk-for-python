@@ -23,4 +23,4 @@ class TestProxyIntegration:
     # Therefore we are not using recorded_by_proxy decorator or recorded_test fixture
     def test_tool_spinup_http(self):
         result = http_client.request("GET", PROXY_CHECK_URL)
-        assert(result.status == 200)
+        assert result.status == 200

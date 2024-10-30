@@ -12,7 +12,6 @@ from azure.ai.ml import (
     load_batch_endpoint,
     load_component,
     load_compute,
-    load_connection,
     load_data,
     load_datastore,
     load_environment,
@@ -22,10 +21,12 @@ from azure.ai.ml import (
     load_online_endpoint,
     load_registry,
     load_workspace,
+    load_connection,
 )
 from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_cloud_name
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._telemetry import set_appinsights_distro
+from azure.ai.ml._telemetry import get_appinsights_log_handler
+from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
@@ -530,8 +531,7 @@ class TestMachineLearningClient:
         assert ml_client._base_url == "https://test.management.azure.com"
         assert _get_default_cloud_name() == "test_cloud"
 
-    @patch("azure.ai.ml._telemetry.logging_handler.configure_azure_monitor")
-    def test_enable_telemetry(self, mock_configure_azure_monitor) -> None:
+    def test_enable_telemetry(self) -> None:
         subscription_id = "fake-sub-id"
         resource_group_name = "fake-rg-name"
 
@@ -553,9 +553,11 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
             assert enable_telemetry
-            mock_configure_azure_monitor.assert_not_called()
+            assert isinstance(handler, logging.NullHandler)
 
         # confirm that telemetry is ENABLED when in jupyter notebook and enable_telemetry=True
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
@@ -563,10 +565,11 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
             assert enable_telemetry
-            mock_configure_azure_monitor.assert_called_once()
-            mock_configure_azure_monitor.reset_mock()
+            assert isinstance(handler, AzureMLSDKLogHandler)
 
         client = MLClient(
             credential=DefaultAzureCredential(),
@@ -587,9 +590,11 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
             assert not enable_telemetry
-            mock_configure_azure_monitor.assert_not_called()
+            assert isinstance(handler, logging.NullHandler)
 
         # confirm that telemetry is DISABLED when in jupyter notebook and enable_telemetry=False
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
@@ -597,6 +602,8 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
             assert not enable_telemetry
-            mock_configure_azure_monitor.assert_not_called()
+            assert isinstance(handler, logging.NullHandler)

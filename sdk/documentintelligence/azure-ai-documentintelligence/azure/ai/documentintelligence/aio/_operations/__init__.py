@@ -16,5 +16,4 @@ __all__ = [
     "DocumentIntelligenceClientOperationsMixin",
     "DocumentIntelligenceAdministrationClientOperationsMixin",
 ]
-
 _patch_sdk()

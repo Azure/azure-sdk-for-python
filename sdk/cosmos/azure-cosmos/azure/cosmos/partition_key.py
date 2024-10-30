@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List
+from typing import IO, Sequence, Type, Union, overload, List, cast
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt64, _UInt128
@@ -173,6 +173,20 @@ class PartitionKey(dict):
         max_epk = str(min_epk) + "FF"
         return _Range(min_epk, max_epk, True, False)
 
+    def _get_epk_range_for_partition_key(
+            self,
+            pk_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]] # pylint: disable=line-too-long
+    ) -> _Range:
+        if self._is_prefix_partition_key(pk_value):
+            return self._get_epk_range_for_prefix_partition_key(
+                cast(Sequence[Union[None, bool, int, float, str, Type[NonePartitionKeyValue]]], pk_value))
+
+        # else return point range
+        effective_partition_key_string =\
+            self._get_effective_partition_key_string(
+                cast(List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]], [pk_value]))
+        return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
+
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
         # We shouldn't be supporting V1
         return ""
@@ -264,6 +278,15 @@ class PartitionKey(dict):
             sb.append(_to_hex(bytearray(hash_v), 0, len(hash_v)))
 
         return ''.join(sb).upper()
+
+    def _is_prefix_partition_key(
+            self,
+            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
+        if self.kind!= "MultiHash":
+            return False
+        if isinstance(partition_key, list) and len(self['paths']) == len(partition_key):
+            return False
+        return True
 
 
 def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:

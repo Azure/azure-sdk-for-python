@@ -118,7 +118,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._hostname = parsed_url.hostname
         kwargs["http_proxy"] = http_proxy
         endpoint = self._hostname
-        if parsed_url.port:
+        if parsed_url.port and not kwargs.get("use_tls", True):
             self._port = parsed_url.port
         elif parsed_url.scheme == "amqps":
             self._port = SECURE_PORT
@@ -585,7 +585,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 "END frame received on invalid channel. Closing connection.",
                 extra=self._network_trace_params
             )
-            return
 
     def _process_incoming_frame(self, channel: int, frame: Optional[Union[bytes, Tuple[Any,...]]]) -> bool:  # pylint:disable=too-many-return-statements
         """Process an incoming frame, either directly or by passing to the necessary Session.

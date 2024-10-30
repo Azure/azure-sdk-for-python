@@ -1,37 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from typing import Optional
 
+from typing_extensions import override
+
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-
-try:
-    from ._content_safety_base import ContentSafetyEvaluatorBase
-except ImportError:
-    from _content_safety_base import ContentSafetyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class _AsyncSexualEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
-        super().__init__(
-            metric=EvaluationMetrics.SEXUAL,
-            azure_ai_project=azure_ai_project,
-            credential=credential,
-        )
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        return await super().__call__(query=query, response=response, **kwargs)
-
-
-class SexualEvaluator:
+@experimental
+class SexualEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a sexual evaluator for sexual score.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
 
     **Usage**
 
@@ -56,21 +44,41 @@ class SexualEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncSexualEvaluator(azure_ai_project, credential)
+    @override
+    def __init__(
+        self,
+        credential,
+        azure_ai_project,
+        eval_last_turn: bool = False,
+    ):
+        super().__init__(
+            eval_metric=EvaluationMetrics.SEXUAL,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
+        )
 
-    def __call__(self, *, query: str, response: str, **kwargs):
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation=None,
+        **kwargs,
+    ):
         """
-        Evaluates sexual content.
+        Evaluate whether sexual content is present in your AI system's response.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :return: The sexual score.
-        :rtype: dict
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score.
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
-
-    def _to_async(self):
-        return self._async_evaluator
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

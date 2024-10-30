@@ -354,9 +354,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                     "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
             )
 
-    return_code = execute_tox_serial(tox_command_tuples)
+    return_result = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
 
-    sys.exit(return_code)
+    sys.exit(return_result) #type: ignore
