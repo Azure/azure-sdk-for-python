@@ -1,16 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Dict
-from typing_extensions import override
+from typing import List, Optional, Union, Dict
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class GroundednessProEvaluator(RaiServiceEvaluatorBase):
+class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
     Initialize a Groundedness Pro evaluator for determine if the response is grounded
     in the query and context.
@@ -100,14 +101,48 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
             **kwargs,
         )
 
-    @override
+    @overload
     def __call__(
         self,
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation=None,
+    ) -> Dict[str, Union[str, bool]]:
+        """Evaluate groundedness for a given query/response/context
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated.
+        :paramtype response: Optional[str]
+        :keyword context: The context to be evaluated.
+        :paramtype context: Optional[str]
+        :return: The relevance score.
+        :rtype: Dict[str, Union[str, bool]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]:
+        """Evaluate groundedness for a conversation for a multi-turn evaluation. If the conversation has
+        more than one turn, the evaluator will aggregate the results of each turn, with the per-turn results
+        available in the output under the "evaluation_per_turn" key.
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The relevance score.
+        :rtype: Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
         **kwargs,
     ):
         """Evaluate groundedness. Accepts either a query, response and context for a single-turn evaluation, or a
@@ -128,7 +163,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase):
         :return: The relevance score.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
         """
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict):
