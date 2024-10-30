@@ -18,7 +18,8 @@ USAGE:
     Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 
-    Update the Azure OpenAI api-version as needed. See `api_version=` below.
+    Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
 
     Update the model deployment name as needed. See `model=` below.
 """

@@ -20,6 +20,11 @@ USAGE:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
+
+    Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+
+    Update the model deployment name as needed. See `model=` below.
 """
 import os
 import sys
