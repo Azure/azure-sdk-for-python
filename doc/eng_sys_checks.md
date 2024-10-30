@@ -112,6 +112,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's dependencies are on PyPI before releasing.
 - `Skip.KeywordCheck`
   - Omit checking that a package's keywords are correctly formulated before releasing.
+- `Skip.Black`
+  - Omit checking `black` in the `analyze` job.
 
 ## The pyproject.toml
 
@@ -172,7 +174,7 @@ You can enable test logging in a pipeline by setting the queue time variable `PY
 
 `PYTEST_LOG_LEVEL=INFO`
 
-This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable. 
+This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable.
 
 Note that if you want DEBUG level logging with sensitive information unredacted in the test logs, then you still must pass `logging_enable=True` into the client(s) being used in tests.
 
