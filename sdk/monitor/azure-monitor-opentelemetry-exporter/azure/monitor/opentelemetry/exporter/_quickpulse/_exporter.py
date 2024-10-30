@@ -169,7 +169,7 @@ class _QuickpulseExporter(MetricExporter):
                     result = MetricExportResult.FAILURE
                 else:
                     # Check if etag has changed
-                    etag = post_response._response_headers.get(
+                    etag = post_response._response_headers.get(  # pylint: disable=protected-access
                         _QUICKPULSE_ETAG_HEADER_NAME  # pylint: disable=protected-access
                     )
                     if etag and etag != configuration_etag:
