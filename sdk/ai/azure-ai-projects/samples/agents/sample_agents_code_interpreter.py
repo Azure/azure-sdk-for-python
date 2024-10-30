@@ -40,7 +40,9 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
 
     # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS)
+    file = project_client.agents.upload_file_and_poll(
+        file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
+    )
     print(f"Uploaded file, file ID: {file.id}")
 
     code_interpreter = CodeInterpreterTool(file_ids=[file.id])
@@ -60,7 +62,9 @@ with project_client:
 
     # create a message
     message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?"
+        thread_id=thread.id,
+        role="user",
+        content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
     )
     print(f"Created message, message ID: {message.id}")
 
