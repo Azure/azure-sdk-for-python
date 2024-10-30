@@ -13,10 +13,15 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects openai
+    pip install azure-ai-projects openai
 
     Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+
+    Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+
+    Update the model deployment name as needed. See `model=` below.
 """
 import os
 from azure.ai.projects import AIProjectClient
@@ -31,7 +36,7 @@ with AIProjectClient.from_connection_string(
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
-            model="gpt-4-0613",
+            model="gpt-35-turbo-16k",
             messages=[
                 {
                     "role": "user",

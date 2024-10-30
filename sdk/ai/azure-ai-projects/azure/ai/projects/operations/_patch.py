@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +15,7 @@ from pathlib import Path
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
+from ._operations import TelemetryOperations as TelemetryOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import (
     GetConnectionResponse,
@@ -314,8 +315,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         return connection_properties_list
 
+
 # Internal helper function to enable tracing, used by both sync and async clients
-def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
     """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
     :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
@@ -340,6 +342,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None
                 "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-http'"
             )
         from azure.core.settings import settings
+
         settings.tracing_implementation = "opentelemetry"
         trace.set_tracer_provider(TracerProvider())
         trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
@@ -356,6 +359,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None
                     "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
                 )
             from azure.core.settings import settings
+
             settings.tracing_implementation = "opentelemetry"
             trace.set_tracer_provider(TracerProvider())
             trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
@@ -367,27 +371,35 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None
     # Silently try to load a set of relevant Instrumentors
     try:
         from azure.ai.inference.tracing import AIInferenceInstrumentor
+
         instrumentor = AIInferenceInstrumentor()
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
     except ModuleNotFoundError as _:
-        logger.warning("Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed")
+        logger.warning(
+            "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
+        )
 
     try:
         from opentelemetry.instrumentation.openai import OpenAIInstrumentor
+
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError as _:
-        logger.warning("Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai` is not installed")
+        logger.warning(
+            "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai` is not installed"
+        )
 
     try:
         from opentelemetry.instrumentation.langchain import LangchainInstrumentor
+
         LangchainInstrumentor().instrument()
     except ModuleNotFoundError as _:
-        logger.warning("Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed")
+        logger.warning(
+            "Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed"
+        )
 
 
-# TODO: change this to TelemetryOperations
-class DiagnosticsOperations(DiagnosticsOperationsGenerated):
+class TelemetryOperations(TelemetryOperationsGenerated):
 
     _connection_string: Optional[str] = None
     _get_connection_string_called: bool = False
@@ -413,7 +425,7 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
             if get_workspace_response.properties.application_insights:
 
                 # Make a GET call to the Application Insights resource URL to get the connection string
-                app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
+                app_insights_respose: GetAppInsightsResponse = self._get_app_insights(
                     app_insights_resource_url=get_workspace_response.properties.application_insights
                 )
 
@@ -422,10 +434,9 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
         self._get_connection_string_called = True
         return self._connection_string
 
-
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
-    # TODO: This could be a class method. But we don't have a class property AIProjectClient.diagnostics
-    def enable(self, *, destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+    # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
+    def enable(self, *, destination: Union[TextIOWrapper, str], **kwargs) -> None:
         """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
         :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
@@ -2497,7 +2508,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 __all__: List[str] = [
     "AgentsOperations",
     "ConnectionsOperations",
-    "DiagnosticsOperations",
+    "TelemetryOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

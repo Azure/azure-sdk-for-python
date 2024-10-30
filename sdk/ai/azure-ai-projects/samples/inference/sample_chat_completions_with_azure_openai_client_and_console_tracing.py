@@ -17,8 +17,14 @@ USAGE:
     pip install azure-ai-projects openai opentelemetry.instrumentation.openai opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true - Optional. For detailed traces, including chat request and response messages.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+      messages, which may contain personal data. False by default.
+
+    Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+
+    Update the model deployment name as needed. See `model=` below.
 """
 import os
 import sys
@@ -30,15 +36,14 @@ with AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 ) as project_client:
 
-    # Enable console tracing. Set environment variable `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`
-    # for detailed logs, including chat request and response messages.
-    project_client.diagnostics.enable(destination=sys.stdout)
+    # Enable console tracing
+    project_client.telemetry.enable(destination=sys.stdout)
 
     # Get an authenticated OpenAI client for your default Azure OpenAI connection:
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
-            model="gpt-4-0613",
+            model="gpt-35-turbo-16k",
             messages=[
                 {
                     "role": "user",
