@@ -47,6 +47,7 @@ __all__ = [
     "resource_id",
     "is_valid_resource_id",
     "is_valid_resource_name",
+    "get_arm_endpoints",
 ]
 
 
@@ -230,7 +231,7 @@ def get_arm_endpoints(cloud_setting: AzureClouds) -> Dict[str, Any]:
     """
     if cloud_setting == AzureClouds.AZURE_CHINA_CLOUD:
         return {
-            "resource_manager": "https://management.chinacloudapi.cn",
+            "resource_manager": "https://management.chinacloudapi.cn/",
             "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
         }
     if cloud_setting == AzureClouds.AZURE_US_GOVERNMENT:
