@@ -28,7 +28,7 @@ class SelfHarmMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = SelfHarmMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {

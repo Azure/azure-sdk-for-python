@@ -28,7 +28,7 @@ class ViolenceMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ViolenceMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {
@@ -72,6 +72,7 @@ class ViolenceMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates violence content.
+        
         :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation

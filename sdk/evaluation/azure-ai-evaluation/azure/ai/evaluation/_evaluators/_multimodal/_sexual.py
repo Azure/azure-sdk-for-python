@@ -28,7 +28,7 @@ class SexualMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = SexualMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {

@@ -22,7 +22,6 @@ class ProtectedMaterialMultimodalEvaluator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
     :return: A dictionary containing the evaluation result label and reasoning.
-    :rtype: Dict[str, str]
 
     **Usage Example**
 
@@ -34,7 +33,7 @@ class ProtectedMaterialMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ProtectedMaterialMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {

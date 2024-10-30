@@ -33,7 +33,6 @@ class ContentSafetyMultimodalEvaluator:
     :type parallel: bool
 
     :return: A function that evaluates multimodal chat messages and generates content safety metrics.
-    :rtype: Callable
 
     **Usage Example**
 
@@ -45,7 +44,7 @@ class ContentSafetyMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ContentSafetyMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {
@@ -104,6 +103,7 @@ class ContentSafetyMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content-safety metrics for list of messages.
+        
         :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
