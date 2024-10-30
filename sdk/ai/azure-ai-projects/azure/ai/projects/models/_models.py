@@ -380,23 +380,6 @@ class AppInsightsProperties(_model_base.Model):
     connection_string: str = rest_field(name="ConnectionString")
     """Authentication type of the connection target. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_string: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
 
 class InputData(_model_base.Model):
     """Abstract data class for input data configuration.
@@ -1206,21 +1189,27 @@ class FileSearchToolResource(_model_base.Model):
      maximum of 1 vector
      store attached to the agent.
     :vartype vector_store_ids: list[str]
-    :ivar vector_stores:
-    :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreFromAzure]
+    :ivar vector_stores: The list of vector store configuration objects from Azure. This list is
+     limited to one
+     element. The only element of this list contains
+     the list of azure asset IDs used by the search tool.
+    :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreAzureConfigurations]
     """
 
     vector_store_ids: Optional[List[str]] = rest_field()
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
-    vector_stores: Optional[List["_models.VectorStoreFromAzure"]] = rest_field()
+    vector_stores: Optional[List["_models.VectorStoreAzureConfigurations"]] = rest_field()
+    """The list of vector store configuration objects from Azure. This list is limited to one
+     element. The only element of this list contains
+     the list of azure asset IDs used by the search tool."""
 
     @overload
     def __init__(
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-        vector_stores: Optional[List["_models.VectorStoreFromAzure"]] = None,
+        vector_stores: Optional[List["_models.VectorStoreAzureConfigurations"]] = None,
     ) -> None: ...
 
     @overload
@@ -1348,34 +1337,15 @@ class GetAppInsightsResponse(_model_base.Model):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models.AppInsightsProperties
+    :vartype properties: ~azure.ai.projects.models._models.AppInsightsProperties
     """
 
     id: str = rest_field()
     """A unique identifier for the resource. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
-    properties: "_models.AppInsightsProperties" = rest_field()
+    properties: "_models._models.AppInsightsProperties" = rest_field()
     """The properties of the resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        name: str,
-        properties: "_models.AppInsightsProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class GetConnectionResponse(_model_base.Model):
@@ -5510,7 +5480,8 @@ class UpdateToolResourcesOptions(_model_base.Model):
 
 
 class VectorStorageConfiguration(_model_base.Model):
-    """Vector storage configuration represents the collection of data sources.
+    """Vector storage configuration is the list of data sources, used when multiple
+    files can be used for the enterprise file search.
 
 
     :ivar data_sources: Data sources. Required.
@@ -5539,7 +5510,8 @@ class VectorStorageConfiguration(_model_base.Model):
 
 
 class VectorStorageDataSource(_model_base.Model):
-    """The structure to be supplied when the vector store is being created from the Azure asset ID.
+    """The structure, containing Azure asset ID and the asset type of the file used as a data source
+    the enterprise file search.
 
 
     :ivar storage_uri: Asset URI. Required.
@@ -5793,6 +5765,41 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.OTHER, **kwargs)
+
+
+class VectorStoreAzureConfigurations(_model_base.Model):
+    """The structure, containing the list of vector storage configurations i.e. the list of azure
+    asset IDs.
+
+
+    :ivar store_name: Name. Required.
+    :vartype store_name: str
+    :ivar store_configuration: Configurations. Required.
+    :vartype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
+    """
+
+    store_name: str = rest_field(name="name")
+    """Name. Required."""
+    store_configuration: "_models.VectorStorageConfiguration" = rest_field(name="configuration")
+    """Configurations. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        store_name: str,
+        store_configuration: "_models.VectorStorageConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VectorStoreDeletionStatus(_model_base.Model):
@@ -6133,40 +6140,6 @@ class VectorStoreFileError(_model_base.Model):
         *,
         code: Union[str, "_models.VectorStoreFileErrorCode"],
         message: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VectorStoreFromAzure(_model_base.Model):
-    """Vector store, keeping several vector store configurations.
-
-
-    :ivar store_name: Name. Required.
-    :vartype store_name: str
-    :ivar store_configuration: Configurations. Required.
-    :vartype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
-    """
-
-    store_name: str = rest_field(name="name")
-    """Name. Required."""
-    store_configuration: "_models.VectorStorageConfiguration" = rest_field(name="configuration")
-    """Configurations. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        store_name: str,
-        store_configuration: "_models.VectorStorageConfiguration",
     ) -> None: ...
 
     @overload
