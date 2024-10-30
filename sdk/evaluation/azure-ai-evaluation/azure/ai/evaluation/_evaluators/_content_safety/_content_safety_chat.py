@@ -92,17 +92,17 @@ class ContentSafetyChatEvaluator:
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
         parallel: bool = True,
     ):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
-            ViolenceEvaluator(azure_ai_project, credential),
-            SexualEvaluator(azure_ai_project, credential),
-            SelfHarmEvaluator(azure_ai_project, credential),
-            HateUnfairnessEvaluator(azure_ai_project, credential),
+            ViolenceEvaluator(credential, azure_ai_project),
+            SexualEvaluator(credential, azure_ai_project),
+            SelfHarmEvaluator(credential, azure_ai_project),
+            HateUnfairnessEvaluator(credential, azure_ai_project),
         ]
 
     def __call__(self, *, conversation: list, **kwargs):

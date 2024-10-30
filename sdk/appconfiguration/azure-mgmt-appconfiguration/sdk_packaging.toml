@@ -3,7 +3,7 @@ package_name = "azure-mgmt-appconfiguration"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "App Configuration Management"
 package_doc_id = "?view=azure-python-preview"
-is_stable = false
+is_stable = true
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true

@@ -337,6 +337,8 @@
     "onmicrosoft",
     "openai",
     "OPENAI",
+    "otlp",
+    "OTLP",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -963,9 +965,7 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte",
-        "myalias",
-        "mydomain"
+        "Thawte"
       ]
     },
     {

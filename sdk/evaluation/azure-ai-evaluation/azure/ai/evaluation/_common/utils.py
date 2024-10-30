@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Type, TypeVar, Union, cast, get_args, get_origin
+from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
-
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
@@ -24,7 +25,7 @@ _nltk_data_download_lock = threading.Lock()
 T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
-def get_harm_severity_level(harm_score: int) -> Union[str, float]:
+def get_harm_severity_level(harm_score: Union[float, int]) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
@@ -48,13 +49,19 @@ def get_harm_severity_level(harm_score: int) -> Union[str, float]:
 
 def ensure_nltk_data_downloaded():
     """Download NLTK data packages if not already downloaded."""
+    nltk_data = [
+        ("wordnet", "corpora/wordnet.zip"),
+        ("perluniprops", "misc/perluniprops.zip"),
+        ("punkt", "tokenizers/punkt.zip"),
+        ("punkt_tab", "tokenizers/punkt_tab.zip"),
+    ]
+
     with _nltk_data_download_lock:
-        try:
-            from nltk.tokenize.nist import NISTTokenizer  # pylint: disable=unused-import
-        except LookupError:
-            nltk.download("perluniprops")
-            nltk.download("punkt")
-            nltk.download("punkt_tab")
+        for _id, resource_name in nltk_data:
+            try:
+                nltk.find(resource_name)
+            except LookupError:
+                nltk.download(_id)
 
 
 def nltk_tokenize(text: str) -> List[str]:
@@ -122,24 +129,23 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
 
     if not isinstance(o, dict):
-        msg = "azure_ai_project must be a dictionary"
+        msg = "The 'azure_ai_project' parameter must be a dictionary."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
     missing_fields = set(fields.keys()) - o.keys()
 
     if missing_fields:
-        msg = "azure_ai_project must contain keys: " + ", ".join(f'"{field}"' for field in missing_fields)
+        msg = (
+            "The 'azure_ai_project' dictionary is missing the following required "
+            f"field(s): {', '.join(f'{field}' for field in missing_fields)}."
+        )
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
@@ -147,13 +153,10 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
         if isinstance(o[field_name], expected_type):
             continue
 
-        msg = f"Expected azure_ai_project field {field_name!r} to be of type {expected_type}."
-
+        msg = f"Invalid type for field '{field_name}'. Expected {expected_type}, but got {type(o[field_name])}."
         raise EvaluationException(
-            message=f"{msg}. Got {type(o[field_name])}.",
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            message=msg,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
@@ -270,3 +273,139 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         validate_annotation(v, annotations[k])
 
     return cast(T_TypedDict, o)
+
+
+def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    """Parse the output of prompt-based quality evaluators that return a score and reason.
+
+    Current supported evaluators:
+        - Fluency
+        - Relevance
+        - Retrieval
+        - Groundedness
+        - Coherence
+
+    :param llm_output: The output of the prompt-based quality evaluator.
+    :type llm_output: str
+    :return: The score and reason.
+    :rtype: Tuple[float, str]
+    """
+    score = math.nan
+    reason = ""
+    if llm_output:
+        score_pattern = r"<S2>(.*?)</S2>"
+        reason_pattern = r"<S1>(.*?)</S1>"
+        score_match = re.findall(score_pattern, llm_output, re.DOTALL)
+        reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+        if score_match:
+            score = float(score_match[0].strip())
+        if reason_match:
+            reason = reason_match[0].strip()
+
+    return score, reason
+
+
+def remove_optional_singletons(eval_class, singletons):
+    required_singletons = singletons.copy()
+    if hasattr(eval_class, "_OPTIONAL_PARAMS"):  # pylint: disable=protected-access
+        for param in eval_class._OPTIONAL_PARAMS:  # pylint: disable=protected-access
+            if param in singletons:
+                del required_singletons[param]
+    return required_singletons
+
+
+def retrieve_content_type(assistant_messages: List, metric: str) -> str:
+    """Get the content type for service payload.
+
+    :param assistant_messages: The list of messages to be annotated by evaluation service
+    :type assistant_messages: list
+    :param metric: A string representing the metric type
+    :type metric: str
+    :return: A text representing the content type. Example: 'text', or 'image'
+    :rtype: str
+    """
+    # Check if metric is "protected_material"
+    if metric == "protected_material":
+        return "image"
+
+    # Iterate through each message
+    for item in assistant_messages:
+        # Ensure "content" exists in the message and is iterable
+        content = item.get("content", [])
+        for message in content:
+            if message.get("type", "") == "image_url":
+                return "image"
+    # Default return if no image was found
+    return "text"
+
+
+def validate_conversation(conversation):
+    def raise_exception(msg, target):
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=target,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    if not conversation or "messages" not in conversation:
+        raise_exception(
+            "Attribute 'messages' is missing in the request",
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+        )
+    messages = conversation["messages"]
+    if not isinstance(messages, list):
+        raise_exception(
+            "'messages' parameter must be a JSON-compatible list of chat messages",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    expected_roles = {"user", "assistant", "system"}
+    image_found = False
+    for num, message in enumerate(messages, 1):
+        if not isinstance(message, dict):
+            try:
+                from azure.ai.inference.models import (
+                    ChatRequestMessage,
+                    UserMessage,
+                    AssistantMessage,
+                    SystemMessage,
+                    ImageContentItem,
+                )
+            except ImportError as ex:
+                raise MissingRequiredPackage(
+                    message="Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
+                ) from ex
+
+            if isinstance(messages[0], ChatRequestMessage) and not isinstance(
+                message, (UserMessage, AssistantMessage, SystemMessage)
+            ):
+                raise_exception(
+                    f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
+                    ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                )
+
+            if isinstance(message.content, list) and any(
+                isinstance(item, ImageContentItem) for item in message.content
+            ):
+                image_found = True
+            continue
+        if message.get("role") not in expected_roles:
+            raise_exception(
+                f"Invalid role provided: {message.get('role')}. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        content = message.get("content")
+        if not isinstance(content, (str, list)):
+            raise_exception(
+                f"Content in each turn must be a string or array. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        if isinstance(content, list):
+            if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+                image_found = True
+    if not image_found:
+        raise_exception(
+            "Message needs to have multi-modal input like images.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
