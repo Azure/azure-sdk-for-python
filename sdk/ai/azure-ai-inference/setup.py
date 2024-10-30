@@ -66,7 +66,7 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
-        "pydantic>=2.0.0",
+        "dataclasses",
         "types-PyYAML",
     ],
     python_requires=">=3.8",
