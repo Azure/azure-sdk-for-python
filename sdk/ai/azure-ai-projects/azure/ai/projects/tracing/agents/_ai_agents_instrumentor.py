@@ -12,7 +12,7 @@ import os
 from azure.ai.projects import _types
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 from urllib.parse import urlparse
-from azure.ai.projects.tracing._utils import * # pylint: disable=unused-wildcard-import
+from azure.ai.projects.tracing.agents._utils import * # pylint: disable=unused-wildcard-import
 
 # pylint: disable = no-name-in-module
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore

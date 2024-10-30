@@ -21,10 +21,10 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os
+import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.tracing import AIAgentsInstrumentor
+from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
 from tracing_helpers import configure_tracing
 # To use console exporter, uncomment following lines and install opentelemetry-sdk
 #from opentelemetry import trace

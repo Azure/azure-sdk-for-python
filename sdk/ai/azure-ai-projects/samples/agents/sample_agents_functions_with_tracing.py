@@ -25,7 +25,7 @@ import os, time, json
 from typing import Any, Callable, Set
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.tracing import AIAgentsInstrumentor
+from azure.ai.projects.agents.tracing import AIAgentsInstrumentor
 from tracing_helpers import configure_tracing
 from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
 from user_functions import user_functions

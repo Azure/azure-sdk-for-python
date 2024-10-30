@@ -25,7 +25,7 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.tracing import AIAgentsInstrumentor
+from azure.ai.projects.agents.tracing import AIAgentsInstrumentor
 from azure.ai.projects.models import (
     AgentEventHandler,
     MessageDeltaTextContent,
