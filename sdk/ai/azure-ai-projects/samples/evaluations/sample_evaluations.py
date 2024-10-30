@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a synchronous client.
@@ -60,16 +58,15 @@ evaluation = Evaluation(
             # id=RelevanceEvaluator.id,
             id="azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3",
             init_params={
-                "model_config": default_connection.to_evaluator_model_config(deployment_name=deployment_name,
-                                                                             api_version=api_version)
+                "model_config": default_connection.to_evaluator_model_config(
+                    deployment_name=deployment_name, api_version=api_version
+                )
             },
         ),
         "violence": EvaluatorConfiguration(
             # id=ViolenceEvaluator.id,
             id="azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3",
-            init_params={
-                "azure_ai_project": project_client.scope
-            },
+            init_params={"azure_ai_project": project_client.scope},
         ),
     },
 )

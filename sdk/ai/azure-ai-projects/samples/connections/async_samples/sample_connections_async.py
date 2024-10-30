@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_connections_async.py
-
 DESCRIPTION:
     Given an asynchronous AIProjectClient, this sample demonstrates how to enumerate connections
     and get connections properties.
