@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0 (2024-10-30)
+
+### Features Added
+
+  - Method `DataBoxManagementClient.mitigate` has a new overload `def mitigate(self: None, job_name: str, resource_group_name: str, mitigate_job_request: IO[bytes], content_type: str)`
+  - Method `DataBoxManagementClientOperationsMixin.mitigate` has a new overload `def mitigate(self: None, job_name: str, resource_group_name: str, mitigate_job_request: IO[bytes], content_type: str)`
+  - Method `JobsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, job_name: str, job_resource: IO[bytes], content_type: str)`
+  - Method `JobsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, job_name: str, job_resource_update_parameter: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `JobsOperations.book_shipment_pick_up` has a new overload `def book_shipment_pick_up(self: None, resource_group_name: str, job_name: str, shipment_pick_up_request: IO[bytes], content_type: str)`
+  - Method `JobsOperations.cancel` has a new overload `def cancel(self: None, resource_group_name: str, job_name: str, cancellation_reason: IO[bytes], content_type: str)`
+  - Method `JobsOperations.mark_devices_shipped` has a new overload `def mark_devices_shipped(self: None, job_name: str, resource_group_name: str, mark_devices_shipped_request: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.list_available_skus_by_resource_group` has a new overload `def list_available_skus_by_resource_group(self: None, resource_group_name: str, location: str, available_sku_request: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.region_configuration` has a new overload `def region_configuration(self: None, location: str, region_configuration_request: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.region_configuration_by_resource_group` has a new overload `def region_configuration_by_resource_group(self: None, resource_group_name: str, location: str, region_configuration_request: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.validate_address` has a new overload `def validate_address(self: None, location: str, validate_address: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.validate_inputs` has a new overload `def validate_inputs(self: None, location: str, validation_request: IO[bytes], content_type: str)`
+  - Method `ServiceOperations.validate_inputs_by_resource_group` has a new overload `def validate_inputs_by_resource_group(self: None, resource_group_name: str, location: str, validation_request: IO[bytes], content_type: str)`
+
 ## 2.0.0 (2023-05-22)
 
 ### Features Added
