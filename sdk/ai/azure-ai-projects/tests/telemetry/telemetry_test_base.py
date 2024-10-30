@@ -14,10 +14,10 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 Set these environment variables before running the test:
 set AZURE_AI_PROJECTS_DIAGNOSTICS_TEST_PROJECT_CONNECTION_STRING=
 """
-servicePreparerDiagnosticsTests = functools.partial(
+servicePreparerTelemetryTests = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_diagnostics_test",
-    azure_ai_projects_diagnostics_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
+    "azure_ai_projects_telemetry_test",
+    azure_ai_projects_telemetry_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
 )
 
 # Set to True to enable SDK logging
@@ -34,7 +34,7 @@ if LOGGING_ENABLED:
     logger.addHandler(handler)
 
 
-class DiagnosticsTestBase(AzureRecordedTestCase):
+class TelemetryTestBase(AzureRecordedTestCase):
 
     # Regular expression describing the pattern of an Application Insights connection string.
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
@@ -42,7 +42,7 @@ class DiagnosticsTestBase(AzureRecordedTestCase):
     )
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
-        conn_str = kwargs.pop("azure_ai_projects_diagnostics_tests_project_connection_string")
+        conn_str = kwargs.pop("azure_ai_projects_telemetry_tests_project_connection_string")
         project_client = AIProjectClient.from_connection_string(
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
@@ -51,7 +51,7 @@ class DiagnosticsTestBase(AzureRecordedTestCase):
         return project_client
 
     def get_async_client(self, **kwargs) -> AIProjectClient:
-        conn_str = kwargs.pop("azure_ai_projects_diagnostics_tests_project_connection_string")
+        conn_str = kwargs.pop("azure_ai_projects_telemetry_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
             credential=self.get_credential(AIProjectClientAsync, is_async=False),
             conn_str=conn_str,

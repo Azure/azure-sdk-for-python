@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects aiohttp openai_async
+    pip install azure-ai-projects aiohttp openai_async
 
     Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -35,7 +35,7 @@ async def sample_get_azure_openai_client_async():
         async with await project_client.inference.get_azure_openai_client() as client:
 
             response = await client.chat.completions.create(
-                model="gpt-4-0613",
+                model="gpt-35-turbo-16k",
                 messages=[
                     {
                         "role": "user",

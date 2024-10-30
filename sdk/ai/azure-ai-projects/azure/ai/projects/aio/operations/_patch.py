@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,7 +19,7 @@ from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping,
 from azure.ai.projects import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ._operations import DiagnosticsOperations as DiagnosticsOperationsGenerated
+from ._operations import TelemetryOperations as TelemetryOperationsGenerated
 from ...models._patch import ConnectionProperties
 from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
 from ...models._models import (
@@ -310,7 +311,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         return connection_properties_list
 
 
-class DiagnosticsOperations(DiagnosticsOperationsGenerated):
+class TelemetryOperations(TelemetryOperationsGenerated):
 
     _connection_string: Optional[str] = None
     _get_connection_string_called: bool = False
@@ -336,7 +337,7 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
             if get_workspace_response.properties.application_insights:
 
                 # Make a GET call to the Application Insights resource URL to get the connection string
-                app_insights_respose: GetAppInsightsResponse = await self.get_app_insights(
+                app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
                     app_insights_resource_url=get_workspace_response.properties.application_insights
                 )
 
@@ -345,10 +346,9 @@ class DiagnosticsOperations(DiagnosticsOperationsGenerated):
         self._get_connection_string_called = True
         return self._connection_string
 
-
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
-    # TODO: This could be a class method. But we don't have a class property AIProjectClient.diagnostics
-    def enable(self, *, destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+    # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
+    def enable(self, *, destination: Union[TextIOWrapper, str], **kwargs) -> None:
         """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
         :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
@@ -2022,7 +2022,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 __all__: List[str] = [
     "AgentsOperations",
     "ConnectionsOperations",
-    "DiagnosticsOperations",
+    "TelemetryOperations",
     "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -18,7 +18,8 @@ USAGE:
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true - Optional. For detailed traces, including chat request and response messages.
+    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+      messages, which may contain personal data. False by default.
 """
 import os
 import sys
@@ -31,19 +32,8 @@ with AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 ) as project_client:
 
-    # Enable console tracing. Set environment variable `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`
-    # for detailed logs, including chat request and response messages.
-    project_client.diagnostics.enable(destination=sys.stdout)
-    """
-    if not project_client.diagnostics.db_enable(destination=sys.stdout):
-        print("Application Insights was not enabled for this project.")
-        print("Enable it via the 'Tracing' tab under 'Tools', in your AI Studio project page.")
-        exit()
-
-    print(f"Applications Insights connection string = {project_client.diagnostics.connection_string}")
-
-    configure_azure_monitor(connection_string=project_client.diagnostics.application_insights.connection_string)
-    """
+    # Enable console tracing
+    project_client.telemetry.enable(destination=sys.stdout)
 
     # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
     with project_client.inference.get_chat_completions_client() as client:

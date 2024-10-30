@@ -16,7 +16,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from ._configuration import AIProjectClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, DiagnosticsOperations
+from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
 from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
@@ -185,7 +185,7 @@ class AIProjectClient(ClientGenerated):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        self.diagnostics = DiagnosticsOperations(
+        self.telemetry = TelemetryOperations(
             self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self
         )
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
