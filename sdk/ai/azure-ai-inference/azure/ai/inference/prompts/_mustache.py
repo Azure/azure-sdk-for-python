@@ -2,11 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain and https://github.com/noahmorrison/chevron
-MIT License
-"""
-
 from __future__ import annotations
 
 import logging
@@ -22,6 +17,7 @@ from typing import (
     cast,
 )
 
+from typing import List
 from typing_extensions import TypeAlias
 
 logger = logging.getLogger(__name__)

@@ -2,16 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain
-MIT License
-"""
 from pydantic import BaseModel
+from ._core import Invoker, InvokerFactory, Prompty, SimpleModel
 from ._mustache import render
 
-from ._core import Invoker, Prompty, SimpleModel
 
-
+@InvokerFactory.register_renderer("mustache")
 class MustacheRenderer(Invoker):
     """Render a mustache template."""
 

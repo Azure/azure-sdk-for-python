@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain
-MIT License
-"""
 import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Union
@@ -146,25 +142,16 @@ def prepare(
     if prompt.template.type == "NOOP":
         render = prompt.content
     else:
-        # render
-        result = invoker(
-            "renderer",
-            prompt.template.type,
-            prompt,
-            SimpleModel(item=inputs),
-        )
+        renderer = invoker.create_renderer(prompt.template.type, prompt)
+        result = renderer.invoke(SimpleModel(item=inputs))
         render = result.item
 
     if prompt.template.parser == "NOOP":
         result = render
     else:
-        # parse
-        result = invoker(
-            "parser",
-            f"{prompt.template.parser}.{prompt.model.api}",
-            prompt,
-            SimpleModel(item=result.item), # type: ignore[reportPossiblyUnboundVariable]
-        )
+        parser_name = f"{prompt.template.parser}.{prompt.model.api}"
+        parser = invoker.create_parser(parser_name, prompt)
+        result = parser.invoke(render)
 
     if isinstance(result, SimpleModel):
         return result.item
@@ -201,23 +188,14 @@ def run(
     if parameters != {}:
         prompt.model.parameters = param_hoisting(parameters, prompt.model.parameters)
 
-    # execute
-    result = invoker(
-        "executor",
-        prompt.model.configuration["type"],
-        prompt,
-        SimpleModel(item=content),
-    )
+
+    executor = invoker.create_executor(prompt.model.configuration["type"], prompt)
+    result = executor.invoke(SimpleModel(item=content))
 
     # skip?
     if not raw:
-        # process
-        result = invoker(
-            "processor",
-            prompt.model.configuration["type"],
-            prompt,
-            result,
-        )
+        processor = invoker.create_processor(prompt.model.configuration["type"], prompt)
+        result = processor.invoke(result)
 
     if isinstance(result, SimpleModel):
         return result.item
