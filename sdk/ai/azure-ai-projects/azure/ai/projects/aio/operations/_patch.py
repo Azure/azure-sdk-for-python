@@ -574,6 +574,283 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
+        
+    @overload
+    async def update_agent(
+        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent(
+        self,
+        assistant_id: str,
+        *,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+    @overload
+    async def update_agent(
+        self,
+        assistant_id: str,
+        *,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        toolset: Optional[_models.ToolSet] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+
+    @overload
+    async def update_agent(
+        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_agent(
+        self,
+        assistant_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        toolset: Optional[_models.ToolSet] = None,        
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        content_type: str = "application/json",
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._validate_tools_and_tool_resources(tools, tool_resources)
+        
+        if body is not _Unset:
+            if isinstance(body, io.IOBase):
+                return await super().update_agent(body=body, content_type=content_type, **kwargs)
+            return super().update_agent(body=body, **kwargs)
+
+        if toolset is not None:
+            self._toolset = toolset
+            tools = toolset.definitions
+            tool_resources = toolset.resources
+
+        return await super().update_agent(
+            assistant_id=assistant_id,
+            model=model,
+            name=name,
+            description=description,
+            instructions=instructions,
+            tools=tools,
+            tool_resources=tool_resources,
+            temperature=temperature,
+            top_p=top_p,
+            response_format=response_format,
+            metadata=metadata,
+            **kwargs,
+        )
+        
+    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+        if tool_resources is None:
+            return
+        if tools is None:
+            tools = []
+            
+        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
+        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
+        
 
     def get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """
