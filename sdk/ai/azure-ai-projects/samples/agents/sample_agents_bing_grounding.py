@@ -53,7 +53,10 @@ bing.add_connection(conn_id)
 # Create agent with the bing tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=bing.definitions
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=bing.definitions,
     )
     print(f"Created agent, ID: {agent.id}")
 

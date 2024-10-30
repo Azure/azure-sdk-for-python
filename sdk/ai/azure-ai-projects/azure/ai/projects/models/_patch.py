@@ -33,6 +33,7 @@ from ._models import (
     FileSearchToolDefinition,
     FileSearchToolResource,
     BingGroundingToolDefinition,
+    SharepointToolDefinition,
     ToolConnection,
     ToolConnectionList,
     AzureAISearchResource,
@@ -415,9 +416,10 @@ class AzureAISearchTool(Tool):
         pass
 
 
-class BingGroundingTool(Tool):
+class ConnectionTool(Tool):
     """
-    A tool that searches for information using Bing.
+    A tool that requires connection ids.
+    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
     """
 
     def __init__(self):
@@ -431,21 +433,40 @@ class BingGroundingTool(Tool):
         self.connection_ids.append(ToolConnection(connection_id=connection_id))
 
     @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BingGroundingTool(ConnectionTool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    @property
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Bing grounding tool definitions.
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
-    @property
-    def resources(self) -> ToolResources:
-        """
-        Get the Bing grounding resources.
-        """
-        return ToolResources()
 
-    def execute(self, tool_call: Any) -> Any:
-        pass
+class SharepointTool(ConnectionTool):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+        """
+        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 """
@@ -1095,6 +1116,7 @@ __all__: List[str] = [
     "FileSearchTool",
     "FunctionTool",
     "BingGroundingTool",
+    "SharepointTool",
     "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",

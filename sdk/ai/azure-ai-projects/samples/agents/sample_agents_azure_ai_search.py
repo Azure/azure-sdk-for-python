@@ -52,7 +52,10 @@ ai_search.add_index(conn_id)
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=ai_search.definitions
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=ai_search.definitions,
     )
     print(f"Created agent, ID: {agent.id}")
 
