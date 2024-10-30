@@ -492,6 +492,8 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
+        if not self.file_ids:
+            return ToolResources()
         return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
 
     def execute(self, tool_call: Any) -> Any:
