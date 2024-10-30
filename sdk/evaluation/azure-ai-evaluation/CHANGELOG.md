@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
 
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.
