@@ -1244,7 +1244,9 @@ def unpack_analyzer(analyzer):
 
 class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Represents an indexer.
+
     All required parameters must be populated in order to send to server.
+
     :ivar name: The name of the indexer. Required.
     :vartype name: str
     :ivar description: The description of the indexer.
