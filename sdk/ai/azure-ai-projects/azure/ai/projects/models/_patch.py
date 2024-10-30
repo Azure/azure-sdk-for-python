@@ -36,6 +36,7 @@ from ._models import (
     ToolConnection,
     ToolConnectionList,
     AzureAISearchResource,
+    IndexResource,
     AzureAISearchToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -394,7 +395,7 @@ class AzureAISearchTool(Tool):
         Add an index ID to the list of indices used to search.
         """
         # TODO
-        self.index_list.append(index)
+        self.index_list.append(IndexResource(index_connection_id=index))
 
     @property
     def definitions(self) -> List[ToolDefinition]:
