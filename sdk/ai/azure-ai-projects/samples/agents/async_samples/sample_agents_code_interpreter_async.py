@@ -21,7 +21,6 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
-import time
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
@@ -95,6 +94,9 @@ async def main():
             print(f"File ID: {file_path_annotation.file_path.file_id}")
             print(f"Start Index: {file_path_annotation.start_index}")
             print(f"End Index: {file_path_annotation.end_index}")
+            file_name = Path(file_path_annotation.text).name
+            await project_client.agents.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name)
+            print(f"Saved image file to: {Path.cwd() / file_name}")
 
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
