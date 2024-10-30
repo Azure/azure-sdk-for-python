@@ -57,9 +57,7 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
-class AMQPClient(
-    object
-):  # pylint: disable=too-many-instance-attributes
+class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
@@ -189,23 +187,14 @@ class AMQPClient(
         self._handle_max = kwargs.pop("handle_max", None)
 
         # Link settings
-        self._send_settle_mode = kwargs.pop(
-            "send_settle_mode", SenderSettleMode.Unsettled
-        )
-        self._receive_settle_mode = kwargs.pop(
-            "receive_settle_mode", ReceiverSettleMode.Second
-        )
+        self._send_settle_mode = kwargs.pop("send_settle_mode", SenderSettleMode.Unsettled)
+        self._receive_settle_mode = kwargs.pop("receive_settle_mode", ReceiverSettleMode.Second)
         self._desired_capabilities = kwargs.pop("desired_capabilities", None)
         self._on_attach = kwargs.pop("on_attach", None)
 
         # transport
-        if (
-            kwargs.get("transport_type") is TransportType.Amqp
-            and kwargs.get("http_proxy") is not None
-        ):
-            raise ValueError(
-                "Http proxy settings can't be passed if transport_type is explicitly set to Amqp"
-            )
+        if kwargs.get("transport_type") is TransportType.Amqp and kwargs.get("http_proxy") is not None:
+            raise ValueError("Http proxy settings can't be passed if transport_type is explicitly set to Amqp")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         self._socket_timeout = kwargs.pop("socket_timeout", None)
         self._http_proxy = kwargs.pop("http_proxy", None)
@@ -431,15 +420,15 @@ class AMQPClient(
         return self._client_run(**kwargs)
 
     def mgmt_request(
-            self,
-            message,
-            *,
-            operation: Optional[Union[str, bytes]] = None,
-            operation_type: Optional[Union[str, bytes]] = None,
-            node: str = "$management",
-            timeout: float = 0,
-            **kwargs
-        ):
+        self,
+        message,
+        *,
+        operation: Optional[Union[str, bytes]] = None,
+        operation_type: Optional[Union[str, bytes]] = None,
+        node: str = "$management",
+        timeout: float = 0,
+        **kwargs
+    ):
         """
         :param message: The message to send in the management request.
         :type message: ~pyamqp.message.Message
@@ -636,9 +625,7 @@ class SendClient(AMQPClient):
         except ValueError:
             error = MessageException(condition, description=description, info=info)
         else:
-            error = MessageSendFailed(
-                amqp_condition, description=description, info=info
-            )
+            error = MessageSendFailed(amqp_condition, description=description, info=info)
         message_delivery.state = MessageDeliveryState.Error
         message_delivery.error = error
 
@@ -657,9 +644,7 @@ class SendClient(AMQPClient):
                         info=error_info[0][2],
                     )
                 except TypeError:
-                    self._process_send_error(
-                        message_delivery, condition=ErrorCondition.UnknownError
-                    )
+                    self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
@@ -667,16 +652,12 @@ class SendClient(AMQPClient):
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
             # NotDelivered and other unknown errors
-            self._process_send_error(
-                message_delivery, condition=ErrorCondition.UnknownError
-            )
+            self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
 
     def _send_message_impl(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
-        message_delivery = _MessageDelivery(
-            message, MessageDeliveryState.WaitingToBeSent, expire_time
-        )
+        message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
         while not self.client_ready():
             time.sleep(0.05)
 
@@ -686,8 +667,7 @@ class SendClient(AMQPClient):
             running = self.do_work()
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
-                condition=ErrorCondition.ClientError,
-                description="Send failed - connection not running."
+                condition=ErrorCondition.ClientError, description="Send failed - connection not running."
             )
 
         if message_delivery.state in (
@@ -699,9 +679,7 @@ class SendClient(AMQPClient):
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(
-                    condition=ErrorCondition.UnknownError, description="Send failed."
-                ) from None
+                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
     def send_message(self, message, *, timeout: float = 0, **kwargs):
         """
@@ -710,15 +688,10 @@ class SendClient(AMQPClient):
          0, the client will continue to wait until the message is sent or error happens. The
          default is 0.
         """
-        self._do_retryable_operation(
-            self._send_message_impl,
-            message=message,
-            timeout=timeout,
-            **kwargs
-        )
+        self._do_retryable_operation(self._send_message_impl, message=message, timeout=timeout, **kwargs)
 
 
-class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
+class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
     """
     An AMQP client for receiving messages.
     :param source: The source AMQP service endpoint. This can either be the URI as
@@ -947,14 +920,14 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
 
-    def receive_message_batch( # pylint: disable=unused-argument
-            self,
-            *,
-            max_batch_size: Optional[int] = None,
-            on_message_received: Optional[Callable] = None,
-            timeout: float = 0,
-            **kwargs
-        ):
+    def receive_message_batch(  # pylint: disable=unused-argument
+        self,
+        *,
+        max_batch_size: Optional[int] = None,
+        on_message_received: Optional[Callable] = None,
+        timeout: float = 0,
+        **kwargs
+    ):
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -980,7 +953,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             self._receive_message_batch_impl,
             max_batch_size=max_batch_size,
             on_message_received=on_message_received,
-            timeout=timeout
+            timeout=timeout,
         )
 
     def receive_messages_iter(self, timeout=None, on_message_received=None):
@@ -1038,8 +1011,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     def settle_messages(
@@ -1049,8 +1021,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     def settle_messages(
@@ -1061,8 +1032,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         *,
         error: Optional[AMQPError] = None,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     def settle_messages(
@@ -1075,8 +1045,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     def settle_messages(
@@ -1088,12 +1057,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         section_number: int,
         section_offset: int,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
-    def settle_messages(
-        self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
-    ):
+    def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs):
         batchable = kwargs.pop("batchable", None)
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()

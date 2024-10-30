@@ -52,9 +52,7 @@ async def test_client_token_credential_async(live_eventhub, get_credential_async
 
     on_event.called = False
     async with consumer_client:
-        task = asyncio.ensure_future(
-            consumer_client.receive(on_event, partition_id="0", starting_position="-1")
-        )
+        task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(15)
     await task
     assert on_event.called is True
@@ -79,9 +77,7 @@ async def test_client_sas_credential_async(live_eventhub, uamqp_transport):
         await producer_client.send_batch(batch)
 
     # This should also work, but now using SAS tokens.
-    credential = EventHubSharedKeyCredential(
-        live_eventhub["key_name"], live_eventhub["access_key"]
-    )
+    credential = EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub["event_hub"])
     token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(
@@ -97,9 +93,7 @@ async def test_client_sas_credential_async(live_eventhub, uamqp_transport):
         await producer_client.send_batch(batch)
 
     # Finally let's do it with SAS token + conn str
-    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(
-        hostname, token
-    )
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
     conn_str_producer_client = EventHubProducerClient.from_connection_string(
         token_conn_str,
         eventhub_name=live_eventhub["event_hub"],
@@ -128,9 +122,7 @@ async def test_client_azure_sas_credential_async(live_eventhub, uamqp_transport)
         batch.add(EventData(body="A single message"))
         await producer_client.send_batch(batch)
 
-    credential = EventHubSharedKeyCredential(
-        live_eventhub["key_name"], live_eventhub["access_key"]
-    )
+    credential = EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub["event_hub"])
     token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(
@@ -153,9 +145,7 @@ async def test_client_azure_sas_credential_async(live_eventhub, uamqp_transport)
 @pytest.mark.asyncio
 async def test_client_azure_named_key_credential_async(live_eventhub, uamqp_transport):
 
-    credential = AzureNamedKeyCredential(
-        live_eventhub["key_name"], live_eventhub["access_key"]
-    )
+    credential = AzureNamedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"])
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
         eventhub_name=live_eventhub["event_hub"],
