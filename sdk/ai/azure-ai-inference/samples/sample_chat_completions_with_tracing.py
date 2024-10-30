@@ -44,11 +44,10 @@ settings.tracing_implementation = "opentelemetry"
 
 # Setup tracing to console
 # Requires opentelemetry-sdk
-exporter = ConsoleSpanExporter()
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
-
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
 
 # [START trace_function]
 from opentelemetry.trace import get_tracer
