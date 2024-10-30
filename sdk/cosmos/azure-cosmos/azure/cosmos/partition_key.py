@@ -284,12 +284,12 @@ class PartitionKey(dict):
             partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
         if self.kind != "MultiHash":
             return False
-        is_tuple_or_list = True in (isinstance(partition_key, list),
-                                    isinstance(partition_key, tuple))
-        if is_tuple_or_list and len(self['paths']) == len(partition_key):
+        # For mypy check type of partition_key
+        if isinstance(partition_key, (list, tuple)) and len(self['paths']) == len(partition_key):
             return False
 
-        return is_tuple_or_list
+        # We don't accept values that aren't tuples or list for prefix queries.
+        return isinstance(partition_key, (list, tuple))
 
 
 def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
