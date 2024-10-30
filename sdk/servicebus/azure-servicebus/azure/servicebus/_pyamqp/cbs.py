@@ -50,13 +50,8 @@ def check_put_timeout_status(auth_timeout: float, token_put_time: int) -> bool:
 
 class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=unused-argument
     def __init__(
-            self,
-            session: Session,
-            auth: Union[JWTTokenAuth, SASTokenAuth],
-            *,
-            auth_timeout: float,
-            **kwargs: Any
-        ) -> None:
+        self, session: Session, auth: Union[JWTTokenAuth, SASTokenAuth], *, auth_timeout: float, **kwargs: Any
+    ) -> None:
         self._session = session
         self._connection = self._session._connection
         self._mgmt_link: ManagementLink = self._session.create_request_response_link_pair(
@@ -68,7 +63,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         )
 
         # FIXME: probably can remove the None check as it should fail callable too
-        if not auth.get_token or not callable(auth.get_token): # type: ignore
+        if not auth.get_token or not callable(auth.get_token):  # type: ignore
             raise ValueError("get_token must be a callable object.")
 
         self._auth = auth
@@ -81,7 +76,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": ""
+            "amqpLink": "",
         }
 
         self._token_status_code: Optional[int] = None
@@ -115,24 +110,18 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             _LOGGER.debug(
                 "CSB with status: %r encounters unexpected AMQP management open complete.",
                 self.state,
-                extra=self._network_trace_params
+                extra=self._network_trace_params,
             )
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
             _LOGGER.info(
                 "Unexpected AMQP management open complete in OPEN, CBS error occurred.",
-                extra=self._network_trace_params
+                extra=self._network_trace_params,
             )
         elif self.state == CbsState.OPENING:
-            self.state = (
-                CbsState.OPEN
-                if management_open_result == ManagementOpenResult.OK
-                else CbsState.CLOSED
-            )
+            self.state = CbsState.OPEN if management_open_result == ManagementOpenResult.OK else CbsState.CLOSED
             _LOGGER.debug(
-                "CBS completed opening with status: %r",
-                management_open_result,
-                extra=self._network_trace_params
+                "CBS completed opening with status: %r", management_open_result, extra=self._network_trace_params
             )
 
     def _on_amqp_management_error(self) -> None:
@@ -142,9 +131,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self.state = CbsState.ERROR
             self._mgmt_link.close()
             _LOGGER.info(
-                "CBS failed to open with status: %r",
-                ManagementOpenResult.ERROR,
-                extra=self._network_trace_params
+                "CBS failed to open with status: %r", ManagementOpenResult.ERROR, extra=self._network_trace_params
             )
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
@@ -159,11 +146,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         error_condition: Optional[str] = None,
     ) -> None:
         if error_condition:
-            _LOGGER.info(
-                "CBS Put token error: %r",
-                error_condition,
-                extra=self._network_trace_params
-            )
+            _LOGGER.info("CBS Put token error: %r", error_condition, extra=self._network_trace_params)
             self.auth_state = CbsAuthState.ERROR
             return
         _LOGGER.debug(
@@ -171,7 +154,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             execute_operation_result,
             status_code,
             status_description,
-            extra=self._network_trace_params
+            extra=self._network_trace_params,
         )
         self._token_status_code = status_code
         self._token_status_description = status_description
@@ -183,25 +166,20 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             # put-token-message sending failure, rejected
             self._token_status_code = 0
             self._token_status_description = "Auth message has been rejected."
-        elif (
-            execute_operation_result
-            == ManagementExecuteOperationResult.FAILED_BAD_STATUS
-        ):
+        elif execute_operation_result == ManagementExecuteOperationResult.FAILED_BAD_STATUS:
             self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self) -> None:
-        if (
-            self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
-        ):
+        if self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED):
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                self._expires_on, self._refresh_window # type: ignore
+                self._expires_on, self._refresh_window  # type: ignore
             )
             _LOGGER.debug(
                 "CBS status check: state == %r, expired == %r, refresh required == %r",
                 self.auth_state,
                 is_expired,
                 is_refresh_required,
-                extra=self._network_trace_params
+                extra=self._network_trace_params,
             )
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
@@ -209,14 +187,10 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug(
-                "CBS update in progress. Token put time: %r",
-                self._token_put_time,
-                extra=self._network_trace_params
+                "CBS update in progress. Token put time: %r", self._token_put_time, extra=self._network_trace_params
             )
             if self._token_put_time is not None:
-                put_timeout = check_put_timeout_status(
-                    self._auth_timeout, self._token_put_time
-                )
+                put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
                 if put_timeout:
                     self.auth_state = CbsAuthState.TIMEOUT
 
@@ -244,15 +218,9 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
         if not access_token:
-            _LOGGER.info(
-                "Token refresh function received an empty token object.",
-                extra=self._network_trace_params
-            )
+            _LOGGER.info("Token refresh function received an empty token object.", extra=self._network_trace_params)
         elif not access_token.token:
-            _LOGGER.info(
-                "Token refresh function received an empty token.",
-                extra=self._network_trace_params
-            )
+            _LOGGER.info("Token refresh function received an empty token.", extra=self._network_trace_params)
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
@@ -276,7 +244,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self._put_token(
                 self._token,
                 token_type,
-                self._auth.audience, # type: ignore
+                self._auth.audience,  # type: ignore
                 utc_from_timestamp(self._expires_on),
             )
 
@@ -292,10 +260,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         if self.auth_state == CbsAuthState.OK:
             return True
         if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
-            _LOGGER.info(
-                "Token will expire soon - attempting to refresh.",
-                extra=self._network_trace_params
-            )
+            _LOGGER.info("Token will expire soon - attempting to refresh.", extra=self._network_trace_params)
             self.update_token()
             return False
         if self.auth_state == CbsAuthState.FAILURE:
