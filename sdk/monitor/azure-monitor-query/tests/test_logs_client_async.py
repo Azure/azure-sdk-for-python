@@ -8,7 +8,14 @@ from datetime import timedelta
 import pytest
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryStatus
+from azure.monitor.query import (
+    LogsBatchQuery,
+    LogsQueryError,
+    LogsTable,
+    LogsQueryResult,
+    LogsTableRow,
+    LogsQueryStatus,
+)
 from azure.monitor.query.aio import LogsQueryClient
 
 from base_testcase import AzureMonitorQueryLogsTestCase
@@ -18,15 +25,14 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_auth(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests |
             where TimeGenerated > ago(12h) |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
             # returns LogsQueryResult
-            response = await client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
+            response = await client.query_workspace(monitor_info["workspace_id"], query, timespan=None)
 
             assert response is not None
             assert response.status == LogsQueryStatus.SUCCESS
@@ -34,8 +40,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_auth_no_timespan(self, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests |
             where TimeGenerated > ago(12h) |
@@ -43,7 +48,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
             # returns LogsQueryResult
             with pytest.raises(TypeError):
-                await client.query_workspace(monitor_info['workspace_id'], query)
+                await client.query_workspace(monitor_info["workspace_id"], query)
 
     @pytest.mark.asyncio
     async def test_logs_server_timeout(self, recorded_test, monitor_info):
@@ -69,50 +74,42 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     async def test_logs_query_batch_raises_on_no_timespan(self, monitor_info):
         with pytest.raises(TypeError):
             LogsBatchQuery(
-                workspace_id=monitor_info['workspace_id'],
+                workspace_id=monitor_info["workspace_id"],
                 query="AzureActivity | summarize count()",
             )
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_default(self, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             requests = [
                 LogsBatchQuery(
-                    monitor_info['workspace_id'],
-                    query="AzureActivity | summarize count()",
-                    timespan=timedelta(hours=1)
+                    monitor_info["workspace_id"], query="AzureActivity | summarize count()", timespan=timedelta(hours=1)
                 ),
                 LogsBatchQuery(
-                    monitor_info['workspace_id'],
-                    query= """AppRequests | take 10  |
+                    monitor_info["workspace_id"],
+                    query="""AppRequests | take 10  |
                         summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
                     timespan=timedelta(hours=1),
                 ),
-                LogsBatchQuery(
-                    monitor_info['workspace_id'],
-                    query= "Wrong query | take 2",
-                    timespan=None
-                ),
+                LogsBatchQuery(monitor_info["workspace_id"], query="Wrong query | take 2", timespan=None),
             ]
             response = await client.query_batch(requests)
 
             assert len(response) == 3
             r0 = response[0]
-            assert r0.tables[0].columns == ['count_']
+            assert r0.tables[0].columns == ["count_"]
             r1 = response[1]
-            assert r1.tables[0].columns[0] == 'TimeGenerated'
-            assert r1.tables[0].columns[1] == '_ResourceId'
-            assert r1.tables[0].columns[2] == 'avgRequestDuration'
+            assert r1.tables[0].columns[0] == "TimeGenerated"
+            assert r1.tables[0].columns[1] == "_ResourceId"
+            assert r1.tables[0].columns[2] == "avgRequestDuration"
             r2 = response[2]
             assert r2.__class__ == LogsQueryError
 
     @pytest.mark.asyncio
     async def test_logs_single_query_additional_workspaces_async(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = (
                 f"{monitor_info['table_name']} | where TimeGenerated > ago(100d)"
@@ -121,11 +118,11 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
             # returns LogsQueryResult
             response = await client.query_workspace(
-                monitor_info['workspace_id'],
+                monitor_info["workspace_id"],
                 query,
                 timespan=None,
-                additional_workspaces=[monitor_info['secondary_workspace_id']],
-                )
+                additional_workspaces=[monitor_info["secondary_workspace_id"]],
+            )
 
             assert response
             assert len(response.tables[0].rows) == 2
@@ -134,8 +131,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_additional_workspaces(self, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = (
                 f"{monitor_info['table_name']} | where TimeGenerated > ago(100d)"
@@ -143,22 +139,22 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
             )
             requests = [
                 LogsBatchQuery(
-                    monitor_info['workspace_id'],
+                    monitor_info["workspace_id"],
                     query,
                     timespan=None,
-                    additional_workspaces=[monitor_info['secondary_workspace_id']]
+                    additional_workspaces=[monitor_info["secondary_workspace_id"]],
                 ),
                 LogsBatchQuery(
-                    monitor_info['workspace_id'],
+                    monitor_info["workspace_id"],
                     query,
                     timespan=None,
-                    additional_workspaces=[monitor_info['secondary_workspace_id']]
+                    additional_workspaces=[monitor_info["secondary_workspace_id"]],
                 ),
                 LogsBatchQuery(
-                    monitor_info['workspace_id'],
+                    monitor_info["workspace_id"],
                     query,
                     timespan=None,
-                    additional_workspaces=[monitor_info['secondary_workspace_id']]
+                    additional_workspaces=[monitor_info["secondary_workspace_id"]],
                 ),
             ]
             response = await client.query_batch(requests)
@@ -169,42 +165,37 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_with_visualization(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests | take 10"""
 
             # returns LogsQueryResult
             response = await client.query_workspace(
-                monitor_info['workspace_id'], query, timespan=None, include_visualization=True)
+                monitor_info["workspace_id"], query, timespan=None, include_visualization=True
+            )
 
             assert response.visualization is not None
 
     @pytest.mark.asyncio
     async def test_logs_single_query_with_visualization_and_stats(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests | take 10"""
             # returns LogsQueryResult
             response = await client.query_workspace(
-                monitor_info['workspace_id'], query, timespan=None, include_visualization=True, include_statistics=True)
+                monitor_info["workspace_id"], query, timespan=None, include_visualization=True, include_statistics=True
+            )
 
             assert response.visualization is not None
             assert response.statistics is not None
 
     @pytest.mark.asyncio
     async def test_logs_query_result_iterate_over_tables(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "AppRequests | take 10; AppRequests | take 5"
             response = await client.query_workspace(
-                monitor_info['workspace_id'],
-                query,
-                timespan=None,
-                include_statistics=True,
-                include_visualization=True
+                monitor_info["workspace_id"], query, timespan=None, include_statistics=True, include_visualization=True
             )
 
             ## should iterate over tables
@@ -218,12 +209,11 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_query_result_row_type(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "AppRequests | take 5"
             response = await client.query_workspace(
-                monitor_info['workspace_id'],
+                monitor_info["workspace_id"],
                 query,
                 timespan=None,
             )
@@ -237,12 +227,11 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "requests | summarize count()"
 
-            response = await client.query_resource(monitor_info['metrics_resource_id'], query, timespan=None)
+            response = await client.query_resource(monitor_info["metrics_resource_id"], query, timespan=None)
 
             assert response is not None
             assert response.tables is not None
@@ -250,17 +239,16 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
-        client = self.get_client(
-            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "requests | summarize count()"
 
             response = await client.query_resource(
-                monitor_info['metrics_resource_id'],
+                monitor_info["metrics_resource_id"],
                 query,
                 timespan=None,
                 include_statistics=True,
-                include_visualization=True
+                include_visualization=True,
             )
 
             assert response.visualization is not None
