@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -19,8 +20,17 @@ import time
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.ai.projects.models import VectorStorageDataSource, VectorStore, MessageAttachment, FilePurpose
-from azure.ai.projects.models._enums import VectorStorageDataSourceAssetType
+from azure.ai.projects.models import (
+    FilePurpose,
+    MessageAttachment,
+    ToolResources,
+    VectorStore,
+    VectorStoreAzureConfigurations,
+    VectorStorageConfiguration,
+    VectorStorageDataSource,
+    VectorStorageDataSourceAssetType,
+)
+from azure.ai.projects.models._models import FileSearchToolResource
 
 # TODO clean this up / get rid of anything not in use
 
@@ -1104,12 +1114,72 @@ class TestagentClient(AzureRecordedTestCase):
         if file_ids:
             ds = None
         else:
-            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
+            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"],
+                                          asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
         vector_store = ai_client.agents.create_vector_store_and_poll(
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
         assert vector_store.id
         self._test_file_search(ai_client, vector_store, file_id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_vector_store_threads_file_search_azure(self, ** kwargs):
+        """Test file search when azure asset ids are supplied during thread creation."""
+        self._do_test_vector_store_threads_file_search(**kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_vector_store_threads_file_search_file_ids(self, ** kwargs):
+        """Test file search when azure asset ids are supplied during thread creation."""
+        self._do_test_vector_store_threads_file_search(file_path=self._get_data_file(), **kwargs)
+    
+    def _do_test_vector_store_threads_file_search(self, ** kwargs):
+        """Test file search when azure asset ids are sopplied during thread creation."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+        
+        file_id = self._get_file_id_maybe(ai_client, **kwargs)
+        file_ids = [file_id] if file_id else None
+        vector_store = ai_client.agents.create_vector_store_and_poll(
+            file_ids=[] if file_ids else None,
+            data_sources=None if file_ids else [],
+            name="my_vectorstore"
+        )
+        
+        code_interpreter = None
+        fs = None
+        if file_ids:
+            code_interpreter = CodeInterpreterTool(file_ids=file_ids)
+        else:
+            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"],
+                                              asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
+            fs = FileSearchToolResource(VectorStoreAzureConfigurations(
+                name="my_vector_store", store_configuration=VectorStorageConfiguration(
+                    data_sources=ds)))
+        file_search = FileSearchTool()
+        agent = ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=file_search.resources,
+        )
+        assert agent.id
+        
+        thread = ai_client.agents.create_thread(
+            tool_resources=ToolResources(code_interpreter=code_interpreter, file_search=fs))
+        assert thread.id
+        
+        run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        ai_client.agents.delete_vector_store(vector_store.id)
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        messages = ai_client.agents.list_messages()
+        assert len(messages)
+        ai_client.agents.delete_agent(agent.id)
+        self._remove_file_maybe(file_id, ai_client)
+        ai_client.close()
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1156,6 +1226,7 @@ class TestagentClient(AzureRecordedTestCase):
         """Test adding multiple files to vector store with azure asset IDs."""
         self._do_test_create_vector_store_batch(**kwargs)
 
+
     def _do_test_create_vector_store_batch(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
@@ -1182,7 +1253,12 @@ class TestagentClient(AzureRecordedTestCase):
         assert vector_store_file_batch.id
         self._test_file_search(ai_client, vector_store, file_id)
 
-    def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: Optional[str]) -> None:
+    def _test_file_search(
+            self,
+            ai_client: AIProjectClient,
+            vector_store: VectorStore,
+            file_id: Optional[str],
+        ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = ai_client.agents.create_agent(
@@ -1193,12 +1269,14 @@ class TestagentClient(AzureRecordedTestCase):
             tool_resources=file_search.resources,
         )
         assert agent.id
-        thread = ai_client.agents.create_thread()
+        
+        thread = ai_client.agents.create_thread(tool_resources=tool_resources)
         assert thread.id
+        
         run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         ai_client.agents.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.agents.list_messages(thread_id=thread.id)
+        messages = ai_client.agents.list_messages()
         assert len(messages)
         ai_client.agents.delete_agent(agent.id)
         self._remove_file_maybe(file_id, ai_client)

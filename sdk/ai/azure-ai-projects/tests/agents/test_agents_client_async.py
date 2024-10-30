@@ -1,9 +1,11 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Optional
 import datetime
 import functools
 import json
@@ -18,11 +20,12 @@ from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSear
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
-    VectorStorageDataSource,
-    VectorStorageConfiguration,
-    VectorStore,
-    MessageAttachment,
     FilePurpose,
+    MessageAttachment,
+    ToolResources,
+    VectorStore,
+    VectorStorageDataSource,
+    VectorStorageConfiguration 
 )
 from azure.ai.projects.models._enums import VectorStorageDataSourceAssetType
 
@@ -1199,7 +1202,12 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert vector_store_file_batch.id
         await self._test_file_search(ai_client, vector_store, file_id)
 
-    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str):
+    async def _test_file_search(
+        self,
+        ai_client: AIProjectClient,
+        vector_store: VectorStore,
+        file_id: str
+    ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
