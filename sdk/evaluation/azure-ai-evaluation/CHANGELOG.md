@@ -5,7 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
-- The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument.
+- The `parallel` parameter has been removed from composite evaluators: QAEvaluator, ContentSafetyChatEvaluator, and ContentSafetyMultimodalEvaluator. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
 
 ### Bugs Fixed
 
