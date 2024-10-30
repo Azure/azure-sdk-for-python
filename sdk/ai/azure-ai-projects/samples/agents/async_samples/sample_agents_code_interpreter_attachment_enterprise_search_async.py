@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 FILE: sample_agents_code_interpreter_attachment.py
 
@@ -27,9 +26,12 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import CodeInterpreterTool
-from azure.ai.projects.models import MessageAttachment
-from azure.ai.projects.models import VectorStorageDataSource
+from azure.ai.projects.models import (
+    CodeInterpreterTool,
+    MessageAttachment,
+    VectorStorageDataSource,
+    VectorStorageDataSourceAssetType
+)
 from azure.identity import DefaultAzureCredential
 
 
@@ -65,7 +67,8 @@ async def main():
         # The new data object will contain the Azure ID of an uploaded file,
         # which is the uri starting from azureml://.
         uploaded_data = ml_client.data.create_or_update(local_data)
-        ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type="uri_asset")
+        ds = VectorStorageDataSource(storage_uri=uploaded_data.path,
+                                     asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
     
         # create a message with the attachment
         attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)

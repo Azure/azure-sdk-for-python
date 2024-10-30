@@ -1120,8 +1120,8 @@ class TestagentClient(AzureRecordedTestCase):
         self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    @recorded_by_proxy
     @pytest.mark.skip('The CreateVectorStoreFile API is not supported yet.')
+    @recorded_by_proxy
     def test_create_vector_store_add_file_azure(self, **kwargs):
         """Test adding single file to vector store with azure asset ID."""
         self._do_test_create_vector_store_add_file(**kwargs)

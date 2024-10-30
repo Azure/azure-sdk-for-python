@@ -19,6 +19,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
     VectorStorageDataSource, VectorStorageConfiguration, VectorStore, MessageAttachment, FilePurpose
 )           
+from azure.ai.projects.models._enums import VectorStorageDataSourceAssetType
 
 
 # TODO clean this up / get rid of anything not in use
@@ -1094,55 +1095,101 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy_async
-    async def test_create_vector_store(self, **kwargs):
+    async def test_create_vector_store_azure(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(**kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_file_id(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(file_path=self._get_data_file(), **kwargs)
+
+    async def _do_test_create_vector_store(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(uri=kwargs["azure_ai_projects_data_path"])]
-        store_conf = VectorStorageConfiguration(data_sources=ds)
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        file_ids = [file_id] if file_id else None
+        if file_ids:
+            ds = None
+        else:
+            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
         vector_store = await ai_client.agents.create_vector_store_and_poll(
-            store_configuration=store_conf, name="my_vectorstore"
+            file_ids=file_ids,
+            data_sources=ds, name="my_vectorstore"
         )
         assert vector_store.id
-        await self._test_file_search(ai_client, vector_store)
+        await self._test_file_search(ai_client, vector_store, file_id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_file_id(self, **kwargs):
+        """Test adding single file to vector store withn file ID."""
+        await self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
     @pytest.mark.skip('The CreateVectorStoreFile API is not supported yet.')
     @recorded_by_proxy_async
-    async def test_create_vector_store_file(self, **kwargs):
-        """Test the agent with vector store creation."""
+    async def test_create_vector_store_add_file_azure(self, **kwargs):
+        """Test adding single file to vector store with azure asset ID."""
+        await self._do_test_create_vector_store_add_file(**kwargs)
+
+    async def _do_test_create_vector_store_add_file(self, **kwargs):
+        """Test adding single file to vector store."""
         # create client
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
-        vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        if file_id:
+            ds = None
+        else:
+            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
+        vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
-        vector_store_file = await ai_client.agents.create_vector_store_file(vector_store.id, data_sources=ds)(
-            vector_store_id=vector_store.id, data_sources=ds
+        vector_store_file = await ai_client.agents.create_vector_store_file(
+            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
         )
         assert vector_store_file.id
-        await self._test_file_search(ai_client, vector_store)
-    
+        await self._test_file_search(ai_client, vector_store, file_id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_file_ids(self, **kwargs):
+        """Test adding multiple files to vector store with file IDs."""
+        await self._do_test_create_vector_store_batch(file_path=self._get_data_file(), **kwargs)
+
     @agentClientPreparer()
     @pytest.mark.skip('The CreateFileBatch API is not supported yet.')
     @recorded_by_proxy_async
-    async def test_create_vector_store_batch(self, **kwargs):
+    async def test_create_vector_store_batch_azure(self, **kwargs):
+        """Test adding multiple files to vector store with azure asset IDs."""
+        await self._do_test_create_vector_store_batch(**kwargs)
+
+    async def _do_test_create_vector_store_batch(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
-        ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        if file_id:
+            file_ids = [file_id]
+            ds = None
+        else:
+            file_ids = None
+            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"],
+                                          asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file_batch = await ai_client.agents.create_vector_store_file_batch_and_poll(
-            vector_store_id=vector_store.id, data_sources=ds
+            vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
         )
         assert vector_store_file_batch.id
-        await self._test_file_search(ai_client, vector_store)
+        await self._test_file_search(ai_client, vector_store, file_id)
 
     async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore):
         """Test the file search"""
@@ -1186,11 +1233,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
         
-        file_id = None
-        if 'file_path' in kwargs:
-            file = await ai_client.agents.upload_file_and_poll(file_path=kwargs['file_path'], purpose=FilePurpose.AGENTS)
-            assert file.id, "The file was not uploaded."
-            file_id = file.id
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
         
         code_interpreter = CodeInterpreterTool()
         attachment = MessageAttachment(
@@ -1220,8 +1263,7 @@ class TestagentClient(AzureRecordedTestCase):
     
         assert run.status == "completed", f"Error in run: {run.last_error}"
     
-        if file_id:
-            await ai_client.agents.delete_file(file_id)
+        await self._remove_file_maybe(file_id, ai_client)
         await ai_client.agents.delete_agent(agent.id)
         print("Deleted agent")
     
@@ -1246,11 +1288,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
         
-        file_id = None
-        if 'file_path' in kwargs:
-            file = await ai_client.agents.upload_file_and_poll(file_path=kwargs['file_path'], purpose=FilePurpose.AGENTS)
-            assert file.id, "The file was not uploaded."
-            file_id = file.id
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
     
         # Create agent with file search tool
         agent = await ai_client.agents.create_agent(
@@ -1276,13 +1314,25 @@ class TestagentClient(AzureRecordedTestCase):
     
         run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id, "The run was not created."
-        if file_id:
-            await ai_client.agents.delete_file(file_id)
+        await self._remove_file_maybe(file_id, ai_client)
         await ai_client.agents.delete_agent(agent.id)
     
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
         assert len(await ai_client.agents.list_messages(thread_id=thread.id)), 'No messages were created'
+
+    async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
+        """Return file id if kwargs has file path."""
+        if 'file_path' in kwargs:
+            file = await ai_client.agents.upload_file_and_poll(file_path=kwargs['file_path'], purpose=FilePurpose.AGENTS)
+            assert file.id, "The file was not uploaded."
+            return file.id
+        return None
+
+    async def _remove_file_maybe(self, file_id: str, ai_client: AIProjectClient) -> None:
+        """Remove file if we have file ID."""
+        if file_id:
+            await ai_client.agents.delete_file(file_id)
 
     # # **********************************************************************************
     # #
