@@ -755,7 +755,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.ToolSet] = None,        
+        toolset: Optional[_models.AsyncToolSet] = None,        
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -853,7 +853,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
         
 
-    def get_toolset(self) -> Optional[_models.AsyncToolSet]:
+    def _get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """
         Get the toolset for the agent.
 
@@ -1255,7 +1255,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     await self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                toolset = self.get_toolset()
+                toolset = self._get_toolset()
                 if toolset:
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
                 else:
@@ -1802,7 +1802,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self.get_toolset()
+            toolset = self._get_toolset()
             if toolset:
                 tool_outputs = await toolset.execute_tool_calls(tool_calls)
             else:

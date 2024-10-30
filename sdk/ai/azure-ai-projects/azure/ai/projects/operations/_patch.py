@@ -929,7 +929,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
             raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
     
-    def get_toolset(self) -> Optional[_models.ToolSet]:
+    def _get_toolset(self) -> Optional[_models.ToolSet]:
         """
         Get the toolset for the agent.
 
@@ -1331,7 +1331,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                toolset = self.get_toolset()
+                toolset = self._get_toolset()
                 if toolset:
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
@@ -1878,7 +1878,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self.get_toolset()
+            toolset = self._get_toolset()
             if toolset:
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
             else:
