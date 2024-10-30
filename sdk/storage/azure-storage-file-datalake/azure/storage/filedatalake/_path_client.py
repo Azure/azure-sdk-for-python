@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, Callable, Dict, Optional, Union,
+    Any, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -22,6 +22,8 @@ from ._models import (
     AccessControlChangeFailure,
     AccessControlChangeResult,
     AccessControlChanges,
+    DirectoryProperties,
+    FileProperties,
     LocationMode,
 )
 from ._path_client_helpers import (
@@ -43,7 +45,6 @@ from ._serialize import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.storage.blob._models import BlobProperties
     from ._models import ContentSettings
 
 
@@ -737,7 +738,7 @@ class PathClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _get_path_properties(self, **kwargs: Any) -> "BlobProperties":
+    def _get_path_properties(self, **kwargs: Any) -> Union[DirectoryProperties, FileProperties]:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file or directory. It does not return the content of the directory or file.
 
@@ -782,7 +783,7 @@ class PathClient(StorageAccountHostsMixin):
         :returns:
             Information including user-defined metadata, standard HTTP properties,
             and system properties for the file or directory.
-        :rtype: BlobProperties
+        :rtype: DirectoryProperties or FileProperties
 
         .. admonition:: Example:
 
@@ -799,7 +800,7 @@ class PathClient(StorageAccountHostsMixin):
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
         path_properties = self._blob_client.get_blob_properties(**kwargs)
-        return path_properties
+        return cast(Union[DirectoryProperties, FileProperties], path_properties)
 
     def _exists(self, **kwargs: Any) -> bool:
         """

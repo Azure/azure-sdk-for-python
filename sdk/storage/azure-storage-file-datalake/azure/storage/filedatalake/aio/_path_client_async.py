@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, Awaitable, Callable, Dict, Optional, Union,
+    Any, Awaitable, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -21,6 +21,8 @@ from .._models import (
     AccessControlChangeFailure,
     AccessControlChangeResult,
     AccessControlChanges,
+    DirectoryProperties,
+    FileProperties,
     LocationMode,
 )
 from .._path_client_helpers import (
@@ -42,7 +44,6 @@ from ._data_lake_lease_async import DataLakeLeaseClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.storage.blob._models import BlobProperties
     from .._models import ContentSettings
 
 
@@ -740,7 +741,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _get_path_properties(self, **kwargs: Any) -> "BlobProperties":
+    async def _get_path_properties(self, **kwargs: Any) -> Union[DirectoryProperties, FileProperties]:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file or directory. It does not return the content of the directory or file.
 
@@ -793,7 +794,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
-        return path_properties
+        return cast(Union[DirectoryProperties, FileProperties], path_properties)
 
     async def _exists(self, **kwargs: Any) -> bool:
         """
