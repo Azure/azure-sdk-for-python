@@ -100,7 +100,7 @@ user_functions_live = {"fetch_current_datetime": fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestagentClient(AzureRecordedTestCase):
+class TestagentClientAsync(AzureRecordedTestCase):
 
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
@@ -1199,7 +1199,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert vector_store_file_batch.id
         await self._test_file_search(ai_client, vector_store, file_id)
 
-    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore):
+    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str):
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
@@ -1217,6 +1217,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert run.status == "completed"
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         assert len(messages)
+        self._remove_file_maybe(file_id, ai_client)
         # delete agent and close client
         await ai_client.agents.delete_agent(agent.id)
         print("Deleted agent")
