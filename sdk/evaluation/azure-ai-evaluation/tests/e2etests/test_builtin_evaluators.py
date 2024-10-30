@@ -336,8 +336,9 @@ class TestBuiltInEvaluators:
 
         assert "RAI service is not available in this region" in exc_info._excinfo[1].args[0]
 
-    def test_composite_evaluator_qa(self, model_config):
-        qa_eval = QAEvaluator(model_config)
+    @pytest.mark.parametrize("parallel", [False, True])
+    def test_composite_evaluator_qa(self, model_config, parallel):
+        qa_eval = QAEvaluator(model_config, _parallel=parallel)
         score = qa_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -354,9 +355,10 @@ class TestBuiltInEvaluators:
         assert score["f1_score"] > 0.0
 
     @pytest.mark.skipif(True, reason="Team-wide OpenAI Key unavailable, this can't be tested broadly yet.")
-    def test_composite_evaluator_qa_with_openai_config(self, non_azure_openai_model_config):
+    @pytest.mark.parametrize("parallel", [False, True])
+    def test_composite_evaluator_qa_with_openai_config(self, non_azure_openai_model_config, parallel):
         # openai_config as in "not azure openai"
-        qa_eval = QAEvaluator(non_azure_openai_model_config)
+        qa_eval = QAEvaluator(non_azure_openai_model_config, _parallel=parallel)
         score = qa_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -384,7 +386,7 @@ class TestBuiltInEvaluators:
         assert not math.isnan(score["similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
-        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope)
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=False)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
