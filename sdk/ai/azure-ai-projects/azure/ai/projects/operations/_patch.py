@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys, io, logging, os, time
-from io import IOBase
+from io import IOBase, TextIOWrapper
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 from pathlib import Path
 
@@ -314,45 +314,125 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         return connection_properties_list
 
+# Internal helper function to enable tracing, used by both sync and async clients
+def _enable_telemetry(destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+    """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
+    :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
+        endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
+    :paramtype destination: Union[TextIOWrapper, str]
+    """
+    if isinstance(destination, str):
+        # `destination`` is the OTLP collector URL
+        # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
+        try:
+            from opentelemetry import trace
+            from opentelemetry.sdk.trace import TracerProvider
+            from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError(
+                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+            )
+        try:
+            from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError(
+                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-http'"
+            )
+        from azure.core.settings import settings
+        settings.tracing_implementation = "opentelemetry"
+        trace.set_tracer_provider(TracerProvider())
+        trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
+
+    elif isinstance(destination, TextIOWrapper):
+        if destination is sys.stdout:
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            try:
+                from opentelemetry import trace
+                from opentelemetry.sdk.trace import TracerProvider
+                from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+            except ModuleNotFoundError as _:
+                raise ModuleNotFoundError(
+                    "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+                )
+            from azure.core.settings import settings
+            settings.tracing_implementation = "opentelemetry"
+            trace.set_tracer_provider(TracerProvider())
+            trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+        else:
+            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIOWrapper`")
+    else:
+        raise ValueError("Destination must be a string or a `TextIOWrapper` object")
+
+    # Silently try to load a set of relevant Instrumentors
+    try:
+        from azure.ai.inference.tracing import AIInferenceInstrumentor
+        instrumentor = AIInferenceInstrumentor()
+        if not instrumentor.is_instrumented():
+            instrumentor.instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed")
+
+    try:
+        from opentelemetry.instrumentation.openai import OpenAIInstrumentor
+        OpenAIInstrumentor().instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai` is not installed")
+
+    try:
+        from opentelemetry.instrumentation.langchain import LangchainInstrumentor
+        LangchainInstrumentor().instrument()
+    except ModuleNotFoundError as _:
+        logger.warning("Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed")
+
+
+# TODO: change this to TelemetryOperations
 class DiagnosticsOperations(DiagnosticsOperationsGenerated):
 
-    connection_string: Optional[str] = None
-    """ Application Insights connection string. Call `enable()` to populate this property. """
+    _connection_string: Optional[str] = None
+    _get_connection_string_called: bool = False
 
     def __init__(self, *args, **kwargs):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    @distributed_trace
-    def enable(self, **kwargs) -> bool:
-        """Enable Application Insights tracing.
-        This method makes service calls to get the properties of the Applications Insights resource
-        connected to the Azure AI Studio Project. If Application Insights was not enabled for this project,
-        this method will return False. Otherwise, it will return True. In this case the Application Insights
-        connection string can be accessed via the `.diagnostics.connection_string` property.
-
-        :return: True if Application Insights tracing was enabled. False otherwise.
-        :rtype: bool
+    def get_connection_string(self) -> None:
         """
-        if not self.connection_string:
-            # Get the AI Studio Project properties
+        Get the Application Insights connection string associated with the Project's Application Insights resource.
+        On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
+        Subsequent calls return the cached connection string.
+
+        :return: The connection string, or `None` if an Application Insights resource was not enabled for the Project.
+        :rtype: str
+        """
+        if not self._get_connection_string_called:
+            # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()
 
-            # No Application Insights resource was enabled for this Project
-            if not get_workspace_response.properties.application_insights:
-                return False
+            # Continue only if Application Insights resource was enabled for this Project
+            if get_workspace_response.properties.application_insights:
 
-            app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
-                app_insights_resource_url=get_workspace_response.properties.application_insights
-            )
+                # Make a GET call to the Application Insights resource URL to get the connection string
+                app_insights_respose: GetAppInsightsResponse = self.get_app_insights(
+                    app_insights_resource_url=get_workspace_response.properties.application_insights
+                )
 
-            if not app_insights_respose.properties.connection_string:
-                raise ValueError("Application Insights resource does not have a connection string")
+                self._connection_string = app_insights_respose.properties.connection_string
 
-            self.connection_string = app_insights_respose.properties.connection_string
+        self._get_connection_string_called = True
+        return self._connection_string
 
-        return True
+
+    # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
+    # TODO: This could be a class method. But we don't have a class property AIProjectClient.diagnostics
+    def enable(self, *, destination: Union[TextIOWrapper, str] , **kwargs) -> None:
+        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+
+        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
+         endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
+        :paramtype destination: Union[TextIOWrapper, str]
+        """
+        _enable_telemetry(destination=destination, **kwargs)
 
 
 class AgentsOperations(AgentsOperationsGenerated):
@@ -546,8 +626,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: An Agent object.
         :raises: HttpResponseError for HTTP errors.
         """
+        
+        self._validate_tools_and_tool_resources(tools, tool_resources)
+        
         if body is not _Unset:
-            if isinstance(body, IOBase):
+            if isinstance(body, io.IOBase):
                 return super().create_agent(body=body, content_type=content_type, **kwargs)
             return super().create_agent(body=body, **kwargs)
 
@@ -569,7 +652,283 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
+        
+    @overload
+    def update_agent(
+        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
 
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_agent(
+        self,
+        assistant_id: str,
+        *,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+    @overload
+    def update_agent(
+        self,
+        assistant_id: str,
+        *,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        toolset: Optional[_models.ToolSet] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+
+    @overload
+    def update_agent(
+        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_agent(
+        self,
+        assistant_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        toolset: Optional[_models.ToolSet] = None,        
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        content_type: str = "application/json",
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
+         and adds automatic execution logic for functions). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._validate_tools_and_tool_resources(tools, tool_resources)
+        
+        if body is not _Unset:
+            if isinstance(body, io.IOBase):
+                return super().update_agent(body=body, content_type=content_type, **kwargs)
+            return super().update_agent(body=body, **kwargs)
+
+        if toolset is not None:
+            self._toolset = toolset
+            tools = toolset.definitions
+            tool_resources = toolset.resources
+
+        return super().update_agent(
+            assistant_id=assistant_id,
+            model=model,
+            name=name,
+            description=description,
+            instructions=instructions,
+            tools=tools,
+            tool_resources=tool_resources,
+            temperature=temperature,
+            top_p=top_p,
+            response_format=response_format,
+            metadata=metadata,
+            **kwargs,
+        )
+        
+    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+        if tool_resources is None:
+            return
+        if tools is None:
+            tools = []
+            
+        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
+        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
+    
     def get_toolset(self) -> Optional[_models.ToolSet]:
         """
         Get the toolset for the agent.
