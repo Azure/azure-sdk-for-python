@@ -44,7 +44,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"]},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
@@ -163,7 +163,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong indexingSearchListSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["/town"], "indexingSearchListSize": 5}]
+                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 5}]
         }
         try:
             await self.test_db.create_container(
@@ -176,41 +176,6 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "IndexingSearchListSize value :: 5 is out of range. The allowed range is between 25 and 500." \
-                   in e.http_error_message
-
-        # Pass a vector indexing policy with wrong vectorIndexShardKey value
-        indexing_policy = {
-            "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["country"]}]
-        }
-        try:
-            await self.test_db.create_container(
-                id='vector_container',
-                partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy,
-                vector_embedding_policy=vector_embedding_policy
-            )
-            pytest.fail("Container creation should have failed for value mismatch.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert "The Vector Indexing Policy has an invalid Shard Path: country." in e.http_error_message
-
-        # Pass a vector indexing policy with too many shard paths
-        indexing_policy = {
-            "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["/country", "/city", "/zipcode"]}]
-        }
-        try:
-            await self.test_db.create_container(
-                id='vector_container',
-                partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy,
-                vector_embedding_policy=vector_embedding_policy
-            )
-            pytest.fail("Container creation should have failed for value mismatch.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert "The number of shard paths defined in the Vector Indexing Policy: 3 exceeds the maximum: 1." \
                    in e.http_error_message
 
     async def test_fail_replace_vector_indexing_policy_async(self):
