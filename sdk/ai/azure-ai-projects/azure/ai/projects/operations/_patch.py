@@ -132,9 +132,7 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(
-                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
-            )
+            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
@@ -2014,9 +2012,9 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
-    
+
     @distributed_trace
-    def get_file_content_stream(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def get_file_content(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
         """
         Returns file content as byte stream for given file_id.
 
@@ -2026,8 +2024,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
         """
-        kwargs['stream'] = True
-        response = super().get_file_content(file_id, **kwargs)
+        kwargs["stream"] = True
+        response = super()._get_file_content(file_id, **kwargs)
         return cast(Iterator[bytes], response)
 
     @distributed_trace
@@ -2040,10 +2038,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         after: Optional[str] = None,
         before: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ThreadMessages:
         """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
-        
+
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
@@ -2068,16 +2066,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadMessages
         """
-        messages = super().list_messages(thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs)
+        messages = super().list_messages(
+            thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs
+        )
         return _models.ThreadMessages(pageable_list=messages)
 
     @distributed_trace
-    def save_file(
-        self, 
-        file_id: str, 
-        file_name: str, 
-        target_dir: Optional[Union[str, Path]] = None
-    ) -> None:
+    def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Saves file content retrieved using a file identifier to the specified local directory.
 
@@ -2109,7 +2104,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         # Get file content
         try:
-            file_content_stream = self.get_file_content_stream(file_id)
+            file_content_stream = self.get_file_content(file_id)
             if not file_content_stream:
                 error_msg = f"No content retrievable for file ID '{file_id}'."
                 logger.error(error_msg)

@@ -50,21 +50,21 @@ class ConnectionsTestBase(AzureRecordedTestCase):
     def get_async_client(self, **kwargs) -> AIProjectClientAsync:
         conn_str = kwargs.pop("azure_ai_projects_connections_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
-            credential= self.get_credential(AIProjectClient, is_async=True),
+            credential=self.get_credential(AIProjectClient, is_async=True),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
         )
         return project_client
-    
+
     @classmethod
     def validate_connection(
-         cls,
-         connection: ConnectionProperties,
-         with_credentials: bool,
-         *,
-         expected_connection_type: ConnectionType = None,
-         expected_connection_name: str = None,
-         expected_authentication_type: AuthenticationType = None
+        cls,
+        connection: ConnectionProperties,
+        with_credentials: bool,
+        *,
+        expected_connection_type: ConnectionType = None,
+        expected_connection_name: str = None,
+        expected_authentication_type: AuthenticationType = None
     ):
         assert connection.id is not None
 
