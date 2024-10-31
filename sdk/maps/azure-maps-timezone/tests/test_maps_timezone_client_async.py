@@ -17,7 +17,9 @@ from timezone_preparer import MapsTimeZonePreparer
 class TestMapsTimeZoneClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsTimeZoneClient(
-            credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
+            credential=AzureKeyCredential(
+                os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey")
+            )
         )
         assert self.client is not None
 
@@ -25,7 +27,9 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_timezone_by_coordinates(self):
         async with self.client:
-            result = await self.client.get_timezone(coordinates=[25.0338053, 121.5640089])
+            result = await self.client.get_timezone(
+                coordinates=[25.0338053, 121.5640089]
+            )
             assert result is not None and "TimeZones" in result
 
     @MapsTimeZonePreparer()
@@ -39,7 +43,7 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_iana_version(self):
         async with self.client:
-            expected_result = {'Version': '2024a'}
+            expected_result = {"Version": "2024a"}
             result = await self.client.get_iana_version()
             assert result == expected_result
 
@@ -62,9 +66,19 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
     async def test_convert_windows_timezone_to_iana(self):
         async with self.client:
             expected_result = [
-                {'HasZone1970Location': True, 'Id': 'America/Vancouver', 'IsAlias': False},
-                {'HasZone1970Location': True, 'Id': 'America/Los_Angeles', 'IsAlias': False},
-                {'HasZone1970Location': False, 'Id': 'PST8PDT', 'IsAlias': False}
+                {
+                    "HasZone1970Location": True,
+                    "Id": "America/Vancouver",
+                    "IsAlias": False,
+                },
+                {
+                    "HasZone1970Location": True,
+                    "Id": "America/Los_Angeles",
+                    "IsAlias": False,
+                },
+                {"HasZone1970Location": False, "Id": "PST8PDT", "IsAlias": False},
             ]
-            result = await self.client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
+            result = await self.client.convert_windows_timezone_to_iana(
+                windows_timezone_id="Pacific Standard Time"
+            )
             assert result == expected_result

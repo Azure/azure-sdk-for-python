@@ -22,11 +22,14 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_timezone_by_id():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(
+        credential=AzureKeyCredential(subscription_key)
+    )
     try:
         result = timezone_client.get_timezone(timezone_id="sr-Latn-RS")
         print(result)
@@ -35,5 +38,6 @@ def get_timezone_by_id():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_timezone_by_id()

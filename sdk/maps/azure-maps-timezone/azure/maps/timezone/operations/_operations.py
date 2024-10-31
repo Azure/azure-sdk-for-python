@@ -31,7 +31,9 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -70,9 +72,7 @@ def build_timezone_get_timezone_by_id_request(  # pylint: disable=name-too-long
     if time_stamp is not None:
         _params["timeStamp"] = _SERIALIZER.query("time_stamp", time_stamp, "iso-8601")
     if dst_from is not None:
-        _params["transitionsFrom"] = _SERIALIZER.query(
-            "dst_from", dst_from, "iso-8601"
-        )
+        _params["transitionsFrom"] = _SERIALIZER.query("dst_from", dst_from, "iso-8601")
     if dst_lasting_years is not None:
         _params["transitionsYears"] = _SERIALIZER.query(
             "dst_lasting_years", dst_lasting_years, "int"
@@ -83,10 +83,14 @@ def build_timezone_get_timezone_by_id_request(  # pylint: disable=name-too-long
     if client_id is not None:
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     if accept_language is not None:
-        _headers["Accept-Language"] = _SERIALIZER.header("accept_language", accept_language, "str")
+        _headers["Accept-Language"] = _SERIALIZER.header(
+            "accept_language", accept_language, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_timezone_get_timezone_by_coordinates_request(  # pylint: disable=name-too-long
@@ -122,9 +126,7 @@ def build_timezone_get_timezone_by_coordinates_request(  # pylint: disable=name-
     if time_stamp is not None:
         _params["timeStamp"] = _SERIALIZER.query("time_stamp", time_stamp, "iso-8601")
     if dst_from is not None:
-        _params["transitionsFrom"] = _SERIALIZER.query(
-            "dst_from", dst_from, "iso-8601"
-        )
+        _params["transitionsFrom"] = _SERIALIZER.query("dst_from", dst_from, "iso-8601")
     if dst_lasting_years is not None:
         _params["transitionsYears"] = _SERIALIZER.query(
             "dst_lasting_years", dst_lasting_years, "int"
@@ -135,10 +137,14 @@ def build_timezone_get_timezone_by_coordinates_request(  # pylint: disable=name-
     if client_id is not None:
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     if accept_language is not None:
-        _headers["Accept-Language"] = _SERIALIZER.header("accept_language", accept_language, "str")
+        _headers["Accept-Language"] = _SERIALIZER.header(
+            "accept_language", accept_language, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_timezone_get_windows_timezone_ids_request(  # pylint: disable=name-too-long
@@ -166,7 +172,9 @@ def build_timezone_get_windows_timezone_ids_request(  # pylint: disable=name-too
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_timezone_get_iana_timezone_ids_request(  # pylint: disable=name-too-long
@@ -194,7 +202,9 @@ def build_timezone_get_iana_timezone_ids_request(  # pylint: disable=name-too-lo
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_timezone_get_iana_version_request(
@@ -222,7 +232,9 @@ def build_timezone_get_iana_version_request(
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_timezone_convert_windows_timezone_to_iana_request(  # pylint: disable=name-too-long
@@ -249,16 +261,22 @@ def build_timezone_convert_windows_timezone_to_iana_request(  # pylint: disable=
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["query"] = _SERIALIZER.query("windows_timezone_id", windows_timezone_id, "str")
+    _params["query"] = _SERIALIZER.query(
+        "windows_timezone_id", windows_timezone_id, "str"
+    )
     if windows_territory_code is not None:
-        _params["territory"] = _SERIALIZER.query("windows_territory_code", windows_territory_code, "str")
+        _params["territory"] = _SERIALIZER.query(
+            "windows_territory_code", windows_territory_code, "str"
+        )
 
     # Construct headers
     if client_id is not None:
         _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 class TimezoneOperations:
@@ -276,7 +294,9 @@ class TimezoneOperations:
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._deserialize = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
     def get_timezone_by_id(
@@ -378,12 +398,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -407,14 +429,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -531,12 +557,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -560,14 +588,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -581,7 +613,9 @@ class TimezoneOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_windows_timezone_ids(self, format: str = "json", **kwargs: Any) -> List[JSON]:
+    def get_windows_timezone_ids(
+        self, format: str = "json", **kwargs: Any
+    ) -> List[JSON]:
         """Use to get the list of Windows Time Zone IDs.
 
         The ``Get Windows Time Zones`` API is an HTTP ``GET`` request that returns a full list of
@@ -608,12 +642,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -631,14 +667,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -679,12 +719,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -702,14 +744,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -744,12 +790,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -767,14 +815,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -827,12 +879,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -852,14 +906,18 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:

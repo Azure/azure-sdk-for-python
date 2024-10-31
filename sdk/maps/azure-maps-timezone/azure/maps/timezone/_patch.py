@@ -66,7 +66,9 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
             credential=credential,  # type: ignore
             client_id=client_id,
             endpoint=endpoint,
-            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            authentication_policy=kwargs.pop(
+                "authentication_policy", _authentication_policy(credential)
+            ),
             **kwargs
         )
 

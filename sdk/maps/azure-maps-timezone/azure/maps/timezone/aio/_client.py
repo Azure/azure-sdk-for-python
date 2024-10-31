@@ -20,7 +20,9 @@ from ._configuration import TimezoneClientConfiguration
 from .operations import TimezoneOperations
 
 
-class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-version-keyword
+class TimezoneClient(
+    TimezoneOperations
+):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Time Zone REST APIs.
 
     :ivar timezone: TimezoneOperations operations
@@ -48,7 +50,9 @@ class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-
         endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
-        self._config = TimezoneClientConfiguration(credential=credential, client_id=client_id, **kwargs)
+        self._config = TimezoneClientConfiguration(
+            credential=credential, client_id=client_id, **kwargs
+        )
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -63,10 +67,16 @@ class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -76,7 +86,7 @@ class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-
             client=self._client,
             config=self._config,
             serializer=self._serialize,
-            deserializer=self._deserialize
+            deserializer=self._deserialize,
         )
 
     def send_request(
