@@ -381,6 +381,17 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
         )
 
     try:
+        from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
+
+        instrumentor = AIAgentsInstrumentor()
+        if not instrumentor.is_instrumented():
+            instrumentor.instrument()
+    except Exception as exc:
+        logger.warning(
+            "Could not call `AIAgentsInstrumentor().instrument()` " + str(exc)
+        )
+
+    try:
         from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 
         OpenAIInstrumentor().instrument()

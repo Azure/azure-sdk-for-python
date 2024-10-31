@@ -4,21 +4,25 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async_with_tracing.py
+FILE: sample_agents_basics_async_with_azure_monitor_tracing.py
 
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
-    the Azure Agents service using a asynchronous client with tracing.
+    the Azure Agents service using a asynchronous client with Azure Monitor tracing.
+    View the results in the "Tracing" tab in your Azure AI Studio project page.
 
 USAGE:
-    python sample_agents_basics_async_with_tracing.py
+    python sample_agents_basics_async_with_azure_monitor_tracing.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure.ai.projects azure-identity opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
+    pip install azure.monitor.opentelemetry 
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+      messages, which may contain personal data. False by default.
 """
 import asyncio
 import time
@@ -26,27 +30,15 @@ import sys
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
-# To use console exporter, uncomment following three lines and install opentelemetry-sdk
-# from opentelemetry import trace
-# from opentelemetry.sdk.trace import TracerProvider
-# from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from opentelemetry import trace
 import os
-# Add the parent directory to the system path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tracing_helpers import configure_tracing
+from azure.monitor.opentelemetry import configure_azure_monitor
 
-tracer = configure_tracing("agent-samples").get_tracer(__file__)
-# To setup tracing to console, comment out the previous line and
-# uncomment the four lines below. Requires opentelemetry-sdk.
-# exporter = ConsoleSpanExporter()
-# trace.set_tracer_provider(TracerProvider())
-# tracer = trace.get_tracer(__name__)
-# trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+
+tracer = trace.get_tracer(__name__)
 
 @tracer.start_as_current_span(__file__)
 async def main():
-
-    AIAgentsInstrumentor().instrument()
 
     # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -55,6 +47,14 @@ async def main():
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
     )
+
+    # Enable Azure Monitor tracing
+    application_insights_connection_string = project_client.telemetry.get_connection_string()
+    if not application_insights_connection_string:
+        print("Application Insights was not enabled for this project.")
+        print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+        exit()
+    configure_azure_monitor(connection_string=application_insights_connection_string)
 
     async with project_client:
         agent = await project_client.agents.create_agent(
@@ -87,8 +87,6 @@ async def main():
 
         messages = await project_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
-
-        AIAgentsInstrumentor().uninstrument()
 
 
 if __name__ == "__main__":

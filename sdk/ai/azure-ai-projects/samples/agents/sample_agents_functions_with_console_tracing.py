@@ -4,35 +4,33 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_functions_with_tracing.py
+FILE: sample_agents_functions_with_console_tracing.py
 
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations with function tools from
-    the Azure Agents service using a synchronous client with tracing.
+    the Azure Agents service using a synchronous client with tracing to console.
 
 USAGE:
-    python sample_agents_basics_with_tracing.py
+    python sample_agents_basics_with_console_tracing.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure.ai.projects azure-identity opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+      messages, which may contain personal data. False by default.
 """
 
-import os, time, json
+import os, sys,time, json
 from typing import Any, Callable, Set
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.agents.tracing import AIAgentsInstrumentor
-from tracing_helpers import configure_tracing
 from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
 from user_functions import user_functions
 from opentelemetry import trace
-# To use console exporter, uncomment following lines and install opentelemetry-sdk
-#from opentelemetry.sdk.trace import TracerProvider
-#from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
 
 # Create an AI Project Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -43,14 +41,11 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
+# Enable console tracing
+project_client.telemetry.enable(destination=sys.stdout)
+
 scenario = os.path.basename(__file__)
-tracer = configure_tracing("agent-samples").get_tracer(scenario)
-# To setup tracing to console, comment out the previous line and
-# uncomment the four lines below. Requires opentelemetry-sdk.
-#exporter = ConsoleSpanExporter()
-#trace.set_tracer_provider(TracerProvider())
-#tracer = trace.get_tracer(__name__)
-#trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+tracer = trace.get_tracer(__name__)
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
@@ -82,8 +77,6 @@ user_functions: Set[Callable[..., Any]] = {
 
 # Initialize function tool with user function
 functions = FunctionTool(functions=user_functions)
-
-AIAgentsInstrumentor().instrument()
 
 with tracer.start_as_current_span(scenario):
     with project_client:
@@ -147,5 +140,3 @@ with tracer.start_as_current_span(scenario):
         # Fetch and log all messages
         messages = project_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
-
-AIAgentsInstrumentor().uninstrument()
