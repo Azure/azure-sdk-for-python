@@ -59,7 +59,7 @@ from typing import (
     Tuple,
     Set,
     get_origin,
-    Union,
+    get_args,
 )
 
 logger = logging.getLogger(__name__)
@@ -247,23 +247,28 @@ type_map = {
 }
 
 
-def _map_type(annotation) -> str:
+def _map_type(annotation) -> Dict[str, Any]:
 
     if annotation == inspect.Parameter.empty:
-        return "string"  # Default type if annotation is missing
+        return {"type": "string"}  # Default type if annotation is missing
 
     origin = get_origin(annotation)
 
     if origin in {list, List}:
-        return "array"
+        args = get_args(annotation)
+        item_type = args[0] if args else str
+        return {
+            "type": "array",
+            "items": {"type": type_map.get(item_type.__name__, "string")}
+        }
     elif origin in {dict, Dict}:
-        return "object"
+        return {"type": "object"}
     elif hasattr(annotation, "__name__"):
-        return type_map.get(annotation.__name__, "string")
+        return {"type": type_map.get(annotation.__name__, "string")}
     elif isinstance(annotation, type):
-        return type_map.get(annotation.__name__, "string")
+        return {"type": type_map.get(annotation.__name__, "string")}
 
-    return "string"  # Fallback to "string" if type is unrecognized
+    return {"type": "string"}  # Fallback to "string" if type is unrecognized
 
 
 class Tool(ABC):
@@ -345,11 +350,11 @@ class BaseFunctionTool(Tool):
 
             properties = {}
             for param_name, param in params.items():
-                param_type = _map_type(param.annotation)
+                param_type_info = _map_type(param.annotation)
                 param_description = param_descs.get(param_name, "No description")
 
                 properties[param_name] = {
-                    "type": param_type,
+                    **param_type_info,
                     "description": param_description
                 }
 

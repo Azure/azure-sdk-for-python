@@ -5,7 +5,7 @@
 
 import json
 import datetime
-from typing import Any, Callable, Set, Dict
+from typing import Any, Callable, Set, Dict, List
 
 # These are the user-defined functions that can be called by the agent.
 
@@ -133,6 +133,30 @@ def get_user_info(user_id: int) -> str:
     return json.dumps({"user_info": user_info})
 
 
+def longest_word_in_sentences(sentences: List[str]) -> str:
+    """Finds the longest word in each sentence.
+    
+    :param sentences (List[str]): A list of sentences.
+    :return: A JSON string mapping each sentence to its longest word.
+    :rtype: str
+    """
+    if not sentences:
+        return json.dumps({"error": "The list of sentences is empty"})
+
+    longest_words = {}
+    for sentence in sentences:
+        # Split sentence into words
+        words = sentence.split()
+        if words:
+            # Find the longest word
+            longest_word = max(words, key=len)
+            longest_words[sentence] = longest_word
+        else:
+            longest_words[sentence] = ""
+
+    return json.dumps({"longest_words": longest_words})
+
+
 # Example Questions for Each Function
 # 1. Fetch Current DateTime
 #    Question: "What is the current date and time?"
@@ -158,6 +182,9 @@ def get_user_info(user_id: int) -> str:
 # 8. Get User Info
 #    Question: "Retrieve user information for user ID 1."
 
+# 9. Longest Word in Sentences
+#    Question: "Find the longest word in each of these sentences: ['The quick brown fox jumps over the lazy dog', 'Python is an amazing programming language', 'Azure AI capabilities are impressive']."
+
 # Statically defined user functions for fast reference
 user_functions: Set[Callable[..., Any]] = {
     fetch_current_datetime,
@@ -168,4 +195,5 @@ user_functions: Set[Callable[..., Any]] = {
     toggle_flag,
     merge_dicts,
     get_user_info,
+    longest_word_in_sentences,
 }
