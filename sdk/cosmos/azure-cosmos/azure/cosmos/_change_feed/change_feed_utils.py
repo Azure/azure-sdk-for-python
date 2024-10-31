@@ -139,7 +139,7 @@ def validate_kwargs(
         if not isinstance(kwargs["is_start_from_beginning"], bool):
             raise TypeError(
                 f"'is_start_from_beginning' must be 'bool' type,"
-                f" but given '{type(kwargs["is_start_from_beginning"]).__name__}'.")
+                f" but given '{type(kwargs['is_start_from_beginning']).__name__}'.")
 
     elif "start_time" in kwargs:
         start_time = kwargs['start_time']
