@@ -34,4 +34,3 @@ extends:
     Artifacts:
     - name: azure-data-tables
       safeName: azuredatatables
-
