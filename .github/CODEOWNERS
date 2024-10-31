@@ -425,7 +425,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-/sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
+/sdk/graphrbac/                                                      @lmazuel
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Tables
