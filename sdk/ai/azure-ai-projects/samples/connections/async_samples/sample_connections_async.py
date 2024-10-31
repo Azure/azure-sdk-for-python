@@ -5,21 +5,23 @@
 
 """
 DESCRIPTION:
-    Given an asynchronous AIProjectClient, this sample demonstrates how to enumerate connections
-    and get connections properties.
+    Given an asynchronous AIProjectClient, this sample demonstrates how to enumerate connections,
+    get connection properties, and create a chat completions client using the connection
+    properties.
 
 USAGE:
     python sample_connections_async.py
 
     Before running the sample:
 
-    pip install azure.ai.projects aiohttp azure-identity
+    pip install azure-ai-projects aiohttp azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in the "Project overview"
        tab in your AI Studio Project page.
     2) CONNECTION_NAME - the name of a Serverless or Azure OpenAI connection, as found in the "Connections" tab
        in your AI Studio Hub page.
+    3) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
 
 import asyncio
@@ -31,9 +33,13 @@ from azure.identity import DefaultAzureCredential
 
 async def sample_connections_async():
 
+    project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+    connection_name = os.environ["CONNECTION_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+        conn_str=project_connection_string,
     )
 
     async with project_client:
@@ -54,15 +60,15 @@ async def sample_connections_async():
 
         # Get the properties of the default connection of a particular "type", with credentials
         connection = await project_client.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI,
+            connection_type=ConnectionType.AZURE_AI_SERVICES,
             with_credentials=True,  # Optional. Defaults to "False"
         )
-        print("====> Get default Azure Open AI connection:")
+        print("====> Get default Azure AI Services connection:")
         print(connection)
 
         # Get the properties of a connection by connection name:
         connection = await project_client.connections.get(
-            connection_name=os.environ["CONNECTION_NAME"],
+            connection_name=connection_name,
             with_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get connection by name:")
@@ -96,7 +102,7 @@ async def sample_connections_async():
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
         response = await client.chat.completions.create(
-            model="gpt-4o",
+            model=model_deployment_name,
             messages=[
                 {
                     "role": "user",
@@ -106,7 +112,7 @@ async def sample_connections_async():
         )
         print(response.choices[0].message.content)
 
-    elif connection.connection_type == ConnectionType.SERVERLESS:
+    elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
 
         from azure.ai.inference.aio import ChatCompletionsClient
         from azure.ai.inference.models import UserMessage
@@ -127,7 +133,7 @@ async def sample_connections_async():
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+        response = await client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
         await client.close()
         print(response.choices[0].message.content)
 

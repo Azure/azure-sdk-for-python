@@ -14,6 +14,7 @@ import sys
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
+from azure.ai.projects.models import CodeInterpreterToolResource, FileSearchToolResource, ToolResources
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
@@ -76,7 +77,7 @@ def fetch_current_datetime_live():
 
 
 # create tool for agent use
-def fetch_current_datetime_recordings():
+def fetch_current_datetime():
     """
     Get the current time as a JSON string.
 
@@ -87,9 +88,8 @@ def fetch_current_datetime_recordings():
     return time_json
 
 
-# Statically defined user functions for fast reference
-user_functions_recording = {"fetch_current_datetime": fetch_current_datetime_recordings}
-user_functions_live = {"fetch_current_datetime": fetch_current_datetime_live}
+# create function for agent use
+user_functions = {fetch_current_datetime}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -155,7 +155,7 @@ class TestagentClient(AzureRecordedTestCase):
     # test agent creation and deletion
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_create_delete_agent(self, **kwargs):
+    def test_create_update_delete_agent(self, **kwargs):
         # create client
         client = self.create_client(**kwargs)
         assert isinstance(client, AIProjectClient)
@@ -166,6 +166,10 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
+        # update agent        
+        agent = client.agents.update_agent(agent.id, name="my-agent2", instructions="You are helpful agent")
+        assert agent.name == "my-agent2"
+        
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
@@ -180,7 +184,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # initialize agent functions
-        functions = FunctionTool(functions=user_functions_recording)
+        functions = FunctionTool(functions=user_functions)
 
         # create agent with tools
         agent = client.agents.create_agent(
@@ -196,6 +200,32 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+    # test agent creation with tools
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_tools_and_resources(self, **kwargs):
+        # create client
+        client = self.create_client(**kwargs)
+        assert isinstance(client, AIProjectClient)
+
+        # initialize agent functions
+        functions = FunctionTool(functions=user_functions)
+
+        # create agent with tools
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+        )
+        assert agent.id
+        print("Created agent, agent ID", agent.id)
+        assert agent.tools
+        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        client.close()        
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -777,7 +807,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # Initialize agent tools
-        functions = FunctionTool(user_functions_recording)
+        functions = FunctionTool(functions=user_functions)
         code_interpreter = CodeInterpreterTool()
 
         toolset = ToolSet()
@@ -1074,6 +1104,49 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+        
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_code_interpreter_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.code_interpreter = CodeInterpreterToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_file_search_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.file_search = FileSearchToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
 
     # # **********************************************************************************
     # #

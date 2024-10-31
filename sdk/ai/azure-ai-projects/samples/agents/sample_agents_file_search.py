@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -56,7 +56,7 @@ with project_client:
         tools=file_search.definitions,
         tool_resources=file_search.resources,
     )
-    print(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
     thread = project_client.agents.create_thread()

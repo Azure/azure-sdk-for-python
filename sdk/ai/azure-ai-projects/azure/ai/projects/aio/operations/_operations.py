@@ -77,7 +77,6 @@ from ...operations._operations import (
     build_connections_get_connection_with_secrets_request,
     build_connections_get_workspace_request,
     build_connections_list_connections_request,
-    build_diagnostics_get_app_insights_request,
     build_evaluations_create_or_replace_schedule_request,
     build_evaluations_create_request,
     build_evaluations_disable_schedule_request,
@@ -86,6 +85,7 @@ from ...operations._operations import (
     build_evaluations_list_request,
     build_evaluations_list_schedule_request,
     build_evaluations_update_request,
+    build_telemetry_get_app_insights_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -3517,7 +3517,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+    async def _get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
         """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
@@ -5281,14 +5281,14 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class DiagnosticsOperations:
+class TelemetryOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`diagnostics` attribute.
+        :attr:`telemetry` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -5299,7 +5299,9 @@ class DiagnosticsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_app_insights(self, app_insights_resource_url: str, **kwargs: Any) -> _models.GetAppInsightsResponse:
+    async def _get_app_insights(
+        self, app_insights_resource_url: str, **kwargs: Any
+    ) -> _models._models.GetAppInsightsResponse:
         # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
@@ -5309,7 +5311,7 @@ class DiagnosticsOperations:
          Required.
         :type app_insights_resource_url: str
         :return: GetAppInsightsResponse. The GetAppInsightsResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.GetAppInsightsResponse
+        :rtype: ~azure.ai.projects.models._models.GetAppInsightsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5323,9 +5325,9 @@ class DiagnosticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.GetAppInsightsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.GetAppInsightsResponse] = kwargs.pop("cls", None)
 
-        _request = build_diagnostics_get_app_insights_request(
+        _request = build_telemetry_get_app_insights_request(
             app_insights_resource_url=app_insights_resource_url,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5360,7 +5362,9 @@ class DiagnosticsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GetAppInsightsResponse, response.json())
+            deserialized = _deserialize(
+                _models._models.GetAppInsightsResponse, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

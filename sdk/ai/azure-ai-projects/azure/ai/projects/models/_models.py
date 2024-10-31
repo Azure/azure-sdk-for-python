@@ -380,23 +380,6 @@ class AppInsightsProperties(_model_base.Model):
     connection_string: str = rest_field(name="ConnectionString")
     """Authentication type of the connection target. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_string: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
 
 class InputData(_model_base.Model):
     """Abstract data class for input data configuration.
@@ -1279,34 +1262,15 @@ class GetAppInsightsResponse(_model_base.Model):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models.AppInsightsProperties
+    :vartype properties: ~azure.ai.projects.models._models.AppInsightsProperties
     """
 
     id: str = rest_field()
     """A unique identifier for the resource. Required."""
     name: str = rest_field()
     """The name of the resource. Required."""
-    properties: "_models.AppInsightsProperties" = rest_field()
+    properties: "_models._models.AppInsightsProperties" = rest_field()
     """The properties of the resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        name: str,
-        properties: "_models.AppInsightsProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class GetConnectionResponse(_model_base.Model):

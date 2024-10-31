@@ -45,7 +45,7 @@ class InferenceTestBase(AzureRecordedTestCase):
     def get_async_client(self, **kwargs) -> AIProjectClientAsync:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
-            credential= self.get_credential(AIProjectClientAsync, is_async=True),
+            credential=self.get_credential(AIProjectClientAsync, is_async=True),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
         )
