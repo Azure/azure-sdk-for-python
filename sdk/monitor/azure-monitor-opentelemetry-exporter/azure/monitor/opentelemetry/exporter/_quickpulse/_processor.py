@@ -10,7 +10,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _Quic
 # pylint: disable=protected-access
 class _QuickpulseLogRecordProcessor(LogRecordProcessor):
 
-    def emit(self, log_data: LogData) -> None:
+    def emit(self, log_data: LogData) -> None:  # type: ignore
         qpm = _QuickpulseManager._instance
         if qpm:
             qpm._record_log_record(log_data)

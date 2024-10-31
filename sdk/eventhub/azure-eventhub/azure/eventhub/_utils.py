@@ -9,19 +9,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import (
-    TYPE_CHECKING,
-    cast,
-    Type,
-    Optional,
-    Dict,
-    Union,
-    Any,
-    Iterable,
-    Tuple,
-    Mapping,
-    Callable
-)
+from typing import TYPE_CHECKING, cast, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping, Callable
 
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
@@ -39,6 +27,7 @@ if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
     from ._pyamqp.message import Message as pyamqp_Message
+
     try:
         from uamqp import types as uamqp_types
         from uamqp import Message as uamqp_Message
@@ -68,7 +57,7 @@ class UTC(datetime.tzinfo):
         return datetime.timedelta(0)
 
     def tzname(self, dt):
-        """ Timestamp representation.
+        """Timestamp representation.
         :param any dt: Ignored.
         :return: Timestamp representation.
         :rtype: str
@@ -76,7 +65,7 @@ class UTC(datetime.tzinfo):
         return "Z"
 
     def dst(self, dt):
-        """ No daylight saving for UTC.
+        """No daylight saving for UTC.
         :param any dt: Ignored.
         :return: Offset for daylight savings time.
         :rtype: datetime.timedelta
@@ -116,7 +105,7 @@ def create_properties(
     platform_str = platform.platform()
     properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_IDENTIFIER} {framework} ({platform_str})" # pylint: disable=line-too-long
+    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_IDENTIFIER} {framework} ({platform_str})"  # pylint: disable=line-too-long
     if user_agent:
         final_user_agent = f"{user_agent} {final_user_agent}"
 
@@ -132,7 +121,7 @@ def create_properties(
 def set_event_partition_key(
     event: Union[AmqpAnnotatedMessage, EventData],
     partition_key: Optional[Union[bytes, str]],
-    amqp_transport: AmqpTransport
+    amqp_transport: AmqpTransport,
 ) -> None:
     if not partition_key:
         return
@@ -145,16 +134,14 @@ def set_event_partition_key(
     annotations = raw_message.annotations
     if annotations is None:
         annotations = {}
-    annotations[
-        amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL
-    ] = partition_key  # pylint:disable=protected-access
+    annotations[amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key  # pylint:disable=protected-access
     if not raw_message.header:
         raw_message.header = AmqpMessageHeader(header=True)
     else:
         raw_message.header.durable = True
 
 
-def event_position_selector(value: Union[str, int, datetime.datetime], inclusive: bool=False) -> bytes:
+def event_position_selector(value: Union[str, int, datetime.datetime], inclusive: bool = False) -> bytes:
     """Creates a selector expression of the offset.
 
     :param int or str or datetime.datetime value: The offset value to use for the offset.
@@ -164,19 +151,11 @@ def event_position_selector(value: Union[str, int, datetime.datetime], inclusive
     """
     operator = ">=" if inclusive else ">"
     if isinstance(value, datetime.datetime):  # pylint:disable=no-else-return
-        timestamp = (calendar.timegm(value.utctimetuple()) * 1000) + (
-            value.microsecond / 1000
-        )
-        return (
-            f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'"
-        ).encode("utf-8")
+        timestamp = (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000)
+        return (f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'").encode("utf-8")
     elif isinstance(value, int):
-        return (
-            f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
-        ).encode("utf-8")
-    return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode(
-        "utf-8"
-    )
+        return (f"amqp.annotation.x-opt-sequence-number {operator} '{value}'").encode("utf-8")
+    return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode("utf-8")
 
 
 def get_last_enqueued_event_properties(event_data: EventData) -> Optional[Dict[str, Any]]:
@@ -191,24 +170,14 @@ def get_last_enqueued_event_properties(event_data: EventData) -> Optional[Dict[s
         return event_data._last_enqueued_event_properties
 
     if event_data._message.delivery_annotations:
-        sequence_number = event_data._message.delivery_annotations.get(
-            PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None
-        )
-        enqueued_time_stamp = event_data._message.delivery_annotations.get(
-            PROP_LAST_ENQUEUED_TIME_UTC, None
-        )
+        sequence_number = event_data._message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
+        enqueued_time_stamp = event_data._message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
         if enqueued_time_stamp:
             enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp) / 1000)
-        retrieval_time_stamp = event_data._message.delivery_annotations.get(
-            PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None
-        )
+        retrieval_time_stamp = event_data._message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
         if retrieval_time_stamp:
-            retrieval_time_stamp = utc_from_timestamp(
-                float(retrieval_time_stamp) / 1000
-            )
-        offset_bytes = event_data._message.delivery_annotations.get(
-            PROP_LAST_ENQUEUED_OFFSET, None
-        )
+            retrieval_time_stamp = utc_from_timestamp(float(retrieval_time_stamp) / 1000)
+        offset_bytes = event_data._message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
         offset = offset_bytes.decode("UTF-8") if offset_bytes else None
 
         event_data._last_enqueued_event_properties = {
@@ -232,10 +201,10 @@ def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, Optional[
 
 
 def transform_outbound_single_message(
-        message: Union[AmqpAnnotatedMessage, EventData],
-        message_type: Type[EventData],
-        to_outgoing_amqp_message: Callable[[AmqpAnnotatedMessage], Union[uamqp_Message, pyamqp_Message]]
-    ) -> EventData:
+    message: Union[AmqpAnnotatedMessage, EventData],
+    message_type: Type[EventData],
+    to_outgoing_amqp_message: Callable[[AmqpAnnotatedMessage], Union[uamqp_Message, pyamqp_Message]],
+) -> EventData:
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
@@ -261,12 +230,10 @@ def transform_outbound_single_message(
         # event_data.raw_amqp_message will be set to AmqpAnnotatedMessage.
         message = cast(AmqpAnnotatedMessage, message)
         amqp_message = to_outgoing_amqp_message(message)
-        return message_type._from_message(
-            message=amqp_message, raw_amqp_message=message  # type: ignore
-        )
+        return message_type._from_message(message=amqp_message, raw_amqp_message=message)  # type: ignore
 
 
-def decode_with_recurse(data: Any, encoding: str="UTF-8") -> Any:
+def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
     # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
@@ -282,18 +249,14 @@ def decode_with_recurse(data: Any, encoding: str="UTF-8") -> Any:
         return data
     if isinstance(data, bytes):
         return data.decode(encoding)
-    if isinstance(
-        data, Mapping
-    ):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Mapping):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(
-        data, Iterable
-    ):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Iterable):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

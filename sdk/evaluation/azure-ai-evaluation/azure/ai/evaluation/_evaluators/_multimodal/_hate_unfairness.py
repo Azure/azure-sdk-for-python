@@ -28,7 +28,7 @@ class HateUnfairnessMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = HateUnfairnessMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {
@@ -72,8 +72,9 @@ class HateUnfairnessMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates hate unfairness content.
+
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
+            Each message should have "role" and "content" keys. It supports single turn only.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The hate unfairness score.
         :rtype: Dict[str, Union[float, str]]
