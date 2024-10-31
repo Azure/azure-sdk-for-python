@@ -1375,9 +1375,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: Iterable[Dict[str, Any]]
 
-        .. note::
-          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
-          Please just treat it as opaque and do not take any dependent on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         if force_refresh is True:
@@ -1421,9 +1421,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a feed range
         :rtype: Dict[str, Any]
 
-        .. note::
-          For the feed range, even through a Dict has been returned, but in the future,
-          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         return FeedRangeInternalEpk(self._get_epk_range_for_partition_key(partition_key)).to_dict()
@@ -1437,9 +1437,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
 
-        .. note::
-          For the feed range, even through a Dict has been returned, but in the future,
-          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
+
         """
         parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
         child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
