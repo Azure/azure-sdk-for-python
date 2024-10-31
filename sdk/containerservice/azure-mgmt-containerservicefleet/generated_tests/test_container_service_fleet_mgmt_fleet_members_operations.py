@@ -24,7 +24,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
         response = self.client.fleet_members.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             fleet_name="str",
             fleet_member_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
             fleet_name="str",
             fleet_member_name="str",
             properties={"group": "str"},
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             fleet_name="str",
             fleet_member_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
