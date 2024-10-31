@@ -1,0 +1,11 @@
+{
+  "commit": "400510ae981419169f35012c3a217b268e779b2b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.19.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2024-04 --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/readme.md"
+}
