@@ -300,6 +300,25 @@ class _AIAgentsInstrumentorPreview:
             return role.value
 
         return role
+    
+    def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
+        # do we want a new event for it ?
+        tool_calls = [{"id": t.id,
+                        "type": t.type,
+                        "function" : {
+                            "name": t.function.name,
+                            "arguments": json.loads(t.function.arguments)
+                        } if isinstance(t, RunStepFunctionToolCall) else None,
+                    } for t in step.step_details.tool_calls]
+
+        attributes = self._create_event_attributes(thread_id=step.thread_id,
+                                            agent_id=step.assistant_id,
+                                            thread_run_id=step.run_id,
+                                            message_status=step.status,
+                                            usage=step.usage)
+
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        span.span_instance.add_event(name=f"gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: ThreadRun) -> None:
         if span and span.span_instance.is_recording:
