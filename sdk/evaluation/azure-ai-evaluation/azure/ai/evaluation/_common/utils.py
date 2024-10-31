@@ -362,6 +362,7 @@ def validate_conversation(conversation):
         )
     expected_roles = {"user", "assistant", "system"}
     image_found = False
+    assistantMessageCount = 0
     for num, message in enumerate(messages, 1):
         if not isinstance(message, dict):
             try:
@@ -395,6 +396,8 @@ def validate_conversation(conversation):
                 f"Invalid role provided: {message.get('role')}. Message number: {num}",
                 ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
             )
+        if message.get("role") == "assistant":
+            assistantMessageCount = assistantMessageCount + 1
         content = message.get("content")
         if not isinstance(content, (str, list)):
             raise_exception(
@@ -407,5 +410,15 @@ def validate_conversation(conversation):
     if not image_found:
         raise_exception(
             "Message needs to have multi-modal input like images.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    if assistantMessageCount == 0:
+        raise_exception(
+            "One of the messages should have assistant role",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    if assistantMessageCount > 1:
+        raise_exception(
+            "Only one of the messages should have assistant role",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
