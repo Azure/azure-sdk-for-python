@@ -13,7 +13,6 @@ from opentelemetry.sdk.metrics.export import MetricsData as OTMetricsData
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
-from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
@@ -52,6 +51,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _RequestData,
     _TelemetryData,
     _TraceData,
+)
+from azure.monitor.opentelemetry.exporter.export.trace._utils import (
+    _get_url_for_http_dependency,
+    _get_url_for_http_request,
 )
 
 
@@ -115,8 +118,8 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE, "")  # type: ignore
     grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE, "")  # type: ignore
     span_kind = span.kind
-    url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
+        url = _get_url_for_http_dependency(span.attributes)
         document = RemoteDependencyDocument(
             document_type=DocumentType.REMOTE_DEPENDENCY,
             name=span.name,
@@ -125,6 +128,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
             duration=_ns_to_iso8601_string(duration),
         )
     else:
+        url = _get_url_for_http_request(span.attributes)
         if status_code:
             code = str(status_code)
         else:
@@ -155,39 +159,6 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
             message=log_data.log_record.body,
         )
     return document
-
-
-# mypy: disable-error-code="assignment"
-# pylint: disable=no-else-return
-def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
-    if not attributes:
-        return ""
-    http_method = attributes.get(SpanAttributes.HTTP_METHOD)
-    if http_method:
-        http_scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
-        # Client
-        if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER):
-            http_url = attributes.get(SpanAttributes.HTTP_URL)
-            if http_url:
-                return str(http_url)
-
-            host = attributes.get(SpanAttributes.NET_PEER_NAME)
-            port = attributes.get(SpanAttributes.NET_PEER_PORT, "")
-            ip = attributes.get(SpanAttributes.NET_PEER_IP)
-            if http_scheme:
-                if host:
-                    return f"{http_scheme}://{host}:{port}"
-                else:
-                    return f"{http_scheme}://{ip}:{port}"
-        else:  # Server
-            host = attributes.get(SpanAttributes.NET_HOST_NAME)
-            port = attributes.get(SpanAttributes.NET_HOST_PORT)
-            http_target = attributes.get(SpanAttributes.HTTP_TARGET, "")
-            if http_scheme and host:
-                http_host = attributes.get(SpanAttributes.HTTP_HOST)
-                if http_host:
-                    return f"{http_scheme}://{http_host}:{port}{http_target}"
-    return ""
 
 
 def _ns_to_iso8601_string(nanoseconds: int) -> str:

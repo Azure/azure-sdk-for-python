@@ -134,7 +134,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.metrics[0].value, 5.0)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_dependency")
     def test_get_span_document_client(self, url_mock, iso_mock):
         span_mock = mock.Mock()
         span_mock.name = "test_span"
@@ -156,7 +156,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(doc.duration, "1000")
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_request")
     def test_get_span_document_server(self, url_mock, iso_mock):
         span_mock = mock.Mock()
         span_mock.name = "test_span"
@@ -178,7 +178,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(doc.duration, "1000")
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_request")
     def test_get_span_document_server_grpc_status(self, url_mock, iso_mock):
         span_mock = mock.Mock()
         span_mock.name = "test_span"
