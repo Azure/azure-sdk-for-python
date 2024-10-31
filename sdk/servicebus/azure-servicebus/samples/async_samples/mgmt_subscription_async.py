@@ -20,8 +20,8 @@ import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.identity.aio import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
 SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
 
 
@@ -63,10 +63,13 @@ async def get_and_update_subscription(servicebus_mgmt_client):
 
 async def get_subscription_runtime_properties(servicebus_mgmt_client):
     print("-- Get Subscription Runtime Properties")
-    get_subscription_runtime_properties = await servicebus_mgmt_client.get_subscription_runtime_properties(TOPIC_NAME, SUBSCRIPTION_NAME)
+    get_subscription_runtime_properties = await servicebus_mgmt_client.get_subscription_runtime_properties(
+        TOPIC_NAME, SUBSCRIPTION_NAME
+    )
     print("Subscription Name:", get_subscription_runtime_properties.name)
     print("Please refer to SubscriptionRuntimeProperties from complete available runtime properties.")
     print("")
+
 
 async def main():
     credential = DefaultAzureCredential()
@@ -76,5 +79,6 @@ async def main():
         await get_and_update_subscription(servicebus_mgmt_client)
         await get_subscription_runtime_properties(servicebus_mgmt_client)
         await delete_subscription(servicebus_mgmt_client)
+
 
 asyncio.run(main())
