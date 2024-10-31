@@ -22,9 +22,9 @@ from azure.servicebus.management import SqlRuleFilter
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.identity.aio import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
-SUBSCRIPTION_NAME = os.environ['SERVICEBUS_SUBSCRIPTION_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
+SUBSCRIPTION_NAME = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
 RULE_NAME = "sb_mgmt_rule" + str(uuid.uuid4())
 RULE_WITH_SQL_FILTER_NAME = "sb_sql_rule" + str(uuid.uuid4())
 
@@ -37,13 +37,11 @@ async def create_rule(servicebus_mgmt_client):
 
     print("-- Create Rule with SQL Filter")
     sql_filter_parametrized = SqlRuleFilter(
-        "property1 = @param1 AND property2 = @param2",
-        parameters={
-            "@param1": "value",
-            "@param2" : 1
-        }
+        "property1 = @param1 AND property2 = @param2", parameters={"@param1": "value", "@param2": 1}
     )
-    await servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_WITH_SQL_FILTER_NAME, filter=sql_filter_parametrized)
+    await servicebus_mgmt_client.create_rule(
+        TOPIC_NAME, SUBSCRIPTION_NAME, RULE_WITH_SQL_FILTER_NAME, filter=sql_filter_parametrized
+    )
     print("Rule {} is created.".format(RULE_WITH_SQL_FILTER_NAME))
     print("")
 
@@ -73,11 +71,7 @@ async def get_and_update_rule(servicebus_mgmt_client):
 
     # update by updating the properties in the model
     rule_properties.filter = SqlRuleFilter(
-        "property1 = @param1 AND property2 = @param2",
-        parameters={
-            "@param1": "value2",
-            "@param2": 2
-        }
+        "property1 = @param1 AND property2 = @param2", parameters={"@param1": "value2", "@param2": 2}
     )
     await servicebus_mgmt_client.update_rule(TOPIC_NAME, SUBSCRIPTION_NAME, rule_properties)
 
@@ -88,12 +82,8 @@ async def get_and_update_rule(servicebus_mgmt_client):
         SUBSCRIPTION_NAME,
         rule_properties,
         filter=SqlRuleFilter(
-            "property1 = @param1 AND property2 = @param2",
-            parameters={
-                "@param1": "value3",
-                "@param2": 3
-            }
-        )
+            "property1 = @param1 AND property2 = @param2", parameters={"@param1": "value3", "@param2": 3}
+        ),
     )
 
 
@@ -104,5 +94,6 @@ async def main():
         await list_rules(servicebus_mgmt_client)
         await get_and_update_rule(servicebus_mgmt_client)
         await delete_rule(servicebus_mgmt_client)
+
 
 asyncio.run(main())

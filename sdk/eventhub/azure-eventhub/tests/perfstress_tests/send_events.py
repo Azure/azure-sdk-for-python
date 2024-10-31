@@ -11,18 +11,14 @@ class SendEventsTest(_SendTest):
 
     def run_batch_sync(self):
         if self.args.batch_size > 1:
-            self.producer.send_batch(
-                [self._build_event() for _ in range(self.args.batch_size)]
-            )
+            self.producer.send_batch([self._build_event() for _ in range(self.args.batch_size)])
         else:
             self.producer.send_event(self._build_event())
         return self.args.batch_size
 
     async def run_batch_async(self):
         if self.args.batch_size > 1:
-            await self.async_producer.send_batch(
-                [self._build_event() for _ in range(self.args.batch_size)]
-            )
+            await self.async_producer.send_batch([self._build_event() for _ in range(self.args.batch_size)])
         else:
             await self.async_producer.send_event(self._build_event())
         return self.args.batch_size
