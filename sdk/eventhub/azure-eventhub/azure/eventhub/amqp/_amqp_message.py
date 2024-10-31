@@ -170,10 +170,13 @@ class AmqpAnnotatedMessage:
 
     @property
     def body(self) -> Any:
-        """The body of the Message. The format may vary depending on the body type:
-        For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
+        """
+        The body of the Message. The format may vary depending on the body type:
+
+        For AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes].
+        For AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List].
+        For AmqpMessageBodyType.VALUE, the body could be any type.
+
         :rtype: Any
         """
         if self._body_type == AmqpMessageBodyType.DATA:  # pylint:disable=no-else-return
@@ -186,8 +189,10 @@ class AmqpAnnotatedMessage:
 
     @property
     def body_type(self) -> AmqpMessageBodyType:
-        """The body type of the underlying AMQP message.
-        rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
+        """
+        The body type of the underlying AMQP message.
+
+        :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return self._body_type
 
@@ -195,6 +200,7 @@ class AmqpAnnotatedMessage:
     def properties(self) -> Optional[AmqpMessageProperties]:
         """
         Properties to add to the message.
+
         :rtype: Optional[~azure.eventhub.amqp.AmqpMessageProperties]
         """
         return self._properties
@@ -247,6 +253,7 @@ class AmqpAnnotatedMessage:
     def header(self) -> Optional[AmqpMessageHeader]:
         """
         The message header.
+
         :rtype: Optional[~azure.eventhub.amqp.AmqpMessageHeader]
         """
         return self._header
