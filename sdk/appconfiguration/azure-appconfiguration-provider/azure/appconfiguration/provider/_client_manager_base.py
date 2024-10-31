@@ -109,7 +109,7 @@ class _ConfigurationClientWrapperBase:
                     allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
                     if "configuration_value" in v:
                         allocation_id += (
-                            f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)},"
+                            f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)}"
                         )
                     allocation_id += ";"
                 if sorted_variants:
