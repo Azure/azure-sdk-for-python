@@ -698,7 +698,7 @@ def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     if output_dict:
         print("======= Combined Run Summary (Per Evaluator) =======\n")
         print(json.dumps(output_dict, indent=4))
-        print("\n====================================================")
+        print("\n====================================================\n")
 
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
