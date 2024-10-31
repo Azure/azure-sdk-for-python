@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -63,9 +64,9 @@ class InferenceOperations:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -98,17 +99,13 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -132,9 +129,9 @@ class InferenceOperations:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -173,9 +170,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(

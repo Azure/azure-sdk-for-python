@@ -39,7 +39,9 @@ async def sample_get_embeddings_client_async():
         # Get an authenticated async azure.ai.inference embeddings client for your default Serverless connection:
         async with await project_client.inference.get_embeddings_client() as client:
 
-            response = await client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
+            response = await client.embed(
+                model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
+            )
 
             for item in response.data:
                 length = len(item.embedding)

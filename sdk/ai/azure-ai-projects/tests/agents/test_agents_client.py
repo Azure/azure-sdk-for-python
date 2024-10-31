@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1249,8 +1250,7 @@ class TestagentClient(AzureRecordedTestCase):
             fs = FileSearchToolResource(
                 vector_stores=[
                     VectorStoreAzureConfigurations(
-                        store_name="my_vector_store",
-                        store_configuration=VectorStorageConfiguration(data_sources=ds)
+                        store_name="my_vector_store", store_configuration=VectorStorageConfiguration(data_sources=ds)
                     )
                 ]
             )

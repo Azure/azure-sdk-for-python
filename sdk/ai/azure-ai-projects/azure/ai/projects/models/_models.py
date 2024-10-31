@@ -1451,7 +1451,7 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
      authentication
     :vartype auth_type: str or ~azure.ai.projects.models.AAD
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1461,7 +1461,7 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
     """Authentication type of the connection target. Required. Entra ID authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
+     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
     target: str = rest_field()
     """The connection URL to be used for this service. Required."""
 
@@ -1473,7 +1473,7 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
     :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
     :vartype auth_type: str or ~azure.ai.projects.models.API_KEY
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.projects.models._models.CredentialsApiKeyAuth
@@ -1485,7 +1485,7 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
     """Authentication type of the connection target. Required. API Key authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
+     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
@@ -1500,7 +1500,7 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
      Signature (SAS) authentication
     :vartype auth_type: str or ~azure.ai.projects.models.SAS
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.projects.models._models.CredentialsSASAuth
@@ -1513,7 +1513,7 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
      authentication"""
     category: Union[str, "_models.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
+     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
