@@ -25,7 +25,6 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="black"
-        --disablecov
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
