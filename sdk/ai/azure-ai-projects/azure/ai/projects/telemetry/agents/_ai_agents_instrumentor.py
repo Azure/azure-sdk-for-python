@@ -44,7 +44,6 @@ __all__ = [
 
 _agents_traces_enabled: bool = False
 _trace_agents_content: bool = False
-_AGENTS_GEN_AI_SYSTEM_NAME = "az.ai.agents"
 
 
 class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
