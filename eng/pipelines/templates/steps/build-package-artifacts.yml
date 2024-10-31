@@ -76,6 +76,13 @@ steps:
         Write-Host "We freshly generated the PR diff, and this is what it sees!"
         Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
         cat $(Build.ArtifactStagingDirectory)/diff/diff.json
+
+        $content = Get-Content -Raw $(Build.ArtifactStagingDirectory)/diff/diff.json | ConvertFrom-Json
+        if ($content.ChangedServices) {
+          Write-Host "Attaching changed service names to the build for additional tag generation"
+          $content.ChangedServices | ConvertTo-Json | Out-File -FilePath $(System.DefaultWorkingDirectory)/tags.json -Encoding utf8
+          Write-Host '##vso[task.addattachment type=AdditionalTags;name=AdditionalTags;]$(System.DefaultWorkingDirectory)/tags.json'
+        }
       displayName: Dump PR Diff
 
     - task: Powershell@2
