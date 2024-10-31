@@ -140,7 +140,19 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
   if (!$PackageInfos) {
     $PackageInfos =  @($PackageInfo)
   }
-  #
+
+  # Adding these for diagnostics purposes so we know which version of python is being
+  # executed and dumping all the pip packages for this install of python
+  Write-Host "Executing: which python"
+  $whichOutput = which python 2>&1
+  $whichOutput | ForEach-Object { Write-Host $_ }
+  Write-Host "`n"
+
+  Write-Host "Executing: python -m pip freeze --all"
+  $pipFreezeOutput = python -m pip freeze --all 2>&1
+  $pipFreezeOutput | ForEach-Object { Write-Host $_ }
+  Write-Host "`n"
+
   $tempDirs = @()
   $allSucceeded = $true
   try {
@@ -176,16 +188,11 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
       -ItemType Directory `
       -Path (Join-Path $outputRoot "docsOutput")
 
-      # Adding these for diagnostics purposes so we know which version of python is being
-      # executed and dumping all the pip packages for this install of python
-      which python
-      python -m pip freeze --all
-
       # Force the python output to be unbuffered so we see more than just the warnings.
       Write-Host "Executing: python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
       $pyOutput = python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir 2>&1
-      Write-Host "pyOutput"
-      Write-Host $pyOutput
+      $pyOutput | ForEach-Object { Write-Host $_ }
+      Write-Host "`n"
       if ($LASTEXITCODE -ne 0) {
         LogWarning "py2docfx command failed, see output above."
         $allSucceeded = $false
