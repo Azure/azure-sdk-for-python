@@ -10,10 +10,13 @@ from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 from typing_extensions import Self
 
+from azure.core import AzureClouds
+from azure.core.settings import settings
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import AppConfigurationManagementClientConfiguration
@@ -70,11 +73,18 @@ class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-ve
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: str = "",
+        *,
+        cloud_setting: AzureClouds = None,
         **kwargs: Any
     ) -> None:
+        cloud = cloud_setting or settings.current.azure_cloud
+        endpoints = get_arm_endpoints(cloud)
+        if not base_url:
+            base_url = endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", endpoints["credential_scopes"])
         self._config = AppConfigurationManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
         _policies = kwargs.pop("policies", None)
         if _policies is None:

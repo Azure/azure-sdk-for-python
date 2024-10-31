@@ -79,7 +79,7 @@ setup(
         "isodate>=0.6.1",
         "typing-extensions>=4.6.0",
         "azure-common>=1.1",
-        "azure-mgmt-core>=1.3.2",
+        "azure-mgmt-core>=1.5.0",
     ],
     python_requires=">=3.8",
 )
