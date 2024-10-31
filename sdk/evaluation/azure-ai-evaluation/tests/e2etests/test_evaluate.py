@@ -155,6 +155,36 @@ class TestEvaluate:
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
+    def test_evaluate_with_groundedness_evaluator_with_convo(self, model_config, data_convo_file):
+        # data
+        input_data = pd.read_json(data_convo_file, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_convo_file,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+
+        assert "grounded.groundedness" in metrics.keys()
+
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+        assert row_result_df["outputs.grounded.groundedness"][1] in [3, 4, 5]
+        assert result["studio_url"] is None
+
     def test_evaluate_with_groundedness_evaluator_without_query(self, model_config, data_file_no_query):
         # data
         input_data = pd.read_json(data_file_no_query, lines=True)
