@@ -7,11 +7,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import traceback
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
-from ._core import Prompty
-from ._utils import load, prepare
+from ._core import SimpleModel, Prompty
+from ._invoker import InvokerFactory
 from ._mustache import render
+from ._prompty import load
 
 
 class PromptTemplate:
@@ -28,7 +31,15 @@ class PromptTemplate:
         """
         if not file_path:
             raise ValueError("Please provide file_path")
-        prompty = load(file_path)
+
+        # Get the absolute path of the file by `traceback.extract_stack()`, it's "-2" because:
+        #  In the stack, the last function is the current function.
+        #  The second last function is the caller function, which is the root of the file_path.
+        stack = traceback.extract_stack()
+        caller = Path(stack[-2].filename)
+        abs_file_path = Path(caller.parent / Path(file_path)).resolve().absolute()
+
+        prompty = load(abs_file_path)
         return cls(prompty=prompty)
 
     @classmethod
@@ -95,7 +106,8 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            parsed = prepare(self.prompty, data)
+            rendered = InvokerFactory.run("renderer", self.prompty, SimpleModel(item=data))
+            parsed = InvokerFactory.run("parser", self.prompty, rendered.item)
             return parsed
         elif "prompt_template" in self._config:
             system_prompt = render(self._config["prompt_template"], data)
