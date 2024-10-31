@@ -12,7 +12,7 @@ import os
 from azure.ai.projects import _types
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 from urllib.parse import urlparse
-from azure.ai.projects.tracing.agents._utils import * # pylint: disable=unused-wildcard-import
+from azure.ai.projects.telemetry.agents._utils import * # pylint: disable=unused-wildcard-import
 
 # pylint: disable = no-name-in-module
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
@@ -76,18 +76,12 @@ class AIAgentsInstrumentor:
         """
         Enable trace instrumentation for AI Agents.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
-
         """
         self._impl.instrument()
 
     def uninstrument(self) -> None:
         """
         Remove trace instrumentation for AI Agents.
-
-        Raises:
-            RuntimeError: If instrumentation is not currently enabled.
 
         This method removes any active instrumentation, stopping the tracing
         of AI Agents.
@@ -121,33 +115,24 @@ class _AIAgentsInstrumentorPreview:
         """
         Enable trace instrumentation for AI Agents.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
-
         This method checks the environment variable
         'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
         whether to enable content tracing.
         """
-        if self.is_instrumented():
-            raise RuntimeError("Already instrumented")
-
-        var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-        enable_content_tracing = self._str_to_bool(var_value)
-        self._instrument_agents(enable_content_tracing)
+        if not self.is_instrumented():
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            enable_content_tracing = self._str_to_bool(var_value)
+            self._instrument_agents(enable_content_tracing)
 
     def uninstrument(self):
         """
         Disable trace instrumentation for AI Agents.
 
-        Raises:
-            RuntimeError: If instrumentation is not currently enabled.
-
         This method removes any active instrumentation, stopping the tracing
         of AI Agents.
         """
-        if not self.is_instrumented():
-            raise RuntimeError("Not instrumented")
-        self._uninstrument_agents()
+        if self.is_instrumented():
+            self._uninstrument_agents()
 
     def is_instrumented(self):
         """

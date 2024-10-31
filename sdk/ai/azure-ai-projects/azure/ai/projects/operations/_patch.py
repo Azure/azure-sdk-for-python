@@ -381,7 +381,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
         )
 
     try:
-        from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
+        from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
 
         instrumentor = AIAgentsInstrumentor()
         if not instrumentor.is_instrumented():
