@@ -14,10 +14,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects aiohttp azure-identity
+    pip install azure-ai-projects aiohttp azure-identity
 
-    Set this environment variable with your own value:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
 import asyncio
 import os
@@ -27,15 +28,18 @@ from azure.identity import DefaultAzureCredential
 
 async def sample_get_embeddings_client_async():
 
+    project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
     async with AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+        conn_str=project_connection_string,
     ) as project_client:
 
         # Get an authenticated async azure.ai.inference embeddings client for your default Serverless connection:
         async with await project_client.inference.get_embeddings_client() as client:
 
-            response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
+            response = await client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
 
             for item in response.data:
                 length = len(item.embedding)

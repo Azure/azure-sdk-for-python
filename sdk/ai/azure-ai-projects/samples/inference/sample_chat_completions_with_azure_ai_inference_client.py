@@ -15,24 +15,28 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
+
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
 
+project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
 with AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    conn_str=project_connection_string,
 ) as project_client:
 
-    # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
     with project_client.inference.get_chat_completions_client() as client:
 
-        response = client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+        response = client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
 
         print(response.choices[0].message.content)

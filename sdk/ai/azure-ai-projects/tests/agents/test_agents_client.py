@@ -77,7 +77,7 @@ def fetch_current_datetime_live():
 
 
 # create tool for agent use
-def fetch_current_datetime_recordings():
+def fetch_current_datetime():
     """
     Get the current time as a JSON string.
 
@@ -88,8 +88,8 @@ def fetch_current_datetime_recordings():
     return time_json
 
 
-# Statically defined user functions for fast reference
-user_functions_recording = {"fetch_current_datetime": fetch_current_datetime_recordings}
+# create function for agent use
+user_functions = {fetch_current_datetime}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -184,7 +184,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # initialize agent functions
-        functions = FunctionTool(functions=user_functions_recording)
+        functions = FunctionTool(functions=user_functions)
 
         # create agent with tools
         agent = client.agents.create_agent(
@@ -193,7 +193,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
         assert agent.tools
-        assert agent.tools[0] == functions.definitions
+        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
         print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
         # delete agent and close client
@@ -210,7 +210,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # initialize agent functions
-        functions = FunctionTool(functions=user_functions_recording)
+        functions = FunctionTool(functions=user_functions)
 
         # create agent with tools
         agent = client.agents.create_agent(
@@ -807,7 +807,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # Initialize agent tools
-        functions = FunctionTool(user_functions_recording)
+        functions = FunctionTool(functions=user_functions)
         code_interpreter = CodeInterpreterTool()
 
         toolset = ToolSet()

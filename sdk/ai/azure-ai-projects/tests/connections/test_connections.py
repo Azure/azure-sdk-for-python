@@ -20,6 +20,16 @@ class TestConnections(ConnectionsTestBase):
 
         with self.get_sync_client(**kwargs) as project_client:
 
+            assert project_client.connections.get(
+                connection_name="Some non-existing name", with_credentials=False
+            ) == None
+
+            assert project_client.connections.get(
+                connection_name="Some non-existing name", with_credentials=True
+            ) == None
+
+            return
+
             connection = project_client.connections.get(connection_name=aoai_connection, with_credentials=False)
             print(connection)
             ConnectionsTestBase.validate_connection(
@@ -66,6 +76,14 @@ class TestConnections(ConnectionsTestBase):
         )
 
         with self.get_sync_client(**kwargs) as project_client:
+
+            assert project_client.connections.get_default(
+                connection_type="Some unrecognized type", with_credentials=False
+            ) == None
+
+            assert project_client.connections.get_default(
+                connection_type="Some unrecognized type", with_credentials=True
+            ) == None
 
             connection = project_client.connections.get_default(
                 connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=False

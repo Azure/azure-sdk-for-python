@@ -1267,9 +1267,7 @@ def build_connections_get_connection_with_secrets_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_diagnostics_get_app_insights_request(  # pylint: disable=name-too-long
-    app_insights_resource_url: str, **kwargs: Any
-) -> HttpRequest:
+def build_telemetry_get_app_insights_request(app_insights_resource_url: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -6677,14 +6675,14 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class DiagnosticsOperations:
+class TelemetryOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`diagnostics` attribute.
+        :attr:`telemetry` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -6695,7 +6693,9 @@ class DiagnosticsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_app_insights(self, app_insights_resource_url: str, **kwargs: Any) -> _models.GetAppInsightsResponse:
+    def _get_app_insights(
+        self, app_insights_resource_url: str, **kwargs: Any
+    ) -> _models._models.GetAppInsightsResponse:
         # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
@@ -6705,7 +6705,7 @@ class DiagnosticsOperations:
          Required.
         :type app_insights_resource_url: str
         :return: GetAppInsightsResponse. The GetAppInsightsResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.GetAppInsightsResponse
+        :rtype: ~azure.ai.projects.models._models.GetAppInsightsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6719,9 +6719,9 @@ class DiagnosticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.GetAppInsightsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.GetAppInsightsResponse] = kwargs.pop("cls", None)
 
-        _request = build_diagnostics_get_app_insights_request(
+        _request = build_telemetry_get_app_insights_request(
             app_insights_resource_url=app_insights_resource_url,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6756,7 +6756,9 @@ class DiagnosticsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GetAppInsightsResponse, response.json())
+            deserialized = _deserialize(
+                _models._models.GetAppInsightsResponse, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

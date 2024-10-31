@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +15,6 @@ import json
 import logging
 import base64
 import asyncio
-import re
 
 from azure.core.credentials import TokenCredential, AccessToken
 
@@ -291,9 +291,8 @@ class Tool(ABC):
         :return: The output of the tool operations.
         """
         pass
-
-
-class FunctionTool(Tool):
+    
+class BaseFunctionTool(Tool):
     """
     A tool that executes user-defined functions.
     """
@@ -389,17 +388,6 @@ class FunctionTool(Tool):
 
         return function, parsed_arguments
 
-    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
-        try:
-            return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
-            error_message = f"Error executing function '{tool_call.function.name}': {e}"
-            logging.error(error_message)
-            # Return error message as JSON string back to agent in order to make possible self correction to the function call
-            return json.dumps({"error": error_message})
-
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
@@ -419,7 +407,22 @@ class FunctionTool(Tool):
         return ToolResources()
 
 
-class AsyncFunctionTool(FunctionTool):
+class FunctionTool(BaseFunctionTool):
+
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        function, parsed_arguments = self._get_func_and_args(tool_call)
+
+        try:
+            return function(**parsed_arguments) if parsed_arguments else function()
+        except TypeError as e:
+            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
+            raise
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
+
+
+
+class AsyncFunctionTool(BaseFunctionTool):
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
@@ -539,27 +542,17 @@ class CodeInterpreterTool(Tool):
     def execute(self, tool_call: Any) -> Any:
         pass
 
-
-class ToolSet:
+class BaseToolSet:
     """
-    A collection of tools that can be used by an agent.
+    Abstract class for a collection of tools that can be used by an agent.
     """
 
     def __init__(self):
         self._tools: List[Tool] = []
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
-        """
-        Validate the type of the tool.
-
-        :param tool_type: The type of the tool to validate.
-        :raises ValueError: If the tool type is not a subclass of Tool.
-        """
-        if isinstance(tool_type, AsyncFunctionTool):
-            raise ValueError(
-                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
-            )
-
+    def validate_tool_type(self, tool: Tool) -> None:
+        pass
+    
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
@@ -567,7 +560,7 @@ class ToolSet:
         :param tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
-        self.validate_tool_type(type(tool))
+        self.validate_tool_type(tool)
 
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
@@ -647,6 +640,24 @@ class ToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+class ToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an synchronize agent.
+    """
+
+    def validate_tool_type(self, tool: Tool) -> None:
+        """
+        Validate the type of the tool.
+
+        :param tool_type: The type of the tool to validate.
+        :raises ValueError: If the tool type is not a subclass of Tool.
+        """
+        if isinstance(tool, AsyncFunctionTool):
+            raise ValueError(
+                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
+            )
+
+
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
@@ -672,16 +683,19 @@ class ToolSet:
         return tool_outputs
 
 
-class AsyncToolSet(ToolSet):
+class AsyncToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an asynchronize agent.
+    """
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
+    def validate_tool_type(self, tool: Tool) -> None:
         """
         Validate the type of the tool.
 
         :param tool_type: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
-        if isinstance(tool_type, FunctionTool):
+        if isinstance(tool, FunctionTool):
             raise ValueError(
                 "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
