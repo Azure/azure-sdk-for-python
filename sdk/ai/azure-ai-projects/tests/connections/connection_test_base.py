@@ -7,18 +7,20 @@ import logging
 import functools
 from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
+from azure.ai.projects.models import ConnectionProperties, ConnectionType, AuthenticationType
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
-"""
-Set these environment variables before running the test:
-set AZURE_AI_PROJECTS_CONNECTIONS_TESTS_PROJECT_CONNECTION_STRING=
-"""
+
 servicePreparerConnectionsTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_connections_tests",
     azure_ai_projects_connections_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
+    azure_ai_projects_connections_tests_default_aoai_connection_name="default-aoai-connection-name",
+    azure_ai_projects_connections_tests_default_serverless_connection_name="default-serverless-connection-name",
+    azure_ai_projects_connections_tests_aoai_connection_name="aoai-connection-name",
+    azure_ai_projects_connections_tests_serverless_connection_name="serverless-connection-name",
 )
-
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = False
@@ -44,3 +46,45 @@ class ConnectionsTestBase(AzureRecordedTestCase):
             logging_enable=LOGGING_ENABLED,
         )
         return project_client
+
+    def get_async_client(self, **kwargs) -> AIProjectClientAsync:
+        conn_str = kwargs.pop("azure_ai_projects_connections_tests_project_connection_string")
+        project_client = AIProjectClientAsync.from_connection_string(
+            credential=self.get_credential(AIProjectClient, is_async=True),
+            conn_str=conn_str,
+            logging_enable=LOGGING_ENABLED,
+        )
+        return project_client
+
+    @classmethod
+    def validate_connection(
+        cls,
+        connection: ConnectionProperties,
+        with_credentials: bool,
+        *,
+        expected_connection_type: ConnectionType = None,
+        expected_connection_name: str = None,
+        expected_authentication_type: AuthenticationType = None
+    ):
+        assert connection.id is not None
+
+        if expected_connection_name:
+            assert connection.name == expected_connection_name
+        else:
+            assert connection.name is not None
+
+        if expected_connection_type:
+            assert connection.connection_type == expected_connection_type
+        else:
+            assert connection.connection_type is not None
+
+        if expected_authentication_type:
+            assert connection.authentication_type == expected_authentication_type
+        else:
+            assert connection.authentication_type is not None
+
+        if with_credentials:
+            assert (connection.key is not None) ^ (connection.token_credential is not None)
+        else:
+            assert connection.key == None
+            assert connection.token_credential == None

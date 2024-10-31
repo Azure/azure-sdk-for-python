@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_connections.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to enumerate connections
     and get connection properties.
@@ -15,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in the "Project overview"

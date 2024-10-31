@@ -4,20 +4,19 @@
 # ------------------------------------
 
 """
-FILE: sample_get_embeddings_client.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    async EmbeddingsClient from the azure.ai.inference package.
+    async EmbeddingsClient from the azure.ai.inference package. For more information
+    on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
     python sample_get_embeddings_client.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
-    Set this environment variable with your own values:
+    Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import os

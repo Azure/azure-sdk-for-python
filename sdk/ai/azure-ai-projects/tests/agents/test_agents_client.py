@@ -1,8 +1,10 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable
 import os
 import json
 import time
@@ -13,6 +15,7 @@ import sys
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
+from azure.ai.projects.models import CodeInterpreterToolResource, FileSearchToolResource, ToolResources
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
@@ -46,7 +49,8 @@ if LOGGING_ENABLED:
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_project",
-    project_connection_string_agents_tests="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    # cSpell:disable-next-line
+    azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 agentClientPreparer = functools.partial(
@@ -87,7 +91,6 @@ def fetch_current_datetime_recordings():
 
 # Statically defined user functions for fast reference
 user_functions_recording = {"fetch_current_datetime": fetch_current_datetime_recordings}
-user_functions_live = {"fetch_current_datetime": fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -96,13 +99,13 @@ class TestagentClient(AzureRecordedTestCase):
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("project_connection_string_agents_tests")
+        connection_string = kwargs.pop("azure_ai_projects_connection_string")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         # create and return client
         client = AIProjectClient.from_connection_string(
             credential=credential,
-            connection=connection_string,
+            conn_str=connection_string,
         )
 
         return client
@@ -153,7 +156,7 @@ class TestagentClient(AzureRecordedTestCase):
     # test agent creation and deletion
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_create_delete_agent(self, **kwargs):
+    def test_create_update_delete_agent(self, **kwargs):
         # create client
         client = self.create_client(**kwargs)
         assert isinstance(client, AIProjectClient)
@@ -164,6 +167,10 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
+        # update agent        
+        agent = client.agents.update_agent(agent.id, name="my-agent2", instructions="You are helpful agent")
+        assert agent.name == "my-agent2"
+        
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
@@ -187,13 +194,39 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
         assert agent.tools
-        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        assert agent.tools[0] == functions.definitions
         print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+    # test agent creation with tools
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_tools_and_resources(self, **kwargs):
+        # create client
+        client = self.create_client(**kwargs)
+        assert isinstance(client, AIProjectClient)
+
+        # initialize agent functions
+        functions = FunctionTool(functions=user_functions_recording)
+
+        # create agent with tools
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+        )
+        assert agent.id
+        print("Created agent, agent ID", agent.id)
+        assert agent.tools
+        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        client.close()        
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1072,6 +1105,49 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+        
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_code_interpreter_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.code_interpreter = CodeInterpreterToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_file_search_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.file_search = FileSearchToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
 
     # # **********************************************************************************
     # #

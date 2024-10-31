@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_get_azure_openai_client_async.py
-
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
     AsyncAzureOpenAI client from the azure.ai.inference package.
@@ -15,10 +13,15 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects aiohttp openai_async
+    pip install azure-ai-projects aiohttp openai_async
 
-    Set this environment variable with your own values:
+    Set this environment variable with your own value:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+
+    Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+
+    Update the model deployment name as needed. See `model=` below.
 """
 import os
 import asyncio
@@ -37,7 +40,7 @@ async def sample_get_azure_openai_client_async():
         async with await project_client.inference.get_azure_openai_client() as client:
 
             response = await client.chat.completions.create(
-                model="gpt-4-0613",
+                model="gpt-35-turbo-16k",
                 messages=[
                     {
                         "role": "user",

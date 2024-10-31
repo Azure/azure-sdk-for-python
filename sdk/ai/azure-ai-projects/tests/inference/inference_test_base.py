@@ -9,11 +9,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
-"""
-Set these environment variables before running the test:
-set AZURE_AI_PROJECTS_INFERENCE_TESTS_PROJECT_CONNECTION_STRING=
-set AZURE_AI_PROJECTS_INFERENCE_TESTS_MODEL_DEPLOYMENT_NAME=
-"""
 servicePreparerInferenceTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_inference_tests",
@@ -47,10 +42,10 @@ class InferenceTestBase(AzureRecordedTestCase):
         )
         return project_client
 
-    def get_async_client(self, **kwargs) -> AIProjectClient:
+    def get_async_client(self, **kwargs) -> AIProjectClientAsync:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
-            credential=self.get_credential(AIProjectClientAsync, is_async=False),
+            credential=self.get_credential(AIProjectClientAsync, is_async=True),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
         )

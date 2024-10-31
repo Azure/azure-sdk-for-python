@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -102,7 +102,7 @@ async def main():
         print("Deleted file")
 
         await project_client.agents.delete_vector_store(vector_store.id)
-        print("Deleted vectore store")
+        print("Deleted vector store")
 
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
