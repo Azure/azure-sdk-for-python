@@ -457,7 +457,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             return cast(Dict[str, Any], self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
-                file_attributes=_str(file_attributes) if file_attributes else "none",
+                file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
