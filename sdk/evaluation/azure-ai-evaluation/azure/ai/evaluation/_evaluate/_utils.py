@@ -211,6 +211,8 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f)
 
+    print(f"\nEvaluation results saved to {p.resolve()}")
+
 
 def _apply_column_mapping(
     source_df: pd.DataFrame, mapping_config: Optional[Dict[str, str]], inplace: bool = False

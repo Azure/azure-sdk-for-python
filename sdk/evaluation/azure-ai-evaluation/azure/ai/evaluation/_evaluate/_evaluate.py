@@ -888,9 +888,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result_df_dict = result_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
+    _print_summary(per_evaluator_results)
+
     if output_path:
         _write_output(output_path, result)
-
-    _print_summary(per_evaluator_results)
 
     return result
