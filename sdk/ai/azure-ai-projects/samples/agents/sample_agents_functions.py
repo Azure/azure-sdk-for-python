@@ -76,6 +76,7 @@ with project_client:
             for tool_call in tool_calls:
                 if isinstance(tool_call, RequiredFunctionToolCall):
                     try:
+                        print(f"Executing tool call: {tool_call}")
                         output = functions.execute(tool_call)
                         tool_outputs.append(
                             {

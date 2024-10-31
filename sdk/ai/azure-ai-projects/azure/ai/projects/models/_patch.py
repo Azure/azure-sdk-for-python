@@ -14,6 +14,7 @@ import json
 import logging
 import base64
 import asyncio
+import re
 
 from azure.core.credentials import TokenCredential, AccessToken
 
@@ -240,6 +241,8 @@ type_map = {
     "datetime": "string",  # Use format "date-time"
     "date": "string",  # Use format "date"
     "UUID": "string",  # Use format "uuid"
+    "list": "array",
+    "dict": "object",
 }
 
 
@@ -305,30 +308,63 @@ class FunctionTool(Tool):
         self._definitions = self._build_function_definitions(self._functions)
 
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in functions}
-        return func_dict
+        return {func.__name__: func for func in functions}
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
         specs = []
+        # Flexible regex to capture ':param <name>: <description>'
+        param_pattern = re.compile(
+            r"""
+            ^\s*                                   # Optional leading whitespace
+            :param                                 # Literal ':param'
+            \s+                                    # At least one whitespace character
+            (?P<name>[^:\s\(\)]+)                  # Parameter name (no spaces, colons, or parentheses)
+            (?:\s*\(\s*(?P<type>[^)]+?)\s*\))?     # Optional type in parentheses, allowing internal spaces
+            \s*:\s*                                # Colon ':' surrounded by optional whitespace
+            (?P<description>.+)                    # Description (rest of the line)
+            """,
+            re.VERBOSE
+        )
+
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
-            docstring = inspect.getdoc(func)
+            docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
+
+            param_descs = {}
+            for line in docstring.splitlines():
+                line = line.strip()
+                match = param_pattern.match(line)
+                if match:
+                    groups = match.groupdict()
+                    param_name = groups.get('name')
+                    param_desc = groups.get('description')
+                    param_desc = param_desc.strip() if param_desc else "No description"
+                    param_descs[param_name] = param_desc.strip()
 
             properties = {}
             for param_name, param in params.items():
                 param_type = _map_type(param.annotation)
-                param_description = param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None
-                properties[param_name] = {"type": param_type, "description": param_description}
+                param_description = param_descs.get(param_name, "No description")
+
+                properties[param_name] = {
+                    "type": param_type,
+                    "description": param_description
+                }
 
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
+                parameters={
+                    "type": "object",
+                    "properties": properties,
+                    "required": list(params.keys())
+                },
             )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
+
         return specs
 
     def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
@@ -359,8 +395,10 @@ class FunctionTool(Tool):
         try:
             return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -392,8 +430,10 @@ class AsyncFunctionTool(FunctionTool):
             else:
                 return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
 
 
 class FileSearchTool(Tool):
