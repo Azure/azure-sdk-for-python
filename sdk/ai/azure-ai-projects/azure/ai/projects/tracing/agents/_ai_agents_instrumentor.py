@@ -182,35 +182,6 @@ class _AIAgentsInstrumentorPreview:
                     del tool_call["function"]
         return tool_calls_copy
 
-    def _get_finish_reasons(self, result) -> Optional[List[str]]:
-        if hasattr(result, "choices") and result.choices:
-            finish_reasons: List[str] = []
-            for choice in result.choices:
-                finish_reason = getattr(choice, "finish_reason", None)
-
-                if finish_reason is None:
-                    # If finish_reason is None, default to "none"
-                    finish_reasons.append("none")
-                elif hasattr(finish_reason, "value"):
-                    # If finish_reason has a 'value' attribute (i.e., it's an enum), use it
-                    finish_reasons.append(finish_reason.value)
-                elif isinstance(finish_reason, str):
-                    # If finish_reason is a string, use it directly
-                    finish_reasons.append(finish_reason)
-                else:
-                    # Default to "none"
-                    finish_reasons.append("none")
-
-            return finish_reasons
-        return None
-
-    def _get_finish_reason_for_choice(self, choice):
-        finish_reason = getattr(choice, "finish_reason", None)
-        if finish_reason is not None:
-            return finish_reason.value
-
-        return "none"
-
     def _create_event_attributes(
         self,
         thread_id: str = None,
