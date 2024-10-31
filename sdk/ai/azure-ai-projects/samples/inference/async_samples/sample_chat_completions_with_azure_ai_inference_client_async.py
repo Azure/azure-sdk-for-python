@@ -16,8 +16,9 @@ USAGE:
 
     pip install azure-ai-projects aiohttp azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
 import os
 import asyncio
@@ -28,15 +29,17 @@ from azure.identity import DefaultAzureCredential
 
 async def sample_get_chat_completions_client_async():
 
+    project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
     async with AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+        conn_str=project_connection_string,
     ) as project_client:
 
-        # Get an authenticated async ChatCompletionsClient (from azure.ai.inference) for your default Serverless connection:
         async with await project_client.inference.get_chat_completions_client() as client:
 
-            response = await client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+            response = await client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
             print(response.choices[0].message.content)
 
 
