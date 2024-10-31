@@ -372,11 +372,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
 
-    def _receive(
+    def _receive(  # pylint: disable=inconsistent-return-statements
         self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
-        
+
         with self._lock:
             try:
                 # TODO event issue?
@@ -430,12 +430,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                     if len(batch) >= max_message_count:
                         return [self._build_received_message(message) for message in batch]
 
-                    # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
-                    if (
-                        max_message_count
-                        and self._prefetch_count == 0
-                        and max_message_count >= 1
-                    ):
+                    # Dynamically issue link credit if max_message_count >= 1 when the
+                    # prefetch_count is the default value 0
+                    if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                         link_credit_needed = max_message_count - len(batch)
                         self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
@@ -443,31 +440,20 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                     receiving = True
                     while receiving and not expired and len(batch) < max_message_count:
                         while receiving and received_messages_queue.qsize() < max_message_count:
-                            if (
-                                abs_timeout
-                                and self._amqp_transport.get_current_time(amqp_receive_client)
-                                > abs_timeout
-                            ):
+                            if abs_timeout and self._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
                                 expired = True
                                 break
                             before = received_messages_queue.qsize()
                             receiving = amqp_receive_client.do_work()
                             received = received_messages_queue.qsize() - before
-                            if (
-                                not first_message_received
-                                and received_messages_queue.qsize() > 0
-                                and received > 0
-                            ):
+                            if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
                                 # first message(s) received, continue receiving for some time
                                 first_message_received = True
                                 abs_timeout = (
                                     self._amqp_transport.get_current_time(amqp_receive_client)
                                     + self._further_pull_receive_timeout
                                 )
-                        while (
-                            not received_messages_queue.empty()
-                            and len(batch) < max_message_count
-                        ):
+                        while not received_messages_queue.empty() and len(batch) < max_message_count:
                             batch.append(received_messages_queue.get())
                             received_messages_queue.task_done()
                     return [self._build_received_message(message) for message in batch]

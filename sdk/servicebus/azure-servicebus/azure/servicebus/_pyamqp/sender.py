@@ -7,7 +7,6 @@ import struct
 import uuid
 import logging
 import time
-import threading
 
 from ._encode import encode_payload
 from .link import Link
@@ -103,8 +102,7 @@ class SenderLink(Link):
                 "payload": output,
             }
             self._session._outgoing_transfer(  # pylint:disable=protected-access
-                delivery,
-                self.network_trace_params if self.network_trace else None
+                delivery, self.network_trace_params if self.network_trace else None
             )
             sent_and_settled = False
             if delivery.transfer_state == SessionTransferState.OKAY:

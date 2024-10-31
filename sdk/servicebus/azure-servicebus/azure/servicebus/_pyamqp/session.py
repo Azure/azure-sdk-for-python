@@ -144,7 +144,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self.next_incoming_id = frame[1]  # next_outgoing_id
             self.remote_incoming_window = frame[2]  # incoming_window
             self.remote_outgoing_window = frame[3]  # outgoing_window
-            self.remote_properties = frame[7] # incoming map of properties about the session
+            self.remote_properties = frame[7]  # incoming map of properties about the session
             if self.state == SessionState.BEGIN_SENT:
                 self.remote_channel = frame[0]  # remote_channel
                 self._set_state(SessionState.MAPPED)
@@ -181,36 +181,27 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     def _incoming_attach(self, frame):
         with self._session_lock:
             try:
-                self._input_handles[frame[1]] = self.links[
-                    frame[0].decode("utf-8")
-                ]  # name and handle
-                self._input_handles[frame[1]]._incoming_attach(  # pylint: disable=protected-access
-                    frame
-                )
+                self._input_handles[frame[1]] = self.links[frame[0].decode("utf-8")]  # name and handle
+                self._input_handles[frame[1]]._incoming_attach(frame)  # pylint: disable=protected-access
             except KeyError:
                 try:
                     outgoing_handle = self._get_next_output_handle()
                 except ValueError:
                     _LOGGER.error(
-                        "Unable to attach new link - cannot allocate more handles.",
-                        extra=self.network_trace_params
+                        "Unable to attach new link - cannot allocate more handles.", extra=self.network_trace_params
                     )
                     # detach the link that would have been set.
                     self.links[frame[0].decode("utf-8")].detach(
                         error=AMQPError(
                             condition=ErrorCondition.LinkDetachForced,
                             description="""Cannot allocate more handles, """
-                                """the max number of handles is {}. Detaching link""".format(
-                                self.handle_max
-                            ),
+                            """the max number of handles is {}. Detaching link""".format(self.handle_max),
                             info=None,
                         )
                     )
                     return
                 if frame[2] == Role.Sender:  # role
-                    new_link = ReceiverLink.from_incoming_frame(
-                        self, outgoing_handle, frame
-                    )
+                    new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
                 else:
                     new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
                 new_link._incoming_attach(frame)  # pylint: disable=protected-access
@@ -219,53 +210,39 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 self._input_handles[frame[1]] = new_link
             except ValueError as e:
                 # Reject Link
-                _LOGGER.debug(
-                        "Unable to attach new link: %r",
-                        e,
-                        extra=self.network_trace_params
-                )
+                _LOGGER.debug("Unable to attach new link: %r", e, extra=self.network_trace_params)
                 self._input_handles[frame[1]].detach()
 
     def _outgoing_flow(self, frame=None):
         # with self._session_lock:
-            link_flow = frame or {}
-            link_flow.update(
-                {
-                    "next_incoming_id": self.next_incoming_id,
-                    "incoming_window": self.incoming_window,
-                    "next_outgoing_id": self.next_outgoing_id,
-                    "outgoing_window": self.outgoing_window,
-                }
-            )
-            flow_frame = FlowFrame(**link_flow)
-            if self.network_trace:
-                _LOGGER.debug("-> %r", flow_frame, extra=self.network_trace_params)
-            self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                self.channel, flow_frame
-            )
+        link_flow = frame or {}
+        link_flow.update(
+            {
+                "next_incoming_id": self.next_incoming_id,
+                "incoming_window": self.incoming_window,
+                "next_outgoing_id": self.next_outgoing_id,
+                "outgoing_window": self.outgoing_window,
+            }
+        )
+        flow_frame = FlowFrame(**link_flow)
+        if self.network_trace:
+            _LOGGER.debug("-> %r", flow_frame, extra=self.network_trace_params)
+        self._connection._process_outgoing_frame(self.channel, flow_frame)  # pylint: disable=protected-access
 
     def _incoming_flow(self, frame):
         # with self._session_lock:
-            if self.network_trace:
-                _LOGGER.debug("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
-            self.next_incoming_id = frame[2]  # next_outgoing_id
-            remote_incoming_id = (
-                frame[0] or self.next_outgoing_id
-            )  #  next_incoming_id  TODO "initial-outgoing-id"
-            self.remote_incoming_window = (
-                remote_incoming_id + frame[1] - self.next_outgoing_id
-            )  # incoming_window
-            self.remote_outgoing_window = frame[3]  # outgoing_window
-            if frame[4] is not None:  # handle
-                self._input_handles[frame[4]]._incoming_flow(  # pylint: disable=protected-access
-                    frame
-                )
-            else:
-                for link in self._output_handles.values():
-                    if (
-                        self.remote_incoming_window > 0 and not link._is_closed  # pylint: disable=protected-access
-                    ):
-                        link._incoming_flow(frame)  # pylint: disable=protected-access
+        if self.network_trace:
+            _LOGGER.debug("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
+        self.next_incoming_id = frame[2]  # next_outgoing_id
+        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
+        self.remote_outgoing_window = frame[3]  # outgoing_window
+        if frame[4] is not None:  # handle
+            self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
+        else:
+            for link in self._output_handles.values():
+                if self.remote_incoming_window > 0 and not link._is_closed:  # pylint: disable=protected-access
+                    link._incoming_flow(frame)  # pylint: disable=protected-access
 
     def _outgoing_transfer(self, delivery, network_trace_params):
         if self.state != SessionState.MAPPED:

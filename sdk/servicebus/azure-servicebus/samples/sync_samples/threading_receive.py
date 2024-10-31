@@ -21,7 +21,7 @@ logger = logging.getLogger("azure.servicebus")
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter('[%(thread)d.%(threadName)s] - %(name)-12s  >>>>>>   %(message)s'))
+handler.setFormatter(logging.Formatter("[%(thread)d.%(threadName)s] - %(name)-12s  >>>>>>   %(message)s"))
 
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
@@ -29,6 +29,7 @@ QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 credential = DefaultAzureCredential()
 servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
+
 
 def receive(receiver):
     print(f"Receiving messages on {threading.current_thread().name}")
@@ -40,12 +41,13 @@ def receive(receiver):
         receiver.complete_message(msg)
         print(f"Completed message on {threading.current_thread().name}")
 
+
 with servicebus_client:
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     with receiver:
         with ThreadPoolExecutor(max_workers=5) as exe:
             exe.submit(receive, receiver)
             exe.submit(receive, receiver)
-        
+
 
 print("Receive is done.")

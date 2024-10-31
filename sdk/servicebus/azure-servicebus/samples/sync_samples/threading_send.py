@@ -22,10 +22,10 @@ logger = logging.getLogger("azure.servicebus")
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter('[%(thread)d.%(threadName)s] - %(name)-12s  >>>>>>   %(message)s'))
+handler.setFormatter(logging.Formatter("[%(thread)d.%(threadName)s] - %(name)-12s  >>>>>>   %(message)s"))
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
@@ -34,11 +34,10 @@ def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
     print(f"Sent a single message on {threading.current_thread().name}")
-    time.sleep(12*60)
+    time.sleep(12 * 60)
     print(f"Sending a single message after sleep {threading.current_thread().name}")
     sender.send_messages(message)
     print(f"Sent a single message after sleep {threading.current_thread().name}")
-
 
 
 def send_a_list_of_messages(sender):
