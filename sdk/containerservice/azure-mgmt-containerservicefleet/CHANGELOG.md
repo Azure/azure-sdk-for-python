@@ -1,5 +1,21 @@
 # Release History
 
+## 3.0.0 (2024-10-31)
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerServiceFleetMgmtClient.auto_upgrade_profiles`
+  - Model `APIServerAccessProfile` deleted or renamed its instance variable `enable_vnet_integration`
+  - Model `APIServerAccessProfile` deleted or renamed its instance variable `subnet_id`
+  - Model `NodeImageSelection` deleted or renamed its instance variable `custom_node_image_versions`
+  - Deleted or renamed enum value `NodeImageSelectionType.CUSTOM`
+  - Deleted or renamed model `AutoUpgradeNodeImageSelection`
+  - Deleted or renamed model `AutoUpgradeNodeImageSelectionType`
+  - Deleted or renamed model `AutoUpgradeProfile`
+  - Deleted or renamed model `AutoUpgradeProfileProvisioningState`
+  - Deleted or renamed model `UpgradeChannel`
+  - Deleted or renamed model `AutoUpgradeProfilesOperations`
+
 ## 2.1.0 (2024-10-21)
 
 ### Features Added
