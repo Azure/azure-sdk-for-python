@@ -19,7 +19,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.ai.projects.operations import AgentsOperations
 from azure.ai.projects.aio.operations import AgentsOperations as AsyncAgentOperations
-from azure.ai.projects.models import _models
+from azure.ai.projects.models import _models, AgentRunStream
 from azure.ai.projects.models._enums import MessageRole, RunStepStatus
 from azure.ai.projects.models._models import MessageAttachment, MessageDeltaChunk, RunStep, RunStepDeltaChunk, RunStepFunctionToolCall, RunStepToolCallDetails, SubmitToolOutputsAction, ThreadMessage, ThreadMessageOptions, ThreadRun, ToolDefinition, ToolOutput, ToolResources
 from azure.ai.projects.models._patch import AgentEventHandler, ToolSet
@@ -745,7 +745,8 @@ class _AIAgentsInstrumentorPreview:
                     kwargs['event_handler'] = self.wrap_handler(event_handler, span)
 
                 result = function(*args, **kwargs)
-                self.set_end_run(span, result)
+                if not isinstance(result, AgentRunStream):
+                    self.set_end_run(span, result)
             except Exception as exc:
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
@@ -797,6 +798,8 @@ class _AIAgentsInstrumentorPreview:
 
     def trace_handle_submit_tool_outputs(self, function, *args, **kwargs):
         event_handler = kwargs.get("event_handler")
+        if event_handler is None:
+            event_handler = args[2]
         span = getattr(event_handler, "span", None)
         with span.change_context(span.span_instance):
             try:
