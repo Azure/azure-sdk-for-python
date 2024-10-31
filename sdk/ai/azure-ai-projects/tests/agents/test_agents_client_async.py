@@ -33,7 +33,6 @@ from azure.ai.projects.models import (
     VectorStorageDataSource,
     VectorStorageDataSourceAssetType,
 )
-from azure.ai.projects.models._enums import VectorStorageDataSourceAssetType
 
 
 # TODO clean this up / get rid of anything not in use
