@@ -147,13 +147,15 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI service"""
+    """Azure OpenAI Service"""
     SERVERLESS = "Serverless"
-    """Serverless API service"""
+    """Serverless API Service"""
     AZURE_BLOB_STORAGE = "AzureBlob"
     """Azure Blob Storage"""
-    AI_SERVICES = "AIServices"
+    AZURE_AI_SERVICES = "AIServices"
     """Azure AI Services"""
+    AZURE_AI_SEARCH = "CognitiveSearch"
+    """Azure AI Search"""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

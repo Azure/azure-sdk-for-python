@@ -1,5 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -9,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys, io, logging, os, time
+from azure.core.exceptions import ResourceNotFoundError
 from io import IOBase, TextIOWrapper
 from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 from pathlib import Path
@@ -54,19 +54,31 @@ class InferenceOperations:
     @distributed_trace
     def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
-        Serverless connection. The Serverless connection must have a Chat Completions AI model deployment.
-        The package `azure-ai-inference` must be installed prior to calling this method.
+        Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
+        in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
 
-        :return: An authenticated chat completions client
+        :return: An authenticated chat completions client, or `None` if no Azure AI Services connection is found.
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
-        )
-        if not connection:
-            raise ValueError("No serverless connection found")
+
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # a separate "Serverless" connection. This is now deprecated.
+        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+
+        if use_serverless_connection:
+            connection = self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+            )
+            if not connection:
+                return None
+        else:
+            connection = self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+            )
+            if not connection:
+                return None
 
         try:
             from azure.ai.inference import ChatCompletionsClient
@@ -75,6 +87,11 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
+        if use_serverless_connection:
+            endpoint = connection.endpoint_url
+        else:
+            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
@@ -82,7 +99,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ChatCompletionsClient(
-                endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
+                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
             )
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
@@ -90,14 +107,14 @@ class InferenceOperations:
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+                endpoint=endpoint, credential=connection.properties.token_credential
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=connection.token_credential)
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
@@ -106,19 +123,31 @@ class InferenceOperations:
     @distributed_trace
     def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
-        Serverless connection. The Serverless connection must have a Text Embeddings AI model deployment.
-        The package `azure-ai-inference` must be installed prior to calling this method.
+        Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
+        in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
-        connection = self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
-        )
-        if not connection:
-            raise ValueError("No serverless connection found")
+
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # a separate "Serverless" connection. This is now deprecated.
+        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+
+        if use_serverless_connection:
+            connection = self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+            )
+            if not connection:
+                return None
+        else:
+            connection = self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+            )
+            if not connection:
+                return None
 
         try:
             from azure.ai.inference import EmbeddingsClient
@@ -127,27 +156,32 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             )
 
+        if use_serverless_connection:
+            endpoint = connection.endpoint_url
+        else:
+            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
             client = EmbeddingsClient(
-                endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+                endpoint=endpoint, credential=connection.properties.token_credential
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            client = EmbeddingsClient(endpoint=connection.endpoint_url, credential=connection.token_credential)
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
@@ -233,7 +267,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
-        :return: The connection properties
+        :return: The connection properties, or `None` if there are no connections of the specified type.
         :rtype: ~azure.ai.projects.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -262,7 +296,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :type connection_name: str
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
-        :return: The connection properties
+        :return: The connection properties, or `None` if a connection with this name does not exist.
         :rtype: ~azure.ai.projects.models._models.ConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -270,9 +304,12 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_name:
             raise ValueError("Connection name cannot be empty")
         if with_credentials:
-            connection: GetConnectionResponse = self._get_connection_with_secrets(
-                connection_name=connection_name, ignored="ignore", **kwargs
-            )
+            try:
+                connection: GetConnectionResponse = self._get_connection_with_secrets(
+                    connection_name=connection_name, ignored="ignore", **kwargs
+                )
+            except ResourceNotFoundError as _:
+                return None
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
@@ -290,7 +327,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            return ConnectionProperties(connection=self._get_connection(connection_name=connection_name, **kwargs))
+            try:
+                connection = self._get_connection(connection_name=connection_name, **kwargs)
+            except ResourceNotFoundError as _:
+                return None
+            return ConnectionProperties(connection=connection)
 
     @distributed_trace
     def list(self, *, connection_type: ConnectionType | None = None, **kwargs: Any) -> Iterable[ConnectionProperties]:

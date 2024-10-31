@@ -15,28 +15,29 @@ USAGE:
 
     pip install azure-ai-projects openai
 
-    Set this environment variable with your own value:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-
-    Update the model deployment name as needed. See `model=` below.
 """
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
+project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
 with AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    conn_str=project_connection_string,
 ) as project_client:
 
-    # Get an authenticated OpenAI client for your default Azure OpenAI connection:
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
-            model="gpt-35-turbo-16k",
+            model=model_deployment_name,
             messages=[
                 {
                     "role": "user",

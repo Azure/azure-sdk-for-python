@@ -19,6 +19,7 @@ USAGE:
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -28,9 +29,12 @@ from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 
+project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
 with AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    conn_str=project_connection_string,
 ) as project_client:
 
     # Enable Azure Monitor tracing
@@ -44,6 +48,6 @@ with AIProjectClient.from_connection_string(
     # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
     with project_client.inference.get_chat_completions_client() as client:
 
-        response = client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+        response = client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
 
         print(response.choices[0].message.content)
