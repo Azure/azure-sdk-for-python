@@ -175,7 +175,7 @@ class _AIAgentsInstrumentorPreview:
         message_status: str = None,
         usage: Optional[_models.RunStepCompletionUsage] = None
     ) -> dict:
-        attrs = {GEN_AI_SYSTEM: _AGENTS_GEN_AI_SYSTEM_NAME}
+        attrs = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 
