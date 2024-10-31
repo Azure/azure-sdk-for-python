@@ -1365,12 +1365,6 @@ class InternalConnectionProperties(_model_base.Model):
     auth_type: str = rest_discriminator(name="authType")
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
      and \"SAS\"."""
-    category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
-    target: str = rest_field()
-    """The connection URL to be used for this service. Required."""
-
 
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
@@ -4560,27 +4554,28 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
-class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
     """The input definition information for a sharepoint tool as used to configure an agent.
 
 
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
     :vartype type: str
-    :ivar sharepoint: The list of connections used by the SharePoint tool. Required.
-    :vartype sharepoint: ~azure.ai.projects.models.ToolConnectionList
+    :ivar sharepoint_grounding: The list of connections used by the SharePoint tool. Required.
+    :vartype sharepoint_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
-    sharepoint: "_models.ToolConnectionList" = rest_field()
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: "_models.ToolConnectionList" = rest_field()
     """The list of connections used by the SharePoint tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        sharepoint: "_models.ToolConnectionList",
+        sharepoint_grounding: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -4591,7 +4586,7 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
