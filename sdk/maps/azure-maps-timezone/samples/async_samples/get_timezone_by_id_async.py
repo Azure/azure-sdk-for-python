@@ -28,9 +28,7 @@ async def get_timezone_by_id_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.timezone.aio import MapsTimeZoneClient
 
-    timezone_client = MapsTimeZoneClient(
-        credential=AzureKeyCredential(subscription_key)
-    )
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with timezone_client:
             result = await timezone_client.get_timezone_by_id(timezone_id="sr-Latn-RS")

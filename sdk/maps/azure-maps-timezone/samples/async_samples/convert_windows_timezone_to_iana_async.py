@@ -28,14 +28,10 @@ async def convert_windows_timezone_to_iana_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.timezone.aio import MapsTimeZoneClient
 
-    timezone_client = MapsTimeZoneClient(
-        credential=AzureKeyCredential(subscription_key)
-    )
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with timezone_client:
-            result = await timezone_client.convert_windows_timezone_to_iana(
-                windows_timezone_id="Pacific Standard Time"
-            )
+            result = await timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
             print(result)
     except HttpResponseError as exception:
         if exception.error is not None:

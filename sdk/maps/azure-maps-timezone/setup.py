@@ -28,8 +28,7 @@ try:
     try:
         ver = azure.__version__
         raise Exception(
-            "This package is incompatible with azure=={}. ".format(ver)
-            + 'Uninstall it with "pip uninstall azure".'
+            "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
         )
     except AttributeError:
         pass
@@ -45,9 +44,7 @@ with open(
     ),
     "r",
 ) as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -60,9 +57,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Azure {} Client Library for Python".format(
-        PACKAGE_PPRINT_NAME
-    ),
+    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=readme + "\n\n" + changelog,
     long_description_content_type="text/markdown",
     license="MIT License",

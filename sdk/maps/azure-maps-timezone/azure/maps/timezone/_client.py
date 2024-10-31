@@ -20,9 +20,7 @@ from ._serialization import Deserializer, Serializer
 from .operations import TimezoneOperations
 
 
-class TimezoneClient(
-    TimezoneOperations
-):  # pylint: disable=client-accepts-api-version-keyword
+class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Time Zone REST APIs.
 
     :ivar timezone: TimezoneOperations operations
@@ -50,9 +48,7 @@ class TimezoneClient(
         endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
-        self._config = TimezoneClientConfiguration(
-            credential=credential, client_id=client_id, **kwargs
-        )
+        self._config = TimezoneClientConfiguration(credential=credential, client_id=client_id, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -67,16 +63,10 @@ class TimezoneClient(
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                (
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                    if self._config.redirect_policy
-                    else None
-                ),
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(
-            base_url=endpoint, policies=_policies, **kwargs
-        )
+        self._client: PipelineClient = PipelineClient(base_url=endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -89,9 +79,7 @@ class TimezoneClient(
             deserializer=self._deserialize,
         )
 
-    def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

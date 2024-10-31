@@ -16,9 +16,7 @@ from timezone_preparer import MapsTimeZonePreparer
 class TestMapsTimeZoneClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsTimeZoneClient(
-            credential=AzureKeyCredential(
-                os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey")
-            )
+            credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
         )
         assert self.client is not None
 
@@ -70,8 +68,6 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
             },
             {"HasZone1970Location": False, "Id": "PST8PDT", "IsAlias": False},
         ]
-        result = self.client.convert_windows_timezone_to_iana(
-            windows_timezone_id="Pacific Standard Time"
-        )
+        result = self.client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
 
         assert result == expected_result

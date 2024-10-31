@@ -37,9 +37,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class TimezoneOperations:
@@ -57,9 +55,7 @@ class TimezoneOperations:
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get_timezone_by_id(
@@ -161,7 +157,7 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -192,18 +188,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -320,7 +312,7 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -351,18 +343,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -376,9 +364,7 @@ class TimezoneOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
-    async def get_windows_timezone_ids(
-        self, format: str = "json", **kwargs: Any
-    ) -> List[JSON]:
+    async def get_windows_timezone_ids(self, format: str = "json", **kwargs: Any) -> List[JSON]:
         """Use to get the list of Windows Time Zone IDs.
 
         The ``Get Windows Time Zones`` API is an HTTP ``GET`` request that returns a full list of
@@ -405,7 +391,7 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -430,18 +416,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -455,9 +437,7 @@ class TimezoneOperations:
         return cast(List[JSON], deserialized)  # type: ignore
 
     @distributed_trace_async
-    async def get_iana_timezone_ids(
-        self, format: str = "json", **kwargs: Any
-    ) -> List[JSON]:
+    async def get_iana_timezone_ids(self, format: str = "json", **kwargs: Any) -> List[JSON]:
         """Use to get the list of IANA time zone IDs.
 
         The ``Get IANA Time Zones`` API is an HTTP ``GET`` request that returns a full list of Internet
@@ -484,7 +464,7 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -509,18 +489,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -555,7 +531,7 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -580,18 +556,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -644,7 +616,7 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = (
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
             {  # pylint: disable=unsubscriptable-object
                 401: ClientAuthenticationError,
                 404: ResourceNotFoundError,
@@ -671,18 +643,14 @@ class TimezoneOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if response.content:
