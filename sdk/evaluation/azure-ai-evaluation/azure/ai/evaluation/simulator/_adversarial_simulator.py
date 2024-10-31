@@ -7,6 +7,7 @@ import asyncio
 import logging
 import random
 from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
+from itertools import zip_longest
 
 from tqdm import tqdm
 
@@ -215,17 +216,18 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-        for template in templates:
-            parameter_order = list(range(len(template.template_parameters)))
-            if randomize_order:
-                # The template parameter lists are persistent across sim runs within a session,
-                # So randomize a the selection instead of the parameter list directly,
-                # or a potentially large deep copy.
-                if randomization_seed is not None:
-                    random.seed(randomization_seed)
-                random.shuffle(parameter_order)
-            for index in parameter_order:
-                parameter = template.template_parameters[index].copy()
+
+        if randomize_order:
+            # The template parameter lists are persistent across sim runs within a session,
+            # So randomize a the selection instead of the parameter list directly,
+            # or a potentially large deep copy.
+            if randomization_seed is not None:
+                random.seed(randomization_seed)
+            random.shuffle(templates)
+        parameter_lists = [t.template_parameters for t in templates]
+        zipped_parameters = list(zip_longest(*parameter_lists))
+        for param_group in zipped_parameters:
+            for template, parameter in zip(templates, param_group):
                 if _jailbreak_type == "upia":
                     parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
                 tasks.append(
