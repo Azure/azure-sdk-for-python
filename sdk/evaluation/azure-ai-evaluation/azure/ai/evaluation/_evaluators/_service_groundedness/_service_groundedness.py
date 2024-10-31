@@ -105,18 +105,18 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     def __call__(
         self,
         *,
+        response: str,
+        context: str,
         query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate groundedness for a given query/response/context
 
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
         :keyword query: The query to be evaluated.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :return: The relevance score.
         :rtype: Dict[str, Union[str, bool]]
         """
