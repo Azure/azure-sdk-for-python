@@ -334,23 +334,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
-        target = None
-        if SpanAttributes.PEER_SERVICE in span.attributes:
-            target = span.attributes[SpanAttributes.PEER_SERVICE]
-        else:
-            if SpanAttributes.NET_PEER_NAME in span.attributes:
-                target = span.attributes[SpanAttributes.NET_PEER_NAME]
-            elif SpanAttributes.NET_PEER_IP in span.attributes:
-                target = span.attributes[SpanAttributes.NET_PEER_IP]
-            if SpanAttributes.NET_PEER_PORT in span.attributes:
-                port = span.attributes[SpanAttributes.NET_PEER_PORT]
-                # TODO: check default port for rpc
-                # This logic assumes default ports never conflict across dependency types
-                # type: ignore
-                if port != trace_utils._get_default_port_http(
-                    str(span.attributes.get(SpanAttributes.HTTP_SCHEME))
-                ) and port != trace_utils._get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
-                    target = "{}:{}".format(target, port)
+        target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
@@ -362,16 +346,14 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
-                scheme = trace_utils._get_scheme_for_http_dependency(span.attributes)
-                url = trace_utils._get_url_for_http_dependency(scheme, span.attributes)
+                url = trace_utils._get_url_for_http_dependency(span.attributes)
                 # data
                 if url:
                     data.data = url
                 target, path = trace_utils._get_target_and_path_for_http_dependency(
+                    span.attributes,
                     target,  # type: ignore
                     url,
-                    scheme,
-                    span.attributes,
                 )
                 # http specific logic for name
                 if path:
