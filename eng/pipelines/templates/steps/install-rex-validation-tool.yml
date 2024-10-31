@@ -1,8 +1,8 @@
 steps:
   - pwsh: |
       $py2docfxVer = Get-Content eng/scripts/docs/py2docfx.version.txt
-      Write-Host "python -m pip install py2docfx==$py2docfxVer --pre"
-      python -m pip install py2docfx==$py2docfxVer --pre
+      Write-Host "python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt"
+      python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt
       # After install py2docfx,
       Write-Host "Testing the install. Running python -m py2docfx -h to display the help"
       python -m py2docfx -h

@@ -176,9 +176,16 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
       -ItemType Directory `
       -Path (Join-Path $outputRoot "docsOutput")
 
+      # Adding these for diagnostics purposes so we know which version of python is being
+      # executed and dumping all the pip packages for this install of python
+      which python
+      python -m pip freeze --all
+
       # Force the python output to be unbuffered so we see more than just the warnings.
       Write-Host "Executing: python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
-      python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir
+      $pyOutput = python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir 2>&1
+      Write-Host "pyOutput"
+      Write-Host $pyOutput
       if ($LASTEXITCODE -ne 0) {
         LogWarning "py2docfx command failed, see output above."
         $allSucceeded = $false
