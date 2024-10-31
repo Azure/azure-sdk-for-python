@@ -14,7 +14,9 @@ from typing import Optional, Union
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
-AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
+AZURE_TOKEN_REFRESH_INTERVAL = int(
+    os.getenv("AZURE_TOKEN_REFRESH_INTERVAL", "600")
+)  # token refresh interval in seconds
 
 
 class TokenScope(Enum):
