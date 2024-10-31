@@ -9,10 +9,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ..._vendor import FileType
-import sys
+import sys, io, asyncio
 import logging
 import os
 import time
+from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
 from io import TextIOWrapper
 from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
@@ -794,7 +795,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.ToolSet] = None,        
+        toolset: Optional[_models.AsyncToolSet] = None,        
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -858,7 +859,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return await super().update_agent(body=body, content_type=content_type, **kwargs)
-            return super().update_agent(body=body, **kwargs)
+            return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
             self._toolset = toolset
@@ -892,7 +893,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
         
 
-    def get_toolset(self) -> Optional[_models.AsyncToolSet]:
+    def _get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """
         Get the toolset for the agent.
 
@@ -1294,7 +1295,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     await self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                toolset = self.get_toolset()
+                toolset = self._get_toolset()
                 if toolset:
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
                 else:
@@ -1841,7 +1842,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self.get_toolset()
+            toolset = self._get_toolset()
             if toolset:
                 tool_outputs = await toolset.execute_tool_calls(tool_calls)
             else:
@@ -2294,7 +2295,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def create_vector_store_file_batch_and_poll(
         self,
         vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = None,
+        body: Union[JSON, IO[bytes], None] = None,
         *,
         file_ids: List[str] = _Unset,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -2334,6 +2335,123 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
+
+    @distributed_trace_async
+    async def get_file_content(self, file_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """
+        Asynchronously returns file content as a byte stream for the given file_id.
+
+        :param file_id: The ID of the file to retrieve. Required.
+        :type file_id: str
+        :return: An async iterator that yields bytes from the file content.
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError: If the HTTP request fails.
+        """
+        kwargs["stream"] = True
+        response = await super()._get_file_content(file_id, **kwargs)
+        return cast(AsyncIterator[bytes], response)
+
+    @distributed_trace_async
+    async def get_messages(
+        self,
+        thread_id: str,
+        *,
+        run_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.ThreadMessages:
+        """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
+        :paramtype run_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.ListSortOrder
+        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
+         list. Default value is None.
+        :paramtype after: str
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+
+        :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadMessages
+        """
+        messages = await super().list_messages(
+            thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs
+        )
+        return _models.ThreadMessages(pageable_list=messages)
+
+    @distributed_trace_async
+    async def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
+        """
+        Asynchronously saves file content retrieved using a file identifier to the specified local directory.
+
+        :param file_id: The unique identifier for the file to retrieve.
+        :type file_id: str
+        :param file_name: The name of the file to be saved.
+        :type file_name: str
+        :param target_dir: The directory where the file should be saved. Defaults to the current working directory.
+        :type target_dir: str or Path
+        :raises ValueError: If the target path is not a directory or the file name is invalid.
+        :raises RuntimeError: If file content retrieval fails or no content is found.
+        :raises TypeError: If retrieved chunks are not bytes-like objects.
+        :raises IOError: If writing to the file fails.
+        """
+        try:
+            # Determine and validate the target directory
+            path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
+            path.mkdir(parents=True, exist_ok=True)
+            if not path.is_dir():
+                raise ValueError(f"The target path '{path}' is not a directory.")
+
+            # Sanitize and validate the file name
+            sanitized_file_name = Path(file_name).name
+            if not sanitized_file_name:
+                raise ValueError("The provided file name is invalid.")
+
+            # Retrieve the file content
+            file_content_stream = await self.get_file_content(file_id)
+            if not file_content_stream:
+                raise RuntimeError(f"No content retrievable for file ID '{file_id}'.")
+
+            # Collect all chunks asynchronously
+            chunks = []
+            async for chunk in file_content_stream:
+                if isinstance(chunk, (bytes, bytearray)):
+                    chunks.append(chunk)
+                else:
+                    raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
+
+            target_file_path = path / sanitized_file_name
+
+            # Write the collected content to the file synchronously
+            def write_file(collected_chunks: list):
+                with open(target_file_path, "wb") as file:
+                    for chunk in collected_chunks:
+                        file.write(chunk)
+
+            # Use the event loop to run the synchronous function in a thread executor
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, write_file, chunks)
+
+            logger.debug(f"File '{sanitized_file_name}' saved successfully at '{target_file_path}'.")
+
+        except (ValueError, RuntimeError, TypeError, IOError) as e:
+            logger.error(f"An error occurred in save_file: {e}")
+            raise
 
 
 __all__: List[str] = [

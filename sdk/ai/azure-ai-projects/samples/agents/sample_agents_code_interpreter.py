@@ -25,7 +25,6 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
@@ -87,8 +86,9 @@ with project_client:
 
     for image_content in messages.image_contents:
         print(f"Image File ID: {image_content.image_file.file_id}")
-        project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name="image_file.png")
-        print(f"Saved image file to: {Path.cwd() / 'image_file.png'}")
+        file_name = f"{image_content.image_file.file_id}_image_file.png"
+        project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name=file_name)
+        print(f"Saved image file to: {Path.cwd() / file_name}")
 
     for file_path_annotation in messages.file_path_annotations:
         print(f"File Paths:")
