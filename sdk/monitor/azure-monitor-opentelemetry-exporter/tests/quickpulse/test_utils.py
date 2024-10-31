@@ -15,7 +15,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     AggregationType,
-    DerivedMetricInfo,
     DocumentType,
     Exception,
     MetricPoint,

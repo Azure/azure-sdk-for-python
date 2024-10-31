@@ -271,7 +271,9 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
-    def test_record_span_derive_filter_metrics(self, post_state_mock, span_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock):
+    def test_record_span_derive_filter_metrics(
+        self, post_state_mock, span_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock
+    ):
         post_state_mock.return_value = True
         span_doc = mock.Mock()
         span_doc_mock.return_value = span_doc
@@ -321,7 +323,9 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_log_record_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
-    def test_record_log_derive_filter_metrics(self, post_state_mock, log_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock):
+    def test_record_log_derive_filter_metrics(
+        self, post_state_mock, log_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock
+    ):
         post_state_mock.return_value = True
         log_record_doc = mock.Mock()
         log_record_mock = mock.Mock()
