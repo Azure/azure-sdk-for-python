@@ -46,11 +46,11 @@ T = TypeVar('T', bytes, str)
 async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
-    try:
-        content = b"".join([d async for d in data])
 
-    # This happens when validate_content=True, the body is already read and the stream is closed.
-    except ServiceRequestError:
+    if not data.response.is_stream_consumed:
+        content = b"".join([d async for d in data])
+    else:
+        # This happens when validate_content=True, the body is already read and the stream is closed.
         await data.response.read()
         content = cast(bytes, data.response.content)
 

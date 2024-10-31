@@ -3473,7 +3473,44 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act / Assert
         await blob.upload_blob(data=compressed_data, content_settings=content_settings, overwrite=True)
 
+        downloaded = await blob.download_blob(decompress=True)
+        result = await downloaded.readall()
+        assert result == decompressed_data
+
         downloaded = await blob.download_blob(decompress=False)
         result = await downloaded.readall()
         assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_decompress_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, content_settings=content_settings, overwrite=True)
+
+        # This will get into the retry loop and eventually fail. Reason being: Server computed MD5 using the data we uploaded (compressed data)
+        # Then our pipeline policies content validation computes it against our content returned from response, which currently is always decompressed.
+        # So it's compressed data MD5 (from server computation) vs. uncompressed data MD5 (from our computation)
+
+        # downloaded = await blob.download_blob(validate_content=True)
+        # result = await downloaded.readall()
+        # assert result == decompressed_data
+
+        # This will also fall into a retry loop given the current code. The only way we can get our local MD5 computation to match, is to get uncompressed data
+        # back from the response. Currently, decompress=True on the response due to auto_decompress on the async aiohttp, but if we had more info that this was
+        # intended to be a decompress=False scenario, we could manually set it before calling read()
+        
+        # downloaded = await blob.download_blob(validate_content=True, decompress=False)
+        # result = await downloaded.readall()
+        # assert result == compressed_data
 # ------------------------------------------------------------------------------
