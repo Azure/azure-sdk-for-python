@@ -105,7 +105,7 @@ class ContentSafetyMultimodalEvaluator:
         Evaluates content-safety metrics for list of messages.
         
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
+            Each message should have "role" and "content" keys. It supports single turn only. 
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score based on the Content Safety Metrics.
         :rtype: Dict[str, Union[float, str]]

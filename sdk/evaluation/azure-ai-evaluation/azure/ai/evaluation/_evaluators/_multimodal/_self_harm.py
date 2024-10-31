@@ -72,8 +72,9 @@ class SelfHarmMultimodalEvaluator:
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates self harm content.
+        
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
+            Each message should have "role" and "content" keys. It supports single turn only. 
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The self harm score.
         :rtype: Dict[str, Union[float, str]]
