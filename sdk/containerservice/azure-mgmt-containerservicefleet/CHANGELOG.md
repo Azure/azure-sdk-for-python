@@ -4,17 +4,7 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client operation group `ContainerServiceFleetMgmtClient.auto_upgrade_profiles`
-  - Model `APIServerAccessProfile` deleted or renamed its instance variable `enable_vnet_integration`
-  - Model `APIServerAccessProfile` deleted or renamed its instance variable `subnet_id`
-  - Model `NodeImageSelection` deleted or renamed its instance variable `custom_node_image_versions`
-  - Deleted or renamed enum value `NodeImageSelectionType.CUSTOM`
-  - Deleted or renamed model `AutoUpgradeNodeImageSelection`
-  - Deleted or renamed model `AutoUpgradeNodeImageSelectionType`
-  - Deleted or renamed model `AutoUpgradeProfile`
-  - Deleted or renamed model `AutoUpgradeProfileProvisioningState`
-  - Deleted or renamed model `UpgradeChannel`
-  - Deleted or renamed model `AutoUpgradeProfilesOperations`
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
 
 ## 2.1.0 (2024-10-21)
 
