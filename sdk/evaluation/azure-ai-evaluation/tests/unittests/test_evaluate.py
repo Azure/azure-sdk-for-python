@@ -398,6 +398,7 @@ class TestEvaluate:
 
     @pytest.mark.parametrize("use_relative_path", [True, False])
     def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        # output_path is a file
         if use_relative_path:
             output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
         else:
@@ -418,6 +419,9 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+        os.remove(output_path)
+
+        # output_path is a directory
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
