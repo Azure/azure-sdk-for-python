@@ -3,14 +3,15 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, List, Union
 
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
-class FluencyEvaluator(PromptyEvaluatorBase):
+class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize a fluency evaluator configured for a specific Azure OpenAI model.
 
@@ -48,12 +49,40 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
-    @override
+    @overload
     def __call__(
         self,
         *,
-        response: Optional[str] = None,
-        conversation=None,
+        response: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate fluency in given query/response
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The fluency score
+        :rtype: Dict[str, float]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate fluency for a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
         **kwargs,
     ):
         """
@@ -62,12 +91,11 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         the evaluator will aggregate the results of each turn.
 
         :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
-        :paramtype response: str
+        :paramtype response: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
-
-        return super().__call__(response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
