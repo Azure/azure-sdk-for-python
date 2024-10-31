@@ -15,6 +15,7 @@ import json
 import logging
 import base64
 import asyncio
+import re
 
 from azure.core.credentials import TokenCredential, AccessToken
 
@@ -415,8 +416,8 @@ class FunctionTool(BaseFunctionTool):
         try:
             return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction to the function call
             return json.dumps({"error": error_message})
 
@@ -542,6 +543,7 @@ class CodeInterpreterTool(Tool):
     def execute(self, tool_call: Any) -> Any:
         pass
 
+
 class BaseToolSet:
     """
     Abstract class for a collection of tools that can be used by an agent.
@@ -640,6 +642,7 @@ class BaseToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+
 class ToolSet(BaseToolSet):
     """
     A collection of tools that can be used by an synchronize agent.
@@ -656,7 +659,6 @@ class ToolSet(BaseToolSet):
             raise ValueError(
                 "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
             )
-
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
