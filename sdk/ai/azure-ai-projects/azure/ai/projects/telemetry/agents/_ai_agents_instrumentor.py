@@ -780,7 +780,8 @@ class _AIAgentsInstrumentorPreview:
                     kwargs['event_handler'] = self.wrap_handler(event_handler, span)
 
                 result = await function(*args, **kwargs)
-                self.set_end_run(span, result)
+                if not isinstance(result, AgentRunStream):
+                    self.set_end_run(span, result)
             except Exception as exc:
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
@@ -821,6 +822,8 @@ class _AIAgentsInstrumentorPreview:
 
     async def trace_handle_submit_tool_outputs_async(self, function, *args, **kwargs):
         event_handler = kwargs.get("event_handler")
+        if event_handler is None:
+            event_handler = args[2]
         span = getattr(event_handler, "span", None)
         with span.change_context(span.span_instance):
             try:
