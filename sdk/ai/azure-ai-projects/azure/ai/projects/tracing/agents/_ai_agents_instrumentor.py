@@ -563,6 +563,7 @@ class _AIAgentsInstrumentorPreview:
         return span
 
     def start_list_messages_span(
+        self,
         project_name: str,
         thread_id: str
     ) -> "AbstractSpan":
@@ -1120,6 +1121,60 @@ class _AIAgentsInstrumentorPreview:
         #span.finish()
         return result
 
+    def trace_list_messages(self, function, *args, **kwargs):
+        project_name = args[0]._config.project_name
+        thread_id = kwargs.get("thread_id")
+
+        with self.start_list_messages_span(
+            project_name=project_name,
+            thread_id=thread_id) as span:
+            try:
+                result = function(*args, **kwargs)
+                for message in result.data:
+                    self.add_thread_message_event(span, message)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
+    async def trace_list_messages_async(self, function, *args, **kwargs):
+        project_name = args[0]._config.project_name
+        thread_id = kwargs.get("thread_id")
+
+        with self.start_list_messages_span(
+            project_name=project_name,
+            thread_id=thread_id) as span:
+            try:
+                result = await function(*args, **kwargs)
+                for message in result.data:
+                    self.add_thread_message_event(span, message)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
     def handle_run_stream_exit(self, function, *args, **kwargs):
         agent_run_stream = args[0]
         exc_type = kwargs.get("exc_type")
@@ -1204,6 +1259,8 @@ class _AIAgentsInstrumentorPreview:
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
             elif class_function_name.startswith("AgentsOperations.create_stream"):
                 return self.trace_create_stream(function, *args, **kwargs)
+            elif class_function_name.startswith("AgentsOperations.list_messages"):
+                return self.trace_list_messages(function, *args, **kwargs)
             elif class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1262,6 +1319,8 @@ class _AIAgentsInstrumentorPreview:
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
             elif class_function_name.startswith("AgentsOperations.create_stream"):
                 return await self.trace_create_stream_async(function, *args, **kwargs)
+            elif class_function_name.startswith("AgentsOperations.list_messages"):
+                return await self.trace_list_messages_async(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return
 
@@ -1288,6 +1347,7 @@ class _AIAgentsInstrumentorPreview:
             ("azure.ai.projects.operations", "AgentsOperations", "submit_tool_outputs_to_stream", TraceType.AGENTS, "submit_tool_outputs_to_stream"),
             ("azure.ai.projects.operations", "AgentsOperations", "_handle_submit_tool_outputs", TraceType.AGENTS, "_handle_submit_tool_outputs"),
             ("azure.ai.projects.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
+            ("azure.ai.projects.operations", "AgentsOperations", "list_messages", TraceType.AGENTS, "list_messages"),
             ("azure.ai.projects.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
         async_apis = (
@@ -1300,6 +1360,7 @@ class _AIAgentsInstrumentorPreview:
             ("azure.ai.projects.aio.operations", "AgentsOperations", "submit_tool_outputs_to_stream", TraceType.AGENTS, "submit_tool_outputs_to_stream"),
             ("azure.ai.projects.aio.operations", "AgentsOperations", "_handle_submit_tool_outputs", TraceType.AGENTS, "_handle_submit_tool_outputs"),
             ("azure.ai.projects.aio.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
+            ("azure.ai.projects.aio.operations", "AgentsOperations", "list_messages", TraceType.AGENTS, "list_messages"),
         )
         return sync_apis, async_apis
 
