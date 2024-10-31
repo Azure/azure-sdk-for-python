@@ -14,9 +14,7 @@ from opentelemetry.sdk.metrics.view import View
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
-exporter = AzureMonitorMetricExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-)
+exporter = AzureMonitorMetricExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 # Create a view matching the counter instrument `my.counter`
 # and configure the new name `my.counter.total` for the result metrics stream
 change_metric_name_view = View(

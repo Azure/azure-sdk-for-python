@@ -88,7 +88,7 @@ from ..exceptions import (
     ServiceBusServerBusyError,
     SessionCannotBeLockedError,
     SessionLockLostError,
-    OperationTimeoutError
+    OperationTimeoutError,
 )
 
 if TYPE_CHECKING:
@@ -105,35 +105,33 @@ if TYPE_CHECKING:
 
 class _ServiceBusErrorPolicy(RetryPolicy):
 
-    no_retry = RetryPolicy.no_retry + cast(List[ErrorCondition], [
-                ERROR_CODE_SESSION_LOCK_LOST,
-                ERROR_CODE_MESSAGE_LOCK_LOST,
-                ERROR_CODE_OUT_OF_RANGE,
-                ERROR_CODE_ARGUMENT_ERROR,
-                ERROR_CODE_PRECONDITION_FAILED,
-            ])
+    no_retry = RetryPolicy.no_retry + cast(
+        List[ErrorCondition],
+        [
+            ERROR_CODE_SESSION_LOCK_LOST,
+            ERROR_CODE_MESSAGE_LOCK_LOST,
+            ERROR_CODE_OUT_OF_RANGE,
+            ERROR_CODE_ARGUMENT_ERROR,
+            ERROR_CODE_PRECONDITION_FAILED,
+        ],
+    )
 
     def __init__(self, is_session=False, **kwargs):
         self._is_session = is_session
         custom_condition_backoff = {
             b"com.microsoft:server-busy": 4,
             b"com.microsoft:timeout": 2,
-            b"com.microsoft:container-close": 4
+            b"com.microsoft:container-close": 4,
         }
-        super(_ServiceBusErrorPolicy, self).__init__(
-            custom_condition_backoff=custom_condition_backoff,
-            **kwargs
-        )
+        super(_ServiceBusErrorPolicy, self).__init__(custom_condition_backoff=custom_condition_backoff, **kwargs)
 
     def is_retryable(self, error):
         if self._is_session:
             return False
         return super().is_retryable(error)
 
-_LONG_ANNOTATIONS = (
-    _X_OPT_ENQUEUED_TIME,
-    _X_OPT_LOCKED_UNTIL
-)
+
+_LONG_ANNOTATIONS = (_X_OPT_ENQUEUED_TIME, _X_OPT_LOCKED_UNTIL)
 
 _ERROR_CODE_TO_ERROR_MAPPING = {
     ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
@@ -155,7 +153,8 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     ERROR_CODE_TIMEOUT: OperationTimeoutError,
 }
 
-class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-methods
+
+class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     """
     Class which defines uamqp-based methods used by the sender and receiver.
     """
@@ -181,7 +180,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     FRAMEWORK_SYMBOL = "framework"
     PLATFORM_SYMBOL = "platform"
     USER_AGENT_SYMBOL = "user-agent"
-    #ERROR_CONDITIONS = [condition.value for condition in ErrorCondition]
+    # ERROR_CONDITIONS = [condition.value for condition in ErrorCondition]
 
     # amqp value types
     AMQP_LONG_VALUE: Callable = amqp_long_value
@@ -213,9 +212,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return message
 
     @staticmethod
-    def get_message_delivery_tag(
-        _, frame: "TransferFrame"
-    ) -> Optional[bytes]:
+    def get_message_delivery_tag(_, frame: "TransferFrame") -> Optional[bytes]:
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.
@@ -226,9 +223,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return frame[2] if frame else None
 
     @staticmethod
-    def get_message_delivery_id(
-        _, frame: "TransferFrame"
-    ) -> Optional[int]:
+    def get_message_delivery_id(_, frame: "TransferFrame") -> Optional[int]:
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
@@ -262,12 +257,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
                 creation_time_from_ttl = int(
-                    time.mktime(datetime.datetime.now(timezone.utc).timetuple()) * 1000   # TODO: should this be * 1?
+                    time.mktime(datetime.datetime.now(timezone.utc).timetuple()) * 1000  # TODO: should this be * 1?
                 )
-                absolute_expiry_time_from_ttl = int(min(
-                    MAX_ABSOLUTE_EXPIRY_TIME,
-                    creation_time_from_ttl + annotated_message.header.time_to_live
-                ))
+                absolute_expiry_time_from_ttl = int(
+                    min(MAX_ABSOLUTE_EXPIRY_TIME, creation_time_from_ttl + annotated_message.header.time_to_live)
+                )
 
         message_properties = None
         properties_vals = annotated_message.properties.values() if annotated_message.properties else None
@@ -301,7 +295,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,
             )
         elif ttl_set:
-            message_properties = Properties(    # type: ignore[call-arg]
+            message_properties = Properties(  # type: ignore[call-arg]
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
@@ -346,11 +340,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return encode_payload(output, message._message)  # pylint: disable=protected-access
 
     @staticmethod
-    def update_message_app_properties(
-        message: "Message",
-        key: str,
-        value: str
-    ) -> "Message":
+    def update_message_app_properties(message: "Message", key: str, value: str) -> "Message":
         """
         Adds the given key/value to the application properties of the message.
         :param ~pyamqp.message.Message message: Message.
@@ -408,9 +398,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return handler._link.name
 
     @staticmethod
-    def create_retry_policy(
-        config: "Configuration", *, is_session: bool = False
-    ) -> "_ServiceBusErrorPolicy":
+    def create_retry_policy(config: "Configuration", *, is_session: bool = False) -> "_ServiceBusErrorPolicy":
         """
         Creates the error retry policy.
         :param ~azure.servicebus.common._configuration.Configuration config: Configuration.
@@ -425,14 +413,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             retry_backoff_factor=config.retry_backoff_factor,
             retry_backoff_max=config.retry_backoff_max,
             retry_mode=config.retry_mode,
-            #no_retry_condition=NO_RETRY_ERRORS,
-            #custom_condition_backoff=CUSTOM_CONDITION_BACKOFF,
+            # no_retry_condition=NO_RETRY_ERRORS,
+            # custom_condition_backoff=CUSTOM_CONDITION_BACKOFF,
         )
 
     @staticmethod
-    def create_connection(
-        host: str, auth: "JWTTokenAuth", network_trace: bool, **kwargs: Any
-    ) -> "Connection":
+    def create_connection(host: str, auth: "JWTTokenAuth", network_trace: bool, **kwargs: Any) -> "Connection":
         """
         Creates and returns the pyamqp Connection object.
         :param str host: The hostname used by pyamqp.
@@ -441,12 +427,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Connection
         :rtype: ~pyamqp.Connection
         """
-        return Connection(
-            endpoint=host,
-            sasl_credential=auth.sasl,
-            network_trace=network_trace,
-            **kwargs
-        )
+        return Connection(endpoint=host, sasl_credential=auth.sasl, network_trace=network_trace, **kwargs)
 
     @staticmethod
     def close_connection(connection: "Connection") -> None:
@@ -457,9 +438,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         connection.close()
 
     @staticmethod
-    def create_send_client(
-        config: "Configuration", **kwargs: Any
-    ) ->"SendClient":
+    def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient":
         """
         Creates and returns the pyamqp SendClient.
         :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
@@ -493,8 +472,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
         logger: "Logger",
         timeout: int,
-        last_exception: Optional[Exception]
-    ) -> None:    # pylint: disable=unused-argument
+        last_exception: Optional[Exception],
+    ) -> None:  # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
         :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
@@ -507,10 +486,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         sender._open()
         try:
-            if isinstance(message._message, list):    # BatchMessage
-                sender._handler.send_message(BatchMessage(*message._message), timeout=timeout) # pylint:disable=protected-access
-            else:   # Message
-                sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
+            if isinstance(message._message, list):  # BatchMessage
+                sender._handler.send_message(
+                    BatchMessage(*message._message), timeout=timeout
+                )  # pylint:disable=protected-access
+            else:  # Message
+                sender._handler.send_message(message._message, timeout=timeout)  # pylint:disable=protected-access
         except TimeoutError as exc:
             raise OperationTimeoutError(message="Send operation timed out") from exc
         except MessageException as e:
@@ -527,9 +508,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: None
         """
         # pylint: disable=protected-access
-        utils.add_batch(
-            sb_message_batch._message, outgoing_sb_message._message
-        )
+        utils.add_batch(sb_message_batch._message, outgoing_sb_message._message)
 
     @staticmethod
     def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
@@ -542,13 +521,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: ~pyamqp.endpoints.Source
         """
         filter_map = {SESSION_FILTER: session_filter}
-        source = Source(address=source, filters=filter_map) # type: ignore[call-arg]
+        source = Source(address=source, filters=filter_map)  # type: ignore[call-arg]
         return source
 
     @staticmethod
-    def create_receive_client(
-        receiver: "ServiceBusReceiver", **kwargs: "Any"
-    ) -> "ReceiveClient":
+    def create_receive_client(receiver: "ServiceBusReceiver", **kwargs: "Any") -> "ReceiveClient":
         """
         Creates and returns the receive client.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -571,7 +548,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: ReceiveClient
         :rtype: ~pyamqp.ReceiveClient
         """
-        config = receiver._config   # pylint: disable=protected-access
+        config = receiver._config  # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
         link_properties = kwargs.pop("link_properties")
@@ -581,8 +558,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # frame from the service before raising an OperationTimeoutError due to failure to connect.
         # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
         # connect to a session.
-        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
-            timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
+        if (
+            receiver._session_id == NEXT_AVAILABLE_SESSION  # pylint: disable=protected-access
+            and receiver._max_wait_time  # pylint: disable=protected-access
+        ):
+            timeout_in_ms = receiver._max_wait_time * 1000  # pylint: disable=protected-access
             open_receive_link_base_jitter_in_ms = 100
             open_recieve_link_buffer_in_ms = 20
             open_receive_link_buffer_threshold_in_ms = 1000
@@ -604,23 +584,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
             receive_settle_mode=PyamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
-            send_settle_mode=constants.SenderSettleMode.Settled
-            if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            else constants.SenderSettleMode.Unsettled,
-            on_attach=functools.partial(
-                PyamqpTransport.on_attach,
-                receiver
+            send_settle_mode=(
+                constants.SenderSettleMode.Settled
+                if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+                else constants.SenderSettleMode.Unsettled
             ),
+            on_attach=functools.partial(PyamqpTransport.on_attach, receiver),
             socket_timeout=config.socket_timeout,
-            **kwargs
+            **kwargs,
         )
 
     # TODO: ask why this is a callable.
     @staticmethod
-    def on_attach(
-        receiver: "ServiceBusReceiver",
-        attach_frame: "AttachFrame"
-    ) -> None:
+    def on_attach(receiver: "ServiceBusReceiver", attach_frame: "AttachFrame") -> None:
         """
         Receiver on_attach callback.
 
@@ -633,9 +609,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._session._session_start = utc_now()
             expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
+                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH) / 10000000
                 receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
             session_filter = attach_frame.source.filters[SESSION_FILTER]
             receiver._session_id = session_filter.decode(receiver._config.encoding)
@@ -664,9 +638,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 break
 
     @staticmethod
-    def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+    def iter_next(receiver: "ServiceBusReceiver", wait_time: Optional[int] = None) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
@@ -680,9 +652,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
-            pyamqp_message = next(
-                cast(Iterator["Message"], receiver._message_iter)
-            )
+            pyamqp_message = next(cast(Iterator["Message"], receiver._message_iter))
             message = receiver._build_received_message(pyamqp_message)
             if (
                 receiver._auto_lock_renewer
@@ -696,9 +666,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def enhanced_message_received(  # pylint: disable=arguments-differ
-        receiver: "ServiceBusReceiver",
-        frame: "AttachFrame",
-        message: "Message"
+        receiver: "ServiceBusReceiver", frame: "AttachFrame", message: "Message"
     ) -> None:
         """Callback run on receipt of every message.
 
@@ -718,7 +686,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._handler._received_messages.put((frame, message))
         else:
             # If receive_message or receive iterator is not being called, release message passed to callback.
-            receiver._handler.settle_messages(frame[1], frame[2], 'released')
+            receiver._handler.settle_messages(frame[1], frame[2], "released")
 
     @staticmethod
     def build_received_message(
@@ -740,15 +708,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receive_mode=receiver._receive_mode,
             receiver=receiver,
             frame=received[0],
-            amqp_transport=receiver._amqp_transport
+            amqp_transport=receiver._amqp_transport,
         )
         receiver._last_received_sequenced_number = message.sequence_number
         return message
 
     @staticmethod
-    def get_current_time(
-        handler: "ReceiveClient"
-    ) -> float:  # pylint: disable=unused-argument
+    def get_current_time(handler: "ReceiveClient") -> float:  # pylint: disable=unused-argument
         """
         Gets the current time.
         :param ~pyamqp.ReceiveClient handler: Client with link to get current time.
@@ -758,16 +724,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return time.time()
 
     @staticmethod
-    def reset_link_credit(
-        handler: "ReceiveClient", link_credit: int
-    ) -> None:
+    def reset_link_credit(handler: "ReceiveClient", link_credit: int) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
         :param int link_credit: Link credit needed.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
+        handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -780,36 +744,36 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
+                return handler.settle_messages(message._delivery_id, message._delivery_tag, "accepted")
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
                     message._delivery_tag,
-                    'modified',
+                    "modified",
                     delivery_failed=True,
-                    undeliverable_here=False
+                    undeliverable_here=False,
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
                     message._delivery_id,
                     message._delivery_tag,
-                    'rejected',
+                    "rejected",
                     error=AMQPError(
                         condition=DEADLETTERNAME,
                         description=dead_letter_error_description,
                         info={
                             RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                        }
-                    )
+                        },
+                    ),
                 )
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
                     message._delivery_tag,
-                    'modified',
+                    "modified",
                     delivery_failed=True,
-                    undeliverable_here=True
+                    undeliverable_here=True,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
@@ -818,22 +782,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             raise RuntimeError("Connection lost during settle operation.") from e
 
         except AMQPException as ae:
-            if (
-                ae.condition == ErrorCondition.IllegalState
-            ):
+            if ae.condition == ErrorCondition.IllegalState:
                 raise RuntimeError("Link error occurred during settle operation.") from ae
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
 
-        raise ValueError(
-            f"Unsupported settle operation type: {settle_operation}"
-        )
+        raise ValueError(f"Unsupported settle operation type: {settle_operation}")
 
     @staticmethod
     def parse_received_message(
-        message: "Message",
-        message_type: Type["ServiceBusReceivedMessage"],
-        **kwargs: Any
+        message: "Message", message_type: Type["ServiceBusReceivedMessage"], **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
@@ -850,11 +808,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if message.value:
             for m in message.value[b"messages"]:
                 wrapped = decode_payload(memoryview(m[b"message"]))
-                parsed.append(
-                    message_type(
-                        wrapped, **kwargs
-                    )
-                )
+                parsed.append(message_type(wrapped, **kwargs))
         return parsed
 
     @staticmethod
@@ -868,11 +822,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def create_token_auth(
-        auth_uri: str,
-        get_token: Callable[..., AccessToken],
-        token_type: bytes,
-        config: "Configuration",
-        **kwargs: Any
+        auth_uri: str, get_token: Callable[..., AccessToken], token_type: bytes, config: "Configuration", **kwargs: Any
     ) -> "JWTTokenAuth":
         """
         Creates the JWTTokenAuth.
@@ -910,8 +860,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         application_properties: Optional[Dict[Union[str, bytes], Any]],
         config: "Configuration",
         reply_to: str,
-        **kwargs: Any
-    ) -> "Message": # pylint:disable=unused-argument
+        **kwargs: Any,
+    ) -> "Message":  # pylint:disable=unused-argument
         """
         :param message: The message to send in the management request.
         :type message: Any
@@ -923,10 +873,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         return Message(
             value=message,
-            properties=Properties(
-                reply_to=reply_to,
-                **kwargs
-            ),
+            properties=Properties(reply_to=reply_to, **kwargs),
             application_properties=application_properties,
         )
 
@@ -939,7 +886,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         operation_type: bytes,
         node: str,
         timeout: int,
-        callback: Callable
+        callback: Callable,
     ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
@@ -970,7 +917,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         exception: Optional["AMQPException"] = None,
         status_code: Optional[str] = None,
         *,
-        custom_endpoint_address: Optional[str] = None
+        custom_endpoint_address: Optional[str] = None,
     ) -> "ServiceBusError":
         # handling AMQP Errors that have the condition field or the mgmt handler
         logger.info(
@@ -1017,7 +964,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if condition in _ServiceBusErrorPolicy.no_retry:
             error._retryable = False  # pylint: disable=protected-access
         else:
-            error._retryable = True # pylint: disable=protected-access
+            error._retryable = True  # pylint: disable=protected-access
 
         return error
 
@@ -1027,7 +974,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         error_description: "str",
         condition: Optional["ErrorCondition"] = None,
         description: Optional[str] = None,
-        status_code: Optional[str] = None
+        status_code: Optional[str] = None,
     ) -> "ServiceBusError":
         if description:
             error_description += f" {description}."
@@ -1049,18 +996,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             condition = exception.condition
             description = exception.description
             exception = PyamqpTransport._handle_amqp_exception_with_condition(
-                logger,
-                condition,
-                description,
-                exception=exception,
-                custom_endpoint_address=custom_endpoint_address
+                logger, condition, description, exception=exception, custom_endpoint_address=custom_endpoint_address
             )
         elif not isinstance(exception, ServiceBusError):
-            logger.exception(
-                "Unexpected error occurred (%r). Handler shutting down.", exception
-            )
-            exception = ServiceBusError(
-                message=f"Handler failed: {exception}.", error=exception
-            )
+            logger.exception("Unexpected error occurred (%r). Handler shutting down.", exception)
+            exception = ServiceBusError(message=f"Handler failed: {exception}.", error=exception)
 
         return exception

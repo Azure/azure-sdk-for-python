@@ -1,10 +1,14 @@
 # Release History
 
-## 1.32.0 (Unreleased)
+## 1.32.0 (2024-10-31)
 
 ### Features Added
 
 - Added a default implementation to handle token challenges in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy`.
+
+### Bugs Fixed
+
+- Fixed an issue where the `tracing_attributes` keyword argument wasn't being handled at the request/method level. #38164
 
 ### Other Changes
 

@@ -194,7 +194,7 @@ class TestEvaluate:
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
         content_safety_eval = ContentSafetyEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            credential=azure_cred, azure_ai_project=project_scope, _parallel=False
         )
 
         # run the evaluation
@@ -241,7 +241,7 @@ class TestEvaluate:
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
         content_safety_eval = ContentSafetyMultimodalEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-{str(uuid.uuid4())}",
@@ -283,7 +283,7 @@ class TestEvaluate:
 
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
         content_safety_eval = ContentSafetyMultimodalEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",

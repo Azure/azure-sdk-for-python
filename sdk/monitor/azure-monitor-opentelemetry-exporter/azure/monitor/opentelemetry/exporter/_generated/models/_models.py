@@ -23,18 +23,15 @@ class MonitorDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'required': True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43,8 +40,8 @@ class MonitorDomain(msrest.serialization.Model):
         :paramtype version: int
         """
         super(MonitorDomain, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.version = kwargs.get('version', 2)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.version = kwargs.get("version", 2)
 
 
 class AvailabilityData(MonitorDomain):
@@ -77,32 +74,29 @@ class AvailabilityData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
-        'success': {'required': True},
-        'run_location': {'max_length': 1024, 'min_length': 0},
-        'message': {'max_length': 8192, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
+        "success": {"required": True},
+        "run_location": {"max_length": 1024, "min_length": 0},
+        "message": {"max_length": 8192, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'run_location': {'key': 'runLocation', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "run_location": {"key": "runLocation", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -129,14 +123,14 @@ class AvailabilityData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(AvailabilityData, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.duration = kwargs['duration']
-        self.success = kwargs['success']
-        self.run_location = kwargs.get('run_location', None)
-        self.message = kwargs.get('message', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.id = kwargs["id"]
+        self.name = kwargs["name"]
+        self.duration = kwargs["duration"]
+        self.success = kwargs["success"]
+        self.run_location = kwargs.get("run_location", None)
+        self.message = kwargs.get("message", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class MessageData(MonitorDomain):
@@ -161,23 +155,20 @@ class MessageData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'message': {'required': True, 'max_length': 32768, 'min_length': 0},
+        "version": {"required": True},
+        "message": {"required": True, "max_length": 32768, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'severity_level': {'key': 'severityLevel', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "severity_level": {"key": "severityLevel", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -195,10 +186,10 @@ class MessageData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(MessageData, self).__init__(**kwargs)
-        self.message = kwargs['message']
-        self.severity_level = kwargs.get('severity_level', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.message = kwargs["message"]
+        self.severity_level = kwargs.get("severity_level", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class MetricDataPoint(msrest.serialization.Model):
@@ -228,26 +219,23 @@ class MetricDataPoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'namespace': {'max_length': 256, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'value': {'required': True},
+        "namespace": {"max_length": 256, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'namespace': {'key': 'ns', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'data_point_type': {'key': 'kind', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'int'},
-        'min': {'key': 'min', 'type': 'float'},
-        'max': {'key': 'max', 'type': 'float'},
-        'std_dev': {'key': 'stdDev', 'type': 'float'},
+        "namespace": {"key": "ns", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "data_point_type": {"key": "kind", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "count": {"key": "count", "type": "int"},
+        "min": {"key": "min", "type": "float"},
+        "max": {"key": "max", "type": "float"},
+        "std_dev": {"key": "stdDev", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword namespace: Namespace of the metric.
         :paramtype namespace: str
@@ -270,14 +258,14 @@ class MetricDataPoint(msrest.serialization.Model):
         :paramtype std_dev: float
         """
         super(MetricDataPoint, self).__init__(**kwargs)
-        self.namespace = kwargs.get('namespace', None)
-        self.name = kwargs['name']
-        self.data_point_type = kwargs.get('data_point_type', None)
-        self.value = kwargs['value']
-        self.count = kwargs.get('count', None)
-        self.min = kwargs.get('min', None)
-        self.max = kwargs.get('max', None)
-        self.std_dev = kwargs.get('std_dev', None)
+        self.namespace = kwargs.get("namespace", None)
+        self.name = kwargs["name"]
+        self.data_point_type = kwargs.get("data_point_type", None)
+        self.value = kwargs["value"]
+        self.count = kwargs.get("count", None)
+        self.min = kwargs.get("min", None)
+        self.max = kwargs.get("max", None)
+        self.std_dev = kwargs.get("std_dev", None)
 
 
 class MetricsData(MonitorDomain):
@@ -299,21 +287,18 @@ class MetricsData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'metrics': {'required': True},
+        "version": {"required": True},
+        "metrics": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[MetricDataPoint]'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[MetricDataPoint]"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -328,8 +313,8 @@ class MetricsData(MonitorDomain):
         :paramtype properties: dict[str, str]
         """
         super(MetricsData, self).__init__(**kwargs)
-        self.metrics = kwargs['metrics']
-        self.properties = kwargs.get('properties', None)
+        self.metrics = kwargs["metrics"]
+        self.properties = kwargs.get("properties", None)
 
 
 class MonitorBase(msrest.serialization.Model):
@@ -343,14 +328,11 @@ class MonitorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'base_type': {'key': 'baseType', 'type': 'str'},
-        'base_data': {'key': 'baseData', 'type': 'MonitorDomain'},
+        "base_type": {"key": "baseType", "type": "str"},
+        "base_data": {"key": "baseData", "type": "MonitorDomain"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword base_type: Name of item (B section) if any. If telemetry data is derived straight from
          this, this should be null.
@@ -359,8 +341,8 @@ class MonitorBase(msrest.serialization.Model):
         :paramtype base_data: ~azure_monitor_client.models.MonitorDomain
         """
         super(MonitorBase, self).__init__(**kwargs)
-        self.base_type = kwargs.get('base_type', None)
-        self.base_data = kwargs.get('base_data', None)
+        self.base_type = kwargs.get("base_type", None)
+        self.base_data = kwargs.get("base_data", None)
 
 
 class PageViewData(MonitorDomain):
@@ -395,29 +377,26 @@ class PageViewData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
-        'referred_uri': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
+        "referred_uri": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'referred_uri': {'key': 'referredUri', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "referred_uri": {"key": "referredUri", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -445,13 +424,13 @@ class PageViewData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(PageViewData, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.url = kwargs.get('url', None)
-        self.duration = kwargs.get('duration', None)
-        self.referred_uri = kwargs.get('referred_uri', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.id = kwargs["id"]
+        self.name = kwargs["name"]
+        self.url = kwargs.get("url", None)
+        self.duration = kwargs.get("duration", None)
+        self.referred_uri = kwargs.get("referred_uri", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class PageViewPerfData(MonitorDomain):
@@ -497,32 +476,29 @@ class PageViewPerfData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'perf_total': {'key': 'perfTotal', 'type': 'str'},
-        'network_connect': {'key': 'networkConnect', 'type': 'str'},
-        'sent_request': {'key': 'sentRequest', 'type': 'str'},
-        'received_response': {'key': 'receivedResponse', 'type': 'str'},
-        'dom_processing': {'key': 'domProcessing', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "perf_total": {"key": "perfTotal", "type": "str"},
+        "network_connect": {"key": "networkConnect", "type": "str"},
+        "sent_request": {"key": "sentRequest", "type": "str"},
+        "received_response": {"key": "receivedResponse", "type": "str"},
+        "dom_processing": {"key": "domProcessing", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -562,17 +538,17 @@ class PageViewPerfData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(PageViewPerfData, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.name = kwargs['name']
-        self.url = kwargs.get('url', None)
-        self.duration = kwargs.get('duration', None)
-        self.perf_total = kwargs.get('perf_total', None)
-        self.network_connect = kwargs.get('network_connect', None)
-        self.sent_request = kwargs.get('sent_request', None)
-        self.received_response = kwargs.get('received_response', None)
-        self.dom_processing = kwargs.get('dom_processing', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.id = kwargs["id"]
+        self.name = kwargs["name"]
+        self.url = kwargs.get("url", None)
+        self.duration = kwargs.get("duration", None)
+        self.perf_total = kwargs.get("perf_total", None)
+        self.network_connect = kwargs.get("network_connect", None)
+        self.sent_request = kwargs.get("sent_request", None)
+        self.received_response = kwargs.get("received_response", None)
+        self.dom_processing = kwargs.get("dom_processing", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class RemoteDependencyData(MonitorDomain):
@@ -615,35 +591,32 @@ class RemoteDependencyData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'result_code': {'max_length': 1024, 'min_length': 0},
-        'data': {'max_length': 8192, 'min_length': 0},
-        'type': {'max_length': 1024, 'min_length': 0},
-        'target': {'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
+        "version": {"required": True},
+        "id": {"max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "result_code": {"max_length": 1024, "min_length": 0},
+        "data": {"max_length": 8192, "min_length": 0},
+        "type": {"max_length": 1024, "min_length": 0},
+        "target": {"max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'result_code': {'key': 'resultCode', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "result_code": {"key": "resultCode", "type": "str"},
+        "data": {"key": "data", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -679,16 +652,16 @@ class RemoteDependencyData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(RemoteDependencyData, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs['name']
-        self.result_code = kwargs.get('result_code', None)
-        self.data = kwargs.get('data', None)
-        self.type = kwargs.get('type', None)
-        self.target = kwargs.get('target', None)
-        self.duration = kwargs['duration']
-        self.success = kwargs.get('success', True)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs["name"]
+        self.result_code = kwargs.get("result_code", None)
+        self.data = kwargs.get("data", None)
+        self.type = kwargs.get("type", None)
+        self.target = kwargs.get("target", None)
+        self.duration = kwargs["duration"]
+        self.success = kwargs.get("success", True)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class RequestData(MonitorDomain):
@@ -728,34 +701,31 @@ class RequestData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
-        'success': {'required': True},
-        'response_code': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'source': {'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
+        "success": {"required": True},
+        "response_code": {"required": True, "max_length": 1024, "min_length": 0},
+        "source": {"max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'response_code': {'key': 'responseCode', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "response_code": {"key": "responseCode", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -788,15 +758,15 @@ class RequestData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(RequestData, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.name = kwargs.get('name', None)
-        self.duration = kwargs['duration']
-        self.success = kwargs.get('success', True)
-        self.response_code = kwargs['response_code']
-        self.source = kwargs.get('source', None)
-        self.url = kwargs.get('url', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.id = kwargs["id"]
+        self.name = kwargs.get("name", None)
+        self.duration = kwargs["duration"]
+        self.success = kwargs.get("success", True)
+        self.response_code = kwargs["response_code"]
+        self.source = kwargs.get("source", None)
+        self.url = kwargs.get("url", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class StackFrame(msrest.serialization.Model):
@@ -817,24 +787,21 @@ class StackFrame(msrest.serialization.Model):
     """
 
     _validation = {
-        'level': {'required': True},
-        'method': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'assembly': {'max_length': 1024, 'min_length': 0},
-        'file_name': {'max_length': 1024, 'min_length': 0},
+        "level": {"required": True},
+        "method": {"required": True, "max_length": 1024, "min_length": 0},
+        "assembly": {"max_length": 1024, "min_length": 0},
+        "file_name": {"max_length": 1024, "min_length": 0},
     }
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'int'},
-        'method': {'key': 'method', 'type': 'str'},
-        'assembly': {'key': 'assembly', 'type': 'str'},
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'line': {'key': 'line', 'type': 'int'},
+        "level": {"key": "level", "type": "int"},
+        "method": {"key": "method", "type": "str"},
+        "assembly": {"key": "assembly", "type": "str"},
+        "file_name": {"key": "fileName", "type": "str"},
+        "line": {"key": "line", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword level: Required.
         :paramtype level: int
@@ -848,11 +815,11 @@ class StackFrame(msrest.serialization.Model):
         :paramtype line: int
         """
         super(StackFrame, self).__init__(**kwargs)
-        self.level = kwargs['level']
-        self.method = kwargs['method']
-        self.assembly = kwargs.get('assembly', None)
-        self.file_name = kwargs.get('file_name', None)
-        self.line = kwargs.get('line', None)
+        self.level = kwargs["level"]
+        self.method = kwargs["method"]
+        self.assembly = kwargs.get("assembly", None)
+        self.file_name = kwargs.get("file_name", None)
+        self.line = kwargs.get("line", None)
 
 
 class TelemetryErrorDetails(msrest.serialization.Model):
@@ -867,15 +834,12 @@ class TelemetryErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'index': {'key': 'index', 'type': 'int'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
+        "index": {"key": "index", "type": "int"},
+        "status_code": {"key": "statusCode", "type": "int"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword index: The index in the original payload of the item.
         :paramtype index: int
@@ -885,9 +849,9 @@ class TelemetryErrorDetails(msrest.serialization.Model):
         :paramtype message: str
         """
         super(TelemetryErrorDetails, self).__init__(**kwargs)
-        self.index = kwargs.get('index', None)
-        self.status_code = kwargs.get('status_code', None)
-        self.message = kwargs.get('message', None)
+        self.index = kwargs.get("index", None)
+        self.status_code = kwargs.get("status_code", None)
+        self.message = kwargs.get("message", None)
 
 
 class TelemetryEventData(MonitorDomain):
@@ -910,22 +874,19 @@ class TelemetryEventData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'name': {'required': True, 'max_length': 512, 'min_length': 0},
+        "version": {"required": True},
+        "name": {"required": True, "max_length": 512, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -941,9 +902,9 @@ class TelemetryEventData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(TelemetryEventData, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.name = kwargs["name"]
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class TelemetryExceptionData(MonitorDomain):
@@ -972,25 +933,22 @@ class TelemetryExceptionData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'exceptions': {'required': True},
-        'problem_id': {'max_length': 1024, 'min_length': 0},
+        "version": {"required": True},
+        "exceptions": {"required": True},
+        "problem_id": {"max_length": 1024, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'exceptions': {'key': 'exceptions', 'type': '[TelemetryExceptionDetails]'},
-        'severity_level': {'key': 'severityLevel', 'type': 'str'},
-        'problem_id': {'key': 'problemId', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "exceptions": {"key": "exceptions", "type": "[TelemetryExceptionDetails]"},
+        "severity_level": {"key": "severityLevel", "type": "str"},
+        "problem_id": {"key": "problemId", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1012,11 +970,11 @@ class TelemetryExceptionData(MonitorDomain):
         :paramtype measurements: dict[str, float]
         """
         super(TelemetryExceptionData, self).__init__(**kwargs)
-        self.exceptions = kwargs['exceptions']
-        self.severity_level = kwargs.get('severity_level', None)
-        self.problem_id = kwargs.get('problem_id', None)
-        self.properties = kwargs.get('properties', None)
-        self.measurements = kwargs.get('measurements', None)
+        self.exceptions = kwargs["exceptions"]
+        self.severity_level = kwargs.get("severity_level", None)
+        self.problem_id = kwargs.get("problem_id", None)
+        self.properties = kwargs.get("properties", None)
+        self.measurements = kwargs.get("measurements", None)
 
 
 class TelemetryExceptionDetails(msrest.serialization.Model):
@@ -1044,25 +1002,22 @@ class TelemetryExceptionDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'max_length': 1024, 'min_length': 0},
-        'message': {'required': True, 'max_length': 32768, 'min_length': 0},
-        'stack': {'max_length': 32768, 'min_length': 0},
+        "type_name": {"max_length": 1024, "min_length": 0},
+        "message": {"required": True, "max_length": 32768, "min_length": 0},
+        "stack": {"max_length": 32768, "min_length": 0},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'outer_id': {'key': 'outerId', 'type': 'int'},
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'has_full_stack': {'key': 'hasFullStack', 'type': 'bool'},
-        'stack': {'key': 'stack', 'type': 'str'},
-        'parsed_stack': {'key': 'parsedStack', 'type': '[StackFrame]'},
+        "id": {"key": "id", "type": "int"},
+        "outer_id": {"key": "outerId", "type": "int"},
+        "type_name": {"key": "typeName", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "has_full_stack": {"key": "hasFullStack", "type": "bool"},
+        "stack": {"key": "stack", "type": "str"},
+        "parsed_stack": {"key": "parsedStack", "type": "[StackFrame]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword id: In case exception is nested (outer exception contains inner one), the id and
          outerId properties are used to represent the nesting.
@@ -1083,13 +1038,13 @@ class TelemetryExceptionDetails(msrest.serialization.Model):
         :paramtype parsed_stack: list[~azure_monitor_client.models.StackFrame]
         """
         super(TelemetryExceptionDetails, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.outer_id = kwargs.get('outer_id', None)
-        self.type_name = kwargs.get('type_name', None)
-        self.message = kwargs['message']
-        self.has_full_stack = kwargs.get('has_full_stack', True)
-        self.stack = kwargs.get('stack', None)
-        self.parsed_stack = kwargs.get('parsed_stack', None)
+        self.id = kwargs.get("id", None)
+        self.outer_id = kwargs.get("outer_id", None)
+        self.type_name = kwargs.get("type_name", None)
+        self.message = kwargs["message"]
+        self.has_full_stack = kwargs.get("has_full_stack", True)
+        self.stack = kwargs.get("stack", None)
+        self.parsed_stack = kwargs.get("parsed_stack", None)
 
 
 class TelemetryItem(msrest.serialization.Model):
@@ -1125,26 +1080,23 @@ class TelemetryItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'time': {'required': True},
-        'sequence': {'max_length': 64, 'min_length': 0},
+        "name": {"required": True},
+        "time": {"required": True},
+        "sequence": {"max_length": 64, "min_length": 0},
     }
 
     _attribute_map = {
-        'version': {'key': 'ver', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'sample_rate': {'key': 'sampleRate', 'type': 'float'},
-        'sequence': {'key': 'seq', 'type': 'str'},
-        'instrumentation_key': {'key': 'iKey', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'data': {'key': 'data', 'type': 'MonitorBase'},
+        "version": {"key": "ver", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "sample_rate": {"key": "sampleRate", "type": "float"},
+        "sequence": {"key": "seq", "type": "str"},
+        "instrumentation_key": {"key": "iKey", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "data": {"key": "data", "type": "MonitorBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword version: Envelope version. For internal use only. By assigning this the default, it
          will not be serialized within the payload unless changed to a value other than #1.
@@ -1173,14 +1125,14 @@ class TelemetryItem(msrest.serialization.Model):
         :paramtype data: ~azure_monitor_client.models.MonitorBase
         """
         super(TelemetryItem, self).__init__(**kwargs)
-        self.version = kwargs.get('version', 1)
-        self.name = kwargs['name']
-        self.time = kwargs['time']
-        self.sample_rate = kwargs.get('sample_rate', 100)
-        self.sequence = kwargs.get('sequence', None)
-        self.instrumentation_key = kwargs.get('instrumentation_key', None)
-        self.tags = kwargs.get('tags', None)
-        self.data = kwargs.get('data', None)
+        self.version = kwargs.get("version", 1)
+        self.name = kwargs["name"]
+        self.time = kwargs["time"]
+        self.sample_rate = kwargs.get("sample_rate", 100)
+        self.sequence = kwargs.get("sequence", None)
+        self.instrumentation_key = kwargs.get("instrumentation_key", None)
+        self.tags = kwargs.get("tags", None)
+        self.data = kwargs.get("data", None)
 
 
 class TrackResponse(msrest.serialization.Model):
@@ -1195,15 +1147,12 @@ class TrackResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'items_received': {'key': 'itemsReceived', 'type': 'int'},
-        'items_accepted': {'key': 'itemsAccepted', 'type': 'int'},
-        'errors': {'key': 'errors', 'type': '[TelemetryErrorDetails]'},
+        "items_received": {"key": "itemsReceived", "type": "int"},
+        "items_accepted": {"key": "itemsAccepted", "type": "int"},
+        "errors": {"key": "errors", "type": "[TelemetryErrorDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword items_received: The number of items received.
         :paramtype items_received: int
@@ -1213,6 +1162,6 @@ class TrackResponse(msrest.serialization.Model):
         :paramtype errors: list[~azure_monitor_client.models.TelemetryErrorDetails]
         """
         super(TrackResponse, self).__init__(**kwargs)
-        self.items_received = kwargs.get('items_received', None)
-        self.items_accepted = kwargs.get('items_accepted', None)
-        self.errors = kwargs.get('errors', None)
+        self.items_received = kwargs.get("items_received", None)
+        self.items_accepted = kwargs.get("items_accepted", None)
+        self.errors = kwargs.get("errors", None)
