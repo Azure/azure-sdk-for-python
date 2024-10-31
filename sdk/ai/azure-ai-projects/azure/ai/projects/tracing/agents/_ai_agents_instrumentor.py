@@ -612,10 +612,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_create_agent_async(self, function, *args, **kwargs):
@@ -646,10 +644,6 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
-
-                #if kwargs.get("stream") is True:
-                #    return self._wrapped_stream(result, span)
-                #self._add_response_span_attributes(span, result)
             except Exception as exc:
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
@@ -661,10 +655,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_create_thread(self, function, *args, **kwargs):
@@ -688,10 +680,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_create_thread_async(self, function, *args, **kwargs):
@@ -715,10 +705,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_create_message(self, function, *args, **kwargs):
@@ -749,10 +737,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_create_message_async(self, function, *args, **kwargs):
@@ -783,10 +769,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_create_run(self, operation_name, function, *args, **kwargs):
@@ -833,10 +817,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_create_run_async(self, operation_name, function, *args, **kwargs):
@@ -889,10 +871,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_submit_tool_outputs(self, stream, function, *args, **kwargs):
@@ -925,10 +905,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_submit_tool_outputs_async(self, stream, function, *args, **kwargs):
@@ -961,10 +939,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_handle_submit_tool_outputs(self, function, *args, **kwargs):
@@ -1059,10 +1035,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     async def trace_create_stream_async(self, function, *args, **kwargs):
@@ -1115,10 +1089,8 @@ class _AIAgentsInstrumentorPreview:
                 module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 self._set_attributes(span, ("error.type", error_type))
-                #span.finish()
                 raise
 
-        #span.finish()
         return result
 
     def trace_list_messages(self, function, *args, **kwargs):
