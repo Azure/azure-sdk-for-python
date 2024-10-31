@@ -211,105 +211,6 @@ class _AIAgentsInstrumentorPreview:
 
         return "none"
 
-    def _accumulate_response(self, item, accumulate: Dict[str, Any]) -> None:
-        if item.finish_reason:
-            accumulate["finish_reason"] = item.finish_reason
-        if item.index:
-            accumulate["index"] = item.index
-        if item.delta.content:
-            accumulate.setdefault("message", {})
-            accumulate["message"].setdefault("content", "")
-            accumulate["message"]["content"] += item.delta.content
-        if item.delta.tool_calls:
-            accumulate.setdefault("message", {})
-            accumulate["message"].setdefault("tool_calls", [])
-            if item.delta.tool_calls is not None:
-                for tool_call in item.delta.tool_calls:
-                    if tool_call.id:
-                        accumulate["message"]["tool_calls"].append(
-                            {
-                                "id": tool_call.id,
-                                "type": "",
-                                "function": {"name": "", "arguments": ""},
-                            }
-                        )
-                    if tool_call.function:
-                        accumulate["message"]["tool_calls"][-1]["type"] = "function"
-                    if tool_call.function and tool_call.function.name:
-                        accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
-                    if tool_call.function and tool_call.function.arguments:
-                        accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
-
-    def _wrapped_stream(
-        self, stream_obj: Any, span: "AbstractSpan"
-    ) -> Any:
-        class StreamWrapper(Any):
-            def __init__(self, stream_obj, instrumentor):
-                super().__init__(stream_obj._response)
-                self._instrumentor = instrumentor
-
-            def __iter__(  # pyright: ignore [reportIncompatibleMethodOverride]
-                self,
-            ) -> Iterator[Any]:
-                accumulate: Dict[str, Any] = {}
-                try:
-                    chunk = None
-                    for chunk in stream_obj:
-                        for item in chunk.choices:
-                            self._instrumentor._accumulate_response(item, accumulate)
-                        yield chunk
-
-                    if chunk is not None:
-                        self._instrumentor._add_response_chat_attributes(span, chunk)
-
-                except Exception as exc:
-                    # Set the span status to error
-                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                        span.span_instance.set_status(
-                            StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                            description=str(exc),
-                        )
-                    module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
-                    error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                    self._instrumentor._set_attributes(span, ("error.type", error_type))
-                    raise
-
-                finally:
-                    if stream_obj._done is False:
-                        if accumulate.get("finish_reason") is None:
-                            accumulate["finish_reason"] = "error"
-                    else:
-                        # Only one choice expected with streaming
-                        accumulate["index"] = 0
-                        # Delete message if content tracing is not enabled
-                        if not _trace_agents_content:
-                            if "message" in accumulate:
-                                if "content" in accumulate["message"]:
-                                    del accumulate["message"]["content"]
-                                if not accumulate["message"]:
-                                    del accumulate["message"]
-                            if "message" in accumulate:
-                                if "tool_calls" in accumulate["message"]:
-                                    tool_calls_function_names_and_arguments_removed = (
-                                        self._instrumentor._remove_function_call_names_and_arguments(
-                                            accumulate["message"]["tool_calls"]
-                                        )
-                                    )
-                                    accumulate["message"]["tool_calls"] = list(
-                                        tool_calls_function_names_and_arguments_removed
-                                    )
-
-                    span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": _AGENTS_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(accumulate),
-                        },
-                    )
-                    span.finish()
-
-        return StreamWrapper(stream_obj, self)
-    
     def _create_event_attributes(
         self,
         thread_id: str = None,
@@ -597,10 +498,6 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
-
-                #if kwargs.get("stream") is True:
-                #    return self._wrapped_stream(result, span)
-                #self._add_response_span_attributes(span, result)
             except Exception as exc:
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]

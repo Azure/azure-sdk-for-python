@@ -51,6 +51,7 @@ if not application_insights_connection_string:
     print("Enable it via the 'Tracing' tab in your AI Studio project page.")
     exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
+
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
