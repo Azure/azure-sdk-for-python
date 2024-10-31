@@ -180,7 +180,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[str, float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluates retrieval for a for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
