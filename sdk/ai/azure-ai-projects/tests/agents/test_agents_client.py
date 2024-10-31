@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -33,7 +34,7 @@ from azure.ai.projects.models import (
     VectorStorageDataSource,
     VectorStorageDataSourceAssetType,
 )
-    
+
 
 # TODO clean this up / get rid of anything not in use
 
@@ -184,10 +185,10 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
-        # update agent        
+        # update agent
         agent = client.agents.update_agent(agent.id, name="my-agent2", instructions="You are helpful agent")
         assert agent.name == "my-agent2"
-        
+
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
@@ -218,7 +219,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-        
+
     # test agent creation with tools
     @agentClientPreparer()
     @recorded_by_proxy
@@ -243,7 +244,7 @@ class TestagentClient(AzureRecordedTestCase):
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        client.close()        
+        client.close()
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1122,8 +1123,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-        
-        
+
     # test agent creation with invalid tool resource
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1138,12 +1138,19 @@ class TestagentClient(AzureRecordedTestCase):
             exception_message = ""
             try:
                 client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                    model="gpt-4o",
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=[],
+                    tool_resources=tool_resources,
                 )
             except ValueError as e:
                 exception_message = e.args[0]
 
-            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            assert (
+                exception_message
+                == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     # test agent creation with invalid tool resource
     @agentClientPreparer()
@@ -1159,12 +1166,19 @@ class TestagentClient(AzureRecordedTestCase):
             exception_message = ""
             try:
                 client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                    model="gpt-4o",
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=[],
+                    tool_resources=tool_resources,
                 )
             except ValueError as e:
                 exception_message = e.args[0]
 
-            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            assert (
+                exception_message
+                == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1189,8 +1203,12 @@ class TestagentClient(AzureRecordedTestCase):
         if file_ids:
             ds = None
         else:
-            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"],
-                                          asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
+            ds = [
+                VectorStorageDataSource(
+                    storage_uri=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                )
+            ]
         vector_store = ai_client.agents.create_vector_store_and_poll(
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
@@ -1199,40 +1217,44 @@ class TestagentClient(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_vector_store_threads_file_search_azure(self, ** kwargs):
+    def test_vector_store_threads_file_search_azure(self, **kwargs):
         """Test file search when azure asset ids are supplied during thread creation."""
         self._do_test_vector_store_threads_file_search(**kwargs)
 
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_vector_store_threads_file_search_file_ids(self, ** kwargs):
+    def test_vector_store_threads_file_search_file_ids(self, **kwargs):
         """Test file search when azure asset ids are supplied during thread creation."""
         self._do_test_vector_store_threads_file_search(file_path=self._get_data_file(), **kwargs)
-    
-    def _do_test_vector_store_threads_file_search(self, ** kwargs):
+
+    def _do_test_vector_store_threads_file_search(self, **kwargs):
         """Test file search when azure asset ids are sopplied during thread creation."""
         # create client
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
-        
+
         file_id = self._get_file_id_maybe(ai_client, **kwargs)
         file_ids = [file_id] if file_id else None
-        vector_store = ai_client.agents.create_vector_store_and_poll(
-            file_ids=[] if file_ids else None,
-            data_sources=None if file_ids else [],
-            name="my_vectorstore"
-        )
-        
+
         code_interpreter = None
         fs = None
         if file_ids:
             code_interpreter = CodeInterpreterTool(file_ids=file_ids)
         else:
-            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"],
-                                              asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
-            fs = FileSearchToolResource(VectorStoreAzureConfigurations(
-                name="my_vector_store", store_configuration=VectorStorageConfiguration(
-                    data_sources=ds)))
+            ds = [
+                VectorStorageDataSource(
+                    storage_uri=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                )
+            ]
+            fs = FileSearchToolResource(
+                vector_stores=[
+                    VectorStoreAzureConfigurations(
+                        store_name="my_vector_store",
+                        store_configuration=VectorStorageConfiguration(data_sources=ds)
+                    )
+                ]
+            )
         file_search = FileSearchTool()
         agent = ai_client.agents.create_agent(
             model="gpt-4o",
@@ -1242,15 +1264,15 @@ class TestagentClient(AzureRecordedTestCase):
             tool_resources=file_search.resources,
         )
         assert agent.id
-        
+
         thread = ai_client.agents.create_thread(
-            tool_resources=ToolResources(code_interpreter=code_interpreter, file_search=fs))
+            tool_resources=ToolResources(code_interpreter=code_interpreter, file_search=fs)
+        )
         assert thread.id
-        
+
         run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-        ai_client.agents.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
-        messages = ai_client.agents.list_messages()
+        messages = ai_client.agents.list_messages(thread.id)
         assert len(messages)
         ai_client.agents.delete_agent(agent.id)
         self._remove_file_maybe(file_id, ai_client)
@@ -1301,7 +1323,6 @@ class TestagentClient(AzureRecordedTestCase):
         """Test adding multiple files to vector store with azure asset IDs."""
         self._do_test_create_vector_store_batch(**kwargs)
 
-
     def _do_test_create_vector_store_batch(self, **kwargs):
         """Test the agent with vector store creation."""
         # create client
@@ -1329,11 +1350,11 @@ class TestagentClient(AzureRecordedTestCase):
         self._test_file_search(ai_client, vector_store, file_id)
 
     def _test_file_search(
-            self,
-            ai_client: AIProjectClient,
-            vector_store: VectorStore,
-            file_id: Optional[str],
-        ) -> None:
+        self,
+        ai_client: AIProjectClient,
+        vector_store: VectorStore,
+        file_id: Optional[str],
+    ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = ai_client.agents.create_agent(
@@ -1344,10 +1365,10 @@ class TestagentClient(AzureRecordedTestCase):
             tool_resources=file_search.resources,
         )
         assert agent.id
-        
+
         thread = ai_client.agents.create_thread()
         assert thread.id
-        
+
         run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         ai_client.agents.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"

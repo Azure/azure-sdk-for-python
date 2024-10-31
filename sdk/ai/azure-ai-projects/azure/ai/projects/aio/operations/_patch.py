@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -574,7 +575,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
+
     @overload
     async def update_agent(
         self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -609,7 +610,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -660,7 +661,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
     @overload
     async def update_agent(
         self,
@@ -676,7 +677,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -722,7 +723,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
 
     @overload
     async def update_agent(
@@ -754,13 +754,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.AsyncToolSet] = None,        
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -814,7 +814,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_tools_and_tool_resources(tools, tool_resources)
-        
+
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return await super().update_agent(body=body, content_type=content_type, **kwargs)
@@ -839,18 +839,27 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
-    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+
+    def _validate_tools_and_tool_resources(
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
+    ):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
-            
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
-        
+
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     def _get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """

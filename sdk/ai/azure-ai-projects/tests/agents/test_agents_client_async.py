@@ -1,11 +1,11 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional
 import datetime
 import functools
 import json
@@ -16,16 +16,22 @@ import sys
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
+    CodeInterpreterTool,
     FilePurpose,
+    FileSearchTool,
+    FileSearchToolResource,
+    FunctionTool,
     MessageAttachment,
     ToolResources,
+    ToolSet,
     VectorStore,
+    VectorStoreAzureConfigurations,
+    VectorStorageConfiguration,
     VectorStorageDataSource,
-    VectorStorageConfiguration 
+    VectorStorageDataSourceAssetType,
 )
 from azure.ai.projects.models._enums import VectorStorageDataSourceAssetType
 
@@ -1124,7 +1130,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
         if file_ids:
             ds = None
         else:
-            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
+            ds = [VectorStorageDataSource(
+                storage_uri=kwargs["azure_ai_projects_data_path"],
+                asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
         vector_store = await ai_client.agents.create_vector_store_and_poll(
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
@@ -1154,7 +1162,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
         if file_id:
             ds = None
         else:
-            ds = [VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")]
+            ds = [VectorStorageDataSource(
+                storage_uri=kwargs["azure_ai_projects_data_path"],
+                asset_type=VectorStorageDataSourceAssetType.URI_ASSET)]
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = await ai_client.agents.create_vector_store_file(
@@ -1202,12 +1212,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert vector_store_file_batch.id
         await self._test_file_search(ai_client, vector_store, file_id)
 
-    async def _test_file_search(
-        self,
-        ai_client: AIProjectClient,
-        vector_store: VectorStore,
-        file_id: str
-    ) -> None:
+    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
@@ -1236,7 +1241,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_code_interpreter_azure(self, **kwargs):
         """Test code interpreter with azure ID."""
-        ds = VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")
+        ds = VectorStorageDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
         await self._do_test_code_interpreter(data_sources=[ds], **kwargs)
 
     @agentClientPreparer()
@@ -1290,7 +1297,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
-        ds = VectorStorageDataSource(storage_uri=kwargs["azure_ai_projects_data_path"], asset_type="uri_asset")
+        ds = VectorStorageDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
         await self._do_test_message_attachment(data_sources=[ds], **kwargs)
 
     @agentClientPreparer()
@@ -1335,6 +1344,69 @@ class TestagentClientAsync(AzureRecordedTestCase):
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
         assert len(await ai_client.agents.list_messages(thread_id=thread.id)), "No messages were created"
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_vector_store_threads_file_search_azure(self, **kwargs):
+        """Test file search when azure asset ids are supplied during thread creation."""
+        await self._do_test_vector_store_threads_file_search(**kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_vector_store_threads_file_search_file_ids(self, **kwargs):
+        """Test file search when azure asset ids are supplied during thread creation."""
+        await self._do_test_vector_store_threads_file_search(file_path=self._get_data_file(), **kwargs)
+
+    async def _do_test_vector_store_threads_file_search(self, **kwargs):
+        """Test file search when azure asset ids are sopplied during thread creation."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        file_ids = [file_id] if file_id else None
+
+        code_interpreter = None
+        fs = None
+        if file_ids:
+            code_interpreter = CodeInterpreterTool(file_ids=file_ids)
+        else:
+            ds = [
+                VectorStorageDataSource(
+                    storage_uri=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                )
+            ]
+            fs = FileSearchToolResource(
+                vector_stores=[
+                    VectorStoreAzureConfigurations(
+                        store_name="my_vector_store",
+                        store_configuration=VectorStorageConfiguration(data_sources=ds)
+                    )
+                ]
+            )
+        file_search = FileSearchTool()
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=file_search.resources,
+        )
+        assert agent.id
+
+        thread = await ai_client.agents.create_thread(
+            tool_resources=ToolResources(code_interpreter=code_interpreter, file_search=fs)
+        )
+        assert thread.id
+
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        messages = await ai_client.agents.list_messages(thread.id)
+        assert len(messages)
+        await ai_client.agents.delete_agent(agent.id)
+        await self._remove_file_maybe(file_id, ai_client)
+        await ai_client.close()
 
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
