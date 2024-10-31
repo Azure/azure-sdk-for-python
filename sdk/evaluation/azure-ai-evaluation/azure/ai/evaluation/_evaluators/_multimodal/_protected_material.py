@@ -82,7 +82,7 @@ class ProtectedMaterialMultimodalEvaluator:
         Evaluates protected materials content.
 
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys. It supports single turn only. 
+            Each message should have "role" and "content" keys. It supports single turn only.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: Dict[str, str]
@@ -101,9 +101,9 @@ class _AsyncProtectedMaterialMultimodalEvaluator:
     async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        
+
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys. It supports single turn only. 
+            Each message should have "role" and "content" keys. It supports single turn only.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
