@@ -97,7 +97,7 @@ function Get-python-DocsPackagesAlreadyOnboarded($docRepoLocation, $moniker) {
 #    but those are for track 1 or libraries released by other teams and not through our engineering system.
 # 2. extra_index_url only needs to exist on the object if PackageSourceOverride is set
 # 3. The reason this needs to be done using a json file instead of just a command line is because py2docfx
-#    doesn't handle the autodoc_default_options on the
+#    doesn't handle the autodoc_default_options on the command line.
 function Get-SinglePackageJsonForDocsValidation($PackageInfo, $PackageSourceOverride)
 {
 
