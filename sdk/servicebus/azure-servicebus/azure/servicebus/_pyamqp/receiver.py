@@ -7,6 +7,7 @@
 import uuid
 import logging
 from typing import Optional, Union
+from datetime import datetime, timezone
 
 from ._decode import decode_payload
 from .link import Link
@@ -76,12 +77,36 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            _LOGGER.debug(
-                "Received message: annotations: %r, header: %r",
-                message.message_annotations,
-                message.header,
-                extra=self.network_trace_params
-            )
+            if self.network_trace and _LOGGER.isEnabledFor(logging.DEBUG):
+                seq_num = None
+                enqueued_time = None
+                locked_until = None
+                ttl = None
+                delivery_count = None
+                if message.message_annotations:
+                    seq_num = message.message_annotations.get(b"x-opt-sequence-number")
+                    try:
+                        enqueued_time = message.message_annotations.get(b"x-opt-enqueued-time")
+                        enqueued_time = datetime.fromtimestamp(enqueued_time/1000, tz=timezone.utc)
+                    except TypeError:
+                        enqueued_time = None
+                    try:
+                        locked_until = message.message_annotations.get(b"x-opt-locked-until")
+                        enqueued_time = datetime.fromtimestamp(locked_until/1000, tz=timezone.utc)
+                    except TypeError:
+                        locked_until = None
+                if message.header:
+                    ttl = message.header.ttl
+                    delivery_count = message.header.delivery_count
+                _LOGGER.debug(
+                    "Received message: seq-num: %r, enqd-utc: %r, lockd-til-utc: %r, ttl: %r, dlvry-cnt: %r",
+                    seq_num,
+                    enqueued_time,
+                    locked_until,
+                    ttl,
+                    delivery_count,
+                    extra=self.network_trace_params
+                )
             delivery_state = self._process_incoming_message(self._first_frame, message)
 
             if not frame[4] and delivery_state:  # settled
