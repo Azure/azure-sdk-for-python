@@ -36,12 +36,10 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.endpoint_url == "https://api.bing.microsoft.com":
-        conn_id = conn.id
-        break
+bing_connection = project_client.connections.get(
+    connection_name=os.environ["BING_CONNECTION_NAME"]
+)
+conn_id = bing_connection.id
 
 print(conn_id)
 
@@ -68,7 +66,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="How does wikipedia explain Euler's Identity?",
     )
     print(f"Created message, ID: {message.id}")
 
