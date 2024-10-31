@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Optional
 from typing_extensions import Self
 
 from azure.core import AzureClouds
@@ -75,7 +75,7 @@ class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-ve
         subscription_id: str,
         base_url: str = "",
         *,
-        cloud_setting: AzureClouds = None,
+        cloud_setting: Optional[AzureClouds] = None,
         **kwargs: Any
     ) -> None:
         cloud = cloud_setting or settings.current.azure_cloud
