@@ -1396,8 +1396,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_latest_session_token(
             self,
             feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
-            target_feed_range: Dict[str, Any]) -> str:
-        """ **provisional** Gets the the most up to date session token from the list of session token and feed
+            target_feed_range: Dict[str, Any]
+    ) -> str:
+        """ **provisional** This method is still in preview and may be subject to breaking changes.
+
+        Gets the the most up to date session token from the list of session token and feed
         range tuples for a specific target feed range. The feed range can be obtained from a partition key
         or by reading the container feed ranges. This should only be used if maintaining own session token or else
         the CosmosClient instance will keep track of session token. Session tokens and feed ranges are

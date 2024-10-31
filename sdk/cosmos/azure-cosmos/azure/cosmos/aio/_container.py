@@ -1305,9 +1305,9 @@ class ContainerProxy:
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: Iterable[Dict[str, Any]]
 
-        .. note::
-          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
-          Please just treat it as opaque and do not take any dependent on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         if force_refresh is True:
@@ -1324,11 +1324,14 @@ class ContainerProxy:
                 for partitionKeyRange in partition_key_ranges]
         return (feed_range for feed_range in feed_ranges)
 
-    async def get_latest_session_token(self,
-                                       feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
-                                       target_feed_range: Dict[str, Any]
-                                       ) -> str:
-        """ **provisional** Gets the the most up to date session token from the list of session token and feed
+    async def get_latest_session_token(
+            self,
+            feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
+            target_feed_range: Dict[str, Any]
+    ) -> str:
+        """ **provisional** This method is still in preview and may be subject to breaking changes.
+
+        Gets the the most up to date session token from the list of session token and feed
         range tuples for a specific target feed range. The feed range can be obtained from a partition key
         or by reading the container feed ranges. This should only be used if maintaining own session token or else
         the CosmosClient instance will keep track of session token. Session tokens and feed ranges are
@@ -1349,9 +1352,9 @@ class ContainerProxy:
         :returns: a feed range
         :rtype: Dict[str, Any]
 
-        .. note::
-          For the feed range, even through a Dict has been returned, but in the future,
-          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key)).to_dict()
@@ -1366,9 +1369,9 @@ class ContainerProxy:
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
 
-        .. note::
-          For the feed range, even through a Dict has been returned, but in the future,
-          the structure may change. Please just treat it as opaque and do not take any dependence on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
