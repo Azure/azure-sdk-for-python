@@ -39,6 +39,7 @@ class EvalRunContext:
         self._original_cwd = os.getcwd()
 
     def __enter__(self) -> None:
+        # Preserve current working directory, as PF may change it without restoring it afterward
         self._original_cwd = os.getcwd()
 
         if isinstance(self.client, CodeClient):

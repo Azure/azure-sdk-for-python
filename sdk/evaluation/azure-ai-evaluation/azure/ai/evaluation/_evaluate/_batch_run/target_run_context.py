@@ -20,6 +20,7 @@ class TargetRunContext:
         self._original_cwd = os.getcwd()
 
     def __enter__(self) -> None:
+        # Preserve current working directory, as PF may change it without restoring it afterward
         self._original_cwd = os.getcwd()
 
         # Address "[WinError 32] The process cannot access the file" error,
