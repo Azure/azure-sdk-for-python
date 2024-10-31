@@ -176,9 +176,9 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
       -ItemType Directory `
       -Path (Join-Path $outputRoot "docsOutput")
 
-      # Because this would be running on a lab image, a virtual environment shouldn't be required
-      Write-Host "Executing: python -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
-      python -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir
+      # Force the python output to be unbuffered so we see more than just the warnings.
+      Write-Host "Executing: python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
+      python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir
       if ($LASTEXITCODE -ne 0) {
         LogWarning "py2docfx command failed, see output above."
         $allSucceeded = $false
