@@ -13,11 +13,19 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
-    async def test_connections_get(self, **kwargs):
+    async def test_connections_get_async(self, **kwargs):
         aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
         serverless_connection = kwargs.pop("azure_ai_projects_connections_tests_serverless_connection_name")
 
         async with self.get_async_client(**kwargs) as project_client:
+
+            assert await project_client.connections.get(
+                connection_name="Some non-existing name", with_credentials=False
+            ) == None
+
+            assert await project_client.connections.get(
+                connection_name="Some non-existing name", with_credentials=True
+            ) == None
 
             connection = await project_client.connections.get(connection_name=aoai_connection, with_credentials=False)
             print(connection)
@@ -61,7 +69,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
-    async def test_connections_get_default(self, **kwargs):
+    async def test_connections_get_default_async(self, **kwargs):
 
         default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_default_aoai_connection_name")
         default_serverless_connection = kwargs.pop(
@@ -69,6 +77,14 @@ class TestConnectionsAsync(ConnectionsTestBase):
         )
 
         async with self.get_async_client(**kwargs) as project_client:
+
+            assert await project_client.connections.get_default(
+                connection_type="Some unrecognized type", with_credentials=False
+            ) == None
+
+            assert await project_client.connections.get_default(
+                connection_type="Some unrecognized type", with_credentials=True
+            ) == None
 
             connection = await project_client.connections.get_default(
                 connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=False
