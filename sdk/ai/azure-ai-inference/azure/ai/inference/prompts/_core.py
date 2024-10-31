@@ -5,24 +5,11 @@
 from __future__ import annotations
 
 import os
-import re
-import yaml
-import json
-import abc
 from pathlib import Path
 from ._tracer import Tracer, trace, to_dict
 from pydantic import BaseModel, Field, FilePath
-from typing import AsyncIterator, Iterator, List, Literal, Dict, Callable, Set, TypeVar, Generic
+from typing import AsyncIterator, Iterator, List, Literal, Dict, Set
 from ._utils import load_json, load_json_async
-
-
-T = TypeVar("T")
-
-
-class SimpleModel(BaseModel, Generic[T]):
-    """Simple model for a single item."""
-
-    item: T
 
 
 class ToolCall(BaseModel):

@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from pydantic import BaseModel
-from ._core import Prompty, SimpleModel
+from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 from ._mustache import render
 
@@ -21,10 +20,9 @@ class MustacheRenderer(Invoker):
             cur_prompt = cur_prompt.basePrompty
         self.name = self.prompty.file.name
 
-    def invoke(self, data: BaseModel) -> BaseModel:
-        assert isinstance(data, SimpleModel)
-        generated = render(self.prompty.content, data.item)
-        return SimpleModel[str](item=generated)
+    def invoke(self, data: str) -> str:
+        generated = render(self.prompty.content, data)
+        return generated
     
     async def invoke_async(self, data: str) -> str:
         return self.invoke(data)

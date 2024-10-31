@@ -2,7 +2,7 @@ import traceback
 from pathlib import Path
 from typing import Dict, List, Union
 from ._tracer import trace
-from ._invoker import InvokerFactory, NoOp
+from ._invoker import InvokerFactory
 from ._core import (
     ModelSettings,
     Prompty,

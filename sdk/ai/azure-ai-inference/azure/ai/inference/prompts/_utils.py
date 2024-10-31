@@ -5,7 +5,6 @@
 import re
 import yaml
 import json
-import asyncio
 import aiofiles
 from typing import Dict
 from pathlib import Path

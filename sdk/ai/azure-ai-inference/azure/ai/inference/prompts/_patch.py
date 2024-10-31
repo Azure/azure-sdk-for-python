@@ -11,7 +11,7 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
-from ._core import SimpleModel, Prompty
+from ._core import Prompty
 from ._invoker import InvokerFactory
 from ._mustache import render
 from ._prompty import load
@@ -106,8 +106,8 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            rendered = InvokerFactory.run("renderer", self.prompty, SimpleModel(item=data))
-            parsed = InvokerFactory.run("parser", self.prompty, rendered.item)
+            rendered = InvokerFactory.run("renderer", self.prompty, data)
+            parsed = InvokerFactory.run("parser", self.prompty, rendered)
             return parsed
         elif "prompt_template" in self._config:
             system_prompt = render(self._config["prompt_template"], data)
