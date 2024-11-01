@@ -3,3 +3,5 @@
 ../../core/azure-core-tracing-opentelemetry
 aiohttp
 opentelemetry-sdk
+aiofiles
+dataclasses

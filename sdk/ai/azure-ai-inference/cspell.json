@@ -1,9 +1,11 @@
 {
     "ignoreWords": [
+        "aiofiles",
         "dels",
         "fmatter",
         "fspath",
         "ldel",
+        "okwargs",
         "prompty",
         "rdel"
     ]
