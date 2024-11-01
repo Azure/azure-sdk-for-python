@@ -5,20 +5,28 @@
 
 import json
 import datetime
-from typing import Any, Callable, Set, Dict, List
+from typing import Any, Callable, Set, Dict, List, Optional
 
 # These are the user-defined functions that can be called by the agent.
 
 
-def fetch_current_datetime() -> str:
+def fetch_current_datetime(format: Optional[str] = None) -> str:
     """
-    Get the current time as a JSON string.
+    Get the current time as a JSON string, optionally formatted.
 
+    :param format (Optional[str]): The format in which to return the current time. Defaults to None, which uses a standard format.
     :return: The current time in JSON format.
     :rtype: str
     """
     current_time = datetime.datetime.now()
-    time_json = json.dumps({"current_time": current_time.strftime("%Y-%m-%d %H:%M:%S")})
+    
+    # Use the provided format if available, else use a default format
+    if format:
+        time_format = format
+    else:
+        time_format = "%Y-%m-%d %H:%M:%S"
+
+    time_json = json.dumps({"current_time": current_time.strftime(time_format)})
     return time_json
 
 
@@ -157,33 +165,52 @@ def longest_word_in_sentences(sentences: List[str]) -> str:
     return json.dumps({"longest_words": longest_words})
 
 
-# Example Questions for Each Function
+def process_records(records: List[Dict[str, int]]) -> str:
+    """
+    Process a list of records, where each record is a dictionary with string keys and integer values.
+
+    :param records: A list containing dictionaries that map strings to integers.
+    :return: A list of sums of the integer values in each record.
+    """
+    sums = []
+    for record in records:
+        # Sum up all the values in each dictionary and append the result to the sums list
+        total = sum(record.values())
+        sums.append(total)
+    return json.dumps({"sums": sums})
+
+
+# Example User Input for Each Function
 # 1. Fetch Current DateTime
-#    Question: "What is the current date and time?"
+#    User Input: "What is the current date and time?"
+#    User Input: "What is the current date and time in '%Y-%m-%d %H:%M:%S' format?"
 
 # 2. Fetch Weather
-#    Question: "Can you provide the weather information for New York?"
+#    User Input: "Can you provide the weather information for New York?"
 
 # 3. Send Email
-#    Question: "Send an email to john.doe@example.com with the subject 'Meeting Reminder' and body 'Don't forget our meeting at 3 PM.'"
+#    User Input: "Send an email to john.doe@example.com with the subject 'Meeting Reminder' and body 'Don't forget our meeting at 3 PM.'"
 
 # 4. Calculate Sum
-#    Question: "What is the sum of 45 and 55?"
+#    User Input: "What is the sum of 45 and 55?"
 
 # 5. Convert Temperature
-#    Question: "Convert 25 degrees Celsius to Fahrenheit."
+#    User Input: "Convert 25 degrees Celsius to Fahrenheit."
 
 # 6. Toggle Flag
-#    Question: "Toggle the flag True."
+#    User Input: "Toggle the flag True."
 
 # 7. Merge Dictionaries
-#    Question: "Merge these two dictionaries: {'name': 'Alice'} and {'age': 30}."
+#    User Input: "Merge these two dictionaries: {'name': 'Alice'} and {'age': 30}."
 
 # 8. Get User Info
-#    Question: "Retrieve user information for user ID 1."
+#    User Input: "Retrieve user information for user ID 1."
 
 # 9. Longest Word in Sentences
-#    Question: "Find the longest word in each of these sentences: ['The quick brown fox jumps over the lazy dog', 'Python is an amazing programming language', 'Azure AI capabilities are impressive']."
+#    User Input: "Find the longest word in each of these sentences: ['The quick brown fox jumps over the lazy dog', 'Python is an amazing programming language', 'Azure AI capabilities are impressive']."
+
+# 10. Process Records
+#     User Input: "Process the following records: [{'a': 10, 'b': 20}, {'x': 5, 'y': 15, 'z': 25}, {'m': 30}]."
 
 # Statically defined user functions for fast reference
 user_functions: Set[Callable[..., Any]] = {
@@ -196,4 +223,5 @@ user_functions: Set[Callable[..., Any]] = {
     merge_dicts,
     get_user_info,
     longest_word_in_sentences,
+    process_records,
 }

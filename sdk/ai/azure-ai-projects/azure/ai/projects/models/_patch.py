@@ -60,6 +60,7 @@ from typing import (
     Set,
     get_origin,
     get_args,
+    Union,
 )
 
 logger = logging.getLogger(__name__)
@@ -237,18 +238,13 @@ type_map = {
     "int": "integer",
     "float": "number",
     "bool": "boolean",
-    "bytes": "string",  # Typically encoded as base64-encoded strings in JSON
     "NoneType": "null",
-    "datetime": "string",  # Use format "date-time"
-    "date": "string",  # Use format "date"
-    "UUID": "string",  # Use format "uuid"
     "list": "array",
     "dict": "object",
 }
 
 
 def _map_type(annotation) -> Dict[str, Any]:
-
     if annotation == inspect.Parameter.empty:
         return {"type": "string"}  # Default type if annotation is missing
 
@@ -259,16 +255,41 @@ def _map_type(annotation) -> Dict[str, Any]:
         item_type = args[0] if args else str
         return {
             "type": "array",
-            "items": {"type": type_map.get(item_type.__name__, "string")}
+            "items": _map_type(item_type)
         }
     elif origin in {dict, Dict}:
         return {"type": "object"}
-    elif hasattr(annotation, "__name__"):
-        return {"type": type_map.get(annotation.__name__, "string")}
+    elif origin is Union:
+        args = get_args(annotation)
+        # If Union contains None, it is an optional parameter
+        if type(None) in args:
+            # If Union contains only one non-None type, it is a nullable parameter
+            non_none_args = [arg for arg in args if arg is not type(None)]
+            if len(non_none_args) == 1:
+                schema = _map_type(non_none_args[0])
+                if "type" in schema:
+                    if isinstance(schema["type"], str):
+                        schema["type"] = [schema["type"], "null"]
+                    elif "null" not in schema["type"]:
+                        schema["type"].append("null")
+                else:
+                    schema["type"] = ["null"]
+                return schema
+        # If Union contains multiple types, it is a oneOf parameter
+        return {"oneOf": [_map_type(arg) for arg in args]}
     elif isinstance(annotation, type):
-        return {"type": type_map.get(annotation.__name__, "string")}
+        schema_type = type_map.get(annotation.__name__, "string")
+        return {"type": schema_type}
 
     return {"type": "string"}  # Fallback to "string" if type is unrecognized
+
+
+def is_optional(annotation) -> bool:
+    origin = get_origin(annotation)
+    if origin is Union:
+        args = get_args(annotation)
+        return type(None) in args
+    return False
 
 
 class Tool(ABC):
@@ -297,7 +318,8 @@ class Tool(ABC):
         :return: The output of the tool operations.
         """
         pass
-    
+
+
 class BaseFunctionTool(Tool):
     """
     A tool that executes user-defined functions.
@@ -349,6 +371,7 @@ class BaseFunctionTool(Tool):
                     param_descs[param_name] = param_desc.strip()
 
             properties = {}
+            required = []
             for param_name, param in params.items():
                 param_type_info = _map_type(param.annotation)
                 param_description = param_descs.get(param_name, "No description")
@@ -358,13 +381,17 @@ class BaseFunctionTool(Tool):
                     "description": param_description
                 }
 
+                # If the parameter has no default value and is not optional, add it to the required list
+                if param.default is inspect.Parameter.empty and not is_optional(param.annotation):
+                    required.append(param_name)
+
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
                 parameters={
                     "type": "object",
                     "properties": properties,
-                    "required": list(params.keys())
+                    "required": required
                 },
             )
             tool_def = FunctionToolDefinition(function=function_def)
@@ -425,7 +452,6 @@ class FunctionTool(BaseFunctionTool):
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction to the function call
             return json.dumps({"error": error_message})
-
 
 
 class AsyncFunctionTool(BaseFunctionTool):
