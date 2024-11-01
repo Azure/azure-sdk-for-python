@@ -7,10 +7,9 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 from typing_extensions import Self
 
-from azure.core import AzureClouds
 from azure.core.settings import settings
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
