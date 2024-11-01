@@ -165,6 +165,21 @@ def longest_word_in_sentences(sentences: List[str]) -> str:
     return json.dumps({"longest_words": longest_words})
 
 
+def process_records(records: List[Dict[str, int]]) -> str:
+    """
+    Process a list of records, where each record is a dictionary with string keys and integer values.
+
+    :param records: A list containing dictionaries that map strings to integers.
+    :return: A list of sums of the integer values in each record.
+    """
+    sums = []
+    for record in records:
+        # Sum up all the values in each dictionary and append the result to the sums list
+        total = sum(record.values())
+        sums.append(total)
+    return json.dumps({"sums": sums})
+
+
 # Example User Input for Each Function
 # 1. Fetch Current DateTime
 #    User Input: "What is the current date and time?"
@@ -194,6 +209,9 @@ def longest_word_in_sentences(sentences: List[str]) -> str:
 # 9. Longest Word in Sentences
 #    User Input: "Find the longest word in each of these sentences: ['The quick brown fox jumps over the lazy dog', 'Python is an amazing programming language', 'Azure AI capabilities are impressive']."
 
+# 10. Process Records
+#     User Input: "Process the following records: [{'a': 10, 'b': 20}, {'x': 5, 'y': 15, 'z': 25}, {'m': 30}]."
+
 # Statically defined user functions for fast reference
 user_functions: Set[Callable[..., Any]] = {
     fetch_current_datetime,
@@ -205,4 +223,5 @@ user_functions: Set[Callable[..., Any]] = {
     merge_dicts,
     get_user_info,
     longest_word_in_sentences,
+    process_records,
 }
