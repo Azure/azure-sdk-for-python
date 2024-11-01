@@ -19,7 +19,7 @@ import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 from azure.identity import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 

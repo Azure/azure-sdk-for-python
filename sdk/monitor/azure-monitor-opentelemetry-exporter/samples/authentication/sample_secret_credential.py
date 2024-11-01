@@ -7,6 +7,7 @@ tracked via spans and telemetry is exported to application insights with the Azu
 """
 # mypy: disable-error-code="attr-defined"
 import os
+
 # You will need to install azure-identity
 from azure.identity import ClientSecretCredential
 from opentelemetry import trace
@@ -22,8 +23,7 @@ credential = ClientSecretCredential(
     client_secret="<client_secret>",
 )
 exporter = AzureMonitorTraceExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"],
-    credential=credential
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"], credential=credential
 )
 
 trace.set_tracer_provider(TracerProvider())

@@ -89,12 +89,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
         range_get_content_crc64: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        # pylint: disable=line-too-long
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
@@ -123,6 +125,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          service returns the CRC64 hash for the range, as long as the range is less than or equal to 4
          MB in size. Default value is None.
         :type range_get_content_crc64: bool
+        :param structured_body_type: Specifies the response content should be returned as a structured
+         message and specifies the message schema version and properties. Default value is None.
+        :type structured_body_type: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -137,7 +142,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -181,6 +186,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             range_get_content_md5=range_get_content_md5,
             range_get_content_crc64=range_get_content_crc64,
+            structured_body_type=structured_body_type,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,
@@ -292,6 +298,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "str", response.headers.get("x-ms-immutability-policy-mode")
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
@@ -374,6 +386,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "str", response.headers.get("x-ms-immutability-policy-mode")
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -394,6 +412,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -426,7 +445,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -597,6 +616,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
         permanently removed from the storage account. If the storage account's soft delete feature is
         enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
@@ -646,7 +666,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -721,6 +741,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def undelete(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Undelete a blob that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -736,7 +757,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -793,6 +814,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         expires_on: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time. Known values are:
@@ -813,7 +835,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -875,6 +897,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set HTTP Headers operation sets system properties on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -896,7 +919,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -996,9 +1019,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1016,13 +1042,23 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`. Default value is None.
+        :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime value that, when present,
+         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
+        :type version_id: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1047,6 +1083,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_unmodified_since=_if_unmodified_since,
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
+            snapshot=snapshot,
+            version_id=version_id,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -1085,8 +1123,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def delete_immutability_policy(  # pylint: disable=inconsistent-return-statements
-        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1098,11 +1142,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`. Default value is None.
+        :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime value that, when present,
+         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
+        :type version_id: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1120,6 +1174,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            snapshot=snapshot,
+            version_id=version_id,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -1152,8 +1208,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def set_legal_hold(  # pylint: disable=inconsistent-return-statements
-        self, legal_hold: bool, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        legal_hold: bool,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         :param legal_hold: Specified if a legal hold should be set on the blob. Required.
@@ -1167,11 +1230,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`. Default value is None.
+        :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime value that, when present,
+         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
+        :type version_id: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1190,6 +1263,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            snapshot=snapshot,
+            version_id=version_id,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -1233,6 +1308,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
@@ -1265,7 +1341,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1371,6 +1447,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1397,7 +1474,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1478,6 +1555,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1498,7 +1576,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1577,6 +1655,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1597,7 +1676,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1678,6 +1757,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1702,7 +1782,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1783,6 +1863,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1809,7 +1890,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1892,6 +1973,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1923,7 +2005,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2033,6 +2115,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
@@ -2089,7 +2172,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2207,6 +2290,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
 
@@ -2270,7 +2354,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2389,6 +2473,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
 
@@ -2410,7 +2495,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2481,6 +2566,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
         premium storage account and on a block blob in a blob storage account (locally redundant
         storage only). A premium page blob's tier determines the allowed size, IOPS, and bandwidth of
@@ -2521,7 +2607,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2585,6 +2671,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns the sku name and account kind.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2600,7 +2687,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2665,6 +2752,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         query_request: Optional[_models.QueryRequest] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        # pylint: disable=line-too-long
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
@@ -2695,7 +2783,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2914,6 +3002,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlobTags:
+        # pylint: disable=line-too-long
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2943,7 +3032,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3019,6 +3108,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         tags: Optional[_models.BlobTags] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -3050,7 +3140,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

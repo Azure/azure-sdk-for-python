@@ -38,6 +38,7 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
     try:
         # pylint:disable=unused-import
         from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
@@ -112,9 +113,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -129,13 +128,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
         else:
             if queue_name and topic_name:
-                raise ValueError(
-                    "Queue/Topic name can not be specified simultaneously."
-                )
+                raise ValueError("Queue/Topic name can not be specified simultaneously.")
             if not (queue_name or topic_name):
-                raise ValueError(
-                    "Queue/Topic name is missing. Please specify queue_name/topic_name."
-                )
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -154,16 +149,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def __aenter__(self) -> "ServiceBusSender":
         if self._shutdown.is_set():
             raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
+                "The handler has already been shutdown. Please use ServiceBusClient to create a new instance."
             )
         await self._open_with_retry()
         return self
 
     @classmethod
-    def _from_connection_string(
-        cls, conn_str: str, **kwargs: Any
-    ) -> "ServiceBusSender":
+    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
         :param str conn_str: The connection string of a Service Bus.
@@ -196,9 +188,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         return cls(**constructor_args)
 
-    def _create_handler(
-        self, auth: Union["uamqp_JWTTokenAuthAsync", "pyamqp_JWTTokenAuthAsync"]
-    ) -> None:
+    def _create_handler(self, auth: Union["uamqp_JWTTokenAuthAsync", "pyamqp_JWTTokenAuthAsync"]) -> None:
 
         self._handler = self._amqp_transport.create_send_client_async(
             config=self._config,
@@ -223,8 +213,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 await asyncio.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
-                self._amqp_transport.get_remote_max_message_size(self._handler)
-                or MAX_MESSAGE_LENGTH_BYTES
+                self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
         except:
             await self._close_handler()
@@ -234,7 +223,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Optional[Exception] = None
+        last_exception: Optional[Exception] = None,
     ) -> None:
         await self._amqp_transport.send_messages_async(
             self, message, _LOGGER, timeout=timeout, last_exception=last_exception
@@ -287,19 +276,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         }
         if isinstance(obj_messages, ServiceBusMessage):
             request_body, trace_links = self._build_schedule_request(
-                schedule_time_utc,
-                self._amqp_transport,
-                tracing_attributes,
-                obj_messages
+                schedule_time_utc, self._amqp_transport, tracing_attributes, obj_messages
             )
         else:
             if len(obj_messages) == 0:
                 return []  # No-op on empty list.
             request_body, trace_links = self._build_schedule_request(
-                schedule_time_utc,
-                self._amqp_transport,
-                tracing_attributes,
-                *obj_messages
+                schedule_time_utc, self._amqp_transport, tracing_attributes, *obj_messages
             )
         with send_trace_context_manager(self, span_name=SPAN_NAME_SCHEDULE, links=trace_links):
             return await self._mgmt_request_response_with_retry(
@@ -402,13 +385,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         try:  # Short circuit noop if an empty list or batch is provided.
             if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
                 return
-        except TypeError:   # continue if ServiceBusMessage
+        except TypeError:  # continue if ServiceBusMessage
             pass
 
         obj_message: Union[ServiceBusMessage, ServiceBusMessageBatch]
         if isinstance(message, ServiceBusMessageBatch):
             # If AmqpTransports are not the same, create batch with correct BatchMessage.
-            if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
+            if self._amqp_transport is not message._amqp_transport:  # pylint: disable=protected-access
                 # pylint: disable=protected-access
                 batch = await self.create_message_batch()
                 batch._from_list(message._messages)  # type: ignore
@@ -431,7 +414,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     additional_attributes={
                         TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
                         TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
-                    }
+                    },
                 )
 
         trace_links = []
@@ -452,9 +435,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 require_last_exception=True,
             )
 
-    async def create_message_batch(
-        self, max_size_in_bytes: Optional[int] = None
-    ) -> ServiceBusMessageBatch:
+    async def create_message_batch(self, max_size_in_bytes: Optional[int] = None) -> ServiceBusMessageBatch:
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
         max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
@@ -480,16 +461,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                "acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             amqp_transport=self._amqp_transport,
-            tracing_attributes = {
+            tracing_attributes={
                 TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
                 TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
-            }
+            },
         )
 
     @property

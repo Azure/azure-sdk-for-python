@@ -440,7 +440,7 @@ class _RefreshTimer:
             calculated_milliseconds = max_backoff_milliseconds
 
         return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
 
 
@@ -451,7 +451,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         endpoint = kwargs.pop("endpoint", None)
         self._origin_endpoint = endpoint
 

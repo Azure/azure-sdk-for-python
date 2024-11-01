@@ -34,9 +34,7 @@ counter = meter.create_counter("counter")
 counter.add(1)
 
 # Async Counter
-observable_counter = meter.create_observable_counter(
-    "observable_counter", [observable_counter_func]
-)
+observable_counter = meter.create_observable_counter("observable_counter", [observable_counter_func])
 
 # UpDownCounter
 updown_counter = meter.create_up_down_counter("updown_counter")

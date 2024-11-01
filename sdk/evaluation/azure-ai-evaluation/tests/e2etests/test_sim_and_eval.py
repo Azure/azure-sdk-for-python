@@ -1,23 +1,19 @@
+import asyncio
 import json
 import os
 import pathlib
 import time
-from typing import Dict, List, Any
-import asyncio
+from typing import Any, Dict, List
+
 import pandas as pd
 import pytest
 import requests
 from ci_tools.variables import in_ci
 from devtools_testutils import is_live
-from azure.identity import DefaultAzureCredential
 
-from azure.ai.evaluation import (
-    evaluate,
-    ProtectedMaterialEvaluator,
-    ViolenceEvaluator,
-)
-
+from azure.ai.evaluation import ProtectedMaterialEvaluator, ViolenceEvaluator, evaluate
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
@@ -95,7 +91,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        violence_eval = ViolenceEvaluator(project_scope, credential=DefaultAzureCredential())
+        violence_eval = ViolenceEvaluator(DefaultAzureCredential(), project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
