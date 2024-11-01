@@ -20,19 +20,19 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
+
 def sample_send_request():
     # [START send_request]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest
     from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    client = DocumentIntelligenceAdministrationClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
-    
+    client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     with client:
         # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
         # Now let's use the `send_request` method to make a resource details fetching request.

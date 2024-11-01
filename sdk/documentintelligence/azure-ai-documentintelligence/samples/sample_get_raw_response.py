@@ -20,17 +20,17 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
+
 def sample_raw_response_hook():
     # [START raw_response_hook]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    client = DocumentIntelligenceAdministrationClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     responses = []
 

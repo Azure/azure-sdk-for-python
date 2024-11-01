@@ -30,9 +30,7 @@ async def sample_raw_response_hook():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    client = DocumentIntelligenceAdministrationClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     responses = []
 

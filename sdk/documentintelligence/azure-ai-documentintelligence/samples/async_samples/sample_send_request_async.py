@@ -31,10 +31,8 @@ async def sample_send_request():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    client = DocumentIntelligenceAdministrationClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
-    
+    client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     async with client:
         # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
         # Now let's use the `send_request` method to make a resource details fetching request.
