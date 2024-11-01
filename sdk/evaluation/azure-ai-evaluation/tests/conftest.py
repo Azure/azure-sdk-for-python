@@ -147,7 +147,7 @@ def add_sanitizers(
         add_general_regex_sanitizer(
             value="root_run_id",
             regex=r'"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_[^"]+"',
-            replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"'
+            replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
     azure_workspace_triad_sanitizer()
