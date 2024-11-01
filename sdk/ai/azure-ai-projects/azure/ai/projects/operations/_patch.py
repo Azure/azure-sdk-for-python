@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -401,6 +402,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
     # Silently try to load a set of relevant Instrumentors
     try:
         from azure.core.settings import settings
+
         settings.tracing_implementation = "opentelemetry"
         _ = settings.tracing_implementation()
     except ModuleNotFoundError as _:
@@ -1001,10 +1003,18 @@ class AgentsOperations(AgentsOperationsGenerated):
         if tools is None:
             tools = []
 
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     def _get_toolset(self) -> Optional[_models.ToolSet]:
         """

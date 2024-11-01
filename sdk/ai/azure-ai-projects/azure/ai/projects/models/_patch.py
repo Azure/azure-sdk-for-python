@@ -2,6 +2,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -278,10 +279,7 @@ def _map_type(annotation) -> Dict[str, Any]:
     if origin in {list, List}:
         args = get_args(annotation)
         item_type = args[0] if args else str
-        return {
-            "type": "array",
-            "items": _map_type(item_type)
-        }
+        return {"type": "array", "items": _map_type(item_type)}
     elif origin in {dict, Dict}:
         return {"type": "object"}
     elif origin is Union:
@@ -375,7 +373,7 @@ class BaseFunctionTool(Tool):
             \s*:\s*                                # Colon ':' surrounded by optional whitespace
             (?P<description>.+)                    # Description (rest of the line)
             """,
-            re.VERBOSE
+            re.VERBOSE,
         )
 
         for name, func in functions.items():
@@ -390,8 +388,8 @@ class BaseFunctionTool(Tool):
                 match = param_pattern.match(line)
                 if match:
                     groups = match.groupdict()
-                    param_name = groups.get('name')
-                    param_desc = groups.get('description')
+                    param_name = groups.get("name")
+                    param_desc = groups.get("description")
                     param_desc = param_desc.strip() if param_desc else "No description"
                     param_descs[param_name] = param_desc.strip()
 
@@ -401,10 +399,7 @@ class BaseFunctionTool(Tool):
                 param_type_info = _map_type(param.annotation)
                 param_description = param_descs.get(param_name, "No description")
 
-                properties[param_name] = {
-                    **param_type_info,
-                    "description": param_description
-                }
+                properties[param_name] = {**param_type_info, "description": param_description}
 
                 # If the parameter has no default value and is not optional, add it to the required list
                 if param.default is inspect.Parameter.empty and not is_optional(param.annotation):
@@ -413,11 +408,7 @@ class BaseFunctionTool(Tool):
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={
-                    "type": "object",
-                    "properties": properties,
-                    "required": required
-                },
+                parameters={"type": "object", "properties": properties, "required": required},
             )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
