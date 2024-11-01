@@ -54,7 +54,7 @@ def sample_chat_completions_from_input_prompty():
         { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
         { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
     ]
-    messages = prompt_template.render(input=input, rules=rules, chat_history=chat_history)
+    messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
