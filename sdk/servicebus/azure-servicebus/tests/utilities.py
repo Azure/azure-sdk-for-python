@@ -15,6 +15,7 @@ try:
     uamqp_available = True
 except (ModuleNotFoundError, ImportError):
     uamqp_available = False
+from azure.servicebus import TransportType
 from azure.servicebus._common.utils import utc_now
 
 # temporary - disable uamqp if China b/c of 8+ hr runtime
@@ -76,6 +77,10 @@ def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=test_pyamqp):
         uamqp_transport_ids.append("pyamqp")
     return uamqp_transport_params, uamqp_transport_ids
 
+def socket_transport():
+    socket_transport_params = [TransportType.Amqp, TransportType.AmqpOverWebsocket]
+    socket_transport_ids = ["amqp", "ws"]
+    return socket_transport_params, socket_transport_ids
 
 class ArgPasser:
     def __call__(self, fn):
@@ -89,5 +94,20 @@ class ArgPasserAsync:
     def __call__(self, fn):
         async def _preparer(test_class, uamqp_transport, **kwargs):
             await fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
+
+        return _preparer
+
+class SocketArgPasser:
+    def __call__(self, fn):
+        def _preparer(test_class, uamqp_transport, socket_transport, **kwargs):
+            fn(test_class, uamqp_transport=uamqp_transport, socket_transport=socket_transport, **kwargs)
+
+        return _preparer
+
+
+class SocketArgPasserAsync:
+    def __call__(self, fn):
+        async def _preparer(test_class, uamqp_transport, socket_transport, **kwargs):
+            await fn(test_class, uamqp_transport=uamqp_transport, socket_transport=socket_transport, **kwargs)
 
         return _preparer
