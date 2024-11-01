@@ -20,13 +20,15 @@ import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.identity.aio import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 
 async def create_queue(servicebus_mgmt_client):
     print("-- Create Queue")
-    await servicebus_mgmt_client.create_queue(QUEUE_NAME, max_delivery_count=10, dead_lettering_on_message_expiration=True)
+    await servicebus_mgmt_client.create_queue(
+        QUEUE_NAME, max_delivery_count=10, dead_lettering_on_message_expiration=True
+    )
     print("Queue {} is created.".format(QUEUE_NAME))
     print("")
 
@@ -87,5 +89,6 @@ async def main():
         await get_and_update_queue(servicebus_mgmt_client)
         await get_queue_runtime_properties(servicebus_mgmt_client)
         await delete_queue(servicebus_mgmt_client)
+
 
 asyncio.run(main())
