@@ -284,12 +284,13 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["self_harm_score"][1] > 0
         assert all(score2["evaluation_per_turn"]["self_harm_reason"]), "self_harm_reason must not be None or empty."
 
-        # Test eval_last_turn behavior
-        eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
-        score3 = eval_fn_last(conversation=simple_conversation)
-        assert score3["self_harm"] == "Very low"
-        assert score3["self_harm_score"] >= 1
-        assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
+        # removed eval_last_turn from evaluators since behavior is incorrect. We can re-enable when
+        # it's added bakc to evaluators
+        # eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
+        # score3 = eval_fn_last(conversation=simple_conversation)
+        # assert score3["self_harm"] == "Very low"
+        # assert score3["self_harm_score"] >= 1
+        # assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
 
     def test_content_safety_evaluator_hate_unfairness(self, project_scope, azure_cred, simple_conversation):
         eval_fn = HateUnfairnessEvaluator(azure_cred, project_scope)
