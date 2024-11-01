@@ -353,15 +353,17 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 
 # Internal helper function to enable tracing, used by both sync and async clients
-def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
-    """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) -> None:
+    """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
     :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-        endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
-    :paramtype destination: Union[TextIOWrapper, str]
+        OpenTelemetry protocol (OTLP) endpoint.
+        If not provided, this method enables instrumentation, but does not configure OpenTelemetry
+        SDK to export traces.
+    :paramtype destination: Union[TextIOWrapper, str, None]
     """
     if isinstance(destination, str):
-        # `destination`` is the OTLP collector URL
+        # `destination` is the OTLP endpoint
         # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
         try:
             from opentelemetry import trace
@@ -369,17 +371,14 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
             from opentelemetry.sdk.trace.export import SimpleSpanProcessor
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError(
-                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+                "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
             )
         try:
-            from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError(
-                "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-http'"
+                "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
             )
-        from azure.core.settings import settings
-
-        settings.tracing_implementation = "opentelemetry"
         trace.set_tracer_provider(TracerProvider())
         trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
 
@@ -392,19 +391,23 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
                 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
-                    "OpenTelemetry package is not installed. Please install it using 'pip install opentelemetry-sdk'"
+                    "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
                 )
-            from azure.core.settings import settings
-
-            settings.tracing_implementation = "opentelemetry"
             trace.set_tracer_provider(TracerProvider())
             trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
         else:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIOWrapper`")
-    else:
-        raise ValueError("Destination must be a string or a `TextIOWrapper` object")
 
     # Silently try to load a set of relevant Instrumentors
+    try:
+        from azure.core.settings import settings
+        settings.tracing_implementation = "opentelemetry"
+        _ = settings.tracing_implementation()
+    except ModuleNotFoundError as _:
+        logger.warning(
+            "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
+        )
+
     try:
         from azure.ai.inference.tracing import AIInferenceInstrumentor
 
@@ -417,7 +420,18 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
         )
 
     try:
-        from opentelemetry.instrumentation.openai import OpenAIInstrumentor
+        from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
+
+        instrumentor = AIAgentsInstrumentor()
+        if not instrumentor.is_instrumented():
+            instrumentor.instrument()
+    except Exception as exc:
+        logger.warning(
+            "Could not call `AIAgentsInstrumentor().instrument()` " + str(exc)
+        )
+
+    try:
+        from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError as _:
@@ -472,12 +486,29 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    def enable(self, *, destination: Union[TextIOWrapper, str], **kwargs) -> None:
-        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+    def enable(self, *, destination: Union[TextIOWrapper, str, None] = None, **kwargs) -> None:
+        """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
 
-        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-         endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
-        :paramtype destination: Union[TextIOWrapper, str]
+        Following instrumentations are enabled (when corresponding packages are installed):
+
+        - Azure AI Inference (`azure-ai-inference`)
+        - Azure AI Projects (`azure-ai-projects`)
+        - OpenAI (`opentelemetry-instrumentation-openai-v2`)
+        - Langchain (`opentelemetry-instrumentation-langchain`)
+
+        The recording of prompt and completion messages is disabled by default. To enable it, set the
+        `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable to `true`.
+
+        When destination is provided, the method configures OpenTelemetry SDK to export traces to
+        stdout or OTLP (OpenTelemetry protocol) gRPC endpoint. It's recommended for local
+        development only. For production use, make sure to configure OpenTelemetry SDK directly.
+
+        :keyword destination: Recommended for local testing only. Set it to `sys.stdout` for
+            tracing to console output, or a string holding the OpenTelemetry protocol (OTLP)
+            endpoint such as "http://localhost:4317.
+            If not provided, the method enables instrumentations, but does not configure OpenTelemetry
+            SDK to export traces.
+        :paramtype destination: Union[TextIOWrapper, str, None]
         """
         _enable_telemetry(destination=destination, **kwargs)
 
@@ -964,26 +995,16 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-    def _validate_tools_and_tool_resources(
-        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
-    ):
+    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
 
-        if tool_resources.file_search is not None and not any(
-            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
-        ):
-            raise ValueError(
-                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
-            )
-        if tool_resources.code_interpreter is not None and not any(
-            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
-        ):
-            raise ValueError(
-                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
-            )
+        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
+        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
+            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
 
     def _get_toolset(self) -> Optional[_models.ToolSet]:
         """

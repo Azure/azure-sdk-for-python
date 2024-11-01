@@ -15,7 +15,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
     @recorded_by_proxy_async
     async def test_connections_get_async(self, **kwargs):
         aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        serverless_connection = kwargs.pop("azure_ai_projects_connections_tests_serverless_connection_name")
+        aiservices_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
 
         async with self.get_async_client(**kwargs) as project_client:
 
@@ -48,25 +48,25 @@ class TestConnectionsAsync(ConnectionsTestBase):
             )
 
             connection = await project_client.connections.get(
-                connection_name=serverless_connection, with_credentials=False
+                connection_name=aiservices_connection, with_credentials=False
             )
             print(connection)
             ConnectionsTestBase.validate_connection(
                 connection,
                 False,
-                expected_connection_name=serverless_connection,
-                expected_connection_type=ConnectionType.SERVERLESS,
+                expected_connection_name=aiservices_connection,
+                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
 
             connection = await project_client.connections.get(
-                connection_name=serverless_connection, with_credentials=True
+                connection_name=aiservices_connection, with_credentials=True
             )
             print(connection)
             ConnectionsTestBase.validate_connection(
                 connection,
                 True,
-                expected_connection_name=serverless_connection,
-                expected_connection_type=ConnectionType.SERVERLESS,
+                expected_connection_name=aiservices_connection,
+                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
 
     @servicePreparerConnectionsTests()
@@ -75,7 +75,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
         default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_default_aoai_connection_name")
         default_serverless_connection = kwargs.pop(
-            "azure_ai_projects_connections_tests_default_serverless_connection_name"
+            "azure_ai_projects_connections_tests_default_aiservices_connection_name"
         )
 
         async with self.get_async_client(**kwargs) as project_client:
@@ -117,25 +117,25 @@ class TestConnectionsAsync(ConnectionsTestBase):
             )
 
             connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=False
+                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=False
             )
             print(connection)
             ConnectionsTestBase.validate_connection(
                 connection,
                 False,
                 expected_connection_name=default_serverless_connection,
-                expected_connection_type=ConnectionType.SERVERLESS,
+                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
 
             connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=True
+                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True
             )
             print(connection)
             ConnectionsTestBase.validate_connection(
                 connection,
                 True,
                 expected_connection_name=default_serverless_connection,
-                expected_connection_type=ConnectionType.SERVERLESS,
+                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
 
     @servicePreparerConnectionsTests()
@@ -160,7 +160,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
                 ConnectionsTestBase.validate_connection(connection, False)
 
             connections = await project_client.connections.list(
-                connection_type=ConnectionType.SERVERLESS,
+                connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
             count_serverless = len(connections)
             print("====> Listing of all Serverless connections (found {count_serverless}):")
