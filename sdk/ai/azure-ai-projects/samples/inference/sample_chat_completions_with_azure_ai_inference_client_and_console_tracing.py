@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     ChatCompletionsClient from the azure.ai.inference package. The client
     is already instrumented with console OpenTelemetry tracing.
 
@@ -14,7 +14,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-inference azure-identity opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
+    pip install azure-ai-projects azure-ai-inference azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+
+    If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
+    https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
+    install:
+
+    pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
@@ -37,6 +43,8 @@ with AIProjectClient.from_connection_string(
 ) as project_client:
 
     # Enable console tracing
+    # or, if you have local OTLP endpoint running, change it to
+    # project_client.telemetry.enable(destination="http://localhost:4317")
     project_client.telemetry.enable(destination=sys.stdout)
 
     # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
