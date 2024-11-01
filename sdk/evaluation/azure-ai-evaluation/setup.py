@@ -76,6 +76,7 @@ setup(
     extras_require={
         "remote": [
             "promptflow-azure<2.0.0,>=1.15.0",
+            "azure-ai-inference>=1.0.0b4",
         ],
     },
     project_urls={
@@ -85,5 +86,6 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
+        "azure.ai.evaluation.simulator._data_sources": ["*.json"],
     },
 )

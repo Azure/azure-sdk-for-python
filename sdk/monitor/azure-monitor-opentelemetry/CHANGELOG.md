@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable Azure AI Inference instrumentation
+    ([38071](https://github.com/Azure/azure-sdk-for-python/pull/38071))
+
 ### Breaking Changes
 
 ### Bugs Fixed

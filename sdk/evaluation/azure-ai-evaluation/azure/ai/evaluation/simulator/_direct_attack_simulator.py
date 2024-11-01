@@ -190,7 +190,7 @@ class DirectAttackSimulator:
             api_call_retry_sleep_sec=api_call_retry_sleep_sec,
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
-            randomize_order=True,
+            randomize_order=False,
             randomization_seed=randomization_seed,
         )
         jb_sim = AdversarialSimulator(azure_ai_project=cast(dict, self.azure_ai_project), credential=self.credential)
@@ -204,7 +204,7 @@ class DirectAttackSimulator:
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
             _jailbreak_type="upia",
-            randomize_order=True,
+            randomize_order=False,
             randomization_seed=randomization_seed,
         )
         return {"jailbreak": jb_sim_results, "regular": regular_sim_results}

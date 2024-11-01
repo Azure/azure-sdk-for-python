@@ -1,9 +1,20 @@
 import math
-import platform
+import base64
+import os
+import pathlib
 
 import pytest
 from devtools_testutils import is_live
 
+from azure.ai.inference.models import (
+    UserMessage,
+    SystemMessage,
+    AssistantMessage,
+    TextContentItem,
+    ImageContentItem,
+    ImageUrl,
+)
+from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CoherenceEvaluator,
@@ -24,6 +35,14 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     ViolenceEvaluator,
+    RetrievalEvaluator,
+    GroundednessProEvaluator,
+    ContentSafetyMultimodalEvaluator,
+    SexualMultimodalEvaluator,
+    HateUnfairnessMultimodalEvaluator,
+    SelfHarmMultimodalEvaluator,
+    ViolenceMultimodalEvaluator,
+    ProtectedMaterialMultimodalEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -84,19 +103,19 @@ class TestBuiltInEvaluators:
     def test_quality_evaluator_fluency(self, model_config, simple_conversation):
         eval_fn = FluencyEvaluator(model_config)
         score = eval_fn(
-            query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["fluency"] > 1.0
+        assert score["fluency_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["fluency"] > 0
         assert score2["evaluation_per_turn"]["fluency"][0] > 0
         assert score2["evaluation_per_turn"]["fluency"][1] > 0
+        assert score2["evaluation_per_turn"]["fluency_reason"][0]
+        assert score2["evaluation_per_turn"]["fluency_reason"][1]
 
     def test_quality_evaluator_coherence(self, model_config, simple_conversation):
         eval_fn = CoherenceEvaluator(model_config)
@@ -105,15 +124,16 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["coherence"] > 1.0
+        assert score["coherence_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["coherence"] > 0
         assert score2["evaluation_per_turn"]["coherence"][0] > 0
         assert score2["evaluation_per_turn"]["coherence"][1] > 0
+        assert score2["evaluation_per_turn"]["coherence_reason"][0]
+        assert score2["evaluation_per_turn"]["coherence_reason"][1]
 
     def test_quality_evaluator_similarity(self, model_config):
         eval_fn = SimilarityEvaluator(model_config)
@@ -123,7 +143,6 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["similarity"] > 1.0
 
     def test_quality_evaluator_groundedness(self, model_config, simple_conversation):
@@ -133,30 +152,39 @@ class TestBuiltInEvaluators:
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
-        print(f"score: {score}")
         assert score["groundedness"] > 1.0
+        assert score["groundedness_reason"]
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["groundedness"] > 0
         assert score2["evaluation_per_turn"]["groundedness"][0] > 0
         assert score2["evaluation_per_turn"]["groundedness"][1] > 0
+        assert score2["evaluation_per_turn"]["groundedness_reason"][0]
+        assert score2["evaluation_per_turn"]["groundedness_reason"][1]
 
-    def test_quality_evaluator_relevance(self, model_config, simple_conversation):
-        eval_fn = RelevanceEvaluator(model_config)
+    def test_quality_evaluator_groundedness_with_query(self, model_config, simple_conversation):
+        eval_fn = GroundednessEvaluator(model_config)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital.",
         )
         assert score is not None
-        print(f"score: {score}")
+        assert score["groundedness"] > 1.0
+        assert score["groundedness_reason"]
+
+    def test_quality_evaluator_relevance(self, model_config, simple_conversation):
+        eval_fn = RelevanceEvaluator(model_config)
+        score = eval_fn(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+        )
+        assert score is not None
         assert score["relevance"] > 1.0
 
         # Test conversation input
         score2 = eval_fn(conversation=simple_conversation)
-        print(f"score2: {score2}")
         assert score2["relevance"] > 0
         assert score2["evaluation_per_turn"]["relevance"][0] > 0
         assert score2["evaluation_per_turn"]["relevance"][1] > 0
@@ -173,11 +201,24 @@ class TestBuiltInEvaluators:
     def test_quality_evaluator_prompt_based_with_dict_input(self, model_config):
         eval_fn = FluencyEvaluator(model_config)
         score = eval_fn(
-            query={"foo": "1"},
             response={"bar": 2},
         )
         assert score is not None
         assert score["fluency"] > 0.0
+
+    def test_quality_evaluator_retrieval(self, model_config, simple_conversation):
+        eval_fn = RetrievalEvaluator(model_config)
+        score = eval_fn(
+            query="What is the value of 2 + 2?",
+            context="2 + 3 = 5",
+        )
+        assert score is not None
+        assert score["retrieval"] > 0.0
+
+        # Test conversation input
+        score2 = eval_fn(conversation=simple_conversation)
+        assert score2["retrieval"] > 0
+        assert score2["evaluation_per_turn"]["retrieval"][0] > 0
 
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
         eval_fn = ViolenceEvaluator(azure_cred, project_scope)
@@ -199,7 +240,7 @@ class TestBuiltInEvaluators:
         assert score2["violence_score"] > 0
         assert score2["evaluation_per_turn"]["violence_score"][0] == 0
         assert score2["evaluation_per_turn"]["violence_score"][1] > 0
-        assert score2["evaluation_per_turn"]["violence"] == ["Very low", "Medium"]
+        assert score2["evaluation_per_turn"]["violence"] == ["Very low", "High"]
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
@@ -246,8 +287,8 @@ class TestBuiltInEvaluators:
         # Test eval_last_turn behavior
         eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
         score3 = eval_fn_last(conversation=simple_conversation)
-        assert score3["self_harm"] != "Very low"
-        assert score3["self_harm_score"] > 0
+        assert score3["self_harm"] == "Very low"
+        assert score3["self_harm_score"] >= 1
         assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
 
     def test_content_safety_evaluator_hate_unfairness(self, project_scope, azure_cred, simple_conversation):
@@ -292,13 +333,12 @@ class TestBuiltInEvaluators:
                 query="What is the capital of Japan?",
                 response="The capital of Japan is Tokyo.",
             )
-            print(score)
 
         assert "RAI service is not available in this region" in exc_info._excinfo[1].args[0]
 
     @pytest.mark.parametrize("parallel", [False, True])
     def test_composite_evaluator_qa(self, model_config, parallel):
-        qa_eval = QAEvaluator(model_config, parallel=parallel)
+        qa_eval = QAEvaluator(model_config, _parallel=parallel)
         score = qa_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -318,7 +358,7 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize("parallel", [False, True])
     def test_composite_evaluator_qa_with_openai_config(self, non_azure_openai_model_config, parallel):
         # openai_config as in "not azure openai"
-        qa_eval = QAEvaluator(non_azure_openai_model_config, parallel=parallel)
+        qa_eval = QAEvaluator(non_azure_openai_model_config, _parallel=parallel)
         score = qa_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -346,7 +386,7 @@ class TestBuiltInEvaluators:
         assert not math.isnan(score["similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
-        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=False)
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=False)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -521,3 +561,461 @@ class TestBuiltInEvaluators:
         assert convo_result["xpia_label"] == 0.5
         assert convo_result["evaluation_per_turn"]["xpia_label"] == [False, True]
         assert all(convo_result["evaluation_per_turn"]["xpia_reason"]), "xpia_reason must not be None or empty."
+
+    def test_groundedness_pro_evaluator(self, project_scope, azure_cred, simple_conversation):
+        ground_eval = GroundednessProEvaluator(azure_cred, project_scope)
+        result = ground_eval(
+            query="What shape has 4 equilateral sides?",
+            response="Rhombus",
+            context="Rhombus is a shape with 4 equilateral sides.",
+        )
+
+        assert result is not None
+        assert result["groundedness_pro_label"]
+        assert result["groundedness_pro_reason"] is not None, "groundedness_pro_reason must not be None or empty."
+
+        convo_result = ground_eval(conversation=simple_conversation)
+
+        assert convo_result is not None
+        assert convo_result["groundedness_pro_label"] == 1.0
+        assert convo_result["evaluation_per_turn"]["groundedness_pro_label"] == [True, True]
+        assert all(
+            convo_result["evaluation_per_turn"]["groundedness_pro_reason"]
+        ), "groundedness_pro_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred):
+        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only_with_text_content(
+        self, project_scope, azure_cred
+    ):
+        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {"role": "user", "content": "What is in this picture?"},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(self, project_scope, azure_cred):
+        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [{"type": "text", "text": "You are AI assistant who can describe images."}],
+                },
+                {
+                    "role": "user",
+                    "content": [{"type": "text", "text": "Create an picture of astronaut in desert."}],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_json_b64_image(self, project_scope, azure_cred):
+        parent = pathlib.Path(__file__).parent.resolve()
+        path = os.path.join(parent, "data")
+        image_path = os.path.join(path, "image1.jpg")
+
+        with pathlib.Path(image_path).open("rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred):
+        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = Conversation(
+            messages=[
+                SystemMessage(
+                    content=[TextContentItem(text="You are an AI assitance who can describe images.")],
+                ),
+                UserMessage(
+                    content=[
+                        TextContentItem(text="What is in this image?"),
+                        ImageContentItem(
+                            image_url=ImageUrl(
+                                url="https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
+                            ),
+                        ),
+                    ],
+                ),
+                AssistantMessage(
+                    content=[
+                        TextContentItem(
+                            text="The image shows a man with short brown hair smiling, wearing a dark-colored shirt."
+                        )
+                    ],
+                ),
+            ]
+        )
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_violence_json(self, project_scope, azure_cred):
+        evaluator = ViolenceMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+
+    def test_multimodal_evaluator_sexual_json(self, project_scope, azure_cred):
+        evaluator = SexualMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+
+    def test_multimodal_evaluator_hate_unfairness_json(self, project_scope, azure_cred):
+        evaluator = HateUnfairnessMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+
+    def test_multimodal_evaluator_self_harm_json(self, project_scope, azure_cred):
+        evaluator = SelfHarmMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+
+    def test_multimodal_evaluator_protected_material_json(self, project_scope, azure_cred):
+        evaluator = ProtectedMaterialMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+
+        score = evaluator(conversation=conversation)
+
+        assert score is not None
+        # assert not result["artwork_label"]
+        # assert "artwork was not found" in result["artwork_reason"]
+        # assert not result["protected_material_label"]
+        # assert "material was not found" in result["protected_material_reason"]
+        # assert not result["protected_material_label"]
+        # assert "material was not found" in result["protected_material_reason"]

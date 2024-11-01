@@ -15,7 +15,7 @@ param testApplicationOid string
 param acrName string = 'acr${uniqueString(resourceGroup().id)}'
 
 @description('The latest AKS version available in the region.')
-param latestAksVersion string = '1.27.7'
+param latestAksVersion string = '1.29.8'
 
 @description('The SSH public key to use for the Linux VMs.')
 param sshPubKey string = ''

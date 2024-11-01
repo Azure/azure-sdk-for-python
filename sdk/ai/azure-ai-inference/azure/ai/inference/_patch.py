@@ -261,7 +261,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         super().__init__(endpoint, credential, **kwargs)
 
-
     @overload
     def complete(
         self,

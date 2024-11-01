@@ -3,8 +3,10 @@
 ## 1.22.0 (unreleased)
 
 ### Features Added
-
+  - Update TLS version from 1.0 to 1.2
+  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.distillation`
 ### Bugs Fixed
+  - Fix send email notification issue in model monitoring
 
 
 ## 1.21.1 (2024-10-21)

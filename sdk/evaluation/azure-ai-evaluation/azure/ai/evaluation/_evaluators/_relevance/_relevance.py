@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, Union, List
 
-from typing_extensions import override
+from typing_extensions import overload, override
 
+from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
@@ -25,9 +26,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         eval_fn = RelevanceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
+            response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -36,6 +35,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         {
             "relevance": 3.0,
             "gpt_relevance": 3.0,
+            "relevance_reason": "The response is relevant to the query because it provides the correct answer.",
         }
 
     Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
@@ -53,31 +53,58 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
-    @override
+    @overload
     def __call__(
         self,
         *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
-        conversation=None,
-        **kwargs,
-    ):
-        """Evaluate relevance. Accepts either a response and context a single evaluation,
-        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
-        the evaluator will aggregate the results of each turn.
+        query: str,
+        response: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate groundedness for given input of query, response, context
 
         :keyword query: The query to be evaluated.
-        :paramtype query: Optional[str]
+        :paramtype query: str
         :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
+        :paramtype response: str
+        :return: The relevance score.
+        :rtype: Dict[str, float]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate relevance for a conversation
+
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """Evaluate relevance. Accepts either a query and response for a single evaluation,
+        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
+
+        :keyword query: The query to be evaluated. Mutually exclusive with the `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
+        :paramtype response: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The relevance score.
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
+        """
+        return super().__call__(*args, **kwargs)
