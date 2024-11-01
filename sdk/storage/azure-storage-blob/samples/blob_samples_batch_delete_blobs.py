@@ -13,7 +13,9 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-SOURCE_FOLDER = "./sample-blobs/"
+SOURCE_FOLDER = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "sample-blobs")
 
 
 def batch_delete_blobs_sample(local_path):

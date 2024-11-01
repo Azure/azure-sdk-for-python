@@ -41,7 +41,11 @@ def main():
 
     # upload the csv file
     blob_client = blob_service_client.get_blob_client(container_name, "csvfile")
-    with open("./sample-blobs/quick_query.csv", "rb") as stream:
+    csv_file = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "sample-blobs",
+            "quick_query.csv")
+    with open(csv_file, "rb") as stream:
         blob_client.upload_blob(stream, overwrite=True)
 
     # select the second column of the csv file
