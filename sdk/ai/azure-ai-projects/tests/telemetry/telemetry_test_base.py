@@ -17,7 +17,7 @@ set AZURE_AI_PROJECTS_DIAGNOSTICS_TEST_PROJECT_CONNECTION_STRING=
 servicePreparerTelemetryTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_telemetry_test",
-    azure_ai_projects_telemetry_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
+    azure_ai_projects_telemetry_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
 )
 
 # Set to True to enable SDK logging

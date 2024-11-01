@@ -15,13 +15,18 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
+    pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+
+    If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
+    https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
+    install:
+
+    pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
-
 """
 
 import os, sys
@@ -80,6 +85,8 @@ class MyEventHandler(AgentEventHandler):
 
 
 # Enable console tracing
+# or, if you have local OTLP endpoint running, change it to
+# project_client.telemetry.enable(destination="http://localhost:4317")
 project_client.telemetry.enable(destination=sys.stdout)
 
 scenario = os.path.basename(__file__)
