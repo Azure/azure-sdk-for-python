@@ -15,6 +15,7 @@ import json
 import logging
 import base64
 import asyncio
+import re
 
 from azure.core.credentials import TokenCredential, AccessToken
 
@@ -58,7 +59,7 @@ from typing import (
     Tuple,
     Set,
     get_origin,
-    Union,
+    get_args,
 )
 
 logger = logging.getLogger(__name__)
@@ -241,26 +242,33 @@ type_map = {
     "datetime": "string",  # Use format "date-time"
     "date": "string",  # Use format "date"
     "UUID": "string",  # Use format "uuid"
+    "list": "array",
+    "dict": "object",
 }
 
 
-def _map_type(annotation) -> str:
+def _map_type(annotation) -> Dict[str, Any]:
 
     if annotation == inspect.Parameter.empty:
-        return "string"  # Default type if annotation is missing
+        return {"type": "string"}  # Default type if annotation is missing
 
     origin = get_origin(annotation)
 
     if origin in {list, List}:
-        return "array"
+        args = get_args(annotation)
+        item_type = args[0] if args else str
+        return {
+            "type": "array",
+            "items": {"type": type_map.get(item_type.__name__, "string")}
+        }
     elif origin in {dict, Dict}:
-        return "object"
+        return {"type": "object"}
     elif hasattr(annotation, "__name__"):
-        return type_map.get(annotation.__name__, "string")
+        return {"type": type_map.get(annotation.__name__, "string")}
     elif isinstance(annotation, type):
-        return type_map.get(annotation.__name__, "string")
+        return {"type": type_map.get(annotation.__name__, "string")}
 
-    return "string"  # Fallback to "string" if type is unrecognized
+    return {"type": "string"}  # Fallback to "string" if type is unrecognized
 
 
 class Tool(ABC):
@@ -289,9 +297,8 @@ class Tool(ABC):
         :return: The output of the tool operations.
         """
         pass
-
-
-class FunctionTool(Tool):
+    
+class BaseFunctionTool(Tool):
     """
     A tool that executes user-defined functions.
     """
@@ -306,30 +313,63 @@ class FunctionTool(Tool):
         self._definitions = self._build_function_definitions(self._functions)
 
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in functions}
-        return func_dict
+        return {func.__name__: func for func in functions}
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
         specs = []
+        # Flexible regex to capture ':param <name>: <description>'
+        param_pattern = re.compile(
+            r"""
+            ^\s*                                   # Optional leading whitespace
+            :param                                 # Literal ':param'
+            \s+                                    # At least one whitespace character
+            (?P<name>[^:\s\(\)]+)                  # Parameter name (no spaces, colons, or parentheses)
+            (?:\s*\(\s*(?P<type>[^)]+?)\s*\))?     # Optional type in parentheses, allowing internal spaces
+            \s*:\s*                                # Colon ':' surrounded by optional whitespace
+            (?P<description>.+)                    # Description (rest of the line)
+            """,
+            re.VERBOSE
+        )
+
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
-            docstring = inspect.getdoc(func)
+            docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
+
+            param_descs = {}
+            for line in docstring.splitlines():
+                line = line.strip()
+                match = param_pattern.match(line)
+                if match:
+                    groups = match.groupdict()
+                    param_name = groups.get('name')
+                    param_desc = groups.get('description')
+                    param_desc = param_desc.strip() if param_desc else "No description"
+                    param_descs[param_name] = param_desc.strip()
 
             properties = {}
             for param_name, param in params.items():
-                param_type = _map_type(param.annotation)
-                param_description = param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None
-                properties[param_name] = {"type": param_type, "description": param_description}
+                param_type_info = _map_type(param.annotation)
+                param_description = param_descs.get(param_name, "No description")
+
+                properties[param_name] = {
+                    **param_type_info,
+                    "description": param_description
+                }
 
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
+                parameters={
+                    "type": "object",
+                    "properties": properties,
+                    "required": list(params.keys())
+                },
             )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
+
         return specs
 
     def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
@@ -354,15 +394,6 @@ class FunctionTool(Tool):
 
         return function, parsed_arguments
 
-    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
-        try:
-            return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
-
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
@@ -382,7 +413,22 @@ class FunctionTool(Tool):
         return ToolResources()
 
 
-class AsyncFunctionTool(FunctionTool):
+class FunctionTool(BaseFunctionTool):
+
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        function, parsed_arguments = self._get_func_and_args(tool_call)
+
+        try:
+            return function(**parsed_arguments) if parsed_arguments else function()
+        except TypeError as e:
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
+
+
+
+class AsyncFunctionTool(BaseFunctionTool):
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
@@ -393,8 +439,10 @@ class AsyncFunctionTool(FunctionTool):
             else:
                 return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
 
 
 class FileSearchTool(Tool):
@@ -501,26 +549,17 @@ class CodeInterpreterTool(Tool):
         pass
 
 
-class ToolSet:
+class BaseToolSet:
     """
-    A collection of tools that can be used by an agent.
+    Abstract class for a collection of tools that can be used by an agent.
     """
 
     def __init__(self):
         self._tools: List[Tool] = []
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
-        """
-        Validate the type of the tool.
-
-        :param tool_type: The type of the tool to validate.
-        :raises ValueError: If the tool type is not a subclass of Tool.
-        """
-        if isinstance(tool_type, AsyncFunctionTool):
-            raise ValueError(
-                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
-            )
-
+    def validate_tool_type(self, tool: Tool) -> None:
+        pass
+    
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
@@ -528,7 +567,7 @@ class ToolSet:
         :param tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
-        self.validate_tool_type(type(tool))
+        self.validate_tool_type(tool)
 
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
@@ -608,6 +647,24 @@ class ToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+
+class ToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an synchronize agent.
+    """
+
+    def validate_tool_type(self, tool: Tool) -> None:
+        """
+        Validate the type of the tool.
+
+        :param tool_type: The type of the tool to validate.
+        :raises ValueError: If the tool type is not a subclass of Tool.
+        """
+        if isinstance(tool, AsyncFunctionTool):
+            raise ValueError(
+                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
+            )
+
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
@@ -633,16 +690,19 @@ class ToolSet:
         return tool_outputs
 
 
-class AsyncToolSet(ToolSet):
+class AsyncToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an asynchronize agent.
+    """
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
+    def validate_tool_type(self, tool: Tool) -> None:
         """
         Validate the type of the tool.
 
         :param tool_type: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
-        if isinstance(tool_type, FunctionTool):
+        if isinstance(tool, FunctionTool):
             raise ValueError(
                 "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
