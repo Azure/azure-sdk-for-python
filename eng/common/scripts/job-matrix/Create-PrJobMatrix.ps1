@@ -64,7 +64,9 @@ $packageProperties = Get-ChildItem -Recurse "$PackagePropertiesFolder" *.json `
 
 # set default matrix config for each package if there isn't an override
 $packageProperties | ForEach-Object {
-  $_.CIMatrixConfigs = $_.CIMatrixConfigs ?? $configs
+  if (-not $_.CIMatrixConfigs) {
+    $_.CIMatrixConfigs = $configs
+  }
 }
 
 # The key here is that after we group the packages by the matrix config objects, we can use the first item's MatrixConfig
@@ -91,6 +93,7 @@ foreach ($matrixBatchKey in $matrixBatchesByConfig.Keys) {
     # we only need to modify the generated job name if there is more than one matrix config or batch in the matrix
     $matrixSuffixNecessary = $matrixConfigs.Count -gt 1
     $batchSuffixNecessary = $packageBatches.Length -gt 1
+    $batchCounter = 1
 
     foreach ($batch in $packageBatches) {
       # to understand this iteration, one must understand that the matrix is a list of hashtables, each with a couple keys:
@@ -98,7 +101,7 @@ foreach ($matrixBatchKey in $matrixBatchesByConfig.Keys) {
       #  { "name": "jobname", "parameters": { matrixSetting1: matrixValue1, ...} },
       # ]
       foreach ($matrixOutputItem in $matrixResults) {
-        $namesForBatch = ($batch | ForEach-Object { $_.ArtifactName }) -join "-"
+        $namesForBatch = ($batch | ForEach-Object { $_.ArtifactName }) -join ","
         # we just need to iterate across them, grab the parameters hashtable, and add the new key
         # if there is more than one batch, we will need to add a suffix including the batch name to the job name
         $matrixOutputItem["parameters"]["$PRMatrixSetting"] = $namesForBatch
@@ -108,11 +111,12 @@ foreach ($matrixBatchKey in $matrixBatchesByConfig.Keys) {
         }
 
         if ($batchSuffixNecessary) {
-          $matrixOutputItem["name"] = $matrixOutputItem["name"] + $namesForBatch
+          $matrixOutputItem["name"] = $matrixOutputItem["name"] + "b$batchCounter"
         }
 
         $OverallResult += $matrixOutputItem
       }
+      $batchCounter += 1
     }
   }
 }

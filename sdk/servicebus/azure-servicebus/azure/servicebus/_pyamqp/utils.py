@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import datetime
 from base64 import b64encode
 from hashlib import sha256
@@ -61,7 +61,7 @@ def utc_now():
     return datetime.datetime.now(tz=TZ_UTC)
 
 
-def encode(value, encoding='UTF-8'):
+def encode(value, encoding="UTF-8"):
     return value.encode(encoding) if isinstance(value, str) else value
 
 
@@ -84,16 +84,12 @@ def generate_sas_token(audience, policy, key, expiry=None):
     encoded_key = key.encode("utf-8")
 
     ttl = int(expiry)
-    sign_key = '%s\n%d' % (encoded_uri, ttl)
-    signature = b64encode(HMAC(encoded_key, sign_key.encode('utf-8'), sha256).digest())
-    result = {
-        'sr': audience,
-        'sig': signature,
-        'se': str(ttl)
-    }
+    sign_key = "%s\n%d" % (encoded_uri, ttl)
+    signature = b64encode(HMAC(encoded_key, sign_key.encode("utf-8"), sha256).digest())
+    result = {"sr": audience, "sig": signature, "se": str(ttl)}
     if policy:
-        result['skn'] = encoded_policy
-    return 'SharedAccessSignature ' + urlencode(result)
+        result["skn"] = encoded_policy
+    return "SharedAccessSignature " + urlencode(result)
 
 
 def add_batch(batch, message):
@@ -103,7 +99,7 @@ def add_batch(batch, message):
     batch[5].append(output)
 
 
-def encode_str(data, encoding='utf-8'):
+def encode_str(data, encoding="utf-8"):
     try:
         return data.encode(encoding)
     except AttributeError:
@@ -118,7 +114,7 @@ def normalized_data_body(data, **kwargs):
     return [encode_str(data, encoding)]
 
 
-def normalized_sequence_body(sequence): # pylint:disable=inconsistent-return-statements
+def normalized_sequence_body(sequence):  # pylint:disable=inconsistent-return-statements
     # A helper method to normalize input into AMQP Sequence Body format
     if isinstance(sequence, list) and all((isinstance(b, list) for b in sequence)):
         return sequence
@@ -149,6 +145,7 @@ def amqp_string_value(value):
 
 def amqp_symbol_value(value):
     return {TYPE: AMQPTypes.symbol, VALUE: value}
+
 
 def amqp_array_value(value):
     return {TYPE: AMQPTypes.array, VALUE: value}

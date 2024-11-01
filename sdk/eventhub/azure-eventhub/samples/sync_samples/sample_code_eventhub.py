@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 """
 Examples to show basic use case of python azure-eventhub SDK, including:
@@ -26,11 +26,11 @@ def example_create_eventhub_producer_client():
     from azure.identity import DefaultAzureCredential
 
     eventhub_fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
-    eventhub_name = os.environ['EVENT_HUB_NAME']
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
     producer = EventHubProducerClient(
         fully_qualified_namespace=eventhub_fully_qualified_namespace,
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
-        credential=DefaultAzureCredential()
+        credential=DefaultAzureCredential(),
     )
     # [END create_eventhub_producer_client_from_conn_str_sync]
 
@@ -38,16 +38,16 @@ def example_create_eventhub_producer_client():
     import os
     from azure.eventhub import EventHubProducerClient, EventHubSharedKeyCredential
 
-    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-    eventhub_name = os.environ['EVENT_HUB_NAME']
-    shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
-    shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
+    shared_access_policy = os.environ["EVENT_HUB_SAS_POLICY"]
+    shared_access_key = os.environ["EVENT_HUB_SAS_KEY"]
 
     credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     producer = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
-        credential=credential
+        credential=credential,
     )
     # [END create_eventhub_producer_client_sync]
     return producer
@@ -60,12 +60,12 @@ def example_create_eventhub_consumer_client():
     from azure.identity import DefaultAzureCredential
 
     eventhub_fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
-    eventhub_name = os.environ['EVENT_HUB_NAME']
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=eventhub_fully_qualified_namespace,
-        consumer_group='$Default',
+        consumer_group="$Default",
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
-        credential=DefaultAzureCredential()
+        credential=DefaultAzureCredential(),
     )
     # [END create_eventhub_consumer_client_from_conn_str_sync]
 
@@ -73,17 +73,18 @@ def example_create_eventhub_consumer_client():
     import os
     from azure.eventhub import EventHubConsumerClient, EventHubSharedKeyCredential
 
-    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-    eventhub_name = os.environ['EVENT_HUB_NAME']
-    shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
-    shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
+    shared_access_policy = os.environ["EVENT_HUB_SAS_POLICY"]
+    shared_access_key = os.environ["EVENT_HUB_SAS_KEY"]
 
     credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
-        consumer_group='$Default',
-        credential=credential)
+        consumer_group="$Default",
+        credential=credential,
+    )
     # [END create_eventhub_consumer_client_sync]
     return consumer
 
@@ -106,7 +107,7 @@ def example_eventhub_sync_send_and_receive():
         event_data_batch = producer.create_batch()
         while True:
             try:
-                event_data_batch.add(EventData('Message inside EventBatchData'))
+                event_data_batch.add(EventData("Message inside EventBatchData"))
             except ValueError:
                 # The EventDataBatch object reaches its max_size.
                 # You can send the full EventDataBatch object and create a new one here.
@@ -119,7 +120,7 @@ def example_eventhub_sync_send_and_receive():
 
             while True:
                 try:
-                    event_data_batch.add(EventData('Message inside EventBatchData'))
+                    event_data_batch.add(EventData("Message inside EventBatchData"))
                 except ValueError:
                     # EventDataBatch object reaches max_size.
                     # New EventDataBatch object can be created here to send more data
@@ -163,19 +164,19 @@ def example_eventhub_producer_send_and_close():
     from azure.identity import DefaultAzureCredential
 
     eventhub_fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
-    eventhub_name = os.environ['EVENT_HUB_NAME']
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
 
     producer = EventHubProducerClient(
         fully_qualified_namespace=eventhub_fully_qualified_namespace,
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
-        credential=DefaultAzureCredential()
+        credential=DefaultAzureCredential(),
     )
     try:
         event_data_batch = producer.create_batch()
 
         while True:
             try:
-                event_data_batch.add(EventData('Message inside EventBatchData'))
+                event_data_batch.add(EventData("Message inside EventBatchData"))
             except ValueError:
                 # EventDataBatch object reaches max_size.
                 # New EventDataBatch object can be created here to send more data
@@ -195,14 +196,15 @@ def example_eventhub_consumer_receive_and_close():
     from azure.identity import DefaultAzureCredential
 
     eventhub_fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
-    eventhub_name = os.environ['EVENT_HUB_NAME']
+    eventhub_name = os.environ["EVENT_HUB_NAME"]
 
     from azure.eventhub import EventHubConsumerClient
+
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=eventhub_fully_qualified_namespace,
         consumer_group="$Default",
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
-        credential=DefaultAzureCredential()
+        credential=DefaultAzureCredential(),
     )
 
     logger = logging.getLogger("azure.eventhub")
@@ -220,7 +222,7 @@ def example_eventhub_consumer_receive_and_close():
         kwargs={
             "on_event": on_event,
             "starting_position": "-1",  # "-1" is from the beginning of the partition.
-        }
+        },
     )
     worker.start()
     time.sleep(10)  # Keep receiving for 10s then close.
@@ -229,7 +231,7 @@ def example_eventhub_consumer_receive_and_close():
     # [END eventhub_consumer_client_close_sync]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     example_eventhub_producer_send_and_close()
     example_eventhub_consumer_receive_and_close()
     example_eventhub_sync_send_and_receive()

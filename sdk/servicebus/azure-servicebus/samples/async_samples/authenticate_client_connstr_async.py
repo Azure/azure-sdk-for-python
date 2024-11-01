@@ -24,10 +24,12 @@ from azure.servicebus.aio import ServiceBusClient
 import os
 import asyncio
 
-connstr = os.environ['SERVICEBUS_CONNECTION_STR']
+connstr = os.environ["SERVICEBUS_CONNECTION_STR"]
+
 
 async def run():
     async with ServiceBusClient.from_connection_string(connstr) as client:
-        pass # Client is now initialized and can be used.
+        pass  # Client is now initialized and can be used.
+
 
 asyncio.run(run())
