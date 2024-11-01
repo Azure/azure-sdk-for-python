@@ -371,11 +371,11 @@
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
-# ServiceOwners:  @wonner @zesluo
+# ServiceOwners:  @wanyang7 @zesluo
 # ServiceLabel: %Synapse
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @wonner @yanjungao718
+/sdk/synapse/                                                        @wanyang7 @yanjungao718
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
