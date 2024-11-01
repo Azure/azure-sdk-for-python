@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import socket
+import sys
 from typing import Dict, Any, Mapping, Union
 import msal
 
@@ -86,49 +87,78 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
             auth_scheme = msal.PopAuthScheme(
                 http_method=pop["resource_request_method"], url=pop["resource_request_url"], nonce=pop["nonce"]
             )
-
-        if self._use_default_broker_account:
+        if sys.platform.startswith("win"):
+            if self._use_default_broker_account:
+                try:
+                    result = app.acquire_token_interactive(
+                        scopes=scopes,
+                        login_hint=self._login_hint,
+                        claims_challenge=claims,
+                        timeout=self._timeout,
+                        prompt=msal.Prompt.NONE,
+                        port=port,
+                        parent_window_handle=self._parent_window_handle,
+                        enable_msa_passthrough=self._enable_msa_passthrough,
+                        auth_scheme=auth_scheme,
+                    )
+                    if "access_token" in result:
+                        return result
+                except socket.error:
+                    pass
             try:
                 result = app.acquire_token_interactive(
                     scopes=scopes,
                     login_hint=self._login_hint,
                     claims_challenge=claims,
                     timeout=self._timeout,
-                    prompt=msal.Prompt.NONE,
+                    prompt="select_account",
                     port=port,
                     parent_window_handle=self._parent_window_handle,
                     enable_msa_passthrough=self._enable_msa_passthrough,
                     auth_scheme=auth_scheme,
                 )
+            except socket.error as ex:
+                raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
+            if "access_token" not in result and "error_description" in result:
+                if within_dac.get():
+                    raise CredentialUnavailableError(message=result["error_description"])
+                raise ClientAuthenticationError(message=result.get("error_description"))
+            if "access_token" not in result:
+                if within_dac.get():
+                    raise CredentialUnavailableError(message="Failed to authenticate user")
+                raise ClientAuthenticationError(message="Failed to authenticate user")
+            return result
+        else:
+            try:
+                result = app.acquire_token_interactive(
+                    scopes=scopes,
+                    login_hint=self._login_hint,
+                    claims_challenge=claims,
+                    timeout=self._timeout,
+                    prompt="select_account",
+                    port=port,
+                    parent_window_handle=self._parent_window_handle,
+                    enable_msa_passthrough=self._enable_msa_passthrough,
+                    auth_scheme=auth_scheme,
+                )
+            except Exception as ex:  # pylint: disable=broad-except
+                app = self._disable_broker_on_app(**kwargs)
+                result = app.acquire_token_interactive(
+                    scopes=scopes,
+                    login_hint=self._login_hint,
+                    claims_challenge=claims,
+                    timeout=self._timeout,
+                    prompt="select_account",
+                    port=port,
+                    parent_window_handle=self._parent_window_handle,
+                    enable_msa_passthrough=self._enable_msa_passthrough,
+                )
                 if "access_token" in result:
                     return result
-            except socket.error:
-                pass
-        try:
-            result = app.acquire_token_interactive(
-                scopes=scopes,
-                login_hint=self._login_hint,
-                claims_challenge=claims,
-                timeout=self._timeout,
-                prompt="select_account",
-                port=port,
-                parent_window_handle=self._parent_window_handle,
-                enable_msa_passthrough=self._enable_msa_passthrough,
-                auth_scheme=auth_scheme,
-            )
-        except socket.error as ex:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
-        if "access_token" not in result and "error_description" in result:
-            if within_dac.get():
-                raise CredentialUnavailableError(message=result["error_description"])
-            raise ClientAuthenticationError(message=result.get("error_description"))
-        if "access_token" not in result:
-            if within_dac.get():
-                raise CredentialUnavailableError(message="Failed to authenticate user")
-            raise ClientAuthenticationError(message="Failed to authenticate user")
-
-        # base class will raise for other errors
-        return result
+                elif "error_description" in result:
+                    if within_dac.get():
+                        raise CredentialUnavailableError(message=result["error_description"])
+                    raise ClientAuthenticationError(message=result.get("error_description"))
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
@@ -160,6 +190,43 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
                 enable_broker_on_windows=True,
+                enable_broker_on_mac=True,
+                enable_pii_log=self._enable_support_logging,
+            )
+
+        return client_applications_map[tenant_id]
+
+    def _disable_broker_on_app(self, **kwargs: Any) -> msal.ClientApplication:
+        tenant_id = resolve_tenant(
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+        )
+
+        client_applications_map = self._client_applications
+        capabilities = None
+        token_cache = self._cache
+
+        app_class = msal.PublicClientApplication
+
+        if kwargs.get("enable_cae"):
+            client_applications_map = self._cae_client_applications
+            capabilities = ["CP1"]
+            token_cache = self._cae_cache
+
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+
+        if tenant_id not in client_applications_map:
+            client_applications_map[tenant_id] = app_class(
+                client_id=self._client_id,
+                client_credential=self._client_credential,
+                client_capabilities=capabilities,
+                authority="{}/{}".format(self._authority, tenant_id),
+                azure_region=self._regional_authority,
+                token_cache=token_cache,
+                http_client=self._client,
+                instance_discovery=self._instance_discovery,
+                enable_broker_on_windows=True,
+                enable_broker_on_mac=False,
                 enable_pii_log=self._enable_support_logging,
             )
 
