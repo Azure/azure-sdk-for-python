@@ -105,6 +105,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class _ServiceBusErrorPolicy(RetryPolicy):
 
     no_retry = RetryPolicy.no_retry + cast(
