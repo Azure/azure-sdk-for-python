@@ -12,10 +12,11 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 servicePreparerInferenceTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_inference_tests",
-    azure_ai_projects_inference_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;hub-name",
-    azure_ai_projects_inference_tests_model_deployment_name="model-deployment-name",
+    azure_ai_projects_inference_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
+    azure_ai_projects_inference_tests_aoai_api_version="aoai-api-version",
+    azure_ai_projects_inference_tests_aoai_model_deployment_name="aoai-model-deployment-name",
+    azure_ai_projects_inference_tests_aiservices_model_deployment_name="aoai-model-deployment-name",
 )
-
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = False

@@ -14,11 +14,12 @@ class TestInference(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_azure_openai_client(self, **kwargs):
-        model = kwargs.pop("azure_ai_projects_inference_tests_model_deployment_name")
+        api_version = kwargs.pop("azure_ai_projects_inference_tests_aoai_api_version")
+        model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             with project_client.inference.get_azure_openai_client(
-                api_version="2024-10-01-preview"
+                api_version=api_version
             ) as azure_openai_client:
                 response = azure_openai_client.chat.completions.create(
                     messages=[
@@ -36,9 +37,11 @@ class TestInference(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_chat_completions_client(self, **kwargs):
+        model = kwargs.pop("azure_ai_projects_inference_tests_aiservices_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_chat_completions_client() as azure_ai_inference_client:
                 response = azure_ai_inference_client.complete(
+                    model=model,
                     messages=[
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
