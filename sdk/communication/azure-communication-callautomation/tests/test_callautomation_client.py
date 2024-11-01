@@ -11,7 +11,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
     CallAutomationClient,
     CallInvite,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    MicrosoftTeamsAppIdentifier
 )
 
 from unittest_helpers import mock_response
@@ -25,6 +26,8 @@ class TestCallAutomationClient(unittest.TestCase):
     callback_url = "https://contoso.com/event"
     communication_user_id = "8:acs:123"
     communication_user_source_id = "8:acs:456"
+    microsoft_teams_app_id = "28:acs:123456"
+    another_microsoft_teams_app_id = "28:acs:78910J"
     incoming_call_context = "env2REDACTEDINCOMINGCALLCONTEXT"
 
     def test_create_call(self):
@@ -85,6 +88,48 @@ class TestCallAutomationClient(unittest.TestCase):
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
 
+    def test_ops_create_call(self):
+        def mock_send(request, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            body = json.loads(request.content)
+            return mock_response(status_code=201, json_payload={
+                "callConnectionId": self.call_connection_id,
+                "serverCallId": self.server_callI_id,
+                "callbackUri": self.callback_url,
+                "targets": [
+                    {"rawId": self.another_microsoft_teams_app_id,
+                     "microsoftTeamsApp": {"app_id": self.another_microsoft_teams_app_id}}],
+                "source": {"rawId": self.microsoft_teams_app_id,
+                           "microsoftTeamsApp": {"app_id": self.microsoft_teams_app_id}}})
+
+        # target endpoint for ACS User
+        user = MicrosoftTeamsAppIdentifier(self.another_microsoft_teams_app_id)
+
+        # caller endpoint for OPS call
+        caller = MicrosoftTeamsAppIdentifier(self.microsoft_teams_app_id)
+
+        # make invitation
+        call_invite = CallInvite(
+            target=user
+        )
+        call_automation_client = CallAutomationClient(
+            "https://endpoint",
+            AzureKeyCredential("fakeCredential=="),
+            transport=Mock(send=mock_send),
+            ops_source=caller
+        )
+        call_connection_properties = call_automation_client.create_call(call_invite, self.callback_url)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)
+        self.assertEqual(self.microsoft_teams_app_id,
+                         call_connection_properties.source.raw_id)
+        self.assertEqual(self.another_microsoft_teams_app_id,
+                         call_connection_properties.targets[0].raw_id)
+        print(call_connection_properties.targets[0])
+
     def test_create_group_call(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)
@@ -96,8 +141,8 @@ class TestCallAutomationClient(unittest.TestCase):
                 "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id,
                              "communicationUser": {"id": self.communication_user_id}}],
-                "sourceIdentity": {"rawId": self.communication_user_source_id,
-                                   "communicationUser": {"id": self.communication_user_source_id}}})
+                "source": {"rawId": self.communication_user_source_id,
+                           "communicationUser": {"id": self.communication_user_source_id}}})
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
@@ -120,8 +165,8 @@ class TestCallAutomationClient(unittest.TestCase):
                 "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id,
                              "communicationUser": {"id": self.communication_user_id}}],
-                "sourceIdentity": {"rawId": self.communication_user_source_id,
-                                   "communicationUser": {"id": self.communication_user_source_id}}})
+                "source": {"rawId": self.communication_user_source_id,
+                           "communicationUser": {"id": self.communication_user_source_id}}})
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
@@ -146,8 +191,8 @@ class TestCallAutomationClient(unittest.TestCase):
                 "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id,
                              "communicationUser": {"id": self.communication_user_id}}],
-                "sourceIdentity": {"rawId": self.communication_user_source_id,
-                                   "communicationUser": {"id": self.communication_user_source_id}}})
+                "source": {"rawId": self.communication_user_source_id,
+                           "communicationUser": {"id": self.communication_user_source_id}}})
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)

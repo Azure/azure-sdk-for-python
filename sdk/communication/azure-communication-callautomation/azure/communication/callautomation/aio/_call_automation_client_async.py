@@ -35,6 +35,7 @@ from .._utils import (
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
+    serialize_microsoft_teams_app_identifier,
     build_call_locator,
     process_repeatability_first_sent
 )
@@ -54,7 +55,8 @@ if TYPE_CHECKING:
     from .._shared.models import (
         CommunicationIdentifier,
         CommunicationUserIdentifier,
-        PhoneNumberIdentifier
+        PhoneNumberIdentifier,
+        MicrosoftTeamsAppIdentifier
     )
     from .._generated.models._enums import (
         CallRejectReason,
@@ -88,6 +90,7 @@ class CallAutomationClient:
             *,
             api_version: Optional[str] = None,
             source: Optional['CommunicationUserIdentifier'] = None,
+            ops_source: Optional['MicrosoftTeamsAppIdentifier'] = None,
             **kwargs
     ) -> None:
         if not credential:
@@ -127,6 +130,7 @@ class CallAutomationClient:
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
         self.source = source
+        self.ops_source = ops_source
 
     @classmethod
     def from_connection_string(
@@ -242,6 +246,7 @@ class CallAutomationClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
+            ops_source=serialize_microsoft_teams_app_identifier(self.ops_source),
             operation_context=operation_context,
             media_streaming_configuration=media_config,
             transcription_configuration=transcription_config,

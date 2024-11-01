@@ -19,17 +19,18 @@ from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
-    CallLocator
+    CallLocator, MicrosoftTeamsAppIdentifierModel
 )
+
 if TYPE_CHECKING:
     from ._models import ServerCallLocator, GroupCallLocator
 
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
-    server_call_id: Optional[str],
-    group_call_id: Optional[str]
+        args: List[Union['ServerCallLocator', 'GroupCallLocator']],
+        call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
+        server_call_id: Optional[str],
+        group_call_id: Optional[str]
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -88,7 +89,7 @@ def get_repeatability_timestamp() -> str:
     return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
 
 
-def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
+def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -125,7 +126,7 @@ def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> O
 
 
 def serialize_communication_user_identifier(
-    identifier: Optional[CommunicationUserIdentifier]
+        identifier: Optional[CommunicationUserIdentifier]
 ) -> Optional[CommunicationUserIdentifierModel]:
     """Serialize the CommunicationUserIdentifier into CommunicationUserIdentifierModel
 
@@ -145,9 +146,30 @@ def serialize_communication_user_identifier(
     raise TypeError(f"Unsupported user identifier type: {identifier.__class__.__name__}")
 
 
+def serialize_microsoft_teams_app_identifier(
+        identifier: Optional[MicrosoftTeamsAppIdentifier]
+) -> Optional[MicrosoftTeamsAppIdentifierModel]:
+    """Serialize the MicrosoftTeamsAppIdentifier into MicrosoftTeamsAppIdentifierModel
+
+    :param identifier: MicrosoftTeamsAppIdentifier
+    :type identifier: MicrosoftTeamsAppIdentifier
+    :return: MicrosoftTeamsAppIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.MicrosoftTeamsAppIdentifierModel
+    """
+    if identifier is None:
+        return None
+    try:
+        if identifier.kind and identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_APP:
+            request_model = MicrosoftTeamsAppIdentifierModel(app_id=identifier.properties['app_id'])
+            return request_model
+    except AttributeError:
+        pass
+    raise TypeError(f"Unsupported user identifier type: {identifier.__class__.__name__}")
+
+
 def deserialize_identifier(
-    identifier_model:CommunicationIdentifierModel
-)->CommunicationIdentifier:
+        identifier_model: CommunicationIdentifierModel
+) -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -179,7 +201,7 @@ def deserialize_identifier(
 
 
 def deserialize_phone_identifier(
-    identifier_model:PhoneNumberIdentifierModel
+        identifier_model: PhoneNumberIdentifierModel
 ) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
@@ -195,8 +217,8 @@ def deserialize_phone_identifier(
 
 
 def deserialize_comm_user_identifier(
-    identifier_model:CommunicationUserIdentifierModel
-) -> Union[CommunicationUserIdentifierModel, None]:
+        identifier_model: CommunicationUserIdentifierModel
+) -> Union[CommunicationUserIdentifier, None]:
     """
     Deserialize the CommunicationUserIdentifierModel into CommunicationUserIdentifier
 
@@ -205,4 +227,20 @@ def deserialize_comm_user_identifier(
     :return: CommunicationUserIdentifier
     :rtype: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
-    return CommunicationUserIdentifierModel(id=identifier_model.id) if identifier_model else None
+    return CommunicationUserIdentifier(id=identifier_model.id) if identifier_model else None
+
+
+def deserialize_microsoft_teams_user_identifier(
+        identifier_model: MicrosoftTeamsAppIdentifierModel
+) -> Union[MicrosoftTeamsAppIdentifier, None]:
+    """
+    Deserialize the MicrosoftTeamsAppIdentifierModel into MicrosoftTeamsAppIdentifier
+
+    :param identifier_model: MicrosoftTeamsAppIdentifierModel
+    :type identifier_model: MicrosoftTeamsAppIdentifierModel
+    :return: MicrosoftTeamsAppIdentifier
+    :rtype: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier
+    """
+    if identifier_model:
+        return MicrosoftTeamsAppIdentifier(identifier_model.app_id)
+    return None
