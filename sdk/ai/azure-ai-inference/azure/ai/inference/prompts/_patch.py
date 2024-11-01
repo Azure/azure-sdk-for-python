@@ -39,7 +39,7 @@ class PromptTemplate:
         caller = Path(stack[-2].filename)
         abs_file_path = Path(caller.parent / Path(file_path)).resolve().absolute()
 
-        prompty = load(abs_file_path)
+        prompty = load(str(abs_file_path))
         return cls(prompty=prompty)
 
     @classmethod
