@@ -43,7 +43,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with project_client:
-    
+
     # List the properties of all connections
     connections = project_client.connections.list()
     print(f"====> Listing of all connections (found {len(connections)}):")
@@ -123,6 +123,8 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-    response = client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
+    response = client.complete(
+        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+    )
     client.close()
     print(response.choices[0].message.content)
