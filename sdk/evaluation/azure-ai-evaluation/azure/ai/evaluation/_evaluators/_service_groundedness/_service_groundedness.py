@@ -92,7 +92,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
         **kwargs,
     ):
-        self._passing_score = 3  # TODO update once the binarization PR is merged
+        self._passing_score = 5  # TODO update once the binarization PR is merged
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
