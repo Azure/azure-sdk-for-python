@@ -159,6 +159,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
+        if self._client._config.network_tracing and _LOGGER.isEnabledFor(logging.DEBUG):
+            _LOGGER.debug(
+                "Received message: seq-num: %r, offset: %r, partition-key: %r",
+                event_data.sequence_number,
+                event_data.offset,
+                event_data.partition_key,
+            )
         if self._amqp_transport.KIND == "uamqp":
             event_data._uamqp_message = message
         self._last_received_event = event_data
