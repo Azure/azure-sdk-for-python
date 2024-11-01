@@ -27,9 +27,6 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
-        focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
-    :type eval_last_turn: bool
 
         **Usage**
 
@@ -57,13 +54,11 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
-        eval_last_turn: bool = False,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.XPIA,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            eval_last_turn=eval_last_turn,
         )
 
     @overload
