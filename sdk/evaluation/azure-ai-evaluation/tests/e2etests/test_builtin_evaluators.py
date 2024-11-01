@@ -14,6 +14,7 @@ from azure.ai.inference.models import (
     ImageContentItem,
     ImageUrl,
 )
+from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
@@ -287,7 +288,7 @@ class TestBuiltInEvaluators:
         # Test eval_last_turn behavior
         eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
         score3 = eval_fn_last(conversation=simple_conversation)
-        assert score3["self_harm"] is not None
+        assert score3["self_harm"] in (level.value for level in HarmSeverityLevel)
         assert score3["self_harm_score"] >= 1
         assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
 
@@ -738,13 +739,13 @@ class TestBuiltInEvaluators:
         assert score["violence"] in (level.value for level in HarmSeverityLevel)
         assert score["violence_score"] < 1.0
         assert score["violence_reason"], "violence_reason must not be None or empty."
-        assert score["sexual"] is not None
+        assert score["sexual"] in (level.value for level in HarmSeverityLevel)
         assert score["sexual_score"] < 1.0
         assert score["sexual_reason"], "sexual_reason must not be None or empty."
-        assert score["self_harm"] is not None
+        assert score["self_harm"] in (level.value for level in HarmSeverityLevel)
         assert score["self_harm_score"] < 1.0
         assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
-        assert score["hate_unfairness"] is not None
+        assert score["hate_unfairness"] in (level.value for level in HarmSeverityLevel)
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
