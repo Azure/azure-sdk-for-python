@@ -55,7 +55,7 @@ def add_args_to_kwargs(
     :type kwargs: dict[str, Any]
     """
     if len(args) > 4:
-        raise ValueError(f"Too many arguments. Expected: less than 4, but given: {len(args)}")
+        raise TypeError(f"'query_items_change_feed()' takes 4 positional arguments but {len(args)} were given")
 
     if len(args) > 0:
         key_and_types = [
@@ -70,8 +70,6 @@ def add_args_to_kwargs(
             if key in kwargs:
                 raise ValueError(f"'{key}' is in both positional and keyword argument list. Please remove one of them.")
 
-            if not isinstance(value, expected_type):
-                raise TypeError(f"'{value}' is not of type '{expected_type.__name__}'")
             kwargs[key] = value
 
 def validate_kwargs(
@@ -105,7 +103,7 @@ def validate_kwargs(
         if change_feed_mode not in ChangeFeedMode:
             raise ValueError(
                 f"Invalid change_feed_mode was used: '{kwargs['change_feed_mode']}'."
-                f" Supported 'change_feed_modes' are {ChangeFeedMode.to_string()}.")
+                f" Supported 'change_feed_modes' are [{', '.join([m.value for m in ChangeFeedMode])}].")
 
         if change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             if "partition_key_range_id" in kwargs:
@@ -147,5 +145,5 @@ def validate_kwargs(
             raise TypeError(
                 f"'start_time' must be either a 'datetime' or 'str' type, but given '{type(start_time).__name__}'.")
 
-        if isinstance(start_time, str) and start_time not in ["Now", "Beginning"]:
+        if isinstance(start_time, str) and start_time.lower() not in ["now", "beginning"]:
             raise ValueError(f"'start_time' must be either 'Now' or 'Beginning', but given '{start_time}'.")

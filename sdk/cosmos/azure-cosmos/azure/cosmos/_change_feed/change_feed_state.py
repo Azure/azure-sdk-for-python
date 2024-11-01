@@ -31,6 +31,7 @@ from enum import Enum
 from typing import Optional, Union, List, Any, Dict, Deque
 import logging
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
@@ -49,17 +50,16 @@ class ChangeFeedStateVersion(Enum):
     V1 = "v1"
     V2 = "v2"
 
-class ChangeFeedMode(str, Enum):
+class ChangeFeedMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The change feed query mode."""
+
     LATEST_VERSION = "LatestVersion"
+    """Query latest items from 'start_time' or 'continuation' token."""
     ALL_VERSIONS_AND_DELETES = "AllVersionsAndDeletes"
+    """Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token."""
 
     def __str__(self):
         return self.value
-
-    @classmethod
-    def to_string(cls):
-        values_str = ', '.join(f"'{item}'" for item in cls)
-        return f"[{values_str}]"
 
 class ChangeFeedState(ABC):
     version_property_name = "v"

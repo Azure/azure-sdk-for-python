@@ -336,7 +336,7 @@ class TestChangeFeed:
             created_collection.query_items_change_feed(
                 change_feed_mode="test_invalid_change_feed_mode",
             )
-        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are ['LatestVersion', 'AllVersionsAndDeletes']."
+        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are [LatestVersion, AllVersionsAndDeletes]."
 
         # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
@@ -391,7 +391,7 @@ class TestChangeFeed:
         assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
 
         # Error if too many positional arguments
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(TypeError) as e:
             created_collection.query_items_change_feed(
                 "partition_key_range_id",
                 False,
@@ -399,25 +399,7 @@ class TestChangeFeed:
                 10,
                 "extra_argument",
             )
-        assert str(e.value) == "Too many arguments. Expected: less than 4, but given: 5"
-
-        # Error if types are not matching
-        positional_arguments = [
-            (123, False, "continuation", 10, "'123' is not of type 'str'"),
-            ("partition_key_range_id", 123, "continuation", 10, "'123' is not of type 'bool'"),
-            ("partition_key_range_id", False, 123, 10, "'123' is not of type 'str'"),
-            ("partition_key_range_id", False, "continuation", 12.34, "'12.34' is not of type 'int'"),
-        ]
-        for positional_argument in positional_arguments:
-            partition_key_range_id, continuation, start_time, end_time, error_msg = positional_argument
-            with pytest.raises(TypeError) as e:
-                created_collection.query_items_change_feed(
-                    partition_key_range_id,
-                    continuation,
-                    start_time,
-                    end_time,
-                )
-            assert str(e.value) == error_msg
+        assert str(e.value) == "'query_items_change_feed()' takes 4 positional arguments but 5 were given"
 
         # Error if arguments are in both positional and keyword arguement list
         with pytest.raises(ValueError) as e:
