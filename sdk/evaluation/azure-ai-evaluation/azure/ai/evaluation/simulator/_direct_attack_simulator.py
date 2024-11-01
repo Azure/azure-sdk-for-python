@@ -126,7 +126,7 @@ class DirectAttackSimulator:
          - '**$schema**': A string indicating the schema URL for the conversation format.
 
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
-        :rtype: Dict[str, [List[Dict[str, Any]]]] with two elements
+        :rtype: Dict[str, [List[Dict[str, Any]]]]
 
         **Output format**
 
