@@ -187,7 +187,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
-        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
 
     def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
