@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.projects.models._models import VectorStorageDataSource
-
 """
 FILE: sample_agents_vector_store_batch_file_search_async.py
 
