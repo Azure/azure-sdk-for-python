@@ -203,7 +203,7 @@ def simple_conversation():
     return {
         "messages": [
             {
-                "content": "What is the capital of France?",
+                "content": "What is the capital of France?`''\"</>{}{{]",
                 "role": "user",
                 "context": "Customer wants to know the capital of France",
             },
