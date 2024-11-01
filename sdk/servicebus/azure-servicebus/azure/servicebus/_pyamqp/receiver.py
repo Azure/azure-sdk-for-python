@@ -7,7 +7,6 @@
 import uuid
 import logging
 from typing import Optional, Union
-from datetime import datetime, timezone
 
 from ._decode import decode_payload
 from .link import Link
