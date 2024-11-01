@@ -27,8 +27,6 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param eval_last_turn: Whether to evaluate the last turn of a conversation. Default is False.
-    :type eval_last_turn: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
@@ -69,8 +67,8 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     """
 
     # TODO address 3579092 to re-enabled parallel evals.
-    def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
-        super().__init__(eval_last_turn=eval_last_turn)
+    def __init__(self, credential, azure_ai_project, **kwargs):
+        super().__init__()
         self._parallel = kwargs.pop("_parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),

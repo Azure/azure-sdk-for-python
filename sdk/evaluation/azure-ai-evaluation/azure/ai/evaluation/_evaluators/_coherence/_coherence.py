@@ -93,10 +93,10 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
         turns, the evaluator will aggregate the results of each turn.
 
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
