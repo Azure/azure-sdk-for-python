@@ -261,7 +261,9 @@ def _map_type(annotation) -> Dict[str, Any]:
         return {"type": "object"}
     elif origin is Union:
         args = get_args(annotation)
+        # If Union contains None, it is an optional parameter
         if type(None) in args:
+            # If Union contains only one non-None type, it is a nullable parameter
             non_none_args = [arg for arg in args if arg is not type(None)]
             if len(non_none_args) == 1:
                 schema = _map_type(non_none_args[0])
@@ -273,6 +275,7 @@ def _map_type(annotation) -> Dict[str, Any]:
                 else:
                     schema["type"] = ["null"]
                 return schema
+        # If Union contains multiple types, it is a oneOf parameter
         return {"oneOf": [_map_type(arg) for arg in args]}
     elif isinstance(annotation, type):
         schema_type = type_map.get(annotation.__name__, "string")
@@ -378,6 +381,7 @@ class BaseFunctionTool(Tool):
                     "description": param_description
                 }
 
+                # If the parameter has no default value and is not optional, add it to the required list
                 if param.default is inspect.Parameter.empty and not is_optional(param.annotation):
                     required.append(param_name)
 
