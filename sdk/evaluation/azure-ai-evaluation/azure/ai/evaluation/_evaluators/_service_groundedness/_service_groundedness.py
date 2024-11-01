@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List, Optional, Union, Dict
+from typing import List, Union, Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
