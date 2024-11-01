@@ -501,11 +501,7 @@ class SSLTransport(_AbstractTransport):
             self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
-    def _wrap_socket(
-        self,
-        sock,
-        **sslopts
-    ):
+    def _wrap_socket(self, sock, **sslopts):
         if "context" in sslopts:
             context = sslopts.pop("context")
             return context.wrap_socket(sock, **sslopts)

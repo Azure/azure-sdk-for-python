@@ -167,16 +167,14 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
     credential.update(live_eventhub["key_name"], live_eventhub["access_key"])
     assert consumer_client.get_eventhub_properties() is not None
 
+
 # New feature only for Pure Python AMQP, not uamqp.
 @pytest.mark.liveTest
-def test_client_with_ssl_context(
-    auth_credentials,
-    socket_transport
-):
+def test_client_with_ssl_context(auth_credentials, socket_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
 
     # Check that SSLContext with invalid/nonexistent cert file raises an error
-    context = ssl.SSLContext(cafile='fakecert.pem')
+    context = ssl.SSLContext(cafile="fakecert.pem")
     context.verify_mode = ssl.CERT_REQUIRED
 
     producer = EventHubProducerClient(
@@ -190,12 +188,12 @@ def test_client_with_ssl_context(
     with producer:
         with pytest.raises(ConnectError):
             batch = producer.create_batch()
-    
+
     def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
         on_event.event = event
-    
+
     def on_error(partition_context, error):
         on_error.error = error
         consumer.close()
@@ -243,7 +241,7 @@ def test_client_with_ssl_context(
 
     def on_event(partition_context, event):
         on_event.total += 1
-    
+
     def on_error(partition_context, error):
         on_error.error = error
         consumer.close()

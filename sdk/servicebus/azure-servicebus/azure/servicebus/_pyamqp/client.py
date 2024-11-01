@@ -208,9 +208,8 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         self._ssl_opts = {}
         if ssl_context:
             self._ssl_opts["context"] = ssl_context
-        else: # str or None
+        else:  # str or None
             self._ssl_opts["ca_certs"] = connection_verify or certifi.where()
-
 
         # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)

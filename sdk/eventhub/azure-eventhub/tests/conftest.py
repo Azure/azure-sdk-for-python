@@ -60,13 +60,13 @@ def sleep(request):
 def uamqp_transport(request):
     return request.param
 
-  
+
 @pytest.fixture(scope="session", params=socket_transports, ids=socket_transport_ids)
 def socket_transport(request):
     return request.param
 
-  
-@pytest.fixture(scope="session")    
+
+@pytest.fixture(scope="session")
 def storage_url():
     try:
         account_name = os.environ["AZURE_STORAGE_ACCOUNT"]

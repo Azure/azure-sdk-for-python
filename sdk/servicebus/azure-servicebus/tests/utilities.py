@@ -77,10 +77,12 @@ def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=test_pyamqp):
         uamqp_transport_ids.append("pyamqp")
     return uamqp_transport_params, uamqp_transport_ids
 
+
 def socket_transport():
     socket_transport_params = [TransportType.Amqp, TransportType.AmqpOverWebsocket]
     socket_transport_ids = ["amqp", "ws"]
     return socket_transport_params, socket_transport_ids
+
 
 class ArgPasser:
     def __call__(self, fn):
@@ -96,6 +98,7 @@ class ArgPasserAsync:
             await fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
 
         return _preparer
+
 
 class SocketArgPasser:
     def __call__(self, fn):

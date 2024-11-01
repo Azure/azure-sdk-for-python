@@ -53,7 +53,12 @@ from servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from utilities import uamqp_transport as get_uamqp_transport, ArgPasser, socket_transport as get_socket_transport, SocketArgPasser
+from utilities import (
+    uamqp_transport as get_uamqp_transport,
+    ArgPasser,
+    socket_transport as get_socket_transport,
+    SocketArgPasser,
+)
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 socket_transport_params, socket_transport_ids = get_socket_transport()
@@ -591,7 +596,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         credential = get_credential()
 
         # Check that SSLContext with invalid/nonexistent cert file raises an error
-        context = ssl.SSLContext(cafile='fakecert.pem')
+        context = ssl.SSLContext(cafile="fakecert.pem")
         context.verify_mode = ssl.CERT_REQUIRED
         client = ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -609,13 +614,13 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
             with pytest.raises(ServiceBusConnectionError):
                 with client.get_queue_receiver(servicebus_queue.name) as receiver:
                     messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
-        
+
         # Check that SSLContext with valid cert file doesn't raise an error
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         context.load_verify_locations(certifi.where())
         purpose = ssl.Purpose.SERVER_AUTH
         context.load_default_certs(purpose=purpose)
-        
+
         client = ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
@@ -631,9 +636,8 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
 
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=2, max_wait_time=10)
-            
-            assert len(messages) == 2
 
+            assert len(messages) == 2
 
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     def test_backoff_fixed_retry(self, uamqp_transport):

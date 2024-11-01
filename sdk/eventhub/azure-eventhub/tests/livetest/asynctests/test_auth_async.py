@@ -169,17 +169,15 @@ async def test_client_azure_named_key_credential_async(live_eventhub, uamqp_tran
     credential.update(live_eventhub["key_name"], live_eventhub["access_key"])
     assert (await consumer_client.get_eventhub_properties()) is not None
 
+
 # New feature only for Pure Python AMQP, not uamqp.
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_with_ssl_context_async(
-    auth_credentials_async,
-    socket_transport
-):
+async def test_client_with_ssl_context_async(auth_credentials_async, socket_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
 
     # Check that SSLContext with invalid/nonexistent cert file raises an error
-    context = ssl.SSLContext(cafile='fakecert.pem')
+    context = ssl.SSLContext(cafile="fakecert.pem")
     context.verify_mode = ssl.CERT_REQUIRED
 
     producer = EventHubProducerClient(
@@ -193,12 +191,12 @@ async def test_client_with_ssl_context_async(
     async with producer:
         with pytest.raises(ConnectError):
             batch = await producer.create_batch()
-    
+
     async def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
         on_event.event = event
-    
+
     async def on_error(partition_context, error):
         on_error.error = error
         await consumer.close()
@@ -214,9 +212,7 @@ async def test_client_with_ssl_context_async(
     )
     on_error.error = None
     async with consumer:
-        task = asyncio.ensure_future(
-            consumer.receive(on_event, on_error=on_error, starting_position="-1")
-        )
+        task = asyncio.ensure_future(consumer.receive(on_event, on_error=on_error, starting_position="-1"))
         await asyncio.sleep(15)
     await task
     assert isinstance(on_error.error, ConnectError)
@@ -230,7 +226,7 @@ async def test_client_with_ssl_context_async(
         await asyncio.to_thread(context.load_default_certs, purpose=purpose)
         return context
 
-    def verify_context():   # for Python 3.8
+    def verify_context():  # for Python 3.8
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         context.load_verify_locations(certifi.where())
         purpose = ssl.Purpose.SERVER_AUTH
@@ -257,7 +253,7 @@ async def test_client_with_ssl_context_async(
 
     async def on_event(partition_context, event):
         on_event.total += 1
-    
+
     async def on_error(partition_context, error):
         on_error.error = error
         await consumer.close()
@@ -274,9 +270,7 @@ async def test_client_with_ssl_context_async(
     on_error.error = None
 
     async with consumer:
-        task = asyncio.ensure_future(
-            consumer.receive(on_event, on_error=on_error, starting_position="-1")
-        )
+        task = asyncio.ensure_future(consumer.receive(on_event, on_error=on_error, starting_position="-1"))
         await asyncio.sleep(15)
     await task
     assert on_event.total == 2

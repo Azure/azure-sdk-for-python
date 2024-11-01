@@ -40,7 +40,13 @@ from tests.servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from tests.utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasserAsync, SocketArgPasserAsync, socket_transport as get_socket_transport
+from tests.utilities import (
+    get_logger,
+    uamqp_transport as get_uamqp_transport,
+    ArgPasserAsync,
+    SocketArgPasserAsync,
+    socket_transport as get_socket_transport,
+)
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 socket_transport_params, socket_transport_ids = get_socket_transport()
@@ -577,7 +583,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         credential = get_credential(is_async=True)
 
         # Check that SSLContext with invalid/nonexistent cert file raises an error
-        context = ssl.SSLContext(cafile='fakecert.pem')
+        context = ssl.SSLContext(cafile="fakecert.pem")
         context.verify_mode = ssl.CERT_REQUIRED
         client = ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -605,7 +611,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             await asyncio.to_thread(context.load_default_certs, purpose=purpose)
             return context
 
-        def verify_context():   # for Python 3.8
+        def verify_context():  # for Python 3.8
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
             context.load_verify_locations(certifi.where())
             purpose = ssl.Purpose.SERVER_AUTH
