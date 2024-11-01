@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -63,9 +64,9 @@ class InferenceOperations:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -98,17 +99,13 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -132,9 +129,9 @@ class InferenceOperations:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -173,9 +170,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -428,9 +423,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str], **kwargs) -> None:
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
     except Exception as exc:
-        logger.warning(
-            "Could not call `AIAgentsInstrumentor().instrument()` " + str(exc)
-        )
+        logger.warning("Could not call `AIAgentsInstrumentor().instrument()` " + str(exc))
 
     try:
         from opentelemetry.instrumentation.openai import OpenAIInstrumentor
@@ -689,9 +682,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: An Agent object.
         :raises: HttpResponseError for HTTP errors.
         """
-        
+
         self._validate_tools_and_tool_resources(tools, tool_resources)
-        
+
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return super().create_agent(body=body, content_type=content_type, **kwargs)
@@ -715,7 +708,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
+
     @overload
     def update_agent(
         self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -750,7 +743,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -801,7 +794,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
     @overload
     def update_agent(
         self,
@@ -817,7 +810,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -863,7 +856,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
 
     @overload
     def update_agent(
@@ -895,13 +887,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.ToolSet] = None,        
+        toolset: Optional[_models.ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -955,7 +947,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_tools_and_tool_resources(tools, tool_resources)
-        
+
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return super().update_agent(body=body, content_type=content_type, **kwargs)
@@ -980,18 +972,28 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
-    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+
+    def _validate_tools_and_tool_resources(
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
+    ):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
-            
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
-    
+
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
+
     def _get_toolset(self) -> Optional[_models.ToolSet]:
         """
         Get the toolset for the agent.
@@ -2534,7 +2536,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                         file.write(chunk)
                     else:
                         raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
-            
+
             logger.debug(f"File '{sanitized_file_name}' saved successfully at '{target_file_path}'.")
 
         except (ValueError, RuntimeError, TypeError, IOError) as e:

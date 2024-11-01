@@ -6436,7 +6436,7 @@ class ConnectionsOperations:
         """List the details of all the connections (not including their credentials).
 
         :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", and "AIServices". Default value is None.
+         "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch". Default value is None.
         :paramtype category: str or ~azure.ai.projects.models.ConnectionType
         :keyword include_all: Indicates whether to list datastores. Service default: do not list
          datastores. Default value is None.

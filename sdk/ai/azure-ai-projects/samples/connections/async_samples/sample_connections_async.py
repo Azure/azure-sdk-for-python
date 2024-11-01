@@ -133,7 +133,9 @@ async def sample_connections_async():
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
+        response = await client.complete(
+            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+        )
         await client.close()
         print(response.choices[0].message.content)
 

@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -59,7 +60,7 @@ from typing import (
     Tuple,
     Set,
     get_origin,
-    cast
+    cast,
 )
 
 logger = logging.getLogger(__name__)
@@ -119,7 +120,9 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: GetConnectionResponse, token_credential: Optional[TokenCredential] = None) -> None:
+    def __init__(
+        self, *, connection: GetConnectionResponse, token_credential: Optional[TokenCredential] = None
+    ) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
@@ -310,7 +313,8 @@ class Tool(ABC):
         :return: The output of the tool operations.
         """
         pass
-    
+
+
 class BaseFunctionTool(Tool):
     """
     A tool that executes user-defined functions.
@@ -523,6 +527,7 @@ class CodeInterpreterTool(Tool):
     def execute(self, tool_call: Any) -> Any:
         pass
 
+
 class BaseToolSet:
     """
     Abstract class for a collection of tools that can be used by an agent.
@@ -533,7 +538,7 @@ class BaseToolSet:
 
     def validate_tool_type(self, tool: Tool) -> None:
         pass
-    
+
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
@@ -621,6 +626,7 @@ class BaseToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+
 class ToolSet(BaseToolSet):
     """
     A collection of tools that can be used by an synchronize agent.
@@ -637,7 +643,6 @@ class ToolSet(BaseToolSet):
             raise ValueError(
                 "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
             )
-
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
