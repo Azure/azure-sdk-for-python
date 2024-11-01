@@ -223,7 +223,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint", and "azure_ai_search".
+     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -232,7 +232,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint\", and \"azure_ai_search\"."""
+     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -4479,7 +4479,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         super().__init__(*args, type="microsoft_fabric", **kwargs)
 
 
-class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
@@ -4488,16 +4488,17 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
     :vartype type: str
     :ivar share_point: Reserved for future use. Required.
     :vartype share_point: dict[str, str]
     """
 
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
-    share_point: Dict[str, str] = rest_field(name="sharepoint")
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    share_point: Dict[str, str] = rest_field(name="sharepoint_grounding")
     """Reserved for future use. Required."""
 
     @overload
@@ -4516,7 +4517,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
@@ -5137,7 +5138,7 @@ class ToolConnection(_model_base.Model):
 
 class ToolConnectionList(_model_base.Model):
     """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint`` tools.
+    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection

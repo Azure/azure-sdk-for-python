@@ -41,8 +41,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_grounding``"""
     MICROSOFT_FABRIC = "microsoft_fabric"
     """Tool type ``microsoft_fabric``"""
-    SHAREPOINT = "sharepoint"
-    """Tool type ``sharepoint``"""
+    SHAREPOINT = "sharepoint_grounding"
+    """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
 
