@@ -107,7 +107,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *,
         response: str,
         context: str,
-        query: Optional[str] = None,
+        query: str,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate groundedness for a given query/response/context
 
