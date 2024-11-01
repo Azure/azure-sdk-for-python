@@ -16,8 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
-    pip install azure.monitor.opentelemetry 
+    pip install azure-ai-projects azure-identity azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
@@ -41,6 +40,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 # Enable Azure Monitor tracing
+
 application_insights_connection_string = project_client.telemetry.get_connection_string()
 if not application_insights_connection_string:
     print("Application Insights was not enabled for this project.")
