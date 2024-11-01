@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -17,7 +18,7 @@ from ._violence import ViolenceEvaluator
 
 
 @experimental
-class ContentSafetyEvaluator(EvaluatorBase):
+class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
 
@@ -31,7 +32,6 @@ class ContentSafetyEvaluator(EvaluatorBase):
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
-    :rtype: Callable
 
     **Usage**
 
@@ -71,7 +71,7 @@ class ContentSafetyEvaluator(EvaluatorBase):
     # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
         super().__init__(eval_last_turn=eval_last_turn)
-        self._parallel = kwargs.pop("parallel", False)
+        self._parallel = kwargs.pop("_parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
@@ -79,13 +79,43 @@ class ContentSafetyEvaluator(EvaluatorBase):
             HateUnfairnessEvaluator(credential, azure_ai_project),
         ]
 
-    @override
+    @overload
     def __call__(
         self,
         *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        query: str,
+        response: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate a collection of content safety metrics for the given query/response pair
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The content safety scores.
+        :rtype: Dict[str, Union[str, float]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate a collection of content safety metrics for a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The content safety scores.
+        :rtype: Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
         **kwargs,
     ):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
@@ -100,9 +130,9 @@ class ContentSafetyEvaluator(EvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The evaluation result.
-        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:

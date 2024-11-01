@@ -3,8 +3,10 @@
 # ---------------------------------------------------------
 
 from enum import Enum
+from azure.ai.evaluation._common._experimental import experimental
 
 
+@experimental
 class AdversarialScenario(Enum):
     """Adversarial scenario types"""
 
@@ -18,12 +20,14 @@ class AdversarialScenario(Enum):
     ADVERSARIAL_CONTENT_PROTECTED_MATERIAL = "adv_content_protected_material"
 
 
+@experimental
 class AdversarialScenarioJailbreak(Enum):
     """Adversarial scenario types for XPIA Jailbreak"""
 
     ADVERSARIAL_INDIRECT_JAILBREAK = "adv_xpia"
 
 
+@experimental
 class _UnstableAdversarialScenario(Enum):
     """Adversarial scenario types that we haven't published, but still want available for internal use
     Values listed here are subject to potential change, and/or migration to the main enum over time.

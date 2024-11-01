@@ -86,11 +86,30 @@ class WorkspaceOperationsBase(ABC):
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
+        v2_service_context = {}
+
+        v2_service_context["subscription_id"] = self._subscription_id
+        v2_service_context["workspace_name"] = workspace_name
+        v2_service_context["resource_group_name"] = resource_group
+        v2_service_context["auth"] = self._credentials  # type: ignore
+
+        from urllib.parse import urlparse
+
+        if obj is not None and obj.ml_flow_tracking_uri:
+            parsed_url = urlparse(obj.ml_flow_tracking_uri)
+            host_url = "https://{}".format(parsed_url.netloc)
+            v2_service_context["host_url"] = host_url
+        else:
+            v2_service_context["host_url"] = ""
+
+        # host_url=service_context._get_mlflow_url(),
+        # cloud=_get_cloud_or_default(
+        #     service_context.get_auth()._cloud_type.name
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.HUB:
-            return Hub._from_rest_object(obj)
+            return Hub._from_rest_object(obj, v2_service_context)
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
-            return Project._from_rest_object(obj)
-        return Workspace._from_rest_object(obj)
+            return Project._from_rest_object(obj, v2_service_context)
+        return Workspace._from_rest_object(obj, v2_service_context)
 
     def begin_create(
         self,

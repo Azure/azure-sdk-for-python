@@ -14,16 +14,16 @@ from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 
 
-CONNECTION_STRING = os.environ['EVENT_HUB_CONN_STR']
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+CONNECTION_STRING = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
+SAS_POLICY = os.environ["EVENT_HUB_SAS_POLICY"]
+SAS_KEY = os.environ["EVENT_HUB_SAS_KEY"]
 CONSUMER_GROUP = "$Default"
 
 
 async def create_producer_client():
-    print('Examples showing how to create producer client.')
+    print("Examples showing how to create producer client.")
 
     # Create producer client from connection string.
 
@@ -37,7 +37,7 @@ async def create_producer_client():
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
         logging_enable=False,  # To enable network tracing log, set logging_enable to True.
         retry_total=3,  # Retry up to 3 times to re-do failed operations.
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+        transport_type=TransportType.Amqp,  # Use Amqp as the underlying transport protocol.
     )
 
     # Create producer client from constructor.
@@ -45,13 +45,10 @@ async def create_producer_client():
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        credential=EventHubSharedKeyCredential(
-            policy=SAS_POLICY,
-            key=SAS_KEY
-        ),
+        credential=EventHubSharedKeyCredential(policy=SAS_POLICY, key=SAS_KEY),
         logging_enable=False,  # To enable network tracing log, set logging_enable to True.
         retry_total=3,  # Retry up to 3 times to re-do failed operations.
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+        transport_type=TransportType.Amqp,  # Use Amqp as the underlying transport protocol.
     )
 
     async with producer_client:
@@ -59,13 +56,12 @@ async def create_producer_client():
 
 
 async def create_consumer_client():
-    print('Examples showing how to create consumer client.')
+    print("Examples showing how to create consumer client.")
 
     # Create consumer client from connection string.
 
     consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STRING,  # connection string contains EventHub name.
-        consumer_group=CONSUMER_GROUP
+        conn_str=CONNECTION_STRING, consumer_group=CONSUMER_GROUP  # connection string contains EventHub name.
     )
 
     # Illustration of commonly used parameters.
@@ -75,7 +71,7 @@ async def create_consumer_client():
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
         logging_enable=False,  # To enable network tracing log, set logging_enable to True.
         retry_total=3,  # Retry up to 3 times to re-do failed operations.
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+        transport_type=TransportType.Amqp,  # Use Amqp as the underlying transport protocol.
     )
 
     # Create consumer client from constructor.
@@ -84,13 +80,10 @@ async def create_consumer_client():
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
         consumer_group=CONSUMER_GROUP,
-        credential=EventHubSharedKeyCredential(
-            policy=SAS_POLICY,
-            key=SAS_KEY
-        ),
+        credential=EventHubSharedKeyCredential(policy=SAS_POLICY, key=SAS_KEY),
         logging_enable=False,  # To enable network tracing log, set logging_enable to True.
         retry_total=3,  # Retry up to 3 times to re-do failed operations.
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+        transport_type=TransportType.Amqp,  # Use Amqp as the underlying transport protocol.
     )
 
     async with consumer_client:
