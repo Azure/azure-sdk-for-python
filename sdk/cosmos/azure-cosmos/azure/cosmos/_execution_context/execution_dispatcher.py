@@ -28,6 +28,7 @@ import os
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
 from azure.cosmos._execution_context import non_streaming_order_by_aggregator
+from . import hybrid_search_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
@@ -107,7 +108,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                       (query_to_use, self._resource_link))
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
-                raise e
+                if "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
+                    query_to_use = self._query if self._query is not None else "Select * from root r"
+                    query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+                                                                          (query_to_use, self._resource_link))
+                    self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+                else:
+                    raise e
 
         return self._execution_context.fetch_next_block()
 
@@ -136,6 +143,20 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._query,
                                                                                         self._options,
                                                                                         query_execution_info)
+        elif query_execution_info.has_hybrid_search_query_info():
+            hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            global_statistics_query = hybrid_search_query_info['globalStatisticsQuery']
+            component_query_infos = hybrid_search_query_info['componentQueryInfos']
+            # need to get all pk ranges here, since we need more than just the target ranges
+            all_pk_ranges = list(self._client._ReadPartitionKeyRanges(collection_link=self._resource_link))
+            execution_context_aggregator = \
+                hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
+                                                                        self._resource_link,
+                                                                        self._query,
+                                                                        self._options,
+                                                                        query_execution_info,
+                                                                        hybrid_search_query_info,
+                                                                        all_pk_ranges)
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
