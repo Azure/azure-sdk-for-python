@@ -180,7 +180,7 @@ class DirectAttackSimulator:
             randomization_seed = randint(0, 1000000)
 
         regular_sim = AdversarialSimulator(
-            azure_ai_project=cast(dict, self.azure_ai_project), credential=self.credential
+            azure_ai_project=self.azure_ai_project, credential=self.credential
         )
         regular_sim_results = await regular_sim(
             scenario=scenario,
@@ -194,7 +194,7 @@ class DirectAttackSimulator:
             randomize_order=False,
             randomization_seed=randomization_seed,
         )
-        jb_sim = AdversarialSimulator(azure_ai_project=cast(dict, self.azure_ai_project), credential=self.credential)
+        jb_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         jb_sim_results = await jb_sim(
             scenario=scenario,
             target=target,
