@@ -60,7 +60,7 @@ class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-ve
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is empty.
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2024-05-01". Note that overriding this
      default value may result in unsupported behavior.
@@ -74,11 +74,9 @@ class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-ve
         credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "",
-        *,
-        cloud_setting: Optional[AzureClouds] = None,
         **kwargs: Any
     ) -> None:
-        cloud = cloud_setting or settings.current.azure_cloud
+        cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud
         endpoints = get_arm_endpoints(cloud)
         if not base_url:
             base_url = endpoints["resource_manager"]
