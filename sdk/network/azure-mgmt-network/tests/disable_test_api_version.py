@@ -15,9 +15,11 @@ from devtools_testutils import (
 
 TEST_API_VERSION = "2021-02-01"
 
+
 def raw_requst_check(request):
     assert request.http_request.query["api-version"] == TEST_API_VERSION
-    
+
+
 @pytest.mark.live_test_only
 class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
@@ -38,11 +40,13 @@ class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
         assert len(result) == 0
 
         # check whether api version is passed to request for mixin operation group
-        self.mgmt_client.check_dns_name_availability(location="eastus", domain_name_label="mydomain", raw_request_hook=raw_requst_check)
+        self.mgmt_client.check_dns_name_availability(
+            location="eastus", domain_name_label="mydomain", raw_request_hook=raw_requst_check
+        )
 
     def fake_client(self, api_version):
         return NetworkManagementClient(credential="", subscription_id="", api_version=api_version)
-    
+
     def test_invalid_api_version(self):
         client = self.fake_client(api_version="1000-01-01")
         # normal operation group
@@ -52,5 +56,3 @@ class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
         # mixin operation group
         with pytest.raises(ValueError):
             client.check_dns_name_availability(location="eastus", domain_name_label="mydomain")
-
-            
