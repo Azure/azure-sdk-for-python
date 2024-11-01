@@ -15,6 +15,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.core.credentials import TokenCredential
@@ -48,7 +49,7 @@ class AdversarialSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: dict, credential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
 
         try:
