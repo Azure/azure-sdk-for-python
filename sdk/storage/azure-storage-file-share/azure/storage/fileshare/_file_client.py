@@ -1067,9 +1067,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_http_headers(
         self, content_settings: "ContentSettings",
-        file_attributes: Union[str, "NTFSAttributes"] = "preserve",
-        file_creation_time: Optional[Union[str, datetime]] = "preserve",
-        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_attributes: Union[str, "NTFSAttributes"] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs: Any
@@ -1083,13 +1083,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
             Default value: Preserve.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key

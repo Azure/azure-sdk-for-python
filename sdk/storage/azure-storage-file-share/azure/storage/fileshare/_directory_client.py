@@ -293,13 +293,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             If not set, the default value would be "none" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :paramtype file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :keyword file_creation_time:
             Creation time for the directory. Default value: "now".
-        :paramtype file_creation_time: str or ~datetime.datetime
+        :paramtype file_creation_time: str or ~datetime.datetime or None
         :keyword file_last_write_time:
             Last write time for the directory. Default value: "now".
-        :paramtype file_last_write_time: str or ~datetime.datetime
+        :paramtype file_last_write_time: str or ~datetime.datetime or None
         :keyword str file_permission:
             If specified the permission (security descriptor) shall be set
             for the directory/file. This header can be used if Permission size is
