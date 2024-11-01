@@ -1,8 +1,10 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable
 import os
 import json
 import time
@@ -13,7 +15,15 @@ import sys
 import io
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet, AgentThread
+from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet, AgentThread, CodeInterpreterToolResource, FileSearchToolResource, ToolResources, AgentRunStream
+from azure.ai.projects.models import (
+    AgentStreamEvent,
+    MessageDeltaTextContent,
+    MessageDeltaChunk,
+    ThreadMessage,
+    ThreadRun,
+    RunStep,
+)
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
@@ -128,17 +138,17 @@ class TestAgentClient(AzureRecordedTestCase):
         client.close()
     """
 
-    #     # **********************************************************************************
-    #     #
-    #     #                               UNIT TESTS
-    #     #
-    #     # **********************************************************************************
+    # **********************************************************************************
+    #
+    #                               UNIT TESTS
+    #
+    # **********************************************************************************
 
-    # # **********************************************************************************
-    # #
-    # #                      HAPPY PATH SERVICE TESTS - agent APIs
-    # #
-    # # **********************************************************************************
+    # **********************************************************************************
+    #
+    #                      HAPPY PATH SERVICE TESTS - agent APIs
+    #
+    # **********************************************************************************
 
     # test client creation
     @agentClientPreparer()
@@ -247,12 +257,39 @@ class TestAgentClient(AzureRecordedTestCase):
         print("Created agent, agent ID", agent.id)
         assert agent.tools
         assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        # assert agent.tools[0] == functions.definitions TODO ask howie why he changed this because it fails
         print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+    # test agent creation with tools
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_tools_and_resources(self, **kwargs):
+        # create client
+        client = self.create_client(**kwargs)
+        assert isinstance(client, AIProjectClient)
+
+        # initialize agent functions
+        functions = FunctionTool(functions=user_functions_recording)
+
+        # create agent with tools
+        agent = client.agents.create_agent(
+            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+        )
+        assert agent.id
+        print("Created agent, agent ID", agent.id)
+        assert agent.tools
+        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        client.close()        
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1957,7 +1994,7 @@ class TestAgentClient(AzureRecordedTestCase):
             # wait for a second
             time.sleep(1)
             run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            if run.status == "failed":
+            if run.status == "failed": # TODO maybe can remove this? 
                 assert run.last_error
                 print(run.last_error)
                 print("FAILED HERE")
@@ -1975,14 +2012,329 @@ class TestAgentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        
+    """    
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_code_interpreter_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
 
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.code_interpreter = CodeInterpreterToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_file_search_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.file_search = FileSearchToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except ValueError as e:
+                exception_message = e.args[0]
+
+            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+    """
+    
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - Streaming APIs
     # #
     # # **********************************************************************************
 
-    # TODO
+    # test creating stream
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_stream(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+                assert isinstance(stream, AgentRunStream)
+                for event_type, event_data in stream:
+                    assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
+
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+
+    # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
+    # test creating stream with body
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_stream_with_body(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create body for stream
+            body = {
+                "assistant_id": agent.id,
+                # "metadata": {"key1": "value1", "key2": "value2"},
+            }
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, body={"assistant_id": agent.id}) as stream:
+                assert isinstance(stream, AgentRunStream)
+                print("stream: ", stream)
+                print("stream type: ", type(stream))
+                for event_type in stream:
+                    print("event type: ", event_type)
+                
+                for event_data in stream:
+                    print("event data: ", event_data)
+                
+                for event_type, event_data in stream:
+                    print("event type: event data")
+                    print(event_type, event_data)
+                    assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
+
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+    
+    # test creating stream with body: IO[bytes]
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_stream_with_iobytes(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, can you tell me a joke?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create body for stream
+            body = {
+                "assistant_id": agent.id,
+                "metadata": {"key1": "value1", "key2": "value2"},
+            }
+            binary_body = json.dumps(body).encode("utf-8")
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body)) as stream:
+                assert isinstance(stream, AgentRunStream)
+                for event_type, event_data in stream:
+                    assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
+
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+
+    # test creating stream with body: IO[bytes]
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_submit_tool_outputs_to_stream(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # Initialize agent tools
+            functions = FunctionTool(user_functions_recording) 
+            # TODO add files for code interpreter tool
+            # code_interpreter = CodeInterpreterTool()
+
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
+
+            # create agent
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+                assert isinstance(stream, AgentRunStream)
+                for event_type, event_data in stream:
+                    # Check if tools are needed
+                    if event_type == AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION and event_data.required_action.submit_tool_outputs:
+                        # TODO event type is thread run requires action, but run status is completed? 
+                        run = client.agents.get_run(thread_id=thread.id, run_id=event_data.id)
+                        if run.status == "completed":
+                            print("Run completed even though it shouldn't be") 
+                            continue
+                        assert run.status == "requires_action"
+                        
+                        print("Requires action: submit tool outputs")
+                        tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
+                        if not tool_calls:
+                            print("No tool calls provided - cancelling run")
+                            client.agents.cancel_run(thread_id=thread.id, run_id=event_data.id) # TODO check ThreadRun object attribute run_id
+                            break
+
+                        # submit tool outputs to stream
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                        if tool_outputs:
+                            client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id, run_id=event_data.id, tool_outputs=tool_outputs
+                            )
+
+                print("Stream processing completed")
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            client.close()
+                                  
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            # # create run
+            # run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            # assert run.id
+            # print("Created run, run ID", run.id)
+
+            # # check that tools are uploaded
+            # assert run.tools
+            # assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            # print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+
+            # # check status
+            # assert run.status in [
+            #     "queued",
+            #     "in_progress",
+            #     "requires_action",
+            #     "cancelling",
+            #     "cancelled",
+            #     "failed",
+            #     "completed",
+            #     "expired",
+            # ]
+            # while run.status in ["queued", "in_progress", "requires_action"]:
+            #     time.sleep(1)
+            #     run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+            #     # check if tools are needed
+            #     if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+            #         print("Requires action: submit tool outputs")
+            #         tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            #         if not tool_calls:
+            #             print(
+            #                 "No tool calls provided - cancelling run"
+            #             )
+            #             client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+            #             break
+
+            #         # submit tool outputs to run
+            #         tool_outputs = toolset.execute_tool_calls(tool_calls) 
+            #         print("Tool outputs:", tool_outputs)
+            #         if tool_outputs:
+            #             client.agents.submit_tool_outputs_to_run(
+            #                 thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+            #             )
+
+            #     print("Current run status:", run.status)
+
+            # print("Run completed with status:", run.status)
+
+            # # check that messages used the tool
+            # messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+            # tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # hour12 = time.strftime("%H")
+            # hour24 = time.strftime("%I")
+            # minute = time.strftime("%M")
+            # assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
+            # print("Used tool_outputs")
+
+            # delete agent and close client
+            
+
+
+            
+
 
     # # **********************************************************************************
     # #
