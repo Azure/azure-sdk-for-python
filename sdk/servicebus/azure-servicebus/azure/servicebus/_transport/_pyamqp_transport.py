@@ -10,6 +10,7 @@ import random
 import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
+import logging
 
 from .._pyamqp import (
     utils,
@@ -102,6 +103,7 @@ if TYPE_CHECKING:
     from .._pyamqp.client import AMQPClient
     from .._pyamqp.message import MessageDict
 
+_LOGGER = logging.getLogger(__name__)
 
 class _ServiceBusErrorPolicy(RetryPolicy):
 
@@ -743,6 +745,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             amqp_transport=receiver._amqp_transport
         )
         receiver._last_received_sequenced_number = message.sequence_number
+        if receiver._config.logging_enable and _LOGGER.isEnabledFor(logging.DEBUG):
+            _LOGGER.debug(
+                "Received message: seq-num: %r, enqd-utc: %r, lockd-til-utc: %r, ttl: %r, dlvry-cnt: %r",
+                message.sequence_number,
+                message.enqueued_time_utc,
+                message.locked_until_utc,
+                message.time_to_live,
+                message.delivery_count,
+            )
         return message
 
     @staticmethod
