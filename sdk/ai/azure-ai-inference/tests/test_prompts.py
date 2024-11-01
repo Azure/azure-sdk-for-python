@@ -30,7 +30,7 @@ class TestPrompts(AzureRecordedTestCase):
             { "rule": "The check-out time is 11am" },
             { "rule": "Breakfast is served from 7am to 10am" },
         ]
-        messages = prompt_template.render(input=input, rules=rules)
+        messages = prompt_template.create_messages(input=input, rules=rules)
         assert len(messages) == 2
         assert messages[0]["role"] == "system"
         assert "Breakfast is served from 7am to 10am" in messages[0]["content"]
@@ -39,12 +39,12 @@ class TestPrompts(AzureRecordedTestCase):
 
     def test_prompt_template_from_message(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
-        prompt_template = PromptTemplate.from_message(
+        prompt_template = PromptTemplate.from_str(
             api = "chat",
             prompt_template = prompt_template_str
         )
         input = "user question input text"
-        messages = prompt_template.render(input=input)
+        messages = prompt_template.create_messages(input=input)
         assert len(messages) == 1
         assert messages[0]["role"] == "system"
         assert "system prompt template text\nuser:\nuser question input text" == messages[0]["content"]
@@ -67,7 +67,7 @@ class TestPrompts(AzureRecordedTestCase):
             user:
             {{input}}
         """
-        prompt_template = PromptTemplate.from_message(
+        prompt_template = PromptTemplate.from_str(
             api = "chat",
             prompt_template = prompt_template_str
         )
@@ -81,7 +81,7 @@ class TestPrompts(AzureRecordedTestCase):
             { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
             { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
         ]
-        messages = prompt_template.render(input=input, rules=rules, chat_history=chat_history)
+        messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
         assert len(messages) == 1
         assert messages[0]["role"] == "system"
         assert "You are an AI assistant in a hotel." in messages[0]["content"]
