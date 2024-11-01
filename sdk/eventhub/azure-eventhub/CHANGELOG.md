@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `ssl_context` parameter to the clients allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.
 
 ## 5.12.2 (2024-10-02)
 
