@@ -108,10 +108,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                       (query_to_use, self._resource_link))
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
-                if "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
-                    query_to_use = self._query if self._query is not None else "Select * from root r"
+                if self._query and "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
                     query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                          (query_to_use, self._resource_link))
+                                                                          (self._query, self._resource_link))
                     self._execution_context = self._create_pipelined_execution_context(query_execution_info)
                 else:
                     raise e
