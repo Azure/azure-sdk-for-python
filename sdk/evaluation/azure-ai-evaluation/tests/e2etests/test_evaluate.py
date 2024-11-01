@@ -811,11 +811,12 @@ class TestEvaluate:
         assert row_result_df.shape[0] == len(input_data)
 
         assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
-
+        assert "outputs.grounded.evaluation_per_turn" in row_result_df.columns.to_list()
         assert "grounded.groundedness" in metrics.keys()
-
         assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
             row_result_df["outputs.grounded.groundedness"]
         )
         assert row_result_df["outputs.grounded.groundedness"][1] in [3, 4, 5]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness"][0] in [3.0, 4.0, 5.0]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness_reason"][0] is not None
         assert result["studio_url"] is None
