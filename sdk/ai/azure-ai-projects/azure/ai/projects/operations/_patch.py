@@ -363,7 +363,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
 
     :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
         OpenTelemetry protocol (OTLP) endpoint.
-        If not provided, thee method enables instrumentation, but does not configure OpenTelemetry
+        If not provided, this method enables instrumentation, but does not configure OpenTelemetry
         SDK to export traces.
     :paramtype destination: Union[TextIOWrapper, str, None]
     """
