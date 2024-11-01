@@ -735,7 +735,7 @@ class TestBuiltInEvaluators:
         score = evaluator(conversation=conversation)
 
         assert score is not None
-        assert score["violence"] is not None
+        assert score["violence"] in (level.value for level in HarmSeverityLevel)
         assert score["violence_score"] < 1.0
         assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] is not None
