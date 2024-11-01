@@ -49,7 +49,7 @@ class TestPrompts(AzureRecordedTestCase):
 
     def test_prompt_template_from_message(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
-        prompt_template = PromptTemplate.from_str(
+        prompt_template = PromptTemplate.from_string(
             api = "chat",
             prompt_template = prompt_template_str
         )
@@ -77,7 +77,7 @@ class TestPrompts(AzureRecordedTestCase):
             user:
             {{input}}
         """
-        prompt_template = PromptTemplate.from_str(
+        prompt_template = PromptTemplate.from_string(
             api = "chat",
             prompt_template = prompt_template_str
         )

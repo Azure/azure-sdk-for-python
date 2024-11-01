@@ -59,12 +59,12 @@ def sample_chat_completions_from_input_prompt_string():
         user:
         {{input}}
     """
-    prompt_template = PromptTemplate.from_str(
+    prompt_template = PromptTemplate.from_string(
         api = "chat",
         prompt_template = prompt_template_str
     )
 
-    input = "When I arrived, can I still have breakfast?"
+    query = "When I arrived, can I still have breakfast?"
     rules = [
         { "rule": "The check-in time is 3pm" },
         { "rule": "The check-out time is 11am" },
@@ -74,7 +74,7 @@ def sample_chat_completions_from_input_prompt_string():
         { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
         { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
     ]
-    messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
+    messages = prompt_template.create_messages(query=query, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     response = client.complete(messages=messages) # type: ignore[reportCallIssue, reportArgumentType]

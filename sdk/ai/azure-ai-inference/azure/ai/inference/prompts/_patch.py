@@ -43,7 +43,7 @@ class PromptTemplate:
         return cls(prompty=prompty)
 
     @classmethod
-    def from_str(
+    def from_string(
         cls, prompt_template: str, api: str = "chat", model_name: Optional[str] = None
     ) -> Self:
         """Initialize a PromptTemplate object from a message template.
