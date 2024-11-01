@@ -899,7 +899,7 @@ Note that some add-on capabilities will incur additional charges. See pricing: h
 
 ### Get Raw JSON Result
 
-Can get the HTTP response by passing prameter `raw_response_hook`.
+Can get the HTTP response by passing parameter `raw_response_hook`.
 <!-- SNIPPET:sample_get_raw_response.raw_response_hook -->
 
 ```python
