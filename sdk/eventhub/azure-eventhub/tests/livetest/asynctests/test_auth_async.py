@@ -235,9 +235,9 @@ async def test_client_with_ssl_context_async(
     async def verify_context_async():
         # asyncio.to_thread only available in Python 3.9+
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        await asyncio.to_thread(context.load_verify_locations(certifi.where()))
+        await asyncio.to_thread(context.load_verify_locations, certifi.where())
         purpose = ssl.Purpose.SERVER_AUTH
-        await asyncio.to_thread(context.load_default_certs(purpose=purpose))
+        await asyncio.to_thread(context.load_default_certs, purpose=purpose)
         return context
 
     def verify_context():   # for Python 3.8

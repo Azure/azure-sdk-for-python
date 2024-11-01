@@ -340,6 +340,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             target,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
@@ -494,6 +495,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             socket_timeout=config.socket_timeout,
             auth=auth,
             idle_timeout=idle_timeout,
@@ -605,6 +607,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             use_tls=config.use_tls,
         )
 
