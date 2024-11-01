@@ -127,7 +127,6 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 if within_dac.get():
                     raise CredentialUnavailableError(message="Failed to authenticate user")
                 raise ClientAuthenticationError(message="Failed to authenticate user")
-            return result
         else:
             try:
                 result = app.acquire_token_interactive(
@@ -141,7 +140,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     enable_msa_passthrough=self._enable_msa_passthrough,
                     auth_scheme=auth_scheme,
                 )
-            except Exception as ex:  # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 app = self._disable_broker_on_app(**kwargs)
                 result = app.acquire_token_interactive(
                     scopes=scopes,
@@ -159,6 +158,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     if within_dac.get():
                         raise CredentialUnavailableError(message=result["error_description"])
                     raise ClientAuthenticationError(message=result.get("error_description"))
+        return result
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
