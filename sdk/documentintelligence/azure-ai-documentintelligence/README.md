@@ -898,7 +898,39 @@ The following add-on capabilities are available in this SDK:
 Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 ### Get Raw JSON Result
-Use the `send_request` method to send custom HTTP requests and get raw JSON result from HTTP responses.
+
+Can get the HTTP response by passing prameter `raw_response_hook`.
+<!-- SNIPPET:sample_get_raw_response.raw_response_hook -->
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+client = DocumentIntelligenceAdministrationClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
+
+responses = []
+
+def callback(response):
+    response_status_code = response.http_response.status_code
+    response_body = response.http_response.json()
+    responses.append(response_status_code)
+    responses.append(response_body)
+
+with client:
+    client.get_resource_info(raw_response_hook=callback)
+
+print(f"Response status code is: {responses[0]}")
+print(f"Response body is: {responses[1]}")
+```
+
+<!-- END SNIPPET -->
+
+Also, can use the `send_request` method to send custom HTTP requests and get raw JSON result from HTTP responses.
 
 <!-- SNIPPET:sample_send_request.send_request -->
 
