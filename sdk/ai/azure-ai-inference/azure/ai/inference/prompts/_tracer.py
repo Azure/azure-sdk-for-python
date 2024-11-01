@@ -7,7 +7,6 @@ import contextlib
 from pathlib import Path
 from numbers import Number
 from datetime import datetime
-from pydantic import BaseModel
 from functools import wraps, partial
 from typing import Any, Callable, Dict, Iterator, List
 
@@ -66,9 +65,6 @@ def to_dict(obj: Any) -> Dict[str, Any]:
         return "PromptyStream"
     elif type(obj).__name__ == "AsyncPromptyStream":
         return "AsyncPromptyStream"
-    # pydantic models have their own json serialization
-    elif isinstance(obj, BaseModel):
-        return obj.model_dump()
     # recursive list and dict
     elif isinstance(obj, list):
         return [to_dict(item) for item in obj]

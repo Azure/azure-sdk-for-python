@@ -37,6 +37,16 @@ class TestPrompts(AzureRecordedTestCase):
         assert messages[1]["role"] == "user"
         assert messages[1]["content"] == "What's the check-in and check-out time?"
 
+    def test_prompt_template_from_prompty_with_masked_secrets(self, **kwargs):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        prompty_file_path = os.path.join(script_dir, "sample1_with_secrets.prompty")
+        prompt_template = PromptTemplate.from_prompty(prompty_file_path)
+        assert prompt_template.prompty.model.configuration["api_key"] == "test_key"
+        assert prompt_template.prompty.model.configuration["api_secret"] == "test_secret"
+        telemetry_dict = prompt_template.prompty.to_safe_dict()
+        assert telemetry_dict["model"]["configuration"]["api_key"] == "********"
+        assert telemetry_dict["model"]["configuration"]["api_secret"] == "***********"
+
     def test_prompt_template_from_message(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
         prompt_template = PromptTemplate.from_message(
