@@ -13,6 +13,7 @@ import datetime
 import inspect
 import json
 import logging
+import math
 import base64
 import asyncio
 
@@ -58,7 +59,7 @@ from typing import (
     Tuple,
     Set,
     get_origin,
-    Union,
+    cast
 )
 
 logger = logging.getLogger(__name__)
@@ -118,7 +119,7 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: GetConnectionResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(self, *, connection: GetConnectionResponse, token_credential: Optional[TokenCredential] = None) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
@@ -128,7 +129,7 @@ class ConnectionProperties:
             if connection.properties.target.endswith("/")
             else connection.properties.target
         )
-        self.key: str = None
+        self.key: Optional[str] = None
         if hasattr(connection.properties, "credentials"):
             if hasattr(connection.properties.credentials, "key"):
                 self.key = connection.properties.credentials.key
@@ -196,7 +197,7 @@ class SASTokenCredential(TokenCredential):
         logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
 
     @classmethod
-    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime:
+    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime.datetime:
         payload = jwt_token.split(".")[1]
         padded_payload = payload + "=" * (4 - len(payload) % 4)  # Add padding if necessary
         decoded_bytes = base64.urlsafe_b64decode(padded_payload)
@@ -223,11 +224,31 @@ class SASTokenCredential(TokenCredential):
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
-    def get_token(self) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
         logger.debug("SASTokenCredential.get_token] Enter")
         if self._expires_on < datetime.datetime.now(datetime.timezone.utc):
             self._refresh_token()
-        return AccessToken(self._sas_token, self._expires_on.timestamp())
+        return AccessToken(self._sas_token, math.floor(self._expires_on.timestamp()))
 
 
 # Define type_map to translate Python type annotations to JSON Schema types
@@ -308,8 +329,8 @@ class BaseFunctionTool(Tool):
         func_dict = {func.__name__: func for func in functions}
         return func_dict
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
-        specs = []
+    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
+        specs: List[FunctionToolDefinition] = []
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
@@ -360,7 +381,7 @@ class BaseFunctionTool(Tool):
 
         :return: A list of function definitions.
         """
-        return self._definitions
+        return cast(List[ToolDefinition], self._definitions)
 
     @property
     def resources(self) -> ToolResources:
@@ -507,7 +528,7 @@ class BaseToolSet:
     Abstract class for a collection of tools that can be used by an agent.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._tools: List[Tool] = []
 
     def validate_tool_type(self, tool: Tool) -> None:
@@ -555,7 +576,7 @@ class BaseToolSet:
         """
         Get the resources for all tools in the tool set.
         """
-        tool_resources = {}
+        tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
             resources = tool.resources
             for key, value in resources.items():
