@@ -1,10 +1,10 @@
 # Release History
 
-## 5.12.3 (2024-10-09)
+## 5.12.3 (Unreleased)
 
-### Bugs Fixed
+### Features Added
 
-- Fixed a bug where creating the SSL context in the async clients was making a blocking call outside of the constructor.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+- Added `ssl_context` parameter to the clients allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.
 
 ## 5.12.2 (2024-10-02)
 

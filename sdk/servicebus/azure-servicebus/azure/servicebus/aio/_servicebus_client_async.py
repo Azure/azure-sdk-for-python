@@ -79,6 +79,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+     connection_verify will be ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -135,6 +138,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         self._handlers: WeakSet = WeakSet()
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
+        self._ssl_context = kwargs.get("ssl_context")
 
     async def __aenter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
@@ -146,12 +150,16 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     async def _create_connection(self):
         auth = await create_authentication(self)
+        if self._ssl_context:
+            ssl_opts = {"context": self._ssl_context}
+        else:
+            ssl_opts = {"ca_certs": self._connection_verify or certifi.where()}
         self._connection = self._amqp_transport.create_connection_async(
             host=self.fully_qualified_namespace,
             auth=auth.sasl,
             network_trace=self._config.logging_enable,
             custom_endpoint_address=self._custom_endpoint_address,
-            ssl_opts={"ca_certs": self._connection_verify or certifi.where()},
+            ssl_opts=ssl_opts,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
         )
@@ -197,6 +205,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+         connection_verify will be ignored.
+        :paramtype ssl_context: ssl.SSLContext or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -297,6 +308,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             **kwargs,
         )
@@ -417,6 +429,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             prefetch_count=prefetch_count,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             **kwargs,
         )
@@ -469,6 +482,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             **kwargs,
         )
@@ -591,6 +605,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
                 **kwargs,
             )
@@ -619,6 +634,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
                 **kwargs,
             )
