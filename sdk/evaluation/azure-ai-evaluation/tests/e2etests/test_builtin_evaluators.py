@@ -286,7 +286,7 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["self_harm_reason"]), "self_harm_reason must not be None or empty."
 
         # removed eval_last_turn from evaluators since behavior is incorrect. We can re-enable when
-        # it's added bakc to evaluators
+        # it's added back to evaluators
         # eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
         # score3 = eval_fn_last(conversation=simple_conversation)
         # assert score3["self_harm"] == "Very low"
