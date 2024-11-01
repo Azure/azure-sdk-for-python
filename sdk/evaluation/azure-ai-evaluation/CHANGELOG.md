@@ -8,13 +8,14 @@
 - The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
 
 ### Bugs Fixed
+- Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.
 - Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
-- Fixed an issue where during long-running simulations, API token expires causing "Forbidden" error. Instead, users can now set an environment variable `AZURE_TOKEN_REFRESH_INTERVAL` to refresh the token more frequently to prevent expiration and ensure continuous operation of the simulation. 
+- Fixed an issue where during long-running simulations, API token expires causing "Forbidden" error. Instead, users can now set an environment variable `AZURE_TOKEN_REFRESH_INTERVAL` to refresh the token more frequently to prevent expiration and ensure continuous operation of the simulation.
 
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.
 - Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
-- Changed the randomization pattern for `AdversarialSimulator` such that there is an almost equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex. 
+- Changed the randomization pattern for `AdversarialSimulator` such that there is an almost equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex.
 - For the `DirectAttackSimulator`, the prompt templates used to generate simulated outputs for each Adversarial harm category will no longer be in a randomized order by default. To override this behavior, pass `randomize_order=True` when you call the `DirectAttackSimulator`, for example:
 ```python
 adversarial_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
@@ -83,7 +84,7 @@ outputs = asyncio.run(custom_simulator(
   - `SimilarityEvaluator`
   - `RetrievalEvaluator`
 - The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
-    
+
     | Evaluator | New `max_token` for Generation |
     | --- | --- |
     | `CoherenceEvaluator` | 800 |
