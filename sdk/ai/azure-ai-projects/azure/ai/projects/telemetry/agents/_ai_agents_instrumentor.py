@@ -13,7 +13,7 @@ import importlib
 import logging
 import os
 from azure.ai.projects import _types
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 from azure.ai.projects.telemetry.agents._utils import *  # pylint: disable=unused-wildcard-import
 
@@ -27,6 +27,7 @@ from azure.ai.projects.models._enums import MessageRole, RunStepStatus
 from azure.ai.projects.models._models import (
     MessageAttachment,
     MessageDeltaChunk,
+    MessageIncompleteDetails,
     RunStep,
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
@@ -185,14 +186,14 @@ class _AIAgentsInstrumentorPreview:
 
     def _create_event_attributes(
         self,
-        thread_id: str = None,
-        agent_id: str = None,
-        thread_run_id: str = None,
-        message_id: str = None,
-        message_status: str = None,
+        thread_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        thread_run_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        message_status: Optional[str] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
-    ) -> dict:
-        attrs = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
+    ) -> Dict[str, Any]:
+        attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 
@@ -253,7 +254,7 @@ class _AIAgentsInstrumentorPreview:
         message_id: Optional[str] = None,
         thread_run_id: Optional[str] = None,
         message_status: Optional[str] = None,
-        incomplete_details: Optional[str] = None,
+        incomplete_details: Optional[MessageIncompleteDetails] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
         # TODO document new fields
@@ -336,7 +337,7 @@ class _AIAgentsInstrumentorPreview:
                     else None
                 ),
             }
-            for t in step.step_details.tool_calls
+            for t in cast(RunStepToolCallDetails, step.step_details).tool_calls
         ]
 
         attributes = self._create_event_attributes(
@@ -374,7 +375,7 @@ class _AIAgentsInstrumentorPreview:
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(
             operation_name,
             project_name,
@@ -387,7 +388,7 @@ class _AIAgentsInstrumentorPreview:
             max_completion_tokens=max_completion_tokens,
             response_format=response_format.value if response_format else None,
         )
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording and instructions and additional_instructions:
             self._add_instructions_event(
                 span, instructions, additional_instructions, thread_id=thread_id, agent_id=agent_id
             )
@@ -404,7 +405,7 @@ class _AIAgentsInstrumentorPreview:
         run_id: str,
         tool_outputs: List[ToolOutput] = _Unset,
         event_handler: Optional[AgentEventHandler] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
 
         run_span = event_handler.span if isinstance(event_handler, _AgentEventHandlerTraceWrapper) else None
         recorded = self._add_tool_message_events(run_span, tool_outputs)
@@ -414,7 +415,7 @@ class _AIAgentsInstrumentorPreview:
             self._add_tool_message_events(span, tool_outputs)
         return span
 
-    def _add_tool_message_events(self, span, tool_outputs: List[ToolOutput]) -> bool:
+    def _add_tool_message_events(self, span: "Optional[AbstractSpan]", tool_outputs: List[ToolOutput]) -> bool:
         if span and span.span_instance.is_recording:
             for tool_output in tool_outputs:
                 body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}

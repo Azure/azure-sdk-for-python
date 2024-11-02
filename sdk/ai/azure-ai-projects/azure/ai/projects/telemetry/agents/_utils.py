@@ -64,7 +64,7 @@ def trace_tool_execution(
     thread_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
     agent_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
     run_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
-) -> "AbstractSpan":
+) -> "Optional[AbstractSpan]":
     span = start_span(
         OperationName.EXECUTE_TOOL,
         server_address=None,
@@ -89,14 +89,14 @@ def start_span(
     agent_id: Optional[str] = None,
     run_id: Optional[str] = None,
     model: Optional[str] = None,
-    temperature: Optional[str] = None,
-    top_p: Optional[str] = None,
+    temperature: Optional[float] = None,
+    top_p: Optional[float] = None,
     max_prompt_tokens: Optional[int] = None,
     max_completion_tokens: Optional[int] = None,
     response_format: Optional[str] = None,
-    gen_ai_system: str = AZ_AI_AGENT_SYSTEM,
+    gen_ai_system: Optional[str] = AZ_AI_AGENT_SYSTEM,
     kind: SpanKind = SpanKind.CLIENT,
-) -> "AbstractSpan":
+) -> "Optional[AbstractSpan]":
     if _span_impl_type is None:
         return None
 
@@ -124,10 +124,10 @@ def start_span(
             span.add_attribute(GEN_AI_REQUEST_MODEL, model)
 
         if temperature:
-            span.add_attribute(GEN_AI_REQUEST_TEMPERATURE, temperature)
+            span.add_attribute(GEN_AI_REQUEST_TEMPERATURE, str(temperature))
 
         if top_p:
-            span.add_attribute(GEN_AI_REQUEST_TOP_P, top_p)
+            span.add_attribute(GEN_AI_REQUEST_TOP_P, str(top_p))
 
         if max_prompt_tokens:
             span.add_attribute(GEN_AI_REQUEST_MAX_INPUT_TOKENS, max_prompt_tokens)
