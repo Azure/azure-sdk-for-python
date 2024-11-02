@@ -1,7 +1,8 @@
 import time
+import pytest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
-from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection, AuthorizeRequest, PoolChangeRequest
+from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection, AuthorizeRequest, PoolChangeRequest, RemotePath, PeerClusterForVolumeMigrationRequest     
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
 import setup
@@ -98,6 +99,49 @@ def create_dp_volume(client, source_volume, rg=setup.TEST_REPL_REMOTE_RG, accoun
     print("\tDone creating DP volume in NetApp Account {0}".format(account_name))
     return destination_volume
 
+def create_migration_volume(client, rg=setup.TEST_REPL_REMOTE_RG, account_name=setup.TEST_ACC_1, pool_name=setup.TEST_POOL_1,
+                     volume_name=setup.TEST_VOL_1, location=setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=False):    
+    if not volume_only:
+        create_pool(
+            client,
+            rg,
+            account_name,
+            pool_name,
+            location,
+            False)
+    print("Creating Migration volume {0} in NetApp Account {1}".format(volume_name, account_name))
+    # data protection and replication object
+    replication = ReplicationObject(        
+        remote_path=RemotePath(external_host_name="externalHostName", server_name="serverName", volume_name="volumeName")
+    )
+
+    data_protection = VolumePropertiesDataProtection(
+        replication=replication
+    )
+
+    default_protocol_type = ["NFSv3"]
+
+    volume_body = Volume(
+        location=location,
+        usage_threshold=100 * GIGABYTE,
+        protocol_types=default_protocol_type,
+        creation_token=volume_name,
+        subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/"
+                  + vnet + "/subnets/" + setup.PERMA_SUBNET,
+        volume_type="Migration",
+        data_protection=data_protection
+    )
+
+    destination_volume = client.volumes.begin_create_or_update(
+        rg,
+        account_name,
+        pool_name,
+        volume_name,
+        volume_body
+    ).result()
+    wait_for_volume(client, rg, account_name, pool_name, volume_name)
+    print("\tDone creating Migration volume in NetApp Account {0}".format(account_name))
+    return destination_volume
 
 def get_volume(client, rg, account_name, pool_name, volume_name):
     volume = client.volumes.get(rg, account_name, pool_name, volume_name)
@@ -504,3 +548,51 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         assert len(list(volume.zones)) > 0
 
         print("Finished with begin_populate_availability_zone")
+    
+    @pytest.mark.skip(reason="Skipping this test for service side issue re-enable when fixed")
+    @recorded_by_proxy    
+    def test_external_migration_volume_fails(self):
+        set_bodiless_matcher()
+        print("Starting test_volume_replication")        
+        volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-m2-")                
+        
+        try:
+            migration_volume = create_migration_volume(
+                self.client,                
+                setup.TEST_RG,
+                setup.PERMA_ACCOUNT,
+                setup.PERMA_POOL,
+                volumeName1,
+                vnet=setup.PERMA_VNET,
+                volume_only=True)
+            
+            # peer external replication
+            print("Peer external replication")
+            body = PeerClusterForVolumeMigrationRequest(peer_ip_addresses=['0.0.0.1','0.0.0.2','0.0.0.3','0.0.0.4','0.0.0.5'])
+            try:
+                self.client.volumes.begin_peer_external_cluster(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, body)
+            except Exception as e:
+                assert str(e).startswith("(Something unexpected occurred)")
+
+            try:
+                self.client.volumes.begin_authorize_external_replication(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+            except Exception as e: #ExternalClusterPeerMissing
+                assert str(e).startswith("(Cluster peer targeting)")
+
+            try:
+                self.client.volumes.begin_perform_replication_transfer(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+            except Exception as e: #VolumeReplicationHasNotBeenCreated
+                assert str(e).startswith("(This operation cannot be performed since the replication setup has not been completed)")
+
+            try:
+                self.client.volumes.begin_finalize_relocation(setup.TEST_RG, PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+            except Exception as e: # VolumeReplicationMissingFor
+                assert str(e).startswith("(Volume Replication was not found for volume:)")
+
+            # now proceed with the delete of the volumes and tidy up resources
+        finally:
+            # delete migration volume
+            delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+
+        print("Finished with external_migration_volume_fails")
+

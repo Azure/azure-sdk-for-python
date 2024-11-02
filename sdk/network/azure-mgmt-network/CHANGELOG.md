@@ -1,5 +1,11 @@
 # Release History
 
+## 28.0.0 (2024-11-01)
+
+### Breaking Changes
+
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
+
 ## 27.0.0 (2024-09-22)
 
 ### Features Added

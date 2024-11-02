@@ -4,6 +4,7 @@
 from datetime import datetime
 from typing import Any, Iterable
 
+import logging
 import platform
 import psutil
 
@@ -39,6 +40,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _QuickpulseState,
     _is_post_state,
     _append_quickpulse_document,
+    _get_quickpulse_derived_metric_infos,
     _get_quickpulse_last_process_cpu,
     _get_quickpulse_last_process_time,
     _get_quickpulse_process_elapsed_time,
@@ -47,7 +49,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_quickpulse_last_process_time,
     _set_quickpulse_process_elapsed_time,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._types import _TelemetryData
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _derive_metrics_from_telemetry_data,
     _get_log_record_document,
     _get_span_document,
 )
@@ -61,9 +65,12 @@ from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
 )
 
+_logger = logging.getLogger(__name__)
+
 
 PROCESS = psutil.Process()
 NUM_CPUS = psutil.cpu_count()
+
 
 def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     """Live metrics entry point.
@@ -85,14 +92,15 @@ class _QuickpulseManager(metaclass=Singleton):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         self._exporter = _QuickpulseExporter(**kwargs)
         part_a_fields = {}
-        resource = kwargs.get('resource')
+        resource = kwargs.get("resource")
         if not resource:
             resource = Resource.create({})
         part_a_fields = _populate_part_a_fields(resource)
         id_generator = RandomIdGenerator()
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
-            invariant_version=1,
+            # Invariant version 5 indicates filtering is supported
+            invariant_version=5,
             instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),
@@ -108,42 +116,28 @@ class _QuickpulseManager(metaclass=Singleton):
         self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
 
         self._request_duration = self._meter.create_histogram(
-            _REQUEST_DURATION_NAME[0],
-            "ms",
-            "live metrics avg request duration in ms"
+            _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
         self._dependency_duration = self._meter.create_histogram(
-            _DEPENDENCY_DURATION_NAME[0],
-            "ms",
-            "live metrics avg dependency duration in ms"
+            _DEPENDENCY_DURATION_NAME[0], "ms", "live metrics avg dependency duration in ms"
         )
         # We use a counter to represent rates per second because collection
         # interval is one second so we simply need the number of requests
         # within the collection interval
         self._request_rate_counter = self._meter.create_counter(
-            _REQUEST_RATE_NAME[0],
-            "req/sec",
-            "live metrics request rate per second"
+            _REQUEST_RATE_NAME[0], "req/sec", "live metrics request rate per second"
         )
         self._request_failed_rate_counter = self._meter.create_counter(
-            _REQUEST_FAILURE_RATE_NAME[0],
-            "req/sec",
-            "live metrics request failed rate per second"
+            _REQUEST_FAILURE_RATE_NAME[0], "req/sec", "live metrics request failed rate per second"
         )
         self._dependency_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_RATE_NAME[0],
-            "dep/sec",
-            "live metrics dependency rate per second"
+            _DEPENDENCY_RATE_NAME[0], "dep/sec", "live metrics dependency rate per second"
         )
         self._dependency_failure_rate_counter = self._meter.create_counter(
-            _DEPENDENCY_FAILURE_RATE_NAME[0],
-            "dep/sec",
-            "live metrics dependency failure rate per second"
+            _DEPENDENCY_FAILURE_RATE_NAME[0], "dep/sec", "live metrics dependency failure rate per second"
         )
         self._exception_rate_counter = self._meter.create_counter(
-            _EXCEPTION_RATE_NAME[0],
-            "exc/sec",
-            "live metrics exception rate per second"
+            _EXCEPTION_RATE_NAME[0], "exc/sec", "live metrics exception rate per second"
         )
         self._process_memory_gauge_old = self._meter.create_observable_gauge(
             _COMMITTED_BYTES_NAME[0],
@@ -165,39 +159,60 @@ class _QuickpulseManager(metaclass=Singleton):
     def _record_span(self, span: ReadableSpan) -> None:
         # Only record if in post state
         if _is_post_state():
-            document = _get_span_document(span)
-            _append_quickpulse_document(document)
-            duration_ms = 0
-            if span.end_time and span.start_time:
-                duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
-            # TODO: Spec out what "success" is
-            success = span.status.is_ok
+            try:
+                document = _get_span_document(span)
+                _append_quickpulse_document(document)
+                duration_ms = 0
+                if span.end_time and span.start_time:
+                    duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
+                # TODO: Spec out what "success" is
+                success = span.status.is_ok
 
-            if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):
-                if success:
-                    self._request_rate_counter.add(1)
+                if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):
+                    if success:
+                        self._request_rate_counter.add(1)
+                    else:
+                        self._request_failed_rate_counter.add(1)
+                    self._request_duration.record(duration_ms)
                 else:
-                    self._request_failed_rate_counter.add(1)
-                self._request_duration.record(duration_ms)
-            else:
-                if success:
-                    self._dependency_rate_counter.add(1)
-                else:
-                    self._dependency_failure_rate_counter.add(1)
-                self._dependency_duration.record(duration_ms)
+                    if success:
+                        self._dependency_rate_counter.add(1)
+                    else:
+                        self._dependency_failure_rate_counter.add(1)
+                    self._dependency_duration.record(duration_ms)
+
+                metric_infos_dict = _get_quickpulse_derived_metric_infos()
+                # check if filtering is enabled
+                if metric_infos_dict:
+                    # Derive metrics for quickpulse filtering
+                    data = _TelemetryData._from_span(span)
+                    _derive_metrics_from_telemetry_data(data)
+                    # TODO: derive exception metrics from span events
+            except Exception:  # pylint: disable=broad-except
+                _logger.exception("Exception occurred while recording span.")
 
     def _record_log_record(self, log_data: LogData) -> None:
         # Only record if in post state
         if _is_post_state():
-            if log_data.log_record:
-                log_record = log_data.log_record
-                if log_record.attributes:
-                    document = _get_log_record_document(log_data)
-                    _append_quickpulse_document(document)
-                    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-                    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
-                    if exc_type is not None or exc_message is not None:
-                        self._exception_rate_counter.add(1)
+            try:
+                if log_data.log_record:
+                    log_record = log_data.log_record
+                    if log_record.attributes:
+                        document = _get_log_record_document(log_data)
+                        _append_quickpulse_document(document)
+                        exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+                        exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+                        if exc_type is not None or exc_message is not None:
+                            self._exception_rate_counter.add(1)
+
+                    metric_infos_dict = _get_quickpulse_derived_metric_infos()
+                    # check if filtering is enabled
+                    if metric_infos_dict:
+                        # Derive metrics for quickpulse filtering
+                        data = _TelemetryData._from_log_record(log_record)
+                        _derive_metrics_from_telemetry_data(data)
+            except Exception:  # pylint: disable=broad-except
+                _logger.exception("Exception occurred while recording log record.")
 
 
 # pylint: disable=unused-argument
@@ -237,5 +252,6 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
 # pylint: disable=unused-argument
 def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(_get_quickpulse_last_process_cpu(), {})
+
 
 # cSpell:enable

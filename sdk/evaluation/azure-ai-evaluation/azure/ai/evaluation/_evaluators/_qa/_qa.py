@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -23,6 +23,8 @@ class QAEvaluator:
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
 
     **Usage**
 
@@ -41,6 +43,11 @@ class QAEvaluator:
     .. code-block:: python
 
         {
+            "groundedness": 3.5,
+            "relevance": 4.0,
+            "coherence": 1.5,
+            "fluency": 4.0,
+            "similarity": 3.0,
             "gpt_groundedness": 3.5,
             "gpt_relevance": 4.0,
             "gpt_coherence": 1.5,
@@ -50,10 +57,10 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config, parallel: bool = True):
-        self._parallel = parallel
+    def __init__(self, model_config, **kwargs):
+        self._parallel = kwargs.pop("_parallel", False)
 
-        self._evaluators: List[Callable[..., Dict[str, float]]] = [
+        self._evaluators: List[Union[Callable[..., Dict[str, Union[str, float]]], Callable[..., Dict[str, float]]]] = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -74,12 +81,10 @@ class QAEvaluator:
         :paramtype context: str
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
-        :keyword parallel: Whether to evaluate in parallel. Defaults to True.
-        :paramtype parallel: bool
         :return: The scores for QA scenario.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Union[str, float]]
         """
-        results: Dict[str, float] = {}
+        results: Dict[str, Union[str, float]] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
