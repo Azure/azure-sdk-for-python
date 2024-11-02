@@ -19,7 +19,7 @@ def fetch_current_datetime(format: Optional[str] = None) -> str:
     :rtype: str
     """
     current_time = datetime.datetime.now()
-    
+
     # Use the provided format if available, else use a default format
     if format:
         time_format = format
@@ -68,7 +68,7 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 
 def calculate_sum(a: int, b: int) -> str:
     """Calculates the sum of two integers.
-    
+
     :param a (int): First integer.
     :rtype: int
     :param b (int): Second integer.
@@ -83,20 +83,20 @@ def calculate_sum(a: int, b: int) -> str:
 
 def convert_temperature(celsius: float) -> str:
     """Converts temperature from Celsius to Fahrenheit.
-    
+
     :param celsius (float): Temperature in Celsius.
     :rtype: float
 
     :return: Temperature in Fahrenheit.
     :rtype: str
     """
-    fahrenheit = (celsius * 9/5) + 32
+    fahrenheit = (celsius * 9 / 5) + 32
     return json.dumps({"fahrenheit": fahrenheit})
 
 
 def toggle_flag(flag: bool) -> str:
     """Toggles a boolean flag.
-    
+
     :param flag (bool): The flag to toggle.
     :rtype: bool
 
@@ -109,7 +109,7 @@ def toggle_flag(flag: bool) -> str:
 
 def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> str:
     """Merges two dictionaries.
-    
+
     :param dict1 (Dict[str, Any]): First dictionary.
     :rtype: dict
     :param dict2 (Dict[str, Any]): Second dictionary.
@@ -125,7 +125,7 @@ def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> str:
 
 def get_user_info(user_id: int) -> str:
     """Retrieves user information based on user ID.
-    
+
     :param user_id (int): ID of the user.
     :rtype: int
 
@@ -143,7 +143,7 @@ def get_user_info(user_id: int) -> str:
 
 def longest_word_in_sentences(sentences: List[str]) -> str:
     """Finds the longest word in each sentence.
-    
+
     :param sentences (List[str]): A list of sentences.
     :return: A JSON string mapping each sentence to its longest word.
     :rtype: str

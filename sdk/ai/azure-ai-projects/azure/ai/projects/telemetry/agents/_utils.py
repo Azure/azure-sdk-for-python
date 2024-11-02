@@ -61,38 +61,41 @@ class OperationName(Enum):
 def trace_tool_execution(
     tool_call_id: str,
     tool_name: str,
-    thread_id: Optional[str] = None, # TODO: would be nice to have this, but need to propagate somehow
-    agent_id: Optional[str] = None, # TODO: would be nice to have this, but need to propagate somehow
-    run_id: Optional[str] = None # TODO: would be nice to have this, but need to propagate somehow
+    thread_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
+    agent_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
+    run_id: Optional[str] = None,  # TODO: would be nice to have this, but need to propagate somehow
 ) -> "AbstractSpan":
-    span = start_span(OperationName.EXECUTE_TOOL,
-                    server_address=None,
-                    span_name=f"execute_tool {tool_name}",
-                    thread_id=thread_id,
-                    agent_id=agent_id,
-                    run_id=run_id,
-                    gen_ai_system=None) # it's a client code execution, not GenAI span
+    span = start_span(
+        OperationName.EXECUTE_TOOL,
+        server_address=None,
+        span_name=f"execute_tool {tool_name}",
+        thread_id=thread_id,
+        agent_id=agent_id,
+        run_id=run_id,
+        gen_ai_system=None,
+    )  # it's a client code execution, not GenAI span
     if span is not None and span.span_instance.is_recording:
         span.add_attribute(GEN_AI_TOOL_CALL_ID, tool_call_id)
         span.add_attribute(GEN_AI_TOOL_NAME, tool_name)
 
     return span
 
+
 def start_span(
-        operation_name: OperationName,
-        server_address: str,
-        span_name: str = None,
-        thread_id: str = None,
-        agent_id: str = None,
-        run_id: str = None,
-        model: str = None,
-        temperature: str = None,
-        top_p: str = None,
-        max_prompt_tokens: Optional[int] = None,
-        max_completion_tokens: Optional[int] = None,
-        response_format: Optional[str] = None,
-        gen_ai_system: str = AZ_AI_AGENT_SYSTEM,
-        kind: SpanKind = SpanKind.CLIENT
+    operation_name: OperationName,
+    server_address: str,
+    span_name: str = None,
+    thread_id: str = None,
+    agent_id: str = None,
+    run_id: str = None,
+    model: str = None,
+    temperature: str = None,
+    top_p: str = None,
+    max_prompt_tokens: Optional[int] = None,
+    max_completion_tokens: Optional[int] = None,
+    response_format: Optional[str] = None,
+    gen_ai_system: str = AZ_AI_AGENT_SYSTEM,
+    kind: SpanKind = SpanKind.CLIENT,
 ) -> "AbstractSpan":
     if _span_impl_type is None:
         return None

@@ -3,6 +3,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1238,7 +1239,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
             thread_id=thread.id, role="user", content="What does the attachment say?"
         )
         assert message.id, "The message was not created."
-        
+
         run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         await ai_client.agents.delete_vector_store(vector_store.id)
         assert run.status == "completed"
@@ -1287,11 +1288,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
         # Create a message with the file search attachment
         # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
         attachment = MessageAttachment(
-            file_id=file_id, data_sources=kwargs.get("data_sources"),
-            tools=[
-                FileSearchTool().definitions[0],
-                CodeInterpreterTool().definitions[0]
-            ]
+            file_id=file_id,
+            data_sources=kwargs.get("data_sources"),
+            tools=[FileSearchTool().definitions[0], CodeInterpreterTool().definitions[0]],
         )
         message = await ai_client.agents.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
@@ -1337,9 +1336,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
         )
         assert agent.id
 
-        thread = await ai_client.agents.create_thread(
-            tool_resources=ToolResources(file_search=fs)
-        )
+        thread = await ai_client.agents.create_thread(tool_resources=ToolResources(file_search=fs))
         assert thread.id
         # create message
         message = await ai_client.agents.create_message(
@@ -1362,13 +1359,12 @@ class TestagentClientAsync(AzureRecordedTestCase):
             storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
         )
         await self._do_test_create_assistant_with_interpreter(data_sources=[ds], **kwargs)
-    
+
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_create_assistant_with_interpreter_file_ids(self, **kwargs):
         """Test Create assistant with code interpreter with file IDs."""
         await self._do_test_create_assistant_with_interpreter(file_path=self._get_data_file(), **kwargs)
-        
 
     async def _do_test_create_assistant_with_interpreter(self, **kwargs):
         """Test create assistant with code interpreter and project asset id"""
@@ -1379,13 +1375,14 @@ class TestagentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.agents.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = await ai_client.agents.upload_file_and_poll(
+                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
+            )
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
         cdr = CodeInterpreterToolResource(
-            file_ids=[file_id] if file_id else None,
-            data_sources=kwargs.get('data_sources')
+            file_ids=[file_id] if file_id else None, data_sources=kwargs.get("data_sources")
         )
         tr = ToolResources(code_interpreter=cdr)
         # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
@@ -1394,7 +1391,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=code_interpreter.definitions,
-            tool_resources=tr
+            tool_resources=tr,
         )
         assert agent.id, "Agent was not created"
 
@@ -1422,7 +1419,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
             storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
         )
         await self._do_test_create_thread_with_interpreter(data_sources=[ds], **kwargs)
-    
+
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_create_thread_with_interpreter_file_ids(self, **kwargs):
@@ -1438,13 +1435,14 @@ class TestagentClientAsync(AzureRecordedTestCase):
 
         file_id = None
         if "file_path" in kwargs:
-            file = await ai_client.agents.upload_file_and_poll(file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS)
+            file = await ai_client.agents.upload_file_and_poll(
+                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
+            )
             assert file.id, "The file was not uploaded."
             file_id = file.id
 
         cdr = CodeInterpreterToolResource(
-            file_ids=[file_id] if file_id else None,
-            data_sources=kwargs.get('data_sources')
+            file_ids=[file_id] if file_id else None, data_sources=kwargs.get("data_sources")
         )
         tr = ToolResources(code_interpreter=cdr)
         # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
@@ -1499,7 +1497,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=file_search.definitions,
-            tool_resources=ToolResources(file_search=fs)
+            tool_resources=ToolResources(file_search=fs),
         )
         assert agent.id
 
@@ -1532,14 +1530,14 @@ class TestagentClientAsync(AzureRecordedTestCase):
     async def test_create_attachment_in_thread_file_ids(self, **kwargs):
         """Create thread with message attachment inline with azure asset IDs."""
         await self._do_test_create_attachment_in_thread_azure(file_path=self._get_data_file(), **kwargs)
-    
+
     async def _do_test_create_attachment_in_thread_azure(self, **kwargs):
         # create client
         ai_client = self.create_client(**kwargs)
         assert isinstance(ai_client, AIProjectClient)
 
         file_id = await self._get_file_id_maybe(ai_client, **kwargs)
-        
+
         file_search = FileSearchTool()
         agent = await ai_client.agents.create_agent(
             model="gpt-4o",
@@ -1553,16 +1551,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
         attachment = MessageAttachment(
             file_id=file_id,
             data_sources=kwargs.get("data_sources"),
-            tools=[
-                FileSearchTool().definitions[0],
-                CodeInterpreterTool().definitions[0]
-            ]
+            tools=[FileSearchTool().definitions[0], CodeInterpreterTool().definitions[0]],
         )
-        message = ThreadMessageOptions(
-            role="user",
-            content="What does the attachment say?",
-            attachments=[attachment]
-        )
+        message = ThreadMessageOptions(role="user", content="What does the attachment say?", attachments=[attachment])
         thread = await ai_client.agents.create_thread(messages=[message])
         assert thread.id
 

@@ -223,7 +223,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint", and "azure_ai_search".
+     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -232,7 +232,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint\", and \"azure_ai_search\"."""
+     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -567,15 +567,21 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
+    :ivar bing_grounding: The list of connections used by the bing grounding tool. Required.
+    :vartype bing_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
+    bing_grounding: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the bing grounding tool. Required."""
 
     @overload
     def __init__(
         self,
+        *,
+        bing_grounding: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -643,67 +649,6 @@ class CodeInterpreterToolResource(_model_base.Model):
         *,
         file_ids: Optional[List[str]] = None,
         data_sources: Optional[List["_models.VectorStorageDataSource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConnectionListResource(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint`` tools.
-
-    :ivar connection_list: The connections attached to this agent. There can be a maximum of 1
-     connection
-     resource attached to the agent.
-    :vartype connection_list: list[~azure.ai.projects.models.ConnectionResource]
-    """
-
-    connection_list: Optional[List["_models.ConnectionResource"]] = rest_field(name="connections")
-    """The connections attached to this agent. There can be a maximum of 1 connection
-     resource attached to the agent."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_list: Optional[List["_models.ConnectionResource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConnectionResource(_model_base.Model):
-    """A connection resource.
-
-
-    :ivar connection_id: A connection in a ConnectionListResource attached to this agent. Required.
-    :vartype connection_id: str
-    """
-
-    connection_id: str = rest_field()
-    """A connection in a ConnectionListResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
     ) -> None: ...
 
     @overload
@@ -2437,15 +2382,21 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fab
     :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
      "microsoft_fabric".
     :vartype type: str
+    :ivar microsoft_fabric: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype microsoft_fabric: ~azure.ai.projects.models.ToolConnectionList
     """
 
     type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'microsoft_fabric'. Required. Default value is
      \"microsoft_fabric\"."""
+    microsoft_fabric: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the Microsoft Fabric tool. Required."""
 
     @overload
     def __init__(
         self,
+        *,
+        microsoft_fabric: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -4587,7 +4538,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         super().__init__(*args, type="microsoft_fabric", **kwargs)
 
 
-class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
@@ -4596,16 +4547,17 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
     :vartype type: str
     :ivar share_point: Reserved for future use. Required.
     :vartype share_point: dict[str, str]
     """
 
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
-    share_point: Dict[str, str] = rest_field(name="sharepoint")
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    share_point: Dict[str, str] = rest_field(name="sharepoint_grounding")
     """Reserved for future use. Required."""
 
     @overload
@@ -4624,7 +4576,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
@@ -4662,21 +4614,28 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
-class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
     """The input definition information for a sharepoint tool as used to configure an agent.
 
 
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
     :vartype type: str
+    :ivar sharepoint_grounding: The list of connections used by the SharePoint tool. Required.
+    :vartype sharepoint_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the SharePoint tool. Required."""
 
     @overload
     def __init__(
         self,
+        *,
+        sharepoint_grounding: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -4687,7 +4646,7 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
@@ -5207,6 +5166,67 @@ class ThreadRun(_model_base.Model):
         self.object: Literal["thread.run"] = "thread.run"
 
 
+class ToolConnection(_model_base.Model):
+    """A connection resource.
+
+
+    :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """A connection in a ToolConnectionList attached to this tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolConnectionList(_model_base.Model):
+    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
+    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
+
+    :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
+     connection
+     resource attached to the tool.
+    :vartype connection_list: list[~azure.ai.projects.models.ToolConnection]
+    """
+
+    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(name="connections")
+    """The connections attached to this tool. There can be a maximum of 1 connection
+     resource attached to the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_list: Optional[List["_models.ToolConnection"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ToolOutput(_model_base.Model):
     """The data provided during a tool outputs submission to resolve pending tool calls and allow the
     model to continue.
@@ -5256,15 +5276,6 @@ class ToolResources(_model_base.Model):
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
     :vartype file_search: ~azure.ai.projects.models.FileSearchToolResource
-    :ivar bing_grounding: Resources to be used by the ``bing_grounding`` tool consisting of
-     connection IDs.
-    :vartype bing_grounding: ~azure.ai.projects.models.ConnectionListResource
-    :ivar microsoft_fabric: Resources to be used by the ``microsoft_fabric`` tool consisting of
-     connection IDs.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ConnectionListResource
-    :ivar share_point: Resources to be used by the ``sharepoint`` tool consisting of connection
-     IDs.
-    :vartype share_point: ~azure.ai.projects.models.ConnectionListResource
     :ivar azure_ai_search: Resources to be used by the ``azure_ai_search`` tool consisting of index
      IDs and names.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
@@ -5274,12 +5285,6 @@ class ToolResources(_model_base.Model):
     """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
-    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
-    """Resources to be used by the ``bing_grounding`` tool consisting of connection IDs."""
-    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
-    """Resources to be used by the ``microsoft_fabric`` tool consisting of connection IDs."""
-    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
-    """Resources to be used by the ``sharepoint`` tool consisting of connection IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
     """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
@@ -5289,9 +5294,6 @@ class ToolResources(_model_base.Model):
         *,
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
-        bing_grounding: Optional["_models.ConnectionListResource"] = None,
-        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
-        share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ) -> None: ...
 
@@ -5422,15 +5424,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
     :vartype file_search: ~azure.ai.projects.models.UpdateFileSearchToolResourceOptions
-    :ivar bing_grounding: Overrides the list of connections to be used by the ``bing_grounding``
-     tool consisting of connection IDs.
-    :vartype bing_grounding: ~azure.ai.projects.models.ConnectionListResource
-    :ivar microsoft_fabric: Overrides the list of connections to be used by the
-     ``microsoft_fabric`` tool consisting of connection IDs.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ConnectionListResource
-    :ivar share_point: Overrides the list of connections to be used by the ``sharepoint`` tool
-     consisting of connection IDs.
-    :vartype share_point: ~azure.ai.projects.models.ConnectionListResource
     :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
      consisting of index IDs and names.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
@@ -5443,15 +5436,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
-    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
-    """Overrides the list of connections to be used by the ``bing_grounding`` tool consisting of
-     connection IDs."""
-    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
-    """Overrides the list of connections to be used by the ``microsoft_fabric`` tool consisting of
-     connection IDs."""
-    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
-    """Overrides the list of connections to be used by the ``sharepoint`` tool consisting of
-     connection IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
     """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
      names."""
@@ -5462,9 +5446,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
         *,
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
-        bing_grounding: Optional["_models.ConnectionListResource"] = None,
-        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
-        share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ) -> None: ...
 
