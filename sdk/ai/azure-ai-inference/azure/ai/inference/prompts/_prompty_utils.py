@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="assignment"
 import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Union

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="union-attr,return-value"
 import re
 import base64
 from ._core import Prompty

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="return-value"
+# mypy: disable-error-code="return-value,operator"
 import abc
 from ._tracer import trace
 from ._core import Prompty

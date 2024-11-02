@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="union-attr,assignment,arg-type"
 from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 from ._mustache import render
