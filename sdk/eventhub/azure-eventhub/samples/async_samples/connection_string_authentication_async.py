@@ -13,18 +13,18 @@ import os
 from azure.eventhub.aio import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 async def main():
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
-        consumer_group='$Default',
+        consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
     )
     async with consumer_client:
-        pass # consumer_client is now ready to be used.
+        pass  # consumer_client is now ready to be used.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

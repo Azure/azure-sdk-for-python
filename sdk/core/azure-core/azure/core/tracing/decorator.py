@@ -97,6 +97,9 @@ def distributed_trace(
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
+            # Assume this will be popped in DistributedTracingPolicy.
+            func_tracing_attributes = kwargs.pop("tracing_attributes", tracing_attributes)
+
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
                 return func(*args, **kwargs)
@@ -108,7 +111,7 @@ def distributed_trace(
             with change_context(passed_in_parent):
                 name = name_of_span or get_function_and_class_name(func, *args)
                 with span_impl_type(name=name, kind=kind) as span:
-                    for key, value in tracing_attributes.items():
+                    for key, value in func_tracing_attributes.items():
                         span.add_attribute(key, value)
                     return func(*args, **kwargs)
 

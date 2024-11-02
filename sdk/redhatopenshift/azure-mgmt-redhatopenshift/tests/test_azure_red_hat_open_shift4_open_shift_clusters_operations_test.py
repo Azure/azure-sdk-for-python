@@ -13,7 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-
+@pytest.mark.live_test_only
 class TestAzureRedHatOpenShift4OpenShiftClustersOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient)
@@ -21,20 +21,15 @@ class TestAzureRedHatOpenShift4OpenShiftClustersOperations(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list(self, resource_group):
-        response = self.client.open_shift_clusters.list(
-            api_version="2023-11-22",
-        )
+        response = self.client.open_shift_clusters.list()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_resource_group(self, resource_group):
         response = self.client.open_shift_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-11-22",
         )
         result = [r for r in response]
         assert result == []
-        
