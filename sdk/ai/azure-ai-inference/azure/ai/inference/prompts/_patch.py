@@ -12,9 +12,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
 from ._core import Prompty
-from ._invoker import InvokerFactory
 from ._mustache import render
-from ._prompty import load
+from ._prompty_utils import load, prepare
 
 
 class PromptTemplate:
@@ -106,8 +105,7 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            rendered = InvokerFactory.run("renderer", self.prompty, data)
-            parsed = InvokerFactory.run("parser", self.prompty, rendered)
+            parsed = prepare(self.prompty, data)
             return parsed
         elif "prompt_template" in self._config:
             system_prompt = render(self._config["prompt_template"], data)
