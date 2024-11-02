@@ -5,13 +5,14 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterator, Sequence
 from types import MappingProxyType
 from typing import (
     Any,
     Dict,
     List,
     Literal,
+    Mapping,
     Optional,
     Union,
     cast,
