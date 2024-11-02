@@ -25,7 +25,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.update_runs.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             fleet_name="str",
             update_run_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                     "id": "str",
                     "managedClusterUpdate": {
                         "upgrade": {"type": "str", "kubernetesVersion": "str"},
-                        "nodeImageSelection": {"type": "str", "customNodeImageVersions": [{"version": "str"}]},
+                        "nodeImageSelection": {"type": "str"},
                     },
                     "name": "str",
                     "provisioningState": "str",
@@ -159,7 +159,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                     "type": "str",
                     "updateStrategyId": "str",
                 },
-                api_version="2024-05-02-preview",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -174,7 +174,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 update_run_name="str",
-                api_version="2024-05-02-preview",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -190,7 +190,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                 fleet_name="str",
                 update_run_name="str",
                 body={"targets": [{"name": "str", "type": "str"}]},
-                api_version="2024-05-02-preview",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -205,7 +205,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 update_run_name="str",
-                api_version="2024-05-02-preview",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -220,7 +220,7 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 update_run_name="str",
-                api_version="2024-05-02-preview",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

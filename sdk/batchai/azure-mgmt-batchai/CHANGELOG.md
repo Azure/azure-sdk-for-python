@@ -1,5 +1,11 @@
 # Release History
 
+## 7.0.0 (2024-10-31)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 10-31-2024. This package will only receive security fixes until 10-31-2024. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azureml-core](https://pypi.org/project/azureml-core/). Refer to the migration guide (https://learn.microsoft.com/previous-versions/azure/batch-ai/how-to-migrate) for guidance on upgrading.
+
 ## 7.0.0b1 (2021-06-02)
 
 This is beta preview version.

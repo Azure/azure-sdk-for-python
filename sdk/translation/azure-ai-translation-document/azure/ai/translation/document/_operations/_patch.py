@@ -43,7 +43,7 @@ from ._operations import (
     SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
     JSON,
     ClsType,
-    build_single_document_translation_document_translate_request,
+    build_single_document_translation_translate_request,
 )
 
 from .._vendor import prepare_multipart_form_data
@@ -336,7 +336,7 @@ class SingleDocumentTranslationClientOperationsMixin(
 ):  # pylint: disable=name-too-long
 
     @overload
-    def document_translate(
+    def translate(
         self,
         body: _models.DocumentTranslateContent,
         *,
@@ -389,7 +389,7 @@ class SingleDocumentTranslationClientOperationsMixin(
         """
 
     @overload
-    def document_translate(
+    def translate(
         self,
         body: JSON,
         *,
@@ -433,7 +433,7 @@ class SingleDocumentTranslationClientOperationsMixin(
         """
 
     @distributed_trace
-    def document_translate(
+    def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
         *,
@@ -502,7 +502,7 @@ class SingleDocumentTranslationClientOperationsMixin(
         _data_fields: List[str] = []
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_single_document_translation_document_translate_request(
+        _request = build_single_document_translation_translate_request(
             target_language=target_language,
             source_language=source_language,
             category=category,

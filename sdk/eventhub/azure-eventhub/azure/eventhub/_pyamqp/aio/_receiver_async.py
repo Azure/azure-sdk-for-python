@@ -59,7 +59,7 @@ class ReceiverLink(Link):
     async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
-        self.received_delivery_id = frame[1] # delivery_id
+        self.received_delivery_id = frame[1]  # delivery_id
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.delivery_count += 1
@@ -86,17 +86,17 @@ class ReceiverLink(Link):
                     delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
-                    batchable=None
+                    batchable=None,
                 )
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
-            await self._session._connection.listen(wait=False) # pylint: disable=protected-access
+            await self._session._connection.listen(wait=False)  # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 if self._error:
                     raise self._error
         elif wait:
-            await self._session._connection.listen(wait=wait) # pylint: disable=protected-access
+            await self._session._connection.listen(wait=wait)  # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 if self._error:
                     raise self._error
@@ -114,11 +114,11 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if delivery_tag not in self._received_delivery_tags:
-            raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
+            raise AMQPException(condition=ErrorCondition.IllegalState, description="Delivery tag not found.")
 
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
-        await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        await self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
         self._received_delivery_tags.remove(delivery_tag)
 
     async def attach(self):
@@ -139,12 +139,7 @@ class ReceiverLink(Link):
         if self._is_closed:
             raise ValueError("Link already closed.")
         await self._outgoing_disposition(
-            first_delivery_id,
-            last_delivery_id,
-            delivery_tag,
-            settled,
-            delivery_state,
-            batchable
+            first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable
         )
         if not settled:
             await self._wait_for_response(wait)

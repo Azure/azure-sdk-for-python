@@ -6,10 +6,9 @@ from enum import Enum
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
-from azure.core import CaseInsensitiveEnumMeta
 
 
-class RougeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RougeType(Enum):
     """
     Enumeration of ROUGE (Recall-Oriented Understudy for Gisting Evaluation) types.
     """
@@ -38,8 +37,8 @@ class _AsyncRougeScoreEvaluator:
         self._rouge_type = rouge_type
 
     async def __call__(self, *, ground_truth: str, response: str, **kwargs):
-        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type])
-        metrics = scorer.score(ground_truth, response)[self._rouge_type]
+        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type.value])
+        metrics = scorer.score(ground_truth, response)[self._rouge_type.value]
         return {
             "rouge_precision": metrics.precision,
             "rouge_recall": metrics.recall,

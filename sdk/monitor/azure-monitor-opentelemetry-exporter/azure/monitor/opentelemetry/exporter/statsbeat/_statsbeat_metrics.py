@@ -44,6 +44,8 @@ _AIMS_API_VERSION = "api-version=2017-12-01"
 _AIMS_FORMAT = "format=json"
 
 _ENDPOINT_TYPES = ["breeze"]
+
+
 class _RP_Names(Enum):
     APP_SERVICE = "appsvc"
     FUNCTIONS = "functions"
@@ -51,7 +53,8 @@ class _RP_Names(Enum):
     VM = "vm"
     UNKNOWN = "unknown"
 
-_HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
+
+_HOST_PATTERN = re.compile("^https?://(?:www\\.)?([^/.]+)")
 
 
 class _FEATURE_TYPES:
@@ -84,7 +87,7 @@ class _StatsbeatMetrics:
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
         "language": "python",
-        "version": VERSION
+        "version": VERSION,
     }
 
     _NETWORK_ATTRIBUTES: Dict[str, Any] = {
@@ -151,7 +154,7 @@ class _StatsbeatMetrics:
             _ATTACH_METRIC_NAME[0],
             callbacks=[self._get_attach_metric],
             unit="",
-            description="Statsbeat metric tracking tracking rp information"
+            description="Statsbeat metric tracking tracking rp information",
         )
 
         # Feature metrics - metrics related to features/instrumentations being used
@@ -159,7 +162,7 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0],
             callbacks=[self._get_feature_metric],
             unit="",
-            description="Statsbeat metric tracking tracking enabled features"
+            description="Statsbeat metric tracking tracking enabled features",
         )
 
     # pylint: disable=unused-argument
@@ -169,32 +172,27 @@ class _StatsbeatMetrics:
         # Check if it is time to observe long interval metrics
         if not self._meets_long_interval_threshold(_ATTACH_METRIC_NAME[0]):
             return observations
-        rp = ''
-        rpId = ''
+        rp = ""
+        rpId = ""
         os_type = platform.system()
         # rp, rpId
         if _utils._is_on_app_service():
             # Web apps
             rp = _RP_Names.APP_SERVICE.value
-            rpId = '{}/{}'.format(
-                        os.environ.get(_WEBSITE_SITE_NAME),
-                        os.environ.get(_WEBSITE_HOME_STAMPNAME, '')
-            )
+            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
         elif _utils._is_on_functions():
             # Function apps
             rp = _RP_Names.FUNCTIONS.value
-            rpId = os.environ.get(_WEBSITE_HOSTNAME, '')
+            rpId = os.environ.get(_WEBSITE_HOSTNAME, "")
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value
-            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, '')
+            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value
-            rpId = '{}/{}'.format(
-                        self._vm_data.get("vmId", ''),
-                        self._vm_data.get("subscriptionId", ''))
-            os_type = self._vm_data.get("osType", '')
+            rpId = "{}/{}".format(self._vm_data.get("vmId", ""), self._vm_data.get("subscriptionId", ""))
+            os_type = self._vm_data.get("osType", "")
         else:
             # Not in any rp or VM metadata failed
             rp = _RP_Names.UNKNOWN.value
@@ -203,16 +201,14 @@ class _StatsbeatMetrics:
         _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"] = rp
         _StatsbeatMetrics._COMMON_ATTRIBUTES["os"] = os_type or platform.system()
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes['rpId'] = rpId
-        observations.append(Observation(1, dict(attributes))) # type: ignore
+        attributes["rpId"] = rpId
+        observations.append(Observation(1, dict(attributes)))  # type: ignore
         return observations
 
     def _get_azure_compute_metadata(self) -> bool:
         try:
-            request_url = "{0}?{1}&{2}".format(
-                _AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
-            response = requests.get(
-                request_url, headers={"MetaData": "True"}, timeout=0.2)
+            request_url = "{0}?{1}&{2}".format(_AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
+            response = requests.get(request_url, headers={"MetaData": "True"}, timeout=0.2)
         except (requests.exceptions.ConnectionError, requests.Timeout):
             # Not in VM
             self._vm_retry = False
@@ -249,8 +245,8 @@ class _StatsbeatMetrics:
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES) # type: ignore
-            observations.append(Observation(1, dict(attributes))) # type: ignore
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)  # type: ignore
+            observations.append(Observation(1, dict(attributes)))  # type: ignore
 
         # instrumentation metric
         # Don't send observation if no instrumentations enabled
@@ -258,8 +254,8 @@ class _StatsbeatMetrics:
         if instrumentation_bits != 0:
             _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES) # type: ignore
-            observations.append(Observation(1, dict(attributes))) # type: ignore
+            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)  # type: ignore
+            observations.append(Observation(1, dict(attributes)))  # type: ignore
 
         return observations
 
@@ -281,37 +277,37 @@ class _StatsbeatMetrics:
             _REQ_SUCCESS_NAME[0],
             callbacks=[self._get_success_count],
             unit="count",
-            description="Statsbeat metric tracking request success count"
+            description="Statsbeat metric tracking request success count",
         )
         self._failure_count = self._meter.create_observable_gauge(
             _REQ_FAILURE_NAME[0],
             callbacks=[self._get_failure_count],
             unit="count",
-            description="Statsbeat metric tracking request failure count"
+            description="Statsbeat metric tracking request failure count",
         )
         self._retry_count = self._meter.create_observable_gauge(
             _REQ_RETRY_NAME[0],
             callbacks=[self._get_retry_count],
             unit="count",
-            description="Statsbeat metric tracking request retry count"
+            description="Statsbeat metric tracking request retry count",
         )
         self._throttle_count = self._meter.create_observable_gauge(
             _REQ_THROTTLE_NAME[0],
             callbacks=[self._get_throttle_count],
             unit="count",
-            description="Statsbeat metric tracking request throttle count"
+            description="Statsbeat metric tracking request throttle count",
         )
         self._exception_count = self._meter.create_observable_gauge(
             _REQ_EXCEPTION_NAME[0],
             callbacks=[self._get_exception_count],
             unit="count",
-            description="Statsbeat metric tracking request exception count"
+            description="Statsbeat metric tracking request exception count",
         )
         self._average_duration = self._meter.create_observable_gauge(
             _REQ_DURATION_NAME[0],
             callbacks=[self._get_average_duration],
             unit="avg",
-            description="Statsbeat metric tracking average request duration"
+            description="Statsbeat metric tracking average request duration",
         )
 
     # pylint: disable=unused-argument
@@ -329,11 +325,9 @@ class _StatsbeatMetrics:
         attributes["statusCode"] = 200
         with _REQUESTS_MAP_LOCK:
             # only observe if value is not 0
-            count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0) # type: ignore
+            count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)  # type: ignore
             if count != 0:
-                observations.append(
-                    Observation(int(count), dict(attributes))
-                )
+                observations.append(Observation(int(count), dict(attributes)))
                 _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
         return observations
 
@@ -344,14 +338,12 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items(): # type: ignore
+            for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items():  # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
-                    observations.append(
-                        Observation(int(count), dict(attributes))
-                    )
-                    _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0 # type: ignore
+                    observations.append(Observation(int(count), dict(attributes)))
+                    _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0  # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -364,11 +356,9 @@ class _StatsbeatMetrics:
             interval_duration = _REQUESTS_MAP.get(_REQ_DURATION_NAME[1], 0)
             interval_count = _REQUESTS_MAP.get("count", 0)
             # only observe if value is not 0
-            if interval_duration > 0 and interval_count > 0: # type: ignore
-                result = interval_duration / interval_count # type: ignore
-                observations.append(
-                    Observation(result * 1000, dict(attributes))
-                )
+            if interval_duration > 0 and interval_count > 0:  # type: ignore
+                result = interval_duration / interval_count  # type: ignore
+                observations.append(Observation(result * 1000, dict(attributes)))
                 _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 0
                 _REQUESTS_MAP["count"] = 0
         return observations
@@ -380,14 +370,12 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items(): # type: ignore
+            for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items():  # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
-                    observations.append(
-                        Observation(int(count), dict(attributes))
-                    )
-                    _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0 # type: ignore
+                    observations.append(Observation(int(count), dict(attributes)))
+                    _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0  # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -397,14 +385,12 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items(): # type: ignore
+            for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items():  # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
-                    observations.append(
-                        Observation(int(count), dict(attributes))
-                    )
-                    _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0 # type: ignore
+                    observations.append(Observation(int(count), dict(attributes)))
+                    _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0  # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -414,14 +400,12 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items(): # type: ignore
+            for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items():  # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["exceptionType"] = code
-                    observations.append(
-                        Observation(int(count), dict(attributes))
-                    )
-                    _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0 # type: ignore
+                    observations.append(Observation(int(count), dict(attributes)))
+                    _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0  # type: ignore
         return observations
 
 
@@ -432,5 +416,6 @@ def _shorten_host(host: str) -> str:
     if match:
         host = match.group(1)
     return host
+
 
 # cSpell:enable

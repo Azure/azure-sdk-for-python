@@ -34,8 +34,8 @@ async def query_metrics_batch():
     client = MetricsClient(endpoint, credential)
 
     resource_ids = [
-        '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-1>',
-        '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-2>'
+        "/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-1>",
+        "/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-2>",
     ]
     async with client:
         try:
@@ -58,6 +58,8 @@ async def query_metrics_batch():
             print("something fatal happened")
             print(err)
     await credential.close()
+
+
 # [END send_metrics_batch_query_async]
 
 if __name__ == "__main__":
