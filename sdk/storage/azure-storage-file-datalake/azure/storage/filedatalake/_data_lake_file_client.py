@@ -494,7 +494,7 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the file size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword int chunk_size:
@@ -779,7 +779,7 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the file size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword int timeout:

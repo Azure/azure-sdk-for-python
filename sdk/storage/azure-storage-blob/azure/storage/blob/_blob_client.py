@@ -540,7 +540,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the blob size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
@@ -696,7 +696,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the blob size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword Optional[str] encoding:

@@ -535,7 +535,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             already validate. Note that this MD5 hash is not stored with the
             file.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the file size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword lease:
@@ -792,10 +792,11 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        **kwargs: Any
-    ) -> StorageStreamDownloader:
+        self, offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -807,7 +808,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the file size exceeds 64MB.
+            Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
         :keyword bool validate_content:
