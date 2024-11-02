@@ -5,6 +5,8 @@
 # mypy: disable-error-code="union-attr,return-value"
 import re
 import base64
+from pathlib import Path
+from typing import Any, List
 from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 
@@ -15,7 +17,7 @@ class PromptyChatParser(Invoker):
     def __init__(self, prompty: Prompty) -> None:
         super().__init__(prompty)
         self.roles = ["assistant", "function", "system", "user"]
-        self.path = self.prompty.file.parent
+        self.path = Path(self.prompty.file).parent
 
     def inline_image(self, image_item: str) -> str:
         """ Inline Image
@@ -102,7 +104,7 @@ class PromptyChatParser(Invoker):
         else:
             return content
 
-    def invoke(self, data: str) -> str:
+    def invoke(self, data: str) -> Any:
         """ Invoke the Prompty Chat Parser
 
         Parameters
@@ -145,7 +147,7 @@ class PromptyChatParser(Invoker):
         return messages
     
 
-    async def invoke_async(self, data: str) -> str:
+    async def invoke_async(self, data: str) -> Any:
         """ Invoke the Prompty Chat Parser (Async)
 
         Parameters

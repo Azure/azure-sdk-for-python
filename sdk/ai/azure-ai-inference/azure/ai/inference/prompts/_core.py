@@ -35,7 +35,7 @@ class PropertySettings:
     """
 
     type: Literal["string", "number", "array", "object", "boolean"]
-    default: Union[str, int, float, List, Dict, bool] = field(default=None)
+    default: Union[str, int, float, List, Dict, bool, None] = field(default=None)
     description: str = field(default="")
 
 
@@ -179,9 +179,9 @@ class Prompty:
 
     @staticmethod
     def _process_file(file: str, parent: Path) -> Any:
-        file = Path(parent / Path(file)).resolve().absolute()
-        if file.exists():
-            items = load_json(file)
+        file_path = Path(parent / Path(file)).resolve().absolute()
+        if file_path.exists():
+            items = load_json(file_path)
             if isinstance(items, list):
                 return [Prompty.normalize(value, parent) for value in items]
             elif isinstance(items, Dict):
@@ -196,9 +196,9 @@ class Prompty:
 
     @staticmethod
     async def _process_file_async(file: str, parent: Path) -> Any:
-        file = Path(parent / Path(file)).resolve().absolute()
-        if file.exists():
-            items = await load_json_async(file)
+        file_path = Path(parent / Path(file)).resolve().absolute()
+        if file_path.exists():
+            items = await load_json_async(file_path)
             if isinstance(items, list):
                 return [Prompty.normalize(value, parent) for value in items]
             elif isinstance(items, Dict):
@@ -212,7 +212,7 @@ class Prompty:
             raise FileNotFoundError(f"File {file} not found")
 
     @staticmethod
-    def _process_env(variable: str, env_error=True, default: str = None) -> Any:
+    def _process_env(variable: str, env_error=True, default: Union[str, None] = None) -> Any:
         if variable in os.environ.keys():
             return os.environ[variable]
         else:
@@ -283,7 +283,7 @@ class Prompty:
 
 
 def param_hoisting(
-    top: Dict[str, Any], bottom: Dict[str, Any], top_key: str = None
+    top: Dict[str, Any], bottom: Dict[str, Any], top_key: Union[str, None] = None
 ) -> Dict[str, Any]:
     if top_key:
         new_dict = {**top[top_key]} if top_key in top else {}

@@ -118,7 +118,7 @@ class InvokerFactory:
     def register_renderer(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._renderers[name] = wrapped_class
-            return wrapped_class
+            return wrapped_class # type: ignore
 
         return inner_wrapper
 
@@ -126,7 +126,7 @@ class InvokerFactory:
     def register_parser(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._parsers[name] = wrapped_class
-            return wrapped_class
+            return wrapped_class # type: ignore
 
         return inner_wrapper
 
@@ -134,7 +134,7 @@ class InvokerFactory:
     def register_executor(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._executors[name] = wrapped_class
-            return wrapped_class
+            return wrapped_class # type: ignore
 
         return inner_wrapper
 
@@ -142,7 +142,7 @@ class InvokerFactory:
     def register_processor(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._processors[name] = wrapped_class
-            return wrapped_class
+            return wrapped_class # type: ignore
 
         return inner_wrapper
 
@@ -174,28 +174,28 @@ class InvokerFactory:
             if name not in cls._renderers:
                 raise ValueError(f"Renderer {name} not found")
 
-            return cls._renderers[name](prompty)
+            return cls._renderers[name](prompty) # type: ignore
 
         elif type == "parser":
             name = f"{prompty.template.parser}.{prompty.model.api}"
             if name not in cls._parsers:
                 raise ValueError(f"Parser {name} not found")
 
-            return cls._parsers[name](prompty)
+            return cls._parsers[name](prompty) # type: ignore
 
         elif type == "executor":
             name = prompty.model.configuration["type"]
             if name not in cls._executors:
                 raise ValueError(f"Executor {name} not found")
 
-            return cls._executors[name](prompty)
+            return cls._executors[name](prompty) # type: ignore
 
         elif type == "processor":
             name = prompty.model.configuration["type"]
             if name not in cls._processors:
                 raise ValueError(f"Processor {name} not found")
 
-            return cls._processors[name](prompty)
+            return cls._processors[name](prompty) # type: ignore
 
         else:
             raise ValueError(f"Type {type} not found")
@@ -298,5 +298,5 @@ class NoOp(Invoker):
     def invoke(self, data: Any) -> Any:
         return data
 
-    async def invoke_async(self, data: str) -> str:
+    async def invoke_async(self, data: str) -> Any:
         return self.invoke(data)

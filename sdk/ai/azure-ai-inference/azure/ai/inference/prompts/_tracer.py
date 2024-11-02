@@ -13,7 +13,7 @@ from pathlib import Path
 from numbers import Number
 from datetime import datetime
 from functools import wraps, partial
-from typing import Any, Callable, Dict, Iterator, List
+from typing import Any, Callable, Dict, Iterator, List, Union
 
 
 # clean up key value pairs for sensitive values
@@ -46,16 +46,16 @@ class Tracer:
     def start(cls, name: str) -> Iterator[Callable[[str, Any], None]]:
         with contextlib.ExitStack() as stack:
             traces: List[Any] = [
-                stack.enter_context(tracer(name)) for tracer in cls._tracers.values()
+                stack.enter_context(tracer(name)) for tracer in cls._tracers.values() # type: ignore
             ]
-            yield lambda key, value: [
+            yield lambda key, value: [ # type: ignore
                 # normalize and sanitize any trace values
                 trace(key, sanitize(key, to_dict(value)))
                 for trace in traces
             ]
 
 
-def to_dict(obj: Any) -> Dict[str, Any]:
+def to_dict(obj: Any) -> Union[Dict[str, Any], List[Dict[str, Any]], str, Number, bool]:
     # simple json types
     if isinstance(obj, str) or isinstance(obj, Number) or isinstance(obj, bool):
         return obj
@@ -71,9 +71,9 @@ def to_dict(obj: Any) -> Dict[str, Any]:
     elif type(obj).__name__ == "AsyncPromptyStream":
         return "AsyncPromptyStream"
     # recursive list and dict
-    elif isinstance(obj, list):
-        return [to_dict(item) for item in obj]
-    elif isinstance(obj, dict):
+    elif isinstance(obj, List):
+        return [to_dict(item) for item in obj] # type: ignore
+    elif isinstance(obj, Dict):
         return {k: v if isinstance(v, str) else to_dict(v) for k, v in obj.items()}
     elif isinstance(obj, Path):
         return str(obj)
@@ -113,17 +113,17 @@ def _inputs(func: Callable, args, kwargs) -> dict:
     return inputs
 
 
-def _results(result: Any) -> dict:
+def _results(result: Any) -> Union[Dict, List[Dict], str, Number, bool]:
     return to_dict(result) if result is not None else "None"
 
 
 def _trace_sync(
-    func: Callable = None, **okwargs: Any
+    func: Union[Callable, None] = None, **okwargs: Any
 ) -> Callable:
 
-    @wraps(func)
+    @wraps(func) # type: ignore
     def wrapper(*args, **kwargs):
-        name, signature = _name(func, args)
+        name, signature = _name(func, args) # type: ignore
         with Tracer.start(name) as trace:
             trace("signature", signature)
 
@@ -132,11 +132,11 @@ def _trace_sync(
             for k, v in okwargs.items():
                 trace(k, to_dict(v))
 
-            inputs = _inputs(func, args, kwargs)
+            inputs = _inputs(func, args, kwargs) # type: ignore
             trace("inputs", inputs)
 
             try:
-                result = func(*args, **kwargs)
+                result = func(*args, **kwargs) # type: ignore
                 trace("result", _results(result))
             except Exception as e:
                 trace(
@@ -162,12 +162,12 @@ def _trace_sync(
 
 
 def _trace_async(
-    func: Callable = None, **okwargs: Any
+    func: Union[Callable, None] = None, **okwargs: Any
 ) -> Callable:
 
-    @wraps(func)
+    @wraps(func) # type: ignore
     async def wrapper(*args, **kwargs):
-        name, signature = _name(func, args)
+        name, signature = _name(func, args) # type: ignore
         with Tracer.start(name) as trace:
             trace("signature", signature)
 
@@ -176,10 +176,10 @@ def _trace_async(
             for k, v in okwargs.items():
                 trace(k, to_dict(v))
 
-            inputs = _inputs(func, args, kwargs)
+            inputs = _inputs(func, args, kwargs) # type: ignore
             trace("inputs", inputs)
             try:
-                result = await func(*args, **kwargs)
+                result = await func(*args, **kwargs) # type: ignore
                 trace("result", _results(result))
             except Exception as e:
                 trace(
@@ -204,7 +204,7 @@ def _trace_async(
     return wrapper
 
 
-def trace(func: Callable = None, **kwargs: Any) -> Callable:
+def trace(func: Union[Callable, None] = None, **kwargs: Any) -> Callable:
     if func is None:
         return partial(trace, **kwargs)
     wrapped_method = _trace_async if inspect.iscoroutinefunction(func) else _trace_sync
@@ -212,7 +212,7 @@ def trace(func: Callable = None, **kwargs: Any) -> Callable:
 
 
 class PromptyTracer:
-    def __init__(self, output_dir: str = None) -> None:
+    def __init__(self, output_dir: Union[str, None] = None) -> None:
         if output_dir:
             self.output = Path(output_dir).resolve().absolute()
         else:
@@ -294,7 +294,7 @@ class PromptyTracer:
                     self.stack[-1]["__frames"] = []
                 self.stack[-1]["__frames"].append(frame)
 
-    def hoist_item(self, src: Dict[str, Any], cur: Dict[str, Any]) -> None:
+    def hoist_item(self, src: Dict[str, Any], cur: Dict[str, Any]) -> Dict[str, Any]:
         for key, value in src.items():
             if value is None or isinstance(value, list) or isinstance(value, dict):
                 continue
@@ -314,7 +314,7 @@ class PromptyTracer:
             / f"{frame['name']}.{datetime.now().strftime('%Y%m%d.%H%M%S')}.tracy"
         )
 
-        v = importlib.metadata.version("prompty")
+        v = importlib.metadata.version("prompty") # type: ignore
         enriched_frame = {
             "runtime": "python",
             "version": v,

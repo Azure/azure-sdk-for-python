@@ -7,7 +7,7 @@ import re
 import yaml
 import json
 import aiofiles
-from typing import Any, Dict
+from typing import Any, Dict, Union
 from pathlib import Path
 
 _yaml_regex = re.compile(
@@ -32,7 +32,7 @@ async def load_json_async(file_path, encoding='utf-8'):
     content = await load_text_async(file_path, encoding=encoding)
     return json.loads(content)
 
-def _find_global_config(prompty_path: Path = Path.cwd()) -> Path:
+def _find_global_config(prompty_path: Path = Path.cwd()) -> Union[Path, None]:
     prompty_config = list(Path.cwd().glob("**/prompty.json"))
 
     if len(prompty_config) > 0:

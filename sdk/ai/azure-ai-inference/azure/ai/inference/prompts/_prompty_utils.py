@@ -193,7 +193,7 @@ def _load_raw_prompty(attributes: dict, content: str, p: Path, global_config: di
     else:
         outputs = {}
 
-    p = Prompty(
+    prompty = Prompty(
         **attributes,
         model=model,
         inputs=inputs,
@@ -203,11 +203,11 @@ def _load_raw_prompty(attributes: dict, content: str, p: Path, global_config: di
         file=p,
     )
 
-    return p
+    return prompty
 
 
 @trace(description="Load a prompty file.")
-def load(prompty_file: str, configuration: str = "default") -> Prompty:
+def load(prompty_file: Union[str, Path], configuration: str = "default") -> Prompty:
     """Load a prompty file.
 
     Parameters
@@ -261,7 +261,7 @@ def load(prompty_file: str, configuration: str = "default") -> Prompty:
 
 
 @trace(description="Load a prompty file.")
-async def load_async(prompty_file: str, configuration: str = "default") -> Prompty:
+async def load_async(prompty_file: Union[str, Path], configuration: str = "default") -> Prompty:
     """Load a prompty file.
 
     Parameters
