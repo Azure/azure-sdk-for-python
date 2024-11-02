@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="union-attr,return-value"
+# pylint: disable=line-too-long,R,consider-using-enumerate
 import re
 import base64
 from pathlib import Path
@@ -145,7 +146,7 @@ class PromptyChatParser(Invoker):
             messages.append({"role": role, "content": self.parse_content(content)})
 
         return messages
-    
+
 
     async def invoke_async(self, data: str) -> Any:
         """ Invoke the Prompty Chat Parser (Async)

@@ -3,10 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="return-value,operator"
+# pylint: disable=line-too-long,R
 import abc
+from typing import Any, Callable, Dict, Literal
 from ._tracer import trace
 from ._core import Prompty
-from typing import Any, Callable, Dict, Literal
 
 
 class Invoker(abc.ABC):
@@ -209,7 +210,7 @@ class InvokerFactory:
         default: Any = None,
     ):
         name = cls._get_name(type, prompty)
-        if name.startswith("NOOP") and default != None:
+        if name.startswith("NOOP") and default is not None:
             return default
         elif name.startswith("NOOP"):
             return data
@@ -227,7 +228,7 @@ class InvokerFactory:
         default: Any = None,
     ):
         name = cls._get_name(type, prompty)
-        if name.startswith("NOOP") and default != None:
+        if name.startswith("NOOP") and default is not None:
             return default
         elif name.startswith("NOOP"):
             return data

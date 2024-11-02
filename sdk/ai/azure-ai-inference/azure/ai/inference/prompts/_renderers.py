@@ -25,6 +25,6 @@ class MustacheRenderer(Invoker):
     def invoke(self, data: str) -> str:
         generated = render(self.prompty.content, data) # type: ignore
         return generated
-    
+
     async def invoke_async(self, data: str) -> str:
         return self.invoke(data)

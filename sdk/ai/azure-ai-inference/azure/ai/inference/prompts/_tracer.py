@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="union-attr,arg-type,misc,return-value,assignment,func-returns-value"
+# pylint: disable=R
 import os
 import json
 import inspect
@@ -22,10 +23,11 @@ def sanitize(key: str, value: Any) -> Any:
         [s in key.lower() for s in ["key", "token", "secret", "password", "credential"]]
     ):
         return len(str(value)) * "*"
-    elif isinstance(value, dict):
+
+    if isinstance(value, dict):
         return {k: sanitize(k, v) for k, v in value.items()}
-    else:
-        return value
+
+    return value
 
 
 class Tracer:
@@ -59,27 +61,34 @@ def to_dict(obj: Any) -> Union[Dict[str, Any], List[Dict[str, Any]], str, Number
     # simple json types
     if isinstance(obj, str) or isinstance(obj, Number) or isinstance(obj, bool):
         return obj
+
     # datetime
-    elif isinstance(obj, datetime):
+    if isinstance(obj, datetime):
         return obj.isoformat()
+
     # safe Prompty obj serialization
-    elif type(obj).__name__ == "Prompty":
+    if type(obj).__name__ == "Prompty":
         return obj.to_safe_dict()
+
     # safe PromptyStream obj serialization
-    elif type(obj).__name__ == "PromptyStream":
+    if type(obj).__name__ == "PromptyStream":
         return "PromptyStream"
-    elif type(obj).__name__ == "AsyncPromptyStream":
+
+    if type(obj).__name__ == "AsyncPromptyStream":
         return "AsyncPromptyStream"
+
     # recursive list and dict
-    elif isinstance(obj, List):
+    if isinstance(obj, List):
         return [to_dict(item) for item in obj] # type: ignore
-    elif isinstance(obj, Dict):
+
+    if isinstance(obj, Dict):
         return {k: v if isinstance(v, str) else to_dict(v) for k, v in obj.items()}
-    elif isinstance(obj, Path):
+
+    if isinstance(obj, Path):
         return str(obj)
+
     # cast to string otherwise...
-    else:
-        return str(obj)
+    return str(obj)
 
 
 def _name(func: Callable, args):
@@ -171,7 +180,7 @@ def _trace_async(
         with Tracer.start(name) as trace:
             trace("signature", signature)
 
-            # support arbitrary keyword 
+            # support arbitrary keyword
             # arguments for trace decorator
             for k, v in okwargs.items():
                 trace(k, to_dict(v))

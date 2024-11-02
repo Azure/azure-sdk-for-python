@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="assignment"
+# pylint: disable=R
 import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Union

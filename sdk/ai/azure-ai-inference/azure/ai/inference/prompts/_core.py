@@ -3,13 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="assignment,attr-defined,index,arg-type"
+# pylint: disable=line-too-long,R,consider-iterating-dictionary
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from ._tracer import Tracer, to_dict
 from typing import Any, AsyncIterator, Dict, Iterator, List, Literal, Dict, Set, Union
+from ._tracer import Tracer, to_dict
 from ._utils import load_json, load_json_async
 
 
@@ -59,7 +60,7 @@ class ModelSettings:
     configuration: Dict = field(default_factory=dict)
     parameters: Dict = field(default_factory=dict)
     response: Dict = field(default_factory=dict)
-    
+
 @dataclass
 class TemplateSettings:
     """TemplateSettings class to define the template of the prompty

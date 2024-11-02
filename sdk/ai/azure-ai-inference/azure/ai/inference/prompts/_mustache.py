@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=line-too-long,R,consider-using-dict-items
 from __future__ import annotations
 
 import logging
@@ -17,8 +18,6 @@ from typing import (
     Union,
     cast,
 )
-
-from typing import List
 from typing_extensions import TypeAlias
 
 logger = logging.getLogger(__name__)
