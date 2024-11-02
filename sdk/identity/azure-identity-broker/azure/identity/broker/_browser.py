@@ -154,10 +154,14 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 )
                 if "access_token" in result:
                     return result
-                elif "error_description" in result:
+                if "error_description" in result:
                     if within_dac.get():
-                        raise CredentialUnavailableError(message=result["error_description"])
-                    raise ClientAuthenticationError(message=result.get("error_description"))
+                        raise CredentialUnavailableError(
+                            message=result["error_description"]
+                        )  # pylint: disable=raise-missing-from
+                    raise ClientAuthenticationError(
+                        message=result.get("error_description")
+                    )  # pylint: disable=raise-missing-from
         return result
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
