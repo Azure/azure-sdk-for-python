@@ -9,6 +9,13 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from azure.ai.evaluation import (
+    ContentSafetyEvaluator,
+    F1ScoreEvaluator,
+    GroundednessEvaluator,
+    ProtectedMaterialEvaluator,
+    evaluate,
+)
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -16,15 +23,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _rename_columns_conditionally,
 )
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
-from azure.ai.evaluation import (
-    evaluate,
-    ContentSafetyEvaluator,
-    F1ScoreEvaluator,
-    GroundednessEvaluator,
-    ProtectedMaterialEvaluator,
-)
-from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def _get_file(name):
@@ -396,14 +396,18 @@ class TestEvaluate:
 
         assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
-        output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+    @pytest.mark.parametrize("use_relative_path", [True, False])
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        # output_path is a file
+        if use_relative_path:
+            output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+        else:
+            output_path = "eval_test_results.jsonl"
+
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
             output_path=output_path,
-            _use_pf_client=use_pf_client,
         )
 
         assert result is not None
@@ -415,6 +419,9 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+        os.remove(output_path)
+
+        # output_path is a directory
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
@@ -557,7 +564,7 @@ class TestEvaluate:
 
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
-        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval, NoInputEval
+        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
         # All variants work with both keyworded inputs
         results = evaluate(
@@ -641,3 +648,13 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_missing_inputs(self, questions_file):
+        """Test we are raising exception if required input is missing in data."""
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=questions_file,
+                target=_target_fn,
+                evaluators={"f1": F1ScoreEvaluator()},
+            )
+        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]

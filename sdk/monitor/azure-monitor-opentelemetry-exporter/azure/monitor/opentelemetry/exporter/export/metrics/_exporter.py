@@ -65,8 +65,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
-            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
-            preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
+            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
+            preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
 
     # pylint: disable=R1702
@@ -141,16 +141,14 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     ) -> Optional[TelemetryItem]:
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
-            envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
+            envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
-    def from_connection_string(
-        cls, conn_str: str, **kwargs: Any
-    ) -> "AzureMonitorMetricExporter":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorMetricExporter":
         """
         Create an AzureMonitorMetricExporter from a connection string. This is
         the recommended way of instantiation if a connection string is passed in
@@ -170,14 +168,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
 # pylint: disable=protected-access
 def _convert_point_to_envelope(
-    point: DataPointT,
-    name: str,
-    resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None
+    point: DataPointT, name: str, resource: Optional[Resource] = None, scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
-    envelope.tags.update(_utils._populate_part_a_fields(resource)) # type: ignore
+    envelope.tags.update(_utils._populate_part_a_fields(resource))  # type: ignore
     namespace = None
     if scope is not None and _is_metric_namespace_opted_in():
         namespace = str(scope.name)[:256]
@@ -231,7 +226,7 @@ def _handle_std_metric_envelope(
     status_code = attributes.get("http.status_code")
     if status_code:
         try:
-            status_code = int(status_code) # type: ignore
+            status_code = int(status_code)  # type: ignore
         except ValueError:
             status_code = 0
     else:
@@ -240,34 +235,33 @@ def _handle_std_metric_envelope(
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["Dependency.Type"] = "http"
-        properties["Dependency.Success"] = str(_is_status_code_success(status_code)) # type: ignore
+        properties["Dependency.Success"] = str(_is_status_code_success(status_code))  # type: ignore
         target = None
         if "peer.service" in attributes:
-            target = attributes["peer.service"] # type: ignore
+            target = attributes["peer.service"]  # type: ignore
         elif "net.peer.name" in attributes:
-            if attributes["net.peer.name"] is None: # type: ignore
+            if attributes["net.peer.name"] is None:  # type: ignore
                 target = None
-            elif "net.host.port" in attributes and \
-                attributes["net.host.port"] is not None: # type: ignore
+            elif "net.host.port" in attributes and attributes["net.host.port"] is not None:  # type: ignore
                 target = "{}:{}".format(
-                    attributes["net.peer.name"], # type: ignore
-                    attributes["net.host.port"], # type: ignore
+                    attributes["net.peer.name"],  # type: ignore
+                    attributes["net.host.port"],  # type: ignore
                 )
             else:
-                target = attributes["net.peer.name"] # type: ignore
-        properties["dependency/target"] = target # type: ignore
+                target = attributes["net.peer.name"]  # type: ignore
+        properties["dependency/target"] = target  # type: ignore
         properties["dependency/resultCode"] = str(status_code)
         # TODO: operation/synthetic
-        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
-        properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
+        properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
     elif name == "http.server.duration":
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["request/resultCode"] = str(status_code)
         # TODO: operation/synthetic
-        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
-        properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
-        properties["Request.Success"] = str(_is_status_code_success(status_code)) # type: ignore
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
+        properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
+        properties["Request.Success"] = str(_is_status_code_success(status_code))  # type: ignore
     else:
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
@@ -275,7 +269,7 @@ def _handle_std_metric_envelope(
 
     # TODO: rpc, database, messaging
 
-    envelope.data.base_data.properties = properties # type: ignore
+    envelope.data.base_data.properties = properties  # type: ignore
 
     return envelope
 
@@ -293,6 +287,7 @@ def _is_status_code_success(status_code: Optional[str]) -> bool:
 
 def _is_metric_namespace_opted_in() -> bool:
     return os.environ.get(_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN, "False").lower() == "true"
+
 
 def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     if result == ExportResult.SUCCESS:

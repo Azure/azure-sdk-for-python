@@ -25,7 +25,6 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
         response = self.client.configuration_stores.list()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,7 +34,6 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -43,4 +41,3 @@ class TestAppConfigurationManagementConfigurationStoresOperationsAsync(AzureMgmt
         response = self.client.configuration_stores.list_deleted()
         result = [r async for r in response]
         assert response
-        
