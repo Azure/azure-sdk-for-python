@@ -13,7 +13,7 @@ from timezone_preparer import MapsTimeZonePreparer
 
 
 # cSpell:disable
-class TestMapsTimeZoneClient(AzureRecordedTestCase):
+class TestMapsTimeZoneClientSync(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsTimeZoneClient(
             credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
@@ -22,21 +22,21 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_get_timezone_by_coordinates_sync(self):
+    def test_get_timezone_by_coordinates(self):
         result = self.client.get_timezone(coordinates=[25.0338053, 121.5640089])
 
         assert result is not None and "TimeZones" in result
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_get_timezone_by_id_sync(self):
+    def test_get_timezone_by_id(self):
         result = self.client.get_timezone(timezone_id="sr-Latn-RS")
 
         assert result is not None and "TimeZones" in result
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_get_iana_version_sync(self):
+    def test_get_iana_version(self):
         expected_result = {"Version": "2024b"}
         result = self.client.get_iana_version()
 
@@ -44,21 +44,21 @@ class TestMapsTimeZoneClient(AzureRecordedTestCase):
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_get_iana_timezone_ids_sync(self):
+    def test_get_iana_timezone_ids(self):
         result = self.client.get_iana_timezone_ids()
 
         assert result is not None and len(result) > 0
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_get_windows_timezone_ids_sync(self):
+    def test_get_windows_timezone_ids(self):
         result = self.client.get_windows_timezone_ids()
 
         assert result is not None and len(result) > 0
 
     @MapsTimeZonePreparer()
     @recorded_by_proxy
-    def test_convert_windows_timezone_to_iana_sync(self):
+    def test_convert_windows_timezone_to_iana(self):
         expected_result = [
             {"HasZone1970Location": True, "Id": "America/Vancouver", "IsAlias": False},
             {
