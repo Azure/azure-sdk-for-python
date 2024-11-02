@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
+    from .. import models as _models
 AgentsApiResponseFormatOption = Union[
     str, str, "_models.AgentsApiResponseFormatMode", "_models.AgentsApiResponseFormat"
 ]

@@ -3,6 +3,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
