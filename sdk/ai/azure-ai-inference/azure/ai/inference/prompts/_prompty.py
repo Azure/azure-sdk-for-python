@@ -1,6 +1,10 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import traceback
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 from ._tracer import trace
 from ._invoker import InvokerFactory
 from ._core import (
@@ -25,8 +29,8 @@ from ._parsers import *
 def headless(
     api: str,
     content: Union[str, List[str], dict],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
     connection: str = "default",
 ) -> Prompty:
     """Create a headless prompty object for programmatic use.
@@ -37,9 +41,9 @@ def headless(
         The API to use for the model
     content : Union[str, List[str], dict]
         The content to process
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
     connection : str, optional
         The connection to use, by default "default"
@@ -82,8 +86,8 @@ def headless(
 async def headless_async(
     api: str,
     content: Union[str, List[str], dict],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
     connection: str = "default",
 ) -> Prompty:
     """Create a headless prompty object for programmatic use.
@@ -94,9 +98,9 @@ async def headless_async(
         The API to use for the model
     content : Union[str, List[str], dict]
         The content to process
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
     connection : str, optional
         The connection to use, by default "default"
@@ -311,7 +315,7 @@ async def load_async(prompty_file: str, configuration: str = "default") -> Promp
 @trace(description="Prepare the inputs for the prompt.")
 def prepare(
     prompt: Prompty,
-    inputs: Dict[str, any] = {},
+    inputs: Dict[str, Any] = {},
 ):
     """Prepare the inputs for the prompt.
 
@@ -319,7 +323,7 @@ def prepare(
     ----------
     prompt : Prompty
         The prompty object
-    inputs : Dict[str, any], optional
+    inputs : Dict[str, Any], optional
         The inputs to the prompt, by default {}
 
     Returns
@@ -345,7 +349,7 @@ def prepare(
 @trace(description="Prepare the inputs for the prompt.")
 async def prepare_async(
     prompt: Prompty,
-    inputs: Dict[str, any] = {},
+    inputs: Dict[str, Any] = {},
 ):
     """Prepare the inputs for the prompt.
 
@@ -353,7 +357,7 @@ async def prepare_async(
     ----------
     prompt : Prompty
         The prompty object
-    inputs : Dict[str, any], optional
+    inputs : Dict[str, Any], optional
         The inputs to the prompt, by default {}
 
     Returns
@@ -380,8 +384,8 @@ async def prepare_async(
 def run(
     prompt: Prompty,
     content: Union[dict, list, str],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
     raw: bool = False,
 ):
     """Run the prepared Prompty content.
@@ -392,16 +396,16 @@ def run(
         The prompty object
     content : Union[dict, list, str]
         The content to process
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
     raw : bool, optional
         Whether to skip processing, by default False
 
     Returns
     -------
-    any
+    Any
         The result of the prompt
 
     Example
@@ -432,8 +436,8 @@ def run(
 async def run_async(
     prompt: Prompty,
     content: Union[dict, list, str],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
     raw: bool = False,
 ):
     """Run the prepared Prompty content.
@@ -444,16 +448,16 @@ async def run_async(
         The prompty object
     content : Union[dict, list, str]
         The content to process
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
     raw : bool, optional
         Whether to skip processing, by default False
 
     Returns
     -------
-    any
+    Any
         The result of the prompt
 
     Example
@@ -483,9 +487,9 @@ async def run_async(
 @trace(description="Execute a prompty")
 def execute(
     prompt: Union[str, Prompty],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
-    inputs: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
+    inputs: Dict[str, Any] = {},
     raw: bool = False,
     config_name: str = "default",
 ):
@@ -495,11 +499,11 @@ def execute(
     ----------
     prompt : Union[str, Prompty]
         The prompty object or path to the prompty file
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
-    inputs : Dict[str, any], optional
+    inputs : Dict[str, Any], optional
         The inputs to the prompt, by default {}
     raw : bool, optional
         Whether to skip processing, by default False
@@ -508,7 +512,7 @@ def execute(
 
     Returns
     -------
-    any
+    Any
         The result of the prompt
 
     Example
@@ -537,9 +541,9 @@ def execute(
 @trace(description="Execute a prompty")
 async def execute_async(
     prompt: Union[str, Prompty],
-    configuration: Dict[str, any] = {},
-    parameters: Dict[str, any] = {},
-    inputs: Dict[str, any] = {},
+    configuration: Dict[str, Any] = {},
+    parameters: Dict[str, Any] = {},
+    inputs: Dict[str, Any] = {},
     raw: bool = False,
     config_name: str = "default",
 ):
@@ -549,11 +553,11 @@ async def execute_async(
     ----------
     prompt : Union[str, Prompty]
         The prompty object or path to the prompty file
-    configuration : Dict[str, any], optional
+    configuration : Dict[str, Any], optional
         The configuration to use, by default {}
-    parameters : Dict[str, any], optional
+    parameters : Dict[str, Any], optional
         The parameters to use, by default {}
-    inputs : Dict[str, any], optional
+    inputs : Dict[str, Any], optional
         The inputs to the prompt, by default {}
     raw : bool, optional
         Whether to skip processing, by default False
@@ -562,7 +566,7 @@ async def execute_async(
 
     Returns
     -------
-    any
+    Any
         The result of the prompt
 
     Example

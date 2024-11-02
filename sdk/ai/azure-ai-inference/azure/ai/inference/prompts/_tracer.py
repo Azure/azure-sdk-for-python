@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+# mypy: disable-error-code="union-attr,arg-type,misc,return-value,assignment,func-returns-value"
 import os
 import json
 import inspect
@@ -40,7 +45,7 @@ class Tracer:
     @contextlib.contextmanager
     def start(cls, name: str) -> Iterator[Callable[[str, Any], None]]:
         with contextlib.ExitStack() as stack:
-            traces = [
+            traces: List[Any] = [
                 stack.enter_context(tracer(name)) for tracer in cls._tracers.values()
             ]
             yield lambda key, value: [

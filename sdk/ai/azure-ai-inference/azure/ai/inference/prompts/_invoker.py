@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="return-value"
 import abc
 from ._tracer import trace
 from ._core import Prompty
-from typing import Callable, Dict, Literal
+from typing import Any, Callable, Dict, Literal
 
 
 class Invoker(abc.ABC):
@@ -25,65 +26,65 @@ class Invoker(abc.ABC):
         self.name = self.__class__.__name__
 
     @abc.abstractmethod
-    def invoke(self, data: any) -> any:
+    def invoke(self, data: Any) -> Any:
         """Abstract method to invoke the invoker
 
         Parameters
         ----------
-        data : any
+        data : Any
             The data to be invoked
 
         Returns
         -------
-        any
+        Any
             The invoked
         """
         pass
 
     @abc.abstractmethod
-    async def invoke_async(self, data: any) -> any:
+    async def invoke_async(self, data: Any) -> Any:
         """Abstract method to invoke the invoker asynchronously
 
         Parameters
         ----------
-        data : any
+        data : Any
             The data to be invoked
 
         Returns
         -------
-        any
+        Any
             The invoked
         """
         pass
 
     @trace
-    def run(self, data: any) -> any:
+    def run(self, data: Any) -> Any:
         """Method to run the invoker
 
         Parameters
         ----------
-        data : any
+        data : Any
             The data to be invoked
 
         Returns
         -------
-        any
+        Any
             The invoked
         """
         return self.invoke(data)
 
     @trace
-    async def run_async(self, data: any) -> any:
+    async def run_async(self, data: Any) -> Any:
         """Method to run the invoker asynchronously
 
         Parameters
         ----------
-        data : any
+        data : Any
             The data to be invoked
 
         Returns
         -------
-        any
+        Any
             The invoked
         """
         return await self.invoke_async(data)
@@ -204,8 +205,8 @@ class InvokerFactory:
         cls,
         type: Literal["renderer", "parser", "executor", "processor"],
         prompty: Prompty,
-        data: any,
-        default: any = None,
+        data: Any,
+        default: Any = None,
     ):
         name = cls._get_name(type, prompty)
         if name.startswith("NOOP") and default != None:
@@ -222,8 +223,8 @@ class InvokerFactory:
         cls,
         type: Literal["renderer", "parser", "executor", "processor"],
         prompty: Prompty,
-        data: any,
-        default: any = None,
+        data: Any,
+        default: Any = None,
     ):
         name = cls._get_name(type, prompty)
         if name.startswith("NOOP") and default != None:
@@ -235,43 +236,43 @@ class InvokerFactory:
         return value
 
     @classmethod
-    def run_renderer(cls, prompty: Prompty, data: any, default: any = None) -> any:
+    def run_renderer(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return cls.run("renderer", prompty, data, default)
 
     @classmethod
     async def run_renderer_async(
-        cls, prompty: Prompty, data: any, default: any = None
-    ) -> any:
+        cls, prompty: Prompty, data: Any, default: Any = None
+    ) -> Any:
         return await cls.run_async("renderer", prompty, data, default)
 
     @classmethod
-    def run_parser(cls, prompty: Prompty, data: any, default: any = None) -> any:
+    def run_parser(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return cls.run("parser", prompty, data, default)
 
     @classmethod
     async def run_parser_async(
-        cls, prompty: Prompty, data: any, default: any = None
-    ) -> any:
+        cls, prompty: Prompty, data: Any, default: Any = None
+    ) -> Any:
         return await cls.run_async("parser", prompty, data, default)
 
     @classmethod
-    def run_executor(cls, prompty: Prompty, data: any, default: any = None) -> any:
+    def run_executor(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return cls.run("executor", prompty, data, default)
 
     @classmethod
     async def run_executor_async(
-        cls, prompty: Prompty, data: any, default: any = None
-    ) -> any:
+        cls, prompty: Prompty, data: Any, default: Any = None
+    ) -> Any:
         return await cls.run_async("executor", prompty, data, default)
 
     @classmethod
-    def run_processor(cls, prompty: Prompty, data: any, default: any = None) -> any:
+    def run_processor(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return cls.run("processor", prompty, data, default)
 
     @classmethod
     async def run_processor_async(
-        cls, prompty: Prompty, data: any, default: any = None
-    ) -> any:
+        cls, prompty: Prompty, data: Any, default: Any = None
+    ) -> Any:
         return await cls.run_async("processor", prompty, data, default)
 
 
@@ -294,7 +295,7 @@ class InvokerException(Exception):
 @InvokerFactory.register_parser("prompty.image")
 @InvokerFactory.register_parser("prompty.completion")
 class NoOp(Invoker):
-    def invoke(self, data: any) -> any:
+    def invoke(self, data: Any) -> Any:
         return data
 
     async def invoke_async(self, data: str) -> str:

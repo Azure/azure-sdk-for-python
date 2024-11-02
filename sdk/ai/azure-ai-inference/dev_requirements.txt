@@ -5,3 +5,5 @@ aiohttp
 opentelemetry-sdk
 aiofiles
 dataclasses
+types-pyyaml
+types-aiofiles

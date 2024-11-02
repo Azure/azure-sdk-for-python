@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="assignment,attr-defined,index,arg-type"
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from ._tracer import Tracer, to_dict
-from typing import AsyncIterator, Dict, Iterator, List, Literal, Dict, Set, Union
+from typing import Any, AsyncIterator, Dict, Iterator, List, Literal, Dict, Set, Union
 from ._utils import load_json, load_json_async
 
 
@@ -27,7 +28,7 @@ class PropertySettings:
     ----------
     type : str
         The type of the property
-    default : any
+    default : Any
         The default value of the property
     description : str
         The description of the property
@@ -134,7 +135,7 @@ class Prompty:
     file: Union[Path, str] = field(default="")
     content: Union[str,List[str], Dict] = field(default="")
 
-    def to_safe_dict(self) -> Dict[str, any]:
+    def to_safe_dict(self) -> Dict[str, Any]:
         d = {}
         if self.model:
             d["model"] = asdict(self.model)
@@ -177,7 +178,7 @@ class Prompty:
         return top
 
     @staticmethod
-    def _process_file(file: str, parent: Path) -> any:
+    def _process_file(file: str, parent: Path) -> Any:
         file = Path(parent / Path(file)).resolve().absolute()
         if file.exists():
             items = load_json(file)
@@ -194,7 +195,7 @@ class Prompty:
             raise FileNotFoundError(f"File {file} not found")
 
     @staticmethod
-    async def _process_file_async(file: str, parent: Path) -> any:
+    async def _process_file_async(file: str, parent: Path) -> Any:
         file = Path(parent / Path(file)).resolve().absolute()
         if file.exists():
             items = await load_json_async(file)
@@ -211,7 +212,7 @@ class Prompty:
             raise FileNotFoundError(f"File {file} not found")
 
     @staticmethod
-    def _process_env(variable: str, env_error=True, default: str = None) -> any:
+    def _process_env(variable: str, env_error=True, default: str = None) -> Any:
         if variable in os.environ.keys():
             return os.environ[variable]
         else:
@@ -223,7 +224,7 @@ class Prompty:
             return ""
 
     @staticmethod
-    def normalize(attribute: any, parent: Path, env_error=True) -> any:
+    def normalize(attribute: Any, parent: Path, env_error=True) -> Any:
         if isinstance(attribute, str):
             attribute = attribute.strip()
             if attribute.startswith("${") and attribute.endswith("}"):
@@ -252,7 +253,7 @@ class Prompty:
             return attribute
 
     @staticmethod
-    async def normalize_async(attribute: any, parent: Path, env_error=True) -> any:
+    async def normalize_async(attribute: Any, parent: Path, env_error=True) -> Any:
         if isinstance(attribute, str):
             attribute = attribute.strip()
             if attribute.startswith("${") and attribute.endswith("}"):
@@ -282,8 +283,8 @@ class Prompty:
 
 
 def param_hoisting(
-    top: Dict[str, any], bottom: Dict[str, any], top_key: str = None
-) -> Dict[str, any]:
+    top: Dict[str, Any], bottom: Dict[str, Any], top_key: str = None
+) -> Dict[str, Any]:
     if top_key:
         new_dict = {**top[top_key]} if top_key in top else {}
     else:
@@ -301,7 +302,7 @@ class PromptyStream(Iterator):
     def __init__(self, name: str, iterator: Iterator):
         self.name = name
         self.iterator = iterator
-        self.items: List[any] = []
+        self.items: List[Any] = []
         self.__name__ = "PromptyStream"
 
     def __iter__(self):
@@ -333,7 +334,7 @@ class AsyncPromptyStream(AsyncIterator):
     def __init__(self, name: str, iterator: AsyncIterator):
         self.name = name
         self.iterator = iterator
-        self.items: List[any] = []
+        self.items: List[Any] = []
         self.__name__ = "AsyncPromptyStream"
 
     def __aiter__(self):
@@ -357,7 +358,7 @@ class AsyncPromptyStream(AsyncIterator):
 
             raise StopAsyncIteration
 
-def _mask_secrets(d: Dict[str, any], path: list[str], patterns: list[str] = ["key", "secret"]) -> bool:
+def _mask_secrets(d: Dict[str, Any], path: list[str], patterns: list[str] = ["key", "secret"]) -> bool:
     sub_d = d
     for key in path:
         if key not in sub_d:

@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# mypy: disable-error-code="import-untyped,return-value"
 import re
 import yaml
 import json
 import aiofiles
-from typing import Dict
+from typing import Any, Dict
 from pathlib import Path
 
 _yaml_regex = re.compile(
@@ -49,7 +50,7 @@ def _find_global_config(prompty_path: Path = Path.cwd()) -> Path:
 
 def load_global_config(
     prompty_path: Path = Path.cwd(), configuration: str = "default"
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     # prompty.config laying around?
     config = _find_global_config(prompty_path)
 
@@ -66,7 +67,7 @@ def load_global_config(
 
 async def load_global_config_async(
     prompty_path: Path = Path.cwd(), configuration: str = "default"
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     # prompty.config laying around?
     config = _find_global_config(prompty_path)
 
@@ -81,7 +82,7 @@ async def load_global_config_async(
     return {}
 
 
-def load_prompty(file_path, encoding='utf-8') -> Dict[str, any]:
+def load_prompty(file_path, encoding='utf-8') -> Dict[str, Any]:
     contents = load_text(file_path, encoding=encoding)
     return parse(contents)
 
