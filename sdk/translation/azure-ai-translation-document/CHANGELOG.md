@@ -2,13 +2,8 @@
 
 ## 1.1.0b2 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+- Renamed SingleDocumentTranslationClient's API from `document_translate` to `translate`
 
 ## 1.1.0b1 (2024-05-21)
 

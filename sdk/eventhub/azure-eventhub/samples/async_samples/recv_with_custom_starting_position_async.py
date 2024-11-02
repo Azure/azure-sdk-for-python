@@ -15,7 +15,7 @@ from azure.eventhub import EventData
 from azure.identity.aio import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 async def on_partition_initialize(partition_context):
@@ -25,19 +25,17 @@ async def on_partition_initialize(partition_context):
 
 async def on_partition_close(partition_context, reason):
     # Put your code here.
-    print("Partition: {} has been closed, reason for closing: {}.".format(
-        partition_context.partition_id,
-        reason
-    ))
+    print("Partition: {} has been closed, reason for closing: {}.".format(partition_context.partition_id, reason))
 
 
 async def on_error(partition_context, error):
     # Put your code here. partition_context can be None in the on_error callback.
     if partition_context:
-        print("An exception: {} occurred during receiving from Partition: {}.".format(
-            partition_context.partition_id,
-            error
-        ))
+        print(
+            "An exception: {} occurred during receiving from Partition: {}.".format(
+                partition_context.partition_id, error
+            )
+        )
     else:
         print("An exception: {} occurred during the load balance process.".format(error))
 
@@ -56,7 +54,7 @@ async def main():
     )
 
     async with producer_client:
-        event_data_batch_to_partition_0 = await producer_client.create_batch(partition_id='0')
+        event_data_batch_to_partition_0 = await producer_client.create_batch(partition_id="0")
         event_data_batch_to_partition_0.add(EventData("First event in partition 0"))
         event_data_batch_to_partition_0.add(EventData("Second event in partition 0"))
         event_data_batch_to_partition_0.add(EventData("Third event in partition 0"))
@@ -67,7 +65,7 @@ async def main():
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
         credential=DefaultAzureCredential(),
-        consumer_group='$Default',
+        consumer_group="$Default",
     )
 
     partition_0_prop = await consumer_client.get_partition_properties("0")
@@ -85,9 +83,9 @@ async def main():
             on_partition_initialize=on_partition_initialize,
             on_partition_close=on_partition_close,
             on_error=on_error,
-            starting_position=starting_position
+            starting_position=starting_position,
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

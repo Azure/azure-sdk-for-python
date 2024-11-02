@@ -19,6 +19,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $AllPkgProps
   )
   $additionalValidationPackages = @()
+  $uniqueResultSet = @()
 
   function isOther($fileName) {
     $startsWithPrefixes = @(".config", ".devcontainer", ".github", ".vscode", "common", "conda", "doc", "eng", "scripts")
@@ -33,6 +34,11 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     return $startsWith
   }
 
+  # this section will identify the list of packages that we should treat as
+  # "directly" changed for a given service level change. While that doesn't
+  # directly change a package within the service, I do believe we should directly include all
+  # packages WITHIN that service. This is because the service level file changes are likely to
+  # have an impact on the packages within that service.
   $changedServices = @()
   foreach($file in $diffObj.ChangedFiles) {
     $pathComponents = $file -split "/"
@@ -43,7 +49,19 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
     # handle any changes under sdk/<file>.<extension>
     if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
-      changedServices += "template"
+      $changedServices += "template"
+    }
+  }
+  foreach ($changedService in $changedServices) {
+    $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
+
+    foreach ($pkg in $additionalPackages) {
+      if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+        # notice the lack of setting IncludedForValidation to true. This is because these "changed services"
+        # are specifically where a file within the service, but not an individual package within that service has changed.
+        # we want this package to be fully validated
+        $uniqueResultSet += $pkg
+      }
     }
   }
 
@@ -88,12 +106,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $additionalValidationPackages += $additionalPackages
   }
 
-  foreach ($changedService in $changedServices) {
-    $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
-    $additionalValidationPackages += $additionalPackages
-  }
 
-  $uniqueResultSet = @()
   foreach ($pkg in $additionalValidationPackages) {
     if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
       $pkg.IncludedForValidation = $true
@@ -425,36 +438,6 @@ function Import-Dev-Cert-python
 {
   Write-Host "Python no longer requires an out of proc trust methodology." `
     "The variables SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE are now dynamically set in proxy_startup.py"
-}
-
-# Defined in common.ps1 as:
-# $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
-function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
-{
-  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
-  if (!$PackageInfos) {
-    $PackageInfos =  @($PackageInfo)
-  }
-
-  $allSucceeded = $true
-  foreach ($item in $PackageInfos) {
-    # If the Version is IGNORE that means it's a source install and those aren't run through ValidatePackage
-    if ($item.Version -eq 'IGNORE') {
-      continue
-    }
-
-    $result = ValidatePackage `
-      -packageName $item.Name `
-      -packageVersion "==$($item.Version)" `
-      -PackageSourceOverride $PackageSourceOverride `
-      -DocValidationImageId $DocValidationImageId
-
-    if (!$result) {
-      $allSucceeded = $false
-    }
-  }
-
-  return $allSucceeded
 }
 
 function Get-python-EmitterName() {
