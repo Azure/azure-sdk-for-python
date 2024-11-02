@@ -24,7 +24,7 @@ from ._parsers import *
 @trace(description="Create a headless prompty object for programmatic use.")
 def headless(
     api: str,
-    content: str | List[str] | dict,
+    content: Union[str, List[str], dict],
     configuration: Dict[str, any] = {},
     parameters: Dict[str, any] = {},
     connection: str = "default",
@@ -35,7 +35,7 @@ def headless(
     ----------
     api : str
         The API to use for the model
-    content : str | List[str] | dict
+    content : Union[str, List[str], dict]
         The content to process
     configuration : Dict[str, any], optional
         The configuration to use, by default {}
@@ -81,7 +81,7 @@ def headless(
 @trace(description="Create a headless prompty object for programmatic use.")
 async def headless_async(
     api: str,
-    content: str | List[str] | dict,
+    content: Union[str, List[str], dict],
     configuration: Dict[str, any] = {},
     parameters: Dict[str, any] = {},
     connection: str = "default",
@@ -92,7 +92,7 @@ async def headless_async(
     ----------
     api : str
         The API to use for the model
-    content : str | List[str] | dict
+    content : Union[str, List[str], dict]
         The content to process
     configuration : Dict[str, any], optional
         The configuration to use, by default {}
@@ -379,7 +379,7 @@ async def prepare_async(
 @trace(description="Run the prepared Prompty content against the model.")
 def run(
     prompt: Prompty,
-    content: dict | list | str,
+    content: Union[dict, list, str],
     configuration: Dict[str, any] = {},
     parameters: Dict[str, any] = {},
     raw: bool = False,
@@ -390,7 +390,7 @@ def run(
     ----------
     prompt : Prompty
         The prompty object
-    content : dict | list | str
+    content : Union[dict, list, str]
         The content to process
     configuration : Dict[str, any], optional
         The configuration to use, by default {}
@@ -431,7 +431,7 @@ def run(
 @trace(description="Run the prepared Prompty content against the model.")
 async def run_async(
     prompt: Prompty,
-    content: dict | list | str,
+    content: Union[dict, list, str],
     configuration: Dict[str, any] = {},
     parameters: Dict[str, any] = {},
     raw: bool = False,
@@ -442,7 +442,7 @@ async def run_async(
     ----------
     prompt : Prompty
         The prompty object
-    content : dict | list | str
+    content : Union[dict, list, str]
         The content to process
     configuration : Dict[str, any], optional
         The configuration to use, by default {}
