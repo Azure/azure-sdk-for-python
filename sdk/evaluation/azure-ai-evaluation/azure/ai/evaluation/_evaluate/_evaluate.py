@@ -287,7 +287,13 @@ def _validate_columns_for_evaluators(
                 # Ignore the missing fields if "conversation" presents in the input data
                 missing_inputs = []
             else:
-                missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
+                optional_params = (
+                    evaluator._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    if hasattr(evaluator, "_OPTIONAL_PARAMS")
+                    else []
+                )
+                excluded_params = set(new_df.columns).union(optional_params)
+                missing_inputs = [col for col in evaluator_params if col not in excluded_params]
 
                 # If "conversation" is the only parameter and it is missing, keep it in the missing inputs
                 # Otherwise, remove it from the missing inputs
