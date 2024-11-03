@@ -4,6 +4,7 @@
         "dels",
         "fmatter",
         "fspath",
+        "fstring",
         "ldel",
         "okwargs",
         "prompty",
