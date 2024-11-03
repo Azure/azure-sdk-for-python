@@ -2,259 +2,106 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain
-MIT License
-"""
-import traceback
+# mypy: disable-error-code="import-untyped,return-value"
+# pylint: disable=line-too-long,R,wrong-import-order,global-variable-not-assigned)
+import re
+import yaml
+import json
+import aiofiles
+from typing import Any, Dict, Union
 from pathlib import Path
-from typing import Any, Dict, List, Union
 
-from ._core import (
-    Frontmatter,
-    InvokerFactory,
-    ModelSettings,
-    Prompty,
-    PropertySettings,
-    SimpleModel,
-    TemplateSettings,
-    param_hoisting,
+_yaml_regex = re.compile(
+    r"^\s*" + r"(?:---|\+\+\+)" + r"(.*?)" + r"(?:---|\+\+\+)" + r"\s*(.+)$",
+    re.S | re.M,
 )
 
 
-def load(prompt_path: str, configuration: str = "default") -> Prompty:
-    """Load a prompty file and return a Prompty object.
+def load_text(file_path, encoding="utf-8"):
+    with open(file_path, "r", encoding=encoding) as file:
+        return file.read()
 
-    Args:
-        prompt_path: The path to the prompty file.
-        configuration: The configuration to use. Defaults to "default".
 
-    Returns:
-        The Prompty object.
-    """
-    file_path = Path(prompt_path)
-    if not file_path.is_absolute():
-        # get caller's path (take into account trace frame)
-        caller = Path(traceback.extract_stack()[-3].filename)
-        file_path = Path(caller.parent / file_path).resolve().absolute()
+async def load_text_async(file_path, encoding="utf-8"):
+    async with aiofiles.open(file_path, mode="r", encoding=encoding) as f:
+        content = await f.read()
+        return content
 
-    # load dictionary from prompty file
-    matter = Frontmatter.read_file(file_path.__fspath__())
-    attributes = matter["attributes"]
-    content = matter["body"]
 
-    # normalize attribute dictionary resolve keys and files
-    attributes = Prompty.normalize(attributes, file_path.parent)
+def load_json(file_path, encoding="utf-8"):
+    return json.loads(load_text(file_path, encoding=encoding))
 
-    # load global configuration
-    if "model" not in attributes:
-        attributes["model"] = {"api": "chat"}
 
-    # pull model settings out of attributes
-    try:
-        model = ModelSettings(**attributes.pop("model"))
-    except Exception as e:
-        raise ValueError(f"Error in model settings: {e}")
+async def load_json_async(file_path, encoding="utf-8"):
+    # async file open
+    content = await load_text_async(file_path, encoding=encoding)
+    return json.loads(content)
 
-    # pull template settings
-    try:
-        if "template" in attributes:
-            t = attributes.pop("template")
-            if isinstance(t, dict):
-                template = TemplateSettings(**t)
-            # has to be a string denoting the type
-            else:
-                template = TemplateSettings(type=t, parser="prompty")
+
+def _find_global_config(prompty_path: Path = Path.cwd()) -> Union[Path, None]:
+    prompty_config = list(Path.cwd().glob("**/prompty.json"))
+
+    if len(prompty_config) > 0:
+        return sorted(
+            [c for c in prompty_config if len(c.parent.parts) <= len(prompty_path.parts)],
+            key=lambda p: len(p.parts),
+        )[-1]
+    else:
+        return None
+
+
+def load_global_config(prompty_path: Path = Path.cwd(), configuration: str = "default") -> Dict[str, Any]:
+    # prompty.config laying around?
+    config = _find_global_config(prompty_path)
+
+    # if there is one load it
+    if config is not None:
+        c = load_json(config)
+        if configuration in c:
+            return c[configuration]
         else:
-            template = TemplateSettings(type="mustache", parser="prompty")
-    except Exception as e:
-        raise ValueError(f"Error in template loader: {e}")
+            raise ValueError(f'Item "{configuration}" not found in "{config}"')
 
-    # formalize inputs and outputs
-    if "inputs" in attributes:
-        try:
-            inputs = {
-                k: PropertySettings(**v) for (k, v) in attributes.pop("inputs").items()
-            }
-        except Exception as e:
-            raise ValueError(f"Error in inputs: {e}")
-    else:
-        inputs = {}
-    if "outputs" in attributes:
-        try:
-            outputs = {
-                k: PropertySettings(**v) for (k, v) in attributes.pop("outputs").items()
-            }
-        except Exception as e:
-            raise ValueError(f"Error in outputs: {e}")
-    else:
-        outputs = {}
-
-    # recursive loading of base prompty
-    if "base" in attributes:
-        # load the base prompty from the same directory as the current prompty
-        base = load(file_path.parent / attributes["base"])
-        # hoist the base prompty's attributes to the current prompty
-        model.api = base.model.api if model.api == "" else model.api
-        model.configuration = param_hoisting(
-            model.configuration, base.model.configuration
-        )
-        model.parameters = param_hoisting(model.parameters, base.model.parameters)
-        model.response = param_hoisting(model.response, base.model.response)
-        attributes["sample"] = param_hoisting(attributes, base.sample, "sample")
-
-        p = Prompty(
-            **attributes,
-            model=model,
-            inputs=inputs,
-            outputs=outputs,
-            template=template,
-            content=content,
-            file=file_path,
-            basePrompty=base,
-        )
-    else:
-        p = Prompty(
-            **attributes,
-            model=model,
-            inputs=inputs,
-            outputs=outputs,
-            template=template,
-            content=content,
-            file=file_path,
-        )
-    return p
+    return {}
 
 
-def prepare(
-    prompt: Prompty,
-    inputs: Dict[str, Any] = {},
-) -> Any:
-    """Prepare the inputs for the prompty.
+async def load_global_config_async(prompty_path: Path = Path.cwd(), configuration: str = "default") -> Dict[str, Any]:
+    # prompty.config laying around?
+    config = _find_global_config(prompty_path)
 
-    Args:
-        prompt: The Prompty object.
-        inputs: The inputs to the prompty. Defaults to {}.
+    # if there is one load it
+    if config is not None:
+        c = await load_json_async(config)
+        if configuration in c:
+            return c[configuration]
+        else:
+            raise ValueError(f'Item "{configuration}" not found in "{config}"')
 
-    Returns:
-        The prepared inputs.
-    """
-    invoker = InvokerFactory()
-
-    inputs = param_hoisting(inputs, prompt.sample)
-
-    if prompt.template.type == "NOOP":
-        render = prompt.content
-    else:
-        # render
-        result = invoker(
-            "renderer",
-            prompt.template.type,
-            prompt,
-            SimpleModel(item=inputs),
-        )
-        render = result.item
-
-    if prompt.template.parser == "NOOP":
-        result = render
-    else:
-        # parse
-        result = invoker(
-            "parser",
-            f"{prompt.template.parser}.{prompt.model.api}",
-            prompt,
-            SimpleModel(item=result.item), # type: ignore[reportPossiblyUnboundVariable]
-        )
-
-    if isinstance(result, SimpleModel):
-        return result.item
-    else:
-        return result
+    return {}
 
 
-def run(
-    prompt: Prompty,
-    content: Union[Dict, List, str],
-    configuration: Dict[str, Any] = {},
-    parameters: Dict[str, Any] = {},
-    raw: bool = False,
-) -> Any:
-    """Run the prompty.
-
-    Args:
-        prompt: The Prompty object.
-        content: The content to run the prompty on.
-        configuration: The configuration to use. Defaults to {}.
-        parameters: The parameters to use. Defaults to {}.
-        raw: Whether to return the raw output. Defaults to False.
-
-    Returns:
-        The result of running the prompty.
-    """
-    invoker = InvokerFactory()
-
-    if configuration != {}:
-        prompt.model.configuration = param_hoisting(
-            configuration, prompt.model.configuration
-        )
-
-    if parameters != {}:
-        prompt.model.parameters = param_hoisting(parameters, prompt.model.parameters)
-
-    # execute
-    result = invoker(
-        "executor",
-        prompt.model.configuration["type"],
-        prompt,
-        SimpleModel(item=content),
-    )
-
-    # skip?
-    if not raw:
-        # process
-        result = invoker(
-            "processor",
-            prompt.model.configuration["type"],
-            prompt,
-            result,
-        )
-
-    if isinstance(result, SimpleModel):
-        return result.item
-    else:
-        return result
+def load_prompty(file_path, encoding="utf-8") -> Dict[str, Any]:
+    contents = load_text(file_path, encoding=encoding)
+    return parse(contents)
 
 
-def execute(
-    prompt: Union[str, Prompty],
-    configuration: Dict[str, Any] = {},
-    parameters: Dict[str, Any] = {},
-    inputs: Dict[str, Any] = {},
-    raw: bool = False,
-    connection: str = "default",
-) -> Any:
-    """Execute a prompty.
+async def load_prompty_async(file_path, encoding="utf-8"):
+    contents = await load_text_async(file_path, encoding=encoding)
+    return parse(contents)
 
-    Args:
-        prompt: The prompt to execute.
-            Can be a path to a prompty file or a Prompty object.
-        configuration: The configuration to use. Defaults to {}.
-        parameters: The parameters to use. Defaults to {}.
-        inputs: The inputs to the prompty. Defaults to {}.
-        raw: Whether to return the raw output. Defaults to False.
-        connection: The connection to use. Defaults to "default".
 
-    Returns:
-        The result of executing the prompty.
-    """
+def parse(contents):
+    global _yaml_regex
 
-    if isinstance(prompt, str):
-        prompt = load(prompt, connection)
+    fmatter = ""
+    body = ""
+    result = _yaml_regex.search(contents)
 
-    # prepare content
-    content = prepare(prompt, inputs)
-
-    # run LLM model
-    result = run(prompt, content, configuration, parameters, raw)
-
-    return result
+    if result:
+        fmatter = result.group(1)
+        body = result.group(2)
+    return {
+        "attributes": yaml.load(fmatter, Loader=yaml.SafeLoader),
+        "body": body,
+        "frontmatter": fmatter,
+    }

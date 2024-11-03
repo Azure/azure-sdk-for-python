@@ -26,9 +26,9 @@ class TestPrompts(AzureRecordedTestCase):
 
         input = "What's the check-in and check-out time?"
         rules = [
-            { "rule": "The check-in time is 3pm" },
-            { "rule": "The check-out time is 11am" },
-            { "rule": "Breakfast is served from 7am to 10am" },
+            {"rule": "The check-in time is 3pm"},
+            {"rule": "The check-out time is 11am"},
+            {"rule": "Breakfast is served from 7am to 10am"},
         ]
         messages = prompt_template.create_messages(input=input, rules=rules)
         assert len(messages) == 2
@@ -37,12 +37,19 @@ class TestPrompts(AzureRecordedTestCase):
         assert messages[1]["role"] == "user"
         assert messages[1]["content"] == "What's the check-in and check-out time?"
 
+    def test_prompt_template_from_prompty_with_masked_secrets(self, **kwargs):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        prompty_file_path = os.path.join(script_dir, "sample1_with_secrets.prompty")
+        prompt_template = PromptTemplate.from_prompty(prompty_file_path)
+        assert prompt_template.prompty.model.configuration["api_key"] == "test_key"
+        assert prompt_template.prompty.model.configuration["api_secret"] == "test_secret"
+        telemetry_dict = prompt_template.prompty.to_safe_dict()
+        assert telemetry_dict["model"]["configuration"]["api_key"] == "********"
+        assert telemetry_dict["model"]["configuration"]["api_secret"] == "***********"
+
     def test_prompt_template_from_message(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
-        prompt_template = PromptTemplate.from_string(
-            api = "chat",
-            prompt_template = prompt_template_str
-        )
+        prompt_template = PromptTemplate.from_string(api="chat", prompt_template=prompt_template_str)
         input = "user question input text"
         messages = prompt_template.create_messages(input=input)
         assert len(messages) == 1
@@ -67,19 +74,16 @@ class TestPrompts(AzureRecordedTestCase):
             user:
             {{input}}
         """
-        prompt_template = PromptTemplate.from_string(
-            api = "chat",
-            prompt_template = prompt_template_str
-        )
+        prompt_template = PromptTemplate.from_string(api="chat", prompt_template=prompt_template_str)
         input = "When I arrived, can I still have breakfast?"
         rules = [
-            { "rule": "The check-in time is 3pm" },
-            { "rule": "The check-out time is 11am" },
-            { "rule": "Breakfast is served from 7am to 10am" },
+            {"rule": "The check-in time is 3pm"},
+            {"rule": "The check-out time is 11am"},
+            {"rule": "Breakfast is served from 7am to 10am"},
         ]
         chat_history = [
-            { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
-            { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
+            {"role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?"},
+            {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
         ]
         messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
         assert len(messages) == 1

@@ -4,3 +4,7 @@
 ../../monitor/azure-monitor-opentelemetry
 aiohttp
 opentelemetry-sdk
+aiofiles
+dataclasses
+types-pyyaml
+types-aiofiles

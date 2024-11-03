@@ -2,49 +2,38 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain
-MIT License
-"""
-import base64
+# mypy: disable-error-code="union-attr,return-value"
+# pylint: disable=line-too-long,R,consider-using-enumerate,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 import re
-from typing import Dict, List, Type, Union
-from pydantic import BaseModel
-from azure.ai.inference.models import (
-    ChatRequestMessage,
-    SystemMessage,
-    UserMessage,
-    AssistantMessage,
-    ToolMessage,
-)
-from ._core import Invoker, Prompty, SimpleModel
+import base64
+from pathlib import Path
+from typing import Any
+from ._core import Prompty
+from ._invoker import Invoker, InvokerFactory
 
 
-class RoleMap:
-    _ROLE_MAP: Dict[str, Type[ChatRequestMessage]] = {
-        "system": SystemMessage,
-        "user": UserMessage,
-        "human": UserMessage,
-        "assistant": AssistantMessage,
-        "ai": AssistantMessage,
-        "function": ToolMessage,
-    }
-    ROLES = _ROLE_MAP.keys()
-
-    @classmethod
-    def get_message_class(cls, role: str) -> Type[ChatRequestMessage]:
-        return cls._ROLE_MAP[role]
-
-
+@InvokerFactory.register_parser("prompty.chat")
 class PromptyChatParser(Invoker):
-    """Parse a chat prompt into a list of messages."""
+    """Prompty Chat Parser"""
 
     def __init__(self, prompty: Prompty) -> None:
-        self.prompty = prompty
-        self.roles = RoleMap.ROLES
-        self.path = self.prompty.file.parent
+        super().__init__(prompty)
+        self.roles = ["assistant", "function", "system", "user"]
+        self.path = Path(self.prompty.file).parent
 
     def inline_image(self, image_item: str) -> str:
+        """Inline Image
+
+        Parameters
+        ----------
+        image_item : str
+            The image item to inline
+
+        Returns
+        -------
+        str
+            The inlined image
+        """
         # pass through if it's a url or base64 encoded
         if image_item.startswith("http") or image_item.startswith("data"):
             return image_item
@@ -62,12 +51,22 @@ class PromptyChatParser(Invoker):
                 return f"data:image/jpeg;base64,{base64_image}"
             else:
                 raise ValueError(
-                    f"Invalid image format {image_path.suffix} - currently only .png "
-                    "and .jpg / .jpeg are supported."
+                    f"Invalid image format {image_path.suffix} - currently only .png and .jpg / .jpeg are supported."
                 )
 
-    def parse_content(self, content: str) -> Union[str, List]:
-        """for parsing inline images"""
+    def parse_content(self, content: str):
+        """for parsing inline images
+
+        Parameters
+        ----------
+        content : str
+            The content to parse
+
+        Returns
+        -------
+        any
+            The parsed content
+        """
         # regular expression to parse markdown images
         image = r"(?P<alt>!\[[^\]]*\])\((?P<filename>.*?)(?=\"|\))\)"
         matches = re.findall(image, content, flags=re.MULTILINE)
@@ -77,50 +76,45 @@ class PromptyChatParser(Invoker):
             current_chunk = 0
             for i in range(len(content_chunks)):
                 # image entry
-                if (
-                    current_chunk < len(matches)
-                    and content_chunks[i] == matches[current_chunk][0]
-                ):
+                if current_chunk < len(matches) and content_chunks[i] == matches[current_chunk][0]:
                     content_items.append(
                         {
                             "type": "image_url",
-                            "image_url": {
-                                "url": self.inline_image(
-                                    matches[current_chunk][1].split(" ")[0].strip()
-                                )
-                            },
+                            "image_url": {"url": self.inline_image(matches[current_chunk][1].split(" ")[0].strip())},
                         }
                     )
                 # second part of image entry
-                elif (
-                    current_chunk < len(matches)
-                    and content_chunks[i] == matches[current_chunk][1]
-                ):
+                elif current_chunk < len(matches) and content_chunks[i] == matches[current_chunk][1]:
                     current_chunk += 1
                 # text entry
                 else:
                     if len(content_chunks[i].strip()) > 0:
-                        content_items.append(
-                            {"type": "text", "text": content_chunks[i].strip()}
-                        )
+                        content_items.append({"type": "text", "text": content_chunks[i].strip()})
             return content_items
         else:
             return content
 
-    def invoke(self, data: BaseModel) -> BaseModel:
-        assert isinstance(data, SimpleModel)
+    def invoke(self, data: str) -> Any:
+        """Invoke the Prompty Chat Parser
+
+        Parameters
+        ----------
+        data : str
+            The data to parse
+
+        Returns
+        -------
+        str
+            The parsed data
+        """
         messages = []
         separator = r"(?i)^\s*#?\s*(" + "|".join(self.roles) + r")\s*:\s*\n"
 
         # get valid chunks - remove empty items
-        chunks = [
-            item
-            for item in re.split(separator, data.item, flags=re.MULTILINE)
-            if len(item.strip()) > 0
-        ]
+        chunks = [item for item in re.split(separator, data, flags=re.MULTILINE) if len(item.strip()) > 0]
 
         # if no starter role, then inject system role
-        if chunks[0].strip().lower() not in self.roles:
+        if not chunks[0].strip().lower() in self.roles:
             chunks.insert(0, "system")
 
         # if last chunk is role entry, then remove (no content?)
@@ -136,4 +130,19 @@ class PromptyChatParser(Invoker):
             content = chunks[i + 1].strip()
             messages.append({"role": role, "content": self.parse_content(content)})
 
-        return SimpleModel[list](item=messages)
+        return messages
+
+    async def invoke_async(self, data: str) -> Any:
+        """Invoke the Prompty Chat Parser (Async)
+
+        Parameters
+        ----------
+        data : str
+            The data to parse
+
+        Returns
+        -------
+        str
+            The parsed data
+        """
+        return self.invoke(data)

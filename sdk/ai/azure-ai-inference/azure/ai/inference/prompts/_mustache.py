@@ -2,26 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""
-Adapted from https://github.com/langchain-ai/langchain and https://github.com/noahmorrison/chevron
-MIT License
-"""
-
+# pylint: disable=line-too-long,R,consider-using-dict-items,docstring-missing-return,docstring-missing-rtype,docstring-missing-param,global-statement,unused-argument,global-variable-not-assigned,protected-access,logging-fstring-interpolation,deprecated-method
 from __future__ import annotations
-
 import logging
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterator, Sequence
 from types import MappingProxyType
 from typing import (
     Any,
     Dict,
     List,
     Literal,
+    Mapping,
     Optional,
     Union,
     cast,
 )
-
 from typing_extensions import TypeAlias
 
 logger = logging.getLogger(__name__)
@@ -196,9 +191,7 @@ def parse_tag(template: str, l_del: str, r_del: str) -> tuple[tuple[str, str], s
 #
 
 
-def tokenize(
-    template: str, def_ldel: str = "{{", def_rdel: str = "}}"
-) -> Iterator[tuple[str, str]]:
+def tokenize(template: str, def_ldel: str = "{{", def_rdel: str = "}}") -> Iterator[tuple[str, str]]:
     """Tokenize a mustache template.
 
     Tokenizes a mustache template in a generator fashion,
@@ -281,11 +274,7 @@ def tokenize(
             try:
                 last_section = open_sections.pop()
             except IndexError as e:
-                msg = (
-                    f'Trying to close tag "{tag_key}"\n'
-                    "Looks like it was not opened.\n"
-                    f"line {_CURRENT_LINE + 1}"
-                )
+                msg = f'Trying to close tag "{tag_key}"\n' "Looks like it was not opened.\n" f"line {_CURRENT_LINE + 1}"
                 raise ChevronError(msg) from e
             if tag_key != last_section:
                 # Otherwise we need to complain
@@ -527,9 +516,7 @@ def render(
         # If we're a variable tag
         elif tag == "variable":
             # Add the html escaped key to the output
-            thing = _get_key(
-                key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel
-            )
+            thing = _get_key(key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel)
             if thing is True and key == ".":
                 # if we've coerced into a boolean by accident
                 # (inverted tags do this)
@@ -542,9 +529,7 @@ def render(
         # If we're a no html escape tag
         elif tag == "no escape":
             # Just lookup the key and add it
-            thing = _get_key(
-                key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel
-            )
+            thing = _get_key(key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel)
             if not isinstance(thing, str):
                 thing = str(thing)
             output += thing
@@ -552,9 +537,7 @@ def render(
         # If we're a section tag
         elif tag == "section":
             # Get the sections scope
-            scope = _get_key(
-                key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel
-            )
+            scope = _get_key(key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel)
 
             # If the scope is a callable (as described in
             # https://mustache.github.io/mustache.5.html)
@@ -606,7 +589,7 @@ def render(
                     ),
                 )
 
-                output += rend # type: ignore[reportOperatorIssue]
+                output += rend  # type: ignore[reportOperatorIssue]
 
             # If the scope is a sequence, an iterator or generator but not
             # derived from a string
@@ -646,14 +629,12 @@ def render(
 
             else:
                 # Otherwise we're just a scope section
-                scopes.insert(0, scope) # type: ignore[reportArgumentType]
+                scopes.insert(0, scope)  # type: ignore[reportArgumentType]
 
         # If we're an inverted section
         elif tag == "inverted section":
             # Add the flipped scope to the scopes
-            scope = _get_key(
-                key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel
-            )
+            scope = _get_key(key, scopes, warn=warn, keep=keep, def_ldel=def_ldel, def_rdel=def_rdel)
             scopes.insert(0, cast(Literal[False], not scope))
 
         # If we're a partial
