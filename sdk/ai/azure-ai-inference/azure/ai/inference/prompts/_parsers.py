@@ -14,20 +14,21 @@ from ._invoker import Invoker, InvokerFactory
 
 @InvokerFactory.register_parser("prompty.chat")
 class PromptyChatParser(Invoker):
-    """ Prompty Chat Parser  """
+    """Prompty Chat Parser"""
+
     def __init__(self, prompty: Prompty) -> None:
         super().__init__(prompty)
         self.roles = ["assistant", "function", "system", "user"]
         self.path = Path(self.prompty.file).parent
 
     def inline_image(self, image_item: str) -> str:
-        """ Inline Image
+        """Inline Image
 
         Parameters
         ----------
         image_item : str
             The image item to inline
-        
+
         Returns
         -------
         str
@@ -54,13 +55,13 @@ class PromptyChatParser(Invoker):
                 )
 
     def parse_content(self, content: str):
-        """ for parsing inline images
-        
+        """for parsing inline images
+
         Parameters
         ----------
         content : str
             The content to parse
-        
+
         Returns
         -------
         any
@@ -75,44 +76,32 @@ class PromptyChatParser(Invoker):
             current_chunk = 0
             for i in range(len(content_chunks)):
                 # image entry
-                if (
-                    current_chunk < len(matches)
-                    and content_chunks[i] == matches[current_chunk][0]
-                ):
+                if current_chunk < len(matches) and content_chunks[i] == matches[current_chunk][0]:
                     content_items.append(
                         {
                             "type": "image_url",
-                            "image_url": {
-                                "url": self.inline_image(
-                                    matches[current_chunk][1].split(" ")[0].strip()
-                                )
-                            },
+                            "image_url": {"url": self.inline_image(matches[current_chunk][1].split(" ")[0].strip())},
                         }
                     )
                 # second part of image entry
-                elif (
-                    current_chunk < len(matches)
-                    and content_chunks[i] == matches[current_chunk][1]
-                ):
+                elif current_chunk < len(matches) and content_chunks[i] == matches[current_chunk][1]:
                     current_chunk += 1
                 # text entry
                 else:
                     if len(content_chunks[i].strip()) > 0:
-                        content_items.append(
-                            {"type": "text", "text": content_chunks[i].strip()}
-                        )
+                        content_items.append({"type": "text", "text": content_chunks[i].strip()})
             return content_items
         else:
             return content
 
     def invoke(self, data: str) -> Any:
-        """ Invoke the Prompty Chat Parser
+        """Invoke the Prompty Chat Parser
 
         Parameters
         ----------
         data : str
             The data to parse
-        
+
         Returns
         -------
         str
@@ -122,11 +111,7 @@ class PromptyChatParser(Invoker):
         separator = r"(?i)^\s*#?\s*(" + "|".join(self.roles) + r")\s*:\s*\n"
 
         # get valid chunks - remove empty items
-        chunks = [
-            item
-            for item in re.split(separator, data, flags=re.MULTILINE)
-            if len(item.strip()) > 0
-        ]
+        chunks = [item for item in re.split(separator, data, flags=re.MULTILINE) if len(item.strip()) > 0]
 
         # if no starter role, then inject system role
         if not chunks[0].strip().lower() in self.roles:
@@ -147,15 +132,14 @@ class PromptyChatParser(Invoker):
 
         return messages
 
-
     async def invoke_async(self, data: str) -> Any:
-        """ Invoke the Prompty Chat Parser (Async)
+        """Invoke the Prompty Chat Parser (Async)
 
         Parameters
         ----------
         data : str
             The data to parse
-        
+
         Returns
         -------
         str

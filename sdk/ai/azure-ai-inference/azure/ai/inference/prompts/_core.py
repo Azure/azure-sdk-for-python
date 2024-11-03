@@ -61,6 +61,7 @@ class ModelSettings:
     parameters: Dict = field(default_factory=dict)
     response: Dict = field(default_factory=dict)
 
+
 @dataclass
 class TemplateSettings:
     """TemplateSettings class to define the template of the prompty
@@ -75,6 +76,7 @@ class TemplateSettings:
 
     type: str = field(default="mustache")
     parser: str = field(default="")
+
 
 @dataclass
 class Prompty:
@@ -134,7 +136,7 @@ class Prompty:
     template: TemplateSettings = field(default_factory=TemplateSettings)
 
     file: Union[Path, str] = field(default="")
-    content: Union[str,List[str], Dict] = field(default="")
+    content: Union[str, List[str], Dict] = field(default="")
 
     def to_safe_dict(self) -> Dict[str, Any]:
         d = {}
@@ -148,11 +150,7 @@ class Prompty:
         if self.outputs:
             d["outputs"] = {k: asdict(v) for k, v in self.outputs.items()}
         if self.file:
-            d["file"] = (
-                str(self.file.as_posix())
-                if isinstance(self.file, Path)
-                else self.file
-            )
+            d["file"] = str(self.file.as_posix()) if isinstance(self.file, Path) else self.file
         return d
 
     @staticmethod
@@ -164,12 +162,8 @@ class Prompty:
         top.version = base.version if top.version == "" else top.version
 
         top.model.api = base.model.api if top.model.api == "" else top.model.api
-        top.model.configuration = param_hoisting(
-            top.model.configuration, base.model.configuration
-        )
-        top.model.parameters = param_hoisting(
-            top.model.parameters, base.model.parameters
-        )
+        top.model.configuration = param_hoisting(top.model.configuration, base.model.configuration)
+        top.model.parameters = param_hoisting(top.model.parameters, base.model.parameters)
         top.model.response = param_hoisting(top.model.response, base.model.response)
 
         top.sample = param_hoisting(top.sample, base.sample)
@@ -186,10 +180,7 @@ class Prompty:
             if isinstance(items, list):
                 return [Prompty.normalize(value, parent) for value in items]
             elif isinstance(items, Dict):
-                return {
-                    key: Prompty.normalize(value, parent)
-                    for key, value in items.items()
-                }
+                return {key: Prompty.normalize(value, parent) for key, value in items.items()}
             else:
                 return items
         else:
@@ -203,10 +194,7 @@ class Prompty:
             if isinstance(items, list):
                 return [Prompty.normalize(value, parent) for value in items]
             elif isinstance(items, Dict):
-                return {
-                    key: Prompty.normalize(value, parent)
-                    for key, value in items.items()
-                }
+                return {key: Prompty.normalize(value, parent) for key, value in items.items()}
             else:
                 return items
         else:
@@ -246,10 +234,7 @@ class Prompty:
         elif isinstance(attribute, list):
             return [Prompty.normalize(value, parent) for value in attribute]
         elif isinstance(attribute, Dict):
-            return {
-                key: Prompty.normalize(value, parent)
-                for key, value in attribute.items()
-            }
+            return {key: Prompty.normalize(value, parent) for key, value in attribute.items()}
         else:
             return attribute
 
@@ -275,17 +260,12 @@ class Prompty:
         elif isinstance(attribute, list):
             return [await Prompty.normalize_async(value, parent) for value in attribute]
         elif isinstance(attribute, Dict):
-            return {
-                key: await Prompty.normalize_async(value, parent)
-                for key, value in attribute.items()
-            }
+            return {key: await Prompty.normalize_async(value, parent) for key, value in attribute.items()}
         else:
             return attribute
 
 
-def param_hoisting(
-    top: Dict[str, Any], bottom: Dict[str, Any], top_key: Union[str, None] = None
-) -> Dict[str, Any]:
+def param_hoisting(top: Dict[str, Any], bottom: Dict[str, Any], top_key: Union[str, None] = None) -> Dict[str, Any]:
     if top_key:
         new_dict = {**top[top_key]} if top_key in top else {}
     else:
@@ -358,6 +338,7 @@ class AsyncPromptyStream(AsyncIterator):
                     trace("result", [to_dict(s) for s in self.items])
 
             raise StopAsyncIteration
+
 
 def _mask_secrets(d: Dict[str, Any], path: list[str], patterns: list[str] = ["key", "secret"]) -> bool:
     sub_d = d

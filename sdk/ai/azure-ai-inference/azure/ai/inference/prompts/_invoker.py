@@ -119,7 +119,7 @@ class InvokerFactory:
     def register_renderer(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._renderers[name] = wrapped_class
-            return wrapped_class # type: ignore
+            return wrapped_class  # type: ignore
 
         return inner_wrapper
 
@@ -127,7 +127,7 @@ class InvokerFactory:
     def register_parser(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._parsers[name] = wrapped_class
-            return wrapped_class # type: ignore
+            return wrapped_class  # type: ignore
 
         return inner_wrapper
 
@@ -135,7 +135,7 @@ class InvokerFactory:
     def register_executor(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._executors[name] = wrapped_class
-            return wrapped_class # type: ignore
+            return wrapped_class  # type: ignore
 
         return inner_wrapper
 
@@ -143,7 +143,7 @@ class InvokerFactory:
     def register_processor(cls, name: str) -> Callable:
         def inner_wrapper(wrapped_class: Invoker) -> Callable:
             cls._processors[name] = wrapped_class
-            return wrapped_class # type: ignore
+            return wrapped_class  # type: ignore
 
         return inner_wrapper
 
@@ -175,28 +175,28 @@ class InvokerFactory:
             if name not in cls._renderers:
                 raise ValueError(f"Renderer {name} not found")
 
-            return cls._renderers[name](prompty) # type: ignore
+            return cls._renderers[name](prompty)  # type: ignore
 
         elif type == "parser":
             name = f"{prompty.template.parser}.{prompty.model.api}"
             if name not in cls._parsers:
                 raise ValueError(f"Parser {name} not found")
 
-            return cls._parsers[name](prompty) # type: ignore
+            return cls._parsers[name](prompty)  # type: ignore
 
         elif type == "executor":
             name = prompty.model.configuration["type"]
             if name not in cls._executors:
                 raise ValueError(f"Executor {name} not found")
 
-            return cls._executors[name](prompty) # type: ignore
+            return cls._executors[name](prompty)  # type: ignore
 
         elif type == "processor":
             name = prompty.model.configuration["type"]
             if name not in cls._processors:
                 raise ValueError(f"Processor {name} not found")
 
-            return cls._processors[name](prompty) # type: ignore
+            return cls._processors[name](prompty)  # type: ignore
 
         else:
             raise ValueError(f"Type {type} not found")
@@ -241,9 +241,7 @@ class InvokerFactory:
         return cls.run("renderer", prompty, data, default)
 
     @classmethod
-    async def run_renderer_async(
-        cls, prompty: Prompty, data: Any, default: Any = None
-    ) -> Any:
+    async def run_renderer_async(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return await cls.run_async("renderer", prompty, data, default)
 
     @classmethod
@@ -251,9 +249,7 @@ class InvokerFactory:
         return cls.run("parser", prompty, data, default)
 
     @classmethod
-    async def run_parser_async(
-        cls, prompty: Prompty, data: Any, default: Any = None
-    ) -> Any:
+    async def run_parser_async(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return await cls.run_async("parser", prompty, data, default)
 
     @classmethod
@@ -261,9 +257,7 @@ class InvokerFactory:
         return cls.run("executor", prompty, data, default)
 
     @classmethod
-    async def run_executor_async(
-        cls, prompty: Prompty, data: Any, default: Any = None
-    ) -> Any:
+    async def run_executor_async(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return await cls.run_async("executor", prompty, data, default)
 
     @classmethod
@@ -271,9 +265,7 @@ class InvokerFactory:
         return cls.run("processor", prompty, data, default)
 
     @classmethod
-    async def run_processor_async(
-        cls, prompty: Prompty, data: Any, default: Any = None
-    ) -> Any:
+    async def run_processor_async(cls, prompty: Prompty, data: Any, default: Any = None) -> Any:
         return await cls.run_async("processor", prompty, data, default)
 
 

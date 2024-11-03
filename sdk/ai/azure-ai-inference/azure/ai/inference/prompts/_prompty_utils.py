@@ -73,9 +73,7 @@ def headless(
     modelSettings = ModelSettings(
         api=api,
         configuration=Prompty.normalize(
-            param_hoisting(
-                configuration, load_global_config(caller.parent, connection)
-            ),
+            param_hoisting(configuration, load_global_config(caller.parent, connection)),
             caller.parent,
         ),
         parameters=parameters,
@@ -129,9 +127,7 @@ async def headless_async(
     templateSettings = TemplateSettings(type="NOOP", parser="NOOP")
 
     global_config = await load_global_config_async(caller.parent, connection)
-    c = await Prompty.normalize_async(
-        param_hoisting(configuration, global_config), caller.parent
-    )
+    c = await Prompty.normalize_async(param_hoisting(configuration, global_config), caller.parent)
 
     modelSettings = ModelSettings(
         api=api,
@@ -177,18 +173,14 @@ def _load_raw_prompty(attributes: dict, content: str, p: Path, global_config: di
     # formalize inputs and outputs
     if "inputs" in attributes:
         try:
-            inputs = {
-                k: PropertySettings(**v) for (k, v) in attributes.pop("inputs").items()
-            }
+            inputs = {k: PropertySettings(**v) for (k, v) in attributes.pop("inputs").items()}
         except Exception as e:
             raise ValueError(f"Error in inputs: {e}")
     else:
         inputs = {}
     if "outputs" in attributes:
         try:
-            outputs = {
-                k: PropertySettings(**v) for (k, v) in attributes.pop("outputs").items()
-            }
+            outputs = {k: PropertySettings(**v) for (k, v) in attributes.pop("outputs").items()}
         except Exception as e:
             raise ValueError(f"Error in outputs: {e}")
     else:
@@ -246,9 +238,7 @@ def load(prompty_file: Union[str, Path], configuration: str = "default") -> Prom
     attributes = Prompty.normalize(attributes, p.parent)
 
     # load global configuration
-    global_config = Prompty.normalize(
-        load_global_config(p.parent, configuration), p.parent
-    )
+    global_config = Prompty.normalize(load_global_config(p.parent, configuration), p.parent)
 
     prompty = _load_raw_prompty(attributes, content, p, global_config)
 
@@ -420,9 +410,7 @@ def run(
     """
 
     if configuration != {}:
-        prompt.model.configuration = param_hoisting(
-            configuration, prompt.model.configuration
-        )
+        prompt.model.configuration = param_hoisting(configuration, prompt.model.configuration)
 
     if parameters != {}:
         prompt.model.parameters = param_hoisting(parameters, prompt.model.parameters)
@@ -472,9 +460,7 @@ async def run_async(
     """
 
     if configuration != {}:
-        prompt.model.configuration = param_hoisting(
-            configuration, prompt.model.configuration
-        )
+        prompt.model.configuration = param_hoisting(configuration, prompt.model.configuration)
 
     if parameters != {}:
         prompt.model.parameters = param_hoisting(parameters, prompt.model.parameters)

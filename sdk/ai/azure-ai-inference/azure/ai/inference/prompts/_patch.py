@@ -43,9 +43,7 @@ class PromptTemplate:
         return cls(prompty=prompty)
 
     @classmethod
-    def from_string(
-        cls, prompt_template: str, api: str = "chat", model_name: Optional[str] = None
-    ) -> Self:
+    def from_string(cls, prompt_template: str, api: str = "chat", model_name: Optional[str] = None) -> Self:
         """Initialize a PromptTemplate object from a message template.
 
         :param prompt_template: The prompt template string.
@@ -92,9 +90,7 @@ class PromptTemplate:
         else:
             raise ValueError("Please invalid arguments for PromptTemplate")
 
-    def create_messages(
-        self, data: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> List[Dict[str, Any]]:
+    def create_messages(self, data: Optional[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
         """Render the prompt template with the given data.
 
         :param data: The data to render the prompt template with.
