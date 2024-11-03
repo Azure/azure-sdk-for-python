@@ -1,0 +1,58 @@
+export AZURE_AI_CHAT_KEY=35e15570f8534983bbeceb0211e136df
+export AZURE_AI_CHAT_ENDPOINT=https://eastus.api.cognitive.microsoft.com/openai/deployments/gpt-4o
+export AZURE_AI_CHAT_VERSION=2024-07-01-preview
+
+How to run linter/test:
+* pip install sphinx_rtd_theme myst_parser
+
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Task: "Run Black"
+python ../../../scripts/devops_tasks/validate_formatting.py azure-ai-inference --service_directory=auto --validate=True
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hints:
+extension-pkg-whitelist=pydantic
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Linters Good:
+    tox run -e sphinx -c ../../../eng/tox/tox.ini --root .
+    tox run -e verifytypes -c ../../../eng/tox/tox.ini --root .
+    tox run -e apistub -c ../../../eng/tox/tox.ini --root .
+Linters Good?:
+    tox run -e samples -c ../../../eng/tox/tox.ini --root .
+Linters Queue:
+
+
+Linters Bad:
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e sphinx -c ../../../eng/tox/tox.ini --root .
+    python /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/eng/tox/run_sphinx_build.py -w /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference/.tox/sphinx/tmp/dist/unzipped/docgen -o /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference/.tox/sphinx/tmp/dist/site -r /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e pylint -c ../../../eng/tox/tox.ini --root .
+    python /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/eng/tox/run_pylint.py -t /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e mypy -c ../../../eng/tox/tox.ini --root .
+    python /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/eng/tox/run_mypy.py -t /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e pyright -c ../../../eng/tox/tox.ini --root .
+    python /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/eng/tox/run_pyright.py -t /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e whl -c ../../../eng/tox/tox.ini --root .
+//    pytest -rsfE --junitxml=/Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference/test-junit-whl.xml --verbose --cov-branch --durations=10 --ignore=azure --ignore=.tox --ignore=build --ignore=.eggs --ignore=samples --log-cli-level=51 /Users/weiwu/Workspace/Microsoft/AzureAI/azure-sdk-for-python/sdk/ai/azure-ai-inference
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+tox run -e sdist -c ../../../eng/tox/tox.ini --root .
+    Error:
+        AttributeError: 'PromptTemplate' object has no attribute 'prompty'
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
++ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

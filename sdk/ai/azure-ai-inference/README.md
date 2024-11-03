@@ -8,6 +8,7 @@ Use the Inference client library (in preview) to:
 * Get text embeddings
 <!-- * Get image embeddings -->
 
+
 The Inference client library supports AI models deployed to the following services:
 
 * [GitHub Models](https://github.com/marketplace/models) - Free-tier endpoint for AI models from different providers
