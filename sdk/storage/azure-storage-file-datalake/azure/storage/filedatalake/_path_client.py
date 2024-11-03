@@ -205,14 +205,8 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def _create(
-        self, resource_type: str,
-        content_settings: Optional["ContentSettings"] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        *,
-        client_transaction_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create directory or file
 
@@ -316,9 +310,7 @@ class PathClient(StorageAccountHostsMixin):
             self.scheme,
             content_settings=content_settings,
             metadata=metadata,
-            client_transaction_id=client_transaction_id,
-            **kwargs
-        )
+            **kwargs)
         try:
             return self._client.path.create(**options)
         except HttpResponseError as error:
