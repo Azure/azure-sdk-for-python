@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Dict, List, Optional, Union
 
-from typing_extensions import override
+from typing_extensions import overload, override
 from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 try:
@@ -16,7 +17,7 @@ except ImportError:
     USER_AGENT = "None"
 
 
-class GroundednessEvaluator(PromptyEvaluatorBase):
+class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
@@ -62,14 +63,47 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         self._model_config = model_config
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
-    @override
+    @overload
     def __call__(
         self,
         *,
+        response: str,
+        context: str,
         query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
-        conversation=None,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate groundedness for given input of response, context
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
+        :keyword query: The query to be evaluated. Optional parameter for use with the `response`
+            and `context` parameters. If provided, a different prompt template will be used for evaluation.
+        :paramtype query: Optional[str]
+        :return: The groundedness score.
+        :rtype: Dict[str, float]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate groundedness for a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The groundedness score.
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
         **kwargs,
     ):
         """Evaluate groundedness. Accepts either a query, response, and context for a single evaluation,
@@ -89,10 +123,10 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
 
-        if query:
+        if kwargs.get("query", None):
             current_dir = os.path.dirname(__file__)
             prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
             self._prompty_file = prompty_path
@@ -103,4 +137,4 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
             )
             self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
 
-        return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)

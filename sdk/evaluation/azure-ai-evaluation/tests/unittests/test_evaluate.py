@@ -396,14 +396,18 @@ class TestEvaluate:
 
         assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
-        output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+    @pytest.mark.parametrize("use_relative_path", [True, False])
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        # output_path is a file
+        if use_relative_path:
+            output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+        else:
+            output_path = "eval_test_results.jsonl"
+
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
             output_path=output_path,
-            _use_pf_client=use_pf_client,
         )
 
         assert result is not None
@@ -415,6 +419,9 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+        os.remove(output_path)
+
+        # output_path is a directory
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
@@ -641,3 +648,13 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_missing_inputs(self, questions_file):
+        """Test we are raising exception if required input is missing in data."""
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=questions_file,
+                target=_target_fn,
+                evaluators={"f1": F1ScoreEvaluator()},
+            )
+        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import os
 import functools
 import inspect
 import logging
@@ -148,6 +149,9 @@ def _get_indentation_size(doc_string: str) -> int:
 
 def _should_skip_warning():
     skip_warning_msg = False
+
+    if os.getenv("AI_EVALS_DISABLE_EXPERIMENTAL_WARNING", "false").lower() == "true":
+        skip_warning_msg = True
 
     # Cases where we want to suppress the warning:
     # 1. When converting from REST object to SDK object

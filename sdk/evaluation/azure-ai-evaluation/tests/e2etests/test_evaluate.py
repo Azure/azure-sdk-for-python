@@ -30,6 +30,12 @@ def data_file():
 
 
 @pytest.fixture
+def data_file_no_query():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data_no_query.jsonl")
+
+
+@pytest.fixture
 def data_convo_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_conversation.jsonl")
@@ -194,7 +200,7 @@ class TestEvaluate:
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
         content_safety_eval = ContentSafetyEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            credential=azure_cred, azure_ai_project=project_scope, _parallel=False
         )
 
         # run the evaluation
@@ -241,7 +247,7 @@ class TestEvaluate:
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
         content_safety_eval = ContentSafetyMultimodalEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-{str(uuid.uuid4())}",
@@ -283,7 +289,7 @@ class TestEvaluate:
 
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
         content_safety_eval = ContentSafetyMultimodalEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
@@ -725,3 +731,92 @@ class TestEvaluate:
     @pytest.mark.skip(reason="TODO: Add test back")
     def test_prompty_with_threadpool_implementation(self):
         pass
+
+    def test_evaluate_with_groundedness_evaluator_with_query(self, model_config, data_file):
+        # data
+        input_data = pd.read_json(data_file, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_file,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+        assert "grounded.groundedness" in metrics.keys()
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+        assert row_result_df["outputs.grounded.groundedness"][2] in [3, 4, 5]
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_groundedness_evaluator_without_query(self, model_config, data_file_no_query):
+        # data
+        input_data = pd.read_json(data_file_no_query, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_file_no_query,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+
+        assert "grounded.groundedness" in metrics.keys()
+
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+
+        assert row_result_df["outputs.grounded.groundedness"][2] in [3, 4, 5]
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_groundedness_evaluator_with_convo(self, model_config, data_convo_file):
+        # data
+        input_data = pd.read_json(data_convo_file, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_convo_file,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+        assert "outputs.grounded.evaluation_per_turn" in row_result_df.columns.to_list()
+        assert "grounded.groundedness" in metrics.keys()
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+        assert row_result_df["outputs.grounded.groundedness"][1] in [3, 4, 5]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness"][0] in [3.0, 4.0, 5.0]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness_reason"][0] is not None
+        assert result["studio_url"] is None
