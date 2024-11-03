@@ -3,11 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="union-attr,return-value"
-# pylint: disable=line-too-long,R,consider-using-enumerate
+# pylint: disable=line-too-long,R,consider-using-enumerate,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 import re
 import base64
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 

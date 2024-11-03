@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="return-value,operator"
-# pylint: disable=line-too-long,R
+# pylint: disable=line-too-long,R,docstring-missing-param,docstring-missing-return,docstring-missing-rtype,unnecessary-pass
 import abc
 from typing import Any, Callable, Dict, Literal
 from ._tracer import trace

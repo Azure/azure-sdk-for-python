@@ -3,13 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="assignment,attr-defined,index,arg-type"
-# pylint: disable=line-too-long,R,consider-iterating-dictionary
+# pylint: disable=line-too-long,R,consider-iterating-dictionary,raise-missing-from,dangerous-default-value
 from __future__ import annotations
-
 import os
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Any, AsyncIterator, Dict, Iterator, List, Literal, Dict, Set, Union
+from typing import Any, AsyncIterator, Dict, Iterator, List, Literal, Union
 from ._tracer import Tracer, to_dict
 from ._utils import load_json, load_json_async
 

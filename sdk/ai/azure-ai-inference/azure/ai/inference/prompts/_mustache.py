@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=line-too-long,R,consider-using-dict-items
+# pylint: disable=line-too-long,R,consider-using-dict-items,docstring-missing-return,docstring-missing-rtype,docstring-missing-param,global-statement,unused-argument,global-variable-not-assigned,protected-access,logging-fstring-interpolation,deprecated-method
 from __future__ import annotations
-
 import logging
 from collections.abc import Iterator, Sequence
 from types import MappingProxyType

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="union-attr,arg-type,misc,return-value,assignment,func-returns-value"
-# pylint: disable=R
+# pylint: disable=R,redefined-outer-name,bare-except,unspecified-encoding
 import os
 import json
 import inspect

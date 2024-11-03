@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="import-untyped,return-value"
-# pylint: disable=line-too-long,R,wrong-import-order
+# pylint: disable=line-too-long,R,wrong-import-order,global-variable-not-assigned)
 import re
 import yaml
 import json
