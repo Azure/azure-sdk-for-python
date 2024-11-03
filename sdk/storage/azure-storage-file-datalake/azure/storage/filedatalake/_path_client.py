@@ -160,7 +160,6 @@ class PathClient(StorageAccountHostsMixin):
         scheme: str,
         content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        client_transaction_id: Optional[str] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -199,7 +198,6 @@ class PathClient(StorageAccountHostsMixin):
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
             'encryption_context': kwargs.pop('encryption_context', None),
-            'client_transaction_id': client_transaction_id,
             'cls': return_response_headers
         }
         options.update(kwargs)
