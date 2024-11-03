@@ -41,7 +41,6 @@ def sample_chat_completions_from_input_prompt_string():
         print("Set them before running this sample.")
         exit()
 
-
     prompt_template_str = """
         system:
         You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
@@ -59,25 +58,22 @@ def sample_chat_completions_from_input_prompt_string():
         user:
         {{input}}
     """
-    prompt_template = PromptTemplate.from_string(
-        api = "chat",
-        prompt_template = prompt_template_str
-    )
+    prompt_template = PromptTemplate.from_string(api="chat", prompt_template=prompt_template_str)
 
     input = "When I arrived, can I still have breakfast?"
     rules = [
-        { "rule": "The check-in time is 3pm" },
-        { "rule": "The check-out time is 11am" },
-        { "rule": "Breakfast is served from 7am to 10am" },
+        {"rule": "The check-in time is 3pm"},
+        {"rule": "The check-out time is 11am"},
+        {"rule": "Breakfast is served from 7am to 10am"},
     ]
     chat_history = [
-        { "role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?" },
-        { "role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM." },
+        {"role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?"},
+        {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
     ]
     messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    response = client.complete(messages=messages) # type: ignore[reportCallIssue, reportArgumentType]
+    response = client.complete(messages=messages)  # type: ignore[reportCallIssue, reportArgumentType]
 
     print(response.choices[0].message.content)
 

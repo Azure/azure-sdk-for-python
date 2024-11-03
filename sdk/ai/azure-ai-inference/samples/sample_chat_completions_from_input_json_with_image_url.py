@@ -54,9 +54,7 @@ def sample_chat_completions_from_input_json_with_image_url():
         model_deployment = None
 
     client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        headers={"azureml-model-deployment": model_deployment}
+        endpoint=endpoint, credential=AzureKeyCredential(key), headers={"azureml-model-deployment": model_deployment}
     )
 
     response = client.complete(
@@ -69,10 +67,7 @@ def sample_chat_completions_from_input_json_with_image_url():
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
+                        {"type": "text", "text": "What's in this image?"},
                         {
                             "type": "image_url",
                             "image_url": {
