@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import uuid
 from datetime import datetime, timedelta
 from time import sleep
 
@@ -31,6 +30,7 @@ from azure.storage.filedatalake import (
 )
 from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
+from azure.storage.filedatalake._shared.response_handlers import return_response_headers
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -1641,15 +1641,16 @@ class TestDirectory(StorageRecordedTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        create_transaction_id = str(uuid.uuid4())[:32]
+        create_transaction_id = 'd9a752bb-3702-4336-b4fb-470bdfad'
 
         try:
             # Act
             directory_client.create_directory(client_transaction_id=create_transaction_id)
 
             # Assert
-            props = directory_client.get_directory_properties()
+            props = directory_client._client.path.get_properties(cls=return_response_headers)
             assert props is not None
+            assert props["client_transaction_id"] == create_transaction_id
         finally:
             directory_client.delete_directory()
 

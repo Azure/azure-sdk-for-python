@@ -136,12 +136,9 @@ class DataLakeDirectoryClient(PathClient):
             credential=credential, **kwargs)
 
     @distributed_trace
-    def create_directory(
-        self, metadata: Optional[Dict[str, str]] = None,
-        *,
-        client_transaction_id: Optional[str] = None,
-        **kwargs
-    ) -> Dict[str, Union[str, "datetime"]]:
+    def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
+                         **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create a new directory.
 
@@ -227,12 +224,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 8
                 :caption: Create directory.
         """
-        return self._create(
-            'directory',
-            metadata=metadata,
-            client_transaction_id=client_transaction_id,
-            **kwargs
-        )
+        return self._create('directory', metadata=metadata, **kwargs)
 
     @distributed_trace
     def delete_directory(self, **kwargs):
