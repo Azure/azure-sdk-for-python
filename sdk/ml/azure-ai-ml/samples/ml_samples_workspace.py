@@ -103,6 +103,7 @@ class WorkspaceConfigurationOptions(object):
         pypirule = FqdnDestination(name="pypirule", destination="pypi.org")
 
         # Example FirewallSku
+        # FirewallSku is an optional parameter, when unspecified this will default to FirewallSku.Standard
         firewallSku = FirewallSku.BASIC
 
         network = ManagedNetwork(
