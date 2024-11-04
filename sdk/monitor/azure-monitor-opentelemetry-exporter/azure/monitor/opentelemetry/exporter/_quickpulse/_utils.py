@@ -308,23 +308,20 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
         return False
     if not comparand:
         return False
-    if name == "*" and predicate in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
+    if name == "*" and predicate not in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
         return False
     if name in ("ResultCode", "ResponseCode", "Duration"):
         if predicate in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
             return False
         if name == "Duration":
             # Duration comparand should be a string timestamp
-            if not _filter_time_stamp_to_ms(comparand):
+            if _filter_time_stamp_to_ms(comparand) is None:
                 return False
         else:
-            result = None
             try:
                 # Response/ResultCode comparand should be interpreted as float
-                result = float(comparand)
+                float(comparand)
             except Exception:  # pylint: disable=broad-except,invalid-name
-                pass
-            if result:
                 return False
     elif name == "Success":
         if predicate not in (PredicateType.EQUAL, PredicateType.NOT_EQUAL):
@@ -339,6 +336,10 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
 
         
 def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
+    # The service side will return a timestamp in the following format:
+    # [days].[hours]:[minutes]:[seconds]
+    # the seconds may be a whole number or something like 7.89. 7.89 seconds translates to 7890 ms.
+    # examples: "14.6:56:7.89" = 1234567890 ms, "0.0:0:0.2" = 200 ms
     total_milliseconds = None
     try:
         days, time = time_stamp.split('.')
