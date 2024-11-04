@@ -242,7 +242,7 @@ class AMQPClientAsync(AMQPClientSync):
                 self._connection = Connection(
                     "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                     sasl_credential=self._auth.sasl,
-                    ssl_opts={"ca_certs": self._ssl_opts},
+                    ssl_opts=self._ssl_opts,
                     container_id=self._name,
                     max_frame_size=self._max_frame_size,
                     channel_max=self._channel_max,
