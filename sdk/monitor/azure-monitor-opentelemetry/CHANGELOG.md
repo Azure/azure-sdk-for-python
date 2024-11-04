@@ -1,12 +1,11 @@
 # Release History
 
-## 1.6.3 (Unreleased)
+## 1.6.3 (2024-11-04)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Enable Azure AI Inference instrumentation
+    ([#38071](https://github.com/Azure/azure-sdk-for-python/pull/38071))
 
 ### Other Changes
 

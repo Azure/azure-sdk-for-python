@@ -35,9 +35,9 @@ class TranslationPerfStressTest(PerfStressTest):
         super().__init__(arguments)
 
         # test related env vars
-        endpoint = os.environ["TRANSLATION_DOCUMENT_TEST_ENDPOINT"]
-        self.storage_name = os.environ["TRANSLATION_DOCUMENT_STORAGE_NAME"]
-        self.storage_key = os.environ["TRANSLATION_DOCUMENT_STORAGE_KEY"]
+        endpoint = os.environ["DOCUMENT_TRANSLATION_ENDPOINT"]
+        self.storage_name = os.environ["DOCUMENT_TRANSLATION_STORAGE_NAME"]
+        self.storage_key = os.environ["DOCUMENT_TRANSLATION_STORAGE_KEY"]
         self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
         self.source_container_name = "source-perf-" + str(uuid.uuid4())
         self.target_container_name = "target-perf-" + str(uuid.uuid4())

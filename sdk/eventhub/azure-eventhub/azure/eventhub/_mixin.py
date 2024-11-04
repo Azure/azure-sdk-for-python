@@ -3,14 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import (
-    Any,
-    Optional,
-    List,
-    Tuple
-)
+from typing import Any, Optional, List, Tuple
 
-class DictMixin():
+
+class DictMixin:
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
@@ -67,7 +63,7 @@ class DictMixin():
     def items(self) -> List[Tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key: str, default: Optional[Any]=None) -> Any:
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default

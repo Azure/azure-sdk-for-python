@@ -25,13 +25,11 @@ Psycopg2Instrumentor().instrument()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-cnx = psycopg2.connect(database='test', user="<user>", password="<password>")
+cnx = psycopg2.connect(database="test", user="<user>", password="<password>")
 cursor = cnx.cursor()
 cursor.execute("INSERT INTO test_tables (test_field) VALUES (123)")
 cursor.close()

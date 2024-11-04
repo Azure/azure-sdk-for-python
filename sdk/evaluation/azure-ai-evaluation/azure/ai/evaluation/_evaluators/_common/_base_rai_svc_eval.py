@@ -1,11 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
+from typing import Dict, TypeVar, Union
 
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
+from azure.ai.evaluation._common.constants import (
+    EvaluationMetrics,
+    _InternalEvaluationMetrics,
+    Tasks,
+    _InternalAnnotationTasks,
+)
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -13,8 +18,10 @@ from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
 
+T = TypeVar("T")
 
-class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
+
+class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others. These evaluators
     are all assumed to be of the "query and response or conversation" input variety.
@@ -43,12 +50,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
         self._credential = credential
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        *args,
         **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
@@ -61,14 +65,13 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[Dict]
-        :return: The evaluation result.
-        :rtype: Dict[str, Union[str, float]]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
         by the child class initializer.
@@ -88,10 +91,43 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
                     + " This should have failed earlier."
                 ),
             )
-        return await evaluate_with_rai_service(
+        input_data = {"query": query, "response": response}
+
+        if "context" in self._singleton_inputs:
+            context = eval_input.get("context", None)
+            if context is None:
+                raise EvaluationException(
+                    message="Not implemented",
+                    internal_message=(
+                        "Attempted context-based evaluation without supplying context."
+                        + " This should have failed earlier."
+                    ),
+                )
+            input_data["context"] = context
+
+        return await evaluate_with_rai_service(  # type: ignore
             metric_name=self._eval_metric,
-            query=query,
-            response=response,
+            data=input_data,
             project_scope=self._azure_ai_project,
             credential=self._credential,
+            annotation_task=self._get_task(),
         )
+
+    def _get_task(self):
+        """Get the annotation task for the current evaluation metric.
+        The annotation task is used by the RAI service script to determine a the message format
+        of the API call, and how the output is processed, among other things.
+
+        :return: The annotation task for the evaluator's self._eval_metric value.
+        :rtype: ~azure.ai.evaluation._common.constants.Tasks
+
+        """
+        if self._eval_metric == EvaluationMetrics.GROUNDEDNESS:
+            return Tasks.GROUNDEDNESS
+        if self._eval_metric == EvaluationMetrics.XPIA:
+            return Tasks.XPIA
+        if self._eval_metric == _InternalEvaluationMetrics.ECI:
+            return _InternalAnnotationTasks.ECI
+        if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
+            return Tasks.PROTECTED_MATERIAL
+        return Tasks.CONTENT_HARM

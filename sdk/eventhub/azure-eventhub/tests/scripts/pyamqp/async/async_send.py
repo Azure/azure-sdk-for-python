@@ -12,7 +12,7 @@ from logging.handlers import RotatingFileHandler
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
 
-logger = logging.getLogger('ASYNC_SEND_PERF_TEST')
+logger = logging.getLogger("ASYNC_SEND_PERF_TEST")
 logger.setLevel(logging.INFO)
 logger.addHandler(RotatingFileHandler("async_send_perf_test.log"))
 
@@ -21,7 +21,7 @@ CONN_STRS = [
     os.environ["EVENT_HUB_CONN_STR_BASIC_NORTHEU"],
     os.environ["EVENT_HUB_CONN_STR_STANDARD_NORTHEU"],
     os.environ["EVENT_HUB_CONN_STR_BASIC_WESTUS2"],
-    os.environ["EVENT_HUB_CONN_STR_STANDARD_WESTUS2"]
+    os.environ["EVENT_HUB_CONN_STR_STANDARD_WESTUS2"],
 ]
 EVENTHUB_NAME = "pyamqp"
 
@@ -38,11 +38,9 @@ async def pre_prepare_client(client, data):
 
 async def send_batch_message(conn_str, eventhub_name, num_of_events, single_event_size, run_times=1, description=None):
 
-    client = EventHubProducerClient(
-        conn_str=conn_str, eventhub_name=eventhub_name
-    )
+    client = EventHubProducerClient(conn_str=conn_str, eventhub_name=eventhub_name)
 
-    data = b'a' * single_event_size
+    data = b"a" * single_event_size
     perf_records = []
     await pre_prepare_client(client, data)
 
@@ -75,7 +73,7 @@ async def send_batch_message(conn_str, eventhub_name, num_of_events, single_even
             avg_perf * single_event_size,
             run_times,
             num_of_events,
-            single_event_size
+            single_event_size,
         )
     )
     return avg_perf
@@ -95,7 +93,15 @@ async def send_batch_message_worker_coroutine(client, data, run_flag):
     return total_cnt
 
 
-async def send_batch_message_in_parallel(conn_str, eventhub_name, single_event_size, parallel_coroutine_count=4, run_times=1, run_duration=30, description=None):
+async def send_batch_message_in_parallel(
+    conn_str,
+    eventhub_name,
+    single_event_size,
+    parallel_coroutine_count=4,
+    run_times=1,
+    run_duration=30,
+    description=None,
+):
 
     perf_records = []
 
@@ -103,25 +109,18 @@ async def send_batch_message_in_parallel(conn_str, eventhub_name, single_event_s
 
         futures = []
         clients = [
-            EventHubProducerClient(
-                conn_str=conn_str, eventhub_name=eventhub_name
-            ) for _ in range(parallel_coroutine_count)
+            EventHubProducerClient(conn_str=conn_str, eventhub_name=eventhub_name)
+            for _ in range(parallel_coroutine_count)
         ]
 
-        data = b'a' * single_event_size
+        data = b"a" * single_event_size
 
         for client in clients:
             await pre_prepare_client(client, data)
 
         run_flag = [True]
         for i in range(parallel_coroutine_count):
-            futures.append(asyncio.create_task(
-                send_batch_message_worker_coroutine(
-                    clients[i],
-                    data,
-                    run_flag
-                )
-            ))
+            futures.append(asyncio.create_task(send_batch_message_worker_coroutine(clients[i], data, run_flag)))
 
         await asyncio.sleep(run_duration)
         run_flag[0] = False
@@ -142,30 +141,32 @@ async def send_batch_message_in_parallel(conn_str, eventhub_name, single_event_s
             run_times,
             single_event_size,
             parallel_coroutine_count,
-            run_duration
+            run_duration,
         )
     )
 
 
-if __name__ == '__main__':
-    logger.info('------------------- START OF TEST -------------------')
+if __name__ == "__main__":
+    logger.info("------------------- START OF TEST -------------------")
 
     for conn_str in CONN_STRS:
         for single_event_size in SINGLE_EVENT_SIZE_LIST:
-            print('-------------------  sending fixed amount of message  -------------------')
+            print("-------------------  sending fixed amount of message  -------------------")
             asyncio.run(
                 send_batch_message(
                     conn_str=conn_str,
                     eventhub_name=EVENTHUB_NAME,
                     num_of_events=FIXED_AMOUNT_OF_EVENTS,
                     single_event_size=single_event_size,
-                    description='sending fixed amount message'
+                    description="sending fixed amount message",
                 )
             )
 
         for parallel_coroutine_count in PARALLEL_COROUTINE_COUNT_LIST:
             for single_event_size in SINGLE_EVENT_SIZE_LIST:
-                print('-------------------  multiple coroutines sending messages for a fixed period -------------------')
+                print(
+                    "-------------------  multiple coroutines sending messages for a fixed period -------------------"
+                )
                 asyncio.run(
                     send_batch_message_in_parallel(
                         conn_str=conn_str,
@@ -173,8 +174,8 @@ if __name__ == '__main__':
                         single_event_size=single_event_size,
                         parallel_coroutine_count=parallel_coroutine_count,
                         run_duration=RUN_DURATION,
-                        description='multiple coroutine sending messages'
+                        description="multiple coroutine sending messages",
                     )
                 )
 
-    logger.info('------------------- END OF TEST -------------------')
+    logger.info("------------------- END OF TEST -------------------")

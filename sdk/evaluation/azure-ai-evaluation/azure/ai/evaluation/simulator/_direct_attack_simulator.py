@@ -7,13 +7,14 @@ import logging
 from random import randint
 from typing import Callable, Optional, cast
 
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator
-from ._helpers import experimental
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ class DirectAttackSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: dict, credential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
 
         try:
@@ -125,7 +126,7 @@ class DirectAttackSimulator:
          - '**$schema**': A string indicating the schema URL for the conversation format.
 
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
-        :rtype: Dict[str, [List[Dict[str, Any]]]] with two elements
+        :rtype: Dict[str, [List[Dict[str, Any]]]]
 
         **Output format**
 
@@ -178,9 +179,7 @@ class DirectAttackSimulator:
         if not randomization_seed:
             randomization_seed = randint(0, 1000000)
 
-        regular_sim = AdversarialSimulator(
-            azure_ai_project=cast(dict, self.azure_ai_project), credential=self.credential
-        )
+        regular_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         regular_sim_results = await regular_sim(
             scenario=scenario,
             target=target,
@@ -190,10 +189,10 @@ class DirectAttackSimulator:
             api_call_retry_sleep_sec=api_call_retry_sleep_sec,
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
-            randomize_order=True,
+            randomize_order=False,
             randomization_seed=randomization_seed,
         )
-        jb_sim = AdversarialSimulator(azure_ai_project=cast(dict, self.azure_ai_project), credential=self.credential)
+        jb_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         jb_sim_results = await jb_sim(
             scenario=scenario,
             target=target,
@@ -204,7 +203,7 @@ class DirectAttackSimulator:
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
             _jailbreak_type="upia",
-            randomize_order=True,
+            randomize_order=False,
             randomization_seed=randomization_seed,
         )
         return {"jailbreak": jb_sim_results, "regular": regular_sim_results}

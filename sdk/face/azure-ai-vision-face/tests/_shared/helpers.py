@@ -24,9 +24,7 @@ def get_account_key(**kwargs):
 def get_image_path(image_file_name: str):
     from .constants import TestImages
 
-    return Path(__file__).resolve().parent / (
-        TestImages.IMAGE_PARENT_FOLDER + "/" + image_file_name
-    )
+    return Path(__file__).resolve().parent / (TestImages.IMAGE_PARENT_FOLDER + "/" + image_file_name)
 
 
 def read_file_content(file_path: Path):

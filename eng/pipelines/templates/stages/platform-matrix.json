@@ -42,7 +42,7 @@
         "Ubuntu2004_313": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13.0-rc.3",
+          "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }

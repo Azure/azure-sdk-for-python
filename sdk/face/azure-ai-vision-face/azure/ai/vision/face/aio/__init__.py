@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._client import FaceAdministrationClient
 from ._patch import FaceClient
 from ._patch import FaceSessionClient
 
@@ -13,6 +14,7 @@ from ._patch import FaceSessionClient
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "FaceAdministrationClient",
     "FaceClient",
     "FaceSessionClient",
 ]
