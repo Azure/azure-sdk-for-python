@@ -26,6 +26,7 @@ USAGE:
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency
+import pprint
 
 # Variables
 PROJECT_CONNECTION_STRING = "<project_connection_string>"
@@ -35,7 +36,7 @@ SAMPLE_EVALUATOR_ID = "<sample-evaluator-id>"
 SAMPLE_NAME = "<sample-name>"
 EVALUATOR_NAME = "<evaluator-name>"
 APP_INSIGHTS_CONNECTION_STRING = "<app-insights-connection-string>"
-SERVICE_NAME = "<service-name>"
+SERVICE_NAME = "sample-service-name"
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -69,6 +70,7 @@ description = "f{SAMPLE_NAME} description"
 tags = {"project": "online-eval-bug-bash"}
 properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6"}
 
+
 def create_schedule():
     try:
         evaluation_schedule = EvaluationSchedule(
@@ -85,22 +87,27 @@ def create_schedule():
     except Exception as e:
         print(f"Error occurred while submitting the online evaluation schedule creation request - {name}, Error={e}")
 
+
 def get_schedule(name):
     try:
         get_evaluation_schedule = project_client.evaluations.get_schedule(name)
         print(f"Successfully fetched the online evaluation schedule - {get_evaluation_schedule.name}")
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(get_evaluation_schedule.as_dict())
     except Exception as e:
         print(f"Error occurred while fetching the online evaluation schedule - {name}, Error={e}")
+
 
 def list_schedules():
     try:
         count = 0
         for evaluation_schedule in project_client.evaluations.list_schedule():
-            print(evaluation_schedule.name)
-            count+=1
+            count += 1
+            print(f"{count}. evaluation_schedule.name")
         print(f"Total evaluation schedules: {count}")
     except Exception as e:
-        print(f"Error occurred while fetching the online evaluation schedules, Error={e}")
+        print(f"\nError occurred while fetching the online evaluation schedules, Error={e}")
+
 
 def disable_schedule(name):
     try:
@@ -108,6 +115,7 @@ def disable_schedule(name):
         print(f"Successfully Disabled the online evaluation schedule - {name}")
     except Exception as e:
         print(f"Error occurred while disabling the online evaluation schedule - {name}, Error={e}")
+
 
 # Comment the below sections to run CRUD operations on Online Evaluation Schedule
 # -------CREATE ONLINE EVALUATION SCHEDULE-------------
