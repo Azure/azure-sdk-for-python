@@ -33,6 +33,13 @@ from ._models import (
     ToolResources,
     FileSearchToolDefinition,
     FileSearchToolResource,
+    BingGroundingToolDefinition,
+    SharepointToolDefinition,
+    ToolConnection,
+    ToolConnectionList,
+    AzureAISearchResource,
+    IndexResource,
+    AzureAISearchToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
@@ -484,6 +491,110 @@ class AsyncFunctionTool(BaseFunctionTool):
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction to the function call
             return json.dumps({"error": error_message})
+
+
+class AzureAISearchTool(Tool):
+    """
+    A tool that searches for information using Azure AI Search.
+    """
+
+    def __init__(self):
+        self.index_list = []
+
+    def add_index(self, index: str):
+        """
+        Add an index ID to the list of indices used to search.
+        """
+        # TODO
+        self.index_list.append(IndexResource(index_connection_id=index))
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+        """
+        return [AzureAISearchToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+        """
+        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ConnectionTool(Tool):
+    """
+    A tool that requires connection ids.
+    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize ConnectionTool with a connection_id.
+
+        :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        """
+        self.connection_ids = [ToolConnection(connection_id=connection_id)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BingGroundingTool(ConnectionTool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+        """
+        return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+class SharepointTool(ConnectionTool):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+        """
+        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+"""
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+#        use connection_list to auto-update connections for bing search tool if no pre-existing
+        if self.connection_ids.__len__() == 0:
+            for id, connection_type in connection_list:
+                if connection_type == "ApiKey":
+                    self.connection_ids.append(id)
+                    return
+"""
+
+
+class FileSearchTool(Tool):
+    """
+    A tool that searches for uploaded file information from the created vector stores.
+    """
+
+    def __init__(self, vector_store_ids: List[str] = []):
+        self.vector_store_ids = vector_store_ids
 
 
 class FileSearchTool(Tool):
@@ -1240,6 +1351,9 @@ __all__: List[str] = [
     "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
+    "BingGroundingTool",
+    "SharepointTool",
+    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",
