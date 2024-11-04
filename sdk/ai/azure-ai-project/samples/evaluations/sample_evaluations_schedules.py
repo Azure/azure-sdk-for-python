@@ -88,7 +88,7 @@ def create_schedule():
             name, evaluation_schedule
         )
         print(f"Successfully submitted the online evaluation schedule creation request - {created_evaluation_schedule.name}, currently in {created_evaluation_schedule.provisioning_state} state.")
-        print("Please use GET API to fetch back the evaluation schedule details.")
+        print("Please use get_schedule to fetch back the evaluation schedule details.")
     except Exception as e:
         print(f"Error occurred while submitting the online evaluation schedule creation request - {name}, Error={e}")
 
