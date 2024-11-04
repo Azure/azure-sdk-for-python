@@ -35,9 +35,10 @@ PROJECT_CONNECTION_STRING = "<project_connection_string>"
 SAMPLE_RESOURCE_ID = "<sample-resource-id>"
 SAMPLE_QUERY = "<sample-query>"
 SAMPLE_EVALUATOR_ID = "<sample-evaluator-id>"
-SAMPLE_NAME = "<sample-name-prefix-with-alias>"
-SAMPLE_DESCRIPTION = "<sample-description>"
+SAMPLE_NAME = "<sample-name>"
 EVALUATOR_NAME = "<evaluator-name>"
+APP_INSIGHTS_CONNECTION_STRING = "<app-insights-connection-string>"
+SERVICE_NAME = "<service-name>"
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -51,20 +52,23 @@ project_client = AIProjectClient.from_connection_string(
 app_insights_config = ApplicationInsightsConfiguration(
     resource_id=SAMPLE_RESOURCE_ID,
     query=SAMPLE_QUERY,
-    service_name="" # this is not being used, keep empty for now
+    service_name=SERVICE_NAME,
+    connection_string=APP_INSIGHTS_CONNECTION_STRING
 )
+
 f1_evaluator_config = EvaluatorConfiguration(
     id=SAMPLE_EVALUATOR_ID,
     init_params={},
     data_mapping={"response": "${data.message}", "ground_truth": "${data.ground_truth}"}
 )
+
 recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
 evaluators = {
     EVALUATOR_NAME: f1_evaluator_config,
 }
 
 name = SAMPLE_NAME
-description = SAMPLE_DESCRIPTION
+description = "f{SAMPLE_NAME} description"
 tags = {"project": "online-eval-bug-bash"}
 properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6"}
 
