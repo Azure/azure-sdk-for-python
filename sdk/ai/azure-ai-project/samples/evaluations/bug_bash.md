@@ -35,13 +35,7 @@ The following changes have been made for Ignite:
 
 ### Resources
 
-If you do not have an Azure AI Project with a deployed model, please use the following resources:
-
-| Resource Type     | Resource Name                                                                                                                                                                                                                                                                  |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Project           | [ignite-eval-project-eastus2](https://ai.azure.com/build/overview?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) |
-| AOAI endpoint key | /subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/connections/igniteevaluati8620559527_aoai/credentials/key                                                        |
-| AOAI deployment   | [gpt-4-ignite-bugbash](https://ai.azure.com/build/deployments/aoai/connections/igniteevaluati8620559527_aoai/gpt-4-ignite-bugbash?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)|
+Project, endpoint key, and deployment given in meeting.
 
 
 
