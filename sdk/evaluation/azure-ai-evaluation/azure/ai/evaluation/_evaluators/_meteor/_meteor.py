@@ -51,12 +51,12 @@ class MeteorScoreEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START meteor_score_evaluator]
-        :end-before: [END meteor_score_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START meteor_score_evaluator]
+            :end-before: [END meteor_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
     """
 
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):

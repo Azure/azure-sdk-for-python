@@ -27,12 +27,12 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START protected_material_evaluator]
-        :end-before: [END protected_material_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a ProtectedMaterialEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START protected_material_evaluator]
+            :end-before: [END protected_material_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
     @override

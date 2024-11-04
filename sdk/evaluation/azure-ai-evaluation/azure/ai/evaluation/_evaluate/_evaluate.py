@@ -609,12 +609,12 @@ def evaluate(
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START evaluate_method]
-        :end-before: [END evaluate_method]
-        :language: python
-        :dedent: 8
-        :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START evaluate_method]
+            :end-before: [END evaluate_method]
+            :language: python
+            :dedent: 8
+            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
     """
     try:
         return _evaluate(

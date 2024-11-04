@@ -24,12 +24,12 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START sexual_evaluator]
-        :end-before: [END sexual_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a SexualEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START sexual_evaluator]
+            :end-before: [END sexual_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a SexualEvaluator.
     """
 
     @override

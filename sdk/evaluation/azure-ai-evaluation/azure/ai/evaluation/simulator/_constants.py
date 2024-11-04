@@ -9,12 +9,12 @@ class SupportedLanguages(Enum):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START supported_languages]
-        :end-before: [END supported_languages]
-        :language: python
-        :dedent: 8
-        :caption: Run the AdversarialSimulator with SimplifiedChinese language support for evaluation.
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START supported_languages]
+            :end-before: [END supported_languages]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with SimplifiedChinese language support for evaluation.
     """
 
     Spanish = "es"

@@ -30,12 +30,12 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START indirect_attack_evaluator]
-        :end-before: [END indirect_attack_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call an IndirectAttackEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START indirect_attack_evaluator]
+            :end-before: [END indirect_attack_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an IndirectAttackEvaluator.
     """
 
     @override

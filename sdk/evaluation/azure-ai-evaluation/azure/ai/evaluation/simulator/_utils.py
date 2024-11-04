@@ -42,12 +42,13 @@ class JsonLineList(list):
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/evaluation_samples_simulate.py
-            :start-after: [START to_eval_qa_json_lines]
-            :end-before: [END to_eval_qa_json_lines]
-            :language: python
-            :dedent: 8
-            :caption: Call to_eval_qa_json_lines on the results of an AdversarialSimulator to produce a JSON lines-formatted string output.
+            .. literalinclude:: ../samples/evaluation_samples_simulate.py
+                :start-after: [START to_eval_qa_json_lines]
+                :end-before: [END to_eval_qa_json_lines]
+                :language: python
+                :dedent: 8
+                :caption: Call to_eval_qa_json_lines on the results of an AdversarialSimulator to produce a
+                    JSON lines-formatted string output.
         """
         json_lines = ""
         for item in self:

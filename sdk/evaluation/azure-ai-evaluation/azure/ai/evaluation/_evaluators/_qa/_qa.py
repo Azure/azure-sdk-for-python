@@ -28,12 +28,12 @@ class QAEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START qa_evaluator]
-        :end-before: [END qa_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a QAEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START qa_evaluator]
+            :end-before: [END qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a QAEvaluator.
 
     .. note::
 

@@ -24,12 +24,12 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START hate_unfairness_evaluator]
-        :end-before: [END hate_unfairness_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a HateUnfairnessEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START hate_unfairness_evaluator]
+            :end-before: [END hate_unfairness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a HateUnfairnessEvaluator.
     """
 
     @override

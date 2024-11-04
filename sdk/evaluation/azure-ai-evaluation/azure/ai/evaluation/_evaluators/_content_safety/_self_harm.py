@@ -24,12 +24,12 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START self_harm_evaluator]
-        :end-before: [END self_harm_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a SelfHarmEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START self_harm_evaluator]
+            :end-before: [END self_harm_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a SelfHarmEvaluator.
     """
 
     @override

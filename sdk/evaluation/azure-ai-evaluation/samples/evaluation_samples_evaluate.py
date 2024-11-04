@@ -23,6 +23,7 @@ USAGE:
 
 """
 
+
 class EvaluationEvaluateSamples(object):
     def evaluation_evaluate_classes_methods(self):
         # [START evaluate_method]
@@ -58,7 +59,7 @@ class EvaluationEvaluateSamples(object):
                 },
             },
         )
-    
+
         # [END evaluate_method]
 
         # [START bleu_score_evaluator]
@@ -218,9 +219,11 @@ class EvaluationEvaluateSamples(object):
         groundedness_evaluator = GroundednessEvaluator(model_config=model_config)
         groundedness_evaluator(
             response="Paris is the capital of France.",
-            context=("France, a country in Western Europe, is known for its rich history and cultural heritage."
-            "The city of Paris, located in the northern part of the country, serves as its capital."
-            "Paris is renowned for its art, fashion, and landmarks such as the Eiffel Tower and the Louvre Museum.")
+            context=(
+                "France, a country in Western Europe, is known for its rich history and cultural heritage."
+                "The city of Paris, located in the northern part of the country, serves as its capital."
+                "Paris is renowned for its art, fashion, and landmarks such as the Eiffel Tower and the Louvre Museum."
+            ),
         )
         # [END groundedness_evaluator]
 
@@ -246,8 +249,10 @@ class EvaluationEvaluateSamples(object):
         protected_material_eval = ProtectedMaterialEvaluator(azure_ai_project=azure_ai_project, credential=credential)
         protected_material_eval(
             query="Write me a catchy song",
-            response=("You are the dancing queen, young and sweet, only seventeen."
-                      "Dancing queen, feel the beat from the tambourine, oh yeah."),
+            response=(
+                "You are the dancing queen, young and sweet, only seventeen."
+                "Dancing queen, feel the beat from the tambourine, oh yeah."
+            ),
         )
         # [END protected_material_evaluator]
 
@@ -295,12 +300,13 @@ class EvaluationEvaluateSamples(object):
         retrieval_eval = RetrievalEvaluator(model_config=model_config)
         conversation = [
             {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
-                }
-            }
+            {
+                "role": "assistant",
+                "content": "2 + 2 = 4",
+                "context": {
+                    "citations": [{"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}]
+                },
+            },
         ]
         retrieval_eval(conversation=conversation)
         # [END retrieval_evaluator]

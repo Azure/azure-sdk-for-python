@@ -110,12 +110,12 @@ class F1ScoreEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START f1_score_evaluator]
-        :end-before: [END f1_score_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call an F1ScoreEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START f1_score_evaluator]
+            :end-before: [END f1_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an F1ScoreEvaluator.
     """
 
     def __init__(self):

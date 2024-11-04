@@ -21,12 +21,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START relevance_evaluator]
-        :end-before: [END relevance_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START relevance_evaluator]
+            :end-before: [END relevance_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
 
     .. note::
 

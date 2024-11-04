@@ -24,12 +24,12 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START violence_evaluator]
-        :end-before: [END violence_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a ViolenceEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START violence_evaluator]
+            :end-before: [END violence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ViolenceEvaluator.
     """
 
     @override

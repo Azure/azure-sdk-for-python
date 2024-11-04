@@ -33,12 +33,12 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START content_safety_evaluator]
-        :end-before: [END content_safety_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a ContentSafetyEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START content_safety_evaluator]
+            :end-before: [END content_safety_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ContentSafetyEvaluator.
     """
 
     # TODO address 3579092 to re-enabled parallel evals.

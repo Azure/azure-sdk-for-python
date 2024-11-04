@@ -23,13 +23,13 @@ class AzureOpenAIModelConfiguration(TypedDict):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_common.py
-        :start-after: [START create_AOAI_model_config]
-        :end-before: [END create_AOAI_model_config]
-        :language: python
-        :dedent: 8
-        :caption: Creating an AzureOpenAIModelConfiguration object.
-    
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_AOAI_model_config]
+            :end-before: [END create_AOAI_model_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AzureOpenAIModelConfiguration object.
+
     """
 
     type: NotRequired[Literal["azure_openai"]]
@@ -57,13 +57,13 @@ class OpenAIModelConfiguration(TypedDict):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_common.py
-        :start-after: [START create_OAI_model_config]
-        :end-before: [END create_OAI_model_config]
-        :language: python
-        :dedent: 8
-        :caption: Creating an OpenAIModelConfiguration object.
-    
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_OAI_model_config]
+            :end-before: [END create_OAI_model_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating an OpenAIModelConfiguration object.
+
     """
 
     type: NotRequired[Literal["openai"]]
@@ -75,7 +75,7 @@ class OpenAIModelConfiguration(TypedDict):
 
 class AzureAIProject(TypedDict):
     """Information about the Azure AI project
-    
+
     :param subscription_id: ID of the Azure subscription the project is in
     :type subscription_id: str
     :param resource_group_name: Name of the Azure resource group the project is in
@@ -85,13 +85,13 @@ class AzureAIProject(TypedDict):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_common.py
-        :start-after: [START create_azure_ai_project_object]
-        :end-before: [END create_azure_ai_project_object]
-        :language: python
-        :dedent: 8
-        :caption: Creating an AzureAIProject object.
-    
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_azure_ai_project_object]
+            :end-before: [END create_azure_ai_project_object]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AzureAIProject object.
+
     """
 
     subscription_id: str

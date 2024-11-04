@@ -36,12 +36,12 @@ class IndirectAttackSimulator(AdversarialSimulator):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START indirect_attack_simulator]
-        :end-before: [END indirect_attack_simulator]
-        :language: python
-        :dedent: 8
-        :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START indirect_attack_simulator]
+            :end-before: [END indirect_attack_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
     """
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):

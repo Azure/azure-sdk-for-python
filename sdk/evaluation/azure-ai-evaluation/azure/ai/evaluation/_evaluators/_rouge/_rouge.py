@@ -58,12 +58,12 @@ class RougeScoreEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START rouge_score_evaluator]
-        :end-before: [END rouge_score_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START rouge_score_evaluator]
+            :end-before: [END rouge_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
     def __init__(self, rouge_type: RougeType):

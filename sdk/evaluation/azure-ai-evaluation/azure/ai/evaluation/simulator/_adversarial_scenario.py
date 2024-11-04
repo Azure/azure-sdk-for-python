@@ -12,12 +12,12 @@ class AdversarialScenario(Enum):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START adversarial_scenario]
-        :end-before: [END adversarial_scenario]
-        :language: python
-        :dedent: 8
-        :caption: Configure an AdversarialSimulator with an AdversarialConversation scenario.
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
+            :language: python
+            :dedent: 8
+            :caption: Configure an AdversarialSimulator with an AdversarialConversation scenario.
     """
 
     ADVERSARIAL_QA = "adv_qa"

@@ -21,12 +21,12 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START fluency_evaluator]
-        :end-before: [END fluency_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a FluencyEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START fluency_evaluator]
+            :end-before: [END fluency_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a FluencyEvaluator.
 
     .. note::
 

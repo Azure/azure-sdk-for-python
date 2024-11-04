@@ -27,12 +27,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START groundedness_evaluator]
-        :end-before: [END groundedness_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a GroundednessEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START groundedness_evaluator]
+            :end-before: [END groundedness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a GroundednessEvaluator.
 
     .. note::
 

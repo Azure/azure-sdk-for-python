@@ -50,12 +50,13 @@ class AdversarialSimulator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START adversarial_simulator]
-        :end-before: [END adversarial_simulator]
-        :language: python
-        :dedent: 8
-        :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with 2 conversation turns each (4 messages per result).
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_simulator]
+            :end-before: [END adversarial_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with
+                2 conversation turns each (4 messages per result).
     """
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):

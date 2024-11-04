@@ -33,9 +33,7 @@ class EvaluationCommonSamples(object):
         from azure.ai.evaluation._model_configurations import OpenAIModelConfiguration
 
         model_config = OpenAIModelConfiguration(
-            api_key="my-oai-api-key",
-            base_url="https://api.openai.com/v1",
-            model="gpt-35-turbo"
+            api_key="my-oai-api-key", base_url="https://api.openai.com/v1", model="gpt-35-turbo"
         )
 
         # [END create_OAI_model_config]
@@ -46,7 +44,7 @@ class EvaluationCommonSamples(object):
         project = AzureAIProject(
             subscription_id="my-subscription-id",
             resource_group_name="my-resource-group-name",
-            project_name="my-project-name"
+            project_name="my-project-name",
         )
 
         # [END create_azure_ai_project_object]

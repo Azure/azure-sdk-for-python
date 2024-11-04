@@ -33,12 +33,12 @@ class GleuScoreEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START gleu_score_evaluator]
-        :end-before: [END gleu_score_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a GleuScoreEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START gleu_score_evaluator]
+            :end-before: [END gleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a GleuScoreEvaluator.
     """
 
     def __init__(self):

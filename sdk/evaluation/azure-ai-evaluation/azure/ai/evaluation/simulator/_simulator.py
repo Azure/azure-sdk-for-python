@@ -36,12 +36,12 @@ class Simulator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START nonadversarial_simulator]
-        :end-before: [END nonadversarial_simulator]
-        :language: python
-        :dedent: 8
-        :caption: Run a Simulator for 2 queries and 4 conversation turns (8 messages per query).
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START nonadversarial_simulator]
+            :end-before: [END nonadversarial_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run a Simulator for 2 queries and 4 conversation turns (8 messages per query).
     """
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):

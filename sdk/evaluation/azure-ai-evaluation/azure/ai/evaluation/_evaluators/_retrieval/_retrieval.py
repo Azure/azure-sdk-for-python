@@ -122,12 +122,12 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START retrieval_evaluator]
-        :end-before: [END retrieval_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call a RetrievalEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START retrieval_evaluator]
+            :end-before: [END retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RetrievalEvaluator.
 
     .. note::
 

@@ -35,12 +35,12 @@ class BleuScoreEvaluator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-        :start-after: [START bleu_score_evaluator]
-        :end-before: [END bleu_score_evaluator]
-        :language: python
-        :dedent: 8
-        :caption: Initialize and call an BleuScoreEvaluator.
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START bleu_score_evaluator]
+            :end-before: [END bleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an BleuScoreEvaluator.
     """
 
     def __init__(self):

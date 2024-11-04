@@ -34,13 +34,14 @@ class DirectAttackSimulator:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/evaluation_samples_simulate.py
-        :start-after: [START direct_attack_simulator]
-        :end-before: [END direct_attack_simulator]
-        :language: python
-        :dedent: 8
-        :caption: Run the DirectAttackSimulator to produce 2 results with 3 conversation turns each (6 messages in each result).
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START direct_attack_simulator]
+            :end-before: [END direct_attack_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run the DirectAttackSimulator to produce 2 results with 3 conversation turns each (6 messages in each result).
     """
+
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
 

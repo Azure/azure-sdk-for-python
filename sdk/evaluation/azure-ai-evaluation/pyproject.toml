@@ -18,3 +18,13 @@ extend_skip_glob = [
   "*/.tox/*",
 ]
 
+python_version = "3.10"
+exclude = [
+  "tests",
+  "setup.py",
+  "samples",
+]
+warn_unused_configs = true
+follow_imports = "skip"
+ignore_missing_imports = true
+follow_imports_for_stubs = false
