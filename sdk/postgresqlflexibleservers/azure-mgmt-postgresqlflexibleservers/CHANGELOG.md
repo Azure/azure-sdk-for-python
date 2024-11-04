@@ -43,8 +43,6 @@
   - Added enum `TuningOptionEnum`
   - Added model `TuningOptionsListResult`
   - Added model `TuningOptionsResource`
-  - Added model `QuotaUsagesOperations`
-  - Added model `TuningOptionsOperations`
 
 ## 1.0.0 (2024-10-11)
 
