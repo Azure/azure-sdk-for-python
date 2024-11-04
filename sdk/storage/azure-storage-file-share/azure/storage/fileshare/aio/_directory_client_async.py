@@ -350,9 +350,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        file_attributes = kwargs.pop('file_attributes', 'none')
-        file_creation_time = kwargs.pop('file_creation_time', 'now')
-        file_last_write_time = kwargs.pop('file_last_write_time', 'now')
+        file_attributes = kwargs.pop('file_attributes', None)
+        file_creation_time = kwargs.pop('file_creation_time', None)
+        file_last_write_time = kwargs.pop('file_last_write_time', None)
         file_change_time = kwargs.pop('file_change_time', None)
         file_permission = kwargs.pop('file_permission', None)
         file_permission_key = kwargs.pop('file_permission_key', None)

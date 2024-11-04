@@ -74,9 +74,9 @@ async def _upload_file_helper(
     timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
-    file_attributes: Union[str, "NTFSAttributes"] = "none",
-    file_creation_time: Optional[Union[str, datetime]] = "now",
-    file_last_write_time: Optional[Union[str, datetime]] = "now",
+    file_attributes: Union[str, "NTFSAttributes"] = None,
+    file_creation_time: Optional[Union[str, datetime]] = None,
+    file_last_write_time: Optional[Union[str, datetime]] = None,
     file_permission: Optional[str] = None,
     file_permission_key: Optional[str] = None,
     progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
@@ -373,10 +373,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             file_attributes value is not case sensitive.
         :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
-            Default value: Now.
         :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
         :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
@@ -473,9 +471,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     async def upload_file(
         self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
-        file_attributes: Union[str, "NTFSAttributes"] = "none",
-        file_creation_time: Optional[Union[str, datetime]] = "now",
-        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_attributes: Union[str, "NTFSAttributes"] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs
@@ -492,13 +490,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
-            Default value: Now.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -655,7 +651,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
                 This parameter was introduced in API version '2019-07-07'.
 
-        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :paramtype file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :keyword file_creation_time:
             This value can be set to "source" to copy the creation time from the source file to the target file,
             or a datetime to set as creation time on the target file. This could also be a string in ISO 8601 format.
@@ -1090,10 +1086,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Here is an example for when the var type is str: 'Temporary|Archive'
         :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
-            Default value: Preserve.
         :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
-            Default value: Preserve.
         :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
@@ -1540,9 +1534,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         try:
             return cast(Dict[str, Any], await self._client.file.set_http_headers(
                 file_content_length=size,
-                file_attributes="preserve",
-                file_creation_time="preserve",
-                file_last_write_time="preserve",
+                file_attributes=None,
+                file_creation_time=None,
+                file_last_write_time=None,
                 file_permission="preserve",
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
