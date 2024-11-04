@@ -236,7 +236,6 @@ class CallAutomationClient:
     def connect_call(
         self,
         callback_url: str,
-        *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
         **kwargs
     ) -> CallConnectionProperties:
 
@@ -246,7 +245,6 @@ class CallAutomationClient:
             ) if cognitive_services_endpoint else None
 
         call_locator = build_call_locator(
-            args,
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
@@ -652,11 +650,11 @@ class CallAutomationClient:
         channel_affinity: List['ChannelAffinity'] = kwargs.pop("channel_affinity", None) or []
         channel_affinity_internal = [c._to_generated() for c in channel_affinity]
         call_locator = build_call_locator(
-            args,
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
-            kwargs.pop("room_id", None)
+            kwargs.pop("room_id", None),
+            args
         )
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
 

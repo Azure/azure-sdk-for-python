@@ -51,11 +51,11 @@ def build_external_storage(
     return request
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
     call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
+    args: List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']] = None,
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
