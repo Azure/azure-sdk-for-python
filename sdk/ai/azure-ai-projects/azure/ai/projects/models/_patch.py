@@ -88,7 +88,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Any:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -900,7 +900,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data = json.loads(event_data)
+            parsed_data: Union[str, Dict[str, Any]] = cast(Dict[str, Any], json.loads(event_data))
         except json.JSONDecodeError:
             parsed_data = event_data
 
