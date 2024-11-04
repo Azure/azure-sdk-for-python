@@ -127,6 +127,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             target,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
@@ -211,6 +212,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             socket_timeout=config.socket_timeout,
             auth=auth,
             idle_timeout=idle_timeout,
@@ -364,7 +366,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=config.auth_timeout,
             custom_endpoint_hostname=config.custom_endpoint_hostname,
             port=config.connection_port,
-            verify=config.connection_verify,
         )
         # if update_token:
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
@@ -389,6 +390,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             use_tls=config.use_tls,
         )
 
