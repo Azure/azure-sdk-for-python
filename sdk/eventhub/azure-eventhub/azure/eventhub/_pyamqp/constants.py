@@ -1,14 +1,14 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from typing import cast
 from collections import namedtuple
 from enum import Enum
 import struct
 
-_AS_BYTES = struct.Struct('>B')
+_AS_BYTES = struct.Struct(">B")
 
 #: The IANA assigned port number for AMQP.The standard AMQP port number that has been assigned by IANA
 #: for TCP, UDP, and SCTP.There are currently no UDP or SCTP mappings defined for AMQP.
@@ -19,7 +19,7 @@ PORT = 5672
 WEBSOCKET_PORT = 443
 
 # subprotocol for AMQP over Websocket
-AMQP_WS_SUBPROTOCOL = 'AMQPWSB10'
+AMQP_WS_SUBPROTOCOL = "AMQPWSB10"
 
 #: The IANA assigned port number for secure AMQP (amqps).The standard AMQP port number that has been assigned
 #: by IANA for secure TCP using TLS. Implementations listening on this port should NOT expect a protocol
@@ -32,7 +32,7 @@ WEBSOCKET_PORT = 443
 
 
 # subprotocol for AMQP over Websocket
-AMQP_WS_SUBPROTOCOL = 'AMQPWSB10'
+AMQP_WS_SUBPROTOCOL = "AMQPWSB10"
 
 
 MAJOR = 1  #: Major protocol version.
@@ -51,7 +51,7 @@ SASL_MINOR = 0  #: Minor protocol version.
 SASL_REV = 0  #: Protocol revision.
 SASL_HEADER_FRAME = b"AMQP\x03" + _AS_BYTES.pack(SASL_MAJOR) + _AS_BYTES.pack(SASL_MINOR) + _AS_BYTES.pack(SASL_REV)
 
-EMPTY_FRAME = b'\x00\x00\x00\x08\x02\x00\x00\x00'
+EMPTY_FRAME = b"\x00\x00\x00\x08\x02\x00\x00\x00"
 
 #: The lower bound for the agreed maximum frame size (in bytes). During the initial Connection negotiation, the
 #: two peers must agree upon a maximum frame size. This constant defines the minimum value to which the maximum
@@ -65,7 +65,7 @@ OUTGOING_WINDOW = 64 * 1024
 
 DEFAULT_LINK_CREDIT = 10000
 
-FIELD = namedtuple('FIELD', 'name, type, mandatory, default, multiple')
+FIELD = namedtuple("FIELD", "name, type, mandatory, default, multiple")
 
 STRING_FILTER = b"apache.org:selector-filter:string"
 
@@ -243,6 +243,7 @@ class Role(object):
         <choice name="receiver" value="true"/>
     </type>
     """
+
     Sender = False
     Receiver = True
 
@@ -261,6 +262,7 @@ class SenderSettleMode(object):
         <choice name="mixed" value="2"/>
     </type>
     """
+
     Unsettled = 0
     Settled = 1
     Mixed = 2
@@ -279,6 +281,7 @@ class ReceiverSettleMode(object):
         <choice name="second" value="1"/>
     </type>
     """
+
     First = 0
     Second = 1
 
@@ -294,6 +297,7 @@ class SASLCode(object):
         <choice name="sys-temp" value="4"/>
     </type>
     """
+
     #: Connection authentication succeeded.
     Ok = 0
     #: Connection authentication failed due to an unspecified problem with the supplied credentials.
@@ -320,8 +324,9 @@ MESSAGE_DELIVERY_DONE_STATES = (
     MessageDeliveryState.Ok,
     MessageDeliveryState.Error,
     MessageDeliveryState.Timeout,
-    MessageDeliveryState.Cancelled
+    MessageDeliveryState.Cancelled,
 )
+
 
 class TransportType(Enum):
     """Transport type
@@ -330,6 +335,7 @@ class TransportType(Enum):
      AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
      port 443.
     """
+
     Amqp = 1
     AmqpOverWebsocket = 2
 

@@ -78,7 +78,7 @@ class MockClient:
         time.sleep(0.001)
 
     @distributed_trace_async(tracing_attributes={"foo": "bar"})
-    async def tracing_attr(self):
+    async def tracing_attr(self, **kwargs):
         time.sleep(0.001)
 
     @distributed_trace_async(kind=SpanKind.PRODUCER)
@@ -104,6 +104,19 @@ class TestAsyncDecorator(object):
         assert parent.children[1].name == "MockClient.tracing_attr"
         assert parent.children[1].kind == SpanKind.INTERNAL
         assert parent.children[1].attributes == {"foo": "bar"}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_decorator_tracing_attr_custom(self, http_request):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            await client.tracing_attr(tracing_attributes={"biz": "baz"})
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].kind == SpanKind.INTERNAL
+        assert parent.children[1].attributes == {"biz": "baz"}
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

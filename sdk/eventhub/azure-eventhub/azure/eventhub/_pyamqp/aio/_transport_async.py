@@ -42,9 +42,6 @@ from io import BytesIO
 import logging
 
 
-
-import certifi
-
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
@@ -73,9 +70,7 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncTransportMixin:
     async def receive_frame(self, timeout=None, **kwargs):
         try:
-            header, channel, payload = await asyncio.wait_for(
-                self.read(**kwargs), timeout=timeout
-            )
+            header, channel, payload = await asyncio.wait_for(self.read(**kwargs), timeout=timeout)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -94,9 +89,7 @@ class AsyncTransportMixin:
             read_frame_buffer = BytesIO()
             try:
                 frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(
-                    await self._read(8, buffer=frame_header, initial=True)
-                )
+                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
 
                 channel = struct.unpack(">H", frame_header[6:])[0]
                 size = frame_header[0:4]
@@ -110,34 +103,24 @@ class AsyncTransportMixin:
                         "Received invalid frame type: %r, expected: %r",
                         frame_type,
                         verify_frame_type,
-                        extra=self.network_trace_params
+                        extra=self.network_trace_params,
                     )
-                    raise ValueError(
-                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
+                    raise ValueError(f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}")
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
                 payload = memoryview(bytearray(payload_size))
                 if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(
-                        await self._read(SIGNED_INT_MAX, buffer=payload)
-                    )
-                    read_frame_buffer.write(
-                        await self._read(
-                            size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]
-                        )
-                    )
+                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
+                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
                 else:
-                    read_frame_buffer.write(
-                        await self._read(payload_size, buffer=payload)
-                    )
+                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
             except (
                 asyncio.CancelledError,
                 asyncio.TimeoutError,
                 TimeoutError,
                 socket.timeout,
-                asyncio.IncompleteReadError
+                asyncio.IncompleteReadError,
             ):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -182,7 +165,7 @@ class AsyncTransportMixin:
             return sslopts
         try:
             if "context" in sslopts:
-                return self._build_ssl_context(**sslopts.pop("context"))
+                return sslopts["context"]
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
@@ -211,7 +194,6 @@ class AsyncTransportMixin:
             if certfile is not None:
                 context.load_cert_chain(certfile, keyfile)
 
-
             server_hostname = sslopts.get("server_hostname")
             cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
             if cert_reqs == ssl.CERT_NONE and server_hostname is None:
@@ -220,23 +202,10 @@ class AsyncTransportMixin:
 
             return context
         except TypeError:
-            raise TypeError(
-                "SSL configuration must be a dictionary, or the value True."
-            ) from None
-
-    def _build_ssl_context(
-        self, check_hostname=None, **ctx_options
-    ):
-        ctx = ssl.create_default_context(**ctx_options)
-        ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
-        return ctx
+            raise TypeError("SSL configuration must be a dictionary, or the value True.") from None
 
 
-class AsyncTransport(
-    AsyncTransportMixin
-):  # pylint: disable=too-many-instance-attributes
+class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(
@@ -260,7 +229,7 @@ class AsyncTransport(
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
-        self.network_trace_params = kwargs.get('network_trace_params')
+        self.network_trace_params = kwargs.get("network_trace_params")
         self._use_tls = use_tls
 
     async def connect(self):
@@ -269,14 +238,14 @@ class AsyncTransport(
             if self.connected:
                 return
             try:
-            # Building ssl opts here instead of constructor, so that invalid cert error is raised
-            # when client is connecting, rather then during creation. For uamqp exception parity.
+                # Building ssl opts here instead of constructor, so that invalid cert error is raised
+                # when client is connecting, rather then during creation. For uamqp exception parity.
                 self.sslopts = self._build_ssl_opts(self.sslopts)
             except FileNotFoundError as exc:
-            # FileNotFoundError does not have missing filename info, so adding it below.
-            # Assuming that this must be ca_certs, since this is the only file path that
-            # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
-            # For uamqp exception parity. Remove later when resolving issue #27128.
+                # FileNotFoundError does not have missing filename info, so adding it below.
+                # Assuming that this must be ca_certs, since this is the only file path that
+                # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
+                # For uamqp exception parity. Remove later when resolving issue #27128.
                 exc.filename = self.sslopts
                 raise exc
             self.reader, self.writer = await asyncio.open_connection(
@@ -292,7 +261,6 @@ class AsyncTransport(
             if sock:
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                 self._set_socket_options(sock, self.socket_settings)
-
 
         except (OSError, IOError, SSLError) as e:
             _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
@@ -348,9 +316,7 @@ class AsyncTransport(
         try:
             while toread:
                 try:
-                    view[nbytes : nbytes + toread] = await self.reader.readexactly(
-                        toread
-                    )
+                    view[nbytes : nbytes + toread] = await self.reader.readexactly(toread)
                     nbytes = toread
                 except AttributeError:
                     # This means that close() was called concurrently
@@ -371,7 +337,7 @@ class AsyncTransport(
                     # This behavior is linux specific and only on async. sync Linux & async/sync Windows & Mac raised
                     # ConnectionAborted or ConnectionReset errors which properly end up in a retry loop.
                     if exc.errno in [110]:
-                        raise ConnectionAbortedError('The connection was closed abruptly.') from exc
+                        raise ConnectionAbortedError("The connection was closed abruptly.") from exc
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
                     if exc.errno in _errnos:
@@ -428,9 +394,7 @@ class AsyncTransport(
             )
 
 
-class WebSocketTransportAsync(
-    AsyncTransportMixin
-): # pylint: disable=too-many-instance-attributes
+class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         host,
@@ -438,8 +402,8 @@ class WebSocketTransportAsync(
         port=WEBSOCKET_PORT,
         socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
-        use_tls: bool =True,
-        **kwargs
+        use_tls: bool = True,
+        **kwargs,
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
@@ -451,7 +415,7 @@ class WebSocketTransportAsync(
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
-        self.network_trace_params = kwargs.get('network_trace_params')
+        self.network_trace_params = kwargs.get("network_trace_params")
         self._use_tls = use_tls
 
     async def connect(self):
@@ -469,14 +433,15 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession, ClientConnectorError # pylint: disable=networking-import-outside-azure-core-transport
+            from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
+                ClientSession,
+                ClientConnectorError,
+            )
             from urllib.parse import urlsplit
         except ImportError:
-            raise ImportError(
-                "Please install aiohttp library to use async websocket transport."
-            ) from None
+            raise ImportError("Please install aiohttp library to use async websocket transport.") from None
         if username or password:
-            from aiohttp import BasicAuth # pylint: disable=networking-import-outside-azure-core-transport
+            from aiohttp import BasicAuth  # pylint: disable=networking-import-outside-azure-core-transport
 
             http_proxy_auth = BasicAuth(login=username, password=password)
 
@@ -499,7 +464,7 @@ class WebSocketTransportAsync(
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self.socket_timeout,    # timeout for connect
+                timeout=self.socket_timeout,  # timeout for connect
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,

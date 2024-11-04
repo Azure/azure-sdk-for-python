@@ -7,6 +7,7 @@ import asyncio
 import logging
 import random
 from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
+from itertools import zip_longest
 
 from tqdm import tqdm
 
@@ -14,6 +15,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.core.credentials import TokenCredential
@@ -47,7 +49,7 @@ class AdversarialSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: dict, credential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
 
         try:
@@ -215,35 +217,37 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-        template_parameter_pairs = []
-        for template in templates:
-            for parameter in template.template_parameters:
-                template_parameter_pairs.append((template, parameter.copy()))
 
-        # Randomize the flattened list
         if randomize_order:
+            # The template parameter lists are persistent across sim runs within a session,
+            # So randomize a the selection instead of the parameter list directly,
+            # or a potentially large deep copy.
             if randomization_seed is not None:
                 random.seed(randomization_seed)
-            random.shuffle(template_parameter_pairs)
-        tasks = []
-        for template, parameter in template_parameter_pairs:
-            if _jailbreak_type == "upia":
-                parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
-            tasks.append(
-                asyncio.create_task(
-                    self._simulate_async(
-                        target=target,
-                        template=template,
-                        parameters=parameter,
-                        max_conversation_turns=max_conversation_turns,
-                        api_call_retry_limit=api_call_retry_limit,
-                        api_call_retry_sleep_sec=api_call_retry_sleep_sec,
-                        api_call_delay_sec=api_call_delay_sec,
-                        language=language,
-                        semaphore=semaphore,
+            random.shuffle(templates)
+        parameter_lists = [t.template_parameters for t in templates]
+        zipped_parameters = list(zip_longest(*parameter_lists))
+        for param_group in zipped_parameters:
+            for template, parameter in zip(templates, param_group):
+                if _jailbreak_type == "upia":
+                    parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
+                tasks.append(
+                    asyncio.create_task(
+                        self._simulate_async(
+                            target=target,
+                            template=template,
+                            parameters=parameter,
+                            max_conversation_turns=max_conversation_turns,
+                            api_call_retry_limit=api_call_retry_limit,
+                            api_call_retry_sleep_sec=api_call_retry_sleep_sec,
+                            api_call_delay_sec=api_call_delay_sec,
+                            language=language,
+                            semaphore=semaphore,
+                        )
                     )
                 )
-            )
+                if len(tasks) >= max_simulation_results:
+                    break
             if len(tasks) >= max_simulation_results:
                 break
         for task in asyncio.as_completed(tasks):
