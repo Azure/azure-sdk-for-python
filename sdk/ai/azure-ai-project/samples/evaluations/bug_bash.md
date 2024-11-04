@@ -1,18 +1,56 @@
 ## Welcome to the Quality Evaluation Bug Bash!
 
 
-For this bug bash, we'll be testing all of the quality evaluators that will be release in the GA version of the Azure AI Evaluation SDK. Quality evaluators include:
+For this bug bash, we'll be testing all of the quality evaluators that will be released in the GA version of the Azure AI Evaluation SDK. Quality evaluators include:
 
- - `SimilarityEvaluator`
- - `CoherenceEvaluator`
- - `RelevanceEvaluator`
- - `RetrievalEvaluator`
- - `FluencyEvaluator`
- - `GroundednessEvaluator`
- - `F1ScoreEvaluator`
- - `QAEvaluator` (composite evaluator with Similarity, Coherence, Relevance, F1Score, Groundedness, and Fluency)
+
+#### Data Requirements for Quality Evaluators
+
+| Evaluator         | `query`      | `response`      | `context`       | `ground_truth`  | `conversation` |
+|----------------|---------------|---------------|---------------|---------------|-----------|
+| `GroundednessEvaluator`   | Optional: String | Required: String | Required: String | N/A  | Supported |
+| `GroundednessProEvaluator`   | Required: String | Required: String | Required: String | N/A  | Supported |
+| `RetrievalEvaluator`        | Required: String | N/A | Required: String         | N/A           | Supported |
+| `RelevanceEvaluator`      | Required: String | Required: String | N/A | N/A           | Supported |
+| `CoherenceEvaluator`      | Required: String | Required: String | N/A           | N/A           |Supported |
+| `FluencyEvaluator`        | N/A  | Required: String | N/A          | N/A           |Supported |
+| `SimilarityEvaluator` | Required: String | Required: String | N/A           | Required: String |Not supported |
+| `F1ScoreEvaluator` | N/A  | Required: String | N/A           | Required: String |Not supported |
+| `RougeScoreEvaluator` | N/A | Required: String | N/A           | Required: String           | Not supported |
+| `GleuScoreEvaluator` | N/A | Required: String | N/A           | Required: String           |Not supported |
+| `BleuScoreEvaluator` | N/A | Required: String | N/A           | Required: String           |Not supported |
+| `MeteorScoreEvaluator` | N/A | Required: String | N/A           | Required: String           |Not supported |
+| `QAEvaluator`      | Required: String | Required: String | Required: String | N/A           | Not supported |
+
+> [!NOTE]
+>`QAEvaluator` is a composite evaluator with Similarity, Coherence, Relevance, F1Score, Groundedness, and Fluency.
 
 We want to test the individual evaluators (in single-turn and conversation scenarios) and test them as inputs to the `evaluate()` method. For `evaluate()` testing, ensure that if you are using a dataset with input column names, that the required inputs of the evaluator(s) you're using are present.
+
+```python
+from azure.ai.evaluation import evaluate, GroundednessEvaluator
+groundedness_eval = GroundednessEvaluator(model_config)
+
+result = evaluate(
+    data="./data/groundedness_200.jsonl", # provide your data here
+    evaluation_name="groundedness_pro_test",
+    evaluators={
+        "groundedness": groundedness_pro_eval
+    },
+    # column mapping
+    evaluator_config={
+        "groundedness": {
+            "column_mapping": {
+                "query": "${data.query}",
+                "context": "${data.context}",
+                "response": "${data.response}"
+            } 
+        }
+    },
+    # Optionally provide your AI Studio project information to track your evaluation results in your Azure AI Studio project
+    azure_ai_project = azure_ai_project
+)
+```
 
 The following changes have been made for Ignite:
 
@@ -28,6 +66,42 @@ The following changes have been made for Ignite:
 
 
 
+#### Evaluating multi-turn conversations
+
+For evaluators that support conversations as input, you can just pass in the conversation directly into the evaluator:
+
+```python
+groundedness_score = groundedness_eval(conversation=conversation)
+```
+
+A conversation is a Python dictionary of a list of messages (which include content, role, and optionally context). The following is an example of a two-turn conversation.
+
+```json
+{"conversation":
+    {"messages": [
+        {
+            "content": "Which tent is the most waterproof?", 
+            "role": "user"
+        },
+        {
+            "content": "The Alpine Explorer Tent is the most waterproof",
+            "role": "assistant", 
+            "context": "From the our product list the alpine explorer tent is the most waterproof. The Adventure Dining Table has higher weight."
+        },
+        {
+            "content": "How much does it cost?",
+            "role": "user"
+        },
+        {
+            "content": "The Alpine Explorer Tent is $120.",
+            "role": "assistant",
+            "context": null
+        }
+        ]
+    }
+}
+```
+
 ### Prerequisites
 - Azure AI Project in `EastUS2` region
 - Azure Open AI Deployment with GPT model supporting `chat completion`. Example `gpt-4`
@@ -36,7 +110,6 @@ The following changes have been made for Ignite:
 ### Resources
 
 Project, endpoint key, and deployment given in meeting.
-
 
 
 ### Clone the repository
