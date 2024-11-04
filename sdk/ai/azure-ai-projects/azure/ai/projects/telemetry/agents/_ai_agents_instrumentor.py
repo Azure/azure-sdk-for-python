@@ -297,15 +297,15 @@ class _AIAgentsInstrumentorPreview:
     def _add_instructions_event(
         self,
         span: "AbstractSpan",
-        instructions: str,
-        additional_instructions: str,
+        instructions: Optional[str],
+        additional_instructions: Optional[str],
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
     ) -> None:
         if not instructions:
             return
 
-        event_body = {}
+        event_body: Dict[str, Any] = {}
         if _trace_agents_content and (instructions or additional_instructions):
             if instructions and additional_instructions:
                 event_body["content"] = f"{instructions} {additional_instructions}"
@@ -437,7 +437,7 @@ class _AIAgentsInstrumentorPreview:
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
             project_name,
@@ -459,9 +459,9 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         project_name: str,
-        messages: Optional[List[ThreadMessageOptions]] = None,
+        messages: Optional[List[ThreadMessage]] = None,
         tool_resources: Optional[ToolResources] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, project_name)
         if span and span.span_instance.is_recording:
             for message in messages or []:
@@ -469,7 +469,7 @@ class _AIAgentsInstrumentorPreview:
 
         return span
 
-    def start_list_messages_span(self, project_name: str, thread_id: str) -> "AbstractSpan":
+    def start_list_messages_span(self, project_name: str, thread_id: str) -> "Optional[AbstractSpan]":
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
@@ -1059,7 +1059,7 @@ class _AIAgentsInstrumentorPreview:
         ):
             agent_run_stream.event_handler.__exit__(exc_type, exc_val, exc_tb)
 
-    def wrap_handler(self, handler: "_models.AgentEventHandler", span: "AbstractSpan") -> "_models.AgentEventHandler":
+    def wrap_handler(self, handler: "AgentEventHandler", span: "AbstractSpan") -> "AgentEventHandler":
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1075,7 +1075,7 @@ class _AIAgentsInstrumentorPreview:
         content: str,
         role: Union[str, MessageRole] = _Unset,
         attachments: Optional[List[MessageAttachment]] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         role_str = self._get_role(role)
         span = start_span(OperationName.CREATE_MESSAGE, project_name, thread_id=thread_id)
         if span and span.span_instance.is_recording:
@@ -1397,13 +1397,13 @@ class _AIAgentsInstrumentorPreview:
 
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
-    def __init__(self, inner_handler: AgentEventHandler, instrumentor: AIAgentsInstrumentor, span: "AbstractSpan"):
+    def __init__(self, inner_handler: AgentEventHandler, instrumentor: _AIAgentsInstrumentorPreview, span: "AbstractSpan"):
         super().__init__()
         self.span = span
         self.inner_handler = inner_handler
         self.ended = False
-        self.last_run = None
-        self.last_message = None
+        self.last_run: Optional[ThreadRun] = None
+        self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -1433,7 +1433,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
             self.instrumentor._add_tool_assistant_message_event(self.span, step)
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
-            self.instrumentor.add_thread_message_event(self.span, self.last_message, step.usage)
+            self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
