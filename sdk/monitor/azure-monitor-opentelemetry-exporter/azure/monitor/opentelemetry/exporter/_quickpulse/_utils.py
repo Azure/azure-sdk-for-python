@@ -250,10 +250,13 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
 
 def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
     # Validate telemetry type
-    if not isinstance(metric_info.telemetry_type, TelemetryType):
+    try:
+        telemetry_type = TelemetryType(metric_info.telemetry_type)
+    except Exception:  # pylint: disable=broad-except,invalid-name
         return False
     # Only REQUEST, DEPENDENCY, EXCEPTION, TRACE are supported
-    if not metric_info.telemetry_type in (TelemetryType.REQUEST, TelemetryType.DEPENDENCY, TelemetryType.EXCEPTION, TelemetryType.TRACE):
+    # No filtering options in UX for PERFORMANCE_COUNTERS
+    if not telemetry_type in (TelemetryType.REQUEST, TelemetryType.DEPENDENCY, TelemetryType.EXCEPTION, TelemetryType.TRACE):
         return False
     # Check for CustomMetric projection
     if metric_info.projection and metric_info.projection.startswith("CustomMetrics."):
@@ -263,7 +266,7 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
         for filter in filter_group.filters:
             # Validate field names to telemetry type
             # Validate predicate and comparands
-            if not _validate_filter_field_name(filter, TelemetryType(metric_info.telemetry_type)) or \
+            if not _validate_filter_field_name(filter, telemetry_type) or \
             not _validate_filter_predicate_and_comparand(filter):
                 return False
     return True
@@ -297,9 +300,11 @@ def _validate_filter_field_name(filter: FilterInfo, telemetry_type: TelemetryTyp
 
 def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
     name = filter.field_name
-    predicate = filter.predicate
     comparand = filter.comparand
-    if predicate not in PredicateType:
+    # Validate predicate type
+    try:
+        predicate = PredicateType(filter.predicate)
+    except Exception:  # pylint: disable=broad-except,invalid-name
         return False
     if not comparand:
         return False
@@ -317,7 +322,7 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
             try:
                 # Response/ResultCode comparand should be interpreted as float
                 result = float(comparand)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except,invalid-name
                 pass
             if result:
                 return False
