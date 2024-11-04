@@ -69,7 +69,7 @@ evaluators = {
 }
 
 name = SAMPLE_NAME
-description = "f{SAMPLE_NAME} description"
+description = f"{SAMPLE_NAME} description"
 tags = {"project": "online-eval-bug-bash"}
 properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6"}
 
