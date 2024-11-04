@@ -1160,6 +1160,7 @@ class TestagentClient(AzureRecordedTestCase):
             
             with tempfile.TemporaryDirectory(delete=True) as temp_dir:
             
+                # create a temporary input file for upload
                 test_file_path = os.path.join(temp_dir, "input.txt")
                 
                 with open(test_file_path, "w") as f:
@@ -1167,7 +1168,7 @@ class TestagentClient(AzureRecordedTestCase):
                                         
                 file = client.agents.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)    
                                         
-                                        
+                # create agent                     
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
                 agent = client.agents.create_agent(
                     model="gpt-4-1106-preview",
@@ -1193,7 +1194,7 @@ class TestagentClient(AzureRecordedTestCase):
                 run = client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
                 print(f"Run finished with status: {run.status}")
 
-                # get messages
+                # delete file
                 client.agents.delete_file(file.id)
                 print("Deleted file")
 
