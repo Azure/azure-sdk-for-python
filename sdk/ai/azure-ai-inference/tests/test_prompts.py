@@ -4,10 +4,9 @@
 # ------------------------------------
 import os
 from azure.ai.inference.prompts import PromptTemplate
-from devtools_testutils import AzureRecordedTestCase
 
 
-class TestPrompts(AzureRecordedTestCase):
+class TestPrompts:
 
     # **********************************************************************************
     #
