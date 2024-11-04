@@ -50,13 +50,11 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         self,
         credential,
         azure_ai_project,
-        eval_last_turn: bool = False,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SELF_HARM,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            eval_last_turn=eval_last_turn,
         )
 
     @overload

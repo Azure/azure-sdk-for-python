@@ -102,7 +102,7 @@ class TestQuickpulseManager(unittest.TestCase):
             "4321abcd-5678-4efa-8abc-1234567890ac",
         )
         self.assertEqual(qpm._base_monitoring_data_point.version, _get_sdk_version())
-        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 1)
+        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 5)
         self.assertEqual(
             qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
@@ -260,9 +260,39 @@ class TestQuickpulseManager(unittest.TestCase):
         qpm._dependency_failure_rate_counter = mock.Mock()
         qpm._dependency_duration = mock.Mock()
         qpm._record_span(span_mock)
+        span_doc_mock.assert_called_once_with(span_mock)
         append_doc_mock.assert_called_once_with(span_doc)
         qpm._dependency_failure_rate_counter.add.assert_called_once_with(1)
         qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_derive_filter_metrics(
+        self, post_state_mock, span_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock
+    ):
+        post_state_mock.return_value = True
+        span_doc = mock.Mock()
+        span_doc_mock.return_value = span_doc
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        info_mock.return_value = {"test": "value"}
+        data = mock.Mock()
+        data_mock._from_span.return_value = data
+        qpm._record_span(span_mock)
+        info_mock.assert_called_once()
+        data_mock._from_span.assert_called_once_with(span_mock)
+        derive_mock.assert_called_once_with(data)
+        span_doc_mock.assert_called_once_with(span_mock)
+        append_doc_mock.assert_called_once_with(span_doc)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_log_record_document")
@@ -283,8 +313,38 @@ class TestQuickpulseManager(unittest.TestCase):
         )
         qpm._exception_rate_counter = mock.Mock()
         qpm._record_log_record(log_data_mock)
+        log_doc_mock.assert_called_once_with(log_data_mock)
         append_doc_mock.assert_called_once_with(log_record_doc)
         qpm._exception_rate_counter.add.assert_called_once_with(1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_log_record_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_log_derive_filter_metrics(
+        self, post_state_mock, log_doc_mock, append_doc_mock, info_mock, data_mock, derive_mock
+    ):
+        post_state_mock.return_value = True
+        log_record_doc = mock.Mock()
+        log_record_mock = mock.Mock()
+        log_doc_mock.return_value = log_record_doc
+        log_data_mock = mock.Mock()
+        log_data_mock.log_record = log_record_mock
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        info_mock.return_value = {"test": "value"}
+        data = mock.Mock()
+        data_mock._from_log_record.return_value = data
+        qpm._record_log_record(log_data_mock)
+        info_mock.assert_called_once()
+        data_mock._from_log_record.assert_called_once_with(log_record_mock)
+        derive_mock.assert_called_once_with(data)
+        log_doc_mock.assert_called_once_with(log_data_mock)
+        append_doc_mock.assert_called_once_with(log_record_doc)
 
     def test_process_memory(self):
         with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:

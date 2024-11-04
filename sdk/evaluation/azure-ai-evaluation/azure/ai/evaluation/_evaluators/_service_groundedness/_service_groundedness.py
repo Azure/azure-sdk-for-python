@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List, Optional, Union, Dict
+from typing import List, Union, Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
@@ -92,7 +92,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
         **kwargs,
     ):
-        self._passing_score = 3  # TODO update once the binarization PR is merged
+        self._passing_score = 5  # TODO update once the binarization PR is merged
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
@@ -105,18 +105,18 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     def __call__(
         self,
         *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
+        response: str,
+        context: str,
+        query: str,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate groundedness for a given query/response/context
 
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
         :keyword query: The query to be evaluated.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :return: The relevance score.
         :rtype: Dict[str, Union[str, bool]]
         """

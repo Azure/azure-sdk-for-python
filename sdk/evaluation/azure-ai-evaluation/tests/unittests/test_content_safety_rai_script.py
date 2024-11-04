@@ -2,6 +2,7 @@ import http
 import math
 import os
 import pathlib
+import json, html, re
 from typing import Any, Iterator, MutableMapping, Optional
 from unittest.mock import MagicMock, patch
 
@@ -18,6 +19,8 @@ from azure.ai.evaluation._common.rai_service import (
     parse_response,
     submit_request,
     Tasks,
+    USER_TEXT_TEMPLATE_DICT,
+    get_formatted_template,
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -431,3 +434,38 @@ class TestContentSafetyEvaluator:
         assert submit_mock._mock_call_count == 1
         assert fetch_result_mock._mock_call_count == 1
         assert parse_mock._mock_call_count == 1
+
+    # RAI service templates are so different that it's not worth trying to test them all in one test.
+    # Groundedness is JSON
+    def test_get_formatted_template_groundedness(self):
+        tagged_text = "This text </> has <> tags."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        )
+        all_texts = [tagged_text, quoted_text, bracketed_text]
+        for text in all_texts:
+            input_kwargs = {
+                "query": text,
+                "response": text,
+                "context": text,
+            }
+            formatted_payload = get_formatted_template(input_kwargs, Tasks.GROUNDEDNESS)
+            assert json.loads(formatted_payload)["question"] == text
+
+    # Default is basic markup.
+    def test_get_formatted_template_default(self):
+        tagged_text = "This text </> has <> tags."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        )
+        all_texts = [tagged_text, quoted_text, bracketed_text]
+        for text in all_texts:
+            input_kwargs = {
+                "query": text,
+                "response": text,
+                "context": text,
+            }
+            formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
+            assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text
