@@ -190,6 +190,38 @@
   - Method `VirtualMachineSchedulesOperations.update` deleted or renamed its parameter `schedule` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.update` deleted or renamed its parameter `lab_virtual_machine` of kind `positional_or_keyword`
   - Method `VirtualNetworksOperations.update` deleted or renamed its parameter `virtual_network` of kind `positional_or_keyword`
+  - Operation DisksOperations.update has a new parameter tags
+  - Operation DisksOperations.update no longer has parameter disk
+  - Operation UsersOperations.update has a new parameter tags
+  - Operation UsersOperations.update no longer has parameter user
+  - Operation SchedulesOperations.update has a new parameter tags
+  - Operation SchedulesOperations.update no longer has parameter schedule
+  - Operation GlobalSchedulesOperations.update has a new parameter tags
+  - Operation GlobalSchedulesOperations.update no longer has parameter schedule
+  - Operation ArtifactSourcesOperations.update has a new parameter tags
+  - Operation ArtifactSourcesOperations.update no longer has parameter artifact_source
+  - Operation CustomImagesOperations.update has a new parameter tags
+  - Operation CustomImagesOperations.update no longer has parameter custom_image
+  - Operation VirtualMachinesOperations.update has a new parameter tags
+  - Operation VirtualMachinesOperations.update no longer has parameter lab_virtual_machine
+  - Operation ServiceFabricsOperations.update has a new parameter tags
+  - Operation ServiceFabricsOperations.update no longer has parameter service_fabric
+  - Operation VirtualMachineSchedulesOperations.update has a new parameter tags
+  - Operation VirtualMachineSchedulesOperations.update no longer has parameter schedule
+  - Operation VirtualNetworksOperations.update has a new parameter tags
+  - Operation VirtualNetworksOperations.update no longer has parameter virtual_network
+  - Operation LabsOperations.update has a new parameter tags
+  - Operation LabsOperations.update no longer has parameter lab
+  - Operation ServiceFabricSchedulesOperations.update has a new parameter tags
+  - Operation ServiceFabricSchedulesOperations.update no longer has parameter schedule
+  - Operation PoliciesOperations.update has a new parameter tags
+  - Operation PoliciesOperations.update no longer has parameter policy
+  - Operation FormulasOperations.update has a new parameter tags
+  - Operation FormulasOperations.update no longer has parameter formula
+  - Operation EnvironmentsOperations.update has a new parameter tags
+  - Operation EnvironmentsOperations.update no longer has parameter dtl_environment
+  - Operation NotificationChannelsOperations.update has a new parameter tags
+  - Operation NotificationChannelsOperations.update no longer has parameter notification_channel
 
 ## 10.0.0b1 (2022-10-28)
 
