@@ -82,7 +82,7 @@ def create_schedule():
             properties=properties
         )
         created_evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
-        print(f"Successfully submitted the online evaluation schedule creation request - {created_evaluation_schedule.name}, currently in Creating state")
+        print(f"Successfully submitted the online evaluation schedule creation request - {created_evaluation_schedule.name}, currently in {created_evaluation_schedule.provisioning_state} state.")
         print("Please use get api to fetch back the evaluation schedule details.")
     except Exception as e:
         print(f"Error occurred while submitting the online evaluation schedule creation request - {name}, Error={e}")
@@ -103,7 +103,7 @@ def list_schedules():
         count = 0
         for evaluation_schedule in project_client.evaluations.list_schedule():
             count += 1
-            print(f"{count}. evaluation_schedule.name")
+            print(f"{count}. evaluation_schedule.name -- {evaluation_schedule.is_enabled}")
         print(f"Total evaluation schedules: {count}")
     except Exception as e:
         print(f"\nError occurred while fetching the online evaluation schedules, Error={e}")
