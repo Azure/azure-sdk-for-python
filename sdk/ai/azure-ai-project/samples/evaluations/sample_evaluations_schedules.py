@@ -84,9 +84,11 @@ def create_schedule():
             tags=tags,
             properties=properties
         )
-        created_evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
+        created_evaluation_schedule = project_client.evaluations.create_or_replace_schedule(
+            name, evaluation_schedule
+        )
         print(f"Successfully submitted the online evaluation schedule creation request - {created_evaluation_schedule.name}, currently in {created_evaluation_schedule.provisioning_state} state.")
-        print("Please use get api to fetch back the evaluation schedule details.")
+        print("Please use GET API to fetch back the evaluation schedule details.")
     except Exception as e:
         print(f"Error occurred while submitting the online evaluation schedule creation request - {name}, Error={e}")
 
@@ -94,11 +96,13 @@ def create_schedule():
 def get_schedule(name):
     try:
         get_evaluation_schedule = project_client.evaluations.get_schedule(name)
-        print(f"Successfully fetched the online evaluation schedule - {get_evaluation_schedule.name}")
+        print(f"Successfully fetched the online evaluation schedule - "
+              f"{get_evaluation_schedule.name}")
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(get_evaluation_schedule.as_dict())
     except Exception as e:
-        print(f"Error occurred while fetching the online evaluation schedule - {name}, Error={e}")
+        print(f"Error occurred while fetching the online evaluation schedule - {name},"
+              f"Error={e}")
 
 
 def list_schedules():
@@ -106,10 +110,14 @@ def list_schedules():
         count = 0
         for evaluation_schedule in project_client.evaluations.list_schedule():
             count += 1
-            print(f"{count}. evaluation_schedule.name -- {evaluation_schedule.is_enabled}")
+            print(f"{count}. {evaluation_schedule.name} "
+                  f"[IsEnabled: {evaluation_schedule.is_enabled}]")
         print(f"Total evaluation schedules: {count}")
     except Exception as e:
-        print(f"\nError occurred while fetching the online evaluation schedules, Error={e}")
+        print(
+            f"\nError occurred while fetching the online evaluation schedules,"
+            f"Error={e}"
+        )
 
 
 def disable_schedule(name):
