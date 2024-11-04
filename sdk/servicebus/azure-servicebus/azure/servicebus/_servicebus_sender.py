@@ -36,6 +36,8 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
     MAX_MESSAGE_LENGTH_BYTES,
+    MAX_BATCH_SIZE_STANDARD,
+    MAX_BATCH_SIZE_PREMIUM
 )
 
 if TYPE_CHECKING:
@@ -501,14 +503,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not self._max_message_size_on_link:
             self._open_with_retry()
 
-        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+        if self._max_message_size_on_link > MAX_BATCH_SIZE_PREMIUM:
+            max_size_allowed = MAX_BATCH_SIZE_PREMIUM
+        else:
+            max_size_allowed = MAX_BATCH_SIZE_STANDARD
+
+        if max_size_in_bytes and max_size_in_bytes > max_size_allowed:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {max_size_allowed} bytes."
             )
 
         return ServiceBusMessageBatch(
-            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            max_size_in_bytes=(max_size_in_bytes or max_size_allowed),
             amqp_transport=self._amqp_transport,
             tracing_attributes={
                 TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
