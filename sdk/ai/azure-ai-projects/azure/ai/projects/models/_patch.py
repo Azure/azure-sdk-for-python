@@ -126,7 +126,7 @@ class ConnectionProperties:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.connection_type = connection.properties.category
+        self.connection_type = cast(ConnectionType, connection.properties.category)
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
@@ -139,7 +139,7 @@ class ConnectionProperties:
         self.token_credential = token_credential
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
-        connection_type = self.connection_type.value
+        connection_type =  self.connection_type.value
         if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
             connection_type = "azure_openai"
 
@@ -223,7 +223,10 @@ class SASTokenCredential(TokenCredential):
 
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
-        self._sas_token = connection.properties.credentials.sas
+        self._sas_token = ""
+        if connection.token_credential is not None:
+            sas_credential = cast(SASTokenCredential, connection.token_credential)
+            self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
