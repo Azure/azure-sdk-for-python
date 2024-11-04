@@ -36,8 +36,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _get_metrics_from_projections,
     _get_span_document,
     _get_log_record_document,
+    _filter_time_stamp_to_ms,
     _init_derived_metric_projection,
     _metric_to_quick_pulse_data_points,
+    _validate_derived_metric_info,
     _update_filter_configuration,
 )
 
@@ -226,10 +228,11 @@ class TestUtils(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_etag")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_derived_metric_infos")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_derived_metric_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.DerivedMetricInfo")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._clear_quickpulse_projection_map")
     def test_update_filter_configuration(
-        self, clear_mock, dict_mock, init_projection_mock, set_metric_info_mock, etag_mock
+        self, clear_mock, dict_mock, validate_mock, init_projection_mock, set_metric_info_mock, etag_mock
     ):
         etag = "new-etag"
         test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
@@ -237,12 +240,37 @@ class TestUtils(unittest.TestCase):
         metric_info_mock = mock.Mock()
         metric_info_mock.telemetry_type = TelemetryType.REQUEST
         dict_mock.from_dict.return_value = metric_info_mock
+        validate_mock.return_value = True
         _update_filter_configuration(etag, test_config_bytes)
         clear_mock.assert_called_once()
         dict_mock.from_dict.assert_called_once_with(test_config_dict)
         init_projection_mock.assert_called_once_with(metric_info_mock)
         metric_infos = {}
         metric_infos[TelemetryType.REQUEST] = [metric_info_mock]
+        set_metric_info_mock.assert_called_once_with(metric_infos)
+        etag_mock.assert_called_once_with(etag)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_etag")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_derived_metric_info")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.DerivedMetricInfo")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._clear_quickpulse_projection_map")
+    def test_update_filter_configuration_invalid(
+        self, clear_mock, dict_mock, validate_mock, init_projection_mock, set_metric_info_mock, etag_mock
+    ):
+        etag = "new-etag"
+        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_dict = json.loads(test_config_bytes.decode()).get("Metrics")[0]
+        metric_info_mock = mock.Mock()
+        metric_info_mock.telemetry_type = TelemetryType.REQUEST
+        dict_mock.from_dict.return_value = metric_info_mock
+        validate_mock.return_value = False
+        _update_filter_configuration(etag, test_config_bytes)
+        clear_mock.assert_called_once()
+        dict_mock.from_dict.assert_called_once_with(test_config_dict)
+        init_projection_mock.assert_not_called()
+        metric_infos = {}
         set_metric_info_mock.assert_called_once_with(metric_infos)
         etag_mock.assert_called_once_with(etag)
 
@@ -425,3 +453,88 @@ class TestUtils(unittest.TestCase):
                 ("test-id4", 4.0),
             ],
         )
+
+    def test_validate_info_invalid_telemetry_type(self):
+        valid_metric_info = mock.Mock(
+            telemetry_type='Request',
+            projection=None,
+            filter_groups=[]
+        )
+        valid_metric_info.telemetry_type = 'INVALID_TYPE'
+        self.assertFalse(_validate_derived_metric_info(valid_metric_info))
+
+    def test_validate_info_custom_metric_projection(self):
+        valid_metric_info = mock.Mock(
+            telemetry_type='Request',
+            projection=None,
+            filter_groups=[]
+        )
+        valid_metric_info.telemetry_type = 'Request'
+        valid_metric_info.projection = 'CustomMetrics.MyMetric'
+        self.assertFalse(_validate_derived_metric_info(valid_metric_info))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_filter_predicate_and_comparand")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_filter_field_name")
+    def test_validate_info_valid_filters(self, field_mock, pred_mock):
+        valid_metric_info = mock.Mock(
+            telemetry_type='Request',
+            projection=None,
+            filter_groups=[]
+        )
+        filter = mock.Mock()
+        filter_group = mock.Mock()
+        filter_group.filters = [filter]
+        valid_metric_info.filter_groups = [filter_group]
+        field_mock.return_value = True
+        pred_mock.return_value = True
+
+        self.assertTrue(_validate_derived_metric_info(valid_metric_info))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_filter_predicate_and_comparand")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_filter_field_name")
+    def test_validate_info_invalid_filters(self, field_mock, pred_mock):
+        valid_metric_info = mock.Mock(
+            telemetry_type='Request',
+            projection=None,
+            filter_groups=[]
+        )
+        filter = mock.Mock()
+        filter_group = mock.Mock()
+        filter_group.filters = [filter]
+        valid_metric_info.filter_groups = [filter_group]
+        field_mock.return_value = True
+        pred_mock.return_value = False
+
+        self.assertFalse(_validate_derived_metric_info(valid_metric_info))
+
+    def test_valid_time_stamp_with_decimal_seconds(self):
+        time_stamp = "14.6:56:7.89"
+        expected_ms = 1234567890  # Expected milliseconds
+        self.assertEqual(_filter_time_stamp_to_ms(time_stamp), expected_ms)
+
+    def test_valid_time_stamp_with_whole_seconds(self):
+        time_stamp = "0.0:0:0.2"
+        expected_ms = 200  # Expected milliseconds
+        self.assertEqual(_filter_time_stamp_to_ms(time_stamp), expected_ms)
+
+    def test_valid_time_stamp_with_no_days(self):
+        time_stamp = "0.5:30:15.5"
+        expected_ms = 19815500  # 0 days, 5 hours, 30 minutes, 15.5 seconds
+        self.assertEqual(_filter_time_stamp_to_ms(time_stamp), expected_ms)
+
+    def test_valid_time_stamp_with_large_days(self):
+        time_stamp = "100.0:0:0"
+        expected_ms = 8640000000  # 100 days
+        self.assertEqual(_filter_time_stamp_to_ms(time_stamp), expected_ms)
+
+    def test_invalid_time_stamp(self):
+        time_stamp = "invalid_format"
+        self.assertIsNone(_filter_time_stamp_to_ms(time_stamp))
+
+    def test_time_stamp_missing_seconds(self):
+        time_stamp = "1.0:0:"
+        self.assertIsNone(_filter_time_stamp_to_ms(time_stamp))
+
+    def test_time_stamp_empty_string(self):
+        time_stamp = ""
+        self.assertIsNone(_filter_time_stamp_to_ms(time_stamp))
