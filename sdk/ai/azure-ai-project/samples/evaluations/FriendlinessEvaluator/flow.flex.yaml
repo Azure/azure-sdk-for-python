@@ -1,4 +1,0 @@
-inputs:
-  response:
-    type: string
-entry: friend:FriendlinessEvaluator

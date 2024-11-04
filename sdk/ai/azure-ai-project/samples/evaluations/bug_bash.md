@@ -1,12 +1,41 @@
-## Welcome to the Evaluation in Cloud Bug Bash!
+## Welcome to the Quality Evaluation Bug Bash!
+
+
+For this bug bash, we'll be testing all of the quality evaluators that will be release in the GA version of the Azure AI Evaluation SDK. Quality evaluators include:
+
+ - `SimilarityEvaluator`
+ - `CoherenceEvaluator`
+ - `RelevanceEvaluator`
+ - `RetrievalEvaluator`
+ - `FluencyEvaluator`
+ - `GroundednessEvaluator`
+ - `F1ScoreEvaluator`
+ - `QAEvaluator` (composite evaluator with Similarity, Coherence, Relevance, F1Score, Groundedness, and Fluency)
+
+We want to test the individual evaluators (in single-turn and conversation scenarios) and test them as inputs to the `evaluate()` method. For `evaluate()` testing, ensure that if you are using a dataset with input column names, that the required inputs of the evaluator(s) you're using are present.
+
+The following changes have been made for Ignite:
+
+- Add optional `query` parameter to `GroundednessEvaluator` + update prompts
+- Add `query` and `context` parameters to `RetrievalEvaluator` + update prompt
+- Remove `context` parameter to `RelevanceEvaluator` + update prompt
+- Remove `query` parameter from `FluencyEvaluator` + update prompt
+- Update prompt for `CoherenceEvaluator`
+- Add `_reason` output to all evaluators except `SimilarityEvaluator` and `F1ScoreEvaluator`
+- Validation is added for conversation vs. single-turn inputs on each evaluator
+- Optional inputs are allowed when using `evaluate()` method (e.g. `GroundednessEvaluator` can be used with a dataset that doesn't include a `query` column)
+- New duplicate keys are added to evaluator outputs with the `gpt_` prefix removed. For now, both keys should be present in all outputs. The `gpt_` keys will be removed in a future release.
+
+
 
 ### Prerequisites
 - Azure AI Project in `EastUS2` region
 - Azure Open AI Deployment with GPT model supporting `chat completion`. Example `gpt-4`
+- Azure SDK for Python repository cloned and checked out to the `release/azure-ai-evaluation/1.0.0` branch
 
 ### Resources
 
-If you do not have the required resources, please use the following resources:
+If you do not have an Azure AI Project with a deployed model, please use the following resources:
 
 | Resource Type     | Resource Name                                                                                                                                                                                                                                                                  |
 |-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -14,68 +43,40 @@ If you do not have the required resources, please use the following resources:
 | AOAI endpoint key | /subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/connections/igniteevaluati8620559527_aoai/credentials/key                                                        |
 | AOAI deployment   | [gpt-4-ignite-bugbash](https://ai.azure.com/build/deployments/aoai/connections/igniteevaluati8620559527_aoai/gpt-4-ignite-bugbash?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)|
 
-### Datasets from Registry
-| Dataset | Location                                                                                                                                                                                                                                            |
-|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|  To test any evaluators       | [azureml://registries/remote-eval-testing/data/remote-eval-bugbash-test-dataset-tiny/versions/2](https://ml.azure.com/registries/remote-eval-testing/data/remote-eval-bugbash-test-dataset-tiny/version/2?tid=72f988bf-86f1-41af-91ab-2d7cd011db47) |
-| Jailbreak harm        | [azureml://registries/remote-eval-testing/data/indirect_jailbreak_attack_data_tiny/versions/1](https://ml.azure.com/registries/remote-eval-testing/data/indirect_jailbreak_attack_data_tiny/version/1?tid=72f988bf-86f1-41af-91ab-2d7cd011db47)     |
-| Content harm        | [azureml://registries/remote-eval-testing/data/content_harm_data_tiny/versions/1](https://ml.azure.com/registries/remote-eval-testing/data/content_harm_data_tiny/version/1?tid=72f988bf-86f1-41af-91ab-2d7cd011db47)                               |
-| Protected Materials (IP) harm  | [azureml://registries/remote-eval-testing/data/ip_harm_data_tiny/versions/1](https://ml.azure.com/registries/remote-eval-testing/data/ip_harm_data_tiny/version/1?tid=72f988bf-86f1-41af-91ab-2d7cd011db47)                                                                                                                                                                      |
 
-### Datasets from Project
-| Dataset | Location                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|  To test any evaluators       | [/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/data/remote-eval-bugbash-dataset-tiny/versions/1](https://ai.azure.com/build/data/remote-eval-bugbash-dataset-tiny/1/details?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourcegroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)            |
-| Jailbreak harm        | [/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/data/unfiltered_indirect_attack_sim_outputs/versions/1](https://ai.azure.com/build/data/unfiltered_indirect_attack_sim_outputs/1/details?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourcegroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) |
-| Content harm tiny       | [/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/data/unfiltered_content_harm_sim_output/versions/1](https://ai.azure.com/build/data/unfiltered_content_harm_sim_output/1/details?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourcegroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)        |
-| Protected Materials (IP) harm  | [/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2/data/ip-harm-dataset-tiny/versions/1](https://ai.azure.com/build/data/ip-harm-dataset-tiny/1/details?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourcegroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)                                   
 
 ### Clone the repository
 ```bash
 git clone https://github.com/Azure/azure-sdk-for-python.git
 # Navigate to cloned repo folder
 git pull
-git checkout users/singankit/remote_evaluation_bug_bash
+git checkout release/azure-ai-evaluation/1.0.0
 ```
 
 ### Installation Instructions:
 
 1. Create a **virtual environment of you choice**. To create one using conda, run the following command:
     ```bash
-    conda create -n remote-evaluation-bug-bash python=3.11
-    conda activate remote-evaluation-bug-bash
+    >> conda create -n quality-evaluation-bug-bash python=3.11
+    >> conda activate quality-evaluation-bug-bash
     ```
 2. Install the required packages by running the following command:
     ```bash
-   # Clearing any old installation
-    pip uninstall azure-ai-project azure-ai-ml azure-ai-evaluation
-
-   pip install azure-identity azure-ai-ml
-   # installing azure-ai-evaluation
-   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_evaluation-1.0.0a20241022005-py3-none-any.whl
-   # installing azure-ai-project
-   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
+   >> cd sdk/evaluation/azure-ai-evaluation
+   >> pip install -r dev_requirements.txt
+   >> pip install "tox<5"
+   >> pip install -e .
     ```
 
-### Evaluators to test
-
-- [Built In Evaluators](https://ai.azure.com/build/evaluation/evaluator?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&flight=ModelCatalogAMLTestRegistryName=azureml-staging&tid=72f988bf-86f1-41af-91ab-2d7cd011db47)
-- Custom Prompt Based Evaluator
-  - [FriendlinessMeasureEvaluator](https://ai.azure.com/build/evaluation/evaluators/FriendlinessMeasureEvaluator/1/ignite-eval-project-eastus2/details?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&flight=ModelCatalogAMLTestRegistryName=azureml-staging&tid=72f988bf-86f1-41af-91ab-2d7cd011db47&resourceType=Workspace)
-
-### How to Get `Connection String` for the Project ?
-Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
-
-### Evaluation List
-Use the following uri for listing evaluation : https://int.ai.azure.com/build/evaluation?wsid=/subscriptions/fac34303-435d-4486-8c3f-7094d82a0b60/resourceGroups/rg-cliu/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-project-eastus2&flight=RAIEvalNewListExp&tid=72f988bf-86f1-41af-91ab-2d7cd011db47
-
-It needs a flight `&flight=RAIEvalNewListExp`
+### Data
+You can use the datasets in the `data` directory. Some datasets have column mappings, some are conversations, some omit certain columns, etc. You can use these datasets to test the evaluators.
 
 ### Report Bugs
 
-Please use the following template to report bugs : [**Bug Template**](https://msdata.visualstudio.com/Vienna/_workitems/create/Bug?templateId=5f8cafcf-2bbc-42df-a0ba-13c3ebcbeabe&ownerId=31cd3b44-f331-4377-95dd-2f8d6e169ee4)
+Please use the following template to report bugs : [**Bug Template**](https://msdata.visualstudio.com/Vienna/_workitems/edit/3600109)
 
 ### Samples
 
-1. Remote Evaluation - [Sample Link](./sample_evaluations.py). This sample demonstrates how to create a new evaluation in cloud.
-2. Online Evaluation - [Sample Link](./sample_evaluations_schedules.py). This sample demonstrates how to evaluate continuously by running evaluation on a schedule.
+1. [Using `evaluate()`](https://github.com/Azure-Samples/azureai-samples/blob/main/scenarios/evaluate/evaluate_qualitative_metrics/evaluate_qualitative_metrics.ipynb) (note that some input params have changed)
+2. [Individual evaluator](https://github.com/Azure-Samples/azureai-samples/blob/47c934561c24533644af58ed377e2b7382d61621/scenarios/evaluate/evaluate_app/evaluate_app.ipynb#L182)
+3. There are also sample usages of each evaluator in their docstrings
