@@ -39,6 +39,7 @@ import os
 
 tracer = trace.get_tracer(__name__)
 
+
 @tracer.start_as_current_span(__file__)
 async def main():
 

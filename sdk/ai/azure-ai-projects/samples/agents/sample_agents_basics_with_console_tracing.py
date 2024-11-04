@@ -61,7 +61,9 @@ with tracer.start_as_current_span(scenario):
         thread = project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = project_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a joke"
+        )
         print(f"Created message, message ID: {message.id}")
 
         run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)

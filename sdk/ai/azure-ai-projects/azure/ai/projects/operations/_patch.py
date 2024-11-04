@@ -65,7 +65,7 @@ class InferenceOperations:
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -98,17 +98,13 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -134,7 +130,7 @@ class InferenceOperations:
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -173,9 +169,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
@@ -406,6 +400,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
     # Silently try to load a set of relevant Instrumentors
     try:
         from azure.core.settings import settings
+
         settings.tracing_implementation = "opentelemetry"
         _ = settings.tracing_implementation()
     except ModuleNotFoundError as _:
@@ -431,9 +426,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
     except Exception as exc:
-        logger.warning(
-            "Could not call `AIAgentsInstrumentor().instrument()` " + str(exc)
-        )
+        logger.warning("Could not call `AIAgentsInstrumentor().instrument()` " + str(exc))
 
     try:
         from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
@@ -770,7 +763,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -837,7 +830,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -884,7 +877,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @overload
     def update_agent(
         self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
@@ -921,7 +913,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -1001,16 +993,26 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+    def _validate_tools_and_tool_resources(
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
+    ):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
 
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     def _get_toolset(self) -> Optional[_models.ToolSet]:
         """

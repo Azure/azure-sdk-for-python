@@ -29,11 +29,9 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
 
     def test_sas_token_credential_class_mocked(self, **kwargs):
         import jwt
-        import datetime
         import time
 
         # Create a simple JWT with 10 seconds expiration time
-        token_duration_sec = 5
         secret_key = "my_secret_key"
         token_duration_sec = 5
         sas_token_expiration: datetime = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
@@ -70,7 +68,7 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
             for _ in range(token_duration_sec + 2):
                 print("Looping...")
                 time.sleep(1)
-                access_token = sas_token_credential.get_token()
+                sas_token_credential.get_token()
         except HttpResponseError as e:
             exception_caught = True
             print(e)

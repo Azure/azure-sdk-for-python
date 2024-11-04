@@ -1,4 +1,7 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -166,10 +169,10 @@ class TestagentClient(AzureRecordedTestCase):
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
-        # update agent        
+        # update agent
         agent = client.agents.update_agent(agent.id, name="my-agent2", instructions="You are helpful agent")
         assert agent.name == "my-agent2"
-        
+
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
@@ -200,7 +203,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-        
+
     # test agent creation with tools
     @agentClientPreparer()
     @recorded_by_proxy
@@ -225,7 +228,7 @@ class TestagentClient(AzureRecordedTestCase):
         # delete agent and close client
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        client.close()        
+        client.close()
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1104,8 +1107,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
-        
-        
+
     # test agent creation with invalid tool resource
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1120,12 +1122,19 @@ class TestagentClient(AzureRecordedTestCase):
             exception_message = ""
             try:
                 client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                    model="gpt-4o",
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=[],
+                    tool_resources=tool_resources,
                 )
             except ValueError as e:
                 exception_message = e.args[0]
 
-            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            assert (
+                exception_message
+                == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     # test agent creation with invalid tool resource
     @agentClientPreparer()
@@ -1141,12 +1150,19 @@ class TestagentClient(AzureRecordedTestCase):
             exception_message = ""
             try:
                 client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                    model="gpt-4o",
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=[],
+                    tool_resources=tool_resources,
                 )
             except ValueError as e:
                 exception_message = e.args[0]
 
-            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            assert (
+                exception_message
+                == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
 
 
     @agentClientPreparer()

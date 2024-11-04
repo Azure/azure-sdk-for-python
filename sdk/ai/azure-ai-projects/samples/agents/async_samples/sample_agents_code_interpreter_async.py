@@ -63,7 +63,9 @@ async def main():
         print(f"Created thread, thread ID: {thread.id}")
 
         message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?"
+            thread_id=thread.id,
+            role="user",
+            content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
         )
         print(f"Created message, message ID: {message.id}")
 
