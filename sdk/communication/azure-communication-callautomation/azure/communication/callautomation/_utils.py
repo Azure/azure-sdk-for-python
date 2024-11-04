@@ -13,13 +13,14 @@ from ._shared.models import (
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsAppIdentifier,
     UnknownIdentifier,
-    CommunicationIdentifierKind
+    CommunicationIdentifierKind,
 )
 from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
-    CallLocator, MicrosoftTeamsAppIdentifierModel
+    CallLocator,
+    MicrosoftTeamsAppIdentifierModel,
 )
 
 if TYPE_CHECKING:
@@ -27,10 +28,10 @@ if TYPE_CHECKING:
 
 
 def build_call_locator(
-        args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-        call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
-        server_call_id: Optional[str],
-        group_call_id: Optional[str]
+    args: List[Union["ServerCallLocator", "GroupCallLocator"]],
+    call_locator: Optional[Union["ServerCallLocator", "GroupCallLocator"]],
+    server_call_id: Optional[str],
+    group_call_id: Optional[str],
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -78,15 +79,15 @@ def build_call_locator(
 
 
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
-    if 'headers' in keywords:
-        if 'Repeatability-First-Sent' not in keywords['headers']:
-            keywords['headers']['Repeatability-First-Sent'] = get_repeatability_timestamp()
+    if "headers" in keywords:
+        if "Repeatability-First-Sent" not in keywords["headers"]:
+            keywords["headers"]["Repeatability-First-Sent"] = get_repeatability_timestamp()
     else:
-        keywords['headers'] = {'Repeatability-First-Sent': get_repeatability_timestamp()}
+        keywords["headers"] = {"Repeatability-First-Sent": get_repeatability_timestamp()}
 
 
 def get_repeatability_timestamp() -> str:
-    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 
 def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
@@ -98,7 +99,7 @@ def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     :rtype: dict[str, any]
     """
     try:
-        request_model = {'raw_id': identifier.raw_id}
+        request_model = {"raw_id": identifier.raw_id}
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
@@ -118,7 +119,7 @@ def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> O
         return None
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
-            request_model = PhoneNumberIdentifierModel(value=identifier.properties['value'])
+            request_model = PhoneNumberIdentifierModel(value=identifier.properties["value"])
             return request_model
     except AttributeError:
         pass
@@ -126,7 +127,7 @@ def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> O
 
 
 def serialize_communication_user_identifier(
-        identifier: Optional[CommunicationUserIdentifier]
+    identifier: Optional[CommunicationUserIdentifier],
 ) -> Optional[CommunicationUserIdentifierModel]:
     """Serialize the CommunicationUserIdentifier into CommunicationUserIdentifierModel
 
@@ -139,15 +140,15 @@ def serialize_communication_user_identifier(
         return None
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
-            request_model = CommunicationUserIdentifierModel(id=identifier.properties['id'])
+            request_model = CommunicationUserIdentifierModel(id=identifier.properties["id"])
             return request_model
     except AttributeError:
         pass
     raise TypeError(f"Unsupported user identifier type: {identifier.__class__.__name__}")
 
 
-def serialize_microsoft_teams_app_identifier(
-        identifier: Optional[MicrosoftTeamsAppIdentifier]
+def serialize_msft_teams_app_identifier(
+    identifier: Optional[MicrosoftTeamsAppIdentifier],
 ) -> Optional[MicrosoftTeamsAppIdentifierModel]:
     """Serialize the MicrosoftTeamsAppIdentifier into MicrosoftTeamsAppIdentifierModel
 
@@ -160,16 +161,14 @@ def serialize_microsoft_teams_app_identifier(
         return None
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_APP:
-            request_model = MicrosoftTeamsAppIdentifierModel(app_id=identifier.properties['app_id'])
+            request_model = MicrosoftTeamsAppIdentifierModel(app_id=identifier.properties["app_id"])
             return request_model
     except AttributeError:
         pass
     raise TypeError(f"Unsupported user identifier type: {identifier.__class__.__name__}")
 
 
-def deserialize_identifier(
-        identifier_model: CommunicationIdentifierModel
-) -> CommunicationIdentifier:
+def deserialize_identifier(identifier_model: CommunicationIdentifierModel) -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -189,20 +188,18 @@ def deserialize_identifier(
             raw_id=raw_id,
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
-            cloud=identifier_model.microsoft_teams_user.cloud
+            cloud=identifier_model.microsoft_teams_user.cloud,
         )
     if identifier_model.microsoft_teams_app:
         return MicrosoftTeamsAppIdentifier(
             raw_id=raw_id,
             app_id=identifier_model.microsoft_teams_app.app_id,
-            cloud=identifier_model.microsoft_teams_app.cloud
+            cloud=identifier_model.microsoft_teams_app.cloud,
         )
     return UnknownIdentifier(raw_id)
 
 
-def deserialize_phone_identifier(
-        identifier_model: PhoneNumberIdentifierModel
-) -> Union[PhoneNumberIdentifier, None]:
+def deserialize_phone_identifier(identifier_model: PhoneNumberIdentifierModel) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
 
@@ -217,7 +214,7 @@ def deserialize_phone_identifier(
 
 
 def deserialize_comm_user_identifier(
-        identifier_model: CommunicationUserIdentifierModel
+    identifier_model: CommunicationUserIdentifierModel,
 ) -> Union[CommunicationUserIdentifier, None]:
     """
     Deserialize the CommunicationUserIdentifierModel into CommunicationUserIdentifier
@@ -230,8 +227,8 @@ def deserialize_comm_user_identifier(
     return CommunicationUserIdentifier(id=identifier_model.id) if identifier_model else None
 
 
-def deserialize_microsoft_teams_user_identifier(
-        identifier_model: MicrosoftTeamsAppIdentifierModel
+def deserialize_msft_teams_app_identifier(
+    identifier_model: MicrosoftTeamsAppIdentifierModel,
 ) -> Union[MicrosoftTeamsAppIdentifier, None]:
     """
     Deserialize the MicrosoftTeamsAppIdentifierModel into MicrosoftTeamsAppIdentifier

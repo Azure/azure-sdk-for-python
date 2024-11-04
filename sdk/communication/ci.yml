@@ -31,6 +31,7 @@ extends:
   parameters:
     ServiceDirectory: communication
     TestProxy: true
+    ValidateFormatting: true
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity

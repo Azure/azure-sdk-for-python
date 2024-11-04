@@ -12,7 +12,7 @@ from azure.communication.callautomation import (
     CallAutomationClient,
     CallInvite,
     CommunicationUserIdentifier,
-    MicrosoftTeamsAppIdentifier
+    MicrosoftTeamsAppIdentifier,
 )
 
 from unittest_helpers import mock_response
@@ -37,42 +37,41 @@ class TestCallAutomationClient(unittest.TestCase):
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             body = json.loads(request.content)
             assert body["sourceDisplayName"] == "baz", "Parameter value not as expected"
-            return mock_response(status_code=201, json_payload={
-                "callConnectionId": self.call_connection_id,
-                "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_url,
-                "targets": [
-                    {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}],
-                "sourceIdentity": {"rawId": self.communication_user_source_id,
-                                   "communicationUser": {"id": self.communication_user_source_id}}})
+            return mock_response(
+                status_code=201,
+                json_payload={
+                    "callConnectionId": self.call_connection_id,
+                    "serverCallId": self.server_callI_id,
+                    "callbackUri": self.callback_url,
+                    "targets": [
+                        {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
+                    ],
+                    "sourceIdentity": {
+                        "rawId": self.communication_user_source_id,
+                        "communicationUser": {"id": self.communication_user_source_id},
+                    },
+                },
+            )
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
 
         # make invitation
-        call_invite = CallInvite(
-            target=user,
-            source_display_name="baz"
-        )
+        call_invite = CallInvite(target=user, source_display_name="baz")
         call_automation_client = CallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send)
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
         call_connection_properties = call_automation_client.create_call(call_invite, self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
 
-        call_invite = CallInvite(
-            target=user,
-            source_display_name="WRONG"
-        )
+        call_invite = CallInvite(target=user, source_display_name="WRONG")
         call_connection_properties = call_automation_client.create_call(
             target_participant=call_invite,
             callback_url=self.callback_url,
             voip_headers={"foo": "bar"},
-            source_display_name="baz"
+            source_display_name="baz",
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -82,7 +81,7 @@ class TestCallAutomationClient(unittest.TestCase):
             target_participant=user,
             callback_url=self.callback_url,
             voip_headers={"foo": "bar"},
-            source_display_name="baz"
+            source_display_name="baz",
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -94,15 +93,24 @@ class TestCallAutomationClient(unittest.TestCase):
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             body = json.loads(request.content)
-            return mock_response(status_code=201, json_payload={
-                "callConnectionId": self.call_connection_id,
-                "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_url,
-                "targets": [
-                    {"rawId": self.another_microsoft_teams_app_id,
-                     "microsoftTeamsApp": {"app_id": self.another_microsoft_teams_app_id}}],
-                "source": {"rawId": self.microsoft_teams_app_id,
-                           "microsoftTeamsApp": {"app_id": self.microsoft_teams_app_id}}})
+            return mock_response(
+                status_code=201,
+                json_payload={
+                    "callConnectionId": self.call_connection_id,
+                    "serverCallId": self.server_callI_id,
+                    "callbackUri": self.callback_url,
+                    "targets": [
+                        {
+                            "rawId": self.another_microsoft_teams_app_id,
+                            "microsoftTeamsApp": {"app_id": self.another_microsoft_teams_app_id},
+                        }
+                    ],
+                    "source": {
+                        "rawId": self.microsoft_teams_app_id,
+                        "microsoftTeamsApp": {"app_id": self.microsoft_teams_app_id},
+                    },
+                },
+            )
 
         # target endpoint for ACS User
         user = MicrosoftTeamsAppIdentifier(self.another_microsoft_teams_app_id)
@@ -111,23 +119,19 @@ class TestCallAutomationClient(unittest.TestCase):
         caller = MicrosoftTeamsAppIdentifier(self.microsoft_teams_app_id)
 
         # make invitation
-        call_invite = CallInvite(
-            target=user
-        )
+        call_invite = CallInvite(target=user)
         call_automation_client = CallAutomationClient(
             "https://endpoint",
             AzureKeyCredential("fakeCredential=="),
             transport=Mock(send=mock_send),
-            ops_source=caller
+            ops_source=caller,
         )
         call_connection_properties = call_automation_client.create_call(call_invite, self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
-        self.assertEqual(self.microsoft_teams_app_id,
-                         call_connection_properties.source.raw_id)
-        self.assertEqual(self.another_microsoft_teams_app_id,
-                         call_connection_properties.targets[0].raw_id)
+        self.assertEqual(self.microsoft_teams_app_id, call_connection_properties.source.raw_id)
+        self.assertEqual(self.another_microsoft_teams_app_id, call_connection_properties.targets[0].raw_id)
         print(call_connection_properties.targets[0])
 
     def test_create_group_call(self):
@@ -135,20 +139,28 @@ class TestCallAutomationClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=201, json_payload={
-                "callConnectionId": self.call_connection_id,
-                "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_url,
-                "targets": [{"rawId": self.communication_user_id,
-                             "communicationUser": {"id": self.communication_user_id}}],
-                "source": {"rawId": self.communication_user_source_id,
-                           "communicationUser": {"id": self.communication_user_source_id}}})
+            return mock_response(
+                status_code=201,
+                json_payload={
+                    "callConnectionId": self.call_connection_id,
+                    "serverCallId": self.server_callI_id,
+                    "callbackUri": self.callback_url,
+                    "targets": [
+                        {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
+                    ],
+                    "source": {
+                        "rawId": self.communication_user_source_id,
+                        "communicationUser": {"id": self.communication_user_source_id},
+                    },
+                },
+            )
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
+        call_automation_client = CallAutomationClient(
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
+        )
         call_connection_properties = call_automation_client.create_call([user], self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -159,22 +171,28 @@ class TestCallAutomationClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=201, json_payload={
-                "callConnectionId": self.call_connection_id,
-                "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_url,
-                "targets": [{"rawId": self.communication_user_id,
-                             "communicationUser": {"id": self.communication_user_id}}],
-                "source": {"rawId": self.communication_user_source_id,
-                           "communicationUser": {"id": self.communication_user_source_id}}})
+            return mock_response(
+                status_code=201,
+                json_payload={
+                    "callConnectionId": self.call_connection_id,
+                    "serverCallId": self.server_callI_id,
+                    "callbackUri": self.callback_url,
+                    "targets": [
+                        {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
+                    ],
+                    "source": {
+                        "rawId": self.communication_user_source_id,
+                        "communicationUser": {"id": self.communication_user_source_id},
+                    },
+                },
+            )
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
 
         call_automation_client = CallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send))
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
+        )
         call_connection_properties = call_automation_client.create_group_call([user], self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -185,19 +203,27 @@ class TestCallAutomationClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=200, json_payload={
-                "callConnectionId": self.call_connection_id,
-                "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_url,
-                "targets": [{"rawId": self.communication_user_id,
-                             "communicationUser": {"id": self.communication_user_id}}],
-                "source": {"rawId": self.communication_user_source_id,
-                           "communicationUser": {"id": self.communication_user_source_id}}})
+            return mock_response(
+                status_code=200,
+                json_payload={
+                    "callConnectionId": self.call_connection_id,
+                    "serverCallId": self.server_callI_id,
+                    "callbackUri": self.callback_url,
+                    "targets": [
+                        {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
+                    ],
+                    "source": {
+                        "rawId": self.communication_user_source_id,
+                        "communicationUser": {"id": self.communication_user_source_id},
+                    },
+                },
+            )
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
+        call_automation_client = CallAutomationClient(
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
+        )
         call_connection_properties = call_automation_client.answer_call(self.incoming_call_context, self.callback_url)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -212,24 +238,16 @@ class TestCallAutomationClient(unittest.TestCase):
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
-        call_redirect_to = CallInvite(
-            target=user,
-            source_display_name="baz"
-        )
+        call_redirect_to = CallInvite(target=user, source_display_name="baz")
 
         call_automation_client = CallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send)
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
         call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
         with pytest.raises(ValueError) as e:
             call_automation_client.redirect_call(
-                self.incoming_call_context,
-                user,
-                voip_headers={"foo": "bar"},
-                source_display_name="baz"
+                self.incoming_call_context, user, voip_headers={"foo": "bar"}, source_display_name="baz"
             )
         assert "unexpected kwargs" in str(e.value)
 
@@ -240,6 +258,7 @@ class TestCallAutomationClient(unittest.TestCase):
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
+        call_automation_client = CallAutomationClient(
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
+        )
         call_automation_client.reject_call(self.incoming_call_context)
