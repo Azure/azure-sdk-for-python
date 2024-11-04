@@ -23,12 +23,9 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     Make sure the application_insights access is setup correctly, please refer to the documentation for more details on how to get resource_id and other configs needed.
 """
-
-import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency, RecurrenceSchedule
-import pprint
+from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency
 
 # Variables
 PROJECT_CONNECTION_STRING = "<project_connection_string>"
@@ -90,8 +87,8 @@ def create_schedule():
 
 def get_schedule(name):
     try:
-        evaluation_schedule = project_client.evaluations.get_schedule(name)
-        pprint.pprint(evaluation_schedule)
+        get_evaluation_schedule = project_client.evaluations.get_schedule(name)
+        print(f"Successfully fetched the online evaluation schedule - {get_evaluation_schedule.name}")
     except Exception as e:
         print(f"Error occurred while fetching the online evaluation schedule - {name}, Error={e}")
 
