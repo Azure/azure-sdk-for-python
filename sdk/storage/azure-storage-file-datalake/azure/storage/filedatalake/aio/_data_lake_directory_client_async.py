@@ -164,6 +164,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword str client_transaction_id:
+            UUID that identifies a request and provides idempotency on retries. Max length is 32.
+            All retries on the same request should have the same transaction ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -366,6 +369,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
+        :keyword str client_transaction_id:
+            UUID that identifies a request and provides idempotency on retries. Max length is 32.
+            All retries on the same request should have the same transaction ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -467,6 +473,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword str client_transaction_id:
+            UUID that identifies a request and provides idempotency on retries. Max length is 32.
+            All retries on the same request should have the same transaction ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
