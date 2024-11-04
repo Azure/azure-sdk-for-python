@@ -33,8 +33,10 @@ class PopTokenRequestOptions(TokenRequestOptions):
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     """Uses an authentication broker to interactively sign in a user.
 
-    Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported. Users on macOS and Linux
-    will be authenticated through a browser.
+    Currently, only the following brokers are supported:
+    - Web Account Manager (WAM) on Windows
+    - Company Portal on macOS
+    Users on Linux will be authenticated through the browser.
 
     :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
