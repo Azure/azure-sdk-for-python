@@ -319,8 +319,8 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
                 return False
         else:
             try:
-                # Response/ResultCode comparand should be interpreted as float
-                float(comparand)
+                # Response/ResultCode comparand should be interpreted as integer
+                int(comparand)
             except Exception:  # pylint: disable=broad-except,invalid-name
                 return False
     elif name == "Success":
@@ -342,13 +342,13 @@ def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
     # examples: "14.6:56:7.89" = 1234567890 ms, "0.0:0:0.2" = 200 ms
     total_milliseconds = None
     try:
-        days, time = time_stamp.split('.')
-        hours, minutes, seconds = map(int, time.split(':'))
-        total_milliseconds = (
-            int(days) * 24 * 60 * 60 * 1000 +  # days to milliseconds
+        days_hours, minutes, seconds = time_stamp.split(':')
+        days, hours = map(float, days_hours.split('.'))
+        total_milliseconds = int(
+            days * 24 * 60 * 60 * 1000 +  # days to milliseconds
             hours * 60 * 60 * 1000 +           # hours to milliseconds
-            minutes * 60 * 1000 +               # minutes to milliseconds
-            seconds * 1000                      # seconds to milliseconds
+            float(minutes) * 60 * 1000 +               # minutes to milliseconds
+            float(seconds) * 1000                      # seconds to milliseconds
         )
     except Exception:  # pylint: disable=broad-except,invalid-name
         pass
