@@ -180,14 +180,14 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[float]]]]:
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluates retrieval for a for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
-        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
 
     def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
@@ -202,7 +202,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
-        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[str, float]]]]
         """
         query = kwargs.pop("query", None)
         context = kwargs.pop("context", None)

@@ -55,13 +55,11 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
         self,
         credential,
         azure_ai_project,
-        eval_last_turn: bool = False,
     ):
         super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            eval_last_turn=eval_last_turn,
         )
 
     @overload

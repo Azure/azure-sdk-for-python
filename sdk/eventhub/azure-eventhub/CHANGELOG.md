@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added logging to track received messages.
+
 ## 5.12.2 (2024-10-02)
 
 ### Bugs Fixed

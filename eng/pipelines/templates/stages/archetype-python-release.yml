@@ -9,7 +9,6 @@ parameters:
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
   PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -232,6 +231,15 @@ stages:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
                           - download: current
+
+                          # py2docfx requires Python >= 3.11
+                          - task: UsePythonVersion@0
+                            displayName: 'Use Python 3.11'
+                            inputs:
+                              versionSpec: '3.11'
+
+                          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -244,7 +252,6 @@ stages:
                                 - docs-ref-services/
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-                              DocValidationImageId: ${{parameters.DocValidationImageId}}
 
           - deployment: UpdatePackageVersion
             displayName: "Update Package Version"
@@ -351,6 +358,14 @@ stages:
               Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
             displayName: Show visible artifacts
 
+          # py2docfx requires Python >= 3.11
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.11'
+            inputs:
+              versionSpec: '3.11'
+
+          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
             parameters:
               PackageInfoLocations:
@@ -366,6 +381,5 @@ stages:
                 - docs-ref-services/
                 - metadata/
               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-              DocValidationImageId: ${{parameters.DocValidationImageId}}
 
           - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml

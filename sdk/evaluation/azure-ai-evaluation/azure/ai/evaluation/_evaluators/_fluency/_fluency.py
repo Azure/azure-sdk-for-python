@@ -55,7 +55,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         response: str,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate fluency in given query/response
+        """Evaluate fluency in given response
 
         :keyword response: The response to be evaluated.
         :paramtype response: str
