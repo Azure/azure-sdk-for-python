@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
+from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,29 +21,21 @@ from azure.mgmt.loganalytics import LogAnalyticsManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = LogAnalyticsManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="00000000-0000-0000-0000-00000000000",
     )
 
-    response = client.tables.begin_create_or_update(
-        resource_group_name="oiautorest6685",
-        workspace_name="oiautorest6685",
-        table_name="AzureNetworkFlow",
-        parameters={
-            "properties": {
-                "retentionInDays": 45,
-                "schema": {"columns": [{"name": "MyNewColumn", "type": "guid"}], "name": "AzureNetworkFlow"},
-                "totalRetentionInDays": 70,
-            }
-        },
+    response = client.tables.begin_update(
+        resource_group_name='oiautorest6685',
+        workspace_name='oiautorest6685',
+        table_name='AzureNetworkFlow',
+        parameters={'properties': {'retentionInDays': 45, 'schema': {'columns': [{'name': 'MyNewColumn', 'type': 'guid'}], 'name': 'AzureNetworkFlow'}, 'totalRetentionInDays': 70}},
     ).result()
     print(response)
-
 
 # x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2022-10-01/examples/TablesUpsert.json
 if __name__ == "__main__":
     main()
+   main()
