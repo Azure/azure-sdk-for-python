@@ -648,3 +648,13 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_missing_inputs(self, questions_file):
+        """Test we are raising exception if required input is missing in data."""
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=questions_file,
+                target=_target_fn,
+                evaluators={"f1": F1ScoreEvaluator()},
+            )
+        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]
