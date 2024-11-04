@@ -33,6 +33,7 @@ from azure.storage.filedatalake import (
     generate_file_system_sas,
     ResourceTypes
 )
+from azure.storage.filedatalake._shared.response_handlers import return_response_headers
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -1632,6 +1633,34 @@ class TestFile(StorageRecordedTestCase):
         data = b'Hello world'
         fc.get_file_properties()
         fc.upload_data(data, overwrite=True)
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_rename_file_with_client_transaction_id(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        create_client_transaction_id = 'd9a752bb-3702-4336-b4fb-470bdfad'
+        rename_client_transaction_id = '6a9a3e11-5074-42f3-a15e-d445548d'
+
+        try:
+            file_client = directory_client.get_file_client('filename')
+            file_client.create_file(client_transaction_id=create_client_transaction_id)
+            props = file_client._client.path.get_properties(cls=return_response_headers)
+            assert props["client_transaction_id"] == create_client_transaction_id
+
+            new_file_client = file_client.rename_file(
+                new_name=self.file_system_name + '/' + 'newname',
+                client_transaction_id=rename_client_transaction_id
+            )
+            props = new_file_client._client.path.get_properties(cls=return_response_headers)
+            assert props["client_transaction_id"] == rename_client_transaction_id
+        finally:
+            directory_client.delete_directory()
 
 
 # ------------------------------------------------------------------------------

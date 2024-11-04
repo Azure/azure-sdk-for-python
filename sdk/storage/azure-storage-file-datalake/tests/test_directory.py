@@ -1633,7 +1633,7 @@ class TestDirectory(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
-    def test_create_rename_directory(self, **kwargs):
+    def test_create_rename_directory_with_client_transaction_id(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
