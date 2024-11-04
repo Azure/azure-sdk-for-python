@@ -29,14 +29,17 @@ from azure.ai.projects.models import ApplicationInsightsConfiguration, Evaluator
 import pprint
 
 # Variables
+# Change the values of the below constants
+SAMPLE_NAME = "<sample-name>"
+EVALUATOR_NAME = "<evaluator-name>"
+
+# Copy the values from bug bash document
 PROJECT_CONNECTION_STRING = "<project_connection_string>"
 SAMPLE_RESOURCE_ID = "<sample-resource-id>"
 SAMPLE_QUERY = "<sample-query>"
 SAMPLE_EVALUATOR_ID = "<sample-evaluator-id>"
-SAMPLE_NAME = "<sample-name>"
-EVALUATOR_NAME = "<evaluator-name>"
 APP_INSIGHTS_CONNECTION_STRING = "<app-insights-connection-string>"
-SERVICE_NAME = "sample-service-name"
+SERVICE_NAME = "<service-name>"
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
