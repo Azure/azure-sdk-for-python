@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added broker on MacOs support.
+- Added broker on macOS support.
 
 ### Breaking Changes
 
