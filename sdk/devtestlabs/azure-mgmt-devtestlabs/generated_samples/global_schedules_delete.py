@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,11 +30,10 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.global_schedules.delete(
+    client.global_schedules.delete(
         resource_group_name="resourceGroupName",
         name="labvmautostart",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/GlobalSchedules_Delete.json

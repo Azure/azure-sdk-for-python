@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.users.begin_delete(
+    client.users.begin_delete(
         resource_group_name="resourceGroupName",
         lab_name="{devtestlabName}",
         name="{userName}",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/Users_Delete.json

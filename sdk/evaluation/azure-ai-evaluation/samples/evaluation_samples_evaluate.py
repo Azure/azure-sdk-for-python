@@ -195,7 +195,7 @@ class EvaluationEvaluateSamples(object):
         }
 
         fluency_evaluator = FluencyEvaluator(model_config=model_config)
-        fluency_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
+        fluency_evaluator(response="Paris is the capital of France.")
         # [END fluency_evaluator]
 
         # [START gleu_score_evaluator]
@@ -279,7 +279,6 @@ class EvaluationEvaluateSamples(object):
         relevance_eval(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital.",
         )
         # [END relevance_evaluator]
 

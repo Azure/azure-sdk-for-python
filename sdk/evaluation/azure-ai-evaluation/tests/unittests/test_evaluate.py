@@ -9,6 +9,13 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from azure.ai.evaluation import (
+    ContentSafetyEvaluator,
+    F1ScoreEvaluator,
+    GroundednessEvaluator,
+    ProtectedMaterialEvaluator,
+    evaluate,
+)
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -16,15 +23,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _rename_columns_conditionally,
 )
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
-from azure.ai.evaluation import (
-    evaluate,
-    ContentSafetyEvaluator,
-    F1ScoreEvaluator,
-    GroundednessEvaluator,
-    ProtectedMaterialEvaluator,
-)
-from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def _get_file(name):
@@ -111,14 +111,14 @@ def _question_answer_override_target(query, response):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestEvaluate:
-    def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
+    def test_evaluate_evaluators_not_a_dict(self, mock_model_config, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
-                data="data",
+                data=questions_file,
                 evaluators=[GroundednessEvaluator(model_config=mock_model_config)],
             )
 
-        assert "evaluators parameter must be a dictionary." in exc_info.value.args[0]
+        assert "The 'evaluators' parameter must be a dictionary." in exc_info.value.args[0]
 
     def test_evaluate_invalid_data(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -127,7 +127,26 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "data parameter must be a string." in exc_info.value.args[0]
+        assert "The 'data' parameter must be a string or a path-like object." in exc_info.value.args[0]
+
+    def test_evaluate_data_not_exist(self, mock_model_config):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data="not_exist.jsonl",
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            )
+
+        assert "The input data file path 'not_exist.jsonl' does not exist." in exc_info.value.args[0]
+
+    def test_target_not_callable(self, mock_model_config, questions_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+                target="not_callable",
+            )
+
+        assert "The 'target' parameter must be a callable function." in exc_info.value.args[0]
 
     def test_evaluate_invalid_jsonl_data(self, mock_model_config, invalid_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -136,8 +155,8 @@ class TestEvaluate:
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "Failed to load data from " in exc_info.value.args[0]
-        assert "Confirm that it is valid jsonl data." in exc_info.value.args[0]
+        assert "Unable to load data from " in exc_info.value.args[0]
+        assert "Please ensure the input is valid JSONL format." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -367,14 +386,28 @@ class TestEvaluate:
         df_actuals = _rename_columns_conditionally(df)
         assert_frame_equal(df_actuals.sort_index(axis=1), df_expected.sort_index(axis=1))
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
-        output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+    def test_evaluate_output_dir_not_exist(self, mock_model_config, questions_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+                output_path="./not_exist_dir/output.jsonl",
+            )
+
+        assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
+
+    @pytest.mark.parametrize("use_relative_path", [True, False])
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        # output_path is a file
+        if use_relative_path:
+            output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+        else:
+            output_path = "eval_test_results.jsonl"
+
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
             output_path=output_path,
-            _use_pf_client=use_pf_client,
         )
 
         assert result is not None
@@ -386,6 +419,9 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+        os.remove(output_path)
+
+        # output_path is a directory
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
@@ -528,7 +564,7 @@ class TestEvaluate:
 
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
-        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval, NoInputEval
+        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
         # All variants work with both keyworded inputs
         results = evaluate(
@@ -612,3 +648,13 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_missing_inputs(self, questions_file):
+        """Test we are raising exception if required input is missing in data."""
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=questions_file,
+                target=_target_fn,
+                evaluators={"f1": F1ScoreEvaluator()},
+            )
+        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]

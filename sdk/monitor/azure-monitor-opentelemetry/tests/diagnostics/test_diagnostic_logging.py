@@ -33,7 +33,7 @@ def clear_file(file_path):
 def check_file_for_messages(file_path, level, messages):
     with open(file_path, "r") as f:
         f.seek(0)
-        for (message, message_id) in messages:
+        for message, message_id in messages:
             json = loads(f.readline())
             assert json["time"]
             assert json["level"] == level
