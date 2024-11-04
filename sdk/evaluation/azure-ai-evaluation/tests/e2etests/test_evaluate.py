@@ -192,7 +192,8 @@ class TestEvaluate:
         finally:
             os.chdir(original_working_dir)
 
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, azure_cred, data_file):
+    @pytest.mark.parametrize("parallel", [True, False])
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, azure_cred, data_file, parallel):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
@@ -200,7 +201,7 @@ class TestEvaluate:
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
         content_safety_eval = ContentSafetyEvaluator(
-            credential=azure_cred, azure_ai_project=project_scope, _parallel=False
+            credential=azure_cred, azure_ai_project=project_scope, _parallel=parallel
         )
 
         # run the evaluation
