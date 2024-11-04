@@ -26,7 +26,7 @@
   - Added enum `ReplicationModeType`
   - Added enum `RoleChangeType`
   - Added enum `SeedingModeType`
-  - Model `DistributedAvailabilityGroupsOperations` added method `begin_failover`
+  - Operation group `DistributedAvailabilityGroupsOperations` added method `begin_failover`
   - Model `DistributedAvailabilityGroupsOperations` added method `begin_set_role`
 
 ### Breaking Changes
