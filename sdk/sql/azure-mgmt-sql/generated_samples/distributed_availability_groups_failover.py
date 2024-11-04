@@ -15,7 +15,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python update_managed_short_term_retention_policy.py
+    python distributed_availability_groups_failover.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,15 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_backup_short_term_retention_policies.begin_update(
-        resource_group_name="resourceGroup",
-        managed_instance_name="testsvr",
-        database_name="testdb",
-        policy_name="default",
-        parameters={"properties": {"retentionDays": 14}},
+    response = client.distributed_availability_groups.begin_failover(
+        resource_group_name="testrg",
+        managed_instance_name="testcl",
+        distributed_availability_group_name="dag",
+        parameters={"failoverType": "ForcedAllowDataLoss"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/UpdateManagedShortTermRetentionPolicy.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-08-01-preview/examples/DistributedAvailabilityGroupsFailover.json
 if __name__ == "__main__":
     main()
