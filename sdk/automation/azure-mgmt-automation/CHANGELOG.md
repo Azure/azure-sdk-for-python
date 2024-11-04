@@ -1,5 +1,53 @@
 # Release History
 
+## 1.1.0b4 (2024-11-04)
+
+### Features Added
+
+  - Method `AutomationClient.convert_graph_runbook_content` has a new overload `def convert_graph_runbook_content(self: None, resource_group_name: str, automation_account_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `AgentRegistrationInformationOperations.regenerate_key` has a new overload `def regenerate_key(self: None, resource_group_name: str, automation_account_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `AutomationAccountOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `AutomationAccountOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `AutomationClientOperationsMixin.convert_graph_runbook_content` has a new overload `def convert_graph_runbook_content(self: None, resource_group_name: str, automation_account_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `CertificateOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, certificate_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `CertificateOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, certificate_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ConnectionOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, connection_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ConnectionOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, connection_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ConnectionTypeOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, connection_type_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `CredentialOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, credential_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `CredentialOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, credential_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `DscCompilationJobOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, automation_account_name: str, compilation_job_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `DscNodeConfigurationOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, automation_account_name: str, node_configuration_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `DscNodeOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, node_id: str, dsc_node_update_parameters: IO[bytes], content_type: str)`
+  - Method `HybridRunbookWorkerGroupOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, hybrid_runbook_worker_group_name: str, hybrid_runbook_worker_group_creation_parameters: IO[bytes], content_type: str)`
+  - Method `HybridRunbookWorkerGroupOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, hybrid_runbook_worker_group_name: str, hybrid_runbook_worker_group_updation_parameters: IO[bytes], content_type: str)`
+  - Method `HybridRunbookWorkersOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, hybrid_runbook_worker_group_name: str, hybrid_runbook_worker_id: str, hybrid_runbook_worker_creation_parameters: IO[bytes], content_type: str)`
+  - Method `HybridRunbookWorkersOperations.move` has a new overload `def move(self: None, resource_group_name: str, automation_account_name: str, hybrid_runbook_worker_group_name: str, hybrid_runbook_worker_id: str, hybrid_runbook_worker_move_parameters: IO[bytes], content_type: str)`
+  - Method `JobOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, job_name: str, parameters: IO[bytes], client_request_id: Optional[str], content_type: str)`
+  - Method `JobScheduleOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, job_schedule_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `ModuleOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, module_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ModuleOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, module_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, automation_account_name: str, private_endpoint_connection_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `Python2PackageOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, package_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `Python2PackageOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, package_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `Python3PackageOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, package_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `Python3PackageOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, package_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `RunbookOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, runbook_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `RunbookOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, runbook_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ScheduleOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, schedule_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ScheduleOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, schedule_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `SoftwareUpdateConfigurationsOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, software_update_configuration_name: str, parameters: IO[bytes], client_request_id: Optional[str], content_type: str)`
+  - Method `SourceControlOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, source_control_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `SourceControlOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, source_control_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `SourceControlSyncJobOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, source_control_name: str, source_control_sync_job_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `TestJobOperations.create` has a new overload `def create(self: None, resource_group_name: str, automation_account_name: str, runbook_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `VariableOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, variable_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `VariableOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, variable_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `WatcherOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, watcher_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `WatcherOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, watcher_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `WebhookOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, automation_account_name: str, webhook_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `WebhookOperations.update` has a new overload `def update(self: None, resource_group_name: str, automation_account_name: str, webhook_name: str, parameters: IO[bytes], content_type: str)`
+
 ## 1.1.0b3 (2022-12-12)
 
 ### Features Added
