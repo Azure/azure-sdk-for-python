@@ -14,79 +14,10 @@
   - Enum `SourceControlType` added member `STORAGE_ACCOUNT`
   - Added enum `ManagedIdentityType`
   - Added model `ServiceRunnerList`
-  - Model `ArmTemplatesOperations` added parameter `kwargs` in method `__init__`
-  - Model `ArtifactSourcesOperations` added parameter `kwargs` in method `__init__`
-  - Model `ArtifactsOperations` added parameter `kwargs` in method `__init__`
-  - Model `CostsOperations` added parameter `kwargs` in method `__init__`
-  - Model `CustomImagesOperations` added parameter `kwargs` in method `__init__`
-  - Model `DisksOperations` added parameter `kwargs` in method `__init__`
-  - Model `EnvironmentsOperations` added parameter `kwargs` in method `__init__`
-  - Model `FormulasOperations` added parameter `kwargs` in method `__init__`
-  - Model `GalleryImagesOperations` added parameter `kwargs` in method `__init__`
-  - Model `GlobalSchedulesOperations` added parameter `kwargs` in method `__init__`
-  - Model `LabsOperations` added parameter `kwargs` in method `__init__`
-  - Model `NotificationChannelsOperations` added parameter `kwargs` in method `__init__`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Model `PoliciesOperations` added parameter `kwargs` in method `__init__`
-  - Model `PolicySetsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ProviderOperationsOperations` added parameter `kwargs` in method `__init__`
-  - Model `SchedulesOperations` added parameter `kwargs` in method `__init__`
-  - Model `SecretsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ServiceFabricSchedulesOperations` added parameter `kwargs` in method `__init__`
-  - Model `ServiceFabricsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ServiceRunnersOperations` added parameter `kwargs` in method `__init__`
-  - Model `UsersOperations` added parameter `kwargs` in method `__init__`
-  - Model `VirtualMachineSchedulesOperations` added parameter `kwargs` in method `__init__`
-  - Model `VirtualMachinesOperations` added parameter `kwargs` in method `__init__`
-  - Model `VirtualNetworksOperations` added parameter `kwargs` in method `__init__`
-  - Method `ArtifactSourcesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, artifact_source: ArtifactSource, content_type: str)`
-  - Method `ArtifactSourcesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, artifact_source: IO[bytes], content_type: str)`
-  - Method `ArtifactsOperations.generate_arm_template` has a new overload `def generate_arm_template(self: None, resource_group_name: str, lab_name: str, artifact_source_name: str, name: str, generate_arm_template_request: GenerateArmTemplateRequest, content_type: str)`
-  - Method `ArtifactsOperations.generate_arm_template` has a new overload `def generate_arm_template(self: None, resource_group_name: str, lab_name: str, artifact_source_name: str, name: str, generate_arm_template_request: IO[bytes], content_type: str)`
-  - Method `CostsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, lab_cost: LabCost, content_type: str)`
-  - Method `CostsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, lab_cost: IO[bytes], content_type: str)`
-  - Method `CustomImagesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, custom_image: CustomImage, content_type: str)`
-  - Method `CustomImagesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, custom_image: IO[bytes], content_type: str)`
-  - Method `DisksOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, disk: Disk, content_type: str)`
-  - Method `DisksOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, disk: IO[bytes], content_type: str)`
-  - Method `EnvironmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, dtl_environment: DtlEnvironment, content_type: str)`
-  - Method `EnvironmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, dtl_environment: IO[bytes], content_type: str)`
-  - Method `FormulasOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, formula: Formula, content_type: str)`
-  - Method `FormulasOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, formula: IO[bytes], content_type: str)`
-  - Method `GlobalSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, name: str, schedule: Schedule, content_type: str)`
-  - Method `GlobalSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, name: str, schedule: IO[bytes], content_type: str)`
-  - Method `LabsOperations.begin_create_environment` has a new overload `def begin_create_environment(self: None, resource_group_name: str, name: str, lab_virtual_machine_creation_parameter: LabVirtualMachineCreationParameter, content_type: str)`
-  - Method `LabsOperations.begin_create_environment` has a new overload `def begin_create_environment(self: None, resource_group_name: str, name: str, lab_virtual_machine_creation_parameter: IO[bytes], content_type: str)`
-  - Method `LabsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, name: str, lab: Lab, content_type: str)`
-  - Method `LabsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, name: str, lab: IO[bytes], content_type: str)`
-  - Method `NotificationChannelsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, notification_channel: NotificationChannel, content_type: str)`
-  - Method `NotificationChannelsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, notification_channel: IO[bytes], content_type: str)`
-  - Method `PoliciesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, policy_set_name: str, name: str, policy: Policy, content_type: str)`
-  - Method `PoliciesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, policy_set_name: str, name: str, policy: IO[bytes], content_type: str)`
-  - Method `SchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, schedule: Schedule, content_type: str)`
-  - Method `SchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, schedule: IO[bytes], content_type: str)`
-  - Method `SecretsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, secret: Secret, content_type: str)`
-  - Method `SecretsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, secret: IO[bytes], content_type: str)`
-  - Method `ServiceFabricSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, service_fabric_name: str, name: str, schedule: Schedule, content_type: str)`
-  - Method `ServiceFabricSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, service_fabric_name: str, name: str, schedule: IO[bytes], content_type: str)`
-  - Method `ServiceFabricsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, service_fabric: ServiceFabric, content_type: str)`
-  - Method `ServiceFabricsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, user_name: str, name: str, service_fabric: IO[bytes], content_type: str)`
-  - Method `ServiceRunnersOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, service_runner: ServiceRunner, content_type: str)`
-  - Method `ServiceRunnersOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, service_runner: IO[bytes], content_type: str)`
-  - Method `UsersOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, user: User, content_type: str)`
-  - Method `UsersOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, user: IO[bytes], content_type: str)`
-  - Method `VirtualMachineSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, virtual_machine_name: str, name: str, schedule: Schedule, content_type: str)`
-  - Method `VirtualMachineSchedulesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, lab_name: str, virtual_machine_name: str, name: str, schedule: IO[bytes], content_type: str)`
-  - Method `VirtualMachinesOperations.begin_add_data_disk` has a new overload `def begin_add_data_disk(self: None, resource_group_name: str, lab_name: str, name: str, data_disk_properties: DataDiskProperties, content_type: str)`
-  - Method `VirtualMachinesOperations.begin_add_data_disk` has a new overload `def begin_add_data_disk(self: None, resource_group_name: str, lab_name: str, name: str, data_disk_properties: IO[bytes], content_type: str)`
-  - Method `VirtualMachinesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, lab_virtual_machine: LabVirtualMachine, content_type: str)`
-  - Method `VirtualMachinesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, lab_virtual_machine: IO[bytes], content_type: str)`
-  - Method `VirtualNetworksOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, virtual_network: VirtualNetwork, content_type: str)`
-  - Method `VirtualNetworksOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, lab_name: str, name: str, virtual_network: IO[bytes], content_type: str)`
 
 ### Breaking Changes
 
-  - Method `DevTestLabsClient.__init__` parameter `base_url` changed default value from `None` to `str`
+  - Parameter `base_url` of model `DevTestLabsClient` is now required
   - Model `ApplicableScheduleFragment` deleted or renamed its instance variable `lab_vms_shutdown`
   - Model `ApplicableScheduleFragment` deleted or renamed its instance variable `lab_vms_startup`
   - Model `ArtifactSourceFragment` deleted or renamed its instance variable `display_name`
@@ -129,10 +60,10 @@
   - Model `LabFragment` deleted or renamed its instance variable `announcement`
   - Model `LabFragment` deleted or renamed its instance variable `support`
   - Model `LabFragment` deleted or renamed its instance variable `extended_properties`
-  - Method `LabVirtualMachine.__init__` parameter `owner_object_id` changed default value from `None` to `str`
-  - Method `LabVirtualMachine.__init__` parameter `disallow_public_ip_address` changed default value from `None` to `bool`
-  - Method `LabVirtualMachine.__init__` parameter `allow_claim` changed default value from `None` to `bool`
-  - Method `LabVirtualMachine.__init__` parameter `storage_type` changed default value from `None` to `str`
+  - Parameter `owner_object_id` of model `LabVirtualMachine` is now required
+  - Parameter `disallow_public_ip_address` of model `LabVirtualMachine` is now required
+  - Parameter `allow_claim` of model `LabVirtualMachine` is now required
+  - Parameter `storage_type` of model `LabVirtualMachine` is now required
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `created_by_user_id`
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `created_by_user`
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `compute_id`
@@ -141,10 +72,10 @@
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `artifact_deployment_status`
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `virtual_machine_creation_source`
   - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `last_known_power_state`
-  - Method `LabVirtualMachineCreationParameter.__init__` parameter `owner_object_id` changed default value from `None` to `str`
-  - Method `LabVirtualMachineCreationParameter.__init__` parameter `disallow_public_ip_address` changed default value from `None` to `bool`
-  - Method `LabVirtualMachineCreationParameter.__init__` parameter `allow_claim` changed default value from `None` to `bool`
-  - Method `LabVirtualMachineCreationParameter.__init__` parameter `storage_type` changed default value from `None` to `str`
+  - Parameter `owner_object_id` of model `LabVirtualMachineCreationParameter` is now required
+  - Parameter `disallow_public_ip_address` of model `LabVirtualMachineCreationParameter` is now required
+  - Parameter `allow_claim` of model `LabVirtualMachineCreationParameter` is now required
+  - Parameter `storage_type` of model `LabVirtualMachineCreationParameter` is now required
   - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `notes`
   - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `owner_object_id`
   - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `owner_user_principal_name`
@@ -259,22 +190,6 @@
   - Method `VirtualMachineSchedulesOperations.update` deleted or renamed its parameter `schedule` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.update` deleted or renamed its parameter `lab_virtual_machine` of kind `positional_or_keyword`
   - Method `VirtualNetworksOperations.update` deleted or renamed its parameter `virtual_network` of kind `positional_or_keyword`
-  - Method `DisksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'disk', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']`
-  - Method `UsersOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'user', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `SchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'schedule', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `GlobalSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'schedule', 'kwargs']` to `['self', 'resource_group_name', 'name', 'tags', 'kwargs']`
-  - Method `ArtifactSourcesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'artifact_source', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `CustomImagesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'custom_image', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `VirtualMachinesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'lab_virtual_machine', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `ServiceFabricsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'service_fabric', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']`
-  - Method `VirtualMachineSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'virtual_machine_name', 'name', 'schedule', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'virtual_machine_name', 'name', 'tags', 'kwargs']`
-  - Method `VirtualNetworksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'virtual_network', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `LabsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'lab', 'kwargs']` to `['self', 'resource_group_name', 'name', 'tags', 'kwargs']`
-  - Method `ServiceFabricSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'service_fabric_name', 'name', 'schedule', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'service_fabric_name', 'name', 'tags', 'kwargs']`
-  - Method `PoliciesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'policy_set_name', 'name', 'policy', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'policy_set_name', 'name', 'tags', 'kwargs']`
-  - Method `FormulasOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'formula', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
-  - Method `EnvironmentsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'dtl_environment', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']`
-  - Method `NotificationChannelsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'notification_channel', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']`
 
 ## 10.0.0b1 (2022-10-28)
 
