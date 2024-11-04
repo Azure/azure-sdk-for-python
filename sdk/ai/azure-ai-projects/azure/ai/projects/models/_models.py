@@ -928,13 +928,16 @@ class EvaluationSchedule(_model_base.Model):
     :vartype description: str
     :ivar system_data: Metadata containing createdBy and modifiedBy information.
     :vartype system_data: ~azure.ai.projects.models.SystemData
-    :ivar provisioning_status: Status of the evaluation. It is set by service and is read-only.
-    :vartype provisioning_status: str
+    :ivar provisioning_state: Provisioning State of the evaluation. It is set by service and is
+     read-only.
+    :vartype provisioning_state: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
     :vartype tags: dict[str, str]
     :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
      property cannot be removed.
     :vartype properties: dict[str, str]
+    :ivar is_enabled: Enabled status of the evaluation. It is set by service and is read-only.
+    :vartype is_enabled: str
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar trigger: Trigger for the evaluation. Required.
@@ -950,13 +953,15 @@ class EvaluationSchedule(_model_base.Model):
      evaluation and is mutable."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata containing createdBy and modifiedBy information."""
-    provisioning_status: Optional[str] = rest_field(name="provisioningStatus", visibility=["read"])
-    """Status of the evaluation. It is set by service and is read-only."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Provisioning State of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
     properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
+    is_enabled: Optional[str] = rest_field(name="isEnabled", visibility=["read"])
+    """Enabled status of the evaluation. It is set by service and is read-only."""
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
     trigger: "_models.Trigger" = rest_field()
