@@ -1,5 +1,23 @@
 # Release History
 
+## 2.0.0 (2024-11-04)
+
+### Features Added
+
+  - Model `MarketplaceOrderingAgreements` added property `client_side_validation`
+  - Model `OperationDisplay` added property `description`
+  - Added model `OldAgreementTerms`
+  - Added model `OldAgreementTermsList`
+  - Added enum `State`
+  - Model `MarketplaceAgreementsOperations` added parameter `kwargs` in method `__init__`
+  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Method `MarketplaceAgreementsOperations.create` has a new overload `def create(self: None, offer_type: Union[str, OfferType], publisher_id: str, offer_id: str, plan_id: str, parameters: AgreementTerms, content_type: str)`
+  - Method `MarketplaceAgreementsOperations.create` has a new overload `def create(self: None, offer_type: Union[str, OfferType], publisher_id: str, offer_id: str, plan_id: str, parameters: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Method `MarketplaceOrderingAgreements.__init__` parameter `base_url` changed default value from `None` to `str`
+
 ## 1.2.0b1 (2022-10-28)
 
 ### Features Added
