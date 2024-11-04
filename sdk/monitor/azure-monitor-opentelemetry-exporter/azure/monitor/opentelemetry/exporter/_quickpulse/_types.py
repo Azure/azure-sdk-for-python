@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # pylint: disable=protected-access
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import Dict, no_type_check
 
 from opentelemetry.sdk._logs import LogRecord
@@ -69,9 +69,13 @@ class _RequestData(_TelemetryData):
             success=success,
             name=span.name,
             response_code=response_code,
-            url=str(url),
+            url=url or "",
             custom_dimensions=attributes,
         )
+
+    @staticmethod
+    def _get_field_names():
+        return [field.name.replace('_', '').lower() for field in fields(_RequestData)]
 
 
 @dataclass
@@ -146,6 +150,10 @@ class _DependencyData(_TelemetryData):
             data=data,
             custom_dimensions=attributes,
         )
+    
+    @staticmethod
+    def _get_field_names():
+        return [field.name.replace('_', '').lower() for field in fields(_DependencyData)]
 
 
 @dataclass
@@ -174,3 +182,8 @@ class _TraceData(_TelemetryData):
             message=str(log_record.body),
             custom_dimensions=log_record.attributes,
         )
+
+
+_DEPENDENCY_DATA_FIELD_NAMES = _DependencyData._get_field_names()
+_REQUEST_DATA_FIELD_NAMES = _RequestData._get_field_names()
+_KNOWN_STRING_FIELD_NAMES = ("Url", "Name", "Target", "Type", "Data", "Message", "Exception.Message", "Exception.StackTrace")

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from dataclasses import fields
 from datetime import datetime, timedelta, timezone
 import json
 from typing import Dict, List, Optional, Tuple, Union
@@ -31,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     FilterInfo,
     MetricPoint,
     MonitoringDataPoint,
+    PredicateType,
     RemoteDependency as RemoteDependencyDocument,
     Request as RequestDocument,
     TelemetryType,
@@ -46,6 +48,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_quickpulse_projection_map,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DEPENDENCY_DATA_FIELD_NAMES,
+    _KNOWN_STRING_FIELD_NAMES,
+    _REQUEST_DATA_FIELD_NAMES,
     _DependencyData,
     _ExceptionData,
     _RequestData,
@@ -185,6 +190,9 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
         # Skip duplicate ids
         if metric_info.id in seen_ids:
             continue
+        # Validate derived metric info
+        if not _validate_derived_metric_info(metric_info):
+            continue
         telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
         # TODO: Filter out invalid configs: telemetry type, operand
         # TODO: Rename exception fields
@@ -236,6 +244,109 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
     #     # TODO: apply filter logic
     #     pass
     return True
+
+
+# Validation
+
+def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
+    # Validate telemetry type
+    if not isinstance(metric_info.telemetry_type, TelemetryType):
+        return False
+    # Only REQUEST, DEPENDENCY, EXCEPTION, TRACE are supported
+    if not metric_info.telemetry_type in (TelemetryType.REQUEST, TelemetryType.DEPENDENCY, TelemetryType.EXCEPTION, TelemetryType.TRACE):
+        return False
+    # Check for CustomMetric projection
+    if metric_info.projection and metric_info.projection.startswith("CustomMetrics."):
+        return False
+    # Validate filters
+    for filter_group in metric_info.filter_groups:
+        for filter in filter_group.filters:
+            # Validate field names to telemetry type
+            # Validate predicate and comparands
+            if not _validate_filter_field_name(filter, TelemetryType(metric_info.telemetry_type)) or \
+            not _validate_filter_predicate_and_comparand(filter):
+                return False
+    return True
+
+
+def _validate_filter_field_name(filter: FilterInfo, telemetry_type: TelemetryType) -> bool:
+    name = filter.field_name
+    if not name:
+        return False
+    if name.startswith("CustomMetrics"):
+        return False
+    if name.startswith("CustomDimensions") or name == "*":
+        return True
+    name = name.lower()
+    if telemetry_type == TelemetryType.DEPENDENCY:
+        if name not in _DEPENDENCY_DATA_FIELD_NAMES:
+            return False
+    elif telemetry_type == TelemetryType.REQUEST:
+        if name not in _REQUEST_DATA_FIELD_NAMES:
+            return False
+    elif telemetry_type == TelemetryType.EXCEPTION:
+        if name not in ("exception.message", "exception.stacktrace"):
+            return False
+    elif telemetry_type == TelemetryType.TRACE:
+        if name != "message":
+            return False
+    else:
+        return True
+    return True
+
+
+def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
+    name = filter.field_name
+    predicate = filter.predicate
+    comparand = filter.comparand
+    if predicate not in PredicateType:
+        return False
+    if not comparand:
+        return False
+    if name == "*" and predicate in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
+        return False
+    if name in ("ResultCode", "ResponseCode", "Duration"):
+        if predicate in (PredicateType.CONTAINS, PredicateType.DOES_NOT_CONTAIN):
+            return False
+        if name == "Duration":
+            # Duration comparand should be a string timestamp
+            if not _filter_time_stamp_to_ms(comparand):
+                return False
+        else:
+            result = None
+            try:
+                # Response/ResultCode comparand should be interpreted as float
+                result = float(comparand)
+            except Exception:
+                pass
+            if result:
+                return False
+    elif name == "Success":
+        if predicate not in (PredicateType.EQUAL, PredicateType.NOT_EQUAL):
+            return False
+        comparand = comparand.lower()
+        if comparand not in ("true", "false"):
+            return False
+    elif name in _KNOWN_STRING_FIELD_NAMES or name.startswith("CustomDimensions."):
+        if predicate in (PredicateType.GREATER_THAN, PredicateType.GREATER_THAN_OR_EQUAL, PredicateType.LESS_THAN, PredicateType.LESS_THAN_OR_EQUAL):
+            return False
+    return True
+
+        
+def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
+    total_milliseconds = None
+    try:
+        days, time = time_stamp.split('.')
+        hours, minutes, seconds = map(int, time.split(':'))
+        total_milliseconds = (
+            int(days) * 24 * 60 * 60 * 1000 +  # days to milliseconds
+            hours * 60 * 60 * 1000 +           # hours to milliseconds
+            minutes * 60 * 1000 +               # minutes to milliseconds
+            seconds * 1000                      # seconds to milliseconds
+        )
+    except Exception:  # pylint: disable=broad-except,invalid-name
+        pass
+    return total_milliseconds
 
 
 # Projections
