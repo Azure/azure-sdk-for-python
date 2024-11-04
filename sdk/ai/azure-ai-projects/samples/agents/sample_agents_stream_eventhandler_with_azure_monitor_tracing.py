@@ -25,7 +25,7 @@ USAGE:
 
 """
 
-import os,sys
+import os, sys
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
@@ -79,6 +79,7 @@ class MyEventHandler(AgentEventHandler):
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
+
 # Enable Azure Monitor tracing
 application_insights_connection_string = project_client.telemetry.get_connection_string()
 if not application_insights_connection_string:
@@ -101,7 +102,9 @@ with tracer.start_as_current_span(scenario):
         thread = project_client.agents.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = project_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a joke"
+        )
         print(f"Created message, message ID {message.id}")
 
         with project_client.agents.create_stream(
