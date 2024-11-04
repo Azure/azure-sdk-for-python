@@ -1,9 +1,9 @@
 ## Welcome to the Bug Bash for Evaluation in Cloud with Schedules!
 
-### Environment
-- Online Evaluation Service & Azure AI Project deployed in `EastUS2` region
-
 ### How To Get Started
+#### Permissions needed - Please request for below access in channel
+1. Project user access to do bug bush
+2. Log Analytics Contributor role for query and view the evaluation results by the schedule.
 
 #### Azure SDK Setup
 ```bash
@@ -59,10 +59,10 @@ The following sections are optional for the bug bash and will be enhanced afterw
 #### How to Get `Project Connection String`?
 - Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
 
-#### Instructions for pushing application insights data
-- TBD
-
 
 #### Instructions to view enriched data
-- TBD
-
+- You would need LogAnlaytics Contributor role for the AppInsights instance attached to the project
+- Please raise request in the channel to get yourself added
+- Go to Logs dashboard and run query
+    - traces | where customDimensions["event.name"] == "gen_ai.evaluation.< evaluator-name >"
+    - Eg: traces | where customDimensions["event.name"] == "gen_ai.evaluation.f1_score_saik1034"
