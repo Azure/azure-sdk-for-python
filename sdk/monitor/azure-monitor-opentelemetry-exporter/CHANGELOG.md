@@ -1,16 +1,12 @@
 # Release History
 
-## 1.0.0b32 (Unreleased)
-
-### Features Added
+## 1.0.0b32 (2024-11-04)
 
 ### Breaking Changes
 
 - Serialize complex objects provided as log or event bodies to JSON and
   fall back to string representation if they are not serializable.
-  ([37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
-
-### Bugs Fixed
+  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
 
 ### Other Changes
 
