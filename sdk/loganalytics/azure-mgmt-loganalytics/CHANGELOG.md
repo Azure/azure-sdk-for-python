@@ -64,75 +64,17 @@
   - Added enum `TableTypeEnum`
   - Added model `TagsResource`
   - Added model `UserAssignedIdentity`
-  - Model `AvailableServiceTiersOperations` added parameter `kwargs` in method `__init__`
-  - Model `ClustersOperations` added parameter `kwargs` in method `__init__`
-  - Model `DataExportsOperations` added parameter `kwargs` in method `__init__`
-  - Model `DataSourcesOperations` added parameter `kwargs` in method `__init__`
-  - Model `DeletedWorkspacesOperations` added parameter `kwargs` in method `__init__`
-  - Model `GatewaysOperations` added parameter `kwargs` in method `__init__`
-  - Model `IntelligencePacksOperations` added parameter `kwargs` in method `__init__`
-  - Model `LinkedServicesOperations` added parameter `kwargs` in method `__init__`
-  - Model `LinkedStorageAccountsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ManagementGroupsOperations` added parameter `kwargs` in method `__init__`
-  - Model `OperationStatusesOperations` added parameter `kwargs` in method `__init__`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Model `SavedSearchesOperations` added parameter `kwargs` in method `__init__`
-  - Model `SchemaOperations` added parameter `kwargs` in method `__init__`
-  - Model `SharedKeysOperations` added parameter `kwargs` in method `__init__`
-  - Model `StorageInsightConfigsOperations` added parameter `kwargs` in method `__init__`
-  - Model `TablesOperations` added parameter `kwargs` in method `__init__`
-  - Model `TablesOperations` added method `begin_create_or_update`
-  - Model `TablesOperations` added method `begin_delete`
-  - Model `TablesOperations` added method `begin_update`
-  - Model `TablesOperations` added method `cancel_search`
-  - Model `TablesOperations` added method `migrate`
-  - Model `UsagesOperations` added parameter `kwargs` in method `__init__`
-  - Model `WorkspacePurgeOperations` added parameter `kwargs` in method `__init__`
-  - Model `WorkspacesOperations` added parameter `kwargs` in method `__init__`
-  - Added model `QueriesOperations`
-  - Added model `QueryPacksOperations`
-  - Method `ClustersOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, parameters: Cluster, content_type: str)`
-  - Method `ClustersOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, parameters: ClusterPatch, content_type: str)`
-  - Method `ClustersOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DataExportsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_export_name: str, parameters: DataExport, content_type: str)`
-  - Method `DataExportsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_export_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DataSourcesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_source_name: str, parameters: DataSource, content_type: str)`
-  - Method `DataSourcesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_source_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `LinkedServicesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, linked_service_name: str, parameters: LinkedService, content_type: str)`
-  - Method `LinkedServicesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, linked_service_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `LinkedStorageAccountsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_source_type: Union[str, DataSourceType], parameters: LinkedStorageAccountsResource, content_type: str)`
-  - Method `LinkedStorageAccountsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, data_source_type: Union[str, DataSourceType], parameters: IO[bytes], content_type: str)`
-  - Method `SavedSearchesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, saved_search_id: str, parameters: SavedSearch, content_type: str)`
-  - Method `SavedSearchesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, saved_search_id: str, parameters: IO[bytes], content_type: str)`
-  - Method `StorageInsightConfigsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, storage_insight_name: str, parameters: StorageInsight, content_type: str)`
-  - Method `StorageInsightConfigsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, workspace_name: str, storage_insight_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `TablesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, table_name: str, parameters: Table, content_type: str)`
-  - Method `TablesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, table_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `TablesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, workspace_name: str, table_name: str, parameters: Table, content_type: str)`
-  - Method `TablesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, workspace_name: str, table_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `WorkspacePurgeOperations.purge` has a new overload `def purge(self: None, resource_group_name: str, workspace_name: str, body: WorkspacePurgeBody, content_type: str)`
-  - Method `WorkspacePurgeOperations.purge` has a new overload `def purge(self: None, resource_group_name: str, workspace_name: str, body: IO[bytes], content_type: str)`
-  - Method `WorkspacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, parameters: Workspace, content_type: str)`
-  - Method `WorkspacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, workspace_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `WorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, workspace_name: str, parameters: WorkspacePatch, content_type: str)`
-  - Method `WorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, workspace_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `QueriesOperations.put` has a new overload `def put(self: None, resource_group_name: str, query_pack_name: str, id: str, query_payload: LogAnalyticsQueryPackQuery, content_type: str)`
-  - Method `QueriesOperations.put` has a new overload `def put(self: None, resource_group_name: str, query_pack_name: str, id: str, query_payload: IO[bytes], content_type: str)`
-  - Method `QueriesOperations.search` has a new overload `def search(self: None, resource_group_name: str, query_pack_name: str, query_search_properties: LogAnalyticsQueryPackQuerySearchProperties, top: Optional[int], include_body: Optional[bool], skip_token: Optional[str], content_type: str)`
-  - Method `QueriesOperations.search` has a new overload `def search(self: None, resource_group_name: str, query_pack_name: str, query_search_properties: IO[bytes], top: Optional[int], include_body: Optional[bool], skip_token: Optional[str], content_type: str)`
-  - Method `QueriesOperations.update` has a new overload `def update(self: None, resource_group_name: str, query_pack_name: str, id: str, query_payload: LogAnalyticsQueryPackQuery, content_type: str)`
-  - Method `QueriesOperations.update` has a new overload `def update(self: None, resource_group_name: str, query_pack_name: str, id: str, query_payload: IO[bytes], content_type: str)`
-  - Method `QueryPacksOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, query_pack_name: str, log_analytics_query_pack_payload: LogAnalyticsQueryPack, content_type: str)`
-  - Method `QueryPacksOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, query_pack_name: str, log_analytics_query_pack_payload: IO[bytes], content_type: str)`
-  - Method `QueryPacksOperations.create_or_update_without_name` has a new overload `def create_or_update_without_name(self: None, resource_group_name: str, log_analytics_query_pack_payload: LogAnalyticsQueryPack, content_type: str)`
-  - Method `QueryPacksOperations.create_or_update_without_name` has a new overload `def create_or_update_without_name(self: None, resource_group_name: str, log_analytics_query_pack_payload: IO[bytes], content_type: str)`
-  - Method `QueryPacksOperations.update_tags` has a new overload `def update_tags(self: None, resource_group_name: str, query_pack_name: str, query_pack_tags: TagsResource, content_type: str)`
-  - Method `QueryPacksOperations.update_tags` has a new overload `def update_tags(self: None, resource_group_name: str, query_pack_name: str, query_pack_tags: IO[bytes], content_type: str)`
+  - Operation group `TablesOperations` added method `begin_create_or_update`
+  - Operation group `TablesOperations` added method `begin_delete`
+  - Operation group `TablesOperations` added method `begin_update`
+  - Operation group `TablesOperations` added method `cancel_search`
+  - Operation group `TablesOperations` added method `migrate`
+  - Added operation group `QueriesOperations`
+  - Added operation group `QueryPacksOperations`
 
 ### Breaking Changes
 
-  - Method `LogAnalyticsManagementClient.__init__` parameter `base_url` changed default value from `None` to `str`
+  - Parameter `base_url` of model `LogAnalyticsManagementClient` is now required
   - Model `Table` deleted or renamed its instance variable `is_troubleshooting_allowed`
   - Model `Table` deleted or renamed its instance variable `is_troubleshoot_enabled`
   - Model `Table` deleted or renamed its instance variable `last_troubleshoot_date`
