@@ -217,8 +217,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         return self._call_connection_client.get_participants(
             self._call_connection_id,
             cls=lambda participants: [
-                CallParticipant._from_generated(p) for p in participants
-            ],  # pylint:disable=protected-access
+                CallParticipant._from_generated(p) for p in participants  # pylint:disable=protected-access
+            ],
             **kwargs,
         )
 
@@ -635,8 +635,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
             play_prompt=(
-                play_source_single._to_generated() if play_source_single else None
-            ),  # pylint:disable=protected-access
+                play_source_single._to_generated() if play_source_single else None  # pylint:disable=protected-access
+            ),
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
@@ -967,8 +967,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         hold_request = HoldRequest(
             target_participant=serialize_identifier(target_participant),
             play_source_info=(
-                play_source_single._to_generated() if play_source_single else None
-            ),  # pylint:disable=protected-access
+                play_source_single._to_generated() if play_source_single else None  # pylint:disable=protected-access
+            ),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             kwargs=kwargs,
