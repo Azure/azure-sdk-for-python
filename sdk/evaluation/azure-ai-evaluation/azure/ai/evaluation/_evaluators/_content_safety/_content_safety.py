@@ -69,7 +69,7 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, **kwargs):
         super().__init__()
-        self._parallel = kwargs.pop("_parallel", False)
+        self._parallel = kwargs.pop("_parallel", True)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
@@ -152,7 +152,7 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
             with ThreadPoolExecutor() as executor:
                 # pylint: disable=no-value-for-parameter
                 futures = {
-                    executor.submit(query=query, response=response, conversation=conversation): evaluator
+                    executor.submit(evaluator, query=query, response=response, conversation=conversation): evaluator
                     for evaluator in self._evaluators
                 }
 
