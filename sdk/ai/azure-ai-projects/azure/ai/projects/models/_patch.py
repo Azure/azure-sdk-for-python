@@ -517,15 +517,13 @@ class ConnectionTool(Tool):
     Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
     """
 
-    def __init__(self):
-        self.connection_ids = []
+    def __init__(self, connection_id: str):
+        """
+        Initialize ConnectionTool with a connection_id.
 
-    def add_connection(self, connection_id: str):
+        :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
         """
-        Add a connection ID to the list of connections used to search.
-        """
-        # TODO
-        self.connection_ids.append(ToolConnection(connection_id=connection_id))
+        self.connection_ids = [ToolConnection(connection_id=connection_id)]
 
     @property
     def resources(self) -> ToolResources:

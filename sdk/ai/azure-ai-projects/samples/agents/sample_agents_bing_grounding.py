@@ -44,9 +44,7 @@ conn_id = bing_connection.id
 print(conn_id)
 
 # Initialize agent bing tool and add the connection id
-bing = BingGroundingTool()
-bing.add_connection(conn_id)
-
+bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process assistant run
 with project_client:
