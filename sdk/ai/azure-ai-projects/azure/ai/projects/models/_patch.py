@@ -88,7 +88,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Any:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -126,7 +126,7 @@ class ConnectionProperties:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.connection_type = connection.properties.category
+        self.connection_type = cast(ConnectionType, connection.properties.category)
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
@@ -223,7 +223,10 @@ class SASTokenCredential(TokenCredential):
 
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
-        self._sas_token = connection.properties.credentials.sas
+        self._sas_token = ""
+        if connection.token_credential is not None:
+            sas_credential = cast(SASTokenCredential, connection.token_credential)
+            self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
@@ -897,7 +900,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data = json.loads(event_data)
+            parsed_data: Union[str, Dict[str, Any]] = cast(Dict[str, Any], json.loads(event_data))
         except json.JSONDecodeError:
             parsed_data = event_data
 
