@@ -415,7 +415,7 @@ class CallConnected(_serialization.Model):
         self.operation_context = operation_context
 
 
-class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CallConnectionProperties(_serialization.Model):
     """Properties of a call connection.
 
     :ivar call_connection_id: The call connection id.
@@ -628,8 +628,8 @@ class CallLocator(_serialization.Model):
     :vartype server_call_id: str
     :ivar room_id: The Acs room id.
     :vartype room_id: str
-    :ivar kind: The call locator kind. Known values are: "groupCallLocator", "serverCallLocator",
-     and "roomCallLocator".
+    :ivar kind: The call locator kind. Known values are: "unknown", "groupCallLocator",
+     "serverCallLocator", and "roomCallLocator".
     :vartype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
     """
 
@@ -656,7 +656,7 @@ class CallLocator(_serialization.Model):
         :paramtype server_call_id: str
         :keyword room_id: The Acs room id.
         :paramtype room_id: str
-        :keyword kind: The call locator kind. Known values are: "groupCallLocator",
+        :keyword kind: The call locator kind. Known values are: "unknown", "groupCallLocator",
          "serverCallLocator", and "roomCallLocator".
         :paramtype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
         """
@@ -1339,7 +1339,7 @@ class ConnectFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers to set the context for connecting to a call.
+    :ivar operation_context: Used by customers to correlate the request to the response event.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1371,7 +1371,7 @@ class ConnectFailed(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
          skype chain ID.
         :paramtype correlation_id: str
-        :keyword operation_context: Used by customers to set the context for connecting to a call.
+        :keyword operation_context: Used by customers to correlate the request to the response event.
         :paramtype operation_context: str
         :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1398,6 +1398,11 @@ class ConnectRequest(_serialization.Model):
     :ivar call_intelligence_options: AI options for the call.
     :vartype call_intelligence_options:
      ~azure.communication.callautomation.models.CallIntelligenceOptions
+    :ivar media_streaming_options: Media Streaming Configuration.
+    :vartype media_streaming_options:
+     ~azure.communication.callautomation.models.MediaStreamingOptions
+    :ivar transcription_options: Live Transcription Configuration.
+    :vartype transcription_options: ~azure.communication.callautomation.models.TranscriptionOptions
     """
 
     _validation = {
@@ -1410,6 +1415,8 @@ class ConnectRequest(_serialization.Model):
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+        "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
+        "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
     }
 
     def __init__(
@@ -1419,6 +1426,8 @@ class ConnectRequest(_serialization.Model):
         callback_uri: str,
         operation_context: Optional[str] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
+        transcription_options: Optional["_models.TranscriptionOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1431,12 +1440,20 @@ class ConnectRequest(_serialization.Model):
         :keyword call_intelligence_options: AI options for the call.
         :paramtype call_intelligence_options:
          ~azure.communication.callautomation.models.CallIntelligenceOptions
+        :keyword media_streaming_options: Media Streaming Configuration.
+        :paramtype media_streaming_options:
+         ~azure.communication.callautomation.models.MediaStreamingOptions
+        :keyword transcription_options: Live Transcription Configuration.
+        :paramtype transcription_options:
+         ~azure.communication.callautomation.models.TranscriptionOptions
         """
         super().__init__(**kwargs)
         self.call_locator = call_locator
         self.callback_uri = callback_uri
         self.operation_context = operation_context
         self.call_intelligence_options = call_intelligence_options
+        self.media_streaming_options = media_streaming_options
+        self.transcription_options = transcription_options
 
 
 class ContinuousDtmfRecognitionRequest(_serialization.Model):
@@ -2234,6 +2251,11 @@ class MediaStreamingOptions(_serialization.Model):
     :ivar start_media_streaming: Determines if the media streaming should be started immediately
      after call is answered or not.
     :vartype start_media_streaming: bool
+    :ivar enable_bidirectional: A value indicating whether bidirectional streaming is enabled.
+    :vartype enable_bidirectional: bool
+    :ivar audio_format: Specifies the audio format used for encoding, including sample rate and
+     channel type. Known values are: "Pcm16KMono" and "Pcm24KMono".
+    :vartype audio_format: str or ~azure.communication.callautomation.models.AudioFormat
     """
 
     _validation = {
@@ -2249,6 +2271,8 @@ class MediaStreamingOptions(_serialization.Model):
         "content_type": {"key": "contentType", "type": "str"},
         "audio_channel_type": {"key": "audioChannelType", "type": "str"},
         "start_media_streaming": {"key": "startMediaStreaming", "type": "bool"},
+        "enable_bidirectional": {"key": "enableBidirectional", "type": "bool"},
+        "audio_format": {"key": "audioFormat", "type": "str"},
     }
 
     def __init__(
@@ -2259,6 +2283,8 @@ class MediaStreamingOptions(_serialization.Model):
         content_type: Union[str, "_models.MediaStreamingContentType"],
         audio_channel_type: Union[str, "_models.MediaStreamingAudioChannelType"],
         start_media_streaming: Optional[bool] = None,
+        enable_bidirectional: Optional[bool] = None,
+        audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2278,6 +2304,11 @@ class MediaStreamingOptions(_serialization.Model):
         :keyword start_media_streaming: Determines if the media streaming should be started immediately
          after call is answered or not.
         :paramtype start_media_streaming: bool
+        :keyword enable_bidirectional: A value indicating whether bidirectional streaming is enabled.
+        :paramtype enable_bidirectional: bool
+        :keyword audio_format: Specifies the audio format used for encoding, including sample rate and
+         channel type. Known values are: "Pcm16KMono" and "Pcm24KMono".
+        :paramtype audio_format: str or ~azure.communication.callautomation.models.AudioFormat
         """
         super().__init__(**kwargs)
         self.transport_url = transport_url
@@ -2285,6 +2316,8 @@ class MediaStreamingOptions(_serialization.Model):
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
         self.start_media_streaming = start_media_streaming
+        self.enable_bidirectional = enable_bidirectional
+        self.audio_format = audio_format
 
 
 class MediaStreamingStarted(_serialization.Model):
@@ -3423,7 +3456,7 @@ class RecognizeRequest(_serialization.Model):
      ~azure.communication.callautomation.models.RecognizeInputType
     :ivar play_prompt: The source of the audio to be played for recognition.
     :vartype play_prompt: ~azure.communication.callautomation.models.PlaySource
-    :ivar play_prompts:
+    :ivar play_prompts: The source of the audio to be played for recognition.
     :vartype play_prompts: list[~azure.communication.callautomation.models.PlaySource]
     :ivar interrupt_call_media_operation: If set recognize can barge into other existing
      queued-up/currently-processing requests.
@@ -3473,7 +3506,7 @@ class RecognizeRequest(_serialization.Model):
          ~azure.communication.callautomation.models.RecognizeInputType
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.models.PlaySource
-        :keyword play_prompts:
+        :keyword play_prompts: The source of the audio to be played for recognition.
         :paramtype play_prompts: list[~azure.communication.callautomation.models.PlaySource]
         :keyword interrupt_call_media_operation: If set recognize can barge into other existing
          queued-up/currently-processing requests.
@@ -4236,7 +4269,7 @@ class StartCallRecordingRequest(_serialization.Model):
     :ivar pause_on_start: When set to true will start recording in Pause mode, which can be
      resumed.
     :vartype pause_on_start: bool
-    :ivar external_storage:
+    :ivar external_storage: Optional property to specify location where recording will be stored.
     :vartype external_storage: ~azure.communication.callautomation.models.ExternalStorage
     """
 
@@ -4309,7 +4342,8 @@ class StartCallRecordingRequest(_serialization.Model):
         :keyword pause_on_start: When set to true will start recording in Pause mode, which can be
          resumed.
         :paramtype pause_on_start: bool
-        :keyword external_storage:
+        :keyword external_storage: Optional property to specify location where recording will be
+         stored.
         :paramtype external_storage: ~azure.communication.callautomation.models.ExternalStorage
         """
         super().__init__(**kwargs)

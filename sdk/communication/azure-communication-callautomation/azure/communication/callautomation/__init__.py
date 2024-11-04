@@ -62,7 +62,8 @@ from ._generated.models._enums import (
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    VoiceKind
+    VoiceKind,
+    AudioFormat
 )
 
 __all__ = [
@@ -123,6 +124,7 @@ __all__ = [
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
+    "AudioFormat",
 
     # deprecated models
     "CallInvite",

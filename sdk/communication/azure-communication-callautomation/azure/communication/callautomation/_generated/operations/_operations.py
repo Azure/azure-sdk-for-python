@@ -49,7 +49,7 @@ def build_azure_communication_call_automation_service_create_call_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +79,7 @@ def build_azure_communication_call_automation_service_answer_call_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_azure_communication_call_automation_service_redirect_call_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,7 +139,7 @@ def build_azure_communication_call_automation_service_reject_call_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -169,7 +169,7 @@ def build_azure_communication_call_automation_service_connect_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +196,7 @@ def build_call_connection_get_call_request(call_connection_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_call_connection_hangup_call_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,7 +248,7 @@ def build_call_connection_terminate_call_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +281,7 @@ def build_call_connection_transfer_to_participant_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -315,7 +315,7 @@ def build_call_connection_get_participants_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -342,7 +342,7 @@ def build_call_connection_add_participant_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +377,7 @@ def build_call_connection_remove_participant_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -410,7 +410,7 @@ def build_call_connection_mute_request(call_connection_id: str, **kwargs: Any) -
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +445,7 @@ def build_call_connection_cancel_add_participant_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -479,7 +479,7 @@ def build_call_connection_get_participant_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -505,7 +505,7 @@ def build_call_media_play_request(call_connection_id: str, **kwargs: Any) -> Htt
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -534,7 +534,7 @@ def build_call_media_start_transcription_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -563,7 +563,7 @@ def build_call_media_stop_transcription_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -592,7 +592,7 @@ def build_call_media_update_transcription_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -620,7 +620,7 @@ def build_call_media_cancel_all_media_operations_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -645,7 +645,7 @@ def build_call_media_recognize_request(call_connection_id: str, **kwargs: Any) -
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -674,7 +674,7 @@ def build_call_media_start_continuous_dtmf_recognition_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -703,7 +703,7 @@ def build_call_media_stop_continuous_dtmf_recognition_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -730,7 +730,7 @@ def build_call_media_send_dtmf_tones_request(call_connection_id: str, **kwargs: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -763,7 +763,7 @@ def build_call_media_hold_request(call_connection_id: str, **kwargs: Any) -> Htt
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -790,7 +790,7 @@ def build_call_media_unhold_request(call_connection_id: str, **kwargs: Any) -> H
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -819,7 +819,7 @@ def build_call_media_start_media_streaming_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -848,7 +848,7 @@ def build_call_media_stop_media_streaming_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -875,7 +875,7 @@ def build_call_recording_start_recording_request(**kwargs: Any) -> HttpRequest: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +904,7 @@ def build_call_recording_get_recording_properties_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -930,7 +930,7 @@ def build_call_recording_stop_recording_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -956,7 +956,7 @@ def build_call_recording_pause_recording_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -982,7 +982,7 @@ def build_call_recording_resume_recording_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

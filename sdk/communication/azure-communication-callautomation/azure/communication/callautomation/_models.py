@@ -45,7 +45,8 @@ if TYPE_CHECKING:
         RecordingState,
         RecordingKind,
         VoiceKind,
-        DtmfTone
+        DtmfTone,
+        AudioFormat
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
@@ -439,6 +440,11 @@ class MediaStreamingOptions:
     start_media_streaming: bool
     """Determines if the media streaming should be started immediately
      after call is answered or not"""
+    enable_bidirectional: Optional[bool] = None
+    """A value indicating whether bidirectional streaming is enabled."""
+    audio_format: Optional[Union[str,'AudioFormat']] = None
+    """Specifies the audio format used for encoding, including sample rate and
+     channel type. Known values are: "Pcm16KMono" and "Pcm24KMono"."""
 
     def __init__(
         self,
@@ -447,13 +453,17 @@ class MediaStreamingOptions:
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
-        start_media_streaming: bool
+        start_media_streaming: bool,
+        enable_bidirectional:  Optional[bool] = None,
+        audio_format: Optional[Union[str,'AudioFormat']] = None
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
         self.start_media_streaming = start_media_streaming
+        self.enable_bidirectional = enable_bidirectional
+        self.audio_format = audio_format
 
     def _to_generated(self):
         return MediaStreamingOptionsRest(
@@ -461,7 +471,10 @@ class MediaStreamingOptions:
             transport_type=self.transport_type,
             content_type=self.content_type,
             audio_channel_type=self.audio_channel_type,
-            start_media_streaming= self.start_media_streaming
+            start_media_streaming= self.start_media_streaming,
+            enable_bidirectional=self.enable_bidirectional,
+            audio_format = self.audio_format
+
         )
 
 class TranscriptionOptions:
