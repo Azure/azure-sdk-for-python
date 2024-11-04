@@ -299,13 +299,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             If not set, the default value would be "none" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
-        :keyword file_creation_time:
-            Creation time for the directory. Default value: "now".
-        :paramtype file_creation_time: str or ~datetime.datetime
-        :keyword file_last_write_time:
-            Last write time for the directory. Default value: "now".
-        :paramtype file_last_write_time: str or ~datetime.datetime
+        :paramtype file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
+        :keyword file_creation_time: Creation time for the directory.
+        :paramtype file_creation_time: str or ~datetime.datetime or None
+        :keyword file_last_write_time: Last write time for the directory.
+        :paramtype file_last_write_time: str or ~datetime.datetime or None
         :keyword str file_permission:
             If specified the permission (security descriptor) shall be set
             for the directory/file. This header can be used if Permission size is
@@ -760,9 +758,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
     @distributed_trace_async
     async def set_http_headers(
-        self, file_attributes: Union[str, "NTFSAttributes"] = "none",
-        file_creation_time: Optional[Union[str, datetime]] = "preserve",
-        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        self, file_attributes: Union[str, "NTFSAttributes"] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs: Any
@@ -773,13 +771,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
-            Default value: Preserve.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
-            Default value: Preserve.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
