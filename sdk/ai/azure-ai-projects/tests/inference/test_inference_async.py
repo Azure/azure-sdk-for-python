@@ -45,7 +45,7 @@ class TestInferenceAsync(InferenceTestBase):
                     messages=[
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
-                    ]
+                    ],
                 )
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]

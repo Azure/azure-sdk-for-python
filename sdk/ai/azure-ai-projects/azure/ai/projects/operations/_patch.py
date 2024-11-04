@@ -401,6 +401,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
     # Silently try to load a set of relevant Instrumentors
     try:
         from azure.core.settings import settings
+
         settings.tracing_implementation = "opentelemetry"
         _ = settings.tracing_implementation()
     except ModuleNotFoundError as _:
@@ -426,9 +427,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
     except Exception as exc:
-        logger.warning(
-            "Could not call `AIAgentsInstrumentor().instrument()` " + str(exc)
-        )
+        logger.warning("Could not call `AIAgentsInstrumentor().instrument()` " + str(exc))
 
     try:
         from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
@@ -995,16 +994,26 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+    def _validate_tools_and_tool_resources(
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
+    ):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
 
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     def _get_toolset(self) -> Optional[_models.ToolSet]:
         """

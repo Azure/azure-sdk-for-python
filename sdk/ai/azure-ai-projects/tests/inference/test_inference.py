@@ -18,9 +18,7 @@ class TestInference(InferenceTestBase):
         model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-            with project_client.inference.get_azure_openai_client(
-                api_version=api_version
-            ) as azure_openai_client:
+            with project_client.inference.get_azure_openai_client(api_version=api_version) as azure_openai_client:
                 response = azure_openai_client.chat.completions.create(
                     messages=[
                         {
@@ -45,7 +43,7 @@ class TestInference(InferenceTestBase):
                     messages=[
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
-                    ]
+                    ],
                 )
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
