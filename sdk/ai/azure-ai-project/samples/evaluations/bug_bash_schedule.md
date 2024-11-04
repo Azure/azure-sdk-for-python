@@ -30,7 +30,7 @@ git checkout users/singankit/remote_evaluation_bug_bash
    pip install azure-identity azure-ai-ml
    # Optional: Upgrade pip if any issues occur in above two steps (pip install --upgrade pip)
    # installing azure-ai-project, SDK is same for remote, if already installed please ignore.
-   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_project-1.0.0b1-py3-none-any.whl
+   pip install https://onlineevalbugbash.blob.core.windows.net/onlineevalbugbash/azure_ai_projects-1.0.0b3-py3-none-any.whl
     ```
 ### How To Run Python Samples From SDK
 
