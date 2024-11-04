@@ -25,70 +25,102 @@ USAGE:
 """
 
 import os
-from azure.ai.project import AIProjectClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.project.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, SamplingStrategy, EvaluationSchedule, CronTrigger, RecurrenceTrigger, Frequency, RecurrenceSchedule
+from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency, RecurrenceSchedule
 import pprint
+
+# Variables
+PROJECT_CONNECTION_STRING = "<project_connection_string>"
+SAMPLE_RESOURCE_ID = "<sample-resource-id>"
+SAMPLE_QUERY = "<sample-query>"
+SAMPLE_EVALUATOR_ID = "<sample-evaluator-id>"
+SAMPLE_NAME = "<sample-name-prefix-with-alias>"
+SAMPLE_DESCRIPTION = "<sample-description>"
+EVALUATOR_NAME = "<evaluator-name>"
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str="<project_connection_string>",
+    conn_str=PROJECT_CONNECTION_STRING
 )
 
 # Sample for creating an evaluation schedule with recurrence trigger of daily frequency
 app_insights_config = ApplicationInsightsConfiguration(
-    resource_id="<sample-resource-id>",
-    query="<sample-query>",
+    resource_id=SAMPLE_RESOURCE_ID,
+    query=SAMPLE_QUERY,
     service_name="" # this is not being used, keep empty for now
 )
 f1_evaluator_config = EvaluatorConfiguration(
-    id="<sample-evaluator-id>",
+    id=SAMPLE_EVALUATOR_ID,
     init_params={},
-    data_mapping={"response": "${data.message}", "ground_truth": "${data.itemType}"}
+    data_mapping={"response": "${data.message}", "ground_truth": "${data.ground_truth}"}
 )
 recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
 evaluators = {
-    "<evaluator-name>": f1_evaluator_config,
+    EVALUATOR_NAME: f1_evaluator_config,
 }
 
-sampling_strategy = SamplingStrategy(rate=0.7)
-name = "<sample-name-prefix-with-alias>"
-description = "<sample-description>"
-tags = {"<tag-key>": "<tag-value>"}
-properties = {"Environment": "<sample-environment>"}
+name = SAMPLE_NAME
+description = SAMPLE_DESCRIPTION
+tags = {"project": "online-eval-bug-bash"}
+properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6"}
 
-evaluation_schedule = EvaluationSchedule(
-    data=app_insights_config,
-    evaluators=evaluators,
-    trigger=recurrence_trigger,
-    sampling_strategy=sampling_strategy,
-    description=description,
-    tags=tags,
-    properties=properties
-)
+def create_schedule():
+    try:
+        evaluation_schedule = EvaluationSchedule(
+            data=app_insights_config,
+            evaluators=evaluators,
+            trigger=recurrence_trigger,
+            description=description,
+            tags=tags,
+            properties=properties
+        )
+        created_evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
+        print(f"Successfully submitted the online evaluation schedule creation request - {created_evaluation_schedule.name}, currently in Creating state")
+        print("Please use get api to fetch back the evaluation schedule details.")
+    except Exception as e:
+        print(f"Error occurred while submitting the online evaluation schedule creation request - {name}, Error={e}")
+
+def get_schedule(name):
+    try:
+        evaluation_schedule = project_client.evaluations.get_schedule(name)
+        pprint.pprint(evaluation_schedule)
+    except Exception as e:
+        print(f"Error occurred while fetching the online evaluation schedule - {name}, Error={e}")
+
+def list_schedules():
+    try:
+        count = 0
+        for evaluation_schedule in project_client.evaluations.list_schedule():
+            print(evaluation_schedule.name)
+            count+=1
+        print(f"Total evaluation schedules: {count}")
+    except Exception as e:
+        print(f"Error occurred while fetching the online evaluation schedules, Error={e}")
+
+def disable_schedule(name):
+    try:
+        project_client.evaluations.disable_schedule(name)
+        print(f"Successfully Disabled the online evaluation schedule - {name}")
+    except Exception as e:
+        print(f"Error occurred while disabling the online evaluation schedule - {name}, Error={e}")
+
 # Comment the below sections to run CRUD operations on Online Evaluation Schedule
 # -------CREATE ONLINE EVALUATION SCHEDULE-------------
-evaluation_schedule = project_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
-pprint.pprint(evaluation_schedule)
+create_schedule()
 # -----------------------------------------------------
 
 # -------GET ONLINE EVALUATION SCHEDULE BY NAME --------------
-# evaluation_schedule = project_client.evaluations.get_schedule(name)
-# pprint.pprint(evaluation_schedule)
+# get_schedule(name)
 # ------------------------------------------------------------
 
 # -------LIST ONLINE EVALUATION SCHEDULES-------------
-# count = 0
-# for evaluation_schedule in project_client.evaluations.list_schedule():
-#     pprint.pprint(evaluation_schedule)
-#     count+=1
-# print(f"Total evaluation schedules: {count}")
+# list_schedules()
 # -----------------------------------------------------
 
 # ------SOFT DELETE (DISABLE) ONLINE EVALUATION SCHEDULE-------------
-# project_client.evaluations.delete_schedule(name)
-# print("Successfully Soft Deleted (Disabled) the online evaluation schedule - {}".format(name))
+# disable_schedule(name)
 # -------------------------------------------------------------------
