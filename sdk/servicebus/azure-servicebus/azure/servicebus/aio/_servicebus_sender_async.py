@@ -23,7 +23,7 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MAX_MESSAGE_LENGTH_BYTES,
     MAX_BATCH_SIZE_PREMIUM,
-    MAX_BATCH_SIZE_STANDARD
+    MAX_BATCH_SIZE_STANDARD,
 )
 from .._common import mgmt_handlers
 from .._common.utils import transform_outbound_messages
