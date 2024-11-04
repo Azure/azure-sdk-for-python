@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.mgmt.loganalytics import LogAnalyticsManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = LogAnalyticsManagementClient(
         credential=DefaultAzureCredential(),
@@ -28,12 +31,12 @@ def main():
     )
 
     response = client.workspaces.list_by_resource_group(
-        resource_group_name='oiautorest6685',
+        resource_group_name="oiautorest6685",
     )
     for item in response:
         print(item)
 
+
 # x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2022-10-01/examples/WorkspacesListByResourceGroup.json
 if __name__ == "__main__":
     main()
- main()
