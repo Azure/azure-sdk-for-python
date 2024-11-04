@@ -1983,7 +1983,8 @@ class ClusterPatchParameters(_serialization.Model):
 
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the cluster, if configured.
+    :ivar identity: The identity of the cluster, if configured. Setting this property will override
+     the existing identity configuration of the cluster.
     :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
@@ -2002,7 +2003,8 @@ class ClusterPatchParameters(_serialization.Model):
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the cluster, if configured.
+        :keyword identity: The identity of the cluster, if configured. Setting this property will
+         override the existing identity configuration of the cluster.
         :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
         """
         super().__init__(**kwargs)
