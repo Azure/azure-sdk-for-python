@@ -318,26 +318,6 @@ class TestBuiltInEvaluators:
             score2["evaluation_per_turn"]["hate_unfairness_reason"]
         ), "hate_unfairness_reason must not be None or empty."
 
-    # TODO remove?
-
-    @pytest.mark.skipif(True, reason="Content safety service IS available now!")
-    def test_content_safety_service_unavailable(self, project_scope, azure_cred):
-        eval_fn = ViolenceEvaluator(azure_cred, project_scope)
-        # Doing this is replay mode breaks causes mismatch between scrubbed recordings
-        # and the actual request made.
-        if is_live():
-            # Warning, live testing fails due to unstable region.
-            # We need a use a new region.
-            project_scope["project_name"] = "pf-evals-ws-westus2"
-
-        with pytest.raises(Exception) as exc_info:
-            score = eval_fn(
-                query="What is the capital of Japan?",
-                response="The capital of Japan is Tokyo.",
-            )
-
-        assert "RAI service is not available in this region" in exc_info._excinfo[1].args[0]
-
     @pytest.mark.parametrize("parallel", [False, True])
     def test_composite_evaluator_qa(self, model_config, parallel):
         qa_eval = QAEvaluator(model_config, _parallel=parallel)
@@ -387,8 +367,9 @@ class TestBuiltInEvaluators:
         assert not math.isnan(score["fluency"])
         assert not math.isnan(score["similarity"])
 
-    def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
-        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=False)
+    @pytest.mark.parametrize("parallel", [True, False])
+    def test_composite_evaluator_content_safety(self, project_scope, azure_cred, parallel):
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, _parallel=parallel)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -408,8 +389,11 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_composite_evaluator_content_safety_with_conversation(self, project_scope, azure_cred, simple_conversation):
-        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=False)
+    @pytest.mark.parametrize("parallel", [True, False])
+    def test_composite_evaluator_content_safety_with_conversation(
+        self, project_scope, azure_cred, simple_conversation, parallel
+    ):
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=parallel)
         score = safety_eval(
             conversation=simple_conversation,
         )
