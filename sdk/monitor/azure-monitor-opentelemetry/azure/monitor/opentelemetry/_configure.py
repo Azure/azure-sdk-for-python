@@ -10,7 +10,7 @@ from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
-from opentelemetry.instrumentation.instrumentor import ( # type: ignore
+from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
@@ -41,7 +41,9 @@ from azure.monitor.opentelemetry._constants import (
     VIEWS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
-from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics  # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
+    enable_live_metrics,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
@@ -52,7 +54,9 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
+    _is_attach_enabled,
+)
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
@@ -127,14 +131,13 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
-        sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
-        resource=resource
+        sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
     )
-    for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
-        tracer_provider.add_span_processor(span_processor) # type: ignore
+    for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
+        tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
@@ -149,7 +152,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     logger_provider = LoggerProvider(resource=resource)
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qlp = _QuickpulseLogRecordProcessor()
@@ -161,13 +164,13 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
     handler = LoggingHandler(logger_provider=logger_provider)
-    logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
+    logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
     getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
-    views: List[View] = configurations[VIEWS_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+    views: List[View] = configurations[VIEWS_ARG]  # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
@@ -184,20 +187,16 @@ def _setup_live_metrics(configurations):
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
-    for entry_point in iter_entry_points(
-        "opentelemetry_instrumentor"
-    ):
+    for entry_point in iter_entry_points("opentelemetry_instrumentor"):
         lib_name = entry_point.name
         if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
         if not _is_instrumentation_enabled(configurations, lib_name):
-            _logger.debug(
-                "Instrumentation skipped for library %s", entry_point.name
-            )
+            _logger.debug("Instrumentation skipped for library %s", entry_point.name)
             continue
         try:
             # Check if dependent libraries/version are installed
-            conflict = get_dist_dependency_conflicts(entry_point.dist) # type: ignore
+            conflict = get_dist_dependency_conflicts(entry_point.dist)  # type: ignore
             if conflict:
                 _logger.debug(
                     "Skipping instrumentation %s: %s",
@@ -215,6 +214,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 lib_name,
                 exc_info=ex,
             )
+    _setup_additional_azure_sdk_instrumentations(configurations)
 
 
 def _send_attach_warning():
@@ -222,4 +222,32 @@ def _send_attach_warning():
         AzureDiagnosticLogging.warning(
             "Distro detected that automatic attach may have occurred. Check your data to ensure "
             "that telemetry is not being duplicated. This may impact your cost.",
-            _DISTRO_DETECTS_ATTACH)
+            _DISTRO_DETECTS_ATTACH,
+        )
+
+
+def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, ConfigurationValue]):
+    if _AZURE_SDK_INSTRUMENTATION_NAME not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
+        return
+
+    if not _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
+        _logger.debug("Instrumentation skipped for library azure_sdk")
+        return
+
+    try:
+        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug(
+            "Failed to import AIInferenceInstrumentor from azure-ai-inference",
+            exc_info=ex,
+        )
+        return
+
+    try:
+        AIInferenceInstrumentor().instrument()
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.warning(
+            "Exception occurred when instrumenting: %s.",
+            "azure-ai-inference",
+            exc_info=ex,
+        )

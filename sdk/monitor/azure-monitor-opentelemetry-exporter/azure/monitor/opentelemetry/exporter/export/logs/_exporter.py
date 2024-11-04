@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
 import logging
 from typing import Optional, Sequence, Any
 
@@ -52,9 +53,7 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(
-        self, batch: Sequence[LogData], **kwargs: Any  # pylint: disable=unused-argument
-    ) -> LogExportResult:
+    def export(self, batch: Sequence[LogData], **kwargs: Any) -> LogExportResult:  # pylint: disable=unused-argument
         """Export log data.
 
         :param batch: OpenTelemetry LogData(s) to export.
@@ -86,9 +85,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
-    def from_connection_string(
-        cls, conn_str: str, **kwargs: Any
-    ) -> "AzureMonitorLogExporter":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorLogExporter":
         """
         Create an AzureMonitorLogExporter from a connection string. This is the
         recommended way of instantiation if a connection string is passed in
@@ -110,24 +107,24 @@ def _log_data_is_event(log_data: LogData):
     log_record = log_data.log_record
     is_event = False
     if log_record.attributes:
-        is_event = log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE, False) # type: ignore
+        is_event = log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE, False)  # type: ignore
     return is_event is True
+
 
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource)) # type: ignore
-    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format( # type: ignore
+    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))  # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
-    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format( # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     properties = _utils._filter_custom_properties(
-        log_record.attributes,
-        lambda key, val: not _is_ignored_attribute(key)
+        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
     )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
@@ -139,12 +136,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Event telemetry
     if _log_data_is_event(log_data):
-        if not log_record.body:
-            log_record.body = "n/a"
         _set_statsbeat_custom_events_feature()
-        envelope.name = 'Microsoft.ApplicationInsights.Event'
+        envelope.name = "Microsoft.ApplicationInsights.Event"
         data = TelemetryEventData(
-            name=str(log_record.body)[:32768],
+            name=_map_body_to_message(log_record.body),
             properties=properties,
         )
         envelope.data = MonitorBase(base_data=data, base_type="EventData")
@@ -156,33 +151,31 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             exc_type = "Exception"
         # Log body takes priority for message
         if log_record.body:
-            message = str(log_record.body)
+            message = _map_body_to_message(log_record.body)
         elif exc_message:
-            message = exc_message # type: ignore
+            message = exc_message  # type: ignore
         else:
             message = "Exception"
         exc_details = TelemetryExceptionDetails(
-            type_name=str(exc_type)[:1024], # type: ignore
+            type_name=str(exc_type)[:1024],  # type: ignore
             message=str(message)[:32768],
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        data = TelemetryExceptionData( # type: ignore
-            severity_level=severity_level,
+        data = TelemetryExceptionData(  # type: ignore
+            severity_level=severity_level,  # type: ignore
             properties=properties,
             exceptions=[exc_details],
         )
         # pylint: disable=line-too-long
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
-        if not log_record.body:
-            log_record.body = "n/a"
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-        data = MessageData( # type: ignore
-            message=str(log_record.body)[:32768],
-            severity_level=severity_level,
+        data = MessageData(  # type: ignore
+            message=_map_body_to_message(log_record.body),
+            severity_level=severity_level,  # type: ignore
             properties=properties,
         )
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
@@ -205,6 +198,22 @@ def _get_severity_level(severity_number: Optional[SeverityNumber]):
     return int((severity_number.value - 1) / 4 - 1)
 
 
+def _map_body_to_message(log_body: Any) -> str:
+    if not log_body:
+        return ""
+
+    if isinstance(log_body, str):
+        return log_body[:32768]
+
+    if isinstance(log_body, Exception):
+        return str(log_body)[:32768]
+
+    try:
+        return json.dumps(log_body)[:32768]
+    except:  # pylint: disable=bare-except
+        return str(log_body)[:32768]
+
+
 def _is_ignored_attribute(key: str) -> bool:
     return key in _IGNORED_ATTRS
 
@@ -218,6 +227,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )
+
 
 def _set_statsbeat_custom_events_feature():
     if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():

@@ -17,11 +17,7 @@ from ..._pyamqp.endpoints import Source
 
 from ._base_async import AmqpTransportAsync
 from ..._transport._pyamqp_transport import PyamqpTransport
-from ...exceptions import (
-    EventHubError,
-    EventDataSendError,
-    OperationTimeoutError
-)
+from ...exceptions import EventHubError, EventDataSendError, OperationTimeoutError
 from ..._constants import MAX_BUFFER_LENGTH
 
 
@@ -38,7 +34,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(# pylint:disable=unused-argument
+    async def create_connection_async(  # pylint:disable=unused-argument
         *,
         endpoint: str,
         auth: JWTTokenAuthAsync,
@@ -51,7 +47,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         error_policy: Any,
         debug: bool,
         encoding: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
@@ -80,7 +76,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             properties=properties,
             idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
             network_trace=network_trace,
-            **kwargs
+            **kwargs,
         )
 
     @staticmethod
@@ -92,11 +88,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(# pylint: disable=unused-argument
+    def create_send_client(  # pylint: disable=unused-argument
         *,
         config,
         target: str,
-        auth: JWTTokenAuthAsync, # type: ignore
+        auth: JWTTokenAuthAsync,  # type: ignore
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,
@@ -104,7 +100,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         client_name: str,
         link_properties: Optional[Dict[str, Any]],
         properties: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         """
         Creates and returns the pyamqp SendClient.
@@ -170,7 +166,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         *,
         config,
         source: Source,
-        auth: JWTTokenAuthAsync, # type: ignore
+        auth: JWTTokenAuthAsync,  # type: ignore
         idle_timeout: int,
         network_trace: bool,
         retry_policy: Any,
@@ -183,7 +179,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         streaming_receive: bool,
         message_received_callback: Callable,
         timeout: float,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates and returns the receive client.
@@ -235,21 +231,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
-        while consumer._callback_task_run: # pylint: disable=protected-access
-            async with consumer._message_buffer_lock: # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        while consumer._callback_task_run:
+            async with consumer._message_buffer_lock:
                 events = [
-                    consumer._next_message_in_buffer() # pylint: disable=protected-access
-                    for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
+                    consumer._next_message_in_buffer()
+                    for _ in range(min(max_batch_size, len(consumer._message_buffer)))
                 ]
             now_time = time.time()
             if len(events) > 0:
-                await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
-                consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+                await consumer._on_event_received(events if batch else events[0])
+                consumer._last_callback_called_time = now_time
             else:
-                if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
+                if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time:
                     # no events received, and need to callback
-                    await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
-                    consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+                    await consumer._on_event_received([] if batch else None)
+                    consumer._last_callback_called_time = now_time
                 # backoff a bit to avoid throttling CPU when no events are coming
                 await asyncio.sleep(0.05)
 
@@ -264,7 +261,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 try:
                     # set a default value of consumer._prefetch for buffer length
                     buff_length = MAX_BUFFER_LENGTH
-                    await consumer._open() # pylint: disable=protected-access
+                    await consumer._open()  # pylint: disable=protected-access
                     async with consumer._message_buffer_lock:
                         buff_length = len(consumer._message_buffer)
                     if buff_length <= max_batch_size:
@@ -301,8 +298,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def message_received_async(consumer, message: Message) -> None:
-        async with consumer._message_buffer_lock: # pylint: disable=protected-access
-            consumer._message_buffer.append(message) # pylint: disable=protected-access
+        async with consumer._message_buffer_lock:  # pylint: disable=protected-access
+            consumer._message_buffer.append(message)  # pylint: disable=protected-access
 
     @staticmethod
     async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
@@ -415,7 +412,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         operation_type: bytes,
         status_code_field: bytes,
         description_fields: bytes,
-        **kwargs
+        **kwargs,
     ):
         """
         Send mgmt request.
@@ -435,7 +432,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             operation_type=operation_type.decode(),
             status_code_field=status_code_field,
             description_fields=description_fields,
-            **kwargs
+            **kwargs,
         )
 
     @staticmethod
@@ -475,14 +472,16 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         elif isinstance(exception, errors.MessageException):
             _LOGGER.info("%r Event data send error (%r)", name, exception)
             # TODO: issue #34266
-            error = EventDataSendError(str(exception), exception)   # type: ignore[arg-type]
+            error = EventDataSendError(str(exception), exception)  # type: ignore[arg-type]
             raise error
         else:
             try:
                 if isinstance(exception, errors.AuthenticationException):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 elif isinstance(exception, errors.AMQPLinkError):
-                    await cast("ConsumerProducerMixin", closable)._close_handler_async()  # pylint:disable=protected-access
+                    await cast(
+                        "ConsumerProducerMixin", closable
+                    )._close_handler_async()  # pylint:disable=protected-access
                 elif isinstance(exception, errors.AMQPConnectionError):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 # TODO: add MessageHandlerError in amqp?

@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 import pytest
 
 from azure.core.exceptions import HttpResponseError
@@ -27,7 +27,9 @@ class AsyncMgmtListTestHelperInterface(object):
 
 class AsyncMgmtQueueListTestHelper(AsyncMgmtListTestHelperInterface):
     async def list_resource_method(self, start_index=0, max_count=100):
-        return await async_pageable_to_list(self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count))
+        return await async_pageable_to_list(
+            self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count)
+        )
 
     async def create_resource_method(self, name):
         await self.sb_mgmt_client.create_queue(name)
@@ -41,7 +43,9 @@ class AsyncMgmtQueueListTestHelper(AsyncMgmtListTestHelperInterface):
 
 class AsyncMgmtQueueListRuntimeInfoTestHelper(AsyncMgmtListTestHelperInterface):
     async def list_resource_method(self, start_index=0, max_count=100):
-        return await async_pageable_to_list(self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count))
+        return await async_pageable_to_list(
+            self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count)
+        )
 
     async def create_resource_method(self, name):
         await self.sb_mgmt_client.create_queue(name)

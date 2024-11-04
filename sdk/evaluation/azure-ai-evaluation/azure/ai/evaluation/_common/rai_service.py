@@ -6,6 +6,8 @@ import importlib.metadata
 import math
 import re
 import time
+import json
+import html
 from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
@@ -38,8 +40,36 @@ USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
-    Tasks.GROUNDEDNESS: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
 }
+
+
+def get_formatted_template(data: dict, annotation_task: str) -> str:
+    """Given the task and input data, produce a formatted string that will serve as the main
+    payload for the RAI service. Requires specific per-task logic.
+
+    :param data: The data to incorporate into the payload.
+    :type data: dict
+    :param annotation_task: The annotation task to use. This determines the template to use.
+    :type annotation_task: str
+    :return: The formatted based on the data and task template.
+    :rtype: str
+    """
+    # Template class doesn't play nice with json dumping/loading, just handle groundedness'
+    # JSON format manually.
+    # Template was: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
+    if annotation_task == Tasks.GROUNDEDNESS:
+        as_dict = {
+            "question": data.get("query", ""),
+            "answer": data.get("response", ""),
+            "context": data.get("context", ""),
+        }
+        return json.dumps(as_dict)
+    as_dict = {
+        "query": html.escape(data.get("query", "")),
+        "response": html.escape(data.get("response", "")),
+    }
+    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**as_dict)
+    return user_text.replace("'", '\\"')
 
 
 def get_common_headers(token: str) -> Dict:
@@ -83,27 +113,31 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     async with get_async_http_client() as client:
         response = await client.get(svc_liveness_url, headers=headers)
 
-    if response.status_code != 200:
-        msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.UNKNOWN,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        if response.status_code != 200:
+            msg = (
+                f"RAI service is unavailable in this region, or you lack the necessary permissions "
+                f"to access the AI project. Status Code: {response.status_code}"
+            )
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
-    capabilities = response.json()
-
-    if capability and capability not in capabilities:
-        msg = f"Capability '{capability}' is not available in this region"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        capabilities = response.json()
+        if capability and capability not in capabilities:
+            msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
 
 def generate_payload(normalized_user_text: str, metric: str, annotation_task: str) -> Dict:
@@ -157,8 +191,7 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :return: The operation ID.
     :rtype: str
     """
-    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**data)
-    normalized_user_text = user_text.replace("'", '\\"')
+    normalized_user_text = get_formatted_template(data, annotation_task)
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
     url = rai_svc_url + "/submitannotation"
@@ -371,13 +404,17 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
         )
 
     if response.status_code != 200:
-        msg = "Failed to retrieve the discovery service URL."
+        msg = (
+            f"Failed to connect to your Azure AI project. Please check if the project scope is configured correctly, "
+            f"and make sure you have the necessary access permissions. "
+            f"Status code: {response.status_code}."
+        )
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
             target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.UNKNOWN,
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.PROJECT_ACCESS_ERROR,
+            tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
         )
 
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])

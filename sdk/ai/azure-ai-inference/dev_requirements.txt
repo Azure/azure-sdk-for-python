@@ -1,6 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../../core/azure-core-tracing-opentelemetry
+../../monitor/azure-monitor-opentelemetry
 aiohttp
 opentelemetry-sdk
 aiofiles
