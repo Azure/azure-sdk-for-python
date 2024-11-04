@@ -15,7 +15,7 @@ from azure.mgmt.managedservices import ManagedServicesClient
     pip install azure-identity
     pip install azure-mgmt-managedservices
 # USAGE
-    python get_registration_definitions.py
+    python get_operations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.registration_definitions.list(
-        scope="subscription/0afefe50-734e-4610-8a82-a144ahf49dea",
-    )
-    for item in response:
-        print(item)
+    response = client.operations.list()
+    print(response)
 
 
-# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/GetRegistrationDefinitions.json
+# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/GetOperations.json
 if __name__ == "__main__":
     main()
