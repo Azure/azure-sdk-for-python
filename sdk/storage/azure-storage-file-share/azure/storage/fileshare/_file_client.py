@@ -68,7 +68,7 @@ def _upload_file_helper(
     timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
-    file_attributes: Union[str, "NTFSAttributes"] = None,
+    file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
     file_creation_time: Optional[Union[str, datetime]] = None,
     file_last_write_time: Optional[Union[str, datetime]] = None,
     file_permission: Optional[str] = None,
@@ -476,7 +476,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     def upload_file(
         self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
-        file_attributes: Union[str, "NTFSAttributes"] = None,
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
@@ -1067,7 +1067,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_http_headers(
         self, content_settings: "ContentSettings",
-        file_attributes: Union[str, "NTFSAttributes"] = None,
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,

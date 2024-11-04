@@ -758,7 +758,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
     @distributed_trace_async
     async def set_http_headers(
-        self, file_attributes: Union[str, "NTFSAttributes"] = None,
+        self, file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
