@@ -1364,7 +1364,13 @@ class InternalConnectionProperties(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     auth_type: str = rest_discriminator(name="authType")
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
-     and \"SAS\"."""
+    and \"SAS\"."""
+    # Will be generated
+    category: Union[str, "_models.ConnectionType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
+     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
+    target: str = rest_field()
+    """The connection URL to be used for this service. Required."""
 
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
