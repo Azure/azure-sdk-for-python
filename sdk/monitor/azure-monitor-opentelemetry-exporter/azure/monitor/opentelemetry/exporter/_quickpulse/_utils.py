@@ -194,7 +194,6 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
         if not _validate_derived_metric_info(metric_info):
             continue
         telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
-        # TODO: Filter out invalid configs: telemetry type, operand
         # TODO: Rename exception fields
         metric_info_list = metric_infos.get(telemetry_type, [])
         metric_info_list.append(metric_info)
@@ -224,7 +223,6 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
         # Since this data matches the filter, create projections used to
         # generate filtered metrics
         _create_projections(metric_infos, data)
-    # TODO: Configuration error handling
 
 
 def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _TelemetryData) -> bool:
@@ -387,14 +385,19 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
             if isinstance(data, (_DependencyData, _RequestData)):
                 value = data.duration
             else:
+                # Duration only supported for Dependency and Requests
                 continue
         elif metric_info.projection.startswith(_QUICKPULSE_PROJECTION_CUSTOM):
             key = metric_info.projection.split(_QUICKPULSE_PROJECTION_CUSTOM, 1)[1].strip()
             dim_value = data.custom_dimensions.get(key, 0)
+            if dim_value is None:
+                continue
             try:
                 value = float(dim_value)
             except ValueError:
                 continue
+        else:
+            continue
 
         aggregate: Optional[Tuple[float, int]] = _calculate_aggregation(
             AggregationType(metric_info.aggregation),
