@@ -89,12 +89,27 @@ class AIAgentsInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
 
-    def instrument(self) -> None:
+    def instrument(self, enable_content_recording: bool = None) -> None:
         """
         Enable trace instrumentation for AI Agents.
 
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False. Please note that successive calls
+        to insturment will always apply the content recording value provided with the most
+        recent call to instrument (including applying the environment variable if no value is 
+        provided and defaulting to false if the environment variable is not found), even if
+        instrument was already previously called without uninstrument being called in between
+        the instrument calls.
+
+        :type enable_content_recording: bool, optional  
+
         """
-        self._impl.instrument()
+        self._impl.instrument(enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -114,6 +129,14 @@ class AIAgentsInstrumentor:
         """
         return self._impl.is_instrumented()
 
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype bool
+        """
+        return self._impl.is_content_recording_enabled()
+
 
 class _AIAgentsInstrumentorPreview:
     """
@@ -128,18 +151,27 @@ class _AIAgentsInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self):
+    def instrument(self, enable_content_recording: bool = None):
         """
         Enable trace instrumentation for AI Agents.
 
-        This method checks the environment variable
-        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
-        whether to enable content tracing.
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False.
+
+        :type enable_content_recording: bool, optional
         """
-        if not self.is_instrumented():
+        if enable_content_recording is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-            enable_content_tracing = self._str_to_bool(var_value)
-            self._instrument_agents(enable_content_tracing)
+            enable_content_recording = self._str_to_bool(var_value)
+        if not self.is_instrumented():
+            self._instrument_agents(enable_content_recording)
+        else:
+            self._set_enable_content_recording(enable_content_recording=enable_content_recording)
 
     def uninstrument(self):
         """
@@ -159,6 +191,24 @@ class _AIAgentsInstrumentorPreview:
         :rtype: bool
         """
         return self._is_instrumented()
+
+    def set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_tracing: bool
+        """
+        self._set_enable_content_recording(enable_content_recording=enable_content_recording)
+
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return self._is_content_recording_enabled()
 
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
@@ -1394,6 +1444,25 @@ class _AIAgentsInstrumentorPreview:
         :rtype: bool
         """
         return _agents_traces_enabled
+
+    def _set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_tracing: bool
+        """
+        global _trace_agents_content
+        _trace_agents_content = enable_content_recording
+
+    def _is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_agents_content
 
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
