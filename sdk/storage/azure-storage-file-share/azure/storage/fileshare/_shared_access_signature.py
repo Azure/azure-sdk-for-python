@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Callable, List, Optional, Union,
     TYPE_CHECKING
 )

@@ -383,7 +383,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
-            feed_range = change_feed_state_context.get("feedRange")
+            feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
         elif change_feed_state_context.get("partitionKey"):
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
@@ -412,4 +412,4 @@ class ChangeFeedStateV2(ChangeFeedState):
                 feed_range=feed_range,
                 change_feed_start_from=change_feed_start_from,
                 continuation=None)
-        raise RuntimeError("feed_range is empty")
+        raise ValueError("feed_range is empty")

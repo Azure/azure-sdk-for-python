@@ -49,10 +49,10 @@ class LLMBase(ABC):
     Base class for all LLM models.
     """
 
-    def __init__(self, endpoint_url: str, name: str = "unknown", additional_headers: Optional[dict] = {}):
+    def __init__(self, endpoint_url: str, name: str = "unknown", additional_headers: Optional[Dict[str, str]] = None):
         self.endpoint_url = endpoint_url
         self.name = name
-        self.additional_headers = additional_headers
+        self.additional_headers = additional_headers or {}
         self.logger = logging.getLogger(repr(self))
 
         # Metric tracking
@@ -208,7 +208,7 @@ class OpenAICompletionsModel(LLMBase):
         *,
         endpoint_url: str,
         name: str = "OpenAICompletionsModel",
-        additional_headers: Optional[dict] = {},
+        additional_headers: Optional[Dict[str, str]] = None,
         api_version: Optional[str] = "2023-03-15-preview",
         token_manager: APITokenManager,
         azureml_model_deployment: Optional[str] = None,
@@ -220,7 +220,7 @@ class OpenAICompletionsModel(LLMBase):
         frequency_penalty: Optional[float] = 0,
         presence_penalty: Optional[float] = 0,
         stop: Optional[Union[List[str], str]] = None,
-        image_captions: Dict[str, str] = {},
+        image_captions: Optional[Dict[str, str]] = None,
         images_dir: Optional[str] = None,  # Note: unused, kept for class compatibility
     ):
         super().__init__(endpoint_url=endpoint_url, name=name, additional_headers=additional_headers)
@@ -234,7 +234,7 @@ class OpenAICompletionsModel(LLMBase):
         self.n = n
         self.frequency_penalty = frequency_penalty
         self.presence_penalty = presence_penalty
-        self.image_captions = image_captions
+        self.image_captions = image_captions or {}
 
         # Default stop to end token if not provided
         if not stop:
@@ -263,7 +263,7 @@ class OpenAICompletionsModel(LLMBase):
     def get_model_params(self):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
 
-    def format_request_data(self, prompt: str, **request_params) -> Dict[str, str]:
+    def format_request_data(self, prompt: Dict[str, str], **request_params) -> Dict[str, str]:  # type: ignore[override]
         """
         Format the request data for the OpenAI API.
         """
@@ -328,7 +328,7 @@ class OpenAICompletionsModel(LLMBase):
         # Format prompts and tag with index
         request_datas: List[Dict] = []
         for idx, prompt in enumerate(prompts):
-            prompt: Dict[str, str] = self.format_request_data(prompt, **request_params)
+            prompt = self.format_request_data(prompt, **request_params)
             prompt[self.prompt_idx_key] = idx  # type: ignore[assignment]
             request_datas.append(prompt)
 
@@ -447,7 +447,7 @@ class OpenAICompletionsModel(LLMBase):
 
         self._log_request(request_data)
 
-        token = await self.token_manager.get_token()
+        token = self.token_manager.get_token()
 
         headers = {
             "Content-Type": "application/json",
@@ -522,8 +522,8 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     formats the prompt for chat completion.
     """
 
-    def __init__(self, name="OpenAIChatCompletionsModel", *args, **kwargs):
-        super().__init__(name=name, *args, **kwargs)
+    def __init__(self, name="OpenAIChatCompletionsModel", **kwargs):
+        super().__init__(name=name, **kwargs)
 
     def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         request_data = {"messages": messages, **self.get_model_params()}

@@ -90,5 +90,5 @@ async def main():
     await create_metrics_client_sovereign_cloud_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

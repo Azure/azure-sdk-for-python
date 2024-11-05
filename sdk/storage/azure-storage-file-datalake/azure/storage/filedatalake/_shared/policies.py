@@ -37,7 +37,7 @@ from .models import LocationMode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         PipelineRequest,
         PipelineResponse
     )
@@ -72,7 +72,7 @@ def retry_hook(settings, **kwargs):
 # respect the Retry-After header, whether this header is present, and
 # whether the returned status code is on the list of status codes to
 # be retried upon on the presence of the aforementioned header)
-def is_retry(response, mode):   # pylint: disable=too-many-return-statements
+def is_retry(response, mode):
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -267,7 +267,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
 class StorageRequestHook(SansIOHTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
@@ -279,7 +279,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
 
 class StorageResponseHook(HTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
@@ -450,7 +450,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -470,14 +470,11 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param request: A pipeline request object.
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: A pipeline response object.
-        :type response: ~azure.core.pipeline.PipelineResponse or None
-        :param error: An error encountered during the request, or
+        :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
+        :param PipelineRequest request: A pipeline request object.
+        :param Optional[PipelineResponse] response: A pipeline response object.
+        :param Optional[AzureError] error: An error encountered during the request, or
             None if the response was received successfully.
-        :type error: ~azure.core.exceptions.AzureError or None
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -611,7 +608,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -663,7 +660,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

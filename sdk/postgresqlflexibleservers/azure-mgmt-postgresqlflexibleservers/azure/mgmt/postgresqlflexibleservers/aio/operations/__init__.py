@@ -29,6 +29,7 @@ from ._quota_usages_operations import QuotaUsagesOperations
 from ._replicas_operations import ReplicasOperations
 from ._log_files_operations import LogFilesOperations
 from ._server_threat_protection_settings_operations import ServerThreatProtectionSettingsOperations
+from ._tuning_options_operations import TuningOptionsOperations
 from ._virtual_endpoints_operations import VirtualEndpointsOperations
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 
@@ -60,6 +61,7 @@ __all__ = [
     "ReplicasOperations",
     "LogFilesOperations",
     "ServerThreatProtectionSettingsOperations",
+    "TuningOptionsOperations",
     "VirtualEndpointsOperations",
     "VirtualNetworkSubnetUsageOperations",
 ]
