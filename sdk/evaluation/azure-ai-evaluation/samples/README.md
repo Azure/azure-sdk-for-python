@@ -14,15 +14,14 @@ These are code samples that show common scenario operations with the Azure AI Ev
 Their main purpose is to be used in inline examples for class and methods throughout the codebase that render alongside our reference documentation on [learn.microsoft.com](https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview).
 
 ```markdown
-.. admonition:: Example:
+    .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_authentication.py
-        :start-after: [START create_ml_client_from_config_default]
-        :end-before: [END create_ml_client_from_config_default]
-        :language: python
-        :dedent: 8
-        :caption: Creating an MLClient from a file named "config.json"
-            in directory "src".
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START direct_attack_simulator]
+            :end-before: [END direct_attack_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run the DirectAttackSimulator to produce 2 results with 3 conversation turns each (6 messages in each result).
 ```
 
 If adding or updating a public class or method, please add or update the example as well. Double-check that you have the correct path for `literalinclude::`. In the Sphinx build, each module is only one directory level away from azure-ai-evaluation, so the `literalinclude` path should always be `../samples/<sample file name>`.
@@ -38,11 +37,10 @@ Each samples file is run during the azure-sdk-for-python Build CI to ensure that
 
 ## Setup
 
-1. Install the Azure Machine Learning Client Library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure AI Evaluation Client Library for Python with [pip](https://pypi.org/project/pip/):
 
    ```bash
     pip install azure-ai-evaluation
-    pip install azure-identity
     ```
 
 2. Clone or download this sample repository
