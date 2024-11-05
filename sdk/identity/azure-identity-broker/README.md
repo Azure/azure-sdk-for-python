@@ -47,14 +47,25 @@ Microsoft Entra applications rely on redirect URIs to determine where to send th
 This example demonstrates using `InteractiveBrowserBrokerCredential` as a broker-enabled credential for authenticating with the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library. Here, the `win32gui` module from the `pywin32` package is used to get the current window.
 
 ```python
+# On Windows
+import win32gui
+from azure.identity.broker import InteractiveBrowserBrokerCredential
+from azure.storage.blob import BlobServiceClient
+
+# Get the handle of the current window
+current_window_handle = win32gui.GetForegroundWindow()
+
+credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
+client = BlobServiceClient(account_url, credential=credential)
+
+# On macOS
 import msal
 from azure.identity.broker import InteractiveBrowserBrokerCredential
 from azure.storage.blob import BlobServiceClient
 
-# Get the handle of the console window
-current_window_handle = msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE
-
-credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
+credential = InteractiveBrowserBrokerCredential(
+    parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE
+)
 client = BlobServiceClient(account_url, credential=credential)
 ```
 
