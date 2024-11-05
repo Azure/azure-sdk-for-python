@@ -338,6 +338,35 @@ class _AIInferenceInstrumentorPreview:
                     if tool_call.function and tool_call.function.arguments:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
+    def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
+        if item['choices'][0]['finish_reason']:
+            accumulate["finish_reason"] = item['choices'][0]['finish_reason']
+        if item['choices'][0]['index']:
+            accumulate["index"] = item['choices'][0]['index']
+        if 'content' in item['choices'][0]['delta'] and item['choices'][0]['delta']['content']:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("content", "")
+            accumulate["message"]["content"] += item['choices'][0]['delta']['content']
+        if 'tool_calls' in item['choices'][0]['delta'] and item['choices'][0]['delta']['tool_calls']:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("tool_calls", [])
+            if item['choices'][0]['delta']['tool_calls'] is not None:
+                for tool_call in item['choices'][0]['delta']['tool_calls']:
+                    if tool_call.id:
+                        accumulate["message"]["tool_calls"].append(
+                            {
+                                "id": tool_call.id,
+                                "type": "",
+                                "function": {"name": "", "arguments": ""},
+                            }
+                        )
+                    if tool_call.function:
+                        accumulate["message"]["tool_calls"][-1]["type"] = "function"
+                    if tool_call.function and tool_call.function.name:
+                        accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                    if tool_call.function and tool_call.function.arguments:
+                        accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
     def _wrapped_stream(
         self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan"
     ) -> _models.StreamingChatCompletions:
@@ -412,71 +441,94 @@ class _AIInferenceInstrumentorPreview:
         self, stream_obj: _models.AsyncStreamingChatCompletions, span: "AbstractSpan"
     ) -> _models.AsyncStreamingChatCompletions:
         class AsyncStreamWrapper(_models.AsyncStreamingChatCompletions):
-            def __init__(self, stream_obj, instrumentor):
+            def __init__(self, stream_obj, instrumentor, span):
                 super().__init__(stream_obj._response)
                 self._instrumentor = instrumentor
-
-            def __aiter__(self) -> Any: #Iterator[_models.StreamingChatCompletionsUpdate]:
-                accumulate: Dict[str, Any] = {}
+                self._accumulate: Dict[str, Any] = {}
+                self._stream_obj = stream_obj
+                self.span = span
+            
+            def test(self) -> bool:
+                return True
+            
+            async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
                 try:
-                    chunk = None
-                    for chunk in stream_obj:
-                        for item in chunk.choices:
-                            self._instrumentor._accumulate_response(item, accumulate)
-                        yield chunk
-
-                    if chunk is not None:
-                        self._instrumentor._add_response_chat_attributes(span, chunk)
-
-                except Exception as exc:
-                    # Set the span status to error
-                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                        span.span_instance.set_status(
-                            StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                            description=str(exc),
-                        )
-                    module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
-                    error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                    self._instrumentor._set_attributes(span, ("error.type", error_type))
-                    raise
-
-                finally:
-                    if stream_obj._done is False:
-                        if accumulate.get("finish_reason") is None:
-                            accumulate["finish_reason"] = "error"
-                    else:
-                        # Only one choice expected with streaming
-                        accumulate["index"] = 0
-                        # Delete message if content tracing is not enabled
-                        if not _trace_inference_content:
-                            if "message" in accumulate:
-                                if "content" in accumulate["message"]:
-                                    del accumulate["message"]["content"]
-                                if not accumulate["message"]:
-                                    del accumulate["message"]
-                            if "message" in accumulate:
-                                if "tool_calls" in accumulate["message"]:
+                    result = await super().__anext__()
+                    self._instrumentor._accumulate_async_streaming_response(result, self._accumulate)
+                    self._last_result = result
+                except StopAsyncIteration as exc:
+                    if self._last_result:
+                        self._instrumentor._add_response_chat_attributes(span, self._last_result)                    
+                    # Only one choice expected with streaming
+                    self._accumulate["index"] = 0
+                    # Delete message if content tracing is not enabled
+                    if not _trace_inference_content:
+                        if "message" in self._accumulate:
+                            if "content" in self._accumulate["message"]:
+                                del self._accumulate["message"]["content"]
+                                if not self._accumulate["message"]:
+                                    del self._accumulate["message"]
+                            if "message" in self._accumulate:
+                                if "tool_calls" in self._accumulate["message"]:
                                     tool_calls_function_names_and_arguments_removed = (
                                         self._instrumentor._remove_function_call_names_and_arguments(
-                                            accumulate["message"]["tool_calls"]
+                                            self._accumulate["message"]["tool_calls"]
                                         )
                                     )
-                                    accumulate["message"]["tool_calls"] = list(
+                                    self._accumulate["message"]["tool_calls"] = list(
                                         tool_calls_function_names_and_arguments_removed
                                     )
 
-                    span.span_instance.add_event(
+                    self.span.span_instance.add_event(
                         name="gen_ai.choice",
                         attributes={
                             "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(accumulate),
+                            "gen_ai.event.content": json.dumps(self._accumulate),
                         },
                     )
                     span.finish()
+                    raise exc
+                return result
+            
+            def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
+                if self._last_result:
+                    self._instrumentor._add_response_chat_attributes(span, self._last_result)
+                if self._stream_obj._done is False:
+                    if self._accumulate.get("finish_reason") is None:
+                        self._accumulate["finish_reason"] = "error"
+                else:
+                    # Only one choice expected with streaming
+                    self._accumulate["index"] = 0
+                    # Delete message if content tracing is not enabled
+                    if not _trace_inference_content:
+                        if "message" in self._accumulate:
+                            if "content" in self._accumulate["message"]:
+                                del self._accumulate["message"]["content"]
+                                if not self._accumulate["message"]:
+                                    del self._accumulate["message"]
+                            if "message" in self._accumulate:
+                                if "tool_calls" in self._accumulate["message"]:
+                                    tool_calls_function_names_and_arguments_removed = (
+                                        self._instrumentor._remove_function_call_names_and_arguments(
+                                            self._accumulate["message"]["tool_calls"]
+                                        )
+                                    )
+                                    self._accumulate["message"]["tool_calls"] = list(
+                                        tool_calls_function_names_and_arguments_removed
+                                    )
 
-                return self
-
-        return AsyncStreamWrapper(stream_obj, self)
+                    self.span.span_instance.add_event(
+                        name="gen_ai.choice",
+                        attributes={
+                            "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                            "gen_ai.event.content": json.dumps(self._accumulate),
+                        },
+                    )
+                    span.finish()
+                self.close()
+            
+        async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span)
+        return async_stream_wrapper
 
     def _trace_sync_function(
         self,
