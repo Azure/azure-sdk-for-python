@@ -71,7 +71,7 @@ class PollingTerminationMixin(LROBasePolling):
         return None  # type: ignore
 
 
-class SecurityDomainClientDownloadPolling(OperationResourcePolling):
+class SecurityDomainDownloadPolling(OperationResourcePolling):
     def __init__(self) -> None:
         self._polling_url = ""
         super().__init__(operation_location_header="azure-asyncoperation")
@@ -93,7 +93,7 @@ class SecurityDomainClientDownloadPolling(OperationResourcePolling):
         raise OperationFailed("Operation failed or canceled")
 
 
-class SecurityDomainClientDownloadPollingMethod(PollingTerminationMixin, LROBasePolling):
+class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePolling):
     def initialize(
         self,
         client: PipelineClient[Any, Any],
@@ -118,10 +118,10 @@ class SecurityDomainClientDownloadPollingMethod(PollingTerminationMixin, LROBase
             response_headers = {}
             response = pipeline_response.http_response
             deserializer = Deserializer()
-            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(
+            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))  # pylint: disable=protected-access
 
             return _deserialize(SecurityDomainObject, response.json())
 
@@ -137,7 +137,7 @@ class SecurityDomainClientDownloadPollingMethod(PollingTerminationMixin, LROBase
         return cast(SecurityDomainObject, self.parse_resource(self._initial_response))
 
 
-class SecurityDomainClientUploadPolling(SecurityDomainClientDownloadPolling):
+class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
     def set_initial_status(self, pipeline_response: "PipelineResponse") -> str:
         response: HttpResponse = pipeline_response.http_response
         self._polling_url = response.headers["azure-asyncoperation"]
@@ -147,7 +147,7 @@ class SecurityDomainClientUploadPolling(SecurityDomainClientDownloadPolling):
         raise OperationFailed("Operation failed or canceled")
 
 
-class SecurityDomainClientUploadPollingMethod(PollingTerminationMixin, LROBasePolling):
+class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling):
     def initialize(
         self,
         client: PipelineClient[Any, Any],
@@ -172,10 +172,10 @@ class SecurityDomainClientUploadPollingMethod(PollingTerminationMixin, LROBasePo
             response_headers = {}
             response = pipeline_response.http_response
             deserializer = Deserializer()
-            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(
+            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))  # pylint: disable=protected-access
 
             return _deserialize(SecurityDomainOperationStatus, response.json())
 
