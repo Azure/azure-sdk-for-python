@@ -1180,7 +1180,7 @@ class TestagentClient(AzureRecordedTestCase):
         with self.create_client(**kwargs) as client:
             file: OpenAIFile = None
 
-            with tempfile.TemporaryDirectory(delete=True) as temp_dir:
+            with tempfile.TemporaryDirectory() as temp_dir:
 
                 # create a temporary input file for upload
                 test_file_path = os.path.join(temp_dir, "input.txt")
