@@ -81,13 +81,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     """
 
     def __init__(
-            self,
-            endpoint: str,
-            credential: Union["TokenCredential", "AzureKeyCredential"],
-            call_connection_id: str,
-            *,
-            api_version: Optional[str] = None,
-            **kwargs,
+        self,
+        endpoint: str,
+        credential: Union["TokenCredential", "AzureKeyCredential"],
+        call_connection_id: str,
+        *,
+        api_version: Optional[str] = None,
+        **kwargs,
     ) -> None:
         call_automation_client = kwargs.get("_callautomation_client", None)
         if call_automation_client is None:
@@ -145,7 +145,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @classmethod
     def _from_callautomation_client(
-            cls, callautomation_client: "CallAutomationClient", call_connection_id: str
+        cls, callautomation_client: "CallAutomationClient", call_connection_id: str
     ) -> "CallConnectionClient":
         """Internal constructor for sharing the pipeline with CallAutomationClient.
 
@@ -218,16 +218,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def transfer_call_to_participant(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            transferee: Optional["CommunicationIdentifier"] = None,
-            sip_headers: Optional[Dict[str, str]] = None,
-            voip_headers: Optional[Dict[str, str]] = None,
-            source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        transferee: Optional["CommunicationIdentifier"] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
+        **kwargs,
     ) -> TransferCallResult:
         """Transfer this call to another participant.
 
@@ -273,17 +273,17 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def add_participant(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            invitation_timeout: Optional[int] = None,
-            operation_context: Optional[str] = None,
-            source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
-            source_display_name: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            sip_headers: Optional[Dict[str, str]] = None,
-            voip_headers: Optional[Dict[str, str]] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        invitation_timeout: Optional[int] = None,
+        operation_context: Optional[str] = None,
+        source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
+        source_display_name: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        **kwargs,
     ) -> AddParticipantResult:
         """Add a participant to this call.
 
@@ -339,12 +339,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def remove_participant(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> RemoveParticipantResult:
         """Remove a participant from this call.
 
@@ -375,14 +375,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def play_media(
-            self,
-            play_source: Union["FileSource", "TextSource", "SsmlSource"],
-            play_to: Union[Literal["all"], List["CommunicationIdentifier"]] = "all",
-            *,
-            loop: bool = False,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        play_source: Union["FileSource", "TextSource", "SsmlSource"],
+        play_to: Union[Literal["all"], List["CommunicationIdentifier"]] = "all",
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -417,15 +417,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def _play_media(
-            self,
-            play_source: Union["FileSource", "TextSource", "SsmlSource"],
-            play_to: Union[Literal["all"], List["CommunicationIdentifier"]] = "all",
-            *,
-            loop: bool = False,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            interrupt_call_media_operation: Optional[bool] = None,
-            **kwargs,
+        self,
+        play_source: Union["FileSource", "TextSource", "SsmlSource"],
+        play_to: Union[Literal["all"], List["CommunicationIdentifier"]] = "all",
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: Optional[bool] = None,
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -473,14 +473,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def play_media_to_all(
-            self,
-            play_source: Union["FileSource", "TextSource", "SsmlSource"],
-            *,
-            loop: bool = False,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            interrupt_call_media_operation: bool = False,
-            **kwargs,
+        self,
+        play_source: Union["FileSource", "TextSource", "SsmlSource"],
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: bool = False,
+        **kwargs,
     ) -> None:
         """Play media to all participants in this call.
 
@@ -518,24 +518,24 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def start_recognizing_media(
-            self,
-            input_type: Union[str, "RecognizeInputType"],
-            target_participant: "CommunicationIdentifier",
-            *,
-            initial_silence_timeout: Optional[int] = None,
-            play_prompt: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None,
-            interrupt_call_media_operation: bool = False,
-            operation_context: Optional[str] = None,
-            interrupt_prompt: bool = False,
-            dtmf_inter_tone_timeout: Optional[int] = None,
-            dtmf_max_tones_to_collect: Optional[int] = None,
-            dtmf_stop_tones: Optional[List[str or "DtmfTone"]] = None,
-            speech_language: Optional[str] = None,
-            choices: Optional[List["RecognitionChoice"]] = None,
-            end_silence_timeout: Optional[int] = None,
-            speech_recognition_model_endpoint_id: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        input_type: Union[str, "RecognizeInputType"],
+        target_participant: "CommunicationIdentifier",
+        *,
+        initial_silence_timeout: Optional[int] = None,
+        play_prompt: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None,
+        interrupt_call_media_operation: bool = False,
+        operation_context: Optional[str] = None,
+        interrupt_prompt: bool = False,
+        dtmf_inter_tone_timeout: Optional[int] = None,
+        dtmf_max_tones_to_collect: Optional[int] = None,
+        dtmf_stop_tones: Optional[List[str or "DtmfTone"]] = None,
+        speech_language: Optional[str] = None,
+        choices: Optional[List["RecognitionChoice"]] = None,
+        end_silence_timeout: Optional[int] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Recognize inputs from specific participant in this call.
 
@@ -651,12 +651,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def start_continuous_dtmf_recognition(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Start continuous Dtmf recognition by subscribing to tones.
 
@@ -684,12 +684,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def stop_continuous_dtmf_recognition(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Stop continuous Dtmf recognition by unsubscribing to tones.
 
@@ -717,13 +717,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def send_dtmf_tones(
-            self,
-            tones: List[Union[str, "DtmfTone"]],
-            target_participant: "CommunicationIdentifier",
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        tones: List[Union[str, "DtmfTone"]],
+        target_participant: "CommunicationIdentifier",
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> SendDtmfTonesResult:
         """Send Dtmf tones to this call.
 
@@ -755,7 +755,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def mute_participant(
-            self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
+        self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
     ) -> MuteParticipantResult:
         """Mute participant from the call using identifier.
 
@@ -777,12 +777,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def cancel_add_participant_operation(
-            self,
-            invitation_id: str,
-            *,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        invitation_id: str,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
 
@@ -812,13 +812,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def start_hold_music(
-            self,
-            target_participant: "CommunicationIdentifier",
-            play_source: Union["FileSource", "TextSource", "SsmlSource"],
-            *,
-            loop: bool = True,  # pylint: disable=unused-argument
-            operation_context: Optional[str] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        play_source: Union["FileSource", "TextSource", "SsmlSource"],
+        *,
+        loop: bool = True,  # pylint: disable=unused-argument
+        operation_context: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Hold participant from call while playing music.
 
@@ -852,7 +852,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def stop_hold_music(
-            self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
+        self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
     ) -> None:
         """Remove hold from participant.
 
@@ -873,7 +873,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def start_transcription(
-            self, *, locale: Optional[str] = None, operation_context: Optional[str] = None, **kwargs
+        self, *, locale: Optional[str] = None, operation_context: Optional[str] = None, **kwargs
     ) -> None:
         """Starts transcription in the call.
 
@@ -921,13 +921,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def hold(
-            self,
-            target_participant: "CommunicationIdentifier",
-            *,
-            play_source: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None,
-            operation_context: Optional[str] = None,
-            operation_callback_url: Optional[str] = None,
-            **kwargs,
+        self,
+        target_participant: "CommunicationIdentifier",
+        *,
+        play_source: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -971,7 +971,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def unhold(
-            self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
+        self, target_participant: "CommunicationIdentifier", *, operation_context: Optional[str] = None, **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
 
