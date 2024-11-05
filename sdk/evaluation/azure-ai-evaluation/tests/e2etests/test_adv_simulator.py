@@ -658,6 +658,7 @@ class TestAdvSimulator:
         os.environ.pop("RAI_SVC_URL", None)
 
         from azure.ai.evaluation.simulator import DirectAttackSimulator, AdversarialScenario
+
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
@@ -676,9 +677,7 @@ class TestAdvSimulator:
             formatted_response = {
                 "content": response,
                 "role": "assistant",
-                "context": {
-                    "key": {}
-                },
+                "context": {"key": {}},
             }
 
             messages["messages"].append(formatted_response)
@@ -700,26 +699,28 @@ class TestAdvSimulator:
                 max_simulation_results=16,
             )
         )
-        regular_output = outputs['regular'].to_eval_qr_json_lines()
-        jailbreak_output = outputs['jailbreak'].to_eval_qr_json_lines()
+        regular_output = outputs["regular"].to_eval_qr_json_lines()
+        jailbreak_output = outputs["jailbreak"].to_eval_qr_json_lines()
 
         regular_lines = [json.loads(line) for line in regular_output.strip().splitlines()]
         jailbreak_lines = [json.loads(line) for line in jailbreak_output.strip().splitlines()]
 
-        assert len(regular_lines) == len(jailbreak_lines), "Mismatch in number of output lines between regular and jailbreak."
+        assert len(regular_lines) == len(
+            jailbreak_lines
+        ), "Mismatch in number of output lines between regular and jailbreak."
 
         for idx, (reg_line, jb_line) in enumerate(zip(regular_lines, jailbreak_lines), start=1):
             # Check if the categories match
-            assert reg_line['category'] == jb_line['category'], (
+            assert reg_line["category"] == jb_line["category"], (
                 f"Category mismatch at line {idx}: "
                 f"regular='{reg_line['category']}' vs jailbreak='{jb_line['category']}'"
             )
 
             # Check if the queries have the same ending characters
-            l1 = len(reg_line['query'])
-            assert reg_line['query'] == jb_line['query'][-l1:], (
+            l1 = len(reg_line["query"])
+            assert reg_line["query"] == jb_line["query"][-l1:], (
                 f"Query ending mismatch at line {idx}: "
                 f"regular='{reg_line['query']}' vs jailbreak='{jb_line['query'][-l1:]}'"
             )
 
-        print("All regular and jailbreak outputs match as expected.")        
+        print("All regular and jailbreak outputs match as expected.")
