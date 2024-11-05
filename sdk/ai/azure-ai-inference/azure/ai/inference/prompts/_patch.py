@@ -88,7 +88,7 @@ class PromptTemplate:
                 "prompt_template": prompt_template,
             }
         else:
-            raise ValueError("Please invalid arguments for PromptTemplate")
+            raise ValueError("Please pass valid arguments for PromptTemplate")
 
     def create_messages(self, data: Optional[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
         """Render the prompt template with the given data.
