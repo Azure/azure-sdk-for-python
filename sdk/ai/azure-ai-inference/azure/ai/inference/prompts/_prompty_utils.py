@@ -147,7 +147,7 @@ def load(prompty_file: Union[str, Path], configuration: str = "default") -> Prom
 
     Parameters
     ----------
-    prompty_file : str
+    prompty_file : Union[str, Path]
         The path to the prompty file
     configuration : str, optional
         The configuration to use, by default "default"
