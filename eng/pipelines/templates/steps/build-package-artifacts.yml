@@ -59,7 +59,7 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  - template: /eng/common/save-package-properties.yml
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
