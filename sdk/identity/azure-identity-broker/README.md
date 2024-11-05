@@ -25,7 +25,7 @@ This package enables broker support via `InteractiveBrowserBrokerCredential`, wh
 
 ### Parent window handle
 
-When authenticating interactively via `InteractiveBrowserBrokerCredential`, a parent window handle is required to ensure that the authentication dialog is shown correctly over the requesting window. In the context of graphical user interfaces on devices, a window handle is a unique identifier that the operating system assigns to each window. For the Windows operating system, this handle is an integer value that serves as a reference to a specific window. On macOS, it is an integer-based identifier.
+When authenticating interactively via `InteractiveBrowserBrokerCredential`, a parent window handle is required to ensure that the authentication dialog is shown correctly over the requesting window. In the context of graphical user interfaces on devices, a window handle is a unique identifier that the operating system assigns to each window. For the Windows operating system, this handle is an integer value that serves as a reference to a specific window. On macOS, it is an integer-based identifier that represents and identifies a specific window instance.
 
 ## Microsoft account (MSA) passthrough
 
