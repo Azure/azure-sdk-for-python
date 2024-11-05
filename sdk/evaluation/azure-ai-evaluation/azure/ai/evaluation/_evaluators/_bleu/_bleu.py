@@ -51,9 +51,8 @@ class BleuScoreEvaluator:
             "bleu_score": 0.22
         }
     """
-    """
-    Evaluator identifier, experimental and to be used only with evaluation in cloud.
-    """
+
+    @experimental
     id = "bleu"
 
     def __init__(self):
