@@ -1,6 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -101,12 +99,12 @@ class AIAgentsInstrumentor:
         AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
         is not found, then the value will default to False. Please note that successive calls
         to insturment will always apply the content recording value provided with the most
-        recent call to instrument (including applying the environment variable if no value is 
+        recent call to instrument (including applying the environment variable if no value is
         provided and defaulting to false if the environment variable is not found), even if
         instrument was already previously called without uninstrument being called in between
         the instrument calls.
 
-        :type enable_content_recording: bool, optional  
+        :type enable_content_recording: bool, optional
 
         """
         self._impl.instrument(enable_content_recording)
@@ -425,7 +423,7 @@ class _AIAgentsInstrumentorPreview:
             return response_format.value
         if isinstance(response_format, _models.AgentsApiResponseFormat):
             return response_format.type
-        raise ValueError(f'Unknown response format {type(response_format)}')
+        raise ValueError(f"Unknown response format {type(response_format)}")
 
     def start_thread_run_span(
         self,
@@ -1484,7 +1482,9 @@ class _AIAgentsInstrumentorPreview:
 
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
-    def __init__(self, inner_handler: AgentEventHandler, instrumentor: _AIAgentsInstrumentorPreview, span: "AbstractSpan"):
+    def __init__(
+        self, inner_handler: AgentEventHandler, instrumentor: _AIAgentsInstrumentorPreview, span: "AbstractSpan"
+    ):
         super().__init__()
         self.span = span
         self.inner_handler = inner_handler

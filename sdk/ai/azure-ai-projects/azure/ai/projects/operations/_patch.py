@@ -22,9 +22,9 @@ from ..models._models import (
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
-    InternalConnectionPropertiesSASAuth
+    InternalConnectionPropertiesSASAuth,
 )
-#from .._types import AgentsApiResponseFormatOption
+
 from ..models._patch import ConnectionProperties
 from ..models._enums import FilePurpose
 from .._vendor import FileType
@@ -40,10 +40,7 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import _types
-    from azure.ai.inference import (
-        ChatCompletionsClient,
-        EmbeddingsClient
-    )
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
     from openai import AzureOpenAI
     from azure.identity import get_bearer_token_provider
 
@@ -222,7 +219,10 @@ class InferenceOperations:
             client = AzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == AuthenticationType.AAD or connection.authentication_type == AuthenticationType.SAS:
+        elif (
+            connection.authentication_type == AuthenticationType.AAD
+            or connection.authentication_type == AuthenticationType.SAS
+        ):
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
@@ -230,12 +230,10 @@ class InferenceOperations:
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 )
             if connection.authentication_type == AuthenticationType.AAD:
-                auth = 'Creating AzureOpenAI using Entra ID authentication'
+                auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
-                auth = 'Creating AzureOpenAI using SAS authentication'
-            logger.debug(
-                f"[InferenceOperations.get_azure_openai_client] {auth}"
-            )
+                auth = "Creating AzureOpenAI using SAS authentication"
+            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -284,7 +282,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return None
 
     @distributed_trace
-    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> Optional[ConnectionProperties]:
+    def get(
+        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials.
 
@@ -310,6 +310,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ..models._patch import SASTokenCredential
+
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
 
                 token_credential = SASTokenCredential(
@@ -2022,7 +2023,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
-    
+
         :param file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
@@ -2089,7 +2090,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
-    
+
         :param body: Required.
         :type body: JSON
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value

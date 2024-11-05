@@ -1,7 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +14,17 @@ import logging
 import sys
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet, CodeInterpreterToolResource, FileSearchToolResource, ToolResources, OpenAIFile, FilePurpose
+from azure.ai.projects.models import (
+    FunctionTool,
+    CodeInterpreterTool,
+    FileSearchTool,
+    ToolSet,
+    CodeInterpreterToolResource,
+    FileSearchToolResource,
+    ToolResources,
+    OpenAIFile,
+    FilePurpose,
+)
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
@@ -1164,7 +1171,6 @@ class TestagentClient(AzureRecordedTestCase):
                 == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
             )
 
-
     @agentClientPreparer()
     @recorded_by_proxy
     def test_code_interpreter_and_save_file(self, **kwargs):
@@ -1173,18 +1179,18 @@ class TestagentClient(AzureRecordedTestCase):
         # create client
         with self.create_client(**kwargs) as client:
             file: OpenAIFile = None
-            
+
             with tempfile.TemporaryDirectory(delete=True) as temp_dir:
-            
+
                 # create a temporary input file for upload
                 test_file_path = os.path.join(temp_dir, "input.txt")
-                
+
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
-                                        
-                file = client.agents.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)    
-                                        
-                # create agent                     
+
+                file = client.agents.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
+
+                # create agent
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
                 agent = client.agents.create_agent(
                     model="gpt-4-1106-preview",
@@ -1223,11 +1229,10 @@ class TestagentClient(AzureRecordedTestCase):
                     print(f"Last Message: {last_msg.text.value}")
 
                 for file_path_annotation in messages.file_path_annotations:
-                    file_id  = file_path_annotation.file_path.file_id
+                    file_id = file_path_annotation.file_path.file_id
                     print(f"Image File ID: {file_path_annotation.file_path.file_id}")
                     temp_file_path = os.path.join(temp_dir, "output.png")
-                    client.agents.save_file(file_id=file_id, file_name="output.png", target_dir=temp_dir)   
+                    client.agents.save_file(file_id=file_id, file_name="output.png", target_dir=temp_dir)
                     output_file_exist = os.path.exists(temp_file_path)
-                            
-            assert output_file_exist
 
+            assert output_file_exist

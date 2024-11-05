@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List, Any, Union, Dict, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
-from typing_extensions import Self 
+from typing_extensions import Self
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
@@ -181,8 +181,7 @@ class AIProjectClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs3) if self._config3.redirect_policy else None,
                 self._config3.http_logging_policy,
             ]
-        self._client3: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=_endpoint3, policies=_policies3, **kwargs3)
+        self._client3: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

@@ -3,13 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.ai.projects.telemetry.agents._ai_agents_instrumentor import (
-    _AIAgentsInstrumentorPreview
-)
-from azure.ai.projects.models import (
-    AgentsApiResponseFormatMode,
-    AgentsApiResponseFormat
-)
+from azure.ai.projects.telemetry.agents._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
+from azure.ai.projects.models import AgentsApiResponseFormatMode, AgentsApiResponseFormat
 
 
 class TestAiAgentsInstrumentor:
@@ -25,10 +20,11 @@ class TestAiAgentsInstrumentor:
         "fmt,expected",
         [
             (None, None),
-            ('neep', 'neep'),
-            (AgentsApiResponseFormatMode.AUTO, 'auto'),
-            (AgentsApiResponseFormat(type='test'), 'test')
-        ])
+            ("neep", "neep"),
+            (AgentsApiResponseFormatMode.AUTO, "auto"),
+            (AgentsApiResponseFormat(type="test"), "test"),
+        ],
+    )
     def test_convert_api_response_format(self, fmt, expected):
         """Test conversion of AgentsApiResponseFormatOption to string"""
         actual = _AIAgentsInstrumentorPreview.agent_api_response_to_str(fmt)

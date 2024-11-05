@@ -15,7 +15,20 @@ import time
 from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
 from io import TextIOWrapper
-from typing import IO, Any, AsyncIterator, Dict, List, MutableMapping, Optional, Union, cast, overload, Sequence, TYPE_CHECKING
+from typing import (
+    IO,
+    Any,
+    AsyncIterator,
+    Dict,
+    List,
+    MutableMapping,
+    Optional,
+    Union,
+    cast,
+    overload,
+    Sequence,
+    TYPE_CHECKING,
+)
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
@@ -27,7 +40,7 @@ from ...models._models import (
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
-    InternalConnectionPropertiesSASAuth
+    InternalConnectionPropertiesSASAuth,
 )
 from ... import models as _models
 from ...operations._patch import _enable_telemetry
@@ -37,10 +50,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.ai.projects import _types
-    from azure.ai.inference.aio import (
-        ChatCompletionsClient,
-        EmbeddingsClient
-    )
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
     from azure.identity import get_bearer_token_provider
 
@@ -218,8 +228,11 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == AuthenticationType.AAD or connection.authentication_type == AuthenticationType.SAS:
-            
+        elif (
+            connection.authentication_type == AuthenticationType.AAD
+            or connection.authentication_type == AuthenticationType.SAS
+        ):
+
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
@@ -227,12 +240,10 @@ class InferenceOperations:
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
                 )
             if connection.authentication_type == AuthenticationType.AAD:
-                auth = 'Creating AzureOpenAI using Entra ID authentication'
+                auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
-                auth = 'Creating AzureOpenAI using SAS authentication'
-            logger.debug(
-                f"[InferenceOperations.get_azure_openai_client] {auth}"
-            )
+                auth = "Creating AzureOpenAI using SAS authentication"
+            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -281,7 +292,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return None
 
     @distributed_trace_async
-    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> Optional[ConnectionProperties]:
+    async def get(
+        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials.
 
@@ -307,8 +320,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
+
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
-                
+
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,
                     credential=self._config.credential,
@@ -1423,7 +1437,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-    
+
         :param thread_id: Required.
         :type thread_id: str
         :param body: Required.

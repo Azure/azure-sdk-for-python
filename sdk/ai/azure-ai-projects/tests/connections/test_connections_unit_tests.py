@@ -105,19 +105,15 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
             seconds=token_duration_sec
         )
         new_token_credential = self._get_fake_token(new_expiration)
-        
+
         mock_properties = MagicMock()
-        mock_properties.auth_type = 'sas_token'
-        mock_properties.category = 'fake_category'
-        mock_properties.target = 'microsoft.com'
-        mock_properties.credentials.key='very secret key'
-        conn_resp = GetConnectionResponse(
-            id = '12334',
-            name = 'Fake_connection',
-            properties = mock_properties
-        )
+        mock_properties.auth_type = "sas_token"
+        mock_properties.category = "fake_category"
+        mock_properties.target = "microsoft.com"
+        mock_properties.credentials.key = "very secret key"
+        conn_resp = GetConnectionResponse(id="12334", name="Fake_connection", properties=mock_properties)
         conn = ConnectionProperties(connection=conn_resp, token_credential=new_token_credential)
-        with patch('azure.ai.projects.operations.ConnectionsOperations.get', return_value=conn):
+        with patch("azure.ai.projects.operations.ConnectionsOperations.get", return_value=conn):
             new_token = sas_token_credential.get_token()
         assert new_token.expires_on == int(new_expiration.timestamp())
 
