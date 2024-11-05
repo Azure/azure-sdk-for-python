@@ -66,20 +66,11 @@ class SexualMultimodalEvaluator:
 
     """
 
-    _ID = "sexual_multimodal"
+    id = "sexual_multimodal"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncSexualMultimodalEvaluator(credential, azure_ai_project)
-
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
 
     def __call__(self, *, conversation, **kwargs):
         """

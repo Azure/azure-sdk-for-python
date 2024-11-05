@@ -49,7 +49,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             }
     """
 
-    _ID = "xpia"
+    id = "xpia"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(

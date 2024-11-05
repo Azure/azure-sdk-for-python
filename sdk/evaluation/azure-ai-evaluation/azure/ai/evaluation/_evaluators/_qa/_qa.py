@@ -58,7 +58,8 @@ class QAEvaluator:
         }
     """
 
-    _ID = "qa"
+    id = "qa"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, model_config, **kwargs):
         self._parallel = kwargs.pop("_parallel", False)

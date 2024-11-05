@@ -85,7 +85,8 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             }
     """
 
-    _ID = "groundedness_pro"
+    id = "groundedness_pro"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(

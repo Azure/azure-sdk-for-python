@@ -53,7 +53,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "groundedness"
     _OPTIONAL_PARAMS = ["query"]
-    _ID = "groundedness"
+
+    id = "groundedness"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(self, model_config):

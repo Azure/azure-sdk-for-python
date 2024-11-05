@@ -44,7 +44,9 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
-    _ID = "coherence"
+
+    id = "coherence"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(self, model_config):

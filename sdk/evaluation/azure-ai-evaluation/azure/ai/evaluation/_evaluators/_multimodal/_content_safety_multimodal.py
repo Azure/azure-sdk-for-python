@@ -90,7 +90,8 @@ class ContentSafetyMultimodalEvaluator:
 
     """
 
-    _ID = "content_safety_multimodal"
+    id = "content_safety_multimodal"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, credential, azure_ai_project, **kwargs):
         self._parallel = kwargs.pop("_parallel", False)

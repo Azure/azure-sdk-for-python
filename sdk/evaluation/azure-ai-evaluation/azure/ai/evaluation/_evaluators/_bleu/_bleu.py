@@ -53,7 +53,7 @@ class BleuScoreEvaluator:
     """
 
     id = "bleu"
-    """The ID of the BLEU score evaluator. Experimental."""
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self):
         self._async_evaluator = _AsyncBleuScoreEvaluator()

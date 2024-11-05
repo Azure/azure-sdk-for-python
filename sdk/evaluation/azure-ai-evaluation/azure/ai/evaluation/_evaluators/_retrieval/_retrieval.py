@@ -156,20 +156,11 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    _ID = "retrieval"
+    id = "protected_material"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, model_config):  # pylint: disable=super-init-not-called
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
-
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
 
     @overload
     def __call__(

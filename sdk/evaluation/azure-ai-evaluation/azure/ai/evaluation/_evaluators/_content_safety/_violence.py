@@ -45,7 +45,8 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         }
     """
 
-    _ID = "violence"
+    id = "violence"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(

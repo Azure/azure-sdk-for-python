@@ -50,7 +50,8 @@ class GleuScoreEvaluator:
         }
     """
 
-    _ID = "gleu"
+    id = "gleu_score"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self):
         self._async_evaluator = _AsyncGleuScoreEvaluator()

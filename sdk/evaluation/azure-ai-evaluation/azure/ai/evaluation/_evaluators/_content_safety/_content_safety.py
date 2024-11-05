@@ -67,7 +67,8 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
         }
     """
 
-    _ID = ""
+    id = "content_safety"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, **kwargs):

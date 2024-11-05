@@ -50,12 +50,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        return cls._ID
-
     @override
     def __call__(  # pylint: disable=docstring-missing-param
         self,

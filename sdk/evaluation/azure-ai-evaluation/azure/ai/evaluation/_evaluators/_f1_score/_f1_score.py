@@ -128,7 +128,8 @@ class F1ScoreEvaluator:
         }
     """
 
-    _ID = "f1_score"
+    id = "f1_score"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
