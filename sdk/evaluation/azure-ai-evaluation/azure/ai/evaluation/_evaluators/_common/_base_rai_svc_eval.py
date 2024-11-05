@@ -14,7 +14,6 @@ from azure.ai.evaluation._common.constants import (
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation._common._experimental import experimental
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase

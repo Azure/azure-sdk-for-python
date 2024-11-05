@@ -7,7 +7,6 @@ from typing import Callable, Dict, List, Union
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
