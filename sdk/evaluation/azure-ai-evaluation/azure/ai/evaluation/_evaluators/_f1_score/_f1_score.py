@@ -134,14 +134,6 @@ class F1ScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
 
     def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """

@@ -77,20 +77,11 @@ class RougeScoreEvaluator:
         }
     """
 
-    id = "protected_material"
+    id = "rouge"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, rouge_type: RougeType):
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
-
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
 
     def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """

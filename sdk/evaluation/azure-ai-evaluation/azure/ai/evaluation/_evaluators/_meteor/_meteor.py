@@ -78,15 +78,6 @@ class MeteorScoreEvaluator:
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
         self._async_evaluator = _AsyncMeteorScoreEvaluator(alpha=alpha, beta=beta, gamma=gamma)
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
     def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """
         Evaluate the METEOR score between the response and the ground truth.

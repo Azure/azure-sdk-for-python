@@ -59,12 +59,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        return cls._ID
-
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.

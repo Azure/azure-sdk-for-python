@@ -40,7 +40,7 @@ class TestEvaluatorIds:
 
     def test_mathematical_evaluator_ids(self):
         assert BleuScoreEvaluator.id == "bleu"
-        assert GleuScoreEvaluator.id == "gleu"
+        assert GleuScoreEvaluator.id == "gleu_score"
         assert MeteorScoreEvaluator.id == "meteor"
         assert RougeScoreEvaluator.id == "rouge"
         assert F1ScoreEvaluator.id == "f1_score"

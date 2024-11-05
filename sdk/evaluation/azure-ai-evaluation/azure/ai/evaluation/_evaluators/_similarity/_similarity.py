@@ -117,15 +117,6 @@ class SimilarityEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """
         Evaluate similarity.

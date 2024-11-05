@@ -73,15 +73,6 @@ class QAEvaluator:
             F1ScoreEvaluator(),
         ]
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
 
     def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
         """

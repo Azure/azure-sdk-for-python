@@ -56,15 +56,6 @@ class GleuScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncGleuScoreEvaluator()
 
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
-
     def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """
         Evaluate the GLEU score between the response and the ground truth.

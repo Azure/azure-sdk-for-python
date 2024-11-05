@@ -66,7 +66,7 @@ class ViolenceMultimodalEvaluator:
 
     """
 
-    id = "sexual"
+    id = "violence_multimodal"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, credential, azure_ai_project):
