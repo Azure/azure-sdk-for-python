@@ -25,7 +25,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.machine_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             resource_name="str",
             child_resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperationsAsync(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             resource_name="str",
             child_resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperationsAsync(AzureMgmtRecordedTestC
                     "lastModifiedByType": "str",
                 },
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself

@@ -28,6 +28,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
 content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelAsyncClient(ModelClientTestBase):
 
@@ -492,7 +493,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "chat-completion" # TODO: This should be chat_completions based on REST API spec...
+            response1, "chat-completion"  # TODO: This should be chat_completions based on REST API spec...
         )  # TODO: This should be ModelType.CHAT once the model is fixed
         await client.close()
 
@@ -737,25 +738,27 @@ class TestModelAsyncClient(ModelClientTestBase):
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 1
         span = spans[0]
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                               ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', 'chat'),
-                               ('server.address', ''),
-                               ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-large'),
-                               ('gen_ai.usage.input_tokens', '+'),
-                               ('gen_ai.usage.output_tokens', '+'),
-                               ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
-            {                
-                'name': 'gen_ai.choice',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"finish_reason": "stop", "index": 0}'
-                }
+            {
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
             }
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)

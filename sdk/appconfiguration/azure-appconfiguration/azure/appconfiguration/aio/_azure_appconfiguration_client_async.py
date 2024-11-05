@@ -52,19 +52,18 @@ from .._utils import (
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
 
-        :param str base_url: Base url of the service.
-        :param credential: An object which can provide secrets for the app configuration service
-        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-        :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
-            value may result in unsupported behavior.
-        :paramtype api_version: str
+    :param str base_url: Base url of the service.
+    :param credential: An object which can provide secrets for the app configuration service
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
+        value may result in unsupported behavior.
+    :paramtype api_version: str
 
     This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
     """
 
     # pylint:disable=protected-access
-
     def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
@@ -642,7 +641,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.LabelFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.LabelFields] or None
         :return: An async iterator of labels.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSettingLabel]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSettingLabel]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if isinstance(accept_datetime, datetime):

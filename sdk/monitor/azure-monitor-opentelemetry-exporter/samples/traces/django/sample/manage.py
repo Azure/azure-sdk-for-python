@@ -15,7 +15,7 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sample.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sample.settings")
 
     # Azure Monitor OpenTelemetry Exporters and Django Instrumentation should only be set up once in either asgi.py, wsgi.py, or manage.py, depending on startup method.
     # If using manage.py, please remove setup from asgi.py and wsgi.py
@@ -24,9 +24,7 @@ def main():
     # Set up Azure Monitor OpenTelemetry Exporter
     trace.set_tracer_provider(TracerProvider())
     span_processor = BatchSpanProcessor(
-        AzureMonitorTraceExporter.from_connection_string(
-            os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-        )
+        AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
     )
     trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -41,5 +39,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

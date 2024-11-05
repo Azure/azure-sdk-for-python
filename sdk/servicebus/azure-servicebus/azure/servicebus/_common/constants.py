@@ -43,9 +43,7 @@ REQUEST_RESPONSE_RENEWLOCK_OPERATION = VENDOR + b":renew-lock"
 REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION = VENDOR + b":renew-session-lock"
 REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER = VENDOR + b":receive-by-sequence-number"
 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION = VENDOR + b":schedule-message"
-REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION = (
-    VENDOR + b":cancel-scheduled-message"
-)
+REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION = VENDOR + b":cancel-scheduled-message"
 REQUEST_RESPONSE_PEEK_OPERATION = VENDOR + b":peek-message"
 REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION = VENDOR + b":update-disposition"
 REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION = VENDOR + b":get-session-state"
@@ -134,9 +132,7 @@ TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = "/$Transfer" + DEAD_LETTER_QUEUE_SUFFIX
 # Headers
 
 SUPPLEMENTARY_AUTHORIZATION_HEADER = "ServiceBusSupplementaryAuthorization"
-DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER = (
-    "ServiceBusDlqSupplementaryAuthorization"
-)
+DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER = "ServiceBusDlqSupplementaryAuthorization"
 
 MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024  # Backcompat with uAMQP
 MESSAGE_PROPERTY_MAX_LENGTH = 128
@@ -146,17 +142,21 @@ MAX_DURATION_VALUE = 922337203685477
 MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
 MESSAGE_STATE_NAME = b"x-opt-message-state"
 
+
 class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
+
 
 class ServiceBusMessageState(int, Enum):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
 
+
 class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
+
 
 class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEAD_LETTER = "deadletter"
@@ -164,6 +164,7 @@ class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
+
 
 ## all below - previously uamqp
 class TransportType(Enum):
@@ -173,8 +174,10 @@ class TransportType(Enum):
     - AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
     port 443.
     """
+
     Amqp = 1
     AmqpOverWebsocket = 2
+
 
 DEFAULT_AMQPS_PORT = 5671
 DEFAULT_AMQP_WSS_PORT = 443

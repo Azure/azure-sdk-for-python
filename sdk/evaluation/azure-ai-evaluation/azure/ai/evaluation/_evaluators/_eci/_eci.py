@@ -1,11 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
@@ -54,11 +55,32 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
         self,
         credential,
         azure_ai_project,
-        eval_last_turn: bool = False,
     ):
         super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            eval_last_turn=eval_last_turn,
         )
+
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ): ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ): ...
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        return super().__call__(*args, **kwargs)

@@ -1,28 +1,38 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import logging
 from datetime import datetime, timedelta
 
 import pytest
 
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
-from azure.servicebus.management import RuleProperties, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, SqlRuleAction
+from azure.servicebus.management import (
+    RuleProperties,
+    CorrelationRuleFilter,
+    SqlRuleFilter,
+    TrueRuleFilter,
+    SqlRuleAction,
+)
 from azure.servicebus.management._constants import INT32_MAX_VALUE
 from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, set_bodiless_matcher, get_credential
-from devtools_testutils.aio import recorded_by_proxy_async
-from tests.sb_env_loader import (
-    ServiceBusPreparer
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    CachedResourceGroupPreparer,
+    set_bodiless_matcher,
+    get_credential,
 )
+from devtools_testutils.aio import recorded_by_proxy_async
+from tests.sb_env_loader import ServiceBusPreparer
 
 from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 
 _logger = get_logger(logging.DEBUG)
+
 
 class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
@@ -31,33 +41,37 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
         set_bodiless_matcher()
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
-        rule_name_1 = 'test_rule_1'
-        rule_name_2 = 'test_rule_2'
-        rule_name_3 = 'test_rule_3'
-        rule_name_4 = 'test_rule_4'
+        rule_name_1 = "test_rule_1"
+        rule_name_2 = "test_rule_2"
+        rule_name_3 = "test_rule_3"
+        rule_name_4 = "test_rule_4"
 
-        correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
-            "key_string": "str1",
-            "key_int": 2,
-            "key_long": INT32_MAX_VALUE + 3,
-            "key_bool": False,
-            "key_datetime": datetime(2020, 7, 5, 11, 12, 13),
-            "key_duration": timedelta(days=1, hours=2, minutes=3)
-        })
-        sql_rule_action = SqlRuleAction(sql_expression="SET Priority = @param", parameters={
-            "@param": datetime(2020, 7, 5, 11, 12, 13),
-        })
+        correlation_fitler = CorrelationRuleFilter(
+            correlation_id="testcid",
+            properties={
+                "key_string": "str1",
+                "key_int": 2,
+                "key_long": INT32_MAX_VALUE + 3,
+                "key_bool": False,
+                "key_datetime": datetime(2020, 7, 5, 11, 12, 13),
+                "key_duration": timedelta(days=1, hours=2, minutes=3),
+            },
+        )
+        sql_rule_action = SqlRuleAction(
+            sql_expression="SET Priority = @param",
+            parameters={
+                "@param": datetime(2020, 7, 5, 11, 12, 13),
+            },
+        )
 
-        sql_filter = SqlRuleFilter("Priority = @param1 AND Level = @param2", parameters={
-            "@param1": "str1",
-            "@param2": 1
-        })
+        sql_filter = SqlRuleFilter(
+            "Priority = @param1 AND Level = @param2", parameters={"@param1": "str1", "@param2": 1}
+        )
 
         bool_filter = TrueRuleFilter()
 
@@ -65,11 +79,13 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
 
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_1, filter=correlation_fitler, action=sql_rule_action)
+            await mgmt_service.create_rule(
+                topic_name, subscription_name, rule_name_1, filter=correlation_fitler, action=sql_rule_action
+            )
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
             rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
-            assert rule_desc.filter.correlation_id == 'testcid'
+            assert rule_desc.filter.correlation_id == "testcid"
             assert rule_desc.action.sql_expression == "SET Priority = @param"
             assert rule_desc.action.parameters["@param"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_string"] == "str1"
@@ -107,13 +123,12 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_rule_create_duplicate(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "dqkodq"
-        subscription_name = 'kkaqo'
-        rule_name = 'rule'
+        subscription_name = "kkaqo"
+        rule_name = "rule"
         sql_filter = SqlRuleFilter("Priority = 'low'")
         try:
             await mgmt_service.create_topic(topic_name)
@@ -131,13 +146,12 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_rule_update_success(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
-        rule_name = 'rule'
+        rule_name = "rule"
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
         try:
@@ -150,7 +164,7 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = 'low'"
 
-            correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
+            correlation_fitler = CorrelationRuleFilter(correlation_id="testcid")
             sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
 
             rule_desc.filter = correlation_fitler
@@ -159,20 +173,20 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
-            assert rule_desc.filter.correlation_id == 'testcid'
+            assert rule_desc.filter.correlation_id == "testcid"
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
             await mgmt_service.update_rule(
                 topic_description.name,
                 subscription_description.name,
                 rule_desc,
-                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
-                action=None
+                filter=CorrelationRuleFilter(correlation_id="updatedcid"),
+                action=None,
             )
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
-            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.filter.correlation_id == "updatedcid"
             assert rule_desc.action == None
 
         finally:
@@ -186,13 +200,12 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_rule_update_invalid(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
-        rule_name = 'rule'
+        rule_name = "rule"
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
         try:
@@ -217,7 +230,7 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
             rule_desc.name = rule_name
 
             # change the name to a topic with an invalid name exist; should fail.
-            rule_desc.name = ''
+            rule_desc.name = ""
             with pytest.raises(HttpResponseError):
                 await mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
@@ -232,15 +245,14 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_rule_list_and_delete(self, servicebus_fully_qualified_namespace):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
-        rule_name_1 = 'test_rule_1'
-        rule_name_2 = 'test_rule_2'
-        rule_name_3 = 'test_rule_3'
+        rule_name_1 = "test_rule_1"
+        rule_name_2 = "test_rule_2"
+        rule_name_3 = "test_rule_3"
 
         sql_filter_1 = SqlRuleFilter("Priority = 'low'")
         sql_filter_2 = SqlRuleFilter("Priority = 'middle'")
@@ -286,13 +298,12 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_mgmt_rule_async_update_dict_success(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
-        rule_name = 'rule'
+        rule_name = "rule"
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
         try:
@@ -305,7 +316,7 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = 'low'"
 
-            correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
+            correlation_fitler = CorrelationRuleFilter(correlation_id="testcid")
             sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
 
             rule_desc.filter = correlation_fitler
@@ -315,20 +326,20 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
-            assert rule_desc.filter.correlation_id == 'testcid'
+            assert rule_desc.filter.correlation_id == "testcid"
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
             await mgmt_service.update_rule(
                 topic_description.name,
                 subscription_description.name,
                 dict(rule_desc),
-                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
-                action=None
+                filter=CorrelationRuleFilter(correlation_id="updatedcid"),
+                action=None,
             )
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
-            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.filter.correlation_id == "updatedcid"
             assert rule_desc.action == None
 
         finally:
@@ -342,13 +353,12 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     async def test_mgmt_rule_async_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
-        rule_name = 'rule'
+        rule_name = "rule"
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
         try:
@@ -359,7 +369,9 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
             # send in rule dict without non-name keyword args
             rule_description_only_name = {"name": topic_name}
             with pytest.raises(TypeError):
-                await mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_description_only_name)
+                await mgmt_service.update_rule(
+                    topic_description.name, subscription_description.name, rule_description_only_name
+                )
 
         finally:
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
