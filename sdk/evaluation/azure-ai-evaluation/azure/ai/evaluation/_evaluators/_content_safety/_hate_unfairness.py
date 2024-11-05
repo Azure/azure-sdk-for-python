@@ -11,19 +11,6 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 
 
-
-def check_decorator(func):
-    def wrapper(*args, **kwargs):
-        if isinstance(func, property):
-            print(f"{func.fget.__name__} is a property")
-        elif callable(func):
-            print(f"{func.__name__} is a function")
-        else:
-            print(f"{func} is neither a function nor a property")
-        return func(*args, **kwargs)
-    return wrapper
-
-
 @experimental
 class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     """
