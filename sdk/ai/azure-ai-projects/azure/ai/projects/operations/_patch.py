@@ -2019,10 +2019,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
-
+    
         :param file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
@@ -2087,9 +2087,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
-
+    
         :param body: Required.
         :type body: JSON
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
@@ -2129,7 +2129,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file_and_poll(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 

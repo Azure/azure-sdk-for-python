@@ -488,7 +488,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -713,7 +713,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -1319,24 +1319,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         return run
 
     @overload
-    def create_stream(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
-        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
     async def create_stream(
         self,
         thread_id: str,
@@ -1438,10 +1420,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_stream(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
+    
         :param thread_id: Required.
         :type thread_id: str
         :param body: Required.
@@ -1896,7 +1878,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1964,7 +1946,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    async def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, *, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -2006,7 +1988,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
