@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b7 (Unreleased)
+## 11.6.0b7 (2024-11-18)
 
 ### Features Added
 
@@ -26,10 +26,6 @@
   - `azure.search.documents.indexes.SplitSkillUnit`
   - `azure.search.documents.indexes.VectorSearchCompressionKind`
   - `azure.search.documents.indexes.VectorSearchCompressionRescoreStorageMethod`
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

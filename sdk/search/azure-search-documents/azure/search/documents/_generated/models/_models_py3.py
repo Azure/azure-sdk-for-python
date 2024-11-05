@@ -1800,7 +1800,7 @@ class SearchResult(_serialization.Model):
     :vartype captions: list[~azure.search.documents.models.QueryCaptionResult]
     :ivar document_debug_info: Contains debugging information that can be used to further explore
      your search results.
-    :vartype document_debug_info: list[~azure.search.documents.models.DocumentDebugInfo]
+    :vartype document_debug_info: ~azure.search.documents.models.DocumentDebugInfo
     """
 
     _validation = {
@@ -1817,7 +1817,7 @@ class SearchResult(_serialization.Model):
         "reranker_score": {"key": "@search\\.rerankerScore", "type": "float"},
         "highlights": {"key": "@search\\.highlights", "type": "{[str]}"},
         "captions": {"key": "@search\\.captions", "type": "[QueryCaptionResult]"},
-        "document_debug_info": {"key": "@search\\.documentDebugInfo", "type": "[DocumentDebugInfo]"},
+        "document_debug_info": {"key": "@search\\.documentDebugInfo", "type": "DocumentDebugInfo"},
     }
 
     def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
