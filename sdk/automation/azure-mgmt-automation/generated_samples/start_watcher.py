@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.automation import AutomationClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.watcher.start(
+    client.watcher.start(
         resource_group_name="rg",
         automation_account_name="MyTestAutomationAccount",
         watcher_name="MyTestWatcher",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2020-01-13-preview/examples/startWatcher.json
