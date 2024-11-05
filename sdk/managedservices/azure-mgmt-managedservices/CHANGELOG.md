@@ -1,34 +1,10 @@
 # Release History
 
-## 7.0.0 (2024-11-04)
+## 7.0.0b2 (2024-11-05)
 
-### Features Added
+### Other Changes
 
-  - Client `ManagedServicesClient` added operation group `operations_with_scope`
-  - Model `JustInTimeAccessPolicy` added property `managed_by_tenant_approvers`
-  - Model `RegistrationAssignment` added property `system_data`
-  - Model `RegistrationAssignmentPropertiesRegistrationDefinition` added property `system_data`
-  - Model `RegistrationDefinition` added property `system_data`
-  - Model `RegistrationDefinitionProperties` added property `managee_tenant_id`
-  - Model `RegistrationDefinitionProperties` added property `managee_tenant_name`
-  - Added enum `CreatedByType`
-  - Added model `EligibleApprover`
-  - Added model `SystemData`
-  - Model `MarketplaceRegistrationDefinitionsOperations` added parameter `kwargs` in method `__init__`
-  - Model `MarketplaceRegistrationDefinitionsWithoutScopeOperations` added parameter `kwargs` in method `__init__`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Model `RegistrationAssignmentsOperations` added parameter `kwargs` in method `__init__`
-  - Model `RegistrationDefinitionsOperations` added parameter `kwargs` in method `__init__`
-  - Added model `OperationsWithScopeOperations`
-  - Method `RegistrationAssignmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, scope: str, registration_assignment_id: str, request_body: RegistrationAssignment, content_type: str)`
-  - Method `RegistrationAssignmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, scope: str, registration_assignment_id: str, request_body: IO[bytes], content_type: str)`
-  - Method `RegistrationDefinitionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, registration_definition_id: str, scope: str, request_body: RegistrationDefinition, content_type: str)`
-  - Method `RegistrationDefinitionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, registration_definition_id: str, scope: str, request_body: IO[bytes], content_type: str)`
-
-### Breaking Changes
-
-  - Method `ManagedServicesClient.__init__` parameter `base_url` changed default value from `None` to `str`
-  - Method `JustInTimeAccessPolicy.__init__` parameter `maximum_activation_duration` changed default value from `None` to `str`
+  - Update dependencies
 
 ## 7.0.0b1 (2022-10-31)
 
