@@ -173,6 +173,7 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -206,6 +207,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
             is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -251,6 +254,8 @@ class DatabaseProxy(object):
             definition["computedProperties"] = computed_properties
         if vector_embedding_policy is not None:
             definition["vectorEmbeddingPolicy"] = vector_embedding_policy
+        if change_feed_policy is not None:
+            definition["changeFeedPolicy"] = change_feed_policy
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -285,6 +290,7 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -320,6 +326,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
             data type, and is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -349,6 +357,7 @@ class DatabaseProxy(object):
                 session_token=session_token,
                 initial_headers=initial_headers,
                 vector_embedding_policy=vector_embedding_policy,
+                change_feed_policy=change_feed_policy,
                 **kwargs
             )
 

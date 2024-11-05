@@ -1163,7 +1163,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
         else:
-            # TODO: Why re-casting options to dict? Is there any case we don't get dict here?
             options = dict(options)
 
         resource_key_map = {"Documents": "docs"}

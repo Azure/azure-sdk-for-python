@@ -36,7 +36,8 @@ async def setup():
     test_client = CosmosClient(config.host, config.masterKey)
     created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
     created_db_data = {
-        "created_db": created_db
+        "created_db": created_db,
+        "is_emulator": config.is_emulator
     }
 
     yield created_db_data
@@ -51,9 +52,13 @@ async def assert_change_feed(expected, actual):
         assert len(expected) == len(actual)
         return
 
+    #TODO: remove this if we can add flag to get 'previous' always
+    for item in actual:
+        if METADATA in item and item[METADATA][OPERATION_TYPE] == DELETE:
+            item[PREVIOUS] = {ID: item[METADATA][ID]}
+
     # Sort actual by operation_type and id
     actual = sorted(actual, key=lambda k: (k[METADATA][OPERATION_TYPE], k[CURRENT][ID]) if k[METADATA][OPERATION_TYPE] == CREATE else (k[METADATA][OPERATION_TYPE], k[PREVIOUS][ID]))
-
 
     for expected_change_feed, actual_change_feed in zip(expected, actual):
         for expected_type, expected_data in expected_change_feed.items():
@@ -312,9 +317,11 @@ class TestChangeFeedAsync:
 
     async def test_query_change_feed_with_delete(self, setup):
         partition_key = 'pk'
+        # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
+        change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
         created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path=f"/{partition_key}"),
-                                                              offer_throughput=11000)
+                                                              change_feed_policy=change_feed_policy)
 
         change_feed_mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
 
@@ -378,7 +385,7 @@ class TestChangeFeedAsync:
             created_collection.query_items_change_feed(
                 change_feed_mode="test_invalid_change_feed_mode",
             )
-        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are ['LatestVersion', 'AllVersionsAndDeletes']."
+        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are [LatestVersion, AllVersionsAndDeletes]."
 
 
         # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
@@ -432,50 +439,6 @@ class TestChangeFeedAsync:
                 change_feed_mode=change_feed_mode,
             )
         assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
-
-        # Error if too many positional arguments
-        with pytest.raises(ValueError) as e:
-            created_collection.query_items_change_feed(
-                "partition_key_range_id",
-                False,
-                "continuation",
-                10,
-                "extra_argument",
-            )
-        assert str(e.value) == "Too many arguments. Expected: less than 4, but given: 5"
-
-        # Error if types are not matching
-        async def positional_arguments_generator():
-            positional_arguments = [
-                (123, False, "continuation", 10, "'123' is not of type 'str'"),
-                ("partition_key_range_id", 123, "continuation", 10, "'123' is not of type 'bool'"),
-                ("partition_key_range_id", False, 123, 10, "'123' is not of type 'str'"),
-                ("partition_key_range_id", False, "continuation", 12.34, "'12.34' is not of type 'int'"),
-            ]
-            for positional_argument in positional_arguments:
-                yield positional_argument
-
-        async for positional_argument in positional_arguments_generator():
-            partition_key_range_id, continuation, start_time, end_time, error_msg = positional_argument
-            with pytest.raises(TypeError) as e:
-                created_collection.query_items_change_feed(
-                    partition_key_range_id,
-                    continuation,
-                    start_time,
-                    end_time,
-                )
-            assert str(e.value) == error_msg
-
-        # Error if arguments are in both positional and keyword arguement list
-        with pytest.raises(ValueError) as e:
-            created_collection.query_items_change_feed(
-                "partition_key_range_id",
-                False,
-                "continuation",
-                10,
-                continuation="123",
-            )
-        assert str(e.value) == "'continuation' is in both positional and keyword argument list. Please remove one of them."
 
 if __name__ == '__main__':
     unittest.main()

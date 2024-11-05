@@ -55,20 +55,20 @@ def add_args_to_kwargs(
     :type kwargs: dict[str, Any]
     """
     if len(args) > 4:
-        raise TypeError(f"'query_items_change_feed()' takes 4 positional arguments but {len(args)} were given")
+        raise TypeError(f"'query_items_change_feed()' takes 4 positional arguments but {len(args)} were given.")
 
     if len(args) > 0:
-        key_and_types = [
-            ('partition_key_range_id', str),
-            ('is_start_from_beginning', bool),
-            ('continuation', str),
-            ('max_item_count', int),
+        keys = [
+            'partition_key_range_id',
+            'is_start_from_beginning',
+            'continuation',
+            'max_item_count',
         ]
         for i, value in enumerate(args):
-            key, expected_type = key_and_types[i]
+            key = keys[i]
 
             if key in kwargs:
-                raise ValueError(f"'{key}' is in both positional and keyword argument list. Please remove one of them.")
+                raise TypeError(f"'query_items_change_feed()' got multiple values for argument '{key}'.")
 
             kwargs[key] = value
 
