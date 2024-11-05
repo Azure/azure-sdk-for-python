@@ -1,37 +1,10 @@
 # Release History
 
-## 2.0.0 (2024-11-04)
+## 1.1.0b2 (2024-11-05)
 
-### Features Added
+### Other Changes
 
-  - Model `CheckNameAvailabilityRequest` added property `type`
-  - Added enum `EntitySearchType`
-  - Added enum `EntityViewParameterType`
-  - Added enum `ManagementGroupExpandType`
-  - Model `EntitiesOperations` added parameter `kwargs` in method `__init__`
-  - Model `HierarchySettingsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ManagementGroupSubscriptionsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ManagementGroupsOperations` added parameter `kwargs` in method `__init__`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Method `ManagementGroupsAPI.check_name_availability` has a new overload `def check_name_availability(self: None, check_name_availability_request: CheckNameAvailabilityRequest, content_type: str)`
-  - Method `ManagementGroupsAPI.check_name_availability` has a new overload `def check_name_availability(self: None, check_name_availability_request: IO[bytes], content_type: str)`
-  - Method `HierarchySettingsOperations.create_or_update` has a new overload `def create_or_update(self: None, group_id: str, create_tenant_settings_request: CreateOrUpdateSettingsRequest, content_type: str)`
-  - Method `HierarchySettingsOperations.create_or_update` has a new overload `def create_or_update(self: None, group_id: str, create_tenant_settings_request: IO[bytes], content_type: str)`
-  - Method `HierarchySettingsOperations.update` has a new overload `def update(self: None, group_id: str, create_tenant_settings_request: CreateOrUpdateSettingsRequest, content_type: str)`
-  - Method `HierarchySettingsOperations.update` has a new overload `def update(self: None, group_id: str, create_tenant_settings_request: IO[bytes], content_type: str)`
-  - Method `ManagementGroupsAPIOperationsMixin.check_name_availability` has a new overload `def check_name_availability(self: None, check_name_availability_request: CheckNameAvailabilityRequest, content_type: str)`
-  - Method `ManagementGroupsAPIOperationsMixin.check_name_availability` has a new overload `def check_name_availability(self: None, check_name_availability_request: IO[bytes], content_type: str)`
-  - Method `ManagementGroupsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, group_id: str, create_management_group_request: CreateManagementGroupRequest, cache_control: str, content_type: str)`
-  - Method `ManagementGroupsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, group_id: str, create_management_group_request: IO[bytes], cache_control: str, content_type: str)`
-  - Method `ManagementGroupsOperations.update` has a new overload `def update(self: None, group_id: str, patch_group_request: PatchManagementGroupRequest, cache_control: str, content_type: str)`
-  - Method `ManagementGroupsOperations.update` has a new overload `def update(self: None, group_id: str, patch_group_request: IO[bytes], cache_control: str, content_type: str)`
-
-### Breaking Changes
-
-  - Method `ManagementGroupsAPI.__init__` parameter `base_url` changed default value from `None` to `str`
-  - Deleted or renamed model `Enum0`
-  - Deleted or renamed model `Enum2`
-  - Deleted or renamed model `Enum3`
+  - Update dependencies
 
 ## 1.1.0b1 (2022-11-01)
 
