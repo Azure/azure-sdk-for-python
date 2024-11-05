@@ -6,6 +6,7 @@ from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from azure.ai.evaluation._common._experimental import experimental
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
@@ -57,6 +58,8 @@ class QAEvaluator:
         }
     """
 
+    _ID = "qa"
+
     def __init__(self, model_config, **kwargs):
         self._parallel = kwargs.pop("_parallel", False)
 
@@ -68,6 +71,16 @@ class QAEvaluator:
             SimilarityEvaluator(model_config),
             F1ScoreEvaluator(),
         ]
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
+
 
     def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
         """

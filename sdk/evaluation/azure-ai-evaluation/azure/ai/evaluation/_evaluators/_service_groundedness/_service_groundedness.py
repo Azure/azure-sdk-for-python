@@ -85,6 +85,8 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             }
     """
 
+    _ID = "groundedness_pro"
+
     @override
     def __init__(
         self,

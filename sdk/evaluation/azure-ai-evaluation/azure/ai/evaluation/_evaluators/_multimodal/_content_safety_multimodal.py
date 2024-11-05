@@ -90,6 +90,8 @@ class ContentSafetyMultimodalEvaluator:
 
     """
 
+    _ID = "content_safety_multimodal"
+
     def __init__(self, credential, azure_ai_project, **kwargs):
         self._parallel = kwargs.pop("_parallel", False)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [

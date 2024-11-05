@@ -6,6 +6,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common._experimental import experimental
 
 
 @experimental
@@ -70,12 +71,23 @@ class ProtectedMaterialMultimodalEvaluator:
 
     """
 
+    _ID = "protected_material_multimodal"
+
     def __init__(
         self,
         credential,
         azure_ai_project,
     ):
         self._async_evaluator = _AsyncProtectedMaterialMultimodalEvaluator(credential, azure_ai_project)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, conversation, **kwargs):
         """

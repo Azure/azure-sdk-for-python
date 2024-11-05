@@ -49,6 +49,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             }
     """
 
+    _ID = "xpia"
+
     @override
     def __init__(
         self,

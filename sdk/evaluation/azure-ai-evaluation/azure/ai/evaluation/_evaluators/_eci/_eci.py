@@ -50,6 +50,8 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
         }
     """
 
+    _ID = "eci"
+
     @override
     def __init__(
         self,

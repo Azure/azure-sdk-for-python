@@ -8,6 +8,7 @@ from typing import List
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class _AsyncF1ScoreEvaluator:
@@ -127,8 +128,19 @@ class F1ScoreEvaluator:
         }
     """
 
+    _ID = "f1_score"
+
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """

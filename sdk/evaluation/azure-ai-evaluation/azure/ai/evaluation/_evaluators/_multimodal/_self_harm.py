@@ -66,8 +66,20 @@ class SelfHarmMultimodalEvaluator:
 
     """
 
+    _ID = "self_harm_multimodal"
+
     def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(credential, azure_ai_project)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
+
 
     def __call__(self, *, conversation, **kwargs):
         """

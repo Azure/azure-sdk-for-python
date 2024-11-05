@@ -10,6 +10,7 @@ from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
+from azure.ai.evaluation._common._experimental import experimental
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
@@ -57,6 +58,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        return cls._ID
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]

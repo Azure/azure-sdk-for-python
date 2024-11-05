@@ -35,6 +35,15 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
+
     async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.

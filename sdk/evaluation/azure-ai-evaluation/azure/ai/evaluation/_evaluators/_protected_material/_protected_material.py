@@ -51,6 +51,8 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     """
 
+    _ID = "protected_material"
+
     @override
     def __init__(
         self,

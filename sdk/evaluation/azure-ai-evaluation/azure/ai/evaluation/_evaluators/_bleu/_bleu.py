@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._common._experimental import experimental
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
@@ -51,8 +52,19 @@ class BleuScoreEvaluator:
         }
     """
 
+    _ID = "bleu"
+
     def __init__(self):
         self._async_evaluator = _AsyncBleuScoreEvaluator()
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """

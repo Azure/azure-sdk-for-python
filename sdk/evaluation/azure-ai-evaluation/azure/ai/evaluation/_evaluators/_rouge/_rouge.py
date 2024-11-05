@@ -6,6 +6,7 @@ from enum import Enum
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class RougeType(Enum):
@@ -76,8 +77,19 @@ class RougeScoreEvaluator:
         }
     """
 
+    _ID = "rouge"
+
     def __init__(self, rouge_type: RougeType):
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """

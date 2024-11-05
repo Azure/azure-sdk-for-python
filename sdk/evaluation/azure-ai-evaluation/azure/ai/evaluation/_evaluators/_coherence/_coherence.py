@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
@@ -43,12 +44,14 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
+    _ID = "coherence"
 
     @override
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+
 
     @overload
     def __call__(

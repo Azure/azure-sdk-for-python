@@ -42,6 +42,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "fluency.prompty"
     _RESULT_KEY = "fluency"
+    _ID = "fluency"
 
     @override
     def __init__(self, model_config):

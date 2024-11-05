@@ -10,6 +10,7 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common._experimental import experimental
 
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
@@ -110,8 +111,19 @@ class SimilarityEvaluator:
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
+    _ID = "similarity"
+
     def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """

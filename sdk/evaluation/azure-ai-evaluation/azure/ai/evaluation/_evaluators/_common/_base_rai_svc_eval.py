@@ -14,6 +14,7 @@ from azure.ai.evaluation._common.constants import (
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._common._experimental import experimental
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -48,6 +49,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._eval_metric = eval_metric
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        return cls._ID
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param

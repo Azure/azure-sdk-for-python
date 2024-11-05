@@ -15,6 +15,7 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
@@ -155,8 +156,20 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
+    _ID = "retrieval"
+
     def __init__(self, model_config):  # pylint: disable=super-init-not-called
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
+
 
     @overload
     def __call__(

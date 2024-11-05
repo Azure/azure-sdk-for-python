@@ -5,6 +5,7 @@ from nltk.translate.meteor_score import meteor_score
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._common.utils import nltk_tokenize, ensure_nltk_data_downloaded
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class _AsyncMeteorScoreEvaluator:
@@ -71,8 +72,19 @@ class MeteorScoreEvaluator:
         }
     """
 
+    _ID = "meteor"
+
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
         self._async_evaluator = _AsyncMeteorScoreEvaluator(alpha=alpha, beta=beta, gamma=gamma)
+
+    @experimental
+    @classmethod
+    @property
+    def id(cls):
+        """
+        Evaluator identifier, experimental and to be used only with evaluation in cloud.
+        """
+        return cls._ID
 
     def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """

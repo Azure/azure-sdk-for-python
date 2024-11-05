@@ -46,6 +46,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     # Constants must be defined within eval's directory to be save/loadable
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
+    _ID = "relevance"
 
     @override
     def __init__(self, model_config):

@@ -45,6 +45,8 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         }
     """
 
+    _ID = "sexual"
+
     @override
     def __init__(
         self,
