@@ -1,10 +1,11 @@
-
-
 # Azure Identity Broker plugin for Python
 
-This package extends the [Azure Identity][azure_identity] library by providing supplemental credentials for authenticating via an authentication broker.
+This package extends the [Azure Identity][azure_identity] library by providing supplemental credentials for authenticating via an authentication broker. An authentication broker is an application that runs on a user's machine that manages the authentication handshakes and token maintenance for connected accounts. The table below outlines supported brokers and the minimum package version required to use each of them.
 
-An authentication broker is an application that runs on a user’s machine that manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported.
+| Broker                                    | Minimum package version |
+|-------------------------------------------|-------------------------|
+| [Company Portal][company_portal] on macOS | 1.3.0b1                 |
+| Web Account Manager (WAM) on Windows 10+  | 1.0.0                   |
 
 [Source code][source_code] | [Package (PyPI)][azure_identity_broker] | [API reference documentation][ref_docs] | [Microsoft Entra ID documentation][entra_id]
 
@@ -20,7 +21,7 @@ pip install azure-identity-broker
 
 ## Key concepts
 
-This package enables broker support via `InteractiveBrowserBrokerCredential` which is a subclass of the `InteractiveBrowserCredential` of the Azure Identity library.
+This package enables broker support via `InteractiveBrowserBrokerCredential`, which is a subclass of the Azure Identity library's [InteractiveBrowserCredential][ibc].
 
 ### Parent window handles
 
@@ -28,15 +29,16 @@ When authenticating interactively via `InteractiveBrowserBrokerCredential`, a pa
 
 ## Microsoft account (MSA) passthrough
 
-Microsoft accounts (MSA) are personal accounts created by users to access Microsoft services. MSA passthrough is a legacy configuration which enables users to get tokens to resources which normally don't accept MSA logins. This feature is only available to first-party applications. Users authenticating with an application that is configured to use MSA passthrough can set `enable_msa_passthrough` to `True` inside `InteractiveBrowserBrokerCredential` to allow these personal accounts to be listed by WAM.
+Microsoft accounts (MSA) are personal accounts created by users to access Microsoft services. MSA passthrough is a legacy configuration which enables users to get tokens to resources which normally don't accept MSA logins. This feature is only available to first-party applications. Users authenticating with an application that is configured to use MSA passthrough can set `enable_msa_passthrough` to `True` inside `InteractiveBrowserBrokerCredential` to allow these personal accounts to be listed by broker.
 
 ## Redirect URIs
 
-Microsoft Entra applications rely on redirect URIs to determine where to send the authentication response after a user has logged in. To enable brokered authentication through WAM, a redirect URI matching the following pattern should be registered to the application:
+Microsoft Entra applications rely on redirect URIs to determine where to send the authentication response after a user has logged in. To enable brokered authentication, [add a redirect URI](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app#add-a-redirect-uri) to the application for the platform on which it's expected to run.
 
-```
-ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
-```
+| Platform    | Redirect URI                                                                                                          |
+|-------------|-----------------------------------------------------------------------------------------------------------------------|
+| macOS       | `msauth.com.msauth.unsignedapp://auth` for unsigned applications<br>`msauth.BUNDLE_ID://auth` for signed applications |
+| Windows 10+ | `ms-appx-web://Microsoft.AAD.BrokerPlugin/your_client_id`                                                             |
 
 ## Examples
 
@@ -98,7 +100,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_identity_broker]: https://pypi.org/project/azure-identity-broker
 [azure_storage_blob]: https://pypi.org/project/azure-storage-blob
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
+[company_portal]: https://learn.microsoft.com/mem/intune/apps/apps-company-portal-macos
 [entra_id]: https://learn.microsoft.com/entra/identity/
+[ibc]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.interactivebrowsercredential?view=azure-python
 [pip]: https://pypi.org/project/pip
 [ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity-broker/latest/index.html
 [source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity-broker

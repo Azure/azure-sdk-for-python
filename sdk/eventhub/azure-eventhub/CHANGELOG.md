@@ -4,17 +4,14 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.
 
 - Added logging to track received messages.
 
 ## 5.12.2 (2024-10-02)
 
 ### Bugs Fixed
+
 - Implemented backpressure for  async consumer  to address a memory leak issue. ([#36398](https://github.com/Azure/azure-sdk-for-python/issues/36398))
 
 ## 5.12.1 (2024-06-11)

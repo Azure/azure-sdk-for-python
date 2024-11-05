@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -143,9 +143,11 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
+     authenticate the identity of the connection endpoint. Ignored if ssl_context passed in. Default is None
+     in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
+    :keyword ssl_context: An instance of ssl.SSLContext to be used. If this is specified, connection_verify is ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
      wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
      and 1 for transport type AmqpOverWebsocket.
@@ -201,7 +203,13 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
 
         # Custom Endpoint
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
-        self._connection_verify = kwargs.get("connection_verify")
+        connection_verify = kwargs.get("connection_verify")
+        ssl_context = kwargs.get("ssl_context")
+        self._ssl_opts = {}
+        if ssl_context:
+            self._ssl_opts["context"] = ssl_context
+        else:  # str or None
+            self._ssl_opts["ca_certs"] = connection_verify or certifi.where()
 
         # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)
@@ -306,7 +314,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
             self._connection = Connection(
                 "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl_opts={"ca_certs": self._connection_verify or certifi.where()},
+                ssl_opts=self._ssl_opts,
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -556,9 +564,11 @@ class SendClient(AMQPClient):
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
+     authenticate the identity of the connection endpoint. Ignored if ssl_context passed in. Default is None
+     in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
+    :keyword ssl_context: An instance of ssl.SSLContext to be used. If this is specified, connection_verify is ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     """
 
     def __init__(self, hostname, target, **kwargs):
@@ -779,9 +789,11 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
+     authenticate the identity of the connection endpoint. Ignored if ssl_context passed in. Default is None
+     in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
+    :keyword ssl_context: An instance of ssl.SSLContext to be used. If this is specified, connection_verify is ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     """
 
     def __init__(self, hostname, source, **kwargs):
