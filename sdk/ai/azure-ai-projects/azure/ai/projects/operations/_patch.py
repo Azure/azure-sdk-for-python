@@ -183,7 +183,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AzureOpenAI":
+    def get_azure_openai_client(self, *, api_version: Union[str, None] = None, **kwargs) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
@@ -329,7 +329,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return ConnectionProperties(connection=connection)
 
     @distributed_trace
-    def list(self, *, connection_type: ConnectionType | None = None, **kwargs: Any) -> Iterable[ConnectionProperties]:
+    def list(self, *, connection_type: Union[ConnectionType, None] = None, **kwargs: Any) -> Iterable[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
