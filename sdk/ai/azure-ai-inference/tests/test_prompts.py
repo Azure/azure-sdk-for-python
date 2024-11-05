@@ -28,13 +28,16 @@ class TestPrompts:
             {"rule": "The check-in time is 3pm"},
             {"rule": "The check-out time is 11am"},
             {"rule": "Breakfast is served from 7am to 10am"},
-            {"rule": "The hotel website is https://www.myhotel.com?key1=param1&key2=param\"2&key3=param<3>"},
+            {"rule": 'The hotel website is https://www.myhotel.com?key1=param1&key2=param"2&key3=param<3>'},
         ]
         messages = prompt_template.create_messages(input=input, rules=rules)
         assert len(messages) == 2
         assert messages[0]["role"] == "system"
         assert "Breakfast is served from 7am to 10am" in messages[0]["content"]
-        assert "The hotel website is https://www.myhotel.com?key1=param1&amp;key2=param&quot;2&amp;key3=param&lt;3&gt;" in messages[0]["content"]
+        assert (
+            "The hotel website is https://www.myhotel.com?key1=param1&amp;key2=param&quot;2&amp;key3=param&lt;3&gt;"
+            in messages[0]["content"]
+        )
         assert messages[1]["role"] == "user"
         assert messages[1]["content"] == "What's the check-in and check-out time?"
 
