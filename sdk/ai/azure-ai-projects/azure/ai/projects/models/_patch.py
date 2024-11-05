@@ -224,7 +224,7 @@ class SASTokenCredential(TokenCredential):
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
         self._sas_token = ""
-        if connection.token_credential is not None:
+        if connection is not None and connection.token_credential is not None:
             sas_credential = cast(SASTokenCredential, connection.token_credential)
             self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
