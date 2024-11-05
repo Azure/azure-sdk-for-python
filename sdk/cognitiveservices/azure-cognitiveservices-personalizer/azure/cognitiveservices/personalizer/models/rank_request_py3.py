@@ -53,19 +53,28 @@ class RankRequest(Model):
     """
 
     _validation = {
-        'actions': {'required': True},
-        'event_id': {'max_length': 256},
+        "actions": {"required": True},
+        "event_id": {"max_length": 256},
     }
 
     _attribute_map = {
-        'context_features': {'key': 'contextFeatures', 'type': '[object]'},
-        'actions': {'key': 'actions', 'type': '[RankableAction]'},
-        'excluded_actions': {'key': 'excludedActions', 'type': '[str]'},
-        'event_id': {'key': 'eventId', 'type': 'str'},
-        'defer_activation': {'key': 'deferActivation', 'type': 'bool'},
+        "context_features": {"key": "contextFeatures", "type": "[object]"},
+        "actions": {"key": "actions", "type": "[RankableAction]"},
+        "excluded_actions": {"key": "excludedActions", "type": "[str]"},
+        "event_id": {"key": "eventId", "type": "str"},
+        "defer_activation": {"key": "deferActivation", "type": "bool"},
     }
 
-    def __init__(self, *, actions, context_features=None, excluded_actions=None, event_id: str=None, defer_activation: bool=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        actions,
+        context_features=None,
+        excluded_actions=None,
+        event_id: str = None,
+        defer_activation: bool = False,
+        **kwargs
+    ) -> None:
         super(RankRequest, self).__init__(**kwargs)
         self.context_features = context_features
         self.actions = actions

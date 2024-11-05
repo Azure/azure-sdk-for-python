@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -18,9 +18,10 @@ if TYPE_CHECKING:
 
 
 class Authorization(_serialization.Model):
-    """The Azure Active Directory principal identifier and Azure built-in role that describes the access the principal will receive on the delegated resource in the managed tenant.
+    """The Azure Active Directory principal identifier and Azure built-in role that describes the
+    access the principal will receive on the delegated resource in the managed tenant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
     :vartype principal_id: str
@@ -56,8 +57,8 @@ class Authorization(_serialization.Model):
         role_definition_id: str,
         principal_id_display_name: Optional[str] = None,
         delegated_role_definition_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
         :paramtype principal_id: str
@@ -81,9 +82,10 @@ class Authorization(_serialization.Model):
 
 
 class EligibleApprover(_serialization.Model):
-    """Defines the Azure Active Directory principal that can approve any just-in-time access requests by the principal defined in the EligibleAuthorization.
+    """Defines the Azure Active Directory principal that can approve any just-in-time access requests
+    by the principal defined in the EligibleAuthorization.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
     :vartype principal_id: str
@@ -100,7 +102,7 @@ class EligibleApprover(_serialization.Model):
         "principal_id_display_name": {"key": "principalIdDisplayName", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: str, principal_id_display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: str, principal_id_display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
         :paramtype principal_id: str
@@ -113,9 +115,11 @@ class EligibleApprover(_serialization.Model):
 
 
 class EligibleAuthorization(_serialization.Model):
-    """The Azure Active Directory principal identifier, Azure built-in role, and just-in-time access policy that describes the just-in-time access the principal will receive on the delegated resource in the managed tenant.
+    """The Azure Active Directory principal identifier, Azure built-in role, and just-in-time access
+    policy that describes the just-in-time access the principal will receive on the delegated
+    resource in the managed tenant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
     :vartype principal_id: str
@@ -148,8 +152,8 @@ class EligibleAuthorization(_serialization.Model):
         role_definition_id: str,
         principal_id_display_name: Optional[str] = None,
         just_in_time_access_policy: Optional["_models.JustInTimeAccessPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
         :paramtype principal_id: str
@@ -173,7 +177,7 @@ class EligibleAuthorization(_serialization.Model):
 class ErrorDefinition(_serialization.Model):
     """The error response indicating why the incoming request wasn’t able to be processed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code. Required.
     :vartype code: str
@@ -194,7 +198,9 @@ class ErrorDefinition(_serialization.Model):
         "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(self, *, code: str, message: str, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs):
+    def __init__(
+        self, *, code: str, message: str, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code. Required.
         :paramtype code: str
@@ -220,7 +226,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.managedservices.models.ErrorDefinition
@@ -232,7 +238,7 @@ class ErrorResponse(_serialization.Model):
 class JustInTimeAccessPolicy(_serialization.Model):
     """Just-in-time access policy setting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar multi_factor_auth_provider: The multi-factor authorization provider to be used for
      just-in-time access requests. Known values are: "Azure" and "None".
@@ -262,8 +268,8 @@ class JustInTimeAccessPolicy(_serialization.Model):
         multi_factor_auth_provider: Union[str, "_models.MultiFactorAuthProvider"] = "None",
         maximum_activation_duration: datetime.timedelta = "PT8H",
         managed_by_tenant_approvers: Optional[List["_models.EligibleApprover"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword multi_factor_auth_provider: The multi-factor authorization provider to be used for
          just-in-time access requests. Known values are: "Azure" and "None".
@@ -321,8 +327,8 @@ class MarketplaceRegistrationDefinition(_serialization.Model):
         *,
         properties: Optional["_models.MarketplaceRegistrationDefinitionProperties"] = None,
         plan: Optional["_models.Plan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of the marketplace registration definition.
         :paramtype properties:
@@ -359,17 +365,17 @@ class MarketplaceRegistrationDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class MarketplaceRegistrationDefinitionProperties(_serialization.Model):
+class MarketplaceRegistrationDefinitionProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The properties of the marketplace registration definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar managed_by_tenant_id: The identifier of the managedBy tenant. Required.
     :vartype managed_by_tenant_id: str
@@ -413,8 +419,8 @@ class MarketplaceRegistrationDefinitionProperties(_serialization.Model):
         offer_display_name: Optional[str] = None,
         publisher_display_name: Optional[str] = None,
         plan_display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword managed_by_tenant_id: The identifier of the managedBy tenant. Required.
         :paramtype managed_by_tenant_id: str
@@ -464,7 +470,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -498,8 +504,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The service provider.
         :paramtype provider: str
@@ -534,7 +540,7 @@ class OperationList(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -543,7 +549,7 @@ class OperationList(_serialization.Model):
 class Plan(_serialization.Model):
     """The details for the Managed Services offer’s plan in Azure Marketplace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Azure Marketplace plan name. Required.
     :vartype name: str
@@ -569,7 +575,7 @@ class Plan(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, *, name: str, publisher: str, product: str, version: str, **kwargs):
+    def __init__(self, *, name: str, publisher: str, product: str, version: str, **kwargs: Any) -> None:
         """
         :keyword name: Azure Marketplace plan name. Required.
         :paramtype name: str
@@ -619,7 +625,9 @@ class RegistrationAssignment(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RegistrationAssignmentProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.RegistrationAssignmentProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of a registration assignment.
         :paramtype properties: ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
@@ -653,7 +661,7 @@ class RegistrationAssignmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -665,7 +673,7 @@ class RegistrationAssignmentProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar registration_definition_id: The fully qualified path of the registration definition.
      Required.
@@ -695,7 +703,7 @@ class RegistrationAssignmentProperties(_serialization.Model):
         },
     }
 
-    def __init__(self, *, registration_definition_id: str, **kwargs):
+    def __init__(self, *, registration_definition_id: str, **kwargs: Any) -> None:
         """
         :keyword registration_definition_id: The fully qualified path of the registration definition.
          Required.
@@ -707,7 +715,7 @@ class RegistrationAssignmentProperties(_serialization.Model):
         self.registration_definition = None
 
 
-class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Model):
+class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Model):  # pylint: disable=name-too-long
     """The registration definition associated with the registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -749,8 +757,8 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Mode
         *,
         properties: Optional["_models.RegistrationAssignmentPropertiesRegistrationDefinitionProperties"] = None,
         plan: Optional["_models.Plan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of the registration definition associated with the
          registration assignment.
@@ -768,7 +776,9 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Mode
         self.system_data = None
 
 
-class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(_serialization.Model):
+class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """The properties of the registration definition associated with the registration assignment.
 
     :ivar description: The description of the registration definition.
@@ -822,8 +832,8 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(_serializ
         managee_tenant_name: Optional[str] = None,
         managed_by_tenant_id: Optional[str] = None,
         managed_by_tenant_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the registration definition.
         :paramtype description: str
@@ -903,8 +913,8 @@ class RegistrationDefinition(_serialization.Model):
         *,
         properties: Optional["_models.RegistrationDefinitionProperties"] = None,
         plan: Optional["_models.Plan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of a registration definition.
         :paramtype properties: ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
@@ -941,7 +951,7 @@ class RegistrationDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -953,7 +963,7 @@ class RegistrationDefinitionProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar description: The description of the registration definition.
     :vartype description: str
@@ -1011,8 +1021,8 @@ class RegistrationDefinitionProperties(_serialization.Model):
         description: Optional[str] = None,
         eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
         registration_definition_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the registration definition.
         :paramtype description: str
@@ -1079,8 +1089,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
