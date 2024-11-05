@@ -23,7 +23,7 @@ from azure.core.settings import settings
 from azure.ai.projects.operations import AgentsOperations
 from azure.ai.projects.aio.operations import AgentsOperations as AsyncAgentOperations
 from azure.ai.projects.models import _models, AgentRunStream
-from azure.ai.projects.models._enums import MessageRole, RunStepStatus
+from azure.ai.projects.models._enums import MessageRole, RunStepStatus, AgentsApiResponseFormatMode
 from azure.ai.projects.models._models import (
     MessageAttachment,
     MessageDeltaChunk,
@@ -89,7 +89,7 @@ class AIAgentsInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
 
-    def instrument(self, enable_content_recording: bool = None) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
         Enable trace instrumentation for AI Agents.
 
@@ -151,7 +151,7 @@ class _AIAgentsInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self, enable_content_recording: bool = None):
+    def instrument(self, enable_content_recording: Optional[bool] = None):
         """
         Enable trace instrumentation for AI Agents.
 
@@ -409,6 +409,24 @@ class _AIAgentsInstrumentorPreview:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
 
+    @staticmethod
+    def agent_api_response_to_str(response_format: Any) -> Optional[str]:
+        """
+        Convert response_format to string.
+
+        :param response_format: The response format.
+        :type response_format: ~azure.ai.projects._types.AgentsApiResponseFormatOption
+        :returns: string for the response_format.
+        :raises: Value error if response_format is not of type AgentsApiResponseFormatOption.
+        """
+        if isinstance(response_format, str) or response_format is None:
+            return response_format
+        if isinstance(response_format, AgentsApiResponseFormatMode):
+            return response_format.value
+        if isinstance(response_format, _models.AgentsApiResponseFormat):
+            return response_format.type
+        raise ValueError(f'Unknown response format {type(response_format)}')
+
     def start_thread_run_span(
         self,
         operation_name: OperationName,
@@ -436,7 +454,7 @@ class _AIAgentsInstrumentorPreview:
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
-            response_format=response_format.value if response_format else None,
+            response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
         )
         if span and span.span_instance.is_recording and instructions and additional_instructions:
             self._add_instructions_event(
@@ -495,7 +513,7 @@ class _AIAgentsInstrumentorPreview:
             model=model,
             temperature=temperature,
             top_p=top_p,
-            response_format=response_format.value if response_format else None,
+            response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
         )
         if span and span.span_instance.is_recording:
             if name:
