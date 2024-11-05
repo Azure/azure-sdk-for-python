@@ -155,10 +155,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         hybrid_search_query_info)
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
-                                                                                                       self._resource_link,
-                                                                                                       self._query,
-                                                                                                       self._options,
-                                                                                                       query_execution_info)
+                                                                                                   self._resource_link,
+                                                                                                   self._query,
+                                                                                                   self._options,
+                                                                                                   query_execution_info)
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 

@@ -4,9 +4,9 @@
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
 
-from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context.multi_execution_aggregator import _MultiExecutionContextAggregator
-from azure.cosmos._execution_context import document_producer
+from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
+from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -19,7 +19,6 @@ class _Placeholders:
     formattable_total_word_count = "{{documentdb-formattablehybridsearchquery-totalwordcount-{0}}}"
     formattable_hit_counts_array = "{{documentdb-formattablehybridsearchquery-hitcountsarray-{0}}}"
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
-
 
 
 def _retrieve_component_scores(drained_results):
@@ -65,11 +64,11 @@ def _coalesce_duplicate_rids(query_results):
     return list(unique_rids.values())
 
 
-def _drain_and_coalesce_results(document_producers_to_drain):
+async def _drain_and_coalesce_results(document_producers_to_drain):
     all_results = []
     is_singleton = True
     for dp in document_producers_to_drain:
-        all_results.append(dp.peek())
+        all_results.append(await dp.peek())
         all_results.extend(dp._ex_context._buffer)
     if len(document_producers_to_drain) > 1:
         all_results = _coalesce_duplicate_rids(all_results)
@@ -87,7 +86,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     by the user.
     """
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_execution_info, hybrid_search_query_info):
+    def __init__(self, client, resource_link, query, options, partitioned_query_execution_info,
+                 hybrid_search_query_info):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -105,9 +105,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
+    async def _configure_partition_ranges(self):
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
-            target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
+            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
             global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
             partitioned_query_execution_context_list = []
@@ -127,12 +128,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             # verify all document producers have items/ no splits
             for target_query_ex_context in partitioned_query_execution_context_list:
                 try:
-                    target_query_ex_context.peek()
+                    await target_query_ex_context.peek()
                     global_statistics_doc_producers.append(target_query_ex_context)
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = self._repair_document_producer(global_statistics_query,
+                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
                                                                                          target_all_ranges=True)
                     else:
                         raise
@@ -164,7 +165,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
-        target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=False)
+        target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 component_query_execution_list.append(
@@ -181,14 +182,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         component_query_results = []
         for target_query_ex_context in component_query_execution_list:
             try:
-                target_query_ex_context.peek()
+                await target_query_ex_context.peek()
                 component_query_results.append(target_query_ex_context)
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions._partition_range_is_gone(e):
                     component_query_results = []
                     # repairing document producer context on partition split
                     for rewritten_query in rewritten_query_infos:
-                        component_query_results.extend(self._repair_document_producer(
+                        component_query_results.extend(await self._repair_document_producer(
                             rewritten_query['rewrittenQuery']))
                 else:
                     raise
@@ -196,7 +197,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                 continue
 
         # Drain all the results and coalesce on rid
-        drained_results, is_singleton = _drain_and_coalesce_results(component_query_results)
+        drained_results, is_singleton = await _drain_and_coalesce_results(component_query_results)
         # If we only have one component query, we format the response and return with no further work
         if is_singleton:
             self._format_singleton_response(drained_results)
@@ -259,7 +260,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     for j in range(len(all_text_statistics[i]['hitCounts'])):
                         all_text_statistics[i]['hitCounts'][j] += curr_text_statistics[i]['hitCounts'][j]
 
-    def __next__(self):
+    async def __anext__(self):
         """Returns the next item result.
 
         :return: The next result.
@@ -269,12 +270,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         if len(self._final_results) > 0:
             res = self._final_results.pop()
             return res
-        raise StopIteration
+        raise StopAsyncIteration
 
     def fetch_next_block(self):
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
-    def _repair_document_producer(self, query, target_all_ranges=False):
+    async def _repair_document_producer(self, query, target_all_ranges=False):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
         which loads in a refreshed partition key range cache to re-create the partition key ranges.
         After loading this new cache, the document producers get re-created with the new valid ranges.
@@ -282,7 +283,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
         # will be a list of (partition_min, partition_max) tuples
-        target_partition_ranges = self._get_target_partition_key_range(target_all_ranges)
+        target_partition_ranges = await self._get_target_partition_key_range(target_all_ranges)
 
         partitioned_query_execution_context_list = []
         for partition_key_target_range in target_partition_ranges:
@@ -301,16 +302,16 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         doc_producers = []
         for target_query_ex_context in partitioned_query_execution_context_list:
             try:
-                target_query_ex_context.peek()
+                await target_query_ex_context.peek()
                 doc_producers.append(target_query_ex_context)
             except StopIteration:
                 continue
         return doc_producers
 
-    def _get_target_partition_key_range(self, target_all_ranges):
+    async def _get_target_partition_key_range(self, target_all_ranges):
         if target_all_ranges:
-            return list(self._client._ReadPartitionKeyRanges(collection_link=self._resource_link))
+            return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
-        return self._routing_provider.get_overlapping_ranges(
+        return await self._routing_provider.get_overlapping_ranges(
             self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
         )
