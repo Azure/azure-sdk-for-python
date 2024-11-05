@@ -1324,12 +1324,20 @@
     {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
-        "ubinary",
-        "mros",
-        "Nify",
         "ctxt",
-        "wday",
-        "dtype"
+        "dels",
+        "dtype",
+        "fmatter",
+        "fspath",
+        "fstring",
+        "ldel",
+        "mros",
+        "nify",
+        "okwargs",
+        "prompty",
+        "rdel",
+        "ubinary",
+        "wday"
       ]
     },
     {
