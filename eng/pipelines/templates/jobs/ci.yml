@@ -245,7 +245,7 @@ jobs:
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
       ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
-        SparseCheckoutPaths: [ "**/setup.py", "**/ci*.yml"]
+        SparseCheckoutPaths: [ "**/setup.py", "**/pyproject.toml", "tools/", "**/ci*.yml"]
       ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
         EnablePRGeneration: true
         PreGenerationSteps:
