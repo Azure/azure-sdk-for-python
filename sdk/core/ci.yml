@@ -55,5 +55,3 @@ extends:
       safeName: azurecoreexperimental
     - name: corehttp
       safeName: corehttp
-    - name: azure-servicemanagement-legacy
-      safeName: azureservicemanagementlegacy
