@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,7 +28,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -48,6 +48,9 @@ def build_create_request(
     file_creation_time: str = "now",
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
+    owner: Optional[str] = None,
+    group: Optional[str] = None,
+    file_mode: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -56,7 +59,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -86,7 +89,8 @@ def build_create_request(
         )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
+    if file_attributes is not None:
+        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
     if file_creation_time is not None:
         _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
     if file_last_write_time is not None:
@@ -95,6 +99,12 @@ def build_create_request(
         _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    if owner is not None:
+        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
+    if group is not None:
+        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
+    if file_mode is not None:
+        _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -113,7 +123,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -154,7 +164,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -192,6 +202,9 @@ def build_set_properties_request(
     file_creation_time: str = "now",
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
+    owner: Optional[str] = None,
+    group: Optional[str] = None,
+    file_mode: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -201,7 +214,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -228,7 +241,8 @@ def build_set_properties_request(
         )
     if file_permission_key is not None:
         _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
+    if file_attributes is not None:
+        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
     if file_creation_time is not None:
         _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
     if file_last_write_time is not None:
@@ -239,6 +253,12 @@ def build_set_properties_request(
         _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    if owner is not None:
+        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
+    if group is not None:
+        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
+    if file_mode is not None:
+        _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -258,7 +278,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -307,7 +327,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -363,7 +383,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -414,7 +434,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -475,7 +495,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -567,6 +587,9 @@ class DirectoryOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -610,11 +633,19 @@ class DirectoryOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -639,6 +670,9 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -686,6 +720,10 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -711,7 +749,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -777,6 +815,10 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -798,7 +840,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -855,6 +897,9 @@ class DirectoryOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -895,11 +940,19 @@ class DirectoryOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -924,6 +977,9 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -972,6 +1028,9 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -995,7 +1054,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1093,7 +1152,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1189,7 +1248,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1280,7 +1339,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1408,7 +1467,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -38,7 +38,7 @@ from ...operations._directory_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -63,7 +63,7 @@ class DirectoryOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(  # pylint: disable=inconsistent-return-statements
+    async def create(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -74,6 +74,9 @@ class DirectoryOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -117,11 +120,19 @@ class DirectoryOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -146,6 +157,9 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -193,12 +207,16 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(  # pylint: disable=inconsistent-return-statements
+    async def get_properties(
         self, sharesnapshot: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -218,7 +236,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -284,14 +302,16 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, timeout: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    async def delete(self, timeout: Optional[int] = None, **kwargs: Any) -> None:
         # pylint: disable=line-too-long
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
@@ -305,7 +325,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -352,7 +372,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_properties(  # pylint: disable=inconsistent-return-statements
+    async def set_properties(
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
@@ -362,6 +382,9 @@ class DirectoryOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -402,11 +425,19 @@ class DirectoryOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -431,6 +462,9 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -479,12 +513,15 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_metadata(  # pylint: disable=inconsistent-return-statements
+    async def set_metadata(
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -502,7 +539,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -600,7 +637,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -696,7 +733,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -752,7 +789,7 @@ class DirectoryOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def force_close_handles(  # pylint: disable=inconsistent-return-statements
+    async def force_close_handles(
         self,
         handle_id: str,
         timeout: Optional[int] = None,
@@ -787,7 +824,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -845,7 +882,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(  # pylint: disable=inconsistent-return-statements
+    async def rename(
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -915,7 +952,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -96,6 +96,28 @@ class ListSharesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETED = "deleted"
 
 
+class ModeCopyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ModeCopyMode."""
+
+    SOURCE = "source"
+    OVERRIDE = "override"
+
+
+class NfsFileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NfsFileType."""
+
+    REGULAR = "Regular"
+    DIRECTORY = "Directory"
+    SYMLINK = "Symlink"
+
+
+class OwnerCopyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OwnerCopyMode."""
+
+    SOURCE = "source"
+    OVERRIDE = "override"
+
+
 class PermissionCopyModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PermissionCopyModeType."""
 

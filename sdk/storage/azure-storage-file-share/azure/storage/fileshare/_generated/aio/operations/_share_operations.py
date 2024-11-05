@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -47,7 +47,7 @@ from ...operations._share_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -72,7 +72,7 @@ class ShareOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(  # pylint: disable=inconsistent-return-statements
+    async def create(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -137,7 +137,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -209,7 +209,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(  # pylint: disable=inconsistent-return-statements
+    async def get_properties(
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -234,7 +234,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -343,7 +343,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -372,7 +372,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -431,7 +431,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def acquire_lease(  # pylint: disable=inconsistent-return-statements
+    async def acquire_lease(
         self,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
@@ -468,7 +468,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -528,7 +528,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def release_lease(  # pylint: disable=inconsistent-return-statements
+    async def release_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -558,7 +558,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -616,7 +616,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def change_lease(  # pylint: disable=inconsistent-return-statements
+    async def change_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -651,7 +651,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -711,7 +711,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def renew_lease(  # pylint: disable=inconsistent-return-statements
+    async def renew_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -741,7 +741,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -800,7 +800,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def break_lease(  # pylint: disable=inconsistent-return-statements
+    async def break_lease(
         self,
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
@@ -839,7 +839,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -904,7 +904,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def create_snapshot(  # pylint: disable=inconsistent-return-statements
+    async def create_snapshot(
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -922,7 +922,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -974,7 +974,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    async def create_permission(  # pylint: disable=inconsistent-return-statements
+    async def create_permission(
         self,
         share_permission: _models.SharePermission,
         timeout: Optional[int] = None,
@@ -1001,7 +1001,7 @@ class ShareOperations:
         """
 
     @overload
-    async def create_permission(  # pylint: disable=inconsistent-return-statements
+    async def create_permission(
         self,
         share_permission: IO[bytes],
         timeout: Optional[int] = None,
@@ -1028,7 +1028,7 @@ class ShareOperations:
         """
 
     @distributed_trace_async
-    async def create_permission(  # pylint: disable=inconsistent-return-statements
+    async def create_permission(
         self, share_permission: Union[_models.SharePermission, IO[bytes]], timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -1046,7 +1046,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1137,7 +1137,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1191,7 +1191,7 @@ class ShareOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def set_properties(  # pylint: disable=inconsistent-return-statements
+    async def set_properties(
         self,
         timeout: Optional[int] = None,
         quota: Optional[int] = None,
@@ -1251,7 +1251,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1337,7 +1337,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_metadata(  # pylint: disable=inconsistent-return-statements
+    async def set_metadata(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -1361,7 +1361,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1437,7 +1437,7 @@ class ShareOperations:
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1496,7 +1496,7 @@ class ShareOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def set_access_policy(  # pylint: disable=inconsistent-return-statements
+    async def set_access_policy(
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1519,7 +1519,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1604,7 +1604,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1663,7 +1663,7 @@ class ShareOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def restore(  # pylint: disable=inconsistent-return-statements
+    async def restore(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1693,7 +1693,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
