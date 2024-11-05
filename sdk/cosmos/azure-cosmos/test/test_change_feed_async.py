@@ -55,7 +55,8 @@ async def assert_change_feed(expected, actual):
     #TODO: remove this if we can add flag to get 'previous' always
     for item in actual:
         if METADATA in item and item[METADATA][OPERATION_TYPE] == DELETE:
-            item[PREVIOUS] = {ID: item[METADATA][ID]}
+            if ID in item[METADATA]:
+                item[PREVIOUS] = {ID: item[METADATA][ID]}
 
     # Sort actual by operation_type and id
     actual = sorted(actual, key=lambda k: (k[METADATA][OPERATION_TYPE], k[CURRENT][ID]) if k[METADATA][OPERATION_TYPE] == CREATE else (k[METADATA][OPERATION_TYPE], k[PREVIOUS][ID]))
