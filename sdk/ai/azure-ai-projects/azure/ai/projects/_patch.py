@@ -240,9 +240,9 @@ class AIProjectClient(ClientGenerated):
         :rtype: str
         """
         try:
-            from azure.ai.ml import MLClient  # typing: ignore
-            from azure.ai.ml.entities import Data  # typing: ignore
-            from azure.ai.ml.constants import AssetTypes  # typing: ignore
+            from azure.ai.ml import MLClient  # type: ignore
+            from azure.ai.ml.entities import Data  # type: ignore
+            from azure.ai.ml.constants import AssetTypes  # type: ignore
         except ImportError:
             raise ImportError(
                 "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
