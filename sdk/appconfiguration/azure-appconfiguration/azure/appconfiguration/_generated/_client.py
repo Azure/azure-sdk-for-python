@@ -20,13 +20,10 @@ from ._operations import AzureAppConfigurationClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class AzureAppConfigurationClient(
-    AzureAppConfigurationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AzureAppConfigurationClient(AzureAppConfigurationClientOperationsMixin):
     """Azure App Configuration REST API.
 
     :param endpoint: Required.
