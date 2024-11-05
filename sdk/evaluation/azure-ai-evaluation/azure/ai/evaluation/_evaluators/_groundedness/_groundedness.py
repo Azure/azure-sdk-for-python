@@ -19,7 +19,16 @@ except ImportError:
 
 class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
+    Evaluates groundedness score for a given query (optional), response, and context or a multi-turn conversation,
+    including reasoning.
+
+    The groundedness measure assesses the correspondence between claims in an AI-generated answer and the source
+    context, making sure that these claims are substantiated by the context. Even if the responses from LLM are
+    factually correct, they'll be considered ungrounded if they can't be verified against the provided sources
+    (such as your input source or your database). Use the groundedness metric when you need to verify that
+    AI-generated responses align with and are validated by the provided context.
+
+    Groundedness scores range from 1 to 5, with 1 being the least grounded and 5 being the most grounded.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -36,7 +45,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
-        To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """

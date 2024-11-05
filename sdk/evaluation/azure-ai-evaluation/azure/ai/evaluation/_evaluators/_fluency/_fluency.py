@@ -13,7 +13,12 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize a fluency evaluator configured for a specific Azure OpenAI model.
+    Evaluates the fluency of a given response or a multi-turn conversation, including reasoning.
+
+    The fluency measure assesses the extent to which the generated text conforms to grammatical rules, syntactic
+    structures, and appropriate vocabulary usage, resulting in linguistically correct responses.
+
+    Fluency scores range from 1 to 5, with 1 being the least fluent and 5 being the most fluent.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -30,7 +35,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
-        To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """

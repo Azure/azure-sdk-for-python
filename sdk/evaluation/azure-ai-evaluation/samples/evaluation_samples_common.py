@@ -32,7 +32,7 @@ class EvaluationCommonSamples(object):
         # [START create_OAI_model_config]
         from azure.ai.evaluation._model_configurations import OpenAIModelConfiguration
 
-        model_config = OpenAIModelConfiguration(
+        oai_model_config = OpenAIModelConfiguration(
             api_key="my-oai-api-key", base_url="https://api.openai.com/v1", model="gpt-35-turbo"
         )
 

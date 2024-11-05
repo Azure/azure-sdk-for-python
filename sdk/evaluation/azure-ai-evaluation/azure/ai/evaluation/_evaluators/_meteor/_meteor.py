@@ -34,13 +34,19 @@ class _AsyncMeteorScoreEvaluator:
 
 class MeteorScoreEvaluator:
     """
-    Evaluator that computes the METEOR Score between two strings.
+    Calculates the METEOR score for a given response and ground truth.
 
     The METEOR (Metric for Evaluation of Translation with Explicit Ordering) score grader evaluates generated text by
     comparing it to reference texts, focusing on precision, recall, and content alignment. It addresses limitations of
     other metrics like BLEU by considering synonyms, stemming, and paraphrasing. METEOR score considers synonyms and
     word stems to more accurately capture meaning and language variations. In addition to machine translation and
     text summarization, paraphrase detection is an optimal use case for the METEOR score.
+
+    Use the METEOR score when you want a more linguistically informed evaluation metric that captures not only
+    n-gram overlap but also accounts for synonyms, stemming, and word order. This is particularly useful for evaluating
+    tasks like machine translation, text summarization, and text generation.
+
+    The METEOR score ranges from 0 to 1, with 1 indicating a perfect match.
 
     :param alpha: The METEOR score alpha parameter. Default is 0.9.
     :type alpha: float
