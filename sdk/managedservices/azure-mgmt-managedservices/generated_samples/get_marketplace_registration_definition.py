@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managedservices import ManagedServicesClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.managedservices import ManagedServicesClient
     pip install azure-identity
     pip install azure-mgmt-managedservices
 # USAGE
-    python get_registration_operations.py
+    python get_marketplace_registration_definition.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,10 +29,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.operations.list()
+    response = client.marketplace_registration_definitions.get(
+        scope="subscription/0afefe50-734e-4610-8a82-a144ahf49dea",
+        marketplace_identifier="publisher.product.planName.version",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/GetOperations.json
+# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/GetMarketplaceRegistrationDefinition.json
 if __name__ == "__main__":
     main()
