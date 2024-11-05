@@ -6,7 +6,6 @@ import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
 
-from azure.core.async_paging import AsyncList
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator
 from azure.core.async_paging import AsyncPageIterator
