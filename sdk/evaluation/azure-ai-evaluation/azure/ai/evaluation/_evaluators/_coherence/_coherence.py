@@ -8,7 +8,6 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._common._experimental import experimental
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):

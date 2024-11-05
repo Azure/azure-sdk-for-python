@@ -8,7 +8,6 @@ from typing import List
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._common._experimental import experimental
 
 
 class _AsyncF1ScoreEvaluator:

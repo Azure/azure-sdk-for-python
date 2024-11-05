@@ -6,7 +6,6 @@ from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-from azure.ai.evaluation._common._experimental import experimental
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator

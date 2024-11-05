@@ -5,7 +5,6 @@ from nltk.translate.gleu_score import sentence_gleu
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
-from azure.ai.evaluation._common._experimental import experimental
 
 
 class _AsyncGleuScoreEvaluator:

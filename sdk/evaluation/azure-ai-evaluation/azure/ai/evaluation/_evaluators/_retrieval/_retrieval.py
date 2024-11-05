@@ -15,7 +15,6 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._common._experimental import experimental
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 

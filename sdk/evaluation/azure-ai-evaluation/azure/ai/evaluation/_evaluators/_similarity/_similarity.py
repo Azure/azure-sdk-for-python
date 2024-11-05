@@ -10,7 +10,6 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._common._experimental import experimental
 
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
