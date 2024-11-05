@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0(it should be stable) (2024-11-04)
+## 8.3.0 (2024-11-05)
 
+### Other Changes
 
+  - Update dependencies
 
 ## 8.2.0 (2023-02-15)
 
