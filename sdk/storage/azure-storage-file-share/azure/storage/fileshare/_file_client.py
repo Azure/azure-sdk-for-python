@@ -417,6 +417,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -465,6 +471,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 lease_access_conditions=access_conditions,
+                nfs_file_type='Regular',
                 headers=headers,
                 timeout=timeout,
                 cls=return_response_headers,
