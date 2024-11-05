@@ -249,6 +249,9 @@ jobs:
       ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
         EnablePRGeneration: true
         PreGenerationSteps:
+          - pwsh: |
+              python -m pip install "./tools/azure-sdk-tools[build]"
+            displayName: Install Azure SDK Tools To Detect Install Failure
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
