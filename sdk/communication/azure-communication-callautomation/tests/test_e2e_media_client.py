@@ -198,7 +198,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         target = self.identity_client.create_user()
 
         media_streaming_options=MediaStreamingOptions(
-            transport_url=self.transport_url,
+            transport_url="wss://2a90-71-197-175-83.ngrok-free.app",
             transport_type=MediaStreamingTransportType.WEBSOCKET,
             content_type=MediaStreamingContentType.AUDIO,
             audio_channel_type=MediaStreamingAudioChannelType.MIXED,
@@ -262,7 +262,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         target = self.identity_client.create_user()
 
         transcription_options=TranscriptionOptions(
-            transport_url=self.transport_url,
+            transport_url="wss://2a90-71-197-175-83.ngrok-free.app",
             transport_type=TranscriptionTransportType.WEBSOCKET,
             locale="en-US",
             start_transcription=False)
@@ -625,7 +625,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection.play_media_to_all(
             play_source=file_prompt
@@ -654,7 +654,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection.play_media_to_all(
             play_source=file_prompt
@@ -683,7 +683,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection._play_media(
             play_source=file_prompt,
@@ -713,7 +713,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection._play_media(
             play_source=file_prompt,
