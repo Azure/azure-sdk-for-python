@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, Optional, Union, cast
 
 import pandas as pd
 from promptflow.contracts.types import AttrDict
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from ..._external._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException

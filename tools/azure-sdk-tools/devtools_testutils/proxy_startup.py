@@ -299,7 +299,7 @@ def set_common_sanitizers() -> None:
 
     # Remove headers from recordings if we don't need them, and ignore them if present
     # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id,x-stainless-retry-count"
     set_custom_default_matcher(excluded_headers=headers_to_ignore)
     batch_sanitizers[Sanitizer.REMOVE_HEADER] = [{"headers": headers_to_ignore}]
 

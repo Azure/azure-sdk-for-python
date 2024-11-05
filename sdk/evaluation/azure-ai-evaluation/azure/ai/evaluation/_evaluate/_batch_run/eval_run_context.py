@@ -7,7 +7,6 @@ from typing import Optional, Type, Union
 
 from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
 from promptflow._utils.user_agent_utils import ClientUserAgentUtil
-from promptflow.tracing._integrations._openai_injector import inject_openai_api, recover_openai_api
 
 from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,
@@ -45,7 +44,6 @@ class EvalRunContext:
 
         if isinstance(self.client, CodeClient):
             ClientUserAgentUtil.append_user_agent(USER_AGENT)
-            inject_openai_api()
 
         if isinstance(self.client, ProxyClient):
             os.environ[PF_FLOW_ENTRY_IN_TMP] = "true"
@@ -71,9 +69,6 @@ class EvalRunContext:
         exc_tb: Optional[types.TracebackType],
     ) -> None:
         os.chdir(self._original_cwd)
-
-        if isinstance(self.client, CodeClient):
-            recover_openai_api()
 
         if isinstance(self.client, ProxyClient):
             os.environ.pop(PF_FLOW_ENTRY_IN_TMP, None)
