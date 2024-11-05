@@ -316,6 +316,7 @@
     "mktime",
     "mlindex",
     "msal",
+    "msauth",
     "msrest",
     "msrestazure",
     "MSSQL",

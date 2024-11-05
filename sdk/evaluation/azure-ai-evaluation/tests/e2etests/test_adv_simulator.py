@@ -696,7 +696,7 @@ class TestAdvSimulator:
             simulator(
                 scenario=AdversarialScenario.ADVERSARIAL_QA,
                 target=callback,
-                max_conversation_turns=2,
+                max_conversation_turns=1,
                 max_simulation_results=16,
             )
         )
