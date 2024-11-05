@@ -408,6 +408,76 @@ class _AIInferenceInstrumentorPreview:
 
         return StreamWrapper(stream_obj, self)
 
+    def _async_wrapped_stream(
+        self, stream_obj: _models.AsyncStreamingChatCompletions, span: "AbstractSpan"
+    ) -> _models.AsyncStreamingChatCompletions:
+        class AsyncStreamWrapper(_models.AsyncStreamingChatCompletions):
+            def __init__(self, stream_obj, instrumentor):
+                super().__init__(stream_obj._response)
+                self._instrumentor = instrumentor
+
+            def __aiter__(self) -> Any: #Iterator[_models.StreamingChatCompletionsUpdate]:
+                accumulate: Dict[str, Any] = {}
+                try:
+                    chunk = None
+                    for chunk in stream_obj:
+                        for item in chunk.choices:
+                            self._instrumentor._accumulate_response(item, accumulate)
+                        yield chunk
+
+                    if chunk is not None:
+                        self._instrumentor._add_response_chat_attributes(span, chunk)
+
+                except Exception as exc:
+                    # Set the span status to error
+                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                        span.span_instance.set_status(
+                            StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                            description=str(exc),
+                        )
+                    module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
+                    error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                    self._instrumentor._set_attributes(span, ("error.type", error_type))
+                    raise
+
+                finally:
+                    if stream_obj._done is False:
+                        if accumulate.get("finish_reason") is None:
+                            accumulate["finish_reason"] = "error"
+                    else:
+                        # Only one choice expected with streaming
+                        accumulate["index"] = 0
+                        # Delete message if content tracing is not enabled
+                        if not _trace_inference_content:
+                            if "message" in accumulate:
+                                if "content" in accumulate["message"]:
+                                    del accumulate["message"]["content"]
+                                if not accumulate["message"]:
+                                    del accumulate["message"]
+                            if "message" in accumulate:
+                                if "tool_calls" in accumulate["message"]:
+                                    tool_calls_function_names_and_arguments_removed = (
+                                        self._instrumentor._remove_function_call_names_and_arguments(
+                                            accumulate["message"]["tool_calls"]
+                                        )
+                                    )
+                                    accumulate["message"]["tool_calls"] = list(
+                                        tool_calls_function_names_and_arguments_removed
+                                    )
+
+                    span.span_instance.add_event(
+                        name="gen_ai.choice",
+                        attributes={
+                            "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                            "gen_ai.event.content": json.dumps(accumulate),
+                        },
+                    )
+                    span.finish()
+
+                return self
+
+        return AsyncStreamWrapper(stream_obj, self)
+
     def _trace_sync_function(
         self,
         function: Callable,
@@ -534,7 +604,7 @@ class _AIInferenceInstrumentorPreview:
                         self._add_request_span_attributes(span, span_name, args, kwargs)
                         result = await function(*args, **kwargs)
                         if kwargs.get("stream") is True:
-                            return self._wrapped_stream(result, span)
+                            return self._async_wrapped_stream(result, span)
                         self._add_response_span_attributes(span, result)
 
                 except Exception as exc:
