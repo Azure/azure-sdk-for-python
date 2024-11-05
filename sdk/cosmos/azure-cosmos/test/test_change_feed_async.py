@@ -273,22 +273,6 @@ class TestChangeFeedAsync:
         # Should equal batch size
         assert totalCount == batchSize
 
-        # # test an invalid value, Attribute error will be raised for passing non datetime object
-        # invalid_time = "Invalid value"
-        # try:
-        #     change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
-        #     fail("Cannot format date on a non datetime object.")
-        # except ValueError as e:
-        #     assert "'start_time' must be either 'Now' or 'Beginning', but given 'Invalid value'" == e.args[0]
-        #
-        # invalid_time = 1.2
-        # try:
-        #     list(created_collection.query_items_change_feed(start_time=invalid_time))
-        #     fail("Cannot format date on a non datetime object.")
-        # except TypeError as e:
-        #     assert "'start_time' must be either a datetime object or String type, but given '<class 'float'>'" == \
-        #            e.args[0]
-
         await setup["created_db"].delete_container(created_collection.id)
 
     async def test_query_change_feed_with_multi_partition_async(self, setup):
