@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managementgroups import ManagementGroupsAPI
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.managementgroups import ManagementGroupsAPI
     pip install azure-identity
     pip install azure-mgmt-managementgroups
 # USAGE
-    python tenant_backfill_status.py
+    python delete_hierarchy_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,10 +29,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tenant_backfill_status()
-    print(response)
+    client.hierarchy_settings.delete(
+        group_id="root",
+    )
 
 
-# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/stable/2021-04-01/examples/TenantBackfillStatusRequest.json
+# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/stable/2021-04-01/examples/DeleteHierarchySettings.json
 if __name__ == "__main__":
     main()
