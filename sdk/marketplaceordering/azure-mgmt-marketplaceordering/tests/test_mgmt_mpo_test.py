@@ -8,8 +8,10 @@
 import azure.mgmt.marketplaceordering
 
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
+import pytest
 
 
+@pytest.mark.live_test_only
 class TestMgmtMPO(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.marketplaceordering.MarketplaceOrderingAgreements)
