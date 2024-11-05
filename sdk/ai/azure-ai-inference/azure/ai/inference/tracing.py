@@ -74,7 +74,7 @@ class AIInferenceInstrumentor:
         is provided, then the value read from environment variable
         AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
         is not found, then the value will default to False. Please note that successive calls
-        to insturment will always apply the content recording value provided with the most
+        to instrument will always apply the content recording value provided with the most
         recent call to instrument (including applying the environment variable if no value is
         provided and defaulting to false if the environment variable is not found), even if
         instrument was already previously called without uninstrument being called in between
