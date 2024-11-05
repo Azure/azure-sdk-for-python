@@ -196,7 +196,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
@@ -343,7 +343,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     @distributed_trace_async
     async def list(
-        self, *, connection_type: ConnectionType | None = None, **kwargs: Any
+        self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any
     ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
