@@ -51,20 +51,13 @@ class BleuScoreEvaluator:
             "bleu_score": 0.22
         }
     """
-
-    _ID = "bleu"
+    """
+    Evaluator identifier, experimental and to be used only with evaluation in cloud.
+    """
+    id = "bleu"
 
     def __init__(self):
         self._async_evaluator = _AsyncBleuScoreEvaluator()
-
-    @experimental
-    @classmethod
-    @property
-    def id(cls):
-        """
-        Evaluator identifier, experimental and to be used only with evaluation in cloud.
-        """
-        return cls._ID
 
     def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """
