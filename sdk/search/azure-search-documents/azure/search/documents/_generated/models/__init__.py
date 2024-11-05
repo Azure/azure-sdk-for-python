@@ -241,8 +241,10 @@ from ._enums import TokenCharacterKind
 from ._enums import TokenFilterName
 from ._enums import VectorEncodingFormat
 from ._enums import VectorFilterMode
+from ._enums import VectorQueryKind
 from ._enums import VectorSearchAlgorithmKind
 from ._enums import VectorSearchAlgorithmMetric
+from ._enums import VectorSearchCompressionKind
 from ._enums import VectorSearchCompressionTarget
 from ._enums import VectorSearchVectorizerKind
 from ._enums import VisualFeature
@@ -485,8 +487,10 @@ __all__ = [
     "TokenFilterName",
     "VectorEncodingFormat",
     "VectorFilterMode",
+    "VectorQueryKind",
     "VectorSearchAlgorithmKind",
     "VectorSearchAlgorithmMetric",
+    "VectorSearchCompressionKind",
     "VectorSearchCompressionTarget",
     "VectorSearchVectorizerKind",
     "VisualFeature",

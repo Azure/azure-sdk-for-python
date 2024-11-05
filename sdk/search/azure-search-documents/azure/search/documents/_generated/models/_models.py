@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
+from ._enums import VectorQueryKind, VectorSearchAlgorithmKind, VectorSearchCompressionKind, VectorSearchVectorizerKind
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -645,25 +646,27 @@ class VectorSearchVectorizer(_model_base.Model):
     AzureOpenAIVectorizer, WebApiVectorizer
 
 
-    :ivar kind: Discriminator property for VectorSearchVectorizer. Required. Default value is None.
-    :vartype kind: str
     :ivar vectorizer_name: The name to associate with this particular vectorization method.
      Required.
     :vartype vectorizer_name: str
+    :ivar kind: Type of VectorSearchVectorizer. Required. Known values are: "azureOpenAI" and
+     "customWebApi".
+    :vartype kind: str or ~azure.search.documents.models.VectorSearchVectorizerKind
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
-    """Discriminator property for VectorSearchVectorizer. Required. Default value is None."""
     vectorizer_name: str = rest_field(name="name")
     """The name to associate with this particular vectorization method. Required."""
+    kind: str = rest_discriminator(name="kind")
+    """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\" and
+     \"customWebApi\"."""
 
     @overload
     def __init__(
         self,
         *,
-        kind: str,
         vectorizer_name: str,
+        kind: str,
     ): ...
 
     @overload
@@ -687,15 +690,15 @@ class AzureOpenAIVectorizer(VectorSearchVectorizer, discriminator="azureOpenAI")
     :ivar parameters: Contains the parameters specific to Azure OpenAI embedding vectorization.
     :vartype parameters: ~azure.search.documents.models.AzureOpenAIVectorizerParameters
     :ivar kind: The name of the kind of vectorization method being configured for use with
-     vector search. Required. Default value is "azureOpenAI".
-    :vartype kind: str
+     vector search. Required. Generate embeddings using an Azure OpenAI resource at query time.
+    :vartype kind: str or ~azure.search.documents.models.AZURE_OPEN_AI
     """
 
     parameters: Optional["_models.AzureOpenAIVectorizerParameters"] = rest_field(name="azureOpenAIParameters")
     """Contains the parameters specific to Azure OpenAI embedding vectorization."""
-    kind: Literal["azureOpenAI"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI] = rest_discriminator(name="kind")  # type: ignore
     """The name of the kind of vectorization method being configured for use with
-     vector search. Required. Default value is \"azureOpenAI\"."""
+     vector search. Required. Generate embeddings using an Azure OpenAI resource at query time."""
 
     @overload
     def __init__(
@@ -713,7 +716,7 @@ class AzureOpenAIVectorizer(VectorSearchVectorizer, discriminator="azureOpenAI")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="azureOpenAI", **kwargs)
+        super().__init__(*args, kind=VectorSearchVectorizerKind.AZURE_OPEN_AI, **kwargs)
 
 
 class AzureOpenAIVectorizerParameters(_model_base.Model):
@@ -776,9 +779,6 @@ class VectorSearchCompression(_model_base.Model):
     BinaryQuantizationCompression, ScalarQuantizationCompression
 
 
-    :ivar kind: Discriminator property for VectorSearchCompression. Required. Default value is
-     None.
-    :vartype kind: str
     :ivar compression_name: The name to associate with this particular configuration. Required.
     :vartype compression_name: str
     :ivar rerank_with_original_vectors: If set to true, once the ordered set of results calculated
@@ -795,11 +795,12 @@ class VectorSearchCompression(_model_base.Model):
      This parameter can only be set when rerankWithOriginalVectors is true. Higher
      values improve recall at the expense of latency.
     :vartype default_oversampling: float
+    :ivar kind: Type of VectorSearchCompression. Required. Known values are: "scalarQuantization"
+     and "binaryQuantization".
+    :vartype kind: str or ~azure.search.documents.models.VectorSearchCompressionKind
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
-    """Discriminator property for VectorSearchCompression. Required. Default value is None."""
     compression_name: str = rest_field(name="name")
     """The name to associate with this particular configuration. Required."""
     rerank_with_original_vectors: Optional[bool] = rest_field(name="rerankWithOriginalVectors")
@@ -814,13 +815,16 @@ class VectorSearchCompression(_model_base.Model):
      from full-precision vectors. Minimum value is 1, meaning no oversampling (1x).
      This parameter can only be set when rerankWithOriginalVectors is true. Higher
      values improve recall at the expense of latency."""
+    kind: str = rest_discriminator(name="kind")
+    """Type of VectorSearchCompression. Required. Known values are: \"scalarQuantization\" and
+     \"binaryQuantization\"."""
 
     @overload
     def __init__(
         self,
         *,
-        kind: str,
         compression_name: str,
+        kind: str,
         rerank_with_original_vectors: Optional[bool] = None,
         default_oversampling: Optional[float] = None,
     ): ...
@@ -858,13 +862,21 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
      values improve recall at the expense of latency.
     :vartype default_oversampling: float
     :ivar kind: The name of the kind of compression method being configured for use with vector
-     search. Required. Default value is "binaryQuantization".
-    :vartype kind: str
+     search. Required. Binary Quantization, a type of compression method. In binary quantization,
+     the
+     original vectors values are compressed to the narrower binary type by
+     discretizing and representing each component of a vector using binary values,
+     thereby reducing the overall data size.
+    :vartype kind: str or ~azure.search.documents.models.BINARY_QUANTIZATION
     """
 
-    kind: Literal["binaryQuantization"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchCompressionKind.BINARY_QUANTIZATION] = rest_discriminator(name="kind")  # type: ignore
     """The name of the kind of compression method being configured for use with vector
-     search. Required. Default value is \"binaryQuantization\"."""
+     search. Required. Binary Quantization, a type of compression method. In binary quantization,
+     the
+     original vectors values are compressed to the narrower binary type by
+     discretizing and representing each component of a vector using binary values,
+     thereby reducing the overall data size."""
 
     @overload
     def __init__(
@@ -883,7 +895,7 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="binaryQuantization", **kwargs)
+        super().__init__(*args, kind=VectorSearchCompressionKind.BINARY_QUANTIZATION, **kwargs)
 
 
 class SimilarityAlgorithm(_model_base.Model):
@@ -2054,6 +2066,8 @@ class ScoringFunction(_model_base.Model):
      scores;
      defaults to "Linear". Known values are: "linear", "constant", "quadratic", and "logarithmic".
     :vartype interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :ivar kind: Type of ScoringFunction. Required.
+    :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -2067,6 +2081,8 @@ class ScoringFunction(_model_base.Model):
     """A value indicating how boosting will be interpolated across document scores;
      defaults to \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and
      \"logarithmic\"."""
+    kind: str = rest_field()
+    """Type of ScoringFunction. Required."""
 
     @overload
     def __init__(
@@ -2075,6 +2091,7 @@ class ScoringFunction(_model_base.Model):
         type: str,
         field_name: str,
         boost: float,
+        kind: str,
         interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
     ): ...
 
@@ -2103,6 +2120,8 @@ class DistanceScoringFunction(ScoringFunction, discriminator="distance"):
      scores;
      defaults to "Linear". Known values are: "linear", "constant", "quadratic", and "logarithmic".
     :vartype interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :ivar kind: Type of ScoringFunction. Required.
+    :vartype kind: str
     :ivar parameters: Parameter values for the distance scoring function. Required.
     :vartype parameters: ~azure.search.documents.models.DistanceScoringParameters
     :ivar type: Indicates the type of function to use. Valid values include magnitude,
@@ -2124,6 +2143,7 @@ class DistanceScoringFunction(ScoringFunction, discriminator="distance"):
         *,
         field_name: str,
         boost: float,
+        kind: str,
         parameters: "_models.DistanceScoringParameters",
         interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
     ): ...
@@ -2792,25 +2812,26 @@ class VectorSearchAlgorithmConfiguration(_model_base.Model):
     ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration
 
 
-    :ivar kind: Discriminator property for VectorSearchAlgorithmConfiguration. Required. Default
-     value is None.
-    :vartype kind: str
     :ivar name: The name to associate with this particular configuration. Required.
     :vartype name: str
+    :ivar kind: Type of VectorSearchAlgorithmConfiguration. Required. Known values are: "hnsw" and
+     "exhaustiveKnn".
+    :vartype kind: str or ~azure.search.documents.models.VectorSearchAlgorithmKind
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
-    """Discriminator property for VectorSearchAlgorithmConfiguration. Required. Default value is None."""
     name: str = rest_field()
     """The name to associate with this particular configuration. Required."""
+    kind: str = rest_discriminator(name="kind")
+    """Type of VectorSearchAlgorithmConfiguration. Required. Known values are: \"hnsw\" and
+     \"exhaustiveKnn\"."""
 
     @overload
     def __init__(
         self,
         *,
-        kind: str,
         name: str,
+        kind: str,
     ): ...
 
     @overload
@@ -2835,15 +2856,15 @@ class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, di
     :ivar parameters: Contains the parameters specific to exhaustive KNN algorithm.
     :vartype parameters: ~azure.search.documents.models.ExhaustiveKnnParameters
     :ivar kind: The name of the kind of algorithm being configured for use with vector search.
-     Required. Default value is "exhaustiveKnn".
-    :vartype kind: str
+     Required. Exhaustive KNN algorithm which will perform brute-force search.
+    :vartype kind: str or ~azure.search.documents.models.EXHAUSTIVE_KNN
     """
 
     parameters: Optional["_models.ExhaustiveKnnParameters"] = rest_field(name="exhaustiveKnnParameters")
     """Contains the parameters specific to exhaustive KNN algorithm."""
-    kind: Literal["exhaustiveKnn"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN] = rest_discriminator(name="kind")  # type: ignore
     """The name of the kind of algorithm being configured for use with vector search. Required.
-     Default value is \"exhaustiveKnn\"."""
+     Exhaustive KNN algorithm which will perform brute-force search."""
 
     @overload
     def __init__(
@@ -2861,7 +2882,7 @@ class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, di
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="exhaustiveKnn", **kwargs)
+        super().__init__(*args, kind=VectorSearchAlgorithmKind.EXHAUSTIVE_KNN, **kwargs)
 
 
 class ExhaustiveKnnParameters(_model_base.Model):
@@ -3005,6 +3026,8 @@ class FreshnessScoringFunction(ScoringFunction, discriminator="freshness"):
      scores;
      defaults to "Linear". Known values are: "linear", "constant", "quadratic", and "logarithmic".
     :vartype interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :ivar kind: Type of ScoringFunction. Required.
+    :vartype kind: str
     :ivar parameters: Parameter values for the freshness scoring function. Required.
     :vartype parameters: ~azure.search.documents.models.FreshnessScoringParameters
     :ivar type: Indicates the type of function to use. Valid values include magnitude,
@@ -3026,6 +3049,7 @@ class FreshnessScoringFunction(ScoringFunction, discriminator="freshness"):
         *,
         field_name: str,
         boost: float,
+        kind: str,
         parameters: "_models.FreshnessScoringParameters",
         interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
     ): ...
@@ -3144,15 +3168,17 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminat
     :ivar parameters: Contains the parameters specific to HNSW algorithm.
     :vartype parameters: ~azure.search.documents.models.HnswParameters
     :ivar kind: The name of the kind of algorithm being configured for use with vector search.
-     Required. Default value is "hnsw".
-    :vartype kind: str
+     Required. HNSW (Hierarchical Navigable Small World), a type of approximate nearest
+     neighbors algorithm.
+    :vartype kind: str or ~azure.search.documents.models.HNSW
     """
 
     parameters: Optional["_models.HnswParameters"] = rest_field(name="hnswParameters")
     """Contains the parameters specific to HNSW algorithm."""
-    kind: Literal["hnsw"] = rest_discriminator(name="kind")  # type: ignore
-    """The name of the kind of algorithm being configured for use with vector search. Required.
-     Default value is \"hnsw\"."""
+    kind: Literal[VectorSearchAlgorithmKind.HNSW] = rest_discriminator(name="kind")  # type: ignore
+    """The name of the kind of algorithm being configured for use with vector search. Required. HNSW
+     (Hierarchical Navigable Small World), a type of approximate nearest
+     neighbors algorithm."""
 
     @overload
     def __init__(
@@ -3170,7 +3196,7 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="hnsw", **kwargs)
+        super().__init__(*args, kind=VectorSearchAlgorithmKind.HNSW, **kwargs)
 
 
 class HnswParameters(_model_base.Model):
@@ -4450,6 +4476,8 @@ class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
      scores;
      defaults to "Linear". Known values are: "linear", "constant", "quadratic", and "logarithmic".
     :vartype interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :ivar kind: Type of ScoringFunction. Required.
+    :vartype kind: str
     :ivar parameters: Parameter values for the magnitude scoring function. Required.
     :vartype parameters: ~azure.search.documents.models.MagnitudeScoringParameters
     :ivar type: Indicates the type of function to use. Valid values include magnitude,
@@ -4471,6 +4499,7 @@ class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
         *,
         field_name: str,
         boost: float,
+        kind: str,
         parameters: "_models.MagnitudeScoringParameters",
         interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
     ): ...
@@ -5683,15 +5712,23 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
     :ivar parameters: Contains the parameters specific to Scalar Quantization.
     :vartype parameters: ~azure.search.documents.models.ScalarQuantizationParameters
     :ivar kind: The name of the kind of compression method being configured for use with vector
-     search. Required. Default value is "scalarQuantization".
-    :vartype kind: str
+     search. Required. Scalar Quantization, a type of compression method. In scalar quantization,
+     the
+     original vectors values are compressed to a narrower type by discretizing and
+     representing each component of a vector using a reduced set of quantized
+     values, thereby reducing the overall data size.
+    :vartype kind: str or ~azure.search.documents.models.SCALAR_QUANTIZATION
     """
 
     parameters: Optional["_models.ScalarQuantizationParameters"] = rest_field(name="scalarQuantizationParameters")
     """Contains the parameters specific to Scalar Quantization."""
-    kind: Literal["scalarQuantization"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchCompressionKind.SCALAR_QUANTIZATION] = rest_discriminator(name="kind")  # type: ignore
     """The name of the kind of compression method being configured for use with vector
-     search. Required. Default value is \"scalarQuantization\"."""
+     search. Required. Scalar Quantization, a type of compression method. In scalar quantization,
+     the
+     original vectors values are compressed to a narrower type by discretizing and
+     representing each component of a vector using a reduced set of quantized
+     values, thereby reducing the overall data size."""
 
     @overload
     def __init__(
@@ -5711,7 +5748,7 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="scalarQuantization", **kwargs)
+        super().__init__(*args, kind=VectorSearchCompressionKind.SCALAR_QUANTIZATION, **kwargs)
 
 
 class ScalarQuantizationParameters(_model_base.Model):
@@ -9192,6 +9229,8 @@ class TagScoringFunction(ScoringFunction, discriminator="tag"):
      scores;
      defaults to "Linear". Known values are: "linear", "constant", "quadratic", and "logarithmic".
     :vartype interpolation: str or ~azure.search.documents.models.ScoringFunctionInterpolation
+    :ivar kind: Type of ScoringFunction. Required.
+    :vartype kind: str
     :ivar parameters: Parameter values for the tag scoring function. Required.
     :vartype parameters: ~azure.search.documents.models.TagScoringParameters
     :ivar type: Indicates the type of function to use. Valid values include magnitude,
@@ -9213,6 +9252,7 @@ class TagScoringFunction(ScoringFunction, discriminator="tag"):
         *,
         field_name: str,
         boost: float,
+        kind: str,
         parameters: "_models.TagScoringParameters",
         interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
     ): ...
@@ -9549,8 +9589,6 @@ class VectorQuery(_model_base.Model):
     VectorizableTextQuery, VectorizedQuery
 
 
-    :ivar kind: Discriminator property for VectorQuery. Required. Default value is None.
-    :vartype kind: str
     :ivar k: Number of nearest neighbors to return as top hits.
     :vartype k: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
@@ -9575,11 +9613,11 @@ class VectorQuery(_model_base.Model):
      final ranking. Default is 1.0 and the value needs to be a positive number
      larger than zero.
     :vartype weight: float
+    :ivar kind: Type of query. Required. Known values are: "vector" and "text".
+    :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
-    """Discriminator property for VectorQuery. Required. Default value is None."""
     k: Optional[int] = rest_field()
     """Number of nearest neighbors to return as top hits."""
     fields: Optional[str] = rest_field()
@@ -9602,6 +9640,8 @@ class VectorQuery(_model_base.Model):
      the weight, the higher the documents that matched that query will be in the
      final ranking. Default is 1.0 and the value needs to be a positive number
      larger than zero."""
+    kind: str = rest_discriminator(name="kind")
+    """Type of query. Required. Known values are: \"vector\" and \"text\"."""
 
     @overload
     def __init__(
@@ -9657,14 +9697,16 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
     :vartype weight: float
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
-    :ivar kind: The kind of vector query being performed. Required. Default value is "text".
-    :vartype kind: str
+    :ivar kind: The kind of vector query being performed. Required. Vector query where a text value
+     that needs to be vectorized is provided.
+    :vartype kind: str or ~azure.search.documents.models.TEXT
     """
 
     text: str = rest_field()
     """The text to be vectorized to perform a vector search query. Required."""
-    kind: Literal["text"] = rest_discriminator(name="kind")  # type: ignore
-    """The kind of vector query being performed. Required. Default value is \"text\"."""
+    kind: Literal[VectorQueryKind.TEXT] = rest_discriminator(name="kind")  # type: ignore
+    """The kind of vector query being performed. Required. Vector query where a text value that needs
+     to be vectorized is provided."""
 
     @overload
     def __init__(
@@ -9686,7 +9728,7 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="text", **kwargs)
+        super().__init__(*args, kind=VectorQueryKind.TEXT, **kwargs)
 
 
 class VectorizedQuery(VectorQuery, discriminator="vector"):
@@ -9720,14 +9762,16 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
     :vartype weight: float
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
-    :ivar kind: The kind of vector query being performed. Required. Default value is "vector".
-    :vartype kind: str
+    :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
+     value is provided.
+    :vartype kind: str or ~azure.search.documents.models.VECTOR
     """
 
     vector: List[float] = rest_field()
     """The vector representation of a search query. Required."""
-    kind: Literal["vector"] = rest_discriminator(name="kind")  # type: ignore
-    """The kind of vector query being performed. Required. Default value is \"vector\"."""
+    kind: Literal[VectorQueryKind.VECTOR] = rest_discriminator(name="kind")  # type: ignore
+    """The kind of vector query being performed. Required. Vector query where a raw vector value is
+     provided."""
 
     @overload
     def __init__(
@@ -9749,7 +9793,7 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="vector", **kwargs)
+        super().__init__(*args, kind=VectorQueryKind.VECTOR, **kwargs)
 
 
 class VectorSearch(_model_base.Model):
@@ -9981,15 +10025,15 @@ class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
     :ivar web_api_parameters: Specifies the properties of the user-defined vectorizer.
     :vartype web_api_parameters: ~azure.search.documents.models.WebApiVectorizerParameters
     :ivar kind: The name of the kind of vectorization method being configured for use with
-     vector search. Required. Default value is "customWebApi".
-    :vartype kind: str
+     vector search. Required. Generate embeddings using a custom web endpoint at query time.
+    :vartype kind: str or ~azure.search.documents.models.CUSTOM_WEB_API
     """
 
     web_api_parameters: Optional["_models.WebApiVectorizerParameters"] = rest_field(name="customWebApiParameters")
     """Specifies the properties of the user-defined vectorizer."""
-    kind: Literal["customWebApi"] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.CUSTOM_WEB_API] = rest_discriminator(name="kind")  # type: ignore
     """The name of the kind of vectorization method being configured for use with
-     vector search. Required. Default value is \"customWebApi\"."""
+     vector search. Required. Generate embeddings using a custom web endpoint at query time."""
 
     @overload
     def __init__(
@@ -10007,7 +10051,7 @@ class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind="customWebApi", **kwargs)
+        super().__init__(*args, kind=VectorSearchVectorizerKind.CUSTOM_WEB_API, **kwargs)
 
 
 class WebApiVectorizerParameters(_model_base.Model):

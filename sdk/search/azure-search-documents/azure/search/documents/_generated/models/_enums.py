@@ -2193,6 +2193,15 @@ class VectorFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The filter will be applied before the search query."""
 
 
+class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of vector query being performed."""
+
+    VECTOR = "vector"
+    """Vector query where a raw vector value is provided."""
+    TEXT = "text"
+    """Vector query where a text value that needs to be vectorized is provided."""
+
+
 class VectorSearchAlgorithmKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm used for indexing and querying."""
 
@@ -2221,6 +2230,21 @@ class VectorSearchAlgorithmMetric(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Only applicable to bit-packed binary data types. Determines dissimilarity by
     counting differing positions in binary vectors. The fewer differences, the
     closer the similarity."""
+
+
+class VectorSearchCompressionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compression method used for indexing and querying."""
+
+    SCALAR_QUANTIZATION = "scalarQuantization"
+    """Scalar Quantization, a type of compression method. In scalar quantization, the
+    original vectors values are compressed to a narrower type by discretizing and
+    representing each component of a vector using a reduced set of quantized
+    values, thereby reducing the overall data size."""
+    BINARY_QUANTIZATION = "binaryQuantization"
+    """Binary Quantization, a type of compression method. In binary quantization, the
+    original vectors values are compressed to the narrower binary type by
+    discretizing and representing each component of a vector using binary values,
+    thereby reducing the overall data size."""
 
 
 class VectorSearchCompressionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
