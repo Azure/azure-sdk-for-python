@@ -42,6 +42,7 @@ from .._generated.models import (
     VectorizedQuery,
     VectorizableTextQuery,
     VectorQuery,
+    VectorQueryKind,
 )
 
 
@@ -63,4 +64,5 @@ __all__ = (
     "VectorizedQuery",
     "VectorizableTextQuery",
     "VectorQuery",
+    "VectorQueryKind",
 )
