@@ -54,7 +54,7 @@ class EvaluationCommonSamples(object):
 if __name__ == "__main__":
     print("Loading samples in evaluation_samples_common.py")
     sample = EvaluationCommonSamples()
-    print("Samples loaded succesfully!")
+    print("Samples loaded successfully!")
     print("Running samples in evaluation_samples_common.py")
     sample.evaluation_common_classes_methods()
     print("Samples ran successfully!")

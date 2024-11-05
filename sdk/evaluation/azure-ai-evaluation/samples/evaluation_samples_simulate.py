@@ -110,7 +110,7 @@ class EvaluationSimulateSamples(object):
                 max_conversation_turns=4,
                 num_queries=2,
                 target=callback,
-                language = SupportedLanguages.SimplifiedChinese
+                language=SupportedLanguages.SimplifiedChinese,
             )
         )
         # [END supported_languages]
@@ -226,14 +226,16 @@ class EvaluationSimulateSamples(object):
 
         simulator = Simulator(model_config=model_config)
 
-        result = asyncio.run(simulator(
-            target=callback,
-            max_conversation_turns=2,
-            text="some text",
-            tasks=tasks,
-            api_call_delay_sec=1,
-            num_queries=1,
-        ))
+        result = asyncio.run(
+            simulator(
+                target=callback,
+                max_conversation_turns=2,
+                text="some text",
+                tasks=tasks,
+                api_call_delay_sec=1,
+                num_queries=1,
+            )
+        )
         # [END nonadversarial_simulator]
 
 

@@ -51,8 +51,8 @@ class AdversarialSimulator:
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_simulate.py
-            :start-after: [START adversarial_simulator]
-            :end-before: [END adversarial_simulator]
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
             :language: python
             :dedent: 8
             :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with

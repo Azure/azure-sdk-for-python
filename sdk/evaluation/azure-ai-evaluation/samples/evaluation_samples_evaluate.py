@@ -387,7 +387,7 @@ class EvaluationEvaluateSamples(object):
 if __name__ == "__main__":
     print("Loading samples in evaluation_samples_evaluate.py")
     sample = EvaluationEvaluateSamples()
-    print("Samples loaded succesfully!")
+    print("Samples loaded successfully!")
     print("Running samples in evaluation_samples_evaluate.py")
     sample.evaluation_evaluate_classes_methods()
     print("Samples ran successfully!")
