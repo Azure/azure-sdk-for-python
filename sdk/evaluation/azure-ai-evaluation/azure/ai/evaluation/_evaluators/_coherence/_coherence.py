@@ -12,7 +12,11 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize a coherence evaluator configured for a specific Azure OpenAI model.
+    Evaluates coherence score for a given query and response or a multi-turn conversation, including reasoning.
+
+    The coherence measure assesses the ability of the language model to generate text that reads naturally,
+    flows smoothly, and resembles human-like language in its responses. Use it when assessing the readability
+    and user-friendliness of a model's generated responses in real-world applications.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -29,7 +33,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
-        To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """

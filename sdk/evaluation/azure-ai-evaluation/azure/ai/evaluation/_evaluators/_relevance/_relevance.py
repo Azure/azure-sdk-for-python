@@ -13,7 +13,16 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
     """
-    Initialize a relevance evaluator configured for a specific Azure OpenAI model.
+    Evaluates relevance score for a given query and response or a multi-turn conversation, including reasoning.
+
+    The relevance measure assesses the ability of answers to capture the key points of the context.
+    High relevance scores signify the AI system's understanding of the input and its capability to produce coherent
+    and contextually appropriate outputs. Conversely, low relevance scores indicate that generated responses might
+    be off-topic, lacking in context, or insufficient in addressing the user's intended queries. Use the relevance
+    metric when evaluating the AI system's performance in understanding the input and generating contextually
+    appropriate responses.
+
+    Relevance scores range from 1 to 5, with 1 being the worst and 5 being the best.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -30,7 +39,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     .. note::
 
-        To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """

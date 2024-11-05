@@ -1,4 +1,5 @@
 # coding: utf-8
+# type: ignore
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -298,16 +299,23 @@ class EvaluationEvaluateSamples(object):
         }
 
         retrieval_eval = RetrievalEvaluator(model_config=model_config)
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {
-                "role": "assistant",
-                "content": "2 + 2 = 4",
-                "context": {
-                    "citations": [{"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}]
+        conversation = {
+            "messages": [
+                {
+                    "content": "What is the capital of France?`''\"</>{}{{]",
+                    "role": "user",
+                    "context": "Customer wants to know the capital of France",
                 },
-            },
-        ]
+                {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+                {
+                    "content": "What is the capital of Hawaii?",
+                    "role": "user",
+                    "context": "Customer wants to know the capital of Hawaii",
+                },
+                {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+            ],
+            "context": "Global context",
+        }
         retrieval_eval(conversation=conversation)
         # [END retrieval_evaluator]
 
@@ -355,7 +363,31 @@ class EvaluationEvaluateSamples(object):
         )
         # [END indirect_attack_evaluator]
 
+        # [START groundedness_pro_evaluator]
+        import os
+        from azure.identity import DefaultAzureCredential
+        from azure.ai.evaluation import GroundednessProEvaluator
+
+        azure_ai_project = {
+            "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+            "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
+            "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+        }
+        credential = DefaultAzureCredential()
+
+        groundedness_pro_eval = GroundednessProEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        groundedness_pro_eval(
+            query="What shape has 4 equilateral sides?",
+            response="Rhombus",
+            context="Rhombus is a shape with 4 equilateral sides.",
+        )
+        # [END groundedness_pro_evaluator]
+
 
 if __name__ == "__main__":
+    print("Loading samples in evaluation_samples_evaluate.py")
     sample = EvaluationEvaluateSamples()
+    print("Samples loaded succesfully!")
+    print("Running samples in evaluation_samples_evaluate.py")
     sample.evaluation_evaluate_classes_methods()
+    print("Samples ran successfully!")

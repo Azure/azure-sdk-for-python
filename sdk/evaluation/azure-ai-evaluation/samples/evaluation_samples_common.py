@@ -32,7 +32,7 @@ class EvaluationCommonSamples(object):
         # [START create_OAI_model_config]
         from azure.ai.evaluation._model_configurations import OpenAIModelConfiguration
 
-        model_config = OpenAIModelConfiguration(
+        oai_model_config = OpenAIModelConfiguration(
             api_key="my-oai-api-key", base_url="https://api.openai.com/v1", model="gpt-35-turbo"
         )
 
@@ -51,5 +51,9 @@ class EvaluationCommonSamples(object):
 
 
 if __name__ == "__main__":
+    print("Loading samples in evaluation_samples_common.py")
     sample = EvaluationCommonSamples()
+    print("Samples loaded succesfully!")
+    print("Running samples in evaluation_samples_common.py")
     sample.evaluation_common_classes_methods()
+    print("Samples ran successfully!")

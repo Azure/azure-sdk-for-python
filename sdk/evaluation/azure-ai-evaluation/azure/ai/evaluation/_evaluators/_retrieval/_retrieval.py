@@ -112,7 +112,18 @@ class _AsyncRetrievalScoreEvaluator:
 
 class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize an evaluator configured for a specific Azure OpenAI model.
+    Evaluates retrieval score for a given query and context or a multi-turn conversation, including reasoning.
+
+    The retrieval measure assesses the AI system's performance in retrieving information
+    for additional context (e.g. a RAG scenario).
+
+    Retrieval scores range from 1 to 5, with 1 being the worst and 5 being the best.
+
+    High retrieval scores indicate that the AI system has successfully extracted and ranked
+    the most relevant information at the top, without introducing bias from external knowledge
+    and ignoring factual correctness. Conversely, low retrieval scores suggest that the AI system
+    has failed to surface the most relevant context chunks at the top of the list
+    and/or introduced bias and ignored factual correctness.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -131,7 +142,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
-        To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
