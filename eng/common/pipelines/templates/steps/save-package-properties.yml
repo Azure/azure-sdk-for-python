@@ -45,6 +45,13 @@ steps:
           }
         displayName: Upload tags.json with changed services
 
+      - pwsh: |
+          if (Test-Path -Path $(System.DefaultWorkingDirectory)/tags.json) {
+            Write-Host "The file is still around, we need to clean it up."
+            Remove-Item -Force -Path $(System.DefaultWorkingDirectory)/tags.json
+          }
+        displayName: Clean up tags.json file
+
       - task: Powershell@2
         displayName: Save package properties filtered for PR
         inputs:
