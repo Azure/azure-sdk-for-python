@@ -99,6 +99,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
+        # TODO: NEED to change this - make every query retrieve a query plan
+        # also, we can't have this logic being returned to so often - there should be no need for this
+        # need to split up query plan logic and actual query iterating logic
         try:
             return self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
@@ -107,13 +110,12 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+            elif self._query and "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
+                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+                                                                      (self._query, self._resource_link))
+                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
-                if self._query and "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
-                    query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                          (self._query, self._resource_link))
-                    self._execution_context = self._create_pipelined_execution_context(query_execution_info)
-                else:
-                    raise e
+                raise e
 
         return self._execution_context.fetch_next_block()
 
@@ -144,24 +146,19 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         query_execution_info)
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
-            global_statistics_query = hybrid_search_query_info['globalStatisticsQuery']
-            component_query_infos = hybrid_search_query_info['componentQueryInfos']
-            # need to get all pk ranges here, since we need more than just the target ranges
-            all_pk_ranges = list(self._client._ReadPartitionKeyRanges(collection_link=self._resource_link))
             execution_context_aggregator = \
                 hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
                                                                         self._resource_link,
                                                                         self._query,
                                                                         self._options,
                                                                         query_execution_info,
-                                                                        hybrid_search_query_info,
-                                                                        all_pk_ranges)
+                                                                        hybrid_search_query_info)
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
-                                                                                                   self._resource_link,
-                                                                                                   self._query,
-                                                                                                   self._options,
-                                                                                                   query_execution_info)
+                                                                                                       self._resource_link,
+                                                                                                       self._query,
+                                                                                                       self._options,
+                                                                                                       query_execution_info)
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
