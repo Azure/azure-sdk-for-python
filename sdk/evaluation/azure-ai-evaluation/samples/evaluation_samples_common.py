@@ -1,4 +1,5 @@
 # coding: utf-8
+# type: ignore
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.

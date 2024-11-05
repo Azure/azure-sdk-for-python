@@ -14,7 +14,7 @@ class SupportedLanguages(Enum):
             :end-before: [END supported_languages]
             :language: python
             :dedent: 8
-            :caption: Run the AdversarialSimulator with SimplifiedChinese language support for evaluation.
+            :caption: Run the AdversarialSimulator with Simplified Chinese language support for evaluation.
     """
 
     Spanish = "es"

@@ -41,7 +41,7 @@ class Simulator:
             :end-before: [END nonadversarial_simulator]
             :language: python
             :dedent: 8
-            :caption: Run a Simulator for 2 queries and 4 conversation turns (8 messages per query).
+            :caption: Run a Simulator for 2 queries and 4 conversation turns.
     """
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
