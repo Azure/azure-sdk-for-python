@@ -48,7 +48,7 @@ async def main():
                 loop.create_task(send_single_message(sender)),
                 loop.create_task(send_single_message(sender)),
             ]
-            loop.run_until_complete(asyncio.wait(tasks))
+            loop.run_until_complete(asyncio.gather(*tasks))
             loop.close()
             
     print("Send message is done.")
