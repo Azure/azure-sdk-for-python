@@ -6,29 +6,29 @@ from collections import namedtuple
 
 from urllib.parse import urlparse
 
-from .async_polling import AsyncSecurityDomainClientDownloadPollingMethod, AsyncSecurityDomainClientUploadPollingMethod
+from .async_polling import AsyncSecurityDomainDownloadPollingMethod, AsyncSecurityDomainUploadPollingMethod
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache
 from .polling import (
-    SecurityDomainClientDownloadPolling,
-    SecurityDomainClientDownloadPollingMethod,
-    SecurityDomainClientUploadPolling,
-    SecurityDomainClientUploadPollingMethod,
+    SecurityDomainDownloadPolling,
+    SecurityDomainDownloadPollingMethod,
+    SecurityDomainUploadPolling,
+    SecurityDomainUploadPollingMethod,
 )
 
 HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
 
 __all__ = [
-    "AsyncSecurityDomainClientDownloadPollingMethod",
-    "AsyncSecurityDomainClientUploadPollingMethod",
+    "AsyncSecurityDomainDownloadPollingMethod",
+    "AsyncSecurityDomainUploadPollingMethod",
     "ChallengeAuthPolicy",
     "HttpChallenge",
     "HttpChallengeCache",
-    "SecurityDomainClientDownloadPolling",
-    "SecurityDomainClientDownloadPollingMethod",
-    "SecurityDomainClientUploadPolling",
-    "SecurityDomainClientUploadPollingMethod",
+    "SecurityDomainDownloadPolling",
+    "SecurityDomainDownloadPollingMethod",
+    "SecurityDomainUploadPolling",
+    "SecurityDomainUploadPollingMethod",
 ]
 
 _VaultId = namedtuple("_VaultId", ["vault_url", "collection", "name", "version"])
