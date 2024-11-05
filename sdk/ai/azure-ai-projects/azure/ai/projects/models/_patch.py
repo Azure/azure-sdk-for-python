@@ -502,12 +502,12 @@ class AzureAISearchTool(Tool):
     def __init__(self):
         self.index_list = []
 
-    def add_index(self, index: str):
+    def add_index(self, index: str, name: str):
         """
         Add an index ID to the list of indices used to search.
         """
         # TODO
-        self.index_list.append(IndexResource(index_connection_id=index))
+        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -587,15 +587,6 @@ class SharepointTool(ConnectionTool):
                     self.connection_ids.append(id)
                     return
 """
-
-
-class FileSearchTool(Tool):
-    """
-    A tool that searches for uploaded file information from the created vector stores.
-    """
-
-    def __init__(self, vector_store_ids: List[str] = []):
-        self.vector_store_ids = vector_store_ids
 
 
 class FileSearchTool(Tool):
