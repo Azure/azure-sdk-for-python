@@ -10,7 +10,7 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Any, AsyncIterator, Dict, Iterator, List, Literal, Union
 from ._tracer import Tracer, to_dict
-from ._utils import load_json, load_json_async
+from ._utils import load_json
 
 
 @dataclass
@@ -186,20 +186,6 @@ class Prompty:
             raise FileNotFoundError(f"File {file} not found")
 
     @staticmethod
-    async def _process_file_async(file: str, parent: Path) -> Any:
-        file_path = Path(parent / Path(file)).resolve().absolute()
-        if file_path.exists():
-            items = await load_json_async(file_path)
-            if isinstance(items, list):
-                return [Prompty.normalize(value, parent) for value in items]
-            elif isinstance(items, Dict):
-                return {key: Prompty.normalize(value, parent) for key, value in items.items()}
-            else:
-                return items
-        else:
-            raise FileNotFoundError(f"File {file} not found")
-
-    @staticmethod
     def _process_env(variable: str, env_error=True, default: Union[str, None] = None) -> Any:
         if variable in os.environ.keys():
             return os.environ[variable]
@@ -234,32 +220,6 @@ class Prompty:
             return [Prompty.normalize(value, parent) for value in attribute]
         elif isinstance(attribute, Dict):
             return {key: Prompty.normalize(value, parent) for key, value in attribute.items()}
-        else:
-            return attribute
-
-    @staticmethod
-    async def normalize_async(attribute: Any, parent: Path, env_error=True) -> Any:
-        if isinstance(attribute, str):
-            attribute = attribute.strip()
-            if attribute.startswith("${") and attribute.endswith("}"):
-                # check if env or file
-                variable = attribute[2:-1].split(":")
-                if variable[0] == "env" and len(variable) > 1:
-                    return Prompty._process_env(
-                        variable[1],
-                        env_error,
-                        variable[2] if len(variable) > 2 else None,
-                    )
-                elif variable[0] == "file" and len(variable) > 1:
-                    return await Prompty._process_file_async(variable[1], parent)
-                else:
-                    raise ValueError(f"Invalid attribute format ({attribute})")
-            else:
-                return attribute
-        elif isinstance(attribute, list):
-            return [await Prompty.normalize_async(value, parent) for value in attribute]
-        elif isinstance(attribute, Dict):
-            return {key: await Prompty.normalize_async(value, parent) for key, value in attribute.items()}
         else:
             return attribute
 
