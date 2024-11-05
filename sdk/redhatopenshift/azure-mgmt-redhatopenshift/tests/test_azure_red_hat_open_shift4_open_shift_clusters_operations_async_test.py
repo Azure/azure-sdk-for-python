@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-
+@pytest.mark.live_test_only
 class TestAzureRedHatOpenShift4OpenShiftClustersOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient, is_async=True)
@@ -22,20 +22,15 @@ class TestAzureRedHatOpenShift4OpenShiftClustersOperationsAsync(AzureMgmtRecorde
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
-        response = self.client.open_shift_clusters.list(
-            api_version="2023-11-22",
-        )
+        response = self.client.open_shift_clusters.list()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.open_shift_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-11-22",
         )
         result = [r async for r in response]
         assert result == []
-        

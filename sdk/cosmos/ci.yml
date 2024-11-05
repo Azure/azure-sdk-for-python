@@ -33,3 +33,5 @@ extends:
       safeName: azurecosmos
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb
+    - name: azure-mgmt-documentdb
+      safeName: azuremgmtdocumentdb

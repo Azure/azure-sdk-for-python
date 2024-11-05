@@ -6,6 +6,8 @@ import importlib.metadata
 import math
 import re
 import time
+import json
+import html
 from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
@@ -13,10 +15,12 @@ from string import Template
 
 import jwt
 
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .constants import (
@@ -26,7 +30,7 @@ from .constants import (
     Tasks,
     _InternalEvaluationMetrics,
 )
-from .utils import get_harm_severity_level
+from .utils import get_harm_severity_level, retrieve_content_type
 
 try:
     version = importlib.metadata.version("azure-ai-evaluation")
@@ -36,8 +40,36 @@ USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
-    Tasks.GROUNDEDNESS: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
 }
+
+
+def get_formatted_template(data: dict, annotation_task: str) -> str:
+    """Given the task and input data, produce a formatted string that will serve as the main
+    payload for the RAI service. Requires specific per-task logic.
+
+    :param data: The data to incorporate into the payload.
+    :type data: dict
+    :param annotation_task: The annotation task to use. This determines the template to use.
+    :type annotation_task: str
+    :return: The formatted based on the data and task template.
+    :rtype: str
+    """
+    # Template class doesn't play nice with json dumping/loading, just handle groundedness'
+    # JSON format manually.
+    # Template was: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
+    if annotation_task == Tasks.GROUNDEDNESS:
+        as_dict = {
+            "question": data.get("query", ""),
+            "answer": data.get("response", ""),
+            "context": data.get("context", ""),
+        }
+        return json.dumps(as_dict)
+    as_dict = {
+        "query": html.escape(data.get("query", "")),
+        "response": html.escape(data.get("response", "")),
+    }
+    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**as_dict)
+    return user_text.replace("'", '\\"')
 
 
 def get_common_headers(token: str) -> Dict:
@@ -81,27 +113,31 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     async with get_async_http_client() as client:
         response = await client.get(svc_liveness_url, headers=headers)
 
-    if response.status_code != 200:
-        msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.UNKNOWN,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        if response.status_code != 200:
+            msg = (
+                f"RAI service is unavailable in this region, or you lack the necessary permissions "
+                f"to access the AI project. Status Code: {response.status_code}"
+            )
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
-    capabilities = response.json()
-
-    if capability and capability not in capabilities:
-        msg = f"Capability '{capability}' is not available in this region"
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        capabilities = response.json()
+        if capability and capability not in capabilities:
+            msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.USER_ERROR,
+                tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
+            )
 
 
 def generate_payload(normalized_user_text: str, metric: str, annotation_task: str) -> Dict:
@@ -155,8 +191,7 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :return: The operation ID.
     :rtype: str
     """
-    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**data)
-    normalized_user_text = user_text.replace("'", '\\"')
+    normalized_user_text = get_formatted_template(data, annotation_task)
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
     url = rai_svc_url + "/submitannotation"
@@ -281,7 +316,11 @@ def _parse_content_harm_response(
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
-    result: Dict[str, Union[str, float]] = {key: math.nan, key + "_score": math.nan, key + "_reason": ""}
+    result: Dict[str, Union[str, float]] = {
+        (key.value if hasattr(key, "value") else key): math.nan,
+        f"{(key.value if hasattr(key, 'value') else key)}_score": math.nan,
+        f"{(key.value if hasattr(key, 'value') else key)}_reason": math.nan,
+    }
 
     response = batch_response[0]
     if metric_name not in response:
@@ -330,6 +369,8 @@ def _parse_content_harm_response(
         reason = ""
 
     harm_score = metric_value
+    if metric_value == "n/a":
+        return result
     if not math.isnan(metric_value):
         # int(math.nan) causes a value error, and math.nan is already handled
         # by get_harm_severity_level
@@ -363,13 +404,17 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
         )
 
     if response.status_code != 200:
-        msg = "Failed to retrieve the discovery service URL."
+        msg = (
+            f"Failed to connect to your Azure AI project. Please check if the project scope is configured correctly, "
+            f"and make sure you have the necessary access permissions. "
+            f"Status code: {response.status_code}."
+        )
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
             target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.SERVICE_UNAVAILABLE,
-            blame=ErrorBlame.UNKNOWN,
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.PROJECT_ACCESS_ERROR,
+            tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
         )
 
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])
@@ -464,4 +509,110 @@ async def evaluate_with_rai_service(
     annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
     result = parse_response(annotation_response, metric_name, metric_display_name)
 
+    return result
+
+
+def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
+    """Generate the payload for the annotation request
+    :param content_type: The type of the content representing multimodal or images.
+    :type content_type: str
+    :param messages: The normalized list of messages to be entered as the "Contents" in the payload.
+    :type messages: str
+    :param metric: The evaluation metric to use. This determines the task type, and whether a "MetricList" is needed
+        in the payload.
+    :type metric: str
+    :return: The payload for the annotation request.
+    :rtype: Dict
+    """
+    include_metric = True
+    task = Tasks.CONTENT_HARM
+    if metric == EvaluationMetrics.PROTECTED_MATERIAL:
+        task = Tasks.PROTECTED_MATERIAL
+        include_metric = False
+
+    if include_metric:
+        return {
+            "ContentType": content_type,
+            "Contents": [{"messages": messages}],
+            "AnnotationTask": task,
+            "MetricList": [metric],
+        }
+    return {
+        "ContentType": content_type,
+        "Contents": [{"messages": messages}],
+        "AnnotationTask": task,
+    }
+
+
+async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
+    """Submit request to Responsible AI service for evaluation and return operation ID
+    :param messages: The normalized list of messages to be entered as the "Contents" in the payload.
+    :type messages: str
+    :param metric: The evaluation metric to use.
+    :type metric: str
+    :param rai_svc_url: The Responsible AI service URL.
+    :type rai_svc_url: str
+    :param token: The Azure authentication token.
+    :type token: str
+    :return: The operation ID.
+    :rtype: str
+    """
+    ## handle json payload and payload from inference sdk strongly type messages
+    if len(messages) > 0 and not isinstance(messages[0], dict):
+        try:
+            from azure.ai.inference.models import ChatRequestMessage
+        except ImportError as ex:
+            error_message = (
+                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            )
+            raise MissingRequiredPackage(message=error_message) from ex
+        if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
+            messages = [message.as_dict() for message in messages]
+
+    filtered_messages = [message for message in messages if message["role"] != "system"]
+    assistant_messages = [message for message in messages if message["role"] == "assistant"]
+    content_type = retrieve_content_type(assistant_messages, metric)
+    payload = generate_payload_multimodal(content_type, filtered_messages, metric)
+
+    ## calling rai service for annotation
+    url = rai_svc_url + "/submitannotation"
+    headers = get_common_headers(token)
+    async with get_async_http_client() as client:
+        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            url, json=payload, headers=headers
+        )
+    if response.status_code != 202:
+        raise HttpResponseError(
+            message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+        )
+    result = response.json()
+    operation_id = result["location"].split("/")[-1]
+    return operation_id
+
+
+async def evaluate_with_rai_service_multimodal(
+    messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
+):
+    """ "Evaluate the content safety of the response using Responsible AI service
+       :param messages: The normalized list of messages.
+       :type messages: str
+       :param metric_name: The evaluation metric to use.
+       :type metric_name: str
+       :param project_scope: The Azure AI project scope details.
+       :type project_scope: Dict
+       :param credential: The Azure authentication credential.
+       :type credential:
+    ~azure.core.credentials.TokenCredential
+       :return: The parsed annotation result.
+       :rtype: List[List[Dict]]
+    """
+
+    # Get RAI service URL from discovery service and check service availability
+    token = await fetch_or_reuse_token(credential)
+    rai_svc_url = await get_rai_svc_url(project_scope, token)
+    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+    # Submit annotation request and fetch result
+    operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
+    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
+    result = parse_response(annotation_response, metric_name)
     return result

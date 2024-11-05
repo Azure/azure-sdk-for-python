@@ -12,7 +12,7 @@ ENV_MONITOR_ENVIRONMENT = "MONITOR_ENVIRONMENT"
 AUDIENCE_MAP = {
     "AzureCloud": "https://monitor.azure.com",
     "AzureChinaCloud": "https://monitor.azure.cn",
-    "AzureUSGovernment": "https://monitor.azure.us"
+    "AzureUSGovernment": "https://monitor.azure.us",
 }
 
 

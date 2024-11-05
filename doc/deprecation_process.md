@@ -99,6 +99,20 @@ Replace ALL existing text with a disclaimer in the following format.
 
 - Update the `Development Status` classifier in `setup.py` to `Development Status :: 7 - Inactive`.
   - `Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
+ 
+## ci.yml
+
+- Ensure the package is listed under `Artifacts` so that the artifact is generated for release. If not listed, add it.
+
+ ```yml
+  extends:
+    parameters:
+      ...
+      Artifacts:
+      - name: azure-mypackage
+        safeName: azuremypackage
+  ```
+
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -144,6 +158,10 @@ azure-sdk-for-python/eng/common/scripts> ./Prepare-Release.ps1 -PackageName azur
 A release here is the same as usual, triggering the release pipeline of your SDK. Note that local smoke testing and mypy/pylint/sphinx/etc. checks are not needed. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: This release DOES NOT need to be done during during release week and can be done any time.**
+
+### Checks Failing on Other Packages
+
+You may see tests/mypy/pylint or other checks failing on other packages in the CI when releasing. To unblock the release of the deprecated package, you may add one or more `Skip.*` variables when you 'Run pipeline' to skip these checks. The `Skip.*` variables for all checks are listed [here](https://github.com/Azure/azure-sdk-for-python/blob/dc283ae7e8f7fe3bb1db8f27315d589e88bdf453/doc/eng_sys_checks.md?plain=1#L76).
 
 ## Post-Release
 
