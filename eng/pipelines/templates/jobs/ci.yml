@@ -244,20 +244,14 @@ jobs:
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
-      PreGenerationSteps:
-
-        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-
-        - task: Powershell@2
-          inputs:
-            pwsh: true
-            filePath: eng/scripts/distribute-packages-to-matrix.ps1
-            arguments: >-
-              -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-              -PlatformMatrix "${{ parameters.MatrixConfigs[0].Path }}"
-          displayName: 'Distribute Packages to Matrix'
-          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}','auto'))
-
+      ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+        SparseCheckoutPaths: [ "**/setup.py", "**/ci*.yml"]
+      ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+        EnablePRGeneration: true
+        PreGenerationSteps:
+          - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+            parameters:
+              ServiceDirectory: ${{parameters.ServiceDirectory}}
       CloudConfig:
         Cloud: Public
       AdditionalParameters:
