@@ -18,7 +18,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._client import KeyVaultClient
 from .._internal import (
     AsyncChallengeAuthPolicy,
+    AsyncSecurityDomainDownloadNoPolling,
     AsyncSecurityDomainDownloadPollingMethod,
+    AsyncSecurityDomainUploadNoPolling,
     AsyncSecurityDomainUploadPollingMethod,
     SecurityDomainDownloadPolling,
     SecurityDomainUploadPolling,
@@ -85,8 +87,7 @@ class SecurityDomainClient(KeyVaultClient):
         content_type: str = "application/json",
         polling: Optional[Literal[False]] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[SecurityDomainObject]:
-        ...
+    ) -> AsyncLROPoller[SecurityDomainObject]: ...
 
     @overload
     async def begin_download(
@@ -96,8 +97,7 @@ class SecurityDomainClient(KeyVaultClient):
         content_type: str = "application/json",
         polling: Optional[Literal[False]] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[SecurityDomainObject]:
-        ...
+    ) -> AsyncLROPoller[SecurityDomainObject]: ...
 
     @overload
     async def begin_download(
@@ -107,8 +107,7 @@ class SecurityDomainClient(KeyVaultClient):
         content_type: str = "application/json",
         polling: Optional[Literal[False]] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[SecurityDomainObject]:
-        ...
+    ) -> AsyncLROPoller[SecurityDomainObject]: ...
 
     @distributed_trace_async
     async def begin_download(
@@ -139,8 +138,12 @@ class SecurityDomainClient(KeyVaultClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        polling_method = False if polling is False else AsyncSecurityDomainDownloadPollingMethod(
-            lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay
+        polling_method = (
+            AsyncSecurityDomainDownloadNoPolling()
+            if polling is False
+            else AsyncSecurityDomainDownloadPollingMethod(
+                lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay
+            )
         )
         return await super().begin_download(  # type: ignore[return-value]
             certificate_info_object,
@@ -176,8 +179,10 @@ class SecurityDomainClient(KeyVaultClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        polling_method = False if polling is False else AsyncSecurityDomainUploadPollingMethod(
-            lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay
+        polling_method = (
+            AsyncSecurityDomainUploadNoPolling()
+            if polling is False
+            else AsyncSecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
         return await super().begin_upload(
             security_domain,
