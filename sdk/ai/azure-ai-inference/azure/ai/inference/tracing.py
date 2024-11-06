@@ -339,19 +339,23 @@ class _AIInferenceInstrumentorPreview:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
     def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
-        if item['choices'][0]['finish_reason']:
-            accumulate["finish_reason"] = item['choices'][0]['finish_reason']
-        if item['choices'][0]['index']:
-            accumulate["index"] = item['choices'][0]['index']
-        if 'content' in item['choices'][0]['delta'] and item['choices'][0]['delta']['content']:
+        if not "choices" in item:
+            return
+        if "finish_reason" in item["choices"][0] and item["choices"][0]["finish_reason"]:
+            accumulate["finish_reason"] = item["choices"][0]["finish_reason"]
+        if "index" in item["choices"][0] and item["choices"][0]["index"]:
+            accumulate["index"] = item["choices"][0]["index"]
+        if not "delta" in item["choices"][0]:
+            return
+        if "content" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["content"]:
             accumulate.setdefault("message", {})
             accumulate["message"].setdefault("content", "")
-            accumulate["message"]["content"] += item['choices'][0]['delta']['content']
-        if 'tool_calls' in item['choices'][0]['delta'] and item['choices'][0]['delta']['tool_calls']:
+            accumulate["message"]["content"] += item["choices"][0]["delta"]["content"]
+        if "tool_calls" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["tool_calls"]:
             accumulate.setdefault("message", {})
             accumulate["message"].setdefault("tool_calls", [])
-            if item['choices'][0]['delta']['tool_calls'] is not None:
-                for tool_call in item['choices'][0]['delta']['tool_calls']:
+            if item["choices"][0]["delta"]["tool_calls"] is not None:
+                for tool_call in item["choices"][0]["delta"]["tool_calls"]:
                     if tool_call.id:
                         accumulate["message"]["tool_calls"].append(
                             {
@@ -447,86 +451,48 @@ class _AIInferenceInstrumentorPreview:
                 self._accumulate: Dict[str, Any] = {}
                 self._stream_obj = stream_obj
                 self.span = span
-            
-            def test(self) -> bool:
-                return True
-            
+                self._last_result = None
+
             async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
                 try:
                     result = await super().__anext__()
                     self._instrumentor._accumulate_async_streaming_response(result, self._accumulate)
                     self._last_result = result
                 except StopAsyncIteration as exc:
-                    if self._last_result:
-                        self._instrumentor._add_response_chat_attributes(span, self._last_result)                    
-                    # Only one choice expected with streaming
-                    self._accumulate["index"] = 0
-                    # Delete message if content tracing is not enabled
-                    if not _trace_inference_content:
-                        if "message" in self._accumulate:
-                            if "content" in self._accumulate["message"]:
-                                del self._accumulate["message"]["content"]
-                                if not self._accumulate["message"]:
-                                    del self._accumulate["message"]
-                            if "message" in self._accumulate:
-                                if "tool_calls" in self._accumulate["message"]:
-                                    tool_calls_function_names_and_arguments_removed = (
-                                        self._instrumentor._remove_function_call_names_and_arguments(
-                                            self._accumulate["message"]["tool_calls"]
-                                        )
-                                    )
-                                    self._accumulate["message"]["tool_calls"] = list(
-                                        tool_calls_function_names_and_arguments_removed
-                                    )
-
-                    self.span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(self._accumulate),
-                        },
-                    )
-                    span.finish()
+                    self._trace_stream_content()
                     raise exc
                 return result
-            
-            def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
-                if self._last_result:
-                    self._instrumentor._add_response_chat_attributes(span, self._last_result)
-                if self._stream_obj._done is False:
-                    if self._accumulate.get("finish_reason") is None:
-                        self._accumulate["finish_reason"] = "error"
-                else:
-                    # Only one choice expected with streaming
-                    self._accumulate["index"] = 0
-                    # Delete message if content tracing is not enabled
-                    if not _trace_inference_content:
-                        if "message" in self._accumulate:
-                            if "content" in self._accumulate["message"]:
-                                del self._accumulate["message"]["content"]
-                                if not self._accumulate["message"]:
-                                    del self._accumulate["message"]
-                            if "message" in self._accumulate:
-                                if "tool_calls" in self._accumulate["message"]:
-                                    tool_calls_function_names_and_arguments_removed = (
-                                        self._instrumentor._remove_function_call_names_and_arguments(
-                                            self._accumulate["message"]["tool_calls"]
-                                        )
-                                    )
-                                    self._accumulate["message"]["tool_calls"] = list(
-                                        tool_calls_function_names_and_arguments_removed
-                                    )
 
-                    self.span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(self._accumulate),
-                        },
+            def _trace_stream_content(self) -> None:
+                if self._last_result:
+                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                        span, self._last_result
                     )
-                    span.finish()
-                self.close()
-            
+                # Only one choice expected with streaming
+                self._accumulate["index"] = 0
+                # Delete message if content tracing is not enabled
+                if not _trace_inference_content:
+                    if "message" in self._accumulate:
+                        if "content" in self._accumulate["message"]:
+                            del self._accumulate["message"]["content"]
+                            if not self._accumulate["message"]:
+                                del self._accumulate["message"]
+                        if "message" in self._accumulate:
+                            if "tool_calls" in self._accumulate["message"]:
+                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                                    self._accumulate["message"]["tool_calls"]
+                                )
+                                self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
+
+                self.span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(self._accumulate),
+                    },
+                )
+                span.finish()
+
         async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span)
         return async_stream_wrapper
 
