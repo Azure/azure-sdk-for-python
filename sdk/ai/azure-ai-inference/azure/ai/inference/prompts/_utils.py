@@ -4,7 +4,10 @@
 # ------------------------------------
 # mypy: disable-error-code="import-untyped,return-value"
 # pylint: disable=line-too-long,R,wrong-import-order,global-variable-not-assigned)
-import json, re, sys, yaml
+import json
+import re
+import sys
+import yaml
 from typing import Any, Dict, Union
 from pathlib import Path
 
@@ -72,18 +75,17 @@ def parse(contents):
     }
 
 
-def remove_leading_empty_space(multiline_str: str):
+def remove_leading_empty_space(multiline_str: str) -> str:
     """
     Processes a multiline string by:
     1. Removing empty lines
     2. Finding the minimum leading spaces
     3. Indenting all lines to the minimum level
 
-    Args:
-        multiline_str: The input multiline string.
-
-    Returns:
-        The processed multiline string.
+    :param multiline_str: The input multiline string.
+    :type multiline_str: str
+    :return: The processed multiline string.
+    :rtype: str
     """
     lines = multiline_str.splitlines()
     start_index = 0
