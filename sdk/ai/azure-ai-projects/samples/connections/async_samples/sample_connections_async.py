@@ -28,7 +28,7 @@ import asyncio
 import os
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def sample_connections_async():

@@ -23,7 +23,7 @@ USAGE:
 
 import os, asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.models import AsyncFunctionTool, AsyncToolSet, CodeInterpreterTool
 from user_async_functions import user_async_functions
 
