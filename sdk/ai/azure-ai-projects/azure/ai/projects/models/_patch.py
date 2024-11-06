@@ -389,7 +389,7 @@ class BaseFunctionTool(Tool):
             docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
 
-            param_descs = {}
+            param_descriptions = {}
             for line in docstring.splitlines():
                 line = line.strip()
                 match = param_pattern.match(line)
@@ -398,13 +398,13 @@ class BaseFunctionTool(Tool):
                     param_name = groups.get("name")
                     param_desc = groups.get("description")
                     param_desc = param_desc.strip() if param_desc else "No description"
-                    param_descs[param_name] = param_desc.strip()
+                    param_descriptions[param_name] = param_desc.strip()
 
             properties = {}
             required = []
             for param_name, param in params.items():
                 param_type_info = _map_type(param.annotation)
-                param_description = param_descs.get(param_name, "No description")
+                param_description = param_descriptions.get(param_name, "No description")
 
                 properties[param_name] = {**param_type_info, "description": param_description}
 
@@ -836,7 +836,7 @@ class ToolSet(BaseToolSet):
 
 class AsyncToolSet(BaseToolSet):
     """
-    A collection of tools that can be used by an asynchronize agent.
+    A collection of tools that can be used by an asynchronous agent.
     """
 
     def validate_tool_type(self, tool: Tool) -> None:

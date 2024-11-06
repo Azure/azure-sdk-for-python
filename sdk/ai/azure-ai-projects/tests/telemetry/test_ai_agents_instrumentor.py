@@ -11,7 +11,7 @@ class TestAiAgentsInstrumentor:
     """Tests for AI agents instrumentor."""
 
     def test_convert_api_response_format_exception(self):
-        """Test that the exception is raised if agent_api_response_to_str is given wron type."""
+        """Test that the exception is raised if agent_api_response_to_str is given wrong type."""
         with pytest.raises(ValueError) as cm:
             _AIAgentsInstrumentorPreview.agent_api_response_to_str(42)
         assert "Unknown response format <class 'int'>" in cm.value.args[0]
