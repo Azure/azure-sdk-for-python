@@ -24,29 +24,24 @@ class _AsyncGleuScoreEvaluator:
 
 class GleuScoreEvaluator:
     """
-    Evaluator that computes the BLEU Score between two strings.
+    Calculates the GLEU (Google-BLEU) score between a response and the ground truth.
 
     The GLEU (Google-BLEU) score evaluator measures the similarity between generated and reference texts by
     evaluating n-gram overlap, considering both precision and recall. This balanced evaluation, designed for
     sentence-level assessment, makes it ideal for detailed analysis of translation quality. GLEU is well-suited for
     use cases such as machine translation, text summarization, and text generation.
 
-    **Usage**
+    GLEU scores range from 0 to 1, where a value of 1 represents perfect overlap between the response and
+    the ground truth and a value of 0 indicates no overlap.
 
-    .. code-block:: python
+    .. admonition:: Example:
 
-        eval_fn = GleuScoreEvaluator()
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gleu_score": 0.41
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START gleu_score_evaluator]
+            :end-before: [END gleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a GleuScoreEvaluator.
     """
 
     def __init__(self):
