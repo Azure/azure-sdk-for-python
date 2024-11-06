@@ -24,7 +24,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool
+from azure.ai.projects.models import AzureAISearchTool, ToolResources, AzureAISearchResource, IndexResource
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -36,23 +36,13 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == "CognitiveSearch":
-        conn_id = conn.id
-        break
-
-print(conn_id)
-
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool()
-ai_search.add_index(conn_id)
+ai_search = AzureAISearchTool(index_connection_id="myconnectionid", index_name="myindexname")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
@@ -68,7 +58,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="Tell me about Bill and Mellie",
     )
     print(f"Created message, ID: {message.id}")
 
