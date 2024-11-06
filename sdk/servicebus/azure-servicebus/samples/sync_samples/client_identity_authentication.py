@@ -40,7 +40,7 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 credential = EnvironmentCredential()
@@ -57,7 +57,7 @@ servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        sender.send_messages(ServiceBusMessage('Single Message'))
+        sender.send_messages(ServiceBusMessage("Single Message"))
 
 
 print("Send message is done.")

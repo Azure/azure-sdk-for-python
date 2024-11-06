@@ -12,7 +12,6 @@
 from .personalizer_client import PersonalizerClient
 from .version import VERSION
 
-__all__ = ['PersonalizerClient']
+__all__ = ["PersonalizerClient"]
 
 __version__ = VERSION
-

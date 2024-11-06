@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common._experimental import experimental
 
 
 @experimental
@@ -22,7 +22,6 @@ class ProtectedMaterialMultimodalEvaluator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
     :return: A dictionary containing the evaluation result label and reasoning.
-    :rtype: Dict[str, str]
 
     **Usage Example**
 
@@ -34,7 +33,7 @@ class ProtectedMaterialMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ProtectedMaterialMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {
@@ -71,6 +70,9 @@ class ProtectedMaterialMultimodalEvaluator:
 
     """
 
+    id = "protected_material_multimodal"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(
         self,
         credential,
@@ -82,8 +84,9 @@ class ProtectedMaterialMultimodalEvaluator:
         """
         Evaluates protected materials content.
 
-        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: ~azure.ai.evaluation.Conversation
+        :keyword conversation: The conversation contains list of messages to be evaluated.
+            Each message should have "role" and "content" keys. It supports single turn only.
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: Dict[str, str]
         """
@@ -101,8 +104,9 @@ class _AsyncProtectedMaterialMultimodalEvaluator:
     async def __call__(self, *, conversation, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
+
         :keyword conversation: The conversation contains list of messages to be evaluated.
-        Each message should have "role" and "content" keys.
+            Each message should have "role" and "content" keys. It supports single turn only.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any

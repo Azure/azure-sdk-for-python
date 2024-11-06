@@ -1,31 +1,11 @@
 {
-  "commit": "3cb1b51638616435470fc10ea00de92512186ece",
+  "commit": "71341bf84d11e4cf6c3d3c6aa9d1615238b20e90",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.14.3",
+    "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/appplatform/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.14.3 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/appplatform/resource-manager/readme.md",
-  "package-2023-12": "2023-12-14 09:48:21 +0800 0fac19a4056fab82c3955a9d8eeba33e79158e49 Microsoft.AppPlatform/stable/2023-12-01/appplatform.json",
-  "package-preview-2023-11": "2023-10-25 09:34:29 +0800 eac41e7f43d1fdfeff98eced43a90d7b1dd746e2 Microsoft.AppPlatform/preview/2023-11-01-preview/appplatform.json",
-  "package-preview-2023-09": "2023-09-13 03:01:23 +0800 2fff12c0f30c9be23b280152f20f8fb0db7afb98 Microsoft.AppPlatform/preview/2023-09-01-preview/appplatform.json",
-  "package-preview-2023-07": "2023-08-24 15:09:29 +0800 0b6eab579426b030aa84996b9c1b35ce137a7f9f Microsoft.AppPlatform/preview/2023-07-01-preview/appplatform.json",
-  "package-preview-2023-05": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2023-05-01-preview/appplatform.json",
-  "package-preview-2023-03": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2023-03-01-preview/appplatform.json",
-  "package-preview-2023-01": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2023-01-01-preview/appplatform.json",
-  "package-2022-12": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/stable/2022-12-01/appplatform.json",
-  "package-preview-2022-11": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2022-11-01-preview/appplatform.json",
-  "package-preview-2022-09": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2022-09-01-preview/appplatform.json",
-  "package-preview-2022-05": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2022-05-01-preview/appplatform.json",
-  "package-2022-04": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/stable/2022-04-01/appplatform.json",
-  "package-preview-2022-03": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2022-03-01-preview/appplatform.json",
-  "package-preview-2022-01": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2022-01-01-preview/appplatform.json",
-  "package-preview-2021-09": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2021-09-01-preview/appplatform.json",
-  "package-preview-2021-06": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2021-06-01-preview/appplatform.json",
-  "package-preview-2020-11": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json",
-  "package-2020-07": "2023-08-10 13:49:06 +0800 bf037469010a451ea22c3174cf58b20228f6f580 Microsoft.AppPlatform/stable/2020-07-01/appplatform.json",
-  "package-preview-2024-05": "2024-04-19 12:58:52 +0800 ab93e3a3daf9873ded21ab6112b48fbed14fb62e Microsoft.AppPlatform/preview/2024-05-01-preview/appplatform.json",
-  "package-preview-2024-01": "2024-02-02 00:41:36 +0800 6a5d5f04711def0ab35a0a42a91b3285657d401a Microsoft.AppPlatform/preview/2024-01-01-preview/appplatform.json"
+  "autorest_command": "autorest specification/appplatform/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2023-12 --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/appplatform/resource-manager/readme.md"
 }
