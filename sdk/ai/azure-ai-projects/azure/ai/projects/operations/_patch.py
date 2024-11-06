@@ -104,7 +104,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
@@ -169,7 +169,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
@@ -221,7 +221,7 @@ class InferenceOperations:
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
         elif (
-            connection.authentication_type == AuthenticationType.AAD
+            connection.authentication_type == AuthenticationType.ENTRA_ID
             or connection.authentication_type == AuthenticationType.SAS
         ):
             try:
@@ -230,7 +230,7 @@ class InferenceOperations:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 )
-            if connection.authentication_type == AuthenticationType.AAD:
+            if connection.authentication_type == AuthenticationType.ENTRA_ID:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
                 auth = "Creating AzureOpenAI using SAS authentication"
@@ -307,7 +307,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 )
             except ResourceNotFoundError as _:
                 return None
-            if connection.properties.auth_type == AuthenticationType.AAD:
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ..models._patch import SASTokenCredential
