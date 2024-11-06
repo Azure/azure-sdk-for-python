@@ -58,7 +58,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 
-PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool, None]], Tuple[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:
@@ -282,8 +282,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -413,8 +412,7 @@ class ContainerProxy:
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is provided,
             a cross-partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
@@ -522,8 +520,7 @@ class ContainerProxy:
         :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -626,8 +623,7 @@ class ContainerProxy:
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -882,8 +878,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to be patched.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: The partition key of the object to patch.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: List[Dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
@@ -955,8 +950,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1109,8 +1103,7 @@ class ContainerProxy:
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is passed in, a
             cross partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
@@ -1150,8 +1143,7 @@ class ContainerProxy:
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -1181,8 +1173,7 @@ class ContainerProxy:
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
@@ -1215,8 +1206,7 @@ class ContainerProxy:
         this background task.
 
         :param partition_key: Partition key for the items to be deleted.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1264,8 +1254,7 @@ class ContainerProxy:
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: List[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool, None]],
-            Tuple[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.

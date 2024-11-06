@@ -281,10 +281,11 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
+            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:  # pylint: disable=line-too-long
         if self.kind != "MultiHash":
             return False
-        ret = isinstance(partition_key, (list, tuple)) and len(self['paths']) != len(partition_key)
+        ret = ((isinstance(partition_key, Sequence) and
+                not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))
         return ret
 
 
