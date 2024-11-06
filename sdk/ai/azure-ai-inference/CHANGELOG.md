@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b6 (TBD)
+
+### Bugs Fixed
+
+* Fix tracing for asynchronous streaming.
+
 ## 1.0.0b5 (2024-10-16)
 
 ### Features Added
