@@ -30,8 +30,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Optional, Union, List, Any, Dict, Deque
 import logging
+from typing_extensions import Literal
 
-from azure.core import CaseInsensitiveEnumMeta
 from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
@@ -49,17 +49,6 @@ from azure.cosmos.partition_key import _Empty, _Undefined
 class ChangeFeedStateVersion(Enum):
     V1 = "v1"
     V2 = "v2"
-
-class ChangeFeedMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The change feed query mode."""
-
-    LATEST_VERSION = "LatestVersion"
-    """Query latest items from 'start_time' or 'continuation' token."""
-    ALL_VERSIONS_AND_DELETES = "AllVersionsAndDeletes"
-    """Query all versions and deleted items from either 'fromNow'(default) or 'continuation' token."""
-
-    def __str__(self):
-        return self.value
 
 class ChangeFeedState(ABC):
     version_property_name = "v"
@@ -200,7 +189,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range: FeedRangeInternal,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation],
-            mode: Optional[ChangeFeedMode]
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
     ) -> None:
 
         self._container_link = container_link
@@ -221,9 +210,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         else:
             self._continuation = continuation
 
-        self._mode = ChangeFeedMode.LATEST_VERSION
-        if mode is not None:
-            self._mode = mode
+        self._mode = "LatestVersion" if mode is None else mode
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)
 
@@ -279,7 +266,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def set_mode_request_headers(
             self,
             request_headers: Dict[str, Any]) -> None:
-        if self._mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
+        if self._mode == "AllVersionsAndDeletes":
             request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
             request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = \
                 http_constants.HttpHeaders.Separate_meta_with_crts
@@ -381,8 +368,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         mode = continuation_json.get(ChangeFeedStateV2.mode_property_name)
         if mode is None:
-            raise ValueError(f"Invalid continuation:"
-                             f" [Missing {ChangeFeedStateV2.mode_property_name}]")
+            raise ValueError(f"Invalid continuation: [Missing {ChangeFeedStateV2.mode_property_name}]")
 
         return cls(
             container_link=container_link,

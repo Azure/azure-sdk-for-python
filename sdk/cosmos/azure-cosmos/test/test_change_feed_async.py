@@ -14,7 +14,6 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedMode
 
 ID = 'id'
 CURRENT = 'current'
@@ -300,7 +299,7 @@ class TestChangeFeedAsync:
 
         assert actual_ids == expected_ids
 
-    async def test_query_change_feed_with_delete(self, setup):
+    async def test_query_change_feed_with_all_versions_and_deletes(self, setup):
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
@@ -308,7 +307,7 @@ class TestChangeFeedAsync:
                                                               PartitionKey(path=f"/{partition_key}"),
                                                               change_feed_policy=change_feed_policy)
 
-        mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+        mode = 'AllVersionsAndDeletes'
 
         ## Test Change Feed with empty collection(Save the continuation token)
         query_iterable = created_collection.query_items_change_feed(
@@ -363,15 +362,14 @@ class TestChangeFeedAsync:
     async def test_query_change_feed_with_errors(self, setup):
         created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                   PartitionKey(path="/pk"))
-        mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+        mode = 'AllVersionsAndDeletes'
 
         # Error if invalid mode was used
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(
                 mode="test_invalid_mode",
             )
-        assert str(e.value) == "Invalid mode was used: 'test_invalid_mode'. Supported modes are [LatestVersion, AllVersionsAndDeletes]."
-
+        assert str(e.value) == "Invalid mode was used: 'test_invalid_mode'. Supported modes are ['LatestVersion', 'AllVersionsAndDeletes']."
 
         # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
