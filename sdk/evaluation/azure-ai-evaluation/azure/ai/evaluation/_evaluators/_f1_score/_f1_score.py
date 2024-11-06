@@ -133,7 +133,6 @@ class F1ScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
 
-
     def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """
         Evaluate F1 score.

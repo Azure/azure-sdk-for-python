@@ -1,12 +1,37 @@
 import pytest
 
-from azure.ai.evaluation import (CoherenceEvaluator, F1ScoreEvaluator, FluencyEvaluator, F1ScoreEvaluator,
-    GroundednessEvaluator, RelevanceEvaluator, SimilarityEvaluator, QAEvaluator, ViolenceEvaluator,
-    SexualEvaluator, HateUnfairnessEvaluator, SelfHarmEvaluator, ContentSafetyEvaluator, IndirectAttackEvaluator,
-    BleuScoreEvaluator, GleuScoreEvaluator, MeteorScoreEvaluator, RetrievalEvaluator, RougeScoreEvaluator, RougeType,
-    ProtectedMaterialEvaluator, HateUnfairnessMultimodalEvaluator, SelfHarmMultimodalEvaluator, ViolenceMultimodalEvaluator,
-    SexualMultimodalEvaluator, IndirectAttackEvaluator, GroundednessProEvaluator, ProtectedMaterialMultimodalEvaluator,
-    RetrievalEvaluator)
+from azure.ai.evaluation import (
+    CoherenceEvaluator,
+    F1ScoreEvaluator,
+    FluencyEvaluator,
+    F1ScoreEvaluator,
+    GroundednessEvaluator,
+    RelevanceEvaluator,
+    SimilarityEvaluator,
+    QAEvaluator,
+    ViolenceEvaluator,
+    SexualEvaluator,
+    HateUnfairnessEvaluator,
+    SelfHarmEvaluator,
+    ContentSafetyEvaluator,
+    IndirectAttackEvaluator,
+    BleuScoreEvaluator,
+    GleuScoreEvaluator,
+    MeteorScoreEvaluator,
+    RetrievalEvaluator,
+    RougeScoreEvaluator,
+    RougeType,
+    ProtectedMaterialEvaluator,
+    HateUnfairnessMultimodalEvaluator,
+    SelfHarmMultimodalEvaluator,
+    ViolenceMultimodalEvaluator,
+    SexualMultimodalEvaluator,
+    IndirectAttackEvaluator,
+    GroundednessProEvaluator,
+    ProtectedMaterialMultimodalEvaluator,
+    RetrievalEvaluator,
+)
+
 
 # Evaluators are dummy ids for testing purposes to be replaced once the actual ids are available
 class TestEvaluatorIds:

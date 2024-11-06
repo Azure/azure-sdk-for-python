@@ -72,7 +72,6 @@ class SelfHarmMultimodalEvaluator:
     def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(credential, azure_ai_project)
 
-
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates self harm content.

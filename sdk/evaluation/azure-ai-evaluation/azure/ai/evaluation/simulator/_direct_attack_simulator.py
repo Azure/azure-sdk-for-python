@@ -179,9 +179,7 @@ class DirectAttackSimulator:
         if not randomization_seed:
             randomization_seed = randint(0, 1000000)
 
-        regular_sim = AdversarialSimulator(
-            azure_ai_project=self.azure_ai_project, credential=self.credential
-        )
+        regular_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         regular_sim_results = await regular_sim(
             scenario=scenario,
             target=target,
