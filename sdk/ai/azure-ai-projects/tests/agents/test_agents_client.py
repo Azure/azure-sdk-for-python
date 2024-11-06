@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1663,7 +1664,9 @@ class TestagentClient(AzureRecordedTestCase):
                 with open(test_file_path, "w") as f:
                     f.write("This is a test file")
 
-                file: OpenAIFile = client.agents.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
+                file: OpenAIFile = client.agents.upload_file_and_poll(
+                    file_path=test_file_path, purpose=FilePurpose.AGENTS
+                )
 
                 # create agent
                 code_interpreter = CodeInterpreterTool(file_ids=[file.id])

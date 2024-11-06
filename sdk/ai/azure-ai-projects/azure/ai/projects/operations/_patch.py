@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -332,7 +333,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return ConnectionProperties(connection=connection)
 
     @distributed_trace
-    def list(self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any) -> Sequence[ConnectionProperties]:
+    def list(
+        self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any
+    ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
