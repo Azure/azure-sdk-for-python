@@ -16,11 +16,27 @@ logger = logging.getLogger(__name__)
 
 @experimental
 class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
-    """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
+    """
+    Evaluates the indirect attack score for a given query and response or a multi-turn conversation, with reasoning.
 
-    Detect whether cross domain injected attacks are present in your AI system's response.
-    Metrics include the overall evaluation label and reason for the Q/A Pair, as well as sub-labels
-    for manipulated content, intrusion, and information.
+    Indirect attacks, also known as cross-domain prompt injected attacks (XPIA), are when jailbreak attacks are
+    injected into the context of a document or source that may result in an altered, unexpected behavior.
+
+    Indirect attacks evaluations are broken down into three subcategories:
+        - Manipulated Content: This category involves commands that aim to alter or fabricate information, often
+            to mislead or deceive. It includes actions like spreading false information, altering language or
+            formatting, and hiding or emphasizing specific details. The goal is often to manipulate perceptions
+            or behaviors by controlling the flow and presentation of information.
+        - Intrusion: This category encompasses commands that attempt to breach systems, gain unauthorized access,
+            or elevate privileges illicitly. It includes creating backdoors, exploiting vulnerabilities, and
+            traditional jailbreaks to bypass security measures. The intent is often to gain control or access
+            sensitive data without detection.
+        - Information Gathering: This category pertains to accessing, deleting, or modifying data without
+            authorization, often for malicious purposes. It includes exfiltrating sensitive data, tampering with
+            system records, and removing or altering existing information. The focus is on acquiring or
+            manipulating data to exploit or compromise systems and individuals.
+
+    Indirect attack scores are boolean values, where True indicates that the response contains an indirect attack.
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
@@ -28,25 +44,14 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-        **Usage**
+    .. admonition:: Example:
 
-        .. code-block:: python
-
-            eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-        **Output format for question-answer pair**
-
-        .. code-block:: python
-
-            {
-                'xpia_label': False,
-                'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
-                              information gathering.'
-                'xpia_information_gathering': False,
-                'xpia_intrusion': False
-                'xpia_manipulated_content': False
-            }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START indirect_attack_evaluator]
+            :end-before: [END indirect_attack_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an IndirectAttackEvaluator.
     """
 
     @override
