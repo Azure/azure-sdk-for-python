@@ -1,6 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,8 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys, io, logging, os, time
 from azure.core.exceptions import ResourceNotFoundError
-from io import IOBase, TextIOWrapper
-from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
+from io import TextIOWrapper
+from typing import List, Union, IO, Any, Dict, Optional, overload, Sequence, TYPE_CHECKING, Iterator, cast
 from pathlib import Path
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -24,8 +22,9 @@ from ..models._models import (
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
+    InternalConnectionPropertiesSASAuth,
 )
-from .._types import AgentsApiResponseFormatOption
+
 from ..models._patch import ConnectionProperties
 from ..models._enums import FilePurpose
 from .._vendor import FileType
@@ -41,6 +40,9 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import _types
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
+    from openai import AzureOpenAI
+    from azure.identity import get_bearer_token_provider
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
@@ -54,7 +56,7 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+    def get_chat_completions_client(self, **kwargs) -> "Optional[ChatCompletionsClient]":
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
         in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
@@ -101,7 +103,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
@@ -119,7 +121,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+    def get_embeddings_client(self, **kwargs) -> "Optional[EmbeddingsClient]":
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
@@ -166,7 +168,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
@@ -184,7 +186,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AzureOpenAI":
+    def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
@@ -217,27 +219,23 @@ class InferenceOperations:
             client = AzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
-            logger.debug(
-                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
-            )
+        elif (
+            connection.authentication_type == AuthenticationType.ENTRA_ID
+            or connection.authentication_type == AuthenticationType.SAS
+        ):
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 )
+            if connection.authentication_type == AuthenticationType.ENTRA_ID:
+                auth = "Creating AzureOpenAI using Entra ID authentication"
+            else:
+                auth = "Creating AzureOpenAI using SAS authentication"
+            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                azure_ad_token_provider=get_bearer_token_provider(
-                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
-                ),
-                azure_endpoint=connection.endpoint_url,
-                api_version=api_version,
-            )
-        elif connection.authentication_type == AuthenticationType.SAS:
-            logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
-            client = AzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -255,7 +253,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     @distributed_trace
     def get_default(
         self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials.
 
@@ -284,7 +282,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return None
 
     @distributed_trace
-    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+    def get(
+        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials.
 
@@ -306,13 +306,15 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 )
             except ResourceNotFoundError as _:
                 return None
-            if connection.properties.auth_type == AuthenticationType.AAD:
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ..models._patch import SASTokenCredential
 
+                cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
+
                 token_credential = SASTokenCredential(
-                    sas_token=connection.properties.credentials.sas,
+                    sas_token=cred_prop.credentials.sas,
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
@@ -330,14 +332,14 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return ConnectionProperties(connection=connection)
 
     @distributed_trace
-    def list(self, *, connection_type: ConnectionType | None = None, **kwargs: Any) -> Iterable[ConnectionProperties]:
+    def list(self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
             If not provided, all connections are listed.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :return: A list of connection properties
-        :rtype: Iterable[~azure.ai.projects.models._models.ConnectionProperties]
+        :rtype: Sequence[~azure.ai.projects.models._models.ConnectionProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
@@ -375,13 +377,17 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
                 "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
             )
         try:
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError(
                 "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
             )
         trace.set_tracer_provider(TracerProvider())
-        trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
+        # get_tracer_provider returns opentelemetry.trace.TracerProvider
+        # however, we have opentelemetry.sdk.trace.TracerProvider, which implements
+        # add_span_processor method, though we need to cast it to fix type checking.
+        tp = cast(TracerProvider, trace.get_tracer_provider())
+        tp.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
 
     elif isinstance(destination, TextIOWrapper):
         if destination is sys.stdout:
@@ -395,7 +401,11 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
                     "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
                 )
             trace.set_tracer_provider(TracerProvider())
-            trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+            # get_tracer_provider returns opentelemetry.trace.TracerProvider
+            # however, we have opentelemetry.sdk.trace.TracerProvider, which implements
+            # add_span_processor method, though we need to cast it to fix type checking.
+            tp = cast(TracerProvider, trace.get_tracer_provider())
+            tp.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
         else:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIOWrapper`")
 
@@ -404,14 +414,14 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         from azure.core.settings import settings
 
         settings.tracing_implementation = "opentelemetry"
-        _ = settings.tracing_implementation()
+        settings.tracing_implementation()
     except ModuleNotFoundError as _:
         logger.warning(
             "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
         )
 
     try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor
+        from azure.ai.inference.tracing import AIInferenceInstrumentor  # type: ignore
 
         instrumentor = AIInferenceInstrumentor()
         if not instrumentor.is_instrumented():
@@ -431,7 +441,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         logger.warning("Could not call `AIAgentsInstrumentor().instrument()` " + str(exc))
 
     try:
-        from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
+        from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor  # type: ignore
 
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError as _:
@@ -440,7 +450,7 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         )
 
     try:
-        from opentelemetry.instrumentation.langchain import LangchainInstrumentor
+        from opentelemetry.instrumentation.langchain import LangchainInstrumentor  # type: ignore
 
         LangchainInstrumentor().instrument()
     except ModuleNotFoundError as _:
@@ -458,7 +468,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    def get_connection_string(self) -> None:
+    def get_connection_string(self) -> Optional[str]:
         """
         Get the Application Insights connection string associated with the Project's Application Insights resource.
         On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
@@ -2010,7 +2020,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -2078,7 +2088,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -2120,7 +2130,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file_and_poll(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 

@@ -287,7 +287,13 @@ def _validate_columns_for_evaluators(
                 # Ignore the missing fields if "conversation" presents in the input data
                 missing_inputs = []
             else:
-                missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
+                optional_params = (
+                    evaluator._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    if hasattr(evaluator, "_OPTIONAL_PARAMS")
+                    else []
+                )
+                excluded_params = set(new_df.columns).union(optional_params)
+                missing_inputs = [col for col in evaluator_params if col not in excluded_params]
 
                 # If "conversation" is the only parameter and it is missing, keep it in the missing inputs
                 # Otherwise, remove it from the missing inputs
@@ -391,7 +397,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
         output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
-        if not os.path.exists(output_dir):
+        if output_dir and not os.path.exists(output_dir):
             msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
                 message=msg,
@@ -698,7 +704,7 @@ def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     if output_dict:
         print("======= Combined Run Summary (Per Evaluator) =======\n")
         print(json.dumps(output_dict, indent=4))
-        print("\n====================================================")
+        print("\n====================================================\n")
 
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
@@ -888,9 +894,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result_df_dict = result_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
+    _print_summary(per_evaluator_results)
+
     if output_path:
         _write_output(output_path, result)
-
-    _print_summary(per_evaluator_results)
 
     return result

@@ -57,7 +57,7 @@ class AIProjectClient(ClientGenerated):
         # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
         # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
         _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
-        self._config0 = AIProjectClientConfiguration(
+        self._config0: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -85,11 +85,11 @@ class AIProjectClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs0) if self._config0.redirect_policy else None,
                 self._config0.http_logging_policy,
             ]
-        self._client0 = PipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
+        self._client0: PipelineClient = PipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
 
         # For Endpoints operations (listing connections, getting connection properties, getting project properties)
         _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
-        self._config1 = AIProjectClientConfiguration(
+        self._config1: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -116,7 +116,7 @@ class AIProjectClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs1) if self._config1.redirect_policy else None,
                 self._config1.http_logging_policy,
             ]
-        self._client1 = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
+        self._client1: PipelineClient = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
         _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
@@ -147,7 +147,7 @@ class AIProjectClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs2) if self._config2.redirect_policy else None,
                 self._config2.http_logging_policy,
             ]
-        self._client2 = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
+        self._client2: PipelineClient = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
         # cSpell:disable-next-line
@@ -179,7 +179,7 @@ class AIProjectClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs3) if self._config3.redirect_policy else None,
                 self._config3.http_logging_policy,
             ]
-        self._client3 = PipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
+        self._client3: PipelineClient = PipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -240,9 +240,9 @@ class AIProjectClient(ClientGenerated):
         :rtype: str
         """
         try:
-            from azure.ai.ml import MLClient
-            from azure.ai.ml.entities import Data
-            from azure.ai.ml.constants import AssetTypes
+            from azure.ai.ml import MLClient  # type: ignore
+            from azure.ai.ml.entities import Data  # type: ignore
+            from azure.ai.ml.constants import AssetTypes  # type: ignore
         except ImportError:
             raise ImportError(
                 "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"

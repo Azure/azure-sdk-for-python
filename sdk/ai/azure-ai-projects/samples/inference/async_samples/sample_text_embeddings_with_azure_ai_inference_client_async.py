@@ -23,7 +23,7 @@ USAGE:
 import asyncio
 import os
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def sample_get_embeddings_client_async():

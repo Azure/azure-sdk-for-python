@@ -84,7 +84,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
             azure_endpoint=connection.endpoint_url,
             api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
         )
-    elif connection.authentication_type == AuthenticationType.AAD:
+    elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         print("====> Creating AzureOpenAI client using Entra ID authentication")
         client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
@@ -114,7 +114,7 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
     if connection.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating ChatCompletionsClient using API key authentication")
         client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
-    elif connection.authentication_type == AuthenticationType.AAD:
+    elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
         client = ChatCompletionsClient(

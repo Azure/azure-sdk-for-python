@@ -37,28 +37,25 @@ def generate_sas_token(uri, policy, key, expiry=None):
         expiry = time.time() + 3600
     encoded_uri = quote_plus(uri)
     ttl = int(expiry)
-    sign_key = '%s\n%d' % (encoded_uri, ttl)
-    signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
-    result = {
-        'sr': uri,
-        'sig': signature,
-        'se': str(ttl)}
+    sign_key = "%s\n%d" % (encoded_uri, ttl)
+    signature = b64encode(HMAC(b64decode(key), sign_key.encode("utf-8"), sha256).digest())
+    result = {"sr": uri, "sig": signature, "se": str(ttl)}
     if policy:
-        result['skn'] = policy
-    return 'SharedAccessSignature ' + urlencode(result)
+        result["skn"] = policy
+    return "SharedAccessSignature " + urlencode(result)
 
 
 def parse_iot_conn_str(iothub_conn_str):
     hostname = None
     shared_access_key_name = None
     shared_access_key = None
-    for element in iothub_conn_str.split(';'):
-        key, _, value = element.partition('=')
-        if key.lower() == 'hostname':
-            hostname = value.rstrip('/')
-        elif key.lower() == 'sharedaccesskeyname':
+    for element in iothub_conn_str.split(";"):
+        key, _, value = element.partition("=")
+        if key.lower() == "hostname":
+            hostname = value.rstrip("/")
+        elif key.lower() == "sharedaccesskeyname":
             shared_access_key_name = value
-        elif key.lower() == 'sharedaccesskey':
+        elif key.lower() == "sharedaccesskey":
             shared_access_key = value
     if not all([hostname, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
@@ -68,11 +65,10 @@ def parse_iot_conn_str(iothub_conn_str):
 def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
     hostname, shared_access_key_name, shared_access_key = parse_iot_conn_str(iothub_conn_str)
     iot_hub_name = hostname.split(".")[0]
-    operation = '/messages/events/ConsumerGroups/{}/Partitions/{}'.format('$Default', 0)
-    username = '{}@sas.root.{}'.format(shared_access_key_name, iot_hub_name)
+    operation = "/messages/events/ConsumerGroups/{}/Partitions/{}".format("$Default", 0)
+    username = "{}@sas.root.{}".format(shared_access_key_name, iot_hub_name)
     sas_token = generate_sas_token(hostname, shared_access_key_name, shared_access_key)
-    uri = 'amqps://{}:{}@{}{}'.format(quote_plus(username),
-                                      quote_plus(sas_token), hostname, operation)
+    uri = "amqps://{}:{}@{}{}".format(quote_plus(username), quote_plus(sas_token), hostname, operation)
     source_uri = Source(uri)
     receive_client = ReceiveClient(source_uri)
     try:
@@ -87,12 +83,11 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
             # between the port and 'ConsumerGroups'.
             # (ex. "...servicebus.windows.net:12345/<Event Hub name>/ConsumerGroups/...").
             # The regex matches string ':<digits>/', then any characters, then the string '/ConsumerGroups'.
-            iot_hub_name = cast(re.Match, re.search(":\d+\/.*/ConsumerGroups", str(redirect.address))).group(0).split("/")[1]
+            iot_hub_name = (
+                cast(re.Match, re.search(":\d+\/.*/ConsumerGroups", str(redirect.address))).group(0).split("/")[1]
+            )
         return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
-            fully_qualified_name,
-            shared_access_key_name,
-            shared_access_key,
-            iot_hub_name
+            fully_qualified_name, shared_access_key_name, shared_access_key, iot_hub_name
         )
     except Exception as exp:
         raise ValueError(
@@ -116,11 +111,10 @@ async def receive_events_from_iothub(iothub_conn_str):
 
     async with consumer_client:
         await consumer_client.receive_batch(
-            on_event_batch,
-            starting_position=-1  # "-1" is from the beginning of the partition.
+            on_event_batch, starting_position=-1  # "-1" is from the beginning of the partition.
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     iothub_conn_str = os.environ["IOTHUB_CONN_STR"]
     asyncio.run(receive_events_from_iothub(iothub_conn_str))

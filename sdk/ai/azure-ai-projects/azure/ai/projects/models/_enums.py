@@ -137,8 +137,8 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     API_KEY = "ApiKey"
     """API Key authentication"""
-    AAD = "AAD"
-    """Entra ID authentication"""
+    ENTRA_ID = "AAD"
+    """Entra ID authentication (formerly known as AAD)"""
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
 

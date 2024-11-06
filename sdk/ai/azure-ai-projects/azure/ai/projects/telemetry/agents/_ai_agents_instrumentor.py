@@ -11,7 +11,7 @@ import importlib
 import logging
 import os
 from azure.ai.projects import _types
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 from azure.ai.projects.telemetry.agents._utils import *  # pylint: disable=unused-wildcard-import
 
@@ -21,10 +21,11 @@ from azure.core.settings import settings
 from azure.ai.projects.operations import AgentsOperations
 from azure.ai.projects.aio.operations import AgentsOperations as AsyncAgentOperations
 from azure.ai.projects.models import _models, AgentRunStream
-from azure.ai.projects.models._enums import MessageRole, RunStepStatus
+from azure.ai.projects.models._enums import MessageRole, RunStepStatus, AgentsApiResponseFormatMode
 from azure.ai.projects.models._models import (
     MessageAttachment,
     MessageDeltaChunk,
+    MessageIncompleteDetails,
     RunStep,
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
@@ -86,12 +87,26 @@ class AIAgentsInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
 
-    def instrument(self) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
         Enable trace instrumentation for AI Agents.
 
+        :param enable_content_recording: Whether content recording is enabled as part
+          of the traces or not. Content in this context refers to chat message content
+          and function call tool related function names, function parameter names and
+          values. True will enable content recording, False will disable it. If no value
+          is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+          is not found, then the value will default to False. Please note that successive calls
+          to instrument will always apply the content recording value provided with the most
+          recent call to instrument (including applying the environment variable if no value is
+          provided and defaulting to false if the environment variable is not found), even if
+          instrument was already previously called without uninstrument being called in between
+          the instrument calls.
+        :type enable_content_recording: bool, optional
+
         """
-        self._impl.instrument()
+        self._impl.instrument(enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -111,6 +126,14 @@ class AIAgentsInstrumentor:
         """
         return self._impl.is_instrumented()
 
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_content_recording_enabled()
+
 
 class _AIAgentsInstrumentorPreview:
     """
@@ -125,18 +148,27 @@ class _AIAgentsInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self):
+    def instrument(self, enable_content_recording: Optional[bool] = None):
         """
         Enable trace instrumentation for AI Agents.
 
-        This method checks the environment variable
-        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
-        whether to enable content tracing.
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False.
+
+        :type enable_content_recording: bool, optional
         """
-        if not self.is_instrumented():
+        if enable_content_recording is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-            enable_content_tracing = self._str_to_bool(var_value)
-            self._instrument_agents(enable_content_tracing)
+            enable_content_recording = self._str_to_bool(var_value)
+        if not self.is_instrumented():
+            self._instrument_agents(enable_content_recording)
+        else:
+            self._set_enable_content_recording(enable_content_recording=enable_content_recording)
 
     def uninstrument(self):
         """
@@ -156,6 +188,24 @@ class _AIAgentsInstrumentorPreview:
         :rtype: bool
         """
         return self._is_instrumented()
+
+    def set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_tracing: bool
+        """
+        self._set_enable_content_recording(enable_content_recording=enable_content_recording)
+
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return self._is_content_recording_enabled()
 
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
@@ -183,14 +233,14 @@ class _AIAgentsInstrumentorPreview:
 
     def _create_event_attributes(
         self,
-        thread_id: str = None,
-        agent_id: str = None,
-        thread_run_id: str = None,
-        message_id: str = None,
-        message_status: str = None,
+        thread_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        thread_run_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        message_status: Optional[str] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
-    ) -> dict:
-        attrs = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
+    ) -> Dict[str, Any]:
+        attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 
@@ -294,15 +344,15 @@ class _AIAgentsInstrumentorPreview:
     def _add_instructions_event(
         self,
         span: "AbstractSpan",
-        instructions: str,
-        additional_instructions: str,
+        instructions: Optional[str],
+        additional_instructions: Optional[str],
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
     ) -> None:
         if not instructions:
             return
 
-        event_body = {}
+        event_body: Dict[str, Any] = {}
         if _trace_agents_content and (instructions or additional_instructions):
             if instructions and additional_instructions:
                 event_body["content"] = f"{instructions} {additional_instructions}"
@@ -334,7 +384,7 @@ class _AIAgentsInstrumentorPreview:
                     else None
                 ),
             }
-            for t in step.step_details.tool_calls
+            for t in cast(RunStepToolCallDetails, step.step_details).tool_calls
         ]
 
         attributes = self._create_event_attributes(
@@ -356,6 +406,24 @@ class _AIAgentsInstrumentorPreview:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
 
+    @staticmethod
+    def agent_api_response_to_str(response_format: Any) -> Optional[str]:
+        """
+        Convert response_format to string.
+
+        :param response_format: The response format.
+        :type response_format: ~azure.ai.projects._types.AgentsApiResponseFormatOption
+        :returns: string for the response_format.
+        :raises: Value error if response_format is not of type AgentsApiResponseFormatOption.
+        """
+        if isinstance(response_format, str) or response_format is None:
+            return response_format
+        if isinstance(response_format, AgentsApiResponseFormatMode):
+            return response_format.value
+        if isinstance(response_format, _models.AgentsApiResponseFormat):
+            return response_format.type
+        raise ValueError(f"Unknown response format {type(response_format)}")
+
     def start_thread_run_span(
         self,
         operation_name: OperationName,
@@ -372,7 +440,7 @@ class _AIAgentsInstrumentorPreview:
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(
             operation_name,
             project_name,
@@ -383,9 +451,9 @@ class _AIAgentsInstrumentorPreview:
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
-            response_format=response_format.value if response_format else None,
+            response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
         )
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording and instructions and additional_instructions:
             self._add_instructions_event(
                 span, instructions, additional_instructions, thread_id=thread_id, agent_id=agent_id
             )
@@ -402,7 +470,7 @@ class _AIAgentsInstrumentorPreview:
         run_id: str,
         tool_outputs: List[ToolOutput] = _Unset,
         event_handler: Optional[AgentEventHandler] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
 
         run_span = event_handler.span if isinstance(event_handler, _AgentEventHandlerTraceWrapper) else None
         recorded = self._add_tool_message_events(run_span, tool_outputs)
@@ -412,7 +480,7 @@ class _AIAgentsInstrumentorPreview:
             self._add_tool_message_events(span, tool_outputs)
         return span
 
-    def _add_tool_message_events(self, span, tool_outputs: List[ToolOutput]) -> bool:
+    def _add_tool_message_events(self, span: "Optional[AbstractSpan]", tool_outputs: List[ToolOutput]) -> bool:
         if span and span.span_instance.is_recording:
             for tool_output in tool_outputs:
                 body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
@@ -434,7 +502,7 @@ class _AIAgentsInstrumentorPreview:
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
             project_name,
@@ -442,7 +510,7 @@ class _AIAgentsInstrumentorPreview:
             model=model,
             temperature=temperature,
             top_p=top_p,
-            response_format=response_format.value if response_format else None,
+            response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
         )
         if span and span.span_instance.is_recording:
             if name:
@@ -456,9 +524,9 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         project_name: str,
-        messages: Optional[List[ThreadMessageOptions]] = None,
+        messages: Optional[List[ThreadMessage]] = None,
         tool_resources: Optional[ToolResources] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, project_name)
         if span and span.span_instance.is_recording:
             for message in messages or []:
@@ -466,7 +534,7 @@ class _AIAgentsInstrumentorPreview:
 
         return span
 
-    def start_list_messages_span(self, project_name: str, thread_id: str) -> "AbstractSpan":
+    def start_list_messages_span(self, project_name: str, thread_id: str) -> "Optional[AbstractSpan]":
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
@@ -1056,7 +1124,7 @@ class _AIAgentsInstrumentorPreview:
         ):
             agent_run_stream.event_handler.__exit__(exc_type, exc_val, exc_tb)
 
-    def wrap_handler(self, handler: "_models.AgentEventHandler", span: "AbstractSpan") -> "_models.AgentEventHandler":
+    def wrap_handler(self, handler: "AgentEventHandler", span: "AbstractSpan") -> "AgentEventHandler":
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1072,7 +1140,7 @@ class _AIAgentsInstrumentorPreview:
         content: str,
         role: Union[str, MessageRole] = _Unset,
         attachments: Optional[List[MessageAttachment]] = None,
-    ) -> "AbstractSpan":
+    ) -> "Optional[AbstractSpan]":
         role_str = self._get_role(role)
         span = start_span(OperationName.CREATE_MESSAGE, project_name, thread_id=thread_id)
         if span and span.span_instance.is_recording:
@@ -1392,15 +1460,36 @@ class _AIAgentsInstrumentorPreview:
         """
         return _agents_traces_enabled
 
+    def _set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_tracing: bool
+        """
+        global _trace_agents_content
+        _trace_agents_content = enable_content_recording
+
+    def _is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_agents_content
+
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
-    def __init__(self, inner_handler: AgentEventHandler, instrumentor: AIAgentsInstrumentor, span: "AbstractSpan"):
+    def __init__(
+        self, inner_handler: AgentEventHandler, instrumentor: _AIAgentsInstrumentorPreview, span: "AbstractSpan"
+    ):
         super().__init__()
         self.span = span
         self.inner_handler = inner_handler
         self.ended = False
-        self.last_run = None
-        self.last_message = None
+        self.last_run: Optional[ThreadRun] = None
+        self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -1430,7 +1519,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
             self.instrumentor._add_tool_assistant_message_event(self.span, step)
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
-            self.instrumentor.add_thread_message_event(self.span, self.last_message, step.usage)
+            self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:

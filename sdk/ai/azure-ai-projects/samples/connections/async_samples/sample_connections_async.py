@@ -28,7 +28,7 @@ import asyncio
 import os
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def sample_connections_async():
@@ -86,7 +86,7 @@ async def sample_connections_async():
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
             from azure.identity import get_bearer_token_provider
 
@@ -124,7 +124,7 @@ async def sample_connections_async():
             client = ChatCompletionsClient(
                 endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             client = ChatCompletionsClient(

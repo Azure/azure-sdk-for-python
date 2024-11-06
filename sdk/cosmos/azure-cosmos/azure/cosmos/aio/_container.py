@@ -44,6 +44,7 @@ from .._base import (
     _set_properties_cache
 )
 from .._routing.routing_range import Range
+from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
 from ..partition_key import (
     NonePartitionKeyValue,
@@ -1304,9 +1305,9 @@ class ContainerProxy:
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: Iterable[Dict[str, Any]]
 
-        .. note::
-          For each feed range, even through a Dict has been returned, but in the future, the structure may change.
-          Please just treat it as opaque and do not take any dependent on it.
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
 
         """
         if force_refresh is True:
@@ -1321,5 +1322,59 @@ class ContainerProxy:
 
         feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                 for partitionKeyRange in partition_key_ranges]
-
         return (feed_range for feed_range in feed_ranges)
+
+    async def get_latest_session_token(
+            self,
+            feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
+            target_feed_range: Dict[str, Any]
+    ) -> str:
+        """ **provisional** This method is still in preview and may be subject to breaking changes.
+
+        Gets the the most up to date session token from the list of session token and feed
+        range tuples for a specific target feed range. The feed range can be obtained from a partition key
+        or by reading the container feed ranges. This should only be used if maintaining own session token or else
+        the CosmosClient instance will keep track of session token. Session tokens and feed ranges are
+        scoped to a container. Only input session tokens and feed ranges obtained from the same container.
+        :param feed_ranges_to_session_tokens: List of feed range and session token tuples.
+        :type feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]]
+        :param target_feed_range: feed range to get most up to date session token.
+        :type target_feed_range: Dict[str, Any]
+        :returns: a session token
+        :rtype: str
+        """
+        return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
+
+    async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> Dict[str, Any]:
+        """ Gets the feed range for a given partition key.
+        :param partition_key: partition key to get feed range.
+        :type partition_key: PartitionKeyType
+        :returns: a feed range
+        :rtype: Dict[str, Any]
+
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
+
+        """
+        return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key)).to_dict()
+
+    async def is_feed_range_subset(self, parent_feed_range: Dict[str, Any],
+                                   child_feed_range: Dict[str, Any]) -> bool:
+        """Checks if child feed range is a subset of parent feed range.
+        :param parent_feed_range: left feed range
+        :type parent_feed_range: Dict[str, Any]
+        :param child_feed_range: right feed range
+        :type child_feed_range: Dict[str, Any]
+        :returns: a boolean indicating if child feed range is a subset of parent feed range
+        :rtype: bool
+
+        .. warning::
+          The structure of the dict representation of a feed range may vary, including which keys
+          are present. It therefore should only be treated as an opaque value.
+
+        """
+        parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
+        child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
+        return child_feed_range_epk.get_normalized_range().is_subset(
+            parent_feed_range_epk.get_normalized_range())

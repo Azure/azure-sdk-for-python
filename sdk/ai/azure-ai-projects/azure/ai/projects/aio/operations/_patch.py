@@ -1,7 +1,5 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,9 +16,21 @@ import time
 from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
 from io import TextIOWrapper
-from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
+from typing import (
+    IO,
+    Any,
+    AsyncIterator,
+    Dict,
+    List,
+    MutableMapping,
+    Optional,
+    Union,
+    cast,
+    overload,
+    Sequence,
+    TYPE_CHECKING,
+)
 
-from azure.ai.projects import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import TelemetryOperations as TelemetryOperationsGenerated
@@ -31,10 +41,19 @@ from ...models._models import (
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
+    InternalConnectionPropertiesSASAuth,
 )
 from ... import models as _models
 from ...operations._patch import _enable_telemetry
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.ai.projects import _types
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from openai import AsyncAzureOpenAI
+    from azure.identity import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +67,7 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace_async
-    async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+    async def get_chat_completions_client(self, **kwargs) -> "Optional[ChatCompletionsClient]":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
@@ -95,7 +114,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
@@ -113,7 +132,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+    async def get_embeddings_client(self, **kwargs) -> "Optional[EmbeddingsClient]":
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
@@ -160,7 +179,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
@@ -178,7 +197,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
 
@@ -210,27 +229,24 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
-            logger.debug(
-                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
-            )
+        elif (
+            connection.authentication_type == AuthenticationType.ENTRA_ID
+            or connection.authentication_type == AuthenticationType.SAS
+        ):
+
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
                 )
+            if connection.authentication_type == AuthenticationType.ENTRA_ID:
+                auth = "Creating AzureOpenAI using Entra ID authentication"
+            else:
+                auth = "Creating AzureOpenAI using SAS authentication"
+            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                azure_ad_token_provider=get_bearer_token_provider(
-                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
-                ),
-                azure_endpoint=connection.endpoint_url,
-                api_version=api_version,
-            )
-        elif connection.authentication_type == AuthenticationType.SAS:
-            logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
-            client = AsyncAzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -248,7 +264,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     @distributed_trace_async
     async def get_default(
         self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials.
 
@@ -277,7 +293,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return None
 
     @distributed_trace_async
-    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+    async def get(
+        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
+    ) -> Optional[ConnectionProperties]:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials.
 
@@ -299,13 +317,15 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 )
             except ResourceNotFoundError as _:
                 return None
-            if connection.properties.auth_type == AuthenticationType.AAD:
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
+                cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
+
                 token_credential = SASTokenCredential(
-                    sas_token=connection.properties.credentials.sas,
+                    sas_token=cred_prop.credentials.sas,
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
@@ -324,8 +344,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     @distributed_trace_async
     async def list(
-        self, *, connection_type: ConnectionType | None = None, **kwargs: Any
-    ) -> Iterable[ConnectionProperties]:
+        self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any
+    ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
@@ -357,7 +377,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    async def get_connection_string(self) -> str:
+    async def get_connection_string(self) -> Optional[str]:
         """
         Get the Application Insights connection string associated with the Project's Application Insights resource.
         On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
@@ -483,7 +503,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -708,7 +728,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -1314,24 +1334,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         return run
 
     @overload
-    def create_stream(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
-        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
     async def create_stream(
         self,
         thread_id: str,
@@ -1433,7 +1435,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_stream(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1891,7 +1893,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1959,7 +1961,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    async def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, *, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -2001,7 +2003,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 

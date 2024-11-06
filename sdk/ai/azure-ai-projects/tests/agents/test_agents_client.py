@@ -8,16 +8,18 @@
 # cSpell:disable
 from typing import Optional
 
+import os
 import datetime
-import functools
 import json
 import logging
-import os
+import tempfile
 import sys
-import pytest
 import time
+import pytest
+import functools
 
 from azure.ai.projects import AIProjectClient
+from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.projects.models import (
     CodeInterpreterTool,
@@ -27,6 +29,7 @@ from azure.ai.projects.models import (
     FileSearchToolResource,
     FunctionTool,
     MessageAttachment,
+    OpenAIFile,
     ThreadMessageOptions,
     ToolResources,
     ToolSet,
@@ -1644,47 +1647,67 @@ class TestagentClient(AzureRecordedTestCase):
         if file_id:
             ai_client.agents.delete_file(file_id)
 
-    # # **********************************************************************************
-    # #
-    # #                      HAPPY PATH SERVICE TESTS - Streaming APIs
-    # #
-    # # **********************************************************************************
-
-    # # **********************************************************************************
-    # #
-    # #         NEGATIVE TESTS - TODO idk what goes here
-    # #
-    # # **********************************************************************************
-
-    """
-    # DISABLED, PASSES LIVE ONLY: recordings don't capture DNS lookup errors
-    # test agent creation and deletion
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_negative_create_delete_agent(self, **kwargs):
-        # create client using bad endpoint
-        bad_connection_string = "https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm"
+    def test_code_interpreter_and_save_file(self, **kwargs):
+        output_file_exist = False
 
-        credential = self.get_credential(AIProjectClient, is_async=False)
-        client = AIProjectClient.from_connection_string(
-            credential=credential,
-            connection=bad_connection_string,
-        )
-        
-        # attempt to create agent with bad client
-        exception_caught = False
-        try:
-            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        # check for error (will not have a status code since it failed on request -- no response was recieved)
-        except (ServiceRequestError, HttpResponseError) as e:
-            exception_caught = True
-            if type(e) == ServiceRequestError:
-                assert e.message
-                assert "failed to resolve 'foo.bar.some-domain.ms'" in e.message.lower()
-            else:
-                assert "No such host is known" and "foo.bar.some-domain.ms" in str(e)
-        
-        # close client and confirm an exception was caught
-        client.close()
-        assert exception_caught
-    """
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+
+                # create a temporary input file for upload
+                test_file_path = os.path.join(temp_dir, "input.txt")
+
+                with open(test_file_path, "w") as f:
+                    f.write("This is a test file")
+
+                file: OpenAIFile = client.agents.upload_file_and_poll(file_path=test_file_path, purpose=FilePurpose.AGENTS)
+
+                # create agent
+                code_interpreter = CodeInterpreterTool(file_ids=[file.id])
+                agent = client.agents.create_agent(
+                    model="gpt-4-1106-preview",
+                    name="my-assistant",
+                    instructions="You are helpful assistant",
+                    tools=code_interpreter.definitions,
+                    tool_resources=code_interpreter.resources,
+                )
+                print(f"Created agent, agent ID: {agent.id}")
+
+                thread = client.agents.create_thread()
+                print(f"Created thread, thread ID: {thread.id}")
+
+                # create a message
+                message = client.agents.create_message(
+                    thread_id=thread.id,
+                    role="user",
+                    content="Create an image file same as the text file and give me file id?",
+                )
+                print(f"Created message, message ID: {message.id}")
+
+                # create run
+                run = client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+                print(f"Run finished with status: {run.status}")
+
+                # delete file
+                client.agents.delete_file(file.id)
+                print("Deleted file")
+
+                # get messages
+                messages = client.agents.get_messages(thread_id=thread.id)
+                print(f"Messages: {messages}")
+
+                last_msg = messages.get_last_text_message_by_sender("assistant")
+                if last_msg:
+                    print(f"Last Message: {last_msg.text.value}")
+
+                for file_path_annotation in messages.file_path_annotations:
+                    file_id = file_path_annotation.file_path.file_id
+                    print(f"Image File ID: {file_path_annotation.file_path.file_id}")
+                    temp_file_path = os.path.join(temp_dir, "output.png")
+                    client.agents.save_file(file_id=file_id, file_name="output.png", target_dir=temp_dir)
+                    output_file_exist = os.path.exists(temp_file_path)
+
+            assert output_file_exist
