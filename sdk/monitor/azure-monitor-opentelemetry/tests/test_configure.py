@@ -463,7 +463,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr2"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
-    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_lib_not_supported(
         self,
         iter_mock,
@@ -490,7 +490,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("azure_sdk"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
-    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_additional_azure(
         self,
         iter_mock,
@@ -509,7 +509,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
-    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_conflict(
         self,
         iter_mock,
@@ -536,7 +536,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
-    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_exception(
         self,
         iter_mock,
@@ -565,7 +565,7 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
-    @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_disabled(
         self,
         iter_mock,
