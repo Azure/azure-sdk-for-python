@@ -456,7 +456,9 @@ class _AIInferenceInstrumentorPreview:
             async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
                 try:
                     result = await super().__anext__()
-                    self._instrumentor._accumulate_async_streaming_response(result, self._accumulate)
+                    self._instrumentor._accumulate_async_streaming_response(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        result, self._accumulate
+                    )
                     self._last_result = result
                 except StopAsyncIteration as exc:
                     self._trace_stream_content()
@@ -465,7 +467,7 @@ class _AIInferenceInstrumentorPreview:
 
             def _trace_stream_content(self) -> None:
                 if self._last_result:
-                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
                         span, self._last_result
                     )
                 # Only one choice expected with streaming
@@ -479,7 +481,7 @@ class _AIInferenceInstrumentorPreview:
                                 del self._accumulate["message"]
                         if "message" in self._accumulate:
                             if "tool_calls" in self._accumulate["message"]:
-                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
                                     self._accumulate["message"]["tool_calls"]
                                 )
                                 self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
