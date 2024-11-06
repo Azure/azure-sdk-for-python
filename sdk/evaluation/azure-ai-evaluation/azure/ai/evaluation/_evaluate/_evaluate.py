@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import inspect
 import json
+import logging
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
@@ -35,6 +36,7 @@ from ._utils import (
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
+LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
@@ -71,15 +73,9 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
             col_with_numeric_values = pd.to_numeric(df[col], errors="coerce")
             try:
                 metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
-            except EvaluationException as exc:  # only exception that can be cause is all NaN values
-                msg = f"All evaluations are NaN/None for column {col}. No aggregation can be performed."
-                raise EvaluationException(
-                    message=msg,
-                    internal_message=msg,
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.EVALUATE,
-                ) from exc
+            except EvaluationException:  # only exception that can be cause is all NaN values
+                msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+                LOGGER.warning(msg)
 
     return renamed_cols, metric_columns
 
@@ -130,16 +126,10 @@ def _aggregate_content_safety_metrics(
             col_with_boolean_values = apply_transform_nan_safe(
                 col_with_numeric_values, lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0
             )
-        except EvaluationException as exc:  # only exception that can be cause is all NaN values
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.EVALUATE,
-            ) from exc
-        defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+            LOGGER.warning(msg)
 
     return content_safety_cols, defect_rates
 
@@ -172,15 +162,9 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
-        except EvaluationException as exc:  # only exception that can be cause is all NaN values
-            msg = f"All evaluations are NaN/None for column {col}. No aggregation can be performed."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.CONVERSATION,
-            ) from exc
+        except EvaluationException:  # only exception that can be cause is all NaN values
+            msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+            LOGGER.warning(msg)
     return label_cols, defect_rates
 
 
