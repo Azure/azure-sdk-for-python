@@ -284,11 +284,11 @@ class TestChangeFeed:
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                   PartitionKey(path=f"/{partition_key}"),
                                                                   change_feed_policy=change_feed_policy)
-        change_feed_mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+        mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
 
         ## Test Change Feed with empty collection(Save the continuation token)
         query_iterable = created_collection.query_items_change_feed(
-            change_feed_mode=change_feed_mode,
+            mode=mode,
         )
         expected_change_feeds = []
         actual_change_feeds = list(query_iterable)
@@ -303,7 +303,7 @@ class TestChangeFeed:
             created_items.append(created_item)
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token1,
-            change_feed_mode=change_feed_mode,
+            mode=mode,
         )
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]
@@ -316,7 +316,7 @@ class TestChangeFeed:
             created_collection.delete_item(item=item, partition_key=item['pk'])
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token2,
-            change_feed_mode=change_feed_mode,
+            mode=mode,
         )
 
         expected_change_feeds = [{CURRENT: {}, PREVIOUS: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: DELETE}} for i in range(4)]
@@ -326,7 +326,7 @@ class TestChangeFeed:
         ## Test change_feed for created/deleted items
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token1,
-            change_feed_mode = change_feed_mode
+            mode = mode
         )
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]\
@@ -337,20 +337,20 @@ class TestChangeFeed:
     def test_query_change_feed_with_errors(self, setup):
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                   PartitionKey(path="/pk"))
-        change_feed_mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
+        mode = ChangeFeedMode.ALL_VERSIONS_AND_DELETES
 
-        # Error if invalid change_feed_mode was used
+        # Error if invalid mode was used
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(
-                change_feed_mode="test_invalid_change_feed_mode",
+                mode="test_invalid_mode",
             )
-        assert str(e.value) == "Invalid change_feed_mode was used: 'test_invalid_change_feed_mode'. Supported 'change_feed_modes' are [LatestVersion, AllVersionsAndDeletes]."
+        assert str(e.value) == "Invalid mode was used: 'test_invalid_mode'. Supported modes are [LatestVersion, AllVersionsAndDeletes]."
 
         # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(
                 partition_key_range_id="TestPartitionKeyRangeId",
-                change_feed_mode=change_feed_mode,
+                mode=mode,
             )
         assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id' was used. Please use 'feed_range' instead."
 
@@ -365,7 +365,7 @@ class TestChangeFeed:
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(
                 is_start_from_beginning=True,
-                change_feed_mode=change_feed_mode,
+                mode=mode,
             )
         assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning' is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead."
 
@@ -394,7 +394,7 @@ class TestChangeFeed:
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(
                 start_time=round_time(),
-                change_feed_mode=change_feed_mode,
+                mode=mode,
             )
         assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
 
@@ -420,7 +420,7 @@ class TestChangeFeed:
             )
         assert str(e.value) == "'query_items_change_feed()' got multiple values for argument 'continuation'."
 
-        # Error if continuation is missing 'change_feed_mode'
+        # Error if continuation is missing 'mode'
         with pytest.raises(ValueError) as e:
             continuation_json = {
                 "containerRid": "",

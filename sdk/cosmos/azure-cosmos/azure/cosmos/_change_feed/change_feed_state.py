@@ -189,7 +189,7 @@ class ChangeFeedStateV1(ChangeFeedState):
 
 class ChangeFeedStateV2(ChangeFeedState):
     container_rid_property_name = "containerRid"
-    change_feed_mode_property_name = "mode"
+    mode_property_name = "mode"
     change_feed_start_from_property_name = "startFrom"
     continuation_property_name = "continuation"
 
@@ -200,7 +200,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range: FeedRangeInternal,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation],
-            change_feed_mode: Optional[ChangeFeedMode]
+            mode: Optional[ChangeFeedMode]
     ) -> None:
 
         self._container_link = container_link
@@ -221,9 +221,9 @@ class ChangeFeedStateV2(ChangeFeedState):
         else:
             self._continuation = continuation
 
-        self._change_feed_mode = ChangeFeedMode.LATEST_VERSION
-        if change_feed_mode is not None:
-            self._change_feed_mode = change_feed_mode
+        self._mode = ChangeFeedMode.LATEST_VERSION
+        if mode is not None:
+            self._mode = mode
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)
 
@@ -235,7 +235,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         return {
             self.version_property_name: ChangeFeedStateVersion.V2.value,
             self.container_rid_property_name: self._container_rid,
-            self.change_feed_mode_property_name: self._change_feed_mode,
+            self.mode_property_name: self._mode,
             self.change_feed_start_from_property_name: self._change_feed_start_from.to_dict(),
             self.continuation_property_name: self._continuation.to_dict() if self._continuation is not None else None
         }
@@ -276,10 +276,10 @@ class ChangeFeedStateV2(ChangeFeedState):
             request_headers[http_constants.HttpHeaders.StartEpkString] = self._continuation.current_token.feed_range.min
             request_headers[http_constants.HttpHeaders.EndEpkString] = self._continuation.current_token.feed_range.max
 
-    def set_change_feed_mode_request_headers(
+    def set_mode_request_headers(
             self,
             request_headers: Dict[str, Any]) -> None:
-        if self._change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
+        if self._mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
             request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = \
                 http_constants.HttpHeaders.Separate_meta_with_crts
@@ -300,7 +300,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
-        self.set_change_feed_mode_request_headers(request_headers)
+        self.set_mode_request_headers(request_headers)
 
 
     async def populate_request_headers_async(
@@ -317,7 +317,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
-        self.set_change_feed_mode_request_headers(request_headers)
+        self.set_mode_request_headers(request_headers)
 
     def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
         pass
@@ -379,10 +379,10 @@ class ChangeFeedStateV2(ChangeFeedState):
             raise ValueError(f"Invalid continuation: [Missing {ChangeFeedStateV2.continuation_property_name}]")
         continuation = FeedRangeCompositeContinuation.from_json(continuation_data)
 
-        change_feed_mode = continuation_json.get(ChangeFeedStateV2.change_feed_mode_property_name)
-        if change_feed_mode is None:
+        mode = continuation_json.get(ChangeFeedStateV2.mode_property_name)
+        if mode is None:
             raise ValueError(f"Invalid continuation:"
-                             f" [Missing {ChangeFeedStateV2.change_feed_mode_property_name}]")
+                             f" [Missing {ChangeFeedStateV2.mode_property_name}]")
 
         return cls(
             container_link=container_link,
@@ -390,7 +390,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range=continuation.feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=continuation,
-            change_feed_mode=change_feed_mode)
+            mode=mode)
 
     @classmethod
     def from_initial_state(
@@ -423,7 +423,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         change_feed_start_from = (
             ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime")))
 
-        change_feed_mode = change_feed_state_context.get("changeFeedMode")
+        mode = change_feed_state_context.get("mode")
 
         return cls(
             container_link=container_link,
@@ -431,4 +431,4 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range=feed_range,
             change_feed_start_from=change_feed_start_from,
             continuation=None,
-            change_feed_mode=change_feed_mode)
+            mode=mode)

@@ -80,12 +80,12 @@ def validate_kwargs(
     errors will be raised with the error messages and possible ways to correct the errors.
 
     :param kwargs: Keyword arguments to verify for query_items_change_feed API
-    :keyword change_feed_mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
+    :keyword mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
         If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right condition:
             - 'partition_key_range_id': Cannot be used at any time
             - 'is_start_from_beginning': Must be 'False'
             - 'start_time': Must be "Now"
-    :type change_feed_mode: ChangeFeedMode
+    :type mode: ChangeFeedMode
     :keyword partition_key_range_id: Deprecated Warning.
     :type partition_key_range_id: str
     :keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
@@ -98,14 +98,14 @@ def validate_kwargs(
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
     # Validate the keyword arguments
-    if "change_feed_mode" in kwargs:
-        change_feed_mode = kwargs["change_feed_mode"]
-        if change_feed_mode not in ChangeFeedMode:
+    if "mode" in kwargs:
+        mode = kwargs["mode"]
+        if mode not in ChangeFeedMode:
             raise ValueError(
-                f"Invalid change_feed_mode was used: '{kwargs['change_feed_mode']}'."
-                f" Supported 'change_feed_modes' are [{', '.join([m.value for m in ChangeFeedMode])}].")
+                f"Invalid mode was used: '{kwargs['mode']}'."
+                f" Supported modes are [{', '.join([m.value for m in ChangeFeedMode])}].")
 
-        if change_feed_mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
+        if mode == ChangeFeedMode.ALL_VERSIONS_AND_DELETES:
             if "partition_key_range_id" in kwargs:
                 raise ValueError(
                     f"'{ChangeFeedMode.ALL_VERSIONS_AND_DELETES}' mode is not supported if 'partition_key_range_id'"

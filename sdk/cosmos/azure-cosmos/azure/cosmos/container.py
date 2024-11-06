@@ -330,7 +330,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedMode] = None,
+            mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -350,11 +350,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :type priority: Optional[Literal["High", "Low"]]
-        :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
             or 'continuation' token.
-        :type change_feed_mode: Optional[ChangeFeedMode]
+        :type mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -370,7 +370,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedMode] = None,
+            mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
 
@@ -388,11 +388,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
             or 'continuation' token.
-        :paramtype change_feed_mode: Optional[ChangeFeedMode]
+        :paramtype mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -407,7 +407,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedMode] = None,
+            mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -420,11 +420,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
             or 'continuation' token.
-        :paramtype change_feed_mode: Optional[ChangeFeedMode]
+        :paramtype mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -439,7 +439,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            change_feed_mode: Optional[ChangeFeedMode] = None,
+            mode: Optional[ChangeFeedMode] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -457,11 +457,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
             or 'continuation' token.
-        :paramtype change_feed_mode: Optional[ChangeFeedMode]
+        :paramtype mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An Iterable of items (dicts).
@@ -493,11 +493,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
             or 'continuation' token.
-        :paramtype change_feed_mode: Optional[ChangeFeedMode]
+        :paramtype mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :param Any args: args
@@ -511,8 +511,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
-        if "change_feed_mode" in kwargs:
-            change_feed_state_context["changeFeedMode"] = kwargs.pop("change_feed_mode")
+        if "mode" in kwargs:
+            change_feed_state_context["mode"] = kwargs.pop("mode")
         if "partition_key_range_id" in kwargs:
             change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
         if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
