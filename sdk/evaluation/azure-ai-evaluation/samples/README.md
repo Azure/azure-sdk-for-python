@@ -24,7 +24,7 @@ Their main purpose is to be used in inline examples for class and methods throug
             :caption: Run the DirectAttackSimulator to produce 2 results with 3 conversation turns each (6 messages in each result).
 ```
 
-If adding or updating a public class or method, please add or update the example as well. Double-check that you have the correct path for `literalinclude::`. In the Sphinx build, each module is only one directory level away from azure-ai-evaluation, so the `literalinclude` path should always be `../samples/<sample file name>`. Follow [this guide](../../../../doc/dev/sample_guide.md) for information on how to build docs locally to verify your sample renders correctly.
+If adding or updating a public class or method, please add or update the example as well. Double-check that you have the correct path for `literalinclude::`. In the Sphinx build, each module is only one directory level away from azure-ai-evaluation, so the `literalinclude` path should always be `../samples/<sample file name>`. Follow [this guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/sample_guide.md) for information on how to build docs locally to verify your sample renders correctly.
 
 Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
 

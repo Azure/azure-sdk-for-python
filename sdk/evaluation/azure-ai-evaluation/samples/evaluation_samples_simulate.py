@@ -29,6 +29,7 @@ class EvaluationSimulateSamples(object):
         # [START adversarial_scenario]
         import os
         import asyncio
+        from typing import List, Dict, Any, Optional
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
         from azure.identity import DefaultAzureCredential
 

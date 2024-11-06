@@ -37,7 +37,9 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        path = "data/evaluate_test_data.jsonl"
+        print(os.getcwd())
+        path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+
         evaluate(
             data=path,
             evaluators={
