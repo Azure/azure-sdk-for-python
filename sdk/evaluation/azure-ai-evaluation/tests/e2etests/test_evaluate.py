@@ -378,7 +378,7 @@ class TestEvaluate:
         assert "sexual.sexual_defect_rate" in metrics.keys()
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
-    def test_evaluate_with_groundedness_pro_evaluator(self, project_scope, data_convo_file, data_file, azure_cred):
+    def test_evaluate_with_groundedness_pro_evaluator(self, project_scope, data_convo_file, azure_cred):
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
@@ -389,14 +389,14 @@ class TestEvaluate:
         convo_input_data = pd.read_json(data_convo_file, lines=True)
         # run the evaluation
         convo_result = evaluate(
-           data=data_convo_file,
-           evaluators={"groundedness_pro": gp_eval},
+            data=data_convo_file,
+            evaluators={"groundedness_pro": gp_eval},
         )
 
         convo_row_result_df = pd.DataFrame(convo_result["rows"])
         convo_metrics = convo_result["metrics"]
-
-        assert convo_row_result_df.shape[0] == len(direct_result)
+        assert convo_row_result_df.shape[0] == len(convo_input_data)
+        
         assert "outputs.groundedness_pro.groundedness_pro_label" in convo_row_result_df.columns.to_list()
         assert "outputs.groundedness_pro.evaluation_per_turn" in convo_row_result_df.columns.to_list()
 
