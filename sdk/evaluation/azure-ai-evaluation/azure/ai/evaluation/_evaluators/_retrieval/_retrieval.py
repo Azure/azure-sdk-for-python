@@ -112,7 +112,18 @@ class _AsyncRetrievalScoreEvaluator:
 
 class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize an evaluator configured for a specific Azure OpenAI model.
+    Evaluates retrieval score for a given query and context or a multi-turn conversation, including reasoning.
+
+    The retrieval measure assesses the AI system's performance in retrieving information
+    for additional context (e.g. a RAG scenario).
+
+    Retrieval scores range from 1 to 5, with 1 being the worst and 5 being the best.
+
+    High retrieval scores indicate that the AI system has successfully extracted and ranked
+    the most relevant information at the top, without introducing bias from external knowledge
+    and ignoring factual correctness. Conversely, low retrieval scores suggest that the AI system
+    has failed to surface the most relevant context chunks at the top of the list
+    and/or introduced bias and ignored factual correctness.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -120,39 +131,20 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START retrieval_evaluator]
+            :end-before: [END retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RetrievalEvaluator.
 
-        chat_eval = RetrievalEvaluator(model_config)
-        conversation = {
-            "messages": [
-                {"role": "user", "content": "What is the value of 2 + 2?"},
-                {
-                    "role": "assistant", "content": "2 + 2 = 4",
-                    "context": "From 'math_doc.md': Information about additions: 1 + 2 = 3, 2 + 2 = 4"
-                }
-            ]
-        }
-        result = chat_eval(conversation=conversation)
+    .. note::
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_retrieval": 3.0,
-            "retrieval": 3.0,
-            "evaluation_per_turn": {
-                "gpt_retrieval": [1.0, 2.0, 3.0],
-                "retrieval": [1.0, 2.0, 3.0],
-                "retrieval_reason": ["<reasoning for score 1>", "<reasoning for score 2>", "<reasoning for score 3>"]
-            }
-        }
-
-    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
-    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     def __init__(self, model_config):  # pylint: disable=super-init-not-called

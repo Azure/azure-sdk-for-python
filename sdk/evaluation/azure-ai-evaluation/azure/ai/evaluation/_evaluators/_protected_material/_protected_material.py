@@ -15,9 +15,13 @@ from azure.ai.evaluation._model_configurations import Conversation
 @experimental
 class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Initialize a protected material evaluator to detect whether protected material
-    is present in the AI system's response. The evaluator outputs a Boolean label (`True` or `False`)
-    indicating the presence of protected material, along with AI-generated reasoning.
+    Evaluates the protected material score for a given query and response or a multi-turn conversation, with reasoning.
+
+    Protected material is any text that is under copyright, including song lyrics, recipes, and articles. Protected
+    material evaluation leverages the Azure AI Content Safety Protected Material for Text service to perform the
+    classification.
+
+    The protected material score is a boolean value, where True indicates that protected material was detected.
 
     :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -25,30 +29,14 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    :return: A dictionary with a label indicating the presence of protected material and the reasoning.
-    :rtype: Dict[str, Union[bool, str]]
+    .. admonition:: Example:
 
-    **Usage Example**
-
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-    **Output Format**
-
-    .. code-block:: json
-
-        {
-            "protected_material_label": false,
-            "protected_material_reason": "This query does not contain any protected material."
-        }
-
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START protected_material_evaluator]
+            :end-before: [END protected_material_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
     @override

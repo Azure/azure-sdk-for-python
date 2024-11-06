@@ -48,32 +48,29 @@ class _AsyncRougeScoreEvaluator:
 
 class RougeScoreEvaluator:
     """
-    Evaluator for computes the ROUGE scores between two strings.
+    Calculates the ROUGE score for a given response and ground truth.
 
-    ROUGE (Recall-Oriented Understudy for Gisting Evaluation) is a set of metrics used to evaluate automatic
-    summarization and machine translation. It measures the overlap between generated text and reference summaries.
-    ROUGE focuses on recall-oriented measures to assess how well the generated text covers the reference text. Text
-    summarization and document comparison are among optimal use cases for ROUGE, particularly in scenarios where text
-    coherence and relevance are critical.
+    The ROUGE score (Recall-Oriented Understudy for Gisting Evaluation) evaluates the similarity between the
+    generated text and reference text based on n-gram overlap, including ROUGE-N (unigram, bigram, etc.), and
+    ROUGE-L (longest common subsequence). It calculates precision, recall, and F1 scores to capture how well
+    the generated text matches the reference text. Rouge type options are "rouge1" (Unigram overlap), "rouge2"
+    (Bigram overlap), "rouge3" (Trigram overlap), "rouge4" (4-gram overlap), "rouge5" (5-gram overlap), "rougeL"
+    (L-graph overlap)
 
-    **Usage**
+    Use the ROUGE score when you need a robust evaluation metric for text summarization, machine translation, and
+    other natural language processing tasks, especially when focusing on recall and the ability to capture relevant
+    information from the reference text.
 
-    .. code-block:: python
+    ROUGE scores range from 0 to 1, with higher scores indicating better quality.
 
-        eval_fn = RougeScoreEvaluator(rouge_type=RougeType.ROUGE_1)
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
+    .. admonition:: Example:
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "rouge_precision": 1.0,
-            "rouge_recall": 1.0,
-            "rouge_f1_score": 1.0
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START rouge_score_evaluator]
+            :end-before: [END rouge_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
     def __init__(self, rouge_type: RougeType):

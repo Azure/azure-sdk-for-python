@@ -26,29 +26,25 @@ class _AsyncBleuScoreEvaluator:
 
 class BleuScoreEvaluator:
     """
-    Evaluator that computes the BLEU Score between two strings.
+    Calculate the BLEU score for a given response and ground truth.
 
     BLEU (Bilingual Evaluation Understudy) score is commonly used in natural language processing (NLP) and machine
-    translation. It is widely used in text summarization and text generation use cases. It evaluates how closely the
-    generated text matches the reference text. The BLEU score ranges from 0 to 1, with higher scores indicating
-    better quality.
+    translation. It is widely used in text summarization and text generation use cases.
 
-    **Usage**
+    Use the BLEU score when you want to evaluate the similarity between the generated text and reference text,
+    especially in tasks such as machine translation or text summarization, where n-gram overlap is a significant
+    indicator of quality.
 
-    .. code-block:: python
+    The BLEU score ranges from 0 to 1, with higher scores indicating better quality.
 
-        eval_fn = BleuScoreEvaluator()
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
+    .. admonition:: Example:
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "bleu_score": 0.22
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START bleu_score_evaluator]
+            :end-before: [END bleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an BleuScoreEvaluator.
     """
 
     def __init__(self):
