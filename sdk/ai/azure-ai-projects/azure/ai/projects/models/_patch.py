@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -231,7 +232,7 @@ class SASTokenCredential(TokenCredential):
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
         self._sas_token = ""
-        if connection.token_credential is not None:
+        if connection is not None and connection.token_credential is not None:
             sas_credential = cast(SASTokenCredential, connection.token_credential)
             self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
@@ -388,7 +389,7 @@ class BaseFunctionTool(Tool):
             docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
 
-            param_descs = {}
+            param_descriptions = {}
             for line in docstring.splitlines():
                 line = line.strip()
                 match = param_pattern.match(line)
@@ -397,13 +398,13 @@ class BaseFunctionTool(Tool):
                     param_name = groups.get("name")
                     param_desc = groups.get("description")
                     param_desc = param_desc.strip() if param_desc else "No description"
-                    param_descs[param_name] = param_desc.strip()
+                    param_descriptions[param_name] = param_desc.strip()
 
             properties = {}
             required = []
             for param_name, param in params.items():
                 param_type_info = _map_type(param.annotation)
-                param_description = param_descs.get(param_name, "No description")
+                param_description = param_descriptions.get(param_name, "No description")
 
                 properties[param_name] = {**param_type_info, "description": param_description}
 
@@ -501,12 +502,12 @@ class AzureAISearchTool(Tool):
     def __init__(self):
         self.index_list = []
 
-    def add_index(self, index: str):
+    def add_index(self, index: str, name: str):
         """
         Add an index ID to the list of indices used to search.
         """
         # TODO
-        self.index_list.append(IndexResource(index_connection_id=index))
+        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -586,15 +587,6 @@ class SharepointTool(ConnectionTool):
                     self.connection_ids.append(id)
                     return
 """
-
-
-class FileSearchTool(Tool):
-    """
-    A tool that searches for uploaded file information from the created vector stores.
-    """
-
-    def __init__(self, vector_store_ids: List[str] = []):
-        self.vector_store_ids = vector_store_ids
 
 
 class FileSearchTool(Tool):
@@ -844,7 +836,7 @@ class ToolSet(BaseToolSet):
 
 class AsyncToolSet(BaseToolSet):
     """
-    A collection of tools that can be used by an asynchronize agent.
+    A collection of tools that can be used by an asynchronous agent.
     """
 
     def validate_tool_type(self, tool: Tool) -> None:
