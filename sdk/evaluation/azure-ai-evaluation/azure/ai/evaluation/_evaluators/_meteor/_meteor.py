@@ -34,19 +34,13 @@ class _AsyncMeteorScoreEvaluator:
 
 class MeteorScoreEvaluator:
     """
-    Calculates the METEOR score for a given response and ground truth.
+    Evaluator that computes the METEOR Score between two strings.
 
     The METEOR (Metric for Evaluation of Translation with Explicit Ordering) score grader evaluates generated text by
     comparing it to reference texts, focusing on precision, recall, and content alignment. It addresses limitations of
     other metrics like BLEU by considering synonyms, stemming, and paraphrasing. METEOR score considers synonyms and
     word stems to more accurately capture meaning and language variations. In addition to machine translation and
     text summarization, paraphrase detection is an optimal use case for the METEOR score.
-
-    Use the METEOR score when you want a more linguistically informed evaluation metric that captures not only
-    n-gram overlap but also accounts for synonyms, stemming, and word order. This is particularly useful for evaluating
-    tasks like machine translation, text summarization, and text generation.
-
-    The METEOR score ranges from 0 to 1, with 1 indicating a perfect match.
 
     :param alpha: The METEOR score alpha parameter. Default is 0.9.
     :type alpha: float
@@ -55,14 +49,26 @@ class MeteorScoreEvaluator:
     :param gamma: The METEOR score gamma parameter. Default is 0.5.
     :type gamma: float
 
-    .. admonition:: Example:
+    **Usage**
 
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START meteor_score_evaluator]
-            :end-before: [END meteor_score_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
+    .. code-block:: python
+
+        eval_fn = MeteorScoreEvaluator(
+            alpha=0.9,
+            beta=3.0,
+            gamma=0.5
+        )
+        result = eval_fn(
+            response="Tokyo is the capital of Japan.",
+            ground_truth="The capital of Japan is Tokyo.")
+
+    **Output format**
+
+    .. code-block:: python
+
+        {
+            "meteor_score": 0.62
+        }
     """
 
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):

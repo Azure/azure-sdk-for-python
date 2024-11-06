@@ -8,17 +8,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 @experimental
 class AdversarialScenario(Enum):
-    """Adversarial scenario types
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_simulate.py
-            :start-after: [START adversarial_scenario]
-            :end-before: [END adversarial_scenario]
-            :language: python
-            :dedent: 8
-            :caption: Configure an AdversarialSimulator with an Adversarial Conversation scenario.
-    """
+    """Adversarial scenario types"""
 
     ADVERSARIAL_QA = "adv_qa"
     ADVERSARIAL_CONVERSATION = "adv_conversation"

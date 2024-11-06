@@ -607,14 +607,48 @@ def evaluate(
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
-    .. admonition:: Example:
+    :Example:
 
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START evaluate_method]
-            :end-before: [END evaluate_method]
-            :language: python
-            :dedent: 8
-            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
+    Evaluate API can be used as follows:
+
+    .. code-block:: python
+
+            from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
+
+
+            model_config = {
+                "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+                "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+                "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+            }
+
+            coherence_eval = CoherenceEvaluator(model_config=model_config)
+            relevance_eval = RelevanceEvaluator(model_config=model_config)
+
+            path = "evaluate_test_data.jsonl"
+            result = evaluate(
+                data=path,
+                evaluators={
+                    "coherence": coherence_eval,
+                    "relevance": relevance_eval,
+                },
+                evaluator_config={
+                    "coherence": {
+                        "column_mapping": {
+                            "response": "${data.response}",
+                            "query": "${data.query}",
+                        },
+                    },
+                    "relevance": {
+                        "column_mapping": {
+                            "response": "${data.response}",
+                            "context": "${data.context}",
+                            "query": "${data.query}",
+                        },
+                    },
+                },
+            )
+
     """
     try:
         return _evaluate(

@@ -12,30 +12,33 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Evaluates coherence score for a given query and response or a multi-turn conversation, including reasoning.
-
-    The coherence measure assesses the ability of the language model to generate text that reads naturally,
-    flows smoothly, and resembles human-like language in its responses. Use it when assessing the readability
-    and user-friendliness of a model's generated responses in real-world applications.
+    Initialize a coherence evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
-    .. admonition:: Example:
+    **Usage**
 
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START coherence_evaluator]
-            :end-before: [END coherence_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call a CoherenceEvaluator with a query and response.
+    .. code-block:: python
 
-    .. note::
+        eval_fn = CoherenceEvaluator(model_config)
+        result = eval_fn(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.")
 
-        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
-        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+    **Output format**
+
+    .. code-block:: python
+
+        {
+            "coherence": 1.0,
+            "gpt_coherence": 1.0,
+        }
+
+    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
+    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     _PROMPTY_FILE = "coherence.prompty"
