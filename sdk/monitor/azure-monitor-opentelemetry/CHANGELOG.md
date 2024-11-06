@@ -1,14 +1,11 @@
 # Release History
 
-## 1.6.4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.6.4 (2024-11-04)
 
 ### Bugs Fixed
 
-### Other Changes
+- Removed version of OpenTelemetry that broke instrumentation logic in switch to importlib.
+    ([#38366](https://github.com/Azure/azure-sdk-for-python/pull/38366))
 
 ## 1.6.3 (2024-11-04)
 
