@@ -338,6 +338,39 @@ class _AIInferenceInstrumentorPreview:
                     if tool_call.function and tool_call.function.arguments:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
+    def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
+        if not "choices" in item:
+            return
+        if "finish_reason" in item["choices"][0] and item["choices"][0]["finish_reason"]:
+            accumulate["finish_reason"] = item["choices"][0]["finish_reason"]
+        if "index" in item["choices"][0] and item["choices"][0]["index"]:
+            accumulate["index"] = item["choices"][0]["index"]
+        if not "delta" in item["choices"][0]:
+            return
+        if "content" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["content"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("content", "")
+            accumulate["message"]["content"] += item["choices"][0]["delta"]["content"]
+        if "tool_calls" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["tool_calls"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("tool_calls", [])
+            if item["choices"][0]["delta"]["tool_calls"] is not None:
+                for tool_call in item["choices"][0]["delta"]["tool_calls"]:
+                    if tool_call.id:
+                        accumulate["message"]["tool_calls"].append(
+                            {
+                                "id": tool_call.id,
+                                "type": "",
+                                "function": {"name": "", "arguments": ""},
+                            }
+                        )
+                    if tool_call.function:
+                        accumulate["message"]["tool_calls"][-1]["type"] = "function"
+                    if tool_call.function and tool_call.function.name:
+                        accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                    if tool_call.function and tool_call.function.arguments:
+                        accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
     def _wrapped_stream(
         self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan"
     ) -> _models.StreamingChatCompletions:
@@ -407,6 +440,63 @@ class _AIInferenceInstrumentorPreview:
                     span.finish()
 
         return StreamWrapper(stream_obj, self)
+
+    def _async_wrapped_stream(
+        self, stream_obj: _models.AsyncStreamingChatCompletions, span: "AbstractSpan"
+    ) -> _models.AsyncStreamingChatCompletions:
+        class AsyncStreamWrapper(_models.AsyncStreamingChatCompletions):
+            def __init__(self, stream_obj, instrumentor, span):
+                super().__init__(stream_obj._response)
+                self._instrumentor = instrumentor
+                self._accumulate: Dict[str, Any] = {}
+                self._stream_obj = stream_obj
+                self.span = span
+                self._last_result = None
+
+            async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
+                try:
+                    result = await super().__anext__()
+                    self._instrumentor._accumulate_async_streaming_response(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        result, self._accumulate
+                    )
+                    self._last_result = result
+                except StopAsyncIteration as exc:
+                    self._trace_stream_content()
+                    raise exc
+                return result
+
+            def _trace_stream_content(self) -> None:
+                if self._last_result:
+                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        span, self._last_result
+                    )
+                # Only one choice expected with streaming
+                self._accumulate["index"] = 0
+                # Delete message if content tracing is not enabled
+                if not _trace_inference_content:
+                    if "message" in self._accumulate:
+                        if "content" in self._accumulate["message"]:
+                            del self._accumulate["message"]["content"]
+                            if not self._accumulate["message"]:
+                                del self._accumulate["message"]
+                        if "message" in self._accumulate:
+                            if "tool_calls" in self._accumulate["message"]:
+                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                                    self._accumulate["message"]["tool_calls"]
+                                )
+                                self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
+
+                self.span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(self._accumulate),
+                    },
+                )
+                span.finish()
+
+        async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span)
+        return async_stream_wrapper
 
     def _trace_sync_function(
         self,
@@ -534,7 +624,7 @@ class _AIInferenceInstrumentorPreview:
                         self._add_request_span_attributes(span, span_name, args, kwargs)
                         result = await function(*args, **kwargs)
                         if kwargs.get("stream") is True:
-                            return self._wrapped_stream(result, span)
+                            return self._async_wrapped_stream(result, span)
                         self._add_response_span_attributes(span, result)
 
                 except Exception as exc:
