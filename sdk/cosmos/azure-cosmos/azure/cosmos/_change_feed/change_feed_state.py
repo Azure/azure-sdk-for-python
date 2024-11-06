@@ -200,7 +200,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             feed_range: FeedRangeInternal,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation],
-            change_feed_mode: ChangeFeedMode
+            change_feed_mode: Optional[ChangeFeedMode]
     ) -> None:
 
         self._container_link = container_link
@@ -221,9 +221,8 @@ class ChangeFeedStateV2(ChangeFeedState):
         else:
             self._continuation = continuation
 
-        if change_feed_mode is None:
-            self._change_feed_mode = ChangeFeedMode.LATEST_VERSION
-        else:
+        self._change_feed_mode = ChangeFeedMode.LATEST_VERSION
+        if change_feed_mode is not None:
             self._change_feed_mode = change_feed_mode
 
         super(ChangeFeedStateV2, self).__init__(ChangeFeedStateVersion.V2)

@@ -353,7 +353,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
-                                      or 'continuation' token.
+            or 'continuation' token.
         :type change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
@@ -391,7 +391,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
-                                      or 'continuation' token.
+            or 'continuation' token.
         :paramtype change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
@@ -423,7 +423,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
-                                      or 'continuation' token.
+            or 'continuation' token.
         :paramtype change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
@@ -460,7 +460,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
-                                      or 'continuation' token.
+            or 'continuation' token.
         :paramtype change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
@@ -496,7 +496,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword change_feed_mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
-                                      or 'continuation' token.
+            or 'continuation' token.
         :paramtype change_feed_mode: Optional[ChangeFeedMode]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
