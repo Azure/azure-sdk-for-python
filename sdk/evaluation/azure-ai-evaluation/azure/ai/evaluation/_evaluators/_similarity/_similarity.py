@@ -113,7 +113,7 @@ class SimilarityEvaluator:
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    id = "similarity"
+    id = "azureml://registries/azureml/models/Similarity-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, model_config):
