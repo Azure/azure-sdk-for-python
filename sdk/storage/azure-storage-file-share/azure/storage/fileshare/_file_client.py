@@ -470,7 +470,6 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 lease_access_conditions=access_conditions,
-                nfs_file_type='Regular',
                 headers=headers,
                 timeout=timeout,
                 cls=return_response_headers,

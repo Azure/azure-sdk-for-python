@@ -3849,7 +3849,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_file_nfs(self, **kwargs):
+    def test_create_file_and_set_file_properties_nfs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

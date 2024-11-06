@@ -43,7 +43,6 @@ from .._serialize import (
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
-from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -411,6 +410,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -445,13 +450,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition,
             )
-        file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], await self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -1118,6 +1123,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -1138,13 +1149,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition,
         )
-        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], await self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
