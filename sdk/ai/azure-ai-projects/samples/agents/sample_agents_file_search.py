@@ -39,18 +39,18 @@ with project_client:
 
     # Upload file and create vector store
     # [START upload_file_and_create_vector_store]
-    openai_file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-    openai_vectorstore = project_client.agents.create_vector_store_and_poll(
-        file_ids=[openai_file.id], name="my_vectorstore"
+    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+    vector_store = project_client.agents.create_vector_store_and_poll(
+        file_ids=[file.id], name="my_vectorstore"
     )
     # [END upload_file_and_create_vector_store]
     
-    print(f"Uploaded file, file ID: {openai_file.id}")
-    print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
+    print(f"Uploaded file, file ID: {file.id}")
+    print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # Create file search tool with resources followed by creating agent
     # [START create_agent_with_file_search_tool]
-    file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
+    file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
@@ -83,10 +83,10 @@ with project_client:
 
     # [START teardown]
     # Delete the file when done
-    project_client.agents.delete_vector_store(openai_vectorstore.id)
+    project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vector store")
 
-    project_client.agents.delete_file(file_id=openai_file.id)
+    project_client.agents.delete_file(file_id=file.id)
     print("Deleted file")
 
     # Delete the agent when done
