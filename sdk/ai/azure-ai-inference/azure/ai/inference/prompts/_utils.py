@@ -4,9 +4,7 @@
 # ------------------------------------
 # mypy: disable-error-code="import-untyped,return-value"
 # pylint: disable=line-too-long,R,wrong-import-order,global-variable-not-assigned)
-import re
-import yaml
-import json
+import json, re, sys, yaml
 from typing import Any, Dict, Union
 from pathlib import Path
 
@@ -72,3 +70,41 @@ def parse(contents):
         "body": body,
         "frontmatter": fmatter,
     }
+
+
+def remove_leading_empty_space(multiline_str: str):
+    """
+    Processes a multiline string by:
+    1. Removing empty lines
+    2. Finding the minimum leading spaces
+    3. Indenting all lines to the minimum level
+
+    Args:
+        multiline_str: The input multiline string.
+
+    Returns:
+        The processed multiline string.
+    """
+    lines = multiline_str.splitlines()
+    # Skip empty lines until the first non-empty line
+    start_index = 0
+    while start_index < len(lines) and lines[start_index].strip() == "":
+        start_index += 1
+
+    # Find the minimum number of leading spaces
+    min_spaces = float("inf")
+    for line in lines[start_index:]:
+        if len(line.strip()) == 0:
+            continue
+        spaces = len(line) - len(line.lstrip())
+        spaces += line.lstrip().count("\t") * 2  # Count tabs as 2 spaces
+        min_spaces = min(min_spaces, spaces)
+
+    # Remove leading spaces and indent to the minimum level
+    processed_lines = []
+    for line in lines[start_index:]:
+        # spaces_to_remove = len(line) - len(line.lstrip()) - min_spaces
+        # processed_lines.append(line[spaces_to_remove:])
+        processed_lines.append(line[min_spaces:])
+
+    return "\n".join(processed_lines)
