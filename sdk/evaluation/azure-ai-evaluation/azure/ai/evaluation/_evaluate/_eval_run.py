@@ -34,13 +34,11 @@ try:
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
 except (ModuleNotFoundError, ImportError):
-    msg = (
-        "The required packages for remote tracking are missing.\n"
-        'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
-    )
-
     raise EvaluationException(  # pylint: disable=raise-missing-from
-        message=msg,
+        message=(
+            "The required packages for remote tracking are missing.\n"
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
+        ),
         target=ErrorTarget.EVALUATE,
         category=ErrorCategory.MISSING_PACKAGE,
         blame=ErrorBlame.USER_ERROR,
