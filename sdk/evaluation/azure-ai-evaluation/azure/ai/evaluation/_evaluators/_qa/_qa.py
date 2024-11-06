@@ -42,6 +42,9 @@ class QAEvaluator:
         however, it is recommended to use the new keys moving forward as the old keys will be deprecated in the future.
     """
 
+    id = "qa"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(self, model_config, **kwargs):
         self._parallel = kwargs.pop("_parallel", False)
 

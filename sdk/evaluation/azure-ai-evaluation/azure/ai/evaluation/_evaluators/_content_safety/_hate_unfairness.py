@@ -58,6 +58,9 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a HateUnfairnessEvaluator.
     """
 
+    id = "azureml://registries/azureml/models/Hate-and-Unfairness-Evaluator/versions/4"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,

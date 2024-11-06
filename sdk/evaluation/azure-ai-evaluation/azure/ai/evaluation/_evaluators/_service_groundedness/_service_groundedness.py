@@ -45,6 +45,9 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         for the groundedness pro label will be "groundedness_pro_passing_rate".
     """
 
+    id = "azureml://registries/azureml/models/Groundedness-Pro-Evaluator/versions/1"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,
