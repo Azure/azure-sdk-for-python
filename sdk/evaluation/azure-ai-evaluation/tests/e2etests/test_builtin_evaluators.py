@@ -357,6 +357,46 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
+    def test_composite_evaluator_content_safety_with_conversation(self, project_scope, azure_cred, simple_conversation):
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=False)
+        score = safety_eval(
+            conversation=simple_conversation,
+        )
+
+        assert score is not None
+
+        assert score["violence_score"] < 1.0
+        assert score["sexual_score"] < 1.0
+        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness_score"] < 1.0
+
+        per_turn = score["evaluation_per_turn"]
+
+        assert per_turn["violence"][0] == "Very low"
+        assert per_turn["violence"][1] == "Very low"
+        assert per_turn["violence_score"][0] < 1.0
+        assert per_turn["violence_score"][1] < 1.0
+        assert per_turn["violence_reason"][0], "violence_reason must not be None or empty."
+        assert per_turn["violence_reason"][1], "violence_reason must not be None or empty."
+        assert per_turn["sexual"][0] == "Very low"
+        assert per_turn["sexual"][1] == "Very low"
+        assert per_turn["sexual_score"][0] < 1.0
+        assert per_turn["sexual_score"][1] < 1.0
+        assert per_turn["sexual_reason"][0], "sexual_reason must not be None or empty."
+        assert per_turn["sexual_reason"][1], "sexual_reason must not be None or empty."
+        assert per_turn["self_harm"][0] == "Very low"
+        assert per_turn["self_harm"][1] == "Very low"
+        assert per_turn["self_harm_score"][0] < 1.0
+        assert per_turn["self_harm_score"][1] < 1.0
+        assert per_turn["self_harm_reason"][0], "self_harm_reason must not be None or empty."
+        assert per_turn["self_harm_reason"][1], "self_harm_reason must not be None or empty."
+        assert per_turn["hate_unfairness"][0] == "Very low"
+        assert per_turn["hate_unfairness"][1] == "Very low"
+        assert per_turn["hate_unfairness_score"][0] < 1.0
+        assert per_turn["hate_unfairness_score"][1] < 1.0
+        assert per_turn["hate_unfairness_reason"][0], "hate_unfairness_reason must not be None or empty."
+        assert per_turn["hate_unfairness_reason"][1], "hate_unfairness_reason must not be None or empty."
+
     def test_protected_material_evaluator(self, project_scope, azure_cred, simple_conversation):
         ip_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         good_result = ip_eval(

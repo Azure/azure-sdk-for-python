@@ -28,13 +28,13 @@ class RedisEnterpriseManagementClientConfiguration:  # pylint: disable=too-many-
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-03-01-preview")
+        api_version: str = kwargs.pop("api_version", "2024-09-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
