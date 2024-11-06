@@ -23,9 +23,9 @@ pip install azure-identity-broker
 
 This package enables broker support via `InteractiveBrowserBrokerCredential`, which is a subclass of the Azure Identity library's [InteractiveBrowserCredential][ibc].
 
-### Parent window handles
+### Parent window handle
 
-When authenticating interactively via `InteractiveBrowserBrokerCredential`, a parent window handle is required to ensure that the authentication dialog is shown correctly over the requesting window. In the context of graphical user interfaces on devices, a window handle is a unique identifier that the operating system assigns to each window. For the Windows operating system, this handle is an integer value that serves as a reference to a specific window.
+When authenticating interactively via `InteractiveBrowserBrokerCredential`, a parent window handle is required to ensure that the authentication dialog is shown correctly over the requesting window. In the context of graphical user interfaces on devices, a window handle is a unique identifier that the operating system assigns to each window. For the Windows operating system, this handle is an integer value that serves as a reference to a specific window. On macOS, it is an integer-based identifier that represents and identifies a specific window instance.
 
 ## Microsoft account (MSA) passthrough
 
@@ -47,6 +47,7 @@ Microsoft Entra applications rely on redirect URIs to determine where to send th
 This example demonstrates using `InteractiveBrowserBrokerCredential` as a broker-enabled credential for authenticating with the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library. Here, the `win32gui` module from the `pywin32` package is used to get the current window.
 
 ```python
+# On Windows
 import win32gui
 from azure.identity.broker import InteractiveBrowserBrokerCredential
 from azure.storage.blob import BlobServiceClient
@@ -55,6 +56,16 @@ from azure.storage.blob import BlobServiceClient
 current_window_handle = win32gui.GetForegroundWindow()
 
 credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
+client = BlobServiceClient(account_url, credential=credential)
+
+# On macOS
+import msal
+from azure.identity.broker import InteractiveBrowserBrokerCredential
+from azure.storage.blob import BlobServiceClient
+
+credential = InteractiveBrowserBrokerCredential(
+    parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE
+)
 client = BlobServiceClient(account_url, credential=credential)
 ```
 
