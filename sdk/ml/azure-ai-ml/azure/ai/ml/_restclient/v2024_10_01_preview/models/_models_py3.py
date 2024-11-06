@@ -20370,6 +20370,10 @@ class JobResourceConfiguration(ResourceConfiguration):
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
     :vartype docker_args: str
+    :ivar docker_args_list: Extra arguments to pass to the Docker run command, as a collection.
+     This would override any parameters that have already been set by the system, or in this
+     section. This parameter is only supported for Azure ML compute types.
+    :vartype docker_args_list: list[str]
     :ivar shm_size: Size of the docker container's shared memory block. This should be in the
      format of (number)(unit) where number as to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -20385,6 +20389,7 @@ class JobResourceConfiguration(ResourceConfiguration):
         'instance_type': {'key': 'instanceType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
         'docker_args': {'key': 'dockerArgs', 'type': 'str'},
+        'docker_args_list': {'key': 'dockerArgsList', 'type': '[str]'},
         'shm_size': {'key': 'shmSize', 'type': 'str'},
     }
 
@@ -20395,6 +20400,7 @@ class JobResourceConfiguration(ResourceConfiguration):
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
         docker_args: Optional[str] = None,
+        docker_args_list: Optional[List[str]] = None,
         shm_size: Optional[str] = "2g",
         **kwargs
     ):
@@ -20409,6 +20415,10 @@ class JobResourceConfiguration(ResourceConfiguration):
          any parameters that have already been set by the system, or in this section. This parameter is
          only supported for Azure ML compute types.
         :paramtype docker_args: str
+        :keyword docker_args_list: Extra arguments to pass to the Docker run command, as a collection.
+         This would override any parameters that have already been set by the system, or in this
+         section. This parameter is only supported for Azure ML compute types.
+        :paramtype docker_args_list: list[str]
         :keyword shm_size: Size of the docker container's shared memory block. This should be in the
          format of (number)(unit) where number as to be greater than 0 and the unit can be one of
          b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -20416,6 +20426,7 @@ class JobResourceConfiguration(ResourceConfiguration):
         """
         super(JobResourceConfiguration, self).__init__(instance_count=instance_count, instance_type=instance_type, properties=properties, **kwargs)
         self.docker_args = docker_args
+        self.docker_args_list = docker_args_list
         self.shm_size = shm_size
 
 

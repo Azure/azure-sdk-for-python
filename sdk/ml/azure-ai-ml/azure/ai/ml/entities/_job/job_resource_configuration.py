@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2024_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -164,10 +164,12 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestJobResourceConfiguration:
         return RestJobResourceConfiguration(
-            locations=self.locations,
+            # its only supported in preview V20230401Preview - V20240401Preview, not supported in any GA version
+            # locations=self.locations,
             instance_count=self.instance_count,
             instance_type=self.instance_type,
-            max_instance_count=self.max_instance_count,
+            # its only supported in preview V20230401Preview - V20240401Preview, not supported in any GA version
+            # max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args if isinstance(self.docker_args, str) else None,
             docker_args_list=None if isinstance(self.docker_args, str) else self.docker_args,

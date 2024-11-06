@@ -180,6 +180,7 @@ class JobOperations(_ScopeDependentOperations):
         )  # pylint: disable=line-too-long
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -730,6 +731,8 @@ class JobOperations(_ScopeDependentOperations):
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.COMMAND:
+            service_client_operation = self.service_client_10_2024_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,

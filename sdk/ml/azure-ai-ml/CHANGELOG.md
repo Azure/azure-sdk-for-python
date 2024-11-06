@@ -1,6 +1,10 @@
 # Release History
 
 ## 1.22.0 (unreleased)
+### Features Added
+  - Adding multiple docker argument support to command job creation
+
+## 1.22.0 (2024-11-05)
 
 ### Features Added
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
