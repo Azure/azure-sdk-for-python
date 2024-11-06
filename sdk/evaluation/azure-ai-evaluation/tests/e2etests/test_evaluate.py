@@ -119,7 +119,7 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestEvaluate:
-    # @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
+    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
         # data
         input_data = pd.read_json(data_file, lines=True)
@@ -156,7 +156,7 @@ class TestEvaluate:
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
 
-    # @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
+    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_relative_data_path(self, model_config):
         original_working_dir = os.getcwd()
 
@@ -192,7 +192,7 @@ class TestEvaluate:
         finally:
             os.chdir(original_working_dir)
 
-    # @pytest.mark.parametrize("parallel", [True, False])
+    @pytest.mark.parametrize("parallel", [True, False])
     def test_evaluate_with_content_safety_evaluator(self, project_scope, azure_cred, data_file, parallel):
         input_data = pd.read_json(data_file, lines=True)
 
@@ -386,26 +386,15 @@ class TestEvaluate:
         # Internal Parallelism is also disabled to avoid faulty recordings.
         gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred)
 
-        # convo_input_data = pd.read_json(data_convo_file, lines=True)
+        convo_input_data = pd.read_json(data_convo_file, lines=True)
         # run the evaluation
-        # convo_result = evaluate(
-        #    data=data_convo_file,
-        #    evaluators={"groundedness_pro": gp_eval},
-        # )
-
-        # convo_row_result_df = pd.DataFrame(convo_result["rows"])
-        # convo_metrics = convo_result["metrics"]
-
-        direct_result = evaluate(
-            data=data_file,
-            evaluators={"groundedness_pro": gp_eval},
+        convo_result = evaluate(
+           data=data_convo_file,
+           evaluators={"groundedness_pro": gp_eval},
         )
 
-        import pdb
-
-        pdb.set_trace()
-        convo_row_result_df = pd.DataFrame(direct_result["rows"])
-        convo_metrics = direct_result["metrics"]
+        convo_row_result_df = pd.DataFrame(convo_result["rows"])
+        convo_metrics = convo_result["metrics"]
 
         assert convo_row_result_df.shape[0] == len(direct_result)
         assert "outputs.groundedness_pro.groundedness_pro_label" in convo_row_result_df.columns.to_list()
