@@ -20,9 +20,12 @@ USAGE:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
+from typing import cast
+
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.inference import EmbeddingsClient  # type: ignore
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -33,7 +36,7 @@ with AIProjectClient.from_connection_string(
 ) as project_client:
 
     # Get an authenticated azure.ai.inference embeddings client for your default Serverless connection:
-    with project_client.inference.get_embeddings_client() as client:
+    with cast(EmbeddingsClient, project_client.inference.get_embeddings_client()) as client:
 
         response = client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
 

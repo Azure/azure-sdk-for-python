@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 FILE: sample_agents_stream_eventhandler_with_functions.py
 
@@ -23,8 +22,15 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
-from azure.ai.projects.models import AgentEventHandler
+from azure.ai.projects.models import (
+    AgentEventHandler,
+    MessageDeltaChunk,
+    MessageDeltaTextContent,
+    RunStep,
+    ThreadMessage,
+    ThreadRun,
+    ToolOutput
+)
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction
 
@@ -71,10 +77,10 @@ class MyEventHandler(AgentEventHandler):
                     try:
                         output = functions.execute(tool_call)
                         tool_outputs.append(
-                            {
-                                "tool_call_id": tool_call.id,
-                                "output": output,
-                            }
+                            ToolOutput(
+                                tool_call_id=tool_call.id,
+                                output=output
+                            )
                         )
                     except Exception as e:
                         print(f"Error executing tool_call {tool_call.id}: {e}")

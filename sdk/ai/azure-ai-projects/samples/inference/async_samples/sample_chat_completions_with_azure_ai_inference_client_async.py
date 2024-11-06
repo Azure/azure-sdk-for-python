@@ -23,7 +23,7 @@ USAGE:
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.inference.models import UserMessage
+from azure.ai.inference.models import UserMessage  #type: ignore
 from azure.identity import DefaultAzureCredential
 
 

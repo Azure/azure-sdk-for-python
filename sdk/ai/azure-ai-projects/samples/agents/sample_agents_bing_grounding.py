@@ -39,6 +39,10 @@ project_client = AIProjectClient.from_connection_string(
 bing_connection = project_client.connections.get(
     connection_name=os.environ["BING_CONNECTION_NAME"]
 )
+if bing_connection is None:
+    print("Please set correct bing connection name for BING_CONNECTION_NAME"
+          " environment variable and run the script again.")
+    exit()
 conn_id = bing_connection.id
 
 print(conn_id)

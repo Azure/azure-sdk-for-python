@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to enumerate connections,
@@ -23,15 +22,16 @@ USAGE:
        in your AI Studio Hub page.
     3) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
+from typing import cast, Optional, Sequence
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ConnectionType, AuthenticationType
+from azure.ai.projects.models import ConnectionType, AuthenticationType, ConnectionProperties
 from openai import AzureOpenAI
-from azure.ai.inference import ChatCompletionsClient
-from azure.ai.inference.models import UserMessage
+from azure.ai.inference import ChatCompletionsClient  # type: ignore
+from azure.ai.inference.models import UserMessage  # type: ignore
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 connection_name = os.environ["CONNECTION_NAME"]
@@ -45,7 +45,7 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
 
     # List the properties of all connections
-    connections = project_client.connections.list()
+    connections: Sequence[Optional[ConnectionProperties]] = project_client.connections.list()
     print(f"====> Listing of all connections (found {len(connections)}):")
     for connection in connections:
         print(connection)
@@ -63,6 +63,9 @@ with project_client:
         connection_type=ConnectionType.AZURE_AI_SERVICES,
         with_credentials=True,  # Optional. Defaults to "False"
     )
+    if connection is None:
+        print(f"Connection of type {ConnectionType.AZURE_AI_SERVICES} was not found.")
+        exit()
     print("====> Get default Azure AI Services connection:")
     print(connection)
 
@@ -70,6 +73,9 @@ with project_client:
     connection = project_client.connections.get(
         connection_name=connection_name, with_credentials=True  # Optional. Defaults to "False"
     )
+    if connection is None:
+        print(f"Connection {connection_name} was not found.")
+        exit()
     print("====> Get connection by name:")
     print(connection)
 
@@ -89,7 +95,8 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
             azure_ad_token_provider=get_bearer_token_provider(
-                connection.token_credential, "https://cognitiveservices.azure.com/.default"
+                cast(TokenCredential, connection.token_credential),
+                "https://cognitiveservices.azure.com/.default"
             ),
             azure_endpoint=connection.endpoint_url,
             api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
@@ -113,18 +120,19 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
 
     if connection.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating ChatCompletionsClient using API key authentication")
-        client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+        inference_client = ChatCompletionsClient(
+            endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or ""))
     elif connection.authentication_type == AuthenticationType.AAD:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
-        client = ChatCompletionsClient(
-            endpoint=connection.endpoint_url, credential=connection.properties.token_credential
+        inference_client = ChatCompletionsClient(
+            endpoint=connection.endpoint_url, credential=connection.token_credential
         )
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-    response = client.complete(
+    response = inference_client.complete(
         model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
     )
-    client.close()
+    inference_client.close()
     print(response.choices[0].message.content)

@@ -27,7 +27,7 @@ from typing import (
     cast,
     overload,
     Sequence,
-    TYPE_CHECKING,
+    TYPE_CHECKING, TextIO,
 )
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -404,12 +404,12 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    def enable(self, *, destination: Union[TextIOWrapper, str], **kwargs) -> None:
+    def enable(self, *, destination: Union[TextIO, str], **kwargs) -> None:
         """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
 
         :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
          endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
-        :paramtype destination: Union[TextIOWrapper, str]
+        :paramtype destination: Union[TextIO, str]
         """
         _enable_telemetry(destination=destination, **kwargs)
 

@@ -23,13 +23,17 @@ USAGE:
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
-
-import os, sys, time, json
 from typing import Any, Callable, Set
+
+import os, time, json
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
-from user_functions import user_functions
+from azure.ai.projects.models import (
+    FunctionTool,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput
+)
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
@@ -127,10 +131,10 @@ with tracer.start_as_current_span(scenario):
                         try:
                             output = functions.execute(tool_call)
                             tool_outputs.append(
-                                {
-                                    "tool_call_id": tool_call.id,
-                                    "output": output,
-                                }
+                                ToolOutput(
+                                    tool_call_id=tool_call.id,
+                                    output=output,
+                                )
                             )
                         except Exception as e:
                             print(f"Error executing tool_call {tool_call.id}: {e}")

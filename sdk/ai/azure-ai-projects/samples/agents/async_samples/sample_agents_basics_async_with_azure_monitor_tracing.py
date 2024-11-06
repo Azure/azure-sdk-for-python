@@ -28,10 +28,10 @@ import time
 import sys
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
+from azure.ai.projects.tracing.agents import AIAgentsInstrumentor  # type: ignore
 from opentelemetry import trace
 import os
-from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.monitor.opentelemetry import configure_azure_monitor  # type: ignore
 
 
 tracer = trace.get_tracer(__name__)

@@ -31,8 +31,11 @@ USAGE:
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
 """
+from typing import cast
+
 import os
 import sys
+from azure.ai.inference import ChatCompletionsClient  # type: ignore
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
@@ -50,7 +53,9 @@ with AIProjectClient.from_connection_string(
     project_client.telemetry.enable(destination=sys.stdout)
 
     # Get an authenticated OpenAI client for your default Azure OpenAI connection:
-    with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+    with cast(
+        ChatCompletionsClient, project_client.inference.get_azure_openai_client(
+            api_version="2024-06-01")) as client:
 
         response = client.chat.completions.create(
             model=model_deployment_name,

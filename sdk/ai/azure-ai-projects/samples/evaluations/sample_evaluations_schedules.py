@@ -1,7 +1,7 @@
 from azure.ai.projects import AIProjectClient
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import (
+from azure.ai.projects.models import (  # type: ignore
     ApplicationInsightsConfiguration,
     EvaluatorConfiguration,
     SamplingStrategy,

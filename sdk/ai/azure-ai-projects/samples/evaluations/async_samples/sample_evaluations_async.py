@@ -21,13 +21,12 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
-import time
 import os
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator
+from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType  #type: ignore
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator  #type: ignore
 
 
 async def main():
@@ -40,6 +39,9 @@ async def main():
     data_id = project_client.upload_file("./evaluate_test_data.jsonl")
 
     default_connection = await project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+    if default_connection is None:
+        print("Azure OpenAI connection was not found.")
+        exit()
 
     deployment_name = "<>"
     api_version = "<>"

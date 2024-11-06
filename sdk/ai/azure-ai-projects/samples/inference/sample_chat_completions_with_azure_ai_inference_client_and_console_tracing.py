@@ -28,10 +28,13 @@ USAGE:
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
+from typing import cast
+
 import os
 import sys
+from azure.ai.inference import ChatCompletionsClient  # type: ignore
+from azure.ai.inference.models import UserMessage  # type: ignore
 from azure.ai.projects import AIProjectClient
-from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
@@ -48,7 +51,7 @@ with AIProjectClient.from_connection_string(
     project_client.telemetry.enable(destination=sys.stdout)
 
     # Get an authenticated azure.ai.inference ChatCompletionsClient for your default Serverless connection:
-    with project_client.inference.get_chat_completions_client() as client:
+    with cast(ChatCompletionsClient, project_client.inference.get_chat_completions_client()) as client:
 
         response = client.complete(
             model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
