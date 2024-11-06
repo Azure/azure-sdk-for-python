@@ -700,7 +700,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
-
     pf_client = PFClient(user_agent=USER_AGENT)
     target_run: Optional[Run] = None
 
