@@ -415,7 +415,6 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         from azure.core.settings import settings
 
         settings.tracing_implementation = "opentelemetry"
-        settings.tracing_implementation()
     except ModuleNotFoundError as _:
         logger.warning(
             "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
