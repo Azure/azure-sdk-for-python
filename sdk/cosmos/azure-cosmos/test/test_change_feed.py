@@ -409,7 +409,7 @@ class TestChangeFeed:
             )
         assert str(e.value) == "'query_items_change_feed()' takes 4 positional arguments but 5 were given."
 
-        # Error if arguments are in both positional and keyword arguement list
+        # Error if arguments are in both positional and keyword arguments list
         with pytest.raises(TypeError) as e:
             created_collection.query_items_change_feed(
                 "partition_key_range_id",
