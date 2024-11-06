@@ -520,6 +520,10 @@ class TestEvaluate:
         assert aggregation["content_safety.self_harm_defect_rate"] == 0.0
         assert aggregation["content_safety.hate_unfairness_defect_rate"] == 0.3
 
+        with pytest.raises(EvaluationException) as exc_info:
+            _aggregate_metrics(pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), evaluators)
+        assert "column content_safety.violence_score" in exc_info.value.args[0]
+
     def test_label_based_aggregation(self):
         data = {
             "eci.eci_label": [True, True, True, np.nan, None],
@@ -545,6 +549,10 @@ class TestEvaluate:
         assert aggregation["protected_material.protected_material_defect_rate"] == 0.2
         assert "unaccounted_defect_rate" not in aggregation
 
+        with pytest.raises(EvaluationException) as exc_info:
+            _aggregate_metrics(pd.DataFrame({"eci.eci_label": [np.nan, None]}), evaluators)
+        assert "column eci.eci_label" in exc_info.value.args[0]
+
     def test_other_aggregation(self):
         data = {
             "thing.groundedness_pro_label": [True, False, True, False, np.nan, None],
@@ -555,6 +563,10 @@ class TestEvaluate:
 
         assert len(aggregation) == 1
         assert aggregation["thing.groundedness_pro_passing_rate"] == 0.5
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _aggregate_metrics(pd.DataFrame({"thing.groundedness_pro_label": [np.nan, None]}), {})
+        assert "column thing.groundedness_pro_label" in exc_info.value.args[0]
 
     def test_general_aggregation(self):
         data = {

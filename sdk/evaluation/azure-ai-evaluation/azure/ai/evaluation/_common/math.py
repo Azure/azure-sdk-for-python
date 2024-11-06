@@ -10,7 +10,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 
 def list_sum(lst: List[float]) -> float:
     """Given a list of floats, return the sum of the values.
-    
+
     :param lst: A list of floats.
     :type lst: List[float]
     :return: The sum of the values in the list.
@@ -22,7 +22,7 @@ def list_sum(lst: List[float]) -> float:
 
 def list_mean(lst: List[float]) -> float:
     """Given a list of floats, calculate the mean of the values.
-    
+
     :param lst: A list of floats.
     :type lst: List[float]
     :return: The mean of the values in the list.
@@ -34,7 +34,7 @@ def list_mean(lst: List[float]) -> float:
 
 def list_mean_nan_safe(lst: List[float]) -> float:
     """Given a list of floats, remove all nan or None values, then calculate the mean of the remaining values.
-    
+
     :param lst: A list of floats.
     :type lst: List[float]
     :return: The mean of the values in the list.
@@ -79,7 +79,7 @@ def apply_transform_nan_safe(lst: List[float], transform_fn: Callable[[float], A
 
 def is_none_or_nan(val: float) -> bool:
     """math.isnan raises an error if None is inputted. This is a more robust wrapper.
-    
+
     :param val: The value to check.
     :type val: float
     :return: Whether the value is None or NaN.
