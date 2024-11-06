@@ -63,15 +63,26 @@ class AIInferenceInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIInferenceInstrumentorPreview()
 
-    def instrument(self) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+            of the traces or not. Content in this context refers to chat message content
+            and function call tool related function names, function parameter names and
+            values. True will enable content recording, False will disable it. If no value
+            s provided, then the value read from environment variable
+            AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+            is not found, then the value will default to False. Please note that successive calls
+            to instrument will always apply the content recording value provided with the most
+            recent call to instrument (including applying the environment variable if no value is
+            provided and defaulting to false if the environment variable is not found), even if
+            instrument was already previously called without uninstrument being called in between
+            the instrument calls.
 
+        :type enable_content_recording: bool, optional
         """
-        self._impl.instrument()
+        self._impl.instrument(enable_content_recording=enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -94,6 +105,15 @@ class AIInferenceInstrumentor:
         """
         return self._impl.is_instrumented()
 
+    def is_content_recording_enabled(self) -> bool:
+        """
+        This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_content_recording_enabled()
+
 
 class _AIInferenceInstrumentorPreview:
     """
@@ -108,37 +128,37 @@ class _AIInferenceInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self):
+    def instrument(self, enable_content_recording: Optional[bool] = None):
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False.
 
-        This method checks the environment variable
-        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
-        whether to enable content tracing.
+        :type enable_content_recording: bool, optional
         """
-        if self.is_instrumented():
-            raise RuntimeError("Already instrumented")
-
-        var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-        enable_content_tracing = self._str_to_bool(var_value)
-        self._instrument_inference(enable_content_tracing)
+        if enable_content_recording is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            enable_content_recording = self._str_to_bool(var_value)
+        if not self.is_instrumented():
+            self._instrument_inference(enable_content_recording)
+        else:
+            self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
 
     def uninstrument(self):
         """
         Disable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is not currently enabled.
-
         This method removes any active instrumentation, stopping the tracing
         of AI Inference.
         """
-        if not self.is_instrumented():
-            raise RuntimeError("Not instrumented")
-        self._uninstrument_inference()
+        if self.is_instrumented():
+            self._uninstrument_inference()
 
     def is_instrumented(self):
         """
@@ -148,6 +168,24 @@ class _AIInferenceInstrumentorPreview:
         :rtype: bool
         """
         return self._is_instrumented()
+
+    def set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
+
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return self._is_content_recording_enabled()
 
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
@@ -764,3 +802,22 @@ class _AIInferenceInstrumentorPreview:
         :rtype: bool
         """
         return _inference_traces_enabled
+
+    def _set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        global _trace_inference_content  # pylint: disable=W0603
+        _trace_inference_content = enable_content_recording
+
+    def _is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_inference_content
