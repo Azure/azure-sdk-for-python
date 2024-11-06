@@ -8,44 +8,95 @@ from typing_extensions import NotRequired
 
 
 class AzureOpenAIModelConfiguration(TypedDict):
-    """Model Configuration for Azure OpenAI Model"""
+    """Model configuration for Azure OpenAI models
+
+    :param type: The type of the model configuration. Should be 'azure_openai' for AzureOpenAIModelConfiguration
+    :type type: NotRequired[Literal["azure_openai"]]
+    :param azure_deployment: Name of Azure OpenAI deployment to make requests to
+    :type azure_deployment: str
+    :param azure_endpoint: Endpoint of Azure OpenAI resource to make requests to
+    :type azure_endpoint: str
+    :param api_key: API key of Azure OpenAI resource
+    :type api_key: str
+    :param api_version: API version to use in request to Azure OpenAI deployment. Optional.
+    :type api_version: NotRequired[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_AOAI_model_config]
+            :end-before: [END create_AOAI_model_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AzureOpenAIModelConfiguration object.
+
+    """
 
     type: NotRequired[Literal["azure_openai"]]
-    """The type of the model configuration. Should be 'azure_openai' for AzureOpenAIModelConfiguration"""
     azure_deployment: str
-    """Name of Azure OpenAI deployment to make request to"""
     azure_endpoint: str
     """Endpoint of Azure OpenAI resource to make request to"""
     api_key: NotRequired[str]
     """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
-    """(Optional) API version to use in request to Azure OpenAI deployment"""
 
 
 class OpenAIModelConfiguration(TypedDict):
-    """Model Configuration for OpenAI Model"""
+    """Model configuration for OpenAI models
+
+    :param type: The type of the model configuration. Should be 'openai' for OpenAIModelConfiguration
+    :type type: NotRequired[Literal["openai"]]
+    :param api_key: API key needed to make requests to model
+    :type api_key: str
+    :param model: Name of model to be used in OpenAI request
+    :type model: str
+    :param base_url: Base URL to be used in OpenAI request. Optional.
+    :type base_url: NotRequired[str]
+    :param organization: OpenAI organization. Optional.
+    :type organization: NotRequired[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_OAI_model_config]
+            :end-before: [END create_OAI_model_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating an OpenAIModelConfiguration object.
+
+    """
 
     type: NotRequired[Literal["openai"]]
-    """The type of the model configuration. Should be 'openai' for OpenAIModelConfiguration"""
     api_key: str
-    "API key needed to make request to model"
     model: str
-    """Name of model to be used in OpenAI request"""
     base_url: NotRequired[str]
-    """(Optional) Base URL to be used in OpenAI request"""
     organization: NotRequired[str]
-    """(Optional) OpenAI organization"""
 
 
 class AzureAIProject(TypedDict):
-    """Azure AI Project Information"""
+    """Information about the Azure AI project
+
+    :param subscription_id: ID of the Azure subscription the project is in
+    :type subscription_id: str
+    :param resource_group_name: Name of the Azure resource group the project is in
+    :type resource_group_name: str
+    :param project_name: Name of the Azure project
+    :type project_name: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_azure_ai_project_object]
+            :end-before: [END create_azure_ai_project_object]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AzureAIProject object.
+
+    """
 
     subscription_id: str
-    """Azure subscription id of the project"""
     resource_group_name: str
-    """Azure resource group name of the project"""
     project_name: str
-    """Azure project name"""
 
 
 class EvaluatorConfig(TypedDict, total=False):

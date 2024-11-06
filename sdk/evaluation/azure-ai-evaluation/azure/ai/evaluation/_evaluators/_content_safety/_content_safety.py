@@ -31,39 +31,14 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ContentSafetyEvaluator(azure_ai_project)
-        result = eval_fn(
-            query="What is the capital of France?",
-            response="Paris.",
-        )
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "violence": "Medium",
-            "violence_score": 5.0,
-            "violence_reason": "Some reason",
-            "sexual": "Medium",
-            "sexual_score": 5.0,
-            "sexual_reason": "Some reason",
-            "self_harm": "Medium",
-            "self_harm_score": 5.0,
-            "self_harm_reason": "Some reason",
-            "hate_unfairness": "Medium",
-            "hate_unfairness_score": 5.0,
-            "hate_unfairness_reason": "Some reason"
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START content_safety_evaluator]
+            :end-before: [END content_safety_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ContentSafetyEvaluator.
     """
 
     # TODO address 3579092 to re-enabled parallel evals.
