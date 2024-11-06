@@ -1,5 +1,22 @@
 # Release History
 
+## 13.3.0 (2024-10-21)
+
+### Features Added
+
+  - Model `FilePathAvailabilityRequest` added property `availability_zone`
+  - Model `ReplicationObject` added property `remote_path`
+  - Model `Volume` added property `effective_network_features`
+  - Model `VolumeGroupVolumeProperties` added property `effective_network_features`
+  - Added model `ClusterPeerCommandResponse`
+  - Added model `PeerClusterForVolumeMigrationRequest`
+  - Added model `RemotePath`
+  - Added model `SvmPeerCommandResponse`
+  - Operation group `VolumesOperations` added method `begin_authorize_external_replication`
+  - Operation group `VolumesOperations` added method `begin_finalize_external_replication`
+  - Operation group `VolumesOperations` added method `begin_peer_external_cluster`
+  - Operation group `VolumesOperations` added method `begin_perform_replication_transfer`
+
 ## 13.2.0 (2024-08-19)
 
 ### Features Added

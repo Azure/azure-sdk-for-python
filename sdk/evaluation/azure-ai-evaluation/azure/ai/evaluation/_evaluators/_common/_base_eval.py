@@ -7,10 +7,11 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from typing_extensions import ParamSpec, TypeAlias
+from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common.utils import remove_optional_singletons
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -32,9 +33,9 @@ AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
 
     foo: AggregateResult[float] = {
         "evaluation_per_turn": {
-            "gpt_coherence": [1.0, 2.0, 3.0]
+            "coherence": [1.0, 2.0, 3.0]
         },
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -44,7 +45,7 @@ DoEvalResult: TypeAlias = Dict[str, T]
     .. code-block:: python
 
     foo: DoEvalResult[float] = {
-        "gpt_coherence": 2.0
+        "coherence": 2.0
     }
 """
 
@@ -87,7 +88,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """Evaluate a given input. This method serves as a wrapper and is meant to be overridden by child classes for
         one main reason - to overwrite the method headers and docstring to include additional inputs as needed.
         The actual behavior of this function shouldn't change beyond adding more inputs to the
@@ -126,11 +131,19 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :rtype: List[str]
         """
 
+        overloads = get_overloads(self.__call__)
+        if not overloads:
+            call_signatures = [inspect.signature(self.__call__)]
+        else:
+            call_signatures = [inspect.signature(overload) for overload in overloads]
         call_signature = inspect.signature(self.__call__)
         singletons = []
-        for param in call_signature.parameters:
-            if param not in self._not_singleton_inputs:
-                singletons.append(param)
+        for call_signature in call_signatures:
+            params = call_signature.parameters
+            if any(not_singleton_input in params for not_singleton_input in self._not_singleton_inputs):
+                continue
+            # exclude self since it is not a singleton input
+            singletons.extend([p for p in params if p != "self"])
         return singletons
 
     def _derive_conversation_converter(self) -> Callable[[Dict], List[DerivedEvalInput]]:
@@ -230,8 +243,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         if conversation is not None:
             return self._derive_conversation_converter()(conversation)
         # Handle Singletons
-        if all(value is not None for value in singletons.values()):
-            return [singletons]  # TODO loosen requirements to allow for optional singletons?
+        required_singletons = remove_optional_singletons(self, singletons)
+        if all(value is not None for value in required_singletons.values()):
+            return [singletons]
         # Missing input
         msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided."
         raise EvaluationException(

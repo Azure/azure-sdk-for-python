@@ -34,7 +34,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
-from .http_constants import StatusCodes
+from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
@@ -826,7 +826,7 @@ class DatabaseProxy(object):
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not throughput_properties:
             raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
+                status_code=_StatusCodes.NOT_FOUND,
                 message="Could not find ThroughputProperties for database " + self.database_link)
 
         if response_hook:
@@ -859,7 +859,7 @@ class DatabaseProxy(object):
         throughput_properties = list(self.client_connection.QueryOffers(query_spec))
         if not throughput_properties:
             raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
+                status_code=_StatusCodes.NOT_FOUND,
                 message="Could not find ThroughputProperties for database " + self.database_link)
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
