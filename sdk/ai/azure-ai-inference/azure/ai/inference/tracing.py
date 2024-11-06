@@ -68,20 +68,19 @@ class AIInferenceInstrumentor:
         Enable trace instrumentation for AI Inference.
 
         :param enable_content_recording: Whether content recording is enabled as part
-        of the traces or not. Content in this context refers to chat message content
-        and function call tool related function names, function parameter names and
-        values. True will enable content recording, False will disable it. If no value
-        is provided, then the value read from environment variable
-        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-        is not found, then the value will default to False. Please note that successive calls
-        to instrument will always apply the content recording value provided with the most
-        recent call to instrument (including applying the environment variable if no value is
-        provided and defaulting to false if the environment variable is not found), even if
-        instrument was already previously called without uninstrument being called in between
-        the instrument calls.
+            of the traces or not. Content in this context refers to chat message content
+            and function call tool related function names, function parameter names and
+            values. True will enable content recording, False will disable it. If no value
+            s provided, then the value read from environment variable
+            AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+            is not found, then the value will default to False. Please note that successive calls
+            to instrument will always apply the content recording value provided with the most
+            recent call to instrument (including applying the environment variable if no value is
+            provided and defaulting to false if the environment variable is not found), even if
+            instrument was already previously called without uninstrument being called in between
+            the instrument calls.
 
         :type enable_content_recording: bool, optional
-
         """
         self._impl.instrument(enable_content_recording=enable_content_recording)
 
@@ -107,10 +106,11 @@ class AIInferenceInstrumentor:
         return self._impl.is_instrumented()
 
     def is_content_recording_enabled(self) -> bool:
-        """This function gets the content recording value.
+        """
+        This function gets the content recording value.
 
         :return: A bool value indicating whether content recording is enabled.
-        :rtype bool
+        :rtype: bool
         """
         return self._impl.is_content_recording_enabled()
 
