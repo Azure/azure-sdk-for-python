@@ -37,18 +37,21 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
+    # Upload file and create vector store
+    # [START upload_file_and_create_vector_store]
     openai_file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-    print(f"Uploaded file, file ID: {openai_file.id}")
-
     openai_vectorstore = project_client.agents.create_vector_store_and_poll(
         file_ids=[openai_file.id], name="my_vectorstore"
     )
+    # [END upload_file_and_create_vector_store]
+    
+    print(f"Uploaded file, file ID: {openai_file.id}")
     print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
-    # Create file search tool with resources
+    # Create file search tool with resources followed by creating agent
+    # [START create_agent_with_file_search_tool]
     file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
 
-    # Create agent with file search tool and process assistant run
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
@@ -56,6 +59,8 @@ with project_client:
         tools=file_search.definitions,
         tool_resources=file_search.resources,
     )
+    # [END create_agent_with_file_search_tool]
+    
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -76,13 +81,18 @@ with project_client:
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
         print(f"Run failed: {run.last_error}")
 
+    # [START teardown]
     # Delete the file when done
     project_client.agents.delete_vector_store(openai_vectorstore.id)
     print("Deleted vector store")
 
+    project_client.agents.delete_file(file_id=openai_file.id)
+    print("Deleted file")
+
     # Delete the agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
+    # [END teardown]
 
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)
