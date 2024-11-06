@@ -12,7 +12,7 @@ class EventHubConnectionStringProperties(DictMixin):
     Properties of a connection string.
     """
 
-    def __init__( # pylint: disable=unused-argument
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         fully_qualified_namespace: str,
@@ -91,9 +91,9 @@ def parse_connection_string(conn_str: str) -> "EventHubConnectionStringPropertie
     :return: A properties bag containing the parsed connection string.
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
-    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(
-        conn_str, check_case=True
-    )[:-1]
+    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(conn_str, check_case=True)[
+        :-1
+    ]
     endpoint = "sb://" + fully_qualified_namespace + "/"
     props: Dict[str, Any] = {
         "fully_qualified_namespace": fully_qualified_namespace,

@@ -3,6 +3,6 @@ pytest
 django
 fastapi-slim
 flask
-psycopg2
+psycopg2-binary; python_version >= '3.9'
 requests
 urllib3

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from enum import Enum
+import sys
 
 # cSpell:disable
 
@@ -17,7 +17,10 @@ _REQUEST_FAILURE_RATE_NAME = ("azuremonitor.requestsfailedsec", "\\ApplicationIn
 _REQUEST_DURATION_NAME = ("azuremonitor.requestduration", "\\ApplicationInsights\\Request Duration")
 # Dependency
 _DEPENDENCY_RATE_NAME = ("azuremonitor.dependencycallssec", "\\ApplicationInsights\\Dependency Calls/Sec")
-_DEPENDENCY_FAILURE_RATE_NAME = ("azuremonitor.dependencycallsfailedsec", "\\ApplicationInsights\\Dependency Calls Failed/Sec")  # pylint: disable=line-too-long
+_DEPENDENCY_FAILURE_RATE_NAME = (
+    "azuremonitor.dependencycallsfailedsec",
+    "\\ApplicationInsights\\Dependency Calls Failed/Sec",
+)  # pylint: disable=line-too-long
 _DEPENDENCY_DURATION_NAME = ("azuremonitor.dependencycallduration", "\\ApplicationInsights\\Dependency Call Duration")
 # Exception
 _EXCEPTION_RATE_NAME = ("azuremonitor.exceptionssec", "\\ApplicationInsights\\Exceptions/Sec")
@@ -44,19 +47,20 @@ _POST_INTERVAL_SECONDS = 1
 _LONG_PING_INTERVAL_SECONDS = 60
 _POST_CANCEL_INTERVAL_SECONDS = 20
 
-# Live metrics data types
-class _DocumentIngressDocumentType(Enum):
-    Request = "Request"
-    RemoteDependency = "RemoteDependency"
-    Exception = "Exception"
-    Event = "Event"
-    Trace = "Trace"
-
 # Response Headers
 
 _QUICKPULSE_ETAG_HEADER_NAME = "x-ms-qps-configuration-etag"
 _QUICKPULSE_POLLING_HEADER_NAME = "x-ms-qps-service-polling-interval-hint"
 _QUICKPULSE_REDIRECT_HEADER_NAME = "x-ms-qps-service-endpoint-redirect-v2"
 _QUICKPULSE_SUBSCRIBED_HEADER_NAME = "x-ms-qps-subscribed"
+
+# Projections (filtering)
+
+_QUICKPULSE_PROJECTION_COUNT = "Count()"
+_QUICKPULSE_PROJECTION_DURATION = "Duration"
+_QUICKPULSE_PROJECTION_CUSTOM = "CustomDimensions."
+
+_QUICKPULSE_PROJECTION_MAX_VALUE = sys.maxsize
+_QUICKPULSE_PROJECTION_MIN_VALUE = -sys.maxsize - 1
 
 # cSpell:enable

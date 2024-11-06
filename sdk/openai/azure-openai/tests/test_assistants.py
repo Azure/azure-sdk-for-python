@@ -87,16 +87,16 @@ class EventHandler(AssistantEventHandler):
                         if content.text.value:
                             assert content.text.value is not None
                         if content.text.annotations:
-                            for annot in content.text.annotations:
-                                if annot.type == "file_citation":
-                                    assert annot.end_index is not None
-                                    assert annot.file_citation.file_id
-                                    assert annot.file_citation.quote
-                                    assert annot.start_index is not None
-                                elif annot.type == "file_path":
-                                    assert annot.end_index is not None
-                                    assert annot.file_path.file_id
-                                    assert annot.start_index is not None
+                            for annotation in content.text.annotations:
+                                if annotation.type == "file_citation":
+                                    assert annotation.end_index is not None
+                                    assert annotation.file_citation.file_id
+                                    assert annotation.file_citation.quote
+                                    assert annotation.start_index is not None
+                                elif annotation.type == "file_path":
+                                    assert annotation.end_index is not None
+                                    assert annotation.file_path.file_id
+                                    assert annotation.start_index is not None
                 elif content.type == "image_file":
                     assert content.index is not None
                     assert content.image_file.file_id
@@ -109,36 +109,36 @@ class EventHandler(AssistantEventHandler):
             if msg.type == "text":
                 assert msg.text.value
                 if msg.text.annotations:
-                    for annot in msg.text.annotations:
-                        if annot.type == "file_citation":
-                            assert annot.end_index is not None
-                            assert annot.file_citation.file_id
-                            assert annot.file_citation.quote
-                            assert annot.start_index is not None
-                            assert annot.text is not None
-                        elif annot.type == "file_path":
-                            assert annot.end_index is not None
-                            assert annot.file_path.file_id
-                            assert annot.start_index is not None
-                            assert annot.text is not None
+                    for annotation in msg.text.annotations:
+                        if annotation.type == "file_citation":
+                            assert annotation.end_index is not None
+                            assert annotation.file_citation.file_id
+                            assert annotation.file_citation.quote
+                            assert annotation.start_index is not None
+                            assert annotation.text is not None
+                        elif annotation.type == "file_path":
+                            assert annotation.end_index is not None
+                            assert annotation.file_path.file_id
+                            assert annotation.start_index is not None
+                            assert annotation.text is not None
 
     def on_text_created(self, text: Text):
         assert text.value is not None
 
     def on_text_done(self, text: Text):
         assert text.value is not None
-        for annot in text.annotations:
-            if annot.type == "file_citation":
-                assert annot.end_index is not None
-                assert annot.file_citation.file_id
-                assert annot.file_citation.quote
-                assert annot.start_index is not None
-                assert annot.text is not None
-            elif annot.type == "file_path":
-                assert annot.end_index is not None
-                assert annot.file_path.file_id
-                assert annot.start_index is not None
-                assert annot.text is not None
+        for annotation in text.annotations:
+            if annotation.type == "file_citation":
+                assert annotation.end_index is not None
+                assert annotation.file_citation.file_id
+                assert annotation.file_citation.quote
+                assert annotation.start_index is not None
+                assert annotation.text is not None
+            elif annotation.type == "file_path":
+                assert annotation.end_index is not None
+                assert annotation.file_path.file_id
+                assert annotation.start_index is not None
+                assert annotation.text is not None
 
     def on_image_file_done(self, image_file: ImageFile):
         assert image_file.file_id
@@ -179,6 +179,7 @@ class EventHandler(AssistantEventHandler):
             assert tool_call.function.name is not None
 
 
+@pytest.mark.live_test_only
 class TestAssistants(AzureRecordedTestCase):
 
     def handle_run_failure(self, run: Run):

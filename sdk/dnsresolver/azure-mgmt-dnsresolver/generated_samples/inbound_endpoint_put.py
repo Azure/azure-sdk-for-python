@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 """
@@ -51,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/InboundEndpoint_Put.json
+# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/preview/2023-07-01-preview/examples/InboundEndpoint_Put.json
 if __name__ == "__main__":
     main()

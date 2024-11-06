@@ -1,104 +1,110 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from promptflow._utils.async_utils import async_run_allowing_running_loop
 
+from typing import Dict, List, Optional, Union
+
+from typing_extensions import overload, override
+
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
-class _AsyncProtectedMaterialEvaluator:
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._azure_ai_project = azure_ai_project
-        self._credential = credential
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates content according to this evaluator's metric.
-
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :return: The evaluation score computation based on the Content Safety metric (self.metric).
-        :rtype: Any
-        """
-        # Validate inputs
-        # Raises value error if failed, so execution alone signifies success.
-        if not (query and query.strip() and query != "None") or not (
-            response and response.strip() and response != "None"
-        ):
-            msg = "Both 'query' and 'response' must be non-empty strings."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                error_category=ErrorCategory.MISSING_FIELD,
-                error_blame=ErrorBlame.USER_ERROR,
-                error_target=ErrorTarget.PROTECTED_MATERIAL_EVALUATOR,
-            )
-
-        # Run score computation based on supplied metric.
-        result = await evaluate_with_rai_service(
-            metric_name=EvaluationMetrics.PROTECTED_MATERIAL,
-            query=query,
-            response=response,
-            project_scope=self._azure_ai_project,
-            credential=self._credential,
-        )
-        return result
-
-
-class ProtectedMaterialEvaluator:
+@experimental
+class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Initialize a protected material evaluator to detect whether protected material
-    is present in your AI system's response. Outputs True or False with AI-generated reasoning.
+    Evaluates the protected material score for a given query and response or a multi-turn conversation, with reasoning.
 
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
+    Protected material is any text that is under copyright, including song lyrics, recipes, and articles. Protected
+    material evaluation leverages the Azure AI Content Safety Protected Material for Text service to perform the
+    classification.
+
+    The protected material score is a boolean value, where True indicates that protected material was detected.
+
+    :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :return: Whether or not protected material was found in the response, with AI-generated reasoning.
-    :rtype: Dict[str, str]
+    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID,
+        resource group, and project name.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "protected_material_label": "False",
-            "protected_material_reason": "This query does not contain any protected material."
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START protected_material_evaluator]
+            :end-before: [END protected_material_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncProtectedMaterialEvaluator(azure_ai_project, credential)
+    @override
+    def __init__(
+        self,
+        credential,
+        azure_ai_project,
+    ):
+        super().__init__(
+            eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+        )
 
-    def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates protected material content.
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ) -> Dict[str, Union[str, bool]]:
+        """Evaluate a given query/response pair for protected material
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        :return: A dictionary containing a boolean label and reasoning.
-        :rtype: dict
+        :return: The protected material score.
+        :rtype: Dict[str, Union[str, bool]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
-    def _to_async(self):
-        return self._async_evaluator
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]:
+        """Evaluate a conversation for protected material
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The protected material score.
+        :rtype: Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]
+        """
+
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation=None,
+        **kwargs,
+    ):
+        """
+        Evaluate if protected material is present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated.
+        :paramtype response: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score.
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
+        """
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

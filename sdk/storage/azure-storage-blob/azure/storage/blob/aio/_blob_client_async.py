@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import warnings
 from datetime import datetime
@@ -184,7 +184,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname: str) -> str:
@@ -310,7 +310,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_blob_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
+    async def upload_blob_from_url(
+        self, source_url: str,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -327,6 +332,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :keyword dict(str, str) metadata:
+            Name-value pairs associated with the blob as metadata.
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError.
@@ -412,6 +419,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_from_url_options(
             source_url=source_url,
+            metadata=metadata,
             **kwargs)
         try:
             return cast(Dict[str, Any], await self._client.block_blob.put_blob_from_url(**options))
@@ -522,8 +530,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the blob size exceeds
-            64MB.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -679,7 +688,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :keyword int max_concurrency:
-            The number of parallel connections with which to download.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:
@@ -1117,6 +1128,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             .. versionadded:: 12.10.0
                 This was introduced in API version '2020-10-02'.
 
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1127,10 +1141,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, str]
         """
 
+        version_id = get_version_id(self.version_id, kwargs)
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str],
-                    await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs))
+        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
+            cls=return_response_headers,version_id=version_id, **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1139,6 +1154,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         .. versionadded:: 12.10.0
             This operation was introduced in API version '2020-10-02'.
 
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1149,7 +1167,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, str]
         """
 
-        await self._client.blob.delete_immutability_policy(**kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        await self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
 
     @distributed_trace_async
     async def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
@@ -1160,6 +1179,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         :param bool legal_hold:
             Specified if a legal hold should be set on the blob.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1170,8 +1192,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
-        return cast(Dict[str, Union[str, datetime, bool]],
-                    await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs))
+        version_id = get_version_id(self.version_id, kwargs)
+        return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
+            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(
@@ -2216,7 +2239,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
-            return cast(Dict[str, str], parse_tags(tags))  # pylint: disable=protected-access
+            return cast(Dict[str, str], parse_tags(tags))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -3183,7 +3206,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                               self._pipeline._impl_policies) # pylint: disable = protected-access
             )
         else:
-            _pipeline = self._pipeline  # pylint: disable = protected-access
+            _pipeline = self._pipeline
         return ContainerClient(
             f"{self.scheme}://{self.primary_hostname}", container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,

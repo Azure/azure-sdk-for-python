@@ -111,6 +111,7 @@ known_content_issues:
   - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
   - ['sdk/openai/azure-openai/README.md', '#4554']
+  - ['sdk/ai/azure-ai-generative/README.md', 'Deprecated package.']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
@@ -119,6 +120,7 @@ known_content_issues:
   - ['sdk/core/azure-common/README.rst', 'common']
   - ['sdk/core/azure-core/README.md', 'common']
   - ['sdk/core/azure-core/samples/README.md', 'common']
+  - ['sdk/core/azure-core-tracing-opencensus/README.md', 'common']
   - ['sdk/core/azure-core-tracing-opentelemetry/README.md', 'common']
   - ['sdk/core/corehttp/README.md', 'common']
   - ['sdk/core/corehttp/samples/README.md', 'common']

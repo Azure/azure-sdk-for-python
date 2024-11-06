@@ -20,11 +20,6 @@ from ._constants import (
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
-    TELEMETRY_KEY,
-    METADATA_KEY,
-    ETAG_KEY,
-    FEATURE_FLAG_REFERENCE_KEY,
-    FEATURE_FLAG_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
@@ -44,24 +39,6 @@ class _ConfigurationClientWrapperBase:
         encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
         encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
         return encoded_flag[: encoded_flag.find(b"=")]
-
-    def _feature_flag_telemetry(
-        self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
-    ):
-        if TELEMETRY_KEY in feature_flag_value:
-            if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
-
-            if not endpoint.endswith("/"):
-                endpoint += "/"
-            feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-            if feature_flag.label and not feature_flag.label.isspace():
-                feature_flag_reference += f"?label={feature_flag.label}"
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
-                feature_flag.key, feature_flag.label
-            )
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
@@ -127,7 +104,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
             calculated_milliseconds = max_backoff_milliseconds
 
         return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
 
     def __eq__(self, other):

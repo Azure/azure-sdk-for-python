@@ -7,7 +7,7 @@ import copy
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 import jinja2
 
@@ -15,6 +15,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel
+from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 
 
@@ -40,7 +41,7 @@ class ConversationTurn:
     role: "ConversationRole"
     name: Optional[str] = None
     message: str = ""
-    full_response: Optional[Any] = None
+    full_response: Optional[Dict[str, Any]] = None
     request: Optional[Any] = None
 
     def to_openai_chat_format(self, reverse: bool = False) -> Dict[str, str]:
@@ -109,7 +110,7 @@ class ConversationBot:
         role: ConversationRole,
         model: Union[LLMBase, OpenAIChatCompletionsModel],
         conversation_template: str,
-        instantiation_parameters: Dict[str, str],
+        instantiation_parameters: TemplateParameters,
     ) -> None:
         self.role = role
         self.conversation_template_orig = conversation_template
@@ -118,13 +119,13 @@ class ConversationBot:
         )
         self.persona_template_args = instantiation_parameters
         if self.role == ConversationRole.USER:
-            self.name = self.persona_template_args.get("name", role.value)
+            self.name: str = cast(str, self.persona_template_args.get("name", role.value))
         else:
-            self.name = self.persona_template_args.get("chatbot_name", role.value) or model.name
+            self.name = cast(str, self.persona_template_args.get("chatbot_name", role.value)) or model.name
         self.model = model
 
         self.logger = logging.getLogger(repr(self))
-        self.conversation_starter = None  # can either be a dictionary or jinja template
+        self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
@@ -148,7 +149,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
-    ) -> Tuple[dict, dict, int, dict]:
+    ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
 
@@ -161,7 +162,7 @@ class ConversationBot:
         :param turn_number: Parameters used to query GPT-4 model.
         :type turn_number: int
         :return: The response from the ConversationBot.
-        :rtype: Tuple[dict, dict, int, dict]
+        :rtype: Tuple[dict, dict, float, dict]
         """
 
         # check if this is the first turn and the conversation_starter is not None,
@@ -169,11 +170,11 @@ class ConversationBot:
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
             if isinstance(self.conversation_starter, dict):
-                samples = [self.conversation_starter]
+                samples: List[Union[str, jinja2.Template, Dict]] = [self.conversation_starter]
             if isinstance(self.conversation_starter, jinja2.Template):
                 samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
-                samples = [self.conversation_starter]  # type: ignore[attr-defined]
+                samples = [self.conversation_starter]
             time_taken = 0
 
             finish_reason = ["stop"]
@@ -238,7 +239,7 @@ class CallbackConversationBot(ConversationBot):
         self,
         callback: Callable,
         user_template: str,
-        user_template_parameters: Dict,
+        user_template_parameters: TemplateParameters,
         *args,
         **kwargs,
     ) -> None:
@@ -254,7 +255,7 @@ class CallbackConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
-    ) -> Tuple[dict, dict, int, dict]:
+    ) -> Tuple[dict, dict, float, dict]:
         chat_protocol_message = self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
         )

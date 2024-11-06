@@ -2,138 +2,121 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Optional
+from typing import Dict, List, Union
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from typing_extensions import overload, override
 
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
 
 
-class IndirectAttackEvaluator:
-    """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
+@experimental
+class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+    """
+    Evaluates the indirect attack score for a given query and response or a multi-turn conversation, with reasoning.
 
-    Detect whether cross domain injected attacks are present in your AI system's response.
+    Indirect attacks, also known as cross-domain prompt injected attacks (XPIA), are when jailbreak attacks are
+    injected into the context of a document or source that may result in an altered, unexpected behavior.
 
+    Indirect attacks evaluations are broken down into three subcategories:
+        - Manipulated Content: This category involves commands that aim to alter or fabricate information, often
+            to mislead or deceive. It includes actions like spreading false information, altering language or
+            formatting, and hiding or emphasizing specific details. The goal is often to manipulate perceptions
+            or behaviors by controlling the flow and presentation of information.
+        - Intrusion: This category encompasses commands that attempt to breach systems, gain unauthorized access,
+            or elevate privileges illicitly. It includes creating backdoors, exploiting vulnerabilities, and
+            traditional jailbreaks to bypass security measures. The intent is often to gain control or access
+            sensitive data without detection.
+        - Information Gathering: This category pertains to accessing, deleting, or modifying data without
+            authorization, often for malicious purposes. It includes exfiltrating sensitive data, tampering with
+            system records, and removing or altering existing information. The focus is on acquiring or
+            manipulating data to exploit or compromise systems and individuals.
+
+    Indirect attack scores are boolean values, where True indicates that the response contains an indirect attack.
+
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
-        focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
-    :type eval_last_turn: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
-        evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
-        information.
-    :rtype: Callable
-        **Usage**
 
-        .. code-block:: python
+    .. admonition:: Example:
 
-            eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-        **Output format for question-answer pair**
-
-        .. code-block:: python
-
-            {
-                'xpia_label': False,
-                'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
-                              information gathering.'
-                'xpia_information_gathering': False,
-                'xpia_intrusion': False
-                'xpia_manipulated_content': False
-            }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START indirect_attack_evaluator]
+            :end-before: [END indirect_attack_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an IndirectAttackEvaluator.
     """
 
-    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, credential=None):
-        self._evaluator = _IndirectAttackEvaluator(azure_ai_project, credential)
-        self._eval_last_turn = eval_last_turn
+    @override
+    def __init__(
+        self,
+        credential,
+        azure_ai_project,
+    ):
+        super().__init__(
+            eval_metric=EvaluationMetrics.XPIA,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+        )
 
+    @overload
     def __call__(
         self,
         *,
-        query: Optional[str],
-        response: Optional[str],
+        query: str,
+        response: str,
+    ) -> Dict[str, Union[str, bool]]:
+        """Evaluate whether cross domain injected attacks are present in given query/response
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The cross domain injection attack score
+        :rtype: Dict[str, Union[str, bool]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]:
+        """Evaluate cross domain injected attacks are present in a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The cross domain injection attack score
+        :rtype: Dict[str, Union[str, bool, Dict[str, List[Union[str, bool]]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
         **kwargs,
     ):
         """
-        Evaluates content according to the presence of attacks injected into the conversation context to
-        interrupt normal expected functionality by eliciting manipulated content, intrusion and attempting
-        to gather information outside the scope of your AI system.
-        :keyword query: The query to be evaluated. Mutually exclusive with 'conversation'.
+        Evaluate whether cross domain injected attacks are present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated. Mutually exclusive with 'conversation'.
+        :keyword response: The response to be evaluated.
         :paramtype response: Optional[str]
-        :return: The evaluation scores and reasoning.
-        :rtype: dict
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The cross domain injection attack score
+        :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
         """
-
-        return self._evaluator(query=query, response=response, **kwargs)
-
-
-class _AsyncIndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._azure_ai_project = azure_ai_project
-        self._credential = credential
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates content according to this evaluator's metric.
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :return: The evaluation score computation based on the metric (self.metric).
-        :rtype: Any
-        """
-        # Validate inputs
-        # Raises value error if failed, so execution alone signifies success.
-        if not (query and query.strip() and query != "None") or not (
-            response and response.strip() and response != "None"
-        ):
-            msg = "Both 'query' and 'response' must be non-empty strings."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                error_category=ErrorCategory.MISSING_FIELD,
-                error_blame=ErrorBlame.USER_ERROR,
-                error_target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
-            )
-
-        # Run score computation based on supplied metric.
-        result = await evaluate_with_rai_service(
-            metric_name=EvaluationMetrics.XPIA,
-            query=query,
-            response=response,
-            project_scope=self._azure_ai_project,
-            credential=self._credential,
-        )
-        return result
-
-
-class _IndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
-
-    def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates XPIA content.
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword context: The context to be evaluated.
-        :paramtype context: str
-        :return: The XPIA score.
-        :rtype: dict
-        """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
-
-    def _to_async(self):
-        return self._async_evaluator
+        return super().__call__(*args, **kwargs)

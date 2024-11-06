@@ -17,15 +17,15 @@ from azure.servicebus.management._generated._serialization import Model
 from azure.servicebus.management._generated.models import _models
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     members = inspect.getmembers(_models, inspect.isclass)
     class_names = []
     model_class_attributes_string = "MODEL_CLASS_ATTRIBUTES = {\n"
     for class_name, class_ in members:
         if issubclass(class_, Model) and len(class_._attribute_map) > 1:
-            attributes = ", ".join('"'+x + '"' for x in class_._attribute_map.keys())
+            attributes = ", ".join('"' + x + '"' for x in class_._attribute_map.keys())
             attributes = "    {}: ({})".format(class_name, attributes)
-            model_class_attributes_string += attributes+",\n"
+            model_class_attributes_string += attributes + ",\n"
             class_names.append(class_name)
     model_class_attributes_string += "}\n"
     print("from azure.servicebus.management._generated.models import", ", ".join(class_names))

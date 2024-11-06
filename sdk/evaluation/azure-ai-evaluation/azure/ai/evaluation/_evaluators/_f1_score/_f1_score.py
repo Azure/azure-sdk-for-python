@@ -15,6 +15,16 @@ class _AsyncF1ScoreEvaluator:
         pass
 
     async def __call__(self, *, response: str, ground_truth: str, **kwargs):
+        """
+        Evaluate F1 score.
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The F1 score.
+        :rtype: Dict[str, float]
+        """
         # Validate inputs
         if not (response and response.strip() and response != "None") or not (
             ground_truth and ground_truth.strip() and ground_truth != "None"
@@ -34,7 +44,7 @@ class _AsyncF1ScoreEvaluator:
         return {"f1_score": f1_result}
 
     @classmethod
-    def _compute_f1_score(cls, response: str, ground_truth: str) -> str:
+    def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
         import re
         import string
 
@@ -76,11 +86,9 @@ class _AsyncF1ScoreEvaluator:
 
             return white_space_fix(remove_articles(remove_punctuation(lower(text))))
 
-        prediction_tokens = normalize_text(response)
-        reference_tokens = normalize_text(ground_truth)
         tokenizer = QASplitTokenizer()
-        prediction_tokens = tokenizer(prediction_tokens)
-        reference_tokens = tokenizer(reference_tokens)
+        prediction_tokens = tokenizer(normalize_text(response))
+        reference_tokens = tokenizer(normalize_text(ground_truth))
 
         common_tokens = Counter(prediction_tokens) & Counter(reference_tokens)
         num_common_tokens = sum(common_tokens.values())
@@ -98,25 +106,29 @@ class _AsyncF1ScoreEvaluator:
 
 class F1ScoreEvaluator:
     """
-    Initialize a f1 score evaluator for calculating F1 score.
+    Calculates the F1 score for a given response and ground truth or a multi-turn conversation.
 
-    **Usage**
+    F1 Scores range from 0 to 1, with 1 being the best possible score.
 
-    .. code-block:: python
+    The F1-score computes the ratio of the number of shared words between the model generation and
+    the ground truth. Ratio is computed over the individual words in the generated response against those in the ground
+    truth answer. The number of shared words between the generation and the truth is the basis of the F1 score:
+    precision is the ratio of the number of shared words to the total number of words in the generation, and recall
+    is the ratio of the number of shared words to the total number of words in the ground truth.
 
-        eval_fn = F1ScoreEvaluator()
-        result = eval_fn(
-            response="The capital of Japan is Tokyo.",
-            ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
+    Use the F1 score when you want a single comprehensive metric that combines both recall and precision in your
+    model's responses. It provides a balanced evaluation of your model's performance in terms of capturing accurate
+    information in the response.
 
-    **Output format**
 
-    .. code-block:: python
+    .. admonition:: Example:
 
-        {
-            "f1_score": 0.42
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START f1_score_evaluator]
+            :end-before: [END f1_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an F1ScoreEvaluator.
     """
 
     def __init__(self):
@@ -131,7 +143,7 @@ class F1ScoreEvaluator:
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
         :return: The F1 score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
 
         return async_run_allowing_running_loop(
