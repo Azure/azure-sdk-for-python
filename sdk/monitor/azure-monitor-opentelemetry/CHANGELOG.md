@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Removed version of OpenTelemetry that broke instrumentation logic in switch to importlib.
+- Fixed bug caused by migration from pkg_resources to importlib-metadata
     ([#38366](https://github.com/Azure/azure-sdk-for-python/pull/38366))
 
 ## 1.6.3 (2024-11-04)
