@@ -721,7 +721,7 @@ class _AIInferenceInstrumentorPreview:
                                     parameter names and parameter values are traced.
         :type enable_content_recording: bool
         """
-        global _trace_inference_content # pylint: disable=W0603
+        global _trace_inference_content  # pylint: disable=W0603
         _trace_inference_content = enable_content_recording
 
     def _is_content_recording_enabled(self) -> bool:
