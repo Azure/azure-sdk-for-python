@@ -39,6 +39,9 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
+    id = "protected_material"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,

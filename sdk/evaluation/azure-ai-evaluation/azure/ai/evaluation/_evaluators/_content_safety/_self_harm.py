@@ -52,6 +52,9 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a SelfHarmEvaluator.
     """
 
+    id = "self_harm"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,
