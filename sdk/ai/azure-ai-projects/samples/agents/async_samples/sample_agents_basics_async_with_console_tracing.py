@@ -32,7 +32,7 @@ import asyncio
 import time
 import sys
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from opentelemetry import trace
 import os
 

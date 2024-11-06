@@ -24,7 +24,7 @@ import asyncio
 import os
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType  #type: ignore
 from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator  #type: ignore
 
