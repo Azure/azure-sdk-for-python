@@ -5,7 +5,7 @@
 ### Bugs Fixed
 
 - Fixed bug caused by migration from pkg_resources to importlib-metadata
-    ([#38366](https://github.com/Azure/azure-sdk-for-python/pull/38366))
+    ([#38371](https://github.com/Azure/azure-sdk-for-python/pull/38371))
 
 ## 1.6.3 (2024-11-04)
 
