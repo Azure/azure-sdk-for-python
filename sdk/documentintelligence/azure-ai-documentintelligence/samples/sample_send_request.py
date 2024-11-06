@@ -33,20 +33,19 @@ def sample_send_request():
 
     client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    with client:
-        # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
-        # Now let's use the `send_request` method to make a resource details fetching request.
-        # The URL of the request should be absolute, and append the API version used for the request.
-        request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-07-31-preview")
-        response = client.send_request(request)
-        response.raise_for_status()
-        response_body = response.json()
-        print(
-            f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
-            f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
-            f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
-            f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
-        )
+    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+    # Now let's use the `send_request` method to make a resource details fetching request.
+    # The URL of the request should be absolute, and append the API version used for the request.
+    request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-07-31-preview")
+    response = client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(
+        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+    )
     # [END send_request]
 
 

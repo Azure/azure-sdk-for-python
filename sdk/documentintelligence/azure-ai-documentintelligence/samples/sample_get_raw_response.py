@@ -40,8 +40,7 @@ def sample_raw_response_hook():
         responses.append(response_status_code)
         responses.append(response_body)
 
-    with client:
-        client.get_resource_info(raw_response_hook=callback)
+    client.get_resource_info(raw_response_hook=callback)
 
     print(f"Response status code is: {responses[0]}")
     print(f"Response body is: {responses[1]}")

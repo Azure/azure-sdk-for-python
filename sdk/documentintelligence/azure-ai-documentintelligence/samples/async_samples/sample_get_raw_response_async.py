@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_raw_response_hook.py
+FILE: sample_raw_response_hook_async.py
 
 DESCRIPTION:
     This sample demonstrates how to get raw response via "raw_response_hook".
 
 USAGE:
-    python sample_raw_response_hook.py
+    python sample_raw_response_hook_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
