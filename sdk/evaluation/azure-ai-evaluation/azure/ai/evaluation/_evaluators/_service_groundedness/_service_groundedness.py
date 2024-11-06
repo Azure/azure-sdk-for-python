@@ -45,6 +45,9 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         for the groundedness pro label will be "groundedness_pro_passing_rate".
     """
 
+    id = "groundedness_pro"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,

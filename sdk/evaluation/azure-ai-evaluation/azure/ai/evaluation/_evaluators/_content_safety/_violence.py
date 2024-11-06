@@ -54,6 +54,9 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a ViolenceEvaluator.
     """
 
+    id = "violence"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,
