@@ -16,8 +16,8 @@ from .._serialization import Deserializer
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-# The correct success response should be "Succeeded", but this has already shipped.
-_FINISHED = frozenset(["success", "canceled", "failed"])
+# The correct success response should be "Succeeded", but this has already shipped. Handle "Succeeded" just in case.
+_FINISHED = frozenset(["succeeded", "success", "canceled", "failed"])
 
 
 def _finished(status):
@@ -71,6 +71,27 @@ class PollingTerminationMixin(LROBasePolling):
         return None  # type: ignore
 
 
+class NoPollingMixin(LROBasePolling):
+    def finished(self) -> bool:
+        """Is this polling finished?
+
+        :rtype: bool
+        :return: Whether this polling is finished
+        """
+        return True
+
+    def status(self) -> str:
+        """Return the current status.
+
+        :rtype: str
+        :return: The current status
+        """
+        return "succeeded"
+
+    def result(self, *args, **kwargs):
+        return self.resource()
+
+
 class SecurityDomainDownloadPolling(OperationResourcePolling):
     def __init__(self) -> None:
         self._polling_url = ""
@@ -121,7 +142,9 @@ class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePollin
             response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))  # pylint: disable=protected-access
+            response_headers["Retry-After"] = deserializer._deserialize(
+                "int", response.headers.get("Retry-After")
+            )  # pylint: disable=protected-access
 
             return _deserialize(SecurityDomainObject, response.json())
 
@@ -135,6 +158,10 @@ class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePollin
         """
         # The final response should actually be the security domain object that was returned in the initial response
         return cast(SecurityDomainObject, self.parse_resource(self._initial_response))
+
+
+class SecurityDomainDownloadNoPolling(SecurityDomainDownloadPollingMethod, NoPollingMixin):
+    pass
 
 
 class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
@@ -175,7 +202,9 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
             response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = deserializer._deserialize("int", response.headers.get("Retry-After"))  # pylint: disable=protected-access
+            response_headers["Retry-After"] = deserializer._deserialize(
+                "int", response.headers.get("Retry-After")
+            )  # pylint: disable=protected-access
 
             return _deserialize(SecurityDomainOperationStatus, response.json())
 
@@ -188,3 +217,13 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
         :return: The built resource.
         """
         return cast(SecurityDomainOperationStatus, self.parse_resource(self._pipeline_response))
+
+
+class SecurityDomainUploadNoPolling(SecurityDomainUploadPollingMethod, NoPollingMixin):
+    def resource(self) -> SecurityDomainOperationStatus:
+        """Return the built resource.
+
+        :rtype: any
+        :return: The built resource.
+        """
+        return cast(SecurityDomainOperationStatus, self.parse_resource(self._initial_response))
