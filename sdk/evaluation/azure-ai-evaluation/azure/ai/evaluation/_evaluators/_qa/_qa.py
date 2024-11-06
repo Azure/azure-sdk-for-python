@@ -26,35 +26,20 @@ class QAEvaluator:
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START qa_evaluator]
+            :end-before: [END qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a QAEvaluator.
 
-        eval_fn = QAEvaluator(model_config)
-        result = qa_eval(
-            query="Tokyo is the capital of which country?",
-            response="Japan",
-            context="Tokyo is the capital of Japan.",
-            ground_truth="Japan"
-        )
+    .. note::
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "groundedness": 3.5,
-            "relevance": 4.0,
-            "coherence": 1.5,
-            "fluency": 4.0,
-            "similarity": 3.0,
-            "gpt_groundedness": 3.5,
-            "gpt_relevance": 4.0,
-            "gpt_coherence": 1.5,
-            "gpt_fluency": 4.0,
-            "gpt_similarity": 3.0,
-            "f1_score": 0.42
-        }
+        To align with our support of a diverse set of models, keys without the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old keys with the `gpt_` prefix are still be present in the output;
+        however, it is recommended to use the new keys moving forward as the old keys will be deprecated in the future.
     """
 
     def __init__(self, model_config, **kwargs):
