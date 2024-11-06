@@ -403,7 +403,7 @@ outputs = asyncio.run(
     )
 )
 
-print(outputs.to_eval_qa_json_lines())
+print(outputs.to_eval_qr_json_lines())
 ```
 #### Direct Attack Simulator
 

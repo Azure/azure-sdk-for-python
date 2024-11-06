@@ -6,12 +6,15 @@ import json
 import logging
 import math
 import os
-from typing import Optional
+from typing import Dict, List, Union
+from typing_extensions import overload
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.math import list_mean_nan_safe
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
@@ -107,9 +110,20 @@ class _AsyncRetrievalScoreEvaluator:
         }
 
 
-class RetrievalEvaluator:
+class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize an evaluator configured for a specific Azure OpenAI model.
+    Evaluates retrieval score for a given query and context or a multi-turn conversation, including reasoning.
+
+    The retrieval measure assesses the AI system's performance in retrieving information
+    for additional context (e.g. a RAG scenario).
+
+    Retrieval scores range from 1 to 5, with 1 being the worst and 5 being the best.
+
+    High retrieval scores indicate that the AI system has successfully extracted and ranked
+    the most relevant information at the top, without introducing bias from external knowledge
+    and ignoring factual correctness. Conversely, low retrieval scores suggest that the AI system
+    has failed to surface the most relevant context chunks at the top of the list
+    and/or introduced bias and ignored factual correctness.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -117,45 +131,58 @@ class RetrievalEvaluator:
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START retrieval_evaluator]
+            :end-before: [END retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RetrievalEvaluator.
 
-        chat_eval = RetrievalEvaluator(model_config)
-        conversation = {
-            "messages": [
-                {"role": "user", "content": "What is the value of 2 + 2?"},
-                {
-                    "role": "assistant", "content": "2 + 2 = 4",
-                    "context": "From 'math_doc.md': Information about additions: 1 + 2 = 3, 2 + 2 = 4"
-                }
-            ]
-        }
-        result = chat_eval(conversation=conversation)
+    .. note::
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_retrieval": 3.0,
-            "retrieval": 3.0,
-            "evaluation_per_turn": {
-                "gpt_retrieval": [1.0, 2.0, 3.0],
-                "retrieval": [1.0, 2.0, 3.0],
-                "retrieval_reason": ["<reasoning for score 1>", "<reasoning for score 2>", "<reasoning for score 3>"]
-            }
-        }
-
-    Note: To align with our support of a diverse set of models, a key without the `gpt_` prefix has been added.
-    To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-    however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    def __init__(self, model_config):
+    def __init__(self, model_config):  # pylint: disable=super-init-not-called
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
 
-    def __call__(self, *, query: Optional[str] = None, context: Optional[str] = None, conversation=None, **kwargs):
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        context: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluates retrieval for a given a query and context
+
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: Optional[str]
+        :return: The scores for Chat scenario.
+        :rtype: Dict[str, Union[str, float]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluates retrieval for a for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
+
+        :keyword conversation: The conversation to be evaluated.
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The scores for Chat scenario.
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
+    def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -167,8 +194,12 @@ class RetrievalEvaluator:
         :keyword conversation: The conversation to be evaluated.
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
-        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[str, float]]]]
         """
+        query = kwargs.pop("query", None)
+        context = kwargs.pop("context", None)
+        conversation = kwargs.pop("conversation", None)
+
         if (query is None or context is None) and conversation is None:
             msg = "Either a pair of 'query'/'context' or 'conversation' must be provided."
             raise EvaluationException(
@@ -192,6 +223,3 @@ class RetrievalEvaluator:
         return async_run_allowing_running_loop(
             self._async_evaluator, query=query, context=context, conversation=conversation, **kwargs
         )
-
-    def _to_async(self):
-        return self._async_evaluator

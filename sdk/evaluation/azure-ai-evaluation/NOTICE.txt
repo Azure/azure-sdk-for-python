@@ -48,3 +48,23 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+License notice for [Is GPT-4 a reliable rater? Evaluating consistency in GPT-4's text ratings](https://www.frontiersin.org/journals/education/articles/10.3389/feduc.2023.1272229/full)
+------------------------------------------------------------------------------------------------------------------
+Copyright © 2023 Hackl, Müller, Granitzer and Sailer. This work is openly licensed via [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
+
+
+License notice for [Is ChatGPT a Good NLG Evaluator? A Preliminary Study](https://aclanthology.org/2023.newsum-1.1) (Wang et al., NewSum 2023)
+------------------------------------------------------------------------------------------------------------------
+Copyright © 2023. This work is openly licensed via [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
+
+
+License notice for [SummEval: Re-evaluating Summarization Evaluation.](https://doi.org/10.1162/tacl_a_00373) (Fabbri et al.)
+------------------------------------------------------------------------------------------------------------------
+© 2021 Association for Computational Linguistics. This work is openly licensed via [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
+
+
+License notice for [Evaluation Metrics in the Era of GPT-4: Reliably Evaluating Large Language Models on Sequence to Sequence Tasks](https://aclanthology.org/2023.emnlp-main.543) (Sottana et al., EMNLP 2023)
+------------------------------------------------------------------------------------------------------------------
+© 2023 Association for Computational Linguistics. This work is openly licensed via [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).

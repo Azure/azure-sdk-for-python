@@ -530,8 +530,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use when the blob size exceeds
-            64MB.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -687,7 +688,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :keyword int max_concurrency:
-            The number of parallel connections with which to download.
+            Maximum number of parallel connections to use when transferring the blob in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:

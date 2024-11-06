@@ -35,6 +35,7 @@ import sys
 
 use_azure_openai_endpoint = True
 
+
 def sample_chat_completions_streaming_with_tools():
     import os
     import json
@@ -79,11 +80,9 @@ def sample_chat_completions_streaming_with_tools():
         str: The airline name, fight number, date and time of the next flight between the cities, in JSON format.
         """
         if origin_city == "Seattle" and destination_city == "Miami":
-            return json.dumps({
-                "airline": "Delta",
-                "flight_number": "DL123",
-                "flight_date": "May 7th, 2024",
-                "flight_time": "10:00AM"})
+            return json.dumps(
+                {"airline": "Delta", "flight_number": "DL123", "flight_date": "May 7th, 2024", "flight_time": "10:00AM"}
+            )
         return json.dumps({"error": "No flights found between the cities"})
 
     # Define a function 'tool' that the model can use to retrieves flight information
@@ -117,10 +116,7 @@ def sample_chat_completions_streaming_with_tools():
         )
     else:
         # Create a chat completions client for Serverless API endpoint or Managed Compute endpoint
-        client = ChatCompletionsClient(
-            endpoint=endpoint,
-            credential=AzureKeyCredential(key)
-        )
+        client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make a streaming chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
@@ -128,10 +124,7 @@ def sample_chat_completions_streaming_with_tools():
         UserMessage(content="What is the next flights from Seattle to Miami?"),
     ]
 
-    response = client.complete(
-        messages=messages,
-        tools=[flight_info],
-        stream=True)
+    response = client.complete(messages=messages, tools=[flight_info], stream=True)
 
     # Note that in the above call we did not specify `tool_choice`. The service defaults to a setting equivalent
     # to specifying `tool_choice=ChatCompletionsToolChoicePreset.AUTO`. Other than ChatCompletionsToolChoicePreset
@@ -158,11 +151,7 @@ def sample_chat_completions_streaming_with_tools():
         AssistantMessage(
             tool_calls=[
                 ChatCompletionsToolCall(
-                    id=tool_call_id,
-                    function=FunctionCall(
-                        name=function_name,
-                        arguments=function_args
-                    )
+                    id=tool_call_id, function=FunctionCall(name=function_name, arguments=function_args)
                 )
             ]
         )
@@ -176,19 +165,10 @@ def sample_chat_completions_streaming_with_tools():
     print(f"Function response = {function_response}")
 
     # Append the function response as a tool message to the chat history
-    messages.append(
-        ToolMessage(
-            tool_call_id=tool_call_id,
-            content=function_response
-        )
-    )
+    messages.append(ToolMessage(tool_call_id=tool_call_id, content=function_response))
 
     # With the additional tools information on hand, get another streaming response from the model
-    response = client.complete(
-        messages=messages,
-        tools=[flight_info],
-        stream=True
-    )
+    response = client.complete(messages=messages, tools=[flight_info], stream=True)
 
     print("Model response = ", end="")
     for update in response:

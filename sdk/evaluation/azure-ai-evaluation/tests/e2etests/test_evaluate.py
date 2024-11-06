@@ -2,15 +2,17 @@ import json
 import math
 import os
 import pathlib
-import time
-
 import pandas as pd
 import pytest
 import requests
 from ci_tools.variables import in_ci
+import uuid
+import tempfile
 
 from azure.ai.evaluation import (
     ContentSafetyEvaluator,
+    ContentSafetyMultimodalEvaluator,
+    SexualMultimodalEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
@@ -18,6 +20,7 @@ from azure.ai.evaluation import (
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
+import azure.ai.evaluation._evaluate._utils as ev_utils
 
 
 @pytest.fixture
@@ -27,9 +30,27 @@ def data_file():
 
 
 @pytest.fixture
+def data_file_no_query():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data_no_query.jsonl")
+
+
+@pytest.fixture
 def data_convo_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_conversation.jsonl")
+
+
+@pytest.fixture
+def multimodal_file_with_imageurls():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "dataset_messages_image_urls.jsonl")
+
+
+@pytest.fixture
+def multimodal_file_with_b64_images():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "dataset_messages_b64_images.jsonl")
 
 
 @pytest.fixture
@@ -171,9 +192,8 @@ class TestEvaluate:
         finally:
             os.chdir(original_working_dir)
 
-    @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file, azure_cred):
+    @pytest.mark.parametrize("parallel", [True, False])
+    def test_evaluate_with_content_safety_evaluator(self, project_scope, azure_cred, data_file, parallel):
         input_data = pd.read_json(data_file, lines=True)
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
@@ -181,7 +201,7 @@ class TestEvaluate:
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
         content_safety_eval = ContentSafetyEvaluator(
-            azure_ai_project=project_scope, credential=azure_cred, parallel=False
+            credential=azure_cred, azure_ai_project=project_scope, _parallel=parallel
         )
 
         # run the evaluation
@@ -212,13 +232,159 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
+    def test_saving_b64_images(self, multimodal_file_with_b64_images):
+        instance_results = pd.read_json(multimodal_file_with_b64_images, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for key, item in instance_results["conversation"].items():
+                ev_utils._store_multimodal_content(item["messages"], tmpdir)
+            image_folder = os.path.join(tmpdir, "images")
+            files = [file for file in os.listdir(image_folder)]
+            assert isinstance(files, list), "The result should be a list"
+            assert 1 == len(files), "file1.txt should be present in the folder"
+
+    def test_evaluate_with_content_safety_multimodal_evaluator(
+        self, project_scope, azure_cred, multimodal_file_with_imageurls
+    ):
+        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
+        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
+        content_safety_eval = ContentSafetyMultimodalEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
+        )
+        result = evaluate(
+            evaluation_name=f"test-mm-eval-dataset-img-url-{str(uuid.uuid4())}",
+            azure_ai_project=project_scope,
+            data=multimodal_file_with_imageurls,
+            evaluators={"content_safety": content_safety_eval},
+            evaluator_config={
+                "content_safety": {"conversation": "${data.conversation}"},
+            },
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
+
+        assert "content_safety.sexual_defect_rate" in metrics.keys()
+        assert "content_safety.violence_defect_rate" in metrics.keys()
+        assert "content_safety.self_harm_defect_rate" in metrics.keys()
+        assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
+
+        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
+
+    def test_evaluate_with_content_safety_multimodal_evaluator_with_target(
+        self, project_scope, azure_cred, multimodal_file_with_imageurls
+    ):
+        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
+        from .target_fn import target_multimodal_fn1
+
+        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
+        content_safety_eval = ContentSafetyMultimodalEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
+        )
+        result = evaluate(
+            evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
+            azure_ai_project=project_scope,
+            data=multimodal_file_with_imageurls,
+            target=target_multimodal_fn1,
+            evaluators={"content_safety": content_safety_eval},
+            evaluator_config={
+                "content_safety": {"conversation": "${data.conversation}"},
+            },
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
+
+        assert "content_safety.sexual_defect_rate" in metrics.keys()
+        assert "content_safety.violence_defect_rate" in metrics.keys()
+        assert "content_safety.self_harm_defect_rate" in metrics.keys()
+        assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
+
+        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
+
+    def test_evaluate_with_sexual_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
+        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
+        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
+        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+
+        result = evaluate(
+            evaluation_name=f"test-mm-sexual-eval-dataset-img-url-{str(uuid.uuid4())}",
+            azure_ai_project=project_scope,
+            data=multimodal_file_with_imageurls,
+            evaluators={"sexual": eval},
+            evaluator_config={
+                "sexual": {"conversation": "${data.conversation}"},
+            },
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
+        assert "sexual.sexual_defect_rate" in metrics.keys()
+        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
+
+    def test_evaluate_with_sexual_multimodal_evaluator_b64_images(
+        self, project_scope, azure_cred, multimodal_file_with_b64_images
+    ):
+        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
+        input_data = pd.read_json(multimodal_file_with_b64_images, lines=True)
+        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        result = evaluate(
+            evaluation_name=f"test-mm-sexual-eval-dataset-img-b64-{str(uuid.uuid4())}",
+            azure_ai_project=project_scope,
+            data=multimodal_file_with_b64_images,
+            evaluators={"sexual": eval},
+            evaluator_config={
+                "sexual": {"conversation": "${data.conversation}"},
+            },
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
+        assert "sexual.sexual_defect_rate" in metrics.keys()
+        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
+
     def test_evaluate_with_groundedness_pro_evaluator(self, project_scope, data_convo_file, azure_cred):
 
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
         # Internal Parallelism is also disabled to avoid faulty recordings.
-        gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred, parallel=False)
+        gp_eval = GroundednessProEvaluator(azure_ai_project=project_scope, credential=azure_cred)
 
         convo_input_data = pd.read_json(data_convo_file, lines=True)
         # run the evaluation
@@ -566,3 +732,92 @@ class TestEvaluate:
     @pytest.mark.skip(reason="TODO: Add test back")
     def test_prompty_with_threadpool_implementation(self):
         pass
+
+    def test_evaluate_with_groundedness_evaluator_with_query(self, model_config, data_file):
+        # data
+        input_data = pd.read_json(data_file, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_file,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+        assert "grounded.groundedness" in metrics.keys()
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+        assert row_result_df["outputs.grounded.groundedness"][2] in [3, 4, 5]
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_groundedness_evaluator_without_query(self, model_config, data_file_no_query):
+        # data
+        input_data = pd.read_json(data_file_no_query, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_file_no_query,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+
+        assert "grounded.groundedness" in metrics.keys()
+
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+
+        assert row_result_df["outputs.grounded.groundedness"][2] in [3, 4, 5]
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_groundedness_evaluator_with_convo(self, model_config, data_convo_file):
+        # data
+        input_data = pd.read_json(data_convo_file, lines=True)
+
+        groundedness_eval = GroundednessEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_convo_file,
+            evaluators={"grounded": groundedness_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
+        assert "outputs.grounded.evaluation_per_turn" in row_result_df.columns.to_list()
+        assert "grounded.groundedness" in metrics.keys()
+        assert metrics.get("grounded.groundedness") == list_mean_nan_safe(
+            row_result_df["outputs.grounded.groundedness"]
+        )
+        assert row_result_df["outputs.grounded.groundedness"][1] in [3, 4, 5]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness"][0] in [3.0, 4.0, 5.0]
+        assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness_reason"][0] is not None
+        assert result["studio_url"] is None
