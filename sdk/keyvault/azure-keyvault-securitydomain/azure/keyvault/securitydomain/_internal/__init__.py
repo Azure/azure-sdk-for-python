@@ -6,13 +6,20 @@ from collections import namedtuple
 
 from urllib.parse import urlparse
 
-from .async_polling import AsyncSecurityDomainDownloadPollingMethod, AsyncSecurityDomainUploadPollingMethod
+from .async_polling import (
+    AsyncSecurityDomainDownloadNoPolling,
+    AsyncSecurityDomainDownloadPollingMethod,
+    AsyncSecurityDomainUploadNoPolling,
+    AsyncSecurityDomainUploadPollingMethod,
+)
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache
 from .polling import (
+    SecurityDomainDownloadNoPolling,
     SecurityDomainDownloadPolling,
     SecurityDomainDownloadPollingMethod,
+    SecurityDomainUploadNoPolling,
     SecurityDomainUploadPolling,
     SecurityDomainUploadPollingMethod,
 )
@@ -20,13 +27,17 @@ from .polling import (
 HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
 
 __all__ = [
+    "AsyncSecurityDomainDownloadNoPolling",
     "AsyncSecurityDomainDownloadPollingMethod",
+    "AsyncSecurityDomainUploadNoPolling",
     "AsyncSecurityDomainUploadPollingMethod",
     "ChallengeAuthPolicy",
     "HttpChallenge",
     "HttpChallengeCache",
+    "SecurityDomainDownloadNoPolling",
     "SecurityDomainDownloadPolling",
     "SecurityDomainDownloadPollingMethod",
+    "SecurityDomainUploadNoPolling",
     "SecurityDomainUploadPolling",
     "SecurityDomainUploadPollingMethod",
 ]
