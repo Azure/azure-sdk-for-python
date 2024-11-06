@@ -131,7 +131,7 @@ class F1ScoreEvaluator:
             :caption: Initialize and call an F1ScoreEvaluator.
     """
 
-    id = "f1_score"
+    id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self):
