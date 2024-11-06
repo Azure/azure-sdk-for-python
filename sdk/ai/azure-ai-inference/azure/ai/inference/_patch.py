@@ -265,7 +265,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict]],
         stream: Literal[False] = False,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -288,7 +288,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict]],
         stream: Literal[True],
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -311,7 +311,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict]],
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -473,7 +473,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: List[_models.ChatRequestMessage] = _Unset,
+        messages: Union[List[_models.ChatRequestMessage], List[Dict]] = _Unset,
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
