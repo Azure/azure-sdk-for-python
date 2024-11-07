@@ -39,6 +39,331 @@ Use the returned token credential to authenticate the client:
 
 ## Examples
 
+### Agents
+The following steps outline the typical sequence for interacting with agents:
+
+  - <a href='#create-project-client'>Create a project client</a>
+  - <a href='#create-agent'>Create an agent</a> with <a href='#create-agent-with-toolset-or-tools-and-tool-resources'>toolset, or tools and tool resources</a> including:
+    - <a href='#create-agent-with-file-upload-in-vector-store-for-file-search'>File Search with file upload indexed by vector stores</a>
+    - <a href='#create-agent-with-file-upload-for-code-interpreter'>Code Interpreter with file upload</a>
+    - <a href='#create-agent-with-function-tool'>Function calls</a>
+  - <a href='#create-thread'>Create a thread</a>
+  - <a href='#create-message'>Create a message</a> with:
+    - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
+  - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
+  - <a href='#retrieve-messages'>Retrieve messages</a>
+  - <a href='#teardown'>Tear down by deleting resources</a>
+
+
+#### Create Project Client
+
+To create a project client, use the following example:
+
+<!-- SNIPPET:sample_agents_basics.create_project_client -->
+
+```python
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent
+
+Here is an example of create an agent:
+<!-- SNIPPET:sample_agents_basics.create_agent -->
+
+```python
+   
+ agent = project_client.agents.create_agent(
+     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+ )
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with Toolset, or Tools and Tool Resources
+In order to use tools, you can provide toolset.  Here is an example:
+<!-- SNIPPET:sample_agents_run_with_toolset.create_agent_toolset -->
+
+```python
+   
+ functions = FunctionTool(user_functions)
+ code_interpreter = CodeInterpreterTool()
+
+ toolset = ToolSet()
+ toolset.add(functions)
+ toolset.add(code_interpreter)
+     
+ agent = project_client.agents.create_agent(
+     model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+ )
+```
+
+<!-- END SNIPPET -->
+
+Alternatively you can provide tool and tool resources.   Here is an example:
+<!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
+
+```python
+file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
+
+# notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=file_search_tool.definitions,
+    tool_resources=file_search_tool.resources,
+)
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with File Upload in Vector Store for File Search
+To perform file search by an agent, we first need to upload a file, create a vector store, and associate the file to the vector store.
+Here is an example:
+
+<!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
+
+```python
+file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+print(f"Uploaded file, file ID: {file.id}")
+
+vector_store = project_client.agents.create_vector_store_and_poll(
+    file_ids=[file.id], name="my_vectorstore"
+)
+print(f"Created vector store, vector store ID: {vector_store.id}")
+
+# Create file search tool with resources followed by creating agent
+file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="Hello, you are helpful assistant and can search information from uploaded files",
+    tools=file_search.definitions,
+    tool_resources=file_search.resources,
+)
+```
+
+<!-- END SNIPPET -->
+
+Again, you can define `toolset` instead of passing `tools` and `tool_resources`.
+
+#### Create Agent with File Upload for Code Interpreter
+Here is an example to upload a file and use it for code interpreter by an agent:
+
+<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_creae_agent_with_code_interpreter -->
+
+```python
+file = project_client.agents.upload_file_and_poll(
+    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
+)
+print(f"Uploaded file, file ID: {file.id}")
+
+code_interpreter = CodeInterpreterTool(file_ids=[file.id])
+
+# notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=code_interpreter.definitions,
+    tool_resources=code_interpreter.resources,
+)
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with Function Tool
+You can enhance your agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
+
+- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within the `Run` or `Stream` context. Agents will invoke these functions based on their definitions.
+- `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler` will raise a `requires_action` status based on the function definitions. Your code must handle this status and invoke the appropriate functions.
+ 
+For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](samples/agents/sample_agents_functions.py).
+
+Here is an example to use [user functions](samples/agents/user_function.py) in `toolset`:
+<!-- SNIPPET:sample_agents_stream_eventhandler_with_toolset.create_agent_with_function_tool -->
+
+```python
+functions = FunctionTool(user_functions)
+toolset = ToolSet()
+toolset.add(functions)
+
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+)
+```
+
+<!-- END SNIPPET -->
+
+For asynchronized functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronized user functions](samples/agents/async_samples/user_async_functions.py):   
+
+```python
+from azure.ai.projects.aio import AIProjectClient
+```
+
+<!-- SNIPPET:sample_agents_run_with_toolset_async.create_agent_with_async_function_tool -->
+
+```python
+functions = AsyncFunctionTool(user_async_functions)
+
+toolset = AsyncToolSet()
+toolset.add(functions)
+
+agent = await project_client.agents.create_agent(
+    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+)
+```
+
+<!-- END SNIPPET -->
+
+#### Create Message
+
+To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
+
+<!-- SNIPPET:sample_agents_basics.create_message -->
+
+```python
+   
+ agent = project_client.agents.create_agent(
+     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+ )
+```
+
+<!-- END SNIPPET -->
+
+#### Create Message with File Search Attachment
+To attach a file to a message, you need to `MessageAttachment` and `FileSearchTool`:
+
+<!-- SNIPPET:sample_agents_with_file_search_attachment.create_message_with_attachment -->
+
+```python
+attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
+
+#### Create Run, Run_and_Process, or Stream
+
+To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
+
+Here is an example using `create_run`:
+
+<!-- SNIPPET:sample_agents_basics.create_run -->
+
+```python
+run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+
+# poll the run as long as run status is queued or in progress
+while run.status in ["queued", "in_progress", "requires_action"]:
+    # wait for a second
+    time.sleep(1)
+    run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+```
+
+<!-- END SNIPPET -->
+
+Here is an example using `create_and_process_run`:
+
+<!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
+
+```python
+run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+```
+
+<!-- END SNIPPET -->
+
+Here is an example using `create_stream`:
+
+<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
+
+```python
+   
+ with project_client.agents.create_stream(
+     thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+ ) as stream:
+     stream.until_done()
+```
+
+<!-- END SNIPPET -->
+
+The event handler is optional. Here is an example:
+
+<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
+
+```python
+   
+class MyEventHandler(AgentEventHandler):
+ def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+     for content_part in delta.delta.content:
+         if isinstance(content_part, MessageDeltaTextContent):
+             text_value = content_part.text.value if content_part.text else "No text"
+             print(f"Text delta received: {text_value}")
+
+ def on_thread_message(self, message: "ThreadMessage") -> None:
+     print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+
+ def on_thread_run(self, run: "ThreadRun") -> None:
+     print(f"ThreadRun status: {run.status}")
+
+ def on_run_step(self, step: "RunStep") -> None:
+     print(f"RunStep type: {step.type}, Status: {step.status}")
+
+ def on_error(self, data: str) -> None:
+     print(f"An error occurred. Data: {data}")
+
+ def on_done(self) -> None:
+     print("Stream completed.")
+
+ def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+     print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+```
+
+<!-- END SNIPPET -->
+
+<!-- END SNIPPET -->
+
+#### Retrieve Messages
+
+To retrieve messages from agents, use the following example:
+
+<!-- SNIPPET:sample_agents_basics.list_messages -->
+
+```python
+messages = project_client.agents.list_messages(thread_id=thread.id)
+```
+
+<!-- END SNIPPET -->
+
+#### Teardown
+
+To remove resources after completing tasks, use the following functions:
+
+<!-- SNIPPET:sample_agents_file_search.teardown -->
+
+```python
+# Delete the file when done
+project_client.agents.delete_vector_store(vector_store.id)
+print("Deleted vector store")
+
+project_client.agents.delete_file(file_id=file.id)
+print("Deleted file")
+
+# Delete the agent when done
+project_client.agents.delete_agent(agent.id)
+print("Deleted agent")
+```
+
+## Examples
+
 ```python
 >>> from azure.ai.projects import AIProjectClient
 >>> from azure.identity import DefaultAzureCredential
@@ -77,4 +402,6 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+
+
 
