@@ -17,6 +17,7 @@ from azure.ai.evaluation import (
     FluencyEvaluator,
     GroundednessEvaluator,
     GroundednessProEvaluator,
+    RetrievalEvaluator,
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
@@ -819,4 +820,67 @@ class TestEvaluate:
         assert row_result_df["outputs.grounded.groundedness"][1] in [3, 4, 5]
         assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness"][0] in [3.0, 4.0, 5.0]
         assert row_result_df["outputs.grounded.evaluation_per_turn"][0]["groundedness_reason"][0] is not None
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_retrieval_evaluator_with_convo(self, model_config, data_convo_file):
+        # data
+        input_data = pd.read_json(data_convo_file, lines=True)
+
+        retrieval_eval = RetrievalEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_convo_file,
+            evaluators={"retrieval": retrieval_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.retrieval.retrieval" in row_result_df.columns.to_list()
+        assert "outputs.retrieval.gpt_retrieval" in row_result_df.columns.to_list()
+        assert "outputs.retrieval.evaluation_per_turn" in row_result_df.columns.to_list()
+        assert "retrieval.retrieval" in metrics.keys()
+        assert "retrieval.gpt_retrieval" in metrics.keys()
+        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(
+            row_result_df["outputs.retrieval.retrieval"]
+        )
+        assert row_result_df["outputs.retrieval.retrieval"][1] in [0.0, 1.0, 2.0]
+        assert row_result_df["outputs.retrieval.evaluation_per_turn"][0]["retrieval"][0] in [0.0, 1.0, 2.0]
+        assert row_result_df["outputs.retrieval.evaluation_per_turn"][0]["retrieval_reason"][0] is not None
+        assert result["studio_url"] is None
+
+    def test_evaluate_with_retrieval_evaluator_with_column_mappings(self, model_config, data_file):
+        # data
+        input_data = pd.read_json(data_file, lines=True)
+
+        retrieval_eval = RetrievalEvaluator(model_config)
+
+        # run the evaluation
+        result = evaluate(
+            data=data_file,
+            evaluators={"retrieval": retrieval_eval},
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+
+        # validate the results
+        assert result is not None
+        assert result["rows"] is not None
+        assert row_result_df.shape[0] == len(input_data)
+
+        assert "outputs.retrieval.retrieval" in row_result_df.columns.to_list()
+        assert "outputs.retrieval.gpt_retrieval" in row_result_df.columns.to_list()
+        assert "retrieval.retrieval" in metrics.keys()
+        assert "retrieval.gpt_retrieval" in metrics.keys()
+        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(
+            row_result_df["outputs.retrieval.retrieval"]
+        )
+        assert row_result_df["outputs.retrieval.retrieval"][1] in [0.0, 1.0, 2.0]
         assert result["studio_url"] is None
