@@ -138,12 +138,11 @@ def validate_kwargs(
             raise TypeError(
                 f"'is_start_from_beginning' must be 'bool' type,"
                 f" but given '{type(kwargs['is_start_from_beginning']).__name__}'.")
-
     elif "start_time" in kwargs:
         start_time = kwargs['start_time']
-        if not isinstance(start_time, datetime) and not isinstance(start_time, str):
+        if isinstance(start_time, str):
+            if start_time.lower() not in ["now", "beginning"]:
+                raise ValueError(f"'start_time' must be either 'Now' or 'Beginning', but given '{start_time}'.")
+        elif not isinstance(start_time, datetime):
             raise TypeError(
                 f"'start_time' must be either a 'datetime' or 'str' type, but given '{type(start_time).__name__}'.")
-
-        if isinstance(start_time, str) and start_time.lower() not in ["now", "beginning"]:
-            raise ValueError(f"'start_time' must be either 'Now' or 'Beginning', but given '{start_time}'.")
