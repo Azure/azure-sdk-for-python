@@ -1,14 +1,11 @@
 # Release History
 
-## 1.6.4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.6.4 (2024-11-06)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed bug caused by migration from pkg_resources to importlib-metadata
+    ([#38371](https://github.com/Azure/azure-sdk-for-python/pull/38371))
 
 ## 1.6.3 (2024-11-04)
 
