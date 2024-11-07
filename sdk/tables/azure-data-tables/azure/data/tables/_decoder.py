@@ -106,15 +106,25 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
                 properties[name] = value
 
         # prepare metadata
-        raw_timestamp: Optional[str] = properties.pop("Timestamp")  # type: ignore[assignment]
-        raw_etag: Optional[str] = odata.pop("etag")  # type: ignore[assignment]
-        timestamp = None
-        etag = None
+        raw_timestamp: Optional[str] = properties.pop("Timestamp", None)  # type: ignore[assignment]
+        raw_etag: Optional[str] = odata.pop("etag", None)  # type: ignore[assignment]
+        timestamp = raw_timestamp
+        etag = raw_etag
         if raw_timestamp:
             if not raw_etag:
                 etag = f"W/\"datetime'{quote(raw_timestamp)}'\""
             timestamp = _from_entity_datetime(raw_timestamp)
         metadata: EntityMetadata = {"etag": etag, "timestamp": timestamp}
+        odata.pop("metadata", None)
+        id = odata.pop("id", None)
+        if id:
+            metadata["id"] = id
+        type = odata.pop("type", None)
+        if type:
+            metadata["type"] = type
+        editLink = odata.pop("editLink", None)
+        if editLink:
+            metadata["editLink"] = editLink
         decoded._metadata = metadata  # pylint: disable=protected-access
 
         for name, value in properties.items():
