@@ -17,7 +17,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 
 
 @experimental
-def create_distillation(
+def distillation(
     *,
     experiment_name: str,
     data_generation_type: str,

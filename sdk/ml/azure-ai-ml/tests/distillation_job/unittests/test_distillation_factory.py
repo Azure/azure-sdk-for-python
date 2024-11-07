@@ -2,7 +2,7 @@ import pytest
 
 from azure.ai.ml import Input
 from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType
-from azure.ai.ml.distillation import create_distillation
+from azure.ai.ml.model_customization import distillation
 from azure.ai.ml.entities import NoneCredentialConfiguration, ServerlessConnection, WorkspaceConnection
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
@@ -11,7 +11,7 @@ from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSetting
 
 class TestDistillationJob:
     def test_distillation_function(self):
-        distillation_job = create_distillation(
+        distillation_job = distillation(
             experiment_name="llama-test",
             data_generation_type=DataGenerationType.DATA_GENERATION,
             data_generation_task_type=DataGenerationTaskType.SUMMARIZATION,
@@ -47,7 +47,7 @@ class TestDistillationJob:
 
     def test_distillation_function_fails_no_training_data(self):
         with pytest.raises(ValueError) as exception:
-            _ = create_distillation(
+            _ = distillation(
                 experiment_name="llama-test",
                 data_generation_type=DataGenerationType.LABEL_GENERATION,
                 data_generation_task_type=DataGenerationTaskType.NLI,
@@ -64,7 +64,7 @@ class TestDistillationJob:
 
     def test_distillation_function_fails_no_validation_data(self):
         with pytest.raises(ValueError) as exception:
-            _ = create_distillation(
+            _ = distillation(
                 experiment_name="llama-test",
                 data_generation_type=DataGenerationType.LABEL_GENERATION,
                 data_generation_task_type=DataGenerationTaskType.NLI,

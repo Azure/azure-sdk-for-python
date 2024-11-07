@@ -8,6 +8,6 @@ from azure.ai.ml.entities._job.distillation.endpoint_request_settings import End
 from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
 from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
 
-from ._distillation import create_distillation
+from ._distillation import distillation
 
-__all__ = ["create_distillation", "EndpointRequestSettings", "PromptSettings", "TeacherModelSettings"]
+__all__ = ["distillation", "EndpointRequestSettings", "PromptSettings", "TeacherModelSettings"]
