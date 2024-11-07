@@ -66,7 +66,7 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace_async
-    async def get_chat_completions_client(self, **kwargs) -> "Optional[ChatCompletionsClient]":
+    async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
@@ -133,7 +133,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_embeddings_client(self, **kwargs) -> "Optional[EmbeddingsClient]":
+    async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.

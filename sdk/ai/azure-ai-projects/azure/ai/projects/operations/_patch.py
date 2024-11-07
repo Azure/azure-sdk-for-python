@@ -125,7 +125,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "Optional[EmbeddingsClient]":
+    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
