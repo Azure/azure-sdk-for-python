@@ -46,7 +46,8 @@ The following steps outline the typical sequence for interacting with agents:
     - <a href='#create-agent-with-file-upload-in-vector-store-for-file-search'>File Search with file upload indexed by vector stores</a>
     - <a href='#create-agent-with-file-upload-for-code-interpreter'>Code Interpreter with file upload</a>
     - <a href='#create-agent-with-function-tool'>Function calls</a>
-  - <a href='#create-thread'>Create a thread</a>
+  - <a href='#create-thread'>Create a thread</a> with
+     - <a href='#create-thread-with-tool-resource'>Tool resource</a>
   - <a href='#create-message'>Create a message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
     - <a href='#create-message-with-code-interpreter-file-attachment'>Code interpreter attachment</a>
@@ -77,9 +78,32 @@ project_client = AIProjectClient.from_connection_string(
 
 <!-- END SNIPPET -->
 
+Because the client is under resource and context manager, you are required to use `with` or `async with` to consume the client object:
+
+```python
+# For synchronize
+with project_client:
+    agent = project_client.agents.create_agent(
+                model="gpt-4-1106-preview", 
+                name="my-assistant", 
+                instructions="You are helpful assistant"
+ )
+
+# For asynchronize
+async with project_client:
+    agent = project_client.agents.create_agent(
+                model="gpt-4-1106-preview", 
+                name="my-assistant", 
+                instructions="You are helpful assistant"
+ )
+
+```
+
+In the sections below, we will only provide code snips in synchronized functions
+
 #### Create Agent
 
-Here is an example of create an agent:
+Now you should have your project client.  From the project client, you create an agent to serve the end users.  An agent should Here is an example of create an agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
@@ -229,6 +253,47 @@ agent = await project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
+#### Create Thread
+
+For each session or conversation, a thread is required.   Here is an example:
+
+<!-- SNIPPET:sample_agents_basics.create_thread -->
+
+```python
+   
+ thread = project_client.agents.create_thread()
+```
+
+<!-- END SNIPPET -->
+
+#### Create Thread with Tool Resource
+
+In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector storre and upload a file, enable an agent for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
+
+
+<!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
+
+```python
+file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+print(f"Uploaded file, file ID: {file.id}")
+
+vector_store = project_client.agents.create_vector_store_and_poll(
+    file_ids=[file.id], name="my_vectorstore"
+)
+print(f"Created vector store, vector store ID: {vector_store.id}")
+
+# Create file search tool with resources followed by creating agent
+file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="Hello, you are helpful assistant and can search information from uploaded files",
+    tools=file_search.definitions,
+)
+```
+
+<!-- END SNIPPET -->
 #### Create Message
 
 To create a message for assistant to process, you pass `user` as `role` and a question as `content`:
@@ -256,7 +321,9 @@ message = project_client.agents.create_message(
 <!-- END SNIPPET -->
 
 #### Create Message with Code Interpreter File Attachment
-To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`.  You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  Here is an example:
+To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`.  You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
+
+Here is an example to pass `CodeInterpreterTool` as tool:
 
 <!-- SNIPPET:sample_agents_with_code_interpreter_file_attachment.create_agent_and_message_with_code_interpreter_file_attachment -->
 
