@@ -2,21 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import json
 import logging
-import math
 import os
 from typing import Dict, List, Union
 from typing_extensions import overload, override
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-from promptflow.core import AsyncPrompty
-
 from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
-from ..._common.math import list_mean_nan_safe
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +49,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
+
     _PROMPTY_FILE = "retrieval.prompty"
     _RESULT_KEY = "retrieval"
 

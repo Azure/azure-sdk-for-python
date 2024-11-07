@@ -847,9 +847,7 @@ class TestEvaluate:
         assert "outputs.retrieval.evaluation_per_turn" in row_result_df.columns.to_list()
         assert "retrieval.retrieval" in metrics.keys()
         assert "retrieval.gpt_retrieval" in metrics.keys()
-        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(
-            row_result_df["outputs.retrieval.retrieval"]
-        )
+        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(row_result_df["outputs.retrieval.retrieval"])
         assert row_result_df["outputs.retrieval.retrieval"][1] in [0.0, 1.0, 2.0]
         assert row_result_df["outputs.retrieval.evaluation_per_turn"][0]["retrieval"][0] in [0.0, 1.0, 2.0]
         assert row_result_df["outputs.retrieval.evaluation_per_turn"][0]["retrieval_reason"][0] is not None
@@ -879,8 +877,6 @@ class TestEvaluate:
         assert "outputs.retrieval.gpt_retrieval" in row_result_df.columns.to_list()
         assert "retrieval.retrieval" in metrics.keys()
         assert "retrieval.gpt_retrieval" in metrics.keys()
-        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(
-            row_result_df["outputs.retrieval.retrieval"]
-        )
+        assert metrics.get("retrieval.retrieval") == list_mean_nan_safe(row_result_df["outputs.retrieval.retrieval"])
         assert row_result_df["outputs.retrieval.retrieval"][1] in [0.0, 1.0, 2.0]
         assert result["studio_url"] is None
