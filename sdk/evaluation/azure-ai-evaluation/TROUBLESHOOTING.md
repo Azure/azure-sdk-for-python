@@ -23,7 +23,7 @@ This guide walks you through how to investigate failures, common errors in the `
     pip install azure-ai-evaluation[remote]
     ```
 
-- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://review.learn.microsoft.com/azure/ai-studio/how-to/disable-local-auth).
+- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
 
     ```Shell
     az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
