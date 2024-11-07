@@ -400,7 +400,7 @@ def validate_conversation(conversation):
         if message.get("role") == "assistant":
             assistantMessageCount = assistantMessageCount + 1
         if message.get("role") == "user":
-            userMessageCount = userMessageCount + 1    
+            userMessageCount = userMessageCount + 1
         content = message.get("content")
         if not isinstance(content, (str, list)):
             raise_exception(

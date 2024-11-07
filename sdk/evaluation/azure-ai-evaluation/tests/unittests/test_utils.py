@@ -8,6 +8,7 @@ from azure.ai.evaluation._common.utils import nltk_tokenize
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._exceptions import EvaluationException
 
+
 @pytest.mark.unittest
 class TestUtils:
     def test_nltk_tokenize(self):
@@ -55,7 +56,7 @@ class TestUtils:
             for json_obj in messages:
                 json_line = json.dumps(json_obj)
                 outfile.write(json_line + "\n")
-    
+
     def test_messages_with_one_assistant_message(self):
         conversation = {
             "messages": [
@@ -89,7 +90,7 @@ class TestUtils:
             ]
         }
         validate_conversation(conversation=conversation)
-    
+
     def test_messages_with_missing_assistant_message(self):
         conversation = {
             "messages": [
@@ -110,14 +111,14 @@ class TestUtils:
                             },
                         },
                     ],
-                }
+                },
             ]
         }
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
             assert ex.message in "One of the messages should have assistant role"
-    
+
     def test_messages_with_missing_user_message(self):
         conversation = {
             "messages": [
@@ -138,14 +139,14 @@ class TestUtils:
                             },
                         },
                     ],
-                }
+                },
             ]
         }
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
             assert ex.message in "One of the messages should have user role"
-    
+
     def test_messages_with_more_than_one_assistant_message(self):
         conversation = {
             "messages": [
@@ -190,8 +191,11 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"  
-    
+            assert (
+                ex.message
+                in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"
+            )
+
     def test_messages_multi_turn(self):
         conversation = {
             "messages": [
@@ -248,5 +252,7 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role" 
-    
+            assert (
+                ex.message
+                in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"
+            )

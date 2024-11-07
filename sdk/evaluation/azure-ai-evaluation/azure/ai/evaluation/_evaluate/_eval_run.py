@@ -469,7 +469,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         # we are rewriting already registered artifact and need to skip this step.
         if self._is_promptflow_run:
             return
-        
+
         url = (
             f"https://{self._url_base}/artifact/v2.0/subscriptions/{self._subscription_id}"
             f"/resourceGroups/{self._resource_group_name}/providers/"
@@ -491,12 +491,12 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         )
         if response.status_code != 200:
             self._log_warning("register artifact", response)
-        
-        # register artifacts for images if exists in image folder    
+
+        # register artifacts for images if exists in image folder
         try:
             for remote_path in remote_paths["paths"]:
-                remote_file_path=remote_path["path"]
-                if 'images' in os.path.normpath(remote_file_path).split(os.sep):
+                remote_file_path = remote_path["path"]
+                if "images" in os.path.normpath(remote_file_path).split(os.sep):
                     response = self.request_with_retry(
                         url=url,
                         method="POST",
@@ -514,7 +514,6 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                         self._log_warning("register image artifact", response)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
-        
 
     def _get_datastore_credential(self, datastore: "Datastore"):
         # Reference the logic in azure.ai.ml._artifact._artifact_utilities
