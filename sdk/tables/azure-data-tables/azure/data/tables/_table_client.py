@@ -14,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
+from ._common_conversion import _prepare_key
 from ._encoder import TableEntityEncoder, TableEntityEncoderABC
 from ._decoder import TableEntityDecoder, TableEntityDecoderABC, deserialize_iso
 from ._base_client import parse_connection_str, TablesBaseClient
@@ -313,7 +314,6 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -326,9 +326,6 @@ class TableClient(TablesBaseClient):
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -434,8 +431,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=encoder.prepare_key(partition_key),
-                row_key=encoder.prepare_key(row_key),
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 etag=etag or "*",
                 match_condition=match_condition,
                 **kwargs,
@@ -605,8 +602,8 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.update_entity(
                         table=self.table_name,
-                        partition_key=encoder.prepare_key(partition_key),
-                        row_key=encoder.prepare_key(row_key),
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
                         table_entity_properties=entity_json,
                         etag=etag,
                         match_condition=match_condition,
@@ -619,8 +616,8 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.merge_entity(
                         table=self.table_name,
-                        partition_key=encoder.prepare_key(partition_key),
-                        row_key=encoder.prepare_key(row_key),
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
                         etag=etag,
                         match_condition=match_condition,
                         table_entity_properties=entity_json,
@@ -806,7 +803,6 @@ class TableClient(TablesBaseClient):
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
         decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> TableEntity:
@@ -818,9 +814,6 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
             `azure.data.tables.TableEntityDecoder` will be used.
         :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
@@ -845,7 +838,6 @@ class TableClient(TablesBaseClient):
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        encoder: TableEntityEncoderABC[T],
         decoder: TableEntityDecoderABC[T],
         **kwargs,
     ) -> T:
@@ -857,8 +849,6 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :keyword decoder: The decoder used to deserialize the incoming Tables entities.
         :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: Dictionary mapping operation metadata returned from the service.
@@ -875,7 +865,6 @@ class TableClient(TablesBaseClient):
         if row_key is None:
             row_key = args[1]
         select = kwargs.pop("select", None)
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         decoder = kwargs.pop("decoder", DEFAULT_DECODER)
 
         user_select = None
@@ -886,8 +875,8 @@ class TableClient(TablesBaseClient):
         try:
             entity_json = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=encoder.prepare_key(partition_key),
-                row_key=encoder.prepare_key(row_key),
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 select=user_select,
                 **kwargs,
             )
@@ -966,8 +955,8 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.merge_entity(
                         table=self.table_name,
-                        partition_key=encoder.prepare_key(partition_key),
-                        row_key=encoder.prepare_key(row_key),
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
                         table_entity_properties=entity_json,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
@@ -978,8 +967,8 @@ class TableClient(TablesBaseClient):
                     Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                     self._client.table.update_entity(
                         table=self.table_name,
-                        partition_key=encoder.prepare_key(partition_key),
-                        row_key=encoder.prepare_key(row_key),
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
                         table_entity_properties=entity_json,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,

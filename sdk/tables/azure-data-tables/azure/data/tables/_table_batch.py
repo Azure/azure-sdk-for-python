@@ -8,7 +8,7 @@ from typing import Union, Any, Mapping, Optional, List, Tuple, TypeVar, Dict
 from azure.core import MatchConditions
 from azure.core.rest import HttpRequest
 
-from ._common_conversion import _transform_patch_to_cosmos_post
+from ._common_conversion import _transform_patch_to_cosmos_post, _prepare_key
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_condition
 from ._entity import TableEntity
@@ -181,8 +181,8 @@ class TableBatchOperations(object):
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
+                row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 etag=etag,
                 match_condition=match_condition,
                 json=entity_json,
@@ -192,8 +192,8 @@ class TableBatchOperations(object):
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
+                row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 etag=etag,
                 match_condition=match_condition,
                 json=entity_json,
@@ -244,8 +244,8 @@ class TableBatchOperations(object):
         row_key = entity_json.get("RowKey")
         request = build_table_delete_entity_request(
             table=self.table_name,
-            partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-            row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+            partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
+            row_key=_prepare_key(row_key),  # type: ignore[arg-type]
             etag=etag or "*",
             match_condition=_get_match_condition(
                 etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
@@ -283,8 +283,8 @@ class TableBatchOperations(object):
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
+                row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 json=entity_json,
                 version=self._config.version,
                 **kwargs,
@@ -292,8 +292,8 @@ class TableBatchOperations(object):
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
+                row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 json=entity_json,
                 version=self._config.version,
                 **kwargs,

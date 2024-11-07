@@ -19,18 +19,6 @@ T = TypeVar("T")
 
 
 class TableEntityEncoderABC(abc.ABC, Generic[T]):
-    def prepare_key(self, key: str) -> str:
-        """Duplicate the single quote char to escape.
-
-        :param str key: The entity PartitionKey or RowKey value in table entity.
-        :return: The entity PartitionKey or RowKey value in table entity.
-        :rtype: str
-        """
-        try:
-            return key.replace("'", "''")
-        except (AttributeError, TypeError) as exc:
-            raise TypeError("PartitionKey or RowKey must be of type string.") from exc
-
     def prepare_value(  # pylint: disable=too-many-return-statements
         self, name: Optional[str], value: Any
     ) -> Tuple[Optional[EdmType], Optional[Union[str, int, float, bool]]]:

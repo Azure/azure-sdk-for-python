@@ -85,3 +85,16 @@ def _get_account(parsed_url: ParseResult) -> Tuple[List[str], Optional[str]]:
             account = parsed_url.netloc.split(".table.core.")
             account_name = account[0] if len(account) > 1 else None
     return account, account_name
+
+
+def _prepare_key(key: str) -> str:
+    """Duplicate the single quote char to escape.
+
+    :param str key: The entity PartitionKey or RowKey value in table entity.
+    :return: The entity PartitionKey or RowKey value in table entity.
+    :rtype: str
+    """
+    try:
+        return key.replace("'", "''")
+    except (AttributeError, TypeError) as exc:
+        raise TypeError("PartitionKey or RowKey must be of type string.") from exc
