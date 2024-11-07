@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import inspect
 import json
+import logging
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
@@ -13,7 +14,7 @@ from promptflow._sdk._errors import UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
-from azure.ai.evaluation._common.math import list_sum
+from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
@@ -35,6 +36,7 @@ from ._utils import (
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
+LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
@@ -69,10 +71,11 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
             renamed_cols.append(col)
             new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
             col_with_numeric_values = pd.to_numeric(df[col], errors="coerce")
-            metric_columns[new_col_name] = round(
-                list_sum(col_with_numeric_values) / col_with_numeric_values.count(),
-                2,
-            )
+            try:
+                metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
+            except EvaluationException:  # only exception that can be cause is all NaN values
+                msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+                LOGGER.warning(msg)
 
     return renamed_cols, metric_columns
 
@@ -119,11 +122,15 @@ def _aggregate_content_safety_metrics(
     for col in content_safety_df.columns:
         defect_rate_name = col.replace("_score", "_defect_rate")
         col_with_numeric_values = pd.to_numeric(content_safety_df[col], errors="coerce")
-        defect_rates[defect_rate_name] = round(
-            list_sum(col_with_numeric_values >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT)
-            / col_with_numeric_values.count(),
-            2,
-        )
+        try:
+            col_with_boolean_values = apply_transform_nan_safe(
+                col_with_numeric_values, lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0
+            )
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
+            msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+            LOGGER.warning(msg)
+
     return content_safety_cols, defect_rates
 
 
@@ -153,10 +160,11 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
         col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
-        defect_rates[defect_rate_name] = round(
-            list_sum(col_with_boolean_values) / col_with_boolean_values.count(),
-            2,
-        )
+        try:
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
+            msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+            LOGGER.warning(msg)
     return label_cols, defect_rates
 
 
@@ -193,6 +201,9 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
 
+    # NOTE: nan/None values don't count as as booleans, so boolean columns with
+    # nan/None values won't have a mean produced from them.
+    # This is different from label-based known evaluators, which have special handling.
     mean_value = df.mean(numeric_only=True)
     metrics = mean_value.to_dict()
     # Add defect rates back into metrics

@@ -403,7 +403,7 @@ class TestEvaluate:
         assert "groundedness_pro_label" in per_turn_results.keys()
         assert "groundedness_pro_reason" in per_turn_results.keys()
 
-        # Check that label is renamed to passsing rate in metrics
+        # Check that label is renamed to passing rate in metrics
         assert "groundedness_pro.groundedness_pro_passing_rate" in convo_metrics.keys()
         assert 0 <= convo_metrics.get("groundedness_pro.groundedness_pro_passing_rate") <= 1
 
