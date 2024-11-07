@@ -464,6 +464,10 @@ class BaseFunctionTool(Tool):
 
 
 class FunctionTool(BaseFunctionTool):
+    """
+    A tool that synchronously executes user-defined functions.
+    """
+
 
     def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
@@ -478,6 +482,10 @@ class FunctionTool(BaseFunctionTool):
 
 
 class AsyncFunctionTool(BaseFunctionTool):
+    """
+    A tool that asynchronously executes user-defined functions.
+    """
+
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
@@ -506,6 +514,8 @@ class AzureAISearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Azure AI search tool definitions.
+
+        :return: A list of tool definitions.
         """
         return [AzureAISearchToolDefinition()]
 
@@ -513,10 +523,16 @@ class AzureAISearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the Azure AI search resources.
+
+        :return: ToolResources populated with azure_ai_search associated resources.
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
     def execute(self, tool_call: Any) -> Any:
+        """
+        AI Search tool does not execute client-side.
+        """
+
         pass
 
 
@@ -538,10 +554,16 @@ class ConnectionTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the connection tool resources.
+
+        :return: ToolResources populated with connection associated resources.
         """
         return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
+        """
+        Connection tools do not execute client-side.
+        """
+
         pass
 
 
@@ -554,6 +576,8 @@ class BingGroundingTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Bing grounding tool definitions.
+
+        :return: A list of tool definitions.
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -567,6 +591,8 @@ class SharepointTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Sharepoint tool definitions.
+
+        :return: A list of tool definitions.
         """
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -620,6 +646,8 @@ class FileSearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the file search tool definitions.
+
+        :return: A list of tool definitions.
         """
         return [FileSearchToolDefinition()]
 
@@ -627,6 +655,8 @@ class FileSearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the file search resources.
+
+        :return: ToolResources populated with file search associated resources.
         """
         return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
@@ -670,6 +700,8 @@ class CodeInterpreterTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the code interpreter tool definitions.
+
+        :return: A list of tool definitions.
         """
         return [CodeInterpreterToolDefinition()]
 
@@ -677,6 +709,8 @@ class CodeInterpreterTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the code interpreter resources.
+
+        :return: ToolResources populated with code interpreter associated resources.
         """
         if not self.file_ids:
             return ToolResources()
@@ -728,6 +762,8 @@ class BaseToolSet:
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
+
+        :return: A list of tool definitions.
         """
         tools = []
         for tool in self._tools:
@@ -738,6 +774,8 @@ class BaseToolSet:
     def resources(self) -> ToolResources:
         """
         Get the resources for all tools in the tool set.
+
+        :return: all resources for all tools in the tool set.
         """
         tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
