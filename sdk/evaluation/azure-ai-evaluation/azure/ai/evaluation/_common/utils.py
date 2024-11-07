@@ -304,7 +304,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
                 reason = reason_match[0].strip()
         except ValueError:
             raise EvaluationException(
-                message="Failed to parse model output.",
+                message=f"Failed to parse model output: \n{llm_output}",
                 internal_message="Failed to parse model output.",
                 category=ErrorCategory.FAILED_EXECUTION,
                 blame=ErrorBlame.SYSTEM_ERROR,
