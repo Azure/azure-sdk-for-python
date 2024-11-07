@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, T
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import MissingAzurePackage, UserAuthenticationError, UploadInternalError
+from promptflow._sdk._errors import UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
@@ -700,36 +700,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
-    # Target Run
-    try:
-        pf_client = PFClient(
-            config=(
-                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
-                if azure_ai_project
-                else None
-            ),
-            user_agent=USER_AGENT,
-        )
-    # pylint: disable=raise-missing-from
-    except MissingAzurePackage:
-        msg = (
-            "The required packages for remote tracking are missing.\n"
-            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
-        )
-
-        raise EvaluationException(  # pylint: disable=raise-missing-from
-            message=msg,
-            target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_PACKAGE,
-            blame=ErrorBlame.USER_ERROR,
-        )
-
-    trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
-
-    # Handle the case where the customer manually run "pf config set trace.destination=none"
-    if trace_destination and trace_destination.lower() == "none":
-        trace_destination = None
-
+    pf_client = PFClient(user_agent=USER_AGENT)
     target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
@@ -803,11 +774,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         data = os.path.abspath(data)
-
-        # A user reported intermittent errors when PFClient uploads evaluation runs to the cloud.
-        # The root cause is still unclear, but it seems related to a conflict between the async run uploader
-        # and the async batch run. As a quick mitigation, use a PFClient without a trace destination for batch runs.
-        per_evaluator_results = eval_batch_run(ProxyClient(PFClient(user_agent=USER_AGENT)), data=data)
+        per_evaluator_results = eval_batch_run(ProxyClient(pf_client), data=data)
     else:
         data = input_data_df
         per_evaluator_results = eval_batch_run(CodeClient(), data=input_data_df)
@@ -849,6 +816,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     metrics.update(evaluators_metric)
+
+    # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
+    target_run = None
+    trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = _log_metrics_and_instance_results(
         metrics,
         result_df,
