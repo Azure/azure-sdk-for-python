@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added `SearchResourceEncryptionKey`.`identity` support.
-- Added `query_rewrites` in `SearchClient`.`Search`.
+- Added `query_rewrites` & `query_rewrites_count` in `SearchClient.Search`.
 - Added `query_rewrites` in `VectorizableTextQuery`.
 - Added new models:
   - `azure.search.documents.QueryRewritesType`
