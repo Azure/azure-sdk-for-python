@@ -376,7 +376,8 @@ def validate_conversation(conversation):
                 )
             except ImportError as ex:
                 raise MissingRequiredPackage(
-                    message="Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
+                    message="Please install 'azure-ai-inference' package to use SystemMessage, "
+                    "UserMessage or AssistantMessage."
                 ) from ex
 
             if isinstance(message, ChatRequestMessage) and not isinstance(
@@ -430,6 +431,7 @@ def validate_conversation(conversation):
         )
     if assistant_message_count > 1:
         raise_exception(
-            "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message.",
+            "Evaluators for multimodal conversations only support single turn. "
+            "User and assistant role expected as the only role in each message.",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
