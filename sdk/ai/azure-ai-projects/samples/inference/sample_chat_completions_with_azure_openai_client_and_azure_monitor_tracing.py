@@ -26,11 +26,9 @@ USAGE:
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
 """
-
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
