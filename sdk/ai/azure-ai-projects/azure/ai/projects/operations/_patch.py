@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import sys, io, logging, os, time
 from azure.core.exceptions import ResourceNotFoundError
 from io import TextIOWrapper
-from typing import List, Union, IO, Any, Dict, Optional, overload, Sequence, TYPE_CHECKING, Iterator, cast
+from typing import List, Union, IO, Any, Dict, Optional, overload, Sequence, TYPE_CHECKING, Iterator, TextIO, cast
 from pathlib import Path
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -357,14 +357,14 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 
 # Internal helper function to enable tracing, used by both sync and async clients
-def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) -> None:
+def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
     :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
         OpenTelemetry protocol (OTLP) endpoint.
         If not provided, this method enables instrumentation, but does not configure OpenTelemetry
         SDK to export traces.
-    :paramtype destination: Union[TextIOWrapper, str, None]
+    :paramtype destination: Union[TextIO, str, None]
     """
     if isinstance(destination, str):
         # `destination` is the OTLP endpoint
@@ -415,7 +415,6 @@ def _enable_telemetry(destination: Union[TextIOWrapper, str, None], **kwargs) ->
         from azure.core.settings import settings
 
         settings.tracing_implementation = "opentelemetry"
-        settings.tracing_implementation()
     except ModuleNotFoundError as _:
         logger.warning(
             "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
@@ -497,7 +496,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    def enable(self, *, destination: Union[TextIOWrapper, str, None] = None, **kwargs) -> None:
+    def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
         """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
 
         Following instrumentations are enabled (when corresponding packages are installed):
@@ -519,7 +518,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             endpoint such as "http://localhost:4317.
             If not provided, the method enables instrumentations, but does not configure OpenTelemetry
             SDK to export traces.
-        :paramtype destination: Union[TextIOWrapper, str, None]
+        :paramtype destination: Union[TextIO, str, None]
         """
         _enable_telemetry(destination=destination, **kwargs)
 
