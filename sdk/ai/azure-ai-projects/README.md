@@ -50,6 +50,7 @@ The following steps outline the typical sequence for interacting with agents:
   - <a href='#create-thread'>Create a thread</a>
   - <a href='#create-message'>Create a message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
+    - <a href='#create-message-with-code-interpreter-file-attachment'>Code interpreter attachment</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
   - <a href='#retrieve-messages'>Retrieve messages</a>
   - <a href='#teardown'>Tear down by deleting resources</a>
@@ -57,8 +58,15 @@ The following steps outline the typical sequence for interacting with agents:
 
 #### Create Project Client
 
-To create a project client, use the following example:
+When you create an project client, you need to make the decision to use synchronized or asynchronized client.  Use either:
 
+```python
+from azure.ai.projects import AIProjectClient
+# OR
+from azure.ai.projects.aio import AIProjectClient
+```
+
+Here is an example of creating a project client:
 <!-- SNIPPET:sample_agents_basics.create_project_client -->
 
 ```python
@@ -166,7 +174,7 @@ print(f"Uploaded file, file ID: {file.id}")
 
 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
-# notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+# create agent with code interpreter tool and tools_resources
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
@@ -181,8 +189,8 @@ agent = project_client.agents.create_agent(
 #### Create Agent with Function Tool
 You can enhance your agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
-- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within the `Run` or `Stream` context. Agents will invoke these functions based on their definitions.
-- `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler` will raise a `requires_action` status based on the function definitions. Your code must handle this status and invoke the appropriate functions.
+- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
+- `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
  
 For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](samples/agents/sample_agents_functions.py).
 
@@ -229,16 +237,13 @@ To create a message for assistant to process, you pass `user` as `role` and a qu
 <!-- SNIPPET:sample_agents_basics.create_message -->
 
 ```python
-   
- agent = project_client.agents.create_agent(
-     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
- )
+message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
 ```
 
 <!-- END SNIPPET -->
 
 #### Create Message with File Search Attachment
-To attach a file to a message, you need to `MessageAttachment` and `FileSearchTool`:
+To attach a file to a message for content searching, you use `MessageAttachment` and `FileSearchTool`:
 
 <!-- SNIPPET:sample_agents_with_file_search_attachment.create_message_with_attachment -->
 
@@ -251,11 +256,46 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+#### Create Message with Code Interpreter File Attachment
+To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`.  You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  Here is an example:
+
+<!-- SNIPPET:sample_agents_with_code_interpreter_file_attachment.create_agent_and_message_with_code_interpreter_file_attachment -->
+
+```python
+# notice that CodeInterpreter must be enabled in the agent creation, 
+# otherwise the agent will not be able to see the file attachment for code interpretation
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=CodeInterpreterTool().definitions,
+)
+print(f"Created agent, agent ID: {agent.id}")
+
+thread = project_client.agents.create_thread()
+print(f"Created thread, thread ID: {thread.id}")
+
+# create an attachment
+attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
+
+# create a message
+message = project_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
+    attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
+
 #### Create Run, Run_and_Process, or Stream
 
 To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
 
-Here is an example using `create_run`:
+`create_run` requests the agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](samples/agents/sample_agents_functions.py).
+
+Here is an example of `create_run` and poll until the run is completed:
 
 <!-- SNIPPET:sample_agents_basics.create_run -->
 
@@ -271,7 +311,9 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-Here is an example using `create_and_process_run`:
+To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+
+Here is an example:
 
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
@@ -281,7 +323,9 @@ run = project_client.agents.create_and_process_run(thread_id=thread.id, assistan
 
 <!-- END SNIPPET -->
 
-Here is an example using `create_stream`:
+With streaming, polling also need not be considered.   If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
+
+Here is an example:
 
 <!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
 

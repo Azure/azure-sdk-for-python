@@ -43,7 +43,7 @@ with project_client:
     file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
-    # Create agent with file search tool
+    # Create agent
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
