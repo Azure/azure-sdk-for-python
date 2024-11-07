@@ -121,7 +121,7 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
         print("====> Creating ChatCompletionsClient using API key authentication")
         from azure.core.credentials import AzureKeyCredential
 
-        client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
+        client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or ""))
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
