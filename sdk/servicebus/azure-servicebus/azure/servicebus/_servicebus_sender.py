@@ -190,9 +190,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 topic_name=topic_name,
                 **kwargs,
             )
-
-        self._max_message_size_on_link = 0
-        self._max_batch_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientSync", "uamqp_SendClientSync"]
