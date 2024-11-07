@@ -1150,7 +1150,7 @@ class FileProperties(DictMixin):
     """NFS only. The file mode of the file."""
     link_count: Optional[int] = None
     """NFS only. The number of hard links of the file."""
-    file_type: Optional[Literal['Regular', 'Directory', 'Symlink']] = None
+    nfs_file_type: Optional[Literal['Regular', 'Directory', 'Symlink']] = None
     """NFS only. The type of the file."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -1182,7 +1182,7 @@ class FileProperties(DictMixin):
         self.group = kwargs.get('x-ms-group')
         self.file_mode = kwargs.get('x-ms-mode')
         self.link_count = kwargs.get('x-ms-link-count')
-        self.file_type = kwargs.get('x-ms-file-file-type')
+        self.nfs_file_type = kwargs.get('x-ms-file-file-type')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1202,7 +1202,7 @@ class FileProperties(DictMixin):
         props.group = generated.group
         props.file_mode = generated.file_mode
         props.link_count = generated.link_count
-        props.file_type = generated.file_type
+        props.nfs_file_type = generated.nfs_file_type
         return props
 
 

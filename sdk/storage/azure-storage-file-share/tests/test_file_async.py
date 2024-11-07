@@ -3994,7 +3994,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             assert props.group == create_group
             assert props.file_mode == create_file_mode
             assert props.link_count == 1
-            assert props.file_type == 'Regular'
+            assert props.nfs_file_type == 'Regular'
             assert props.file_attributes is None
             assert props.permission_key is None
 
@@ -4011,7 +4011,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             assert props.group == set_group
             assert props.file_mode == set_file_mode
             assert props.link_count == 1
-            assert props.file_type == 'Regular'
+            assert props.nfs_file_type == 'Regular'
             assert props.file_attributes is None
             assert props.permission_key is None
         finally:
