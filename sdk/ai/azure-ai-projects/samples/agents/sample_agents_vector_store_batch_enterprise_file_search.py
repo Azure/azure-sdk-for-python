@@ -9,7 +9,7 @@ DESCRIPTION:
     This sample demonstrates how to create the vector store with the list of files.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search.py
+    python sample_agents_vector_store_batch_enterprise_file_search.py
 
     Before running the sample:
 
@@ -20,12 +20,12 @@ USAGE:
 """
 
 import os
-from azure.ai.ml import MLClient
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import Data
-
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, VectorStorageDataSource, VectorStorageDataSourceAssetType
+from azure.ai.projects.models import (
+    FileSearchTool,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType
+)
 from azure.identity import DefaultAzureCredential
 
 
@@ -40,18 +40,14 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    ml_client = MLClient.from_config(credential)
     # We will upload the local file to Azure and will use it for vector store creation.
-    local_data = Data(name="products", path="./product_info_1.md", type=AssetTypes.URI_FILE)
-    # The new data object will contain the Azure ID of an uploaded file,
-    # which is the uri starting from azureml://.
-    uploaded_data = ml_client.data.create_or_update(local_data)
+    _, asset_id = project_client.upload_file("./product_info_1.md")
 
     # create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    ds = VectorStorageDataSource(storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET)
+    ds = VectorStoreDataSource(storage_uri=asset_id, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
     # add the file to the vector store or you can supply data sources in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
         vector_store_id=vector_store.id, data_sources=[ds]

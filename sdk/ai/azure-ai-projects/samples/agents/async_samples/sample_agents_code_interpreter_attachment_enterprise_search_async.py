@@ -29,8 +29,8 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CodeInterpreterTool,
     MessageAttachment,
-    VectorStorageDataSource,
-    VectorStorageDataSourceAssetType,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -68,8 +68,8 @@ async def main():
         # The new data object will contain the Azure ID of an uploaded file,
         # which is the uri starting from azureml://.
         uploaded_data = ml_client.data.create_or_update(local_data)
-        ds = VectorStorageDataSource(
-            storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=uploaded_data.path, asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
 
         # create a message with the attachment

@@ -419,13 +419,6 @@ class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The thread will truncate to the ``lastMessages`` count of recent messages."""
 
 
-class VectorStorageDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of vector storage configuration."""
-
-    URI_ASSET = "uri_asset"
-    ID_ASSET = "id_asset"
-
-
 class VectorStoreChunkingStrategyRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of chunking strategy."""
 
@@ -438,6 +431,13 @@ class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensiti
 
     OTHER = "other"
     STATIC = "static"
+
+
+class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of vector storage configuration."""
+
+    URI_ASSET = "uri_asset"
+    ID_ASSET = "id_asset"
 
 
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):

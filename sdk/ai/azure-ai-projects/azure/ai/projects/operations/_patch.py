@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -2223,7 +2224,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -2288,7 +2289,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2328,7 +2329,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
         elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
             store_configuration = (
-                _models.VectorStorageConfiguration(data_sources=data_sources) if data_sources else None
+                _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
             )
             vector_store = self.create_vector_store(
                 content_type=content_type,
@@ -2385,7 +2386,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         *,
         file_ids: Optional[List[str]] = None,
-        store_configuration: Optional[_models.VectorStorageConfiguration] = None,
+        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
@@ -2448,7 +2449,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes], None] = None,
         *,
         file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2636,7 +2637,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2697,7 +2698,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStorageDataSource]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,

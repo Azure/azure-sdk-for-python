@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_batch_file_search_async.py
+FILE: sample_agents_vector_store_batch_file_search.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from

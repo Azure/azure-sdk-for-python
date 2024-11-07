@@ -633,14 +633,14 @@ class CodeInterpreterToolResource(_model_base.Model):
     :vartype file_ids: list[str]
     :ivar data_sources: The data sources to be used. This option is mutually exclusive with
      fileIds.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
     file_ids: Optional[List[str]] = rest_field()
     """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
      20 files
      associated with the tool."""
-    data_sources: Optional[List["_models.VectorStorageDataSource"]] = rest_field()
+    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
     """The data sources to be used. This option is mutually exclusive with fileIds."""
 
     @overload
@@ -648,7 +648,7 @@ class CodeInterpreterToolResource(_model_base.Model):
         self,
         *,
         file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List["_models.VectorStorageDataSource"]] = None,
+        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -1052,6 +1052,40 @@ class FileListResponse(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class FileSearchRankingOptions(_model_base.Model):
+    """Ranking options for file search.
+
+
+    :ivar ranker: File search ranker. Required.
+    :vartype ranker: str
+    :ivar score_threshold: Ranker search threshold. Required.
+    :vartype score_threshold: float
+    """
+
+    ranker: str = rest_field()
+    """File search ranker. Required."""
+    score_threshold: float = rest_field()
+    """Ranker search threshold. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ranker: str,
+        score_threshold: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
 
@@ -1097,7 +1131,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      search tool documentation for more information.
     :vartype max_num_results: int
     :ivar ranking_options:
-    :vartype ranking_options: ~azure.ai.projects.models.RankingOptions
+    :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     """
 
     max_num_results: Optional[int] = rest_field()
@@ -1106,14 +1140,14 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
-    ranking_options: Optional["_models.RankingOptions"] = rest_field()
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
 
     @overload
     def __init__(
         self,
         *,
         max_num_results: Optional[int] = None,
-        ranking_options: Optional["_models.RankingOptions"] = None,
+        ranking_options: Optional["_models.FileSearchRankingOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -1138,13 +1172,13 @@ class FileSearchToolResource(_model_base.Model):
      limited to one
      element. The only element of this list contains
      the list of azure asset IDs used by the search tool.
-    :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreAzureConfigurations]
+    :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreConfigurations]
     """
 
     vector_store_ids: Optional[List[str]] = rest_field()
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
-    vector_stores: Optional[List["_models.VectorStoreAzureConfigurations"]] = rest_field()
+    vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field()
     """The list of vector store configuration objects from Azure. This list is limited to one
      element. The only element of this list contains
      the list of azure asset IDs used by the search tool."""
@@ -1154,7 +1188,7 @@ class FileSearchToolResource(_model_base.Model):
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-        vector_stores: Optional[List["_models.VectorStoreAzureConfigurations"]] = None,
+        vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = None,
     ) -> None: ...
 
     @overload
@@ -1480,7 +1514,7 @@ class MessageAttachment(_model_base.Model):
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
     :ivar data_sources: Azure asset ID.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     :ivar tools: The tools to add to this file. Required.
     :vartype tools: list[~azure.ai.projects.models.CodeInterpreterToolDefinition or
      ~azure.ai.projects.models.FileSearchToolDefinition]
@@ -1488,7 +1522,7 @@ class MessageAttachment(_model_base.Model):
 
     file_id: Optional[str] = rest_field()
     """The ID of the file to attach to the message."""
-    data_sources: Optional[List["_models.VectorStorageDataSource"]] = rest_field()
+    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
     """Azure asset ID."""
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
@@ -1499,7 +1533,7 @@ class MessageAttachment(_model_base.Model):
         *,
         tools: List["_types.MessageAttachmentToolDefinition"],
         file_id: Optional[str] = None,
-        data_sources: Optional[List["_models.VectorStorageDataSource"]] = None,
+        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -2797,40 +2831,6 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object: Literal["list"] = "list"
-
-
-class RankingOptions(_model_base.Model):
-    """Ranking options for file search.
-
-
-    :ivar ranker: File search ranker. Required.
-    :vartype ranker: str
-    :ivar score_threshold: Ranker search threshold. Required.
-    :vartype score_threshold: float
-    """
-
-    ranker: str = rest_field()
-    """File search ranker. Required."""
-    score_threshold: float = rest_field()
-    """Ranker search threshold. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        ranker: str,
-        score_threshold: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class RecurrenceSchedule(_model_base.Model):
@@ -5456,71 +5456,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorStorageConfiguration(_model_base.Model):
-    """Vector storage configuration is the list of data sources, used when multiple
-    files can be used for the enterprise file search.
-
-
-    :ivar data_sources: Data sources. Required.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
-    """
-
-    data_sources: List["_models.VectorStorageDataSource"] = rest_field()
-    """Data sources. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data_sources: List["_models.VectorStorageDataSource"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VectorStorageDataSource(_model_base.Model):
-    """The structure, containing Azure asset ID and the asset type of the file used as a data source
-    the enterprise file search.
-
-
-    :ivar storage_uri: Asset URI. Required.
-    :vartype storage_uri: str
-    :ivar asset_type: The asset type *. Required. Known values are: "uri_asset" and "id_asset".
-    :vartype asset_type: str or ~azure.ai.projects.models.VectorStorageDataSourceAssetType
-    """
-
-    storage_uri: str = rest_field(name="uri")
-    """Asset URI. Required."""
-    asset_type: Union[str, "_models.VectorStorageDataSourceAssetType"] = rest_field(name="type")
-    """The asset type *. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        storage_uri: str,
-        asset_type: Union[str, "_models.VectorStorageDataSourceAssetType"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class VectorStore(_model_base.Model):
     """A vector store is a collection of processed files can be used by the ``file_search`` tool.
 
@@ -5553,9 +5488,6 @@ class VectorStore(_model_base.Model):
     :ivar last_active_at: The Unix timestamp (in seconds) for when the vector store was last
      active. Required.
     :vartype last_active_at: ~datetime.datetime
-    :ivar store_configuration: The vector store configuration, used when vector store is created
-     from Azure asset ID.
-    :vartype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -5584,8 +5516,6 @@ class VectorStore(_model_base.Model):
     """The Unix timestamp (in seconds) for when the vector store will expire."""
     last_active_at: datetime.datetime = rest_field(format="unix-timestamp")
     """The Unix timestamp (in seconds) for when the vector store was last active. Required."""
-    store_configuration: Optional["_models.VectorStorageConfiguration"] = rest_field(name="configuration")
-    """The vector store configuration, used when vector store is created from Azure asset ID."""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -5605,7 +5535,6 @@ class VectorStore(_model_base.Model):
         metadata: Dict[str, str],
         expires_after: Optional["_models.VectorStoreExpirationPolicy"] = None,
         expires_at: Optional[datetime.datetime] = None,
-        store_configuration: Optional["_models.VectorStorageConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -5744,7 +5673,37 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.OTHER, **kwargs)
 
 
-class VectorStoreAzureConfigurations(_model_base.Model):
+class VectorStoreConfiguration(_model_base.Model):
+    """Vector storage configuration is the list of data sources, used when multiple
+    files can be used for the enterprise file search.
+
+
+    :ivar data_sources: Data sources. Required.
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+    """
+
+    data_sources: List["_models.VectorStoreDataSource"] = rest_field()
+    """Data sources. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_sources: List["_models.VectorStoreDataSource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorStoreConfigurations(_model_base.Model):
     """The structure, containing the list of vector storage configurations i.e. the list of azure
     asset IDs.
 
@@ -5752,12 +5711,12 @@ class VectorStoreAzureConfigurations(_model_base.Model):
     :ivar store_name: Name. Required.
     :vartype store_name: str
     :ivar store_configuration: Configurations. Required.
-    :vartype store_configuration: ~azure.ai.projects.models.VectorStorageConfiguration
+    :vartype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
     """
 
     store_name: str = rest_field(name="name")
     """Name. Required."""
-    store_configuration: "_models.VectorStorageConfiguration" = rest_field(name="configuration")
+    store_configuration: "_models.VectorStoreConfiguration" = rest_field(name="configuration")
     """Configurations. Required."""
 
     @overload
@@ -5765,7 +5724,42 @@ class VectorStoreAzureConfigurations(_model_base.Model):
         self,
         *,
         store_name: str,
-        store_configuration: "_models.VectorStorageConfiguration",
+        store_configuration: "_models.VectorStoreConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorStoreDataSource(_model_base.Model):
+    """The structure, containing Azure asset ID and the asset type of the file used as a data source
+    the enterprise file search.
+
+
+    :ivar storage_uri: Asset URI. Required.
+    :vartype storage_uri: str
+    :ivar asset_type: The asset type *. Required. Known values are: "uri_asset" and "id_asset".
+    :vartype asset_type: str or ~azure.ai.projects.models.VectorStoreDataSourceAssetType
+    """
+
+    storage_uri: str = rest_field(name="uri")
+    """Asset URI. Required."""
+    asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(name="type")
+    """The asset type *. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_uri: str,
+        asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"],
     ) -> None: ...
 
     @overload

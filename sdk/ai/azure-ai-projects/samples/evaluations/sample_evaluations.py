@@ -37,7 +37,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 # Upload data for evaluation
-data_id = project_client.upload_file("./evaluate_test_data.jsonl")
+data_id, _ = project_client.upload_file("./evaluate_test_data.jsonl")
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
 

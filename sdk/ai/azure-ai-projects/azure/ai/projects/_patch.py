@@ -265,7 +265,7 @@ class AIProjectClient(ClientGenerated):
 
         data_asset = ml_client.data.create_or_update(data)
 
-        return data_asset.id
+        return data_asset.id, data_asset.path
 
     @property
     def scope(self) -> Dict[str, str]:

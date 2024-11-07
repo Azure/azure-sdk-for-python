@@ -3,14 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_batch_file_search_async.py
+FILE: sample_agents_vector_store_batch_enterprise_file_search_async.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search_azure.py
+    python sample_agents_vector_store_batch_enterprise_file_search_async.py
 
     Before running the sample:
 
@@ -26,7 +26,11 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, VectorStorageDataSource, VectorStorageDataSourceAssetType
+from azure.ai.projects.models import (
+    FileSearchTool,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType
+)
 from azure.identity import DefaultAzureCredential
 
 
@@ -49,8 +53,8 @@ async def main():
         # which is the uri starting from azureml://.
         uploaded_data = ml_client.data.create_or_update(local_data)
         # create a vector store with no file and wait for it to be processed
-        ds = VectorStorageDataSource(
-            storage_uri=uploaded_data.path, asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=uploaded_data.path, asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
         vector_store = await project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
