@@ -410,7 +410,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceDeleteSuccessName = "Microsoft.Resources.ResourceDeleteSuccess"
 
-    ResourceNotificationsContainerServiceEventResourcesScheduledEventEmittedEventName = "Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted"
+    ResourceNotificationsContainerServiceEventResourcesScheduledEventName = "Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted"
 
     ResourceNotificationsHealthResourcesAnnotatedEventName = "Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated"
 
