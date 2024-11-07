@@ -10,13 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DocumentDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of supported Data Types."""
-
-    PLAINTEXT = "Plaintext"
-    """Plain text data type."""
-
-
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """List of statuses a job can have."""
 
@@ -70,7 +63,7 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account Number."""
     AGE = "Age"
     """Age."""
-    BIO_I_D = "BioID"
+    BIO_ID = "BioID"
     """Biological Identifier, such as a fingerprint or retinal scan."""
     CITY = "City"
     """City."""
@@ -90,9 +83,9 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health Plan ID Numbers."""
     HOSPITAL = "Hospital"
     """Hospital Name."""
-    I_D_NUM = "IDNum"
+    ID_NUM = "IDNum"
     """Id Number, eg. passport number."""
-    I_P_ADDRESS = "IPAddress"
+    IP_ADDRESS = "IPAddress"
     """IP Address."""
     LICENSE = "License"
     """License, eg. Driver's license or medical license."""
