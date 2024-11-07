@@ -14,18 +14,14 @@ extends:
       Packages: ${{ parameters.Services }}
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      CloudConfig:
-        Public:
-        UsGov:
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
-        China:
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
-          Location: chinanorth3
+      #CloudConfig:
+      #  Public:
+      #  UsGov:
+      #    MatrixFilters:
+      #      - ArmTemplateParameters=^(?!.*enableHsm.*true)
+      #  China:
+      #    MatrixFilters:
+      #      - ArmTemplateParameters=^(?!.*enableHsm.*true)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_SUBSCRIPTION_ID: $(KEYVAULT_SUBSCRIPTION_ID)
-        AZURE_TENANT_ID: $(KEYVAULT_TENANT_ID)
-        AZURE_CLIENT_ID: $(KEYVAULT_CLIENT_ID)
