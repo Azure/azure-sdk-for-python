@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp azure-identity
+    pip install azure-ai-projects azure-identity azure-ai-inference openai aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in the "Project overview"
@@ -88,7 +88,7 @@ async def sample_connections_async():
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
-            from azure.identity import get_bearer_token_provider
+            from azure.identity.aio import get_bearer_token_provider
 
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider

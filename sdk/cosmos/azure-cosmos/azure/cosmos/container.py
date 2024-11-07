@@ -1389,9 +1389,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+        return [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                 for partitionKeyRange in partition_key_ranges]
-        return (feed_range for feed_range in feed_ranges)
 
     def get_latest_session_token(
             self,

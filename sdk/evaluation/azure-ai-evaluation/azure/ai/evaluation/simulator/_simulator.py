@@ -29,16 +29,22 @@ from ._utils import JsonLineChatProtocol
 class Simulator:
     """
     Simulator for generating synthetic conversations.
+
+    :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :raises ValueError: If the model_config does not contain the required keys or any value is None.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START nonadversarial_simulator]
+            :end-before: [END nonadversarial_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run a Simulator for 2 queries and 4 conversation turns.
     """
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        """
-        Initializes the task simulator with the model configuration.
-
-        :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
-        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
-        :raises ValueError: If the model_config does not contain the required keys or any value is None.
-        """
         self._validate_model_config(model_config)
         self.model_config = model_config
         if "api_version" not in self.model_config:

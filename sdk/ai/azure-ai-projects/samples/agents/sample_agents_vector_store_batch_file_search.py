@@ -51,6 +51,7 @@ with project_client:
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
     # create a file search tool
+    # [START create_agent_with_tools_and_tool_resources]
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
@@ -61,6 +62,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
+    # [END create_agent_with_tools_and_tool_resources]    
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
