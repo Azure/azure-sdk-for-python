@@ -20,6 +20,7 @@ from .._tracing import TraceAttributes
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from ._client_base_async import CredentialTypes
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
@@ -115,6 +116,9 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: Optional[str]
+    :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+     connection_verify will be ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -395,6 +399,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         transport_type: TransportType = TransportType.Amqp,
         custom_endpoint_address: Optional[str] = None,
         connection_verify: Optional[str] = None,
+        ssl_context: Optional["SSLContext"] = None,
         uamqp_transport: bool = False,
         **kwargs: Any,
     ) -> "EventHubProducerClient":
@@ -473,6 +478,9 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
         :paramtype connection_verify: Optional[str]
+        :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+         connection_verify will be ignored.
+        :paramtype ssl_context: ssl.SSLContext or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -508,6 +516,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
             transport_type=transport_type,
             custom_endpoint_address=custom_endpoint_address,
             connection_verify=connection_verify,
+            ssl_context=ssl_context,
             uamqp_transport=uamqp_transport,
             **kwargs,
         )

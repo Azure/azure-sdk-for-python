@@ -373,6 +373,7 @@ class _OperationType:
             _OperationType.Replace,
             _OperationType.Upsert,
             _OperationType.Update,
+            _OperationType.Batch
         )
 
     @staticmethod

@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Optional
 from unittest.mock import DEFAULT, MagicMock, Mock, patch
 from uuid import UUID, uuid4
@@ -5,11 +6,11 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -31,7 +32,6 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
-import urllib.parse
 
 
 @pytest.fixture

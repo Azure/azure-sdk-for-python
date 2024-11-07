@@ -11,6 +11,7 @@
 - Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.
 - Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
 - Fixed an issue where during long-running simulations, API token expires causing "Forbidden" error. Instead, users can now set an environment variable `AZURE_TOKEN_REFRESH_INTERVAL` to refresh the token more frequently to prevent expiration and ensure continuous operation of the simulation.
+- Fixed an issue with the `ContentSafetyEvaluator` that caused parallel execution of sub-evaluators to fail. Parallel execution is now enabled by default again, but can still be disabled via the '_parallel' boolean keyword argument during class initialization.
 
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.

@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import RetryMode
 from .constants import DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT, TransportType
 
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from .._transport._base import AmqpTransport
     from ..aio._transport._base_async import AmqpTransportAsync
 
@@ -25,6 +26,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
 
         self.custom_endpoint_address: Optional[str] = kwargs.get("custom_endpoint_address")
         self.connection_verify: Optional[str] = kwargs.get("connection_verify")
+        self.ssl_context: Optional["SSLContext"] = kwargs.get("ssl_context")
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None
         self.hostname = kwargs.pop("hostname")

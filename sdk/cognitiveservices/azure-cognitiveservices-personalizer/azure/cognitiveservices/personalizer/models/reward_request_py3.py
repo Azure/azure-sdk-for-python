@@ -23,11 +23,11 @@ class RewardRequest(Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'float'},
+        "value": {"key": "value", "type": "float"},
     }
 
     def __init__(self, *, value: float, **kwargs) -> None:
