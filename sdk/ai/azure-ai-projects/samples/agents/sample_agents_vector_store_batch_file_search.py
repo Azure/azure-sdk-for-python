@@ -52,6 +52,7 @@ with project_client:
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
     # create a file search tool
+    # [START create_agent_with_tools_and_tool_resources]
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
@@ -62,6 +63,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
+    # [END create_agent_with_tools_and_tool_resources]    
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
@@ -78,7 +80,7 @@ with project_client:
     file_search_tool.remove_vector_store(vector_store.id)
     print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
-    await project_client.agents.update_agent(
+    project_client.agents.update_agent(
         assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
     )
     print(f"Updated agent, agent ID: {agent.id}")

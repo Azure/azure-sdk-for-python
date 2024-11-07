@@ -50,7 +50,9 @@ with project_client:
     # [END create_thread]    
     print(f"Created thread, thread ID: {thread.id}")
 
+    # [START create_message]
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
     # [START create_run]

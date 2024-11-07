@@ -100,6 +100,8 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
+    
+    # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
 
     agent = project_client.agents.create_agent(
@@ -108,6 +110,7 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=functions.definitions,
     )
+    # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

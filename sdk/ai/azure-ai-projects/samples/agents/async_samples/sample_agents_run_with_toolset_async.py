@@ -43,16 +43,16 @@ async def main():
     async with project_client:
 
         # Initialize agent toolset with user functions and code interpreter
+        # [START create_agent_with_async_function_tool]
         functions = AsyncFunctionTool(user_async_functions)
-        code_interpreter = CodeInterpreterTool()
 
         toolset = AsyncToolSet()
         toolset.add(functions)
-        toolset.add(code_interpreter)
 
         agent = await project_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
         )
+        # [END create_agent_with_async_function_tool]        
         print(f"Created agent, ID: {agent.id}")
 
         # Create thread for communication
