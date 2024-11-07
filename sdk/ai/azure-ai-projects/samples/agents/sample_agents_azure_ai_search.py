@@ -47,7 +47,7 @@ print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
 ai_search = AzureAISearchTool()
-ai_search.add_index(conn_id, "sample")
+ai_search.add_index(conn_id, "sample_index")
 
 # Create agent with AI search tool and process assistant run
 with project_client:

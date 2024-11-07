@@ -45,7 +45,7 @@ async def main():
             file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
         )
 
-        # Create agent with file search tool
+        # Create agent
         agent = await project_client.agents.create_agent(
             model="gpt-4-1106-preview",
             name="my-assistant",

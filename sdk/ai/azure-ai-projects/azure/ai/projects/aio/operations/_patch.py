@@ -8,13 +8,12 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ..._vendor import FileType
-import sys, io, asyncio
+import io, asyncio
 import logging
 import os
 import time
 from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
-from io import TextIOWrapper
 from typing import (
     IO,
     Any,
@@ -27,7 +26,8 @@ from typing import (
     cast,
     overload,
     Sequence,
-    TYPE_CHECKING, TextIO,
+    TYPE_CHECKING,
+    TextIO
 )
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -52,7 +52,7 @@ if TYPE_CHECKING:
     from azure.ai.projects import _types
     from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
-    from azure.identity import get_bearer_token_provider
+    from azure.identity.aio import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +70,15 @@ class InferenceOperations:
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
+        is not installed.
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
@@ -85,14 +91,10 @@ class InferenceOperations:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
         else:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
@@ -113,7 +115,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
@@ -135,9 +137,15 @@ class InferenceOperations:
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
+        is not installed.
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
@@ -150,14 +158,10 @@ class InferenceOperations:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
         else:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
@@ -178,7 +182,7 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
@@ -199,6 +203,10 @@ class InferenceOperations:
     async def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `openai` package
+        is not installed.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
@@ -207,14 +215,14 @@ class InferenceOperations:
         :paramtype api_version: str
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
         connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
-        if not connection:
-            raise ValueError("No Azure OpenAI connection found.")
 
         try:
             from openai import AsyncAzureOpenAI
@@ -229,17 +237,17 @@ class InferenceOperations:
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
         elif (
-            connection.authentication_type == AuthenticationType.AAD
+            connection.authentication_type == AuthenticationType.ENTRA_ID
             or connection.authentication_type == AuthenticationType.SAS
         ):
 
             try:
-                from azure.identity import get_bearer_token_provider
+                from azure.identity.aio import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
                 )
-            if connection.authentication_type == AuthenticationType.AAD:
+            if connection.authentication_type == AuthenticationType.ENTRA_ID:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
                 auth = "Creating AzureOpenAI using SAS authentication"
@@ -263,16 +271,18 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     @distributed_trace_async
     async def get_default(
         self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
-    ) -> Optional[ConnectionProperties]:
+    ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
-        populating authentication credentials.
+        populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
+        exception if a connection with the given name was not found.
 
         :param connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.model.ConnectionProperties
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
@@ -288,35 +298,33 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 )
             else:
                 return connection_properties_list[0]
-        else:
-            return None
+        raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
     async def get(
         self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
-    ) -> Optional[ConnectionProperties]:
+    ) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
-        populating authentication credentials.
+        populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
+        exception if a connection with the given name was not found.
 
         :param connection_name: Connection Name. Required.
         :type connection_name: str
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.models.ConnectionProperties
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
-            try:
-                connection: GetConnectionResponse = await self._get_connection_with_secrets(
-                    connection_name=connection_name, ignored="ignore", **kwargs
-                )
-            except ResourceNotFoundError as _:
-                return None
-            if connection.properties.auth_type == AuthenticationType.AAD:
+            connection: GetConnectionResponse = await self._get_connection_with_secrets(
+                connection_name=connection_name, ignored="ignore", **kwargs
+            )
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
@@ -335,10 +343,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            try:
-                connection = await self._get_connection(connection_name=connection_name, **kwargs)
-            except ResourceNotFoundError as _:
-                return None
+            connection = await self._get_connection(connection_name=connection_name, **kwargs)
             return ConnectionProperties(connection=connection)
 
     @distributed_trace_async
@@ -370,7 +375,6 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 class TelemetryOperations(TelemetryOperationsGenerated):
 
     _connection_string: Optional[str] = None
-    _get_connection_string_called: bool = False
 
     def __init__(self, *args, **kwargs):
         self._outer_instance = kwargs.pop("outer_instance")
@@ -379,27 +383,29 @@ class TelemetryOperations(TelemetryOperationsGenerated):
     async def get_connection_string(self) -> Optional[str]:
         """
         Get the Application Insights connection string associated with the Project's Application Insights resource.
-        On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
-        Subsequent calls return the cached connection string.
+        On first call, this method makes a service call to the Application Insights resource URL to get the connection string.
+        Subsequent calls return the cached connection string, if one exists.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Application Insights resource was not
+        enabled for this project.
 
-        :return: The connection string, or `None` if an Application Insights resource was not enabled for the Project.
+        :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
+        :raises ~azure.core.exceptions.ResourceNotFoundError
         """
-        if not self._get_connection_string_called:
+        if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
 
-            # Continue only if Application Insights resource was enabled for this Project
-            if get_workspace_response.properties.application_insights:
+            if not get_workspace_response.properties.application_insights:
+                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
 
-                # Make a GET call to the Application Insights resource URL to get the connection string
-                app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
-                    app_insights_resource_url=get_workspace_response.properties.application_insights
-                )
+            # Make a GET call to the Application Insights resource URL to get the connection string
+            app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
+                app_insights_resource_url=get_workspace_response.properties.application_insights
+            )
 
-                self._connection_string = app_insights_respose.properties.connection_string
+            self._connection_string = app_insights_respose.properties.connection_string
 
-        self._get_connection_string_called = True
         return self._connection_string
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?

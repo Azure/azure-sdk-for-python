@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp azure-identity
+    pip install azure-ai-projects azure-identity azure-ai-inference openai aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in the "Project overview"
@@ -86,9 +86,9 @@ async def sample_connections_async():
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
-            from azure.identity import get_bearer_token_provider
+            from azure.identity.aio import get_bearer_token_provider
 
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
@@ -124,7 +124,7 @@ async def sample_connections_async():
             client = ChatCompletionsClient(
                 endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key)
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             client = ChatCompletionsClient(

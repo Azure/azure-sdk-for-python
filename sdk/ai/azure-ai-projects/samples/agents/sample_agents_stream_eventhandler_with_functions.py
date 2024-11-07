@@ -19,23 +19,23 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
+from typing import Any
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentEventHandler,
+    FunctionTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
+    RequiredFunctionToolCall,
     RunStep,
+    SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
     ToolOutput
 )
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction
-
-from typing import Any
-
 from user_functions import user_functions
 
 
@@ -79,7 +79,7 @@ class MyEventHandler(AgentEventHandler):
                         tool_outputs.append(
                             ToolOutput(
                                 tool_call_id=tool_call.id,
-                                output=output
+                                output=output,
                             )
                         )
                     except Exception as e:
@@ -106,6 +106,8 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
+    
+    # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
 
     agent = project_client.agents.create_agent(
@@ -114,6 +116,7 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=functions.definitions,
     )
+    # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

@@ -1392,7 +1392,7 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
     :vartype auth_type: str or ~azure.ai.projects.models.AAD
     """
 
-    auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication"""
 
 

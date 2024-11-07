@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0b1 (2024-11-05)
+
+### Features Added
+
+- Added broker on macOS support.
 
 ## 1.2.0 (2024-10-08)
 
