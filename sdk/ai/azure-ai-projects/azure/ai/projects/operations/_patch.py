@@ -41,7 +41,7 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import _types
-    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient  # type: ignore
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
     from openai import AzureOpenAI
     from azure.identity import get_bearer_token_provider
 

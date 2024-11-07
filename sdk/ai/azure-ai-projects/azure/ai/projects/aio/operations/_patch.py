@@ -51,7 +51,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.ai.projects import _types
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient  # type: ignore
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
     from azure.identity import get_bearer_token_provider
 
