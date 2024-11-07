@@ -1308,13 +1308,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return response
 
     @distributed_trace
     def create_and_process_run(
         self,
         thread_id: str,
+        *,
         assistant_id: str,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1847,7 +1847,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return response
 
     @overload

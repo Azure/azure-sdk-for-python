@@ -1214,7 +1214,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @distributed_trace_async
@@ -1735,7 +1734,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @overload
