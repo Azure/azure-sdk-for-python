@@ -362,8 +362,8 @@ def validate_conversation(conversation):
         )
     expected_roles = {"user", "assistant", "system"}
     image_found = False
-    assistantMessageCount = 0
-    userMessageCount = 0
+    assistant_message_count = 0
+    user_message_count = 0
     for num, message in enumerate(messages, 1):
         if not isinstance(message, dict):
             try:
@@ -387,9 +387,9 @@ def validate_conversation(conversation):
                     ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                 )
             if isinstance(message, AssistantMessage):
-                assistantMessageCount = assistantMessageCount + 1
+                assistant_message_count += 1
             if isinstance(message, UserMessage):
-                userMessageCount = userMessageCount + 1
+                user_message_count += 1
             if isinstance(message.content, list) and any(
                 isinstance(item, ImageContentItem) for item in message.content
             ):
@@ -401,9 +401,9 @@ def validate_conversation(conversation):
                 ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
             )
         if message.get("role") == "assistant":
-            assistantMessageCount = assistantMessageCount + 1
+            assistant_message_count += 1
         if message.get("role") == "user":
-            userMessageCount = userMessageCount + 1
+            user_message_count += 1
         content = message.get("content")
         if not isinstance(content, (str, list)):
             raise_exception(
@@ -418,18 +418,18 @@ def validate_conversation(conversation):
             "Message needs to have multi-modal input like images.",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
-    if assistantMessageCount == 0:
+    if assistant_message_count == 0:
         raise_exception(
-            "One of the messages should have assistant role",
+            "Assistant role required in one of the messages.",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
-    if userMessageCount == 0:
+    if user_message_count == 0:
         raise_exception(
-            "One of the messages should have user role",
+            "User role required in one of the messages.",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
-    if assistantMessageCount > 1:
+    if assistant_message_count > 1:
         raise_exception(
-            "Single Turn conversation is allowed. Only one of the messages should have user or assistant role",
+            "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message.",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )

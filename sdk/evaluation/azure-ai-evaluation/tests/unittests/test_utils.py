@@ -117,7 +117,7 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "One of the messages should have assistant role"
+            assert ex.message in "Assistant role required in one of the messages."
 
     def test_messages_with_missing_user_message(self):
         conversation = {
@@ -145,7 +145,7 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "One of the messages should have user role"
+            assert ex.message in "User role required in one of the messages."
 
     def test_messages_with_more_than_one_assistant_message(self):
         conversation = {
@@ -193,7 +193,7 @@ class TestUtils:
         except EvaluationException as ex:
             assert (
                 ex.message
-                in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"
+                in "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message."
             )
 
     def test_messages_multi_turn(self):
@@ -254,5 +254,5 @@ class TestUtils:
         except EvaluationException as ex:
             assert (
                 ex.message
-                in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"
+                in "Evaluators for multimodal conversations only support single turn. User and assistant role expected as the only role in each message."
             )
