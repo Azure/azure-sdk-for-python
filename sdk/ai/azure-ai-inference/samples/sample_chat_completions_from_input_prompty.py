@@ -23,7 +23,6 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr"
 # pyright: reportAttributeAccessIssue=false
 
 
