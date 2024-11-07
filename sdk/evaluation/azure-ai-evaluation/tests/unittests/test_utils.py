@@ -3,7 +3,6 @@ import os
 import pathlib
 import base64
 import json
-import pandas as pd
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -191,5 +190,63 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have assistant role"            
+            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role"  
+    
+    def test_messages_multi_turn(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Can you describe this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Okay, try again with this image"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The image shows a same man with short brown hair smiling, wearing a dark-colored shirt.",
+                        }
+                    ],
+                },
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have user or assistant role" 
     

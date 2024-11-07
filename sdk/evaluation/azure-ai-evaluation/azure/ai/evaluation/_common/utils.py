@@ -329,12 +329,12 @@ def retrieve_content_type(assistant_messages: List, metric: str) -> str:
         return "image"
 
     # Iterate through each message
-    for item in assistant_messages:
+    for message in assistant_messages:
         # Ensure "content" exists in the message and is iterable
-        content = item.get("content", [])
-        for message in content:
-            if message.get("type", "") == "image_url":
-                return "image"
+        if isinstance(message.get("content", []), list):
+            for content in message.get("content", []):
+                if content.get("type") == "image_url":
+                    return "image"
     # Default return if no image was found
     return "text"
 
@@ -427,6 +427,6 @@ def validate_conversation(conversation):
         )
     if assistantMessageCount > 1:
         raise_exception(
-            "Single Turn conversation is allowed. Only one of the messages should have assistant role",
+            "Single Turn conversation is allowed. Only one of the messages should have user or assistant role",
             ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
         )
