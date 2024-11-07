@@ -381,7 +381,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    async def get_connection_string(self) -> Optional[str]:
+    async def get_connection_string(self) -> str:
         """
         Get the Application Insights connection string associated with the Project's Application Insights resource.
         On first call, this method makes a service call to the Application Insights resource URL to get the connection string.
@@ -411,12 +411,29 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    def enable(self, *, destination: Union[TextIO, str], **kwargs) -> None:
-        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+    async def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
+        """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
 
-        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-         endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
-        :paramtype destination: Union[TextIO, str]
+        Following instrumentations are enabled (when corresponding packages are installed):
+
+        - Azure AI Inference (`azure-ai-inference`)
+        - Azure AI Projects (`azure-ai-projects`)
+        - OpenAI (`opentelemetry-instrumentation-openai-v2`)
+        - Langchain (`opentelemetry-instrumentation-langchain`)
+
+        The recording of prompt and completion messages is disabled by default. To enable it, set the
+        `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable to `true`.
+
+        When destination is provided, the method configures OpenTelemetry SDK to export traces to
+        stdout or OTLP (OpenTelemetry protocol) gRPC endpoint. It's recommended for local
+        development only. For production use, make sure to configure OpenTelemetry SDK directly.
+
+        :keyword destination: Recommended for local testing only. Set it to `sys.stdout` for
+            tracing to console output, or a string holding the OpenTelemetry protocol (OTLP)
+            endpoint such as "http://localhost:4317.
+            If not provided, the method enables instrumentations, but does not configure OpenTelemetry
+            SDK to export traces.
+        :paramtype destination: Union[TextIO, str, None]
         """
         _enable_telemetry(destination=destination, **kwargs)
 

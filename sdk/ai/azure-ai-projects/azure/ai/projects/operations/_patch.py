@@ -413,7 +413,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
             tp = cast(TracerProvider, trace.get_tracer_provider())
             tp.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
         else:
-            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIOWrapper`")
+            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     # Silently try to load a set of relevant Instrumentors
     try:
