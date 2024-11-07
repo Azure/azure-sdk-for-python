@@ -24,7 +24,7 @@ USAGE:
       messages, which may contain personal data. False by default.
 """
 
-import os, sys, time
+import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace

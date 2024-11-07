@@ -249,7 +249,7 @@ class AIProjectClient(ClientGenerated):
             )
 
         data = Data(
-            path=file_path,
+            path=str(file_path),
             type=AssetTypes.URI_FILE,
             name=str(uuid.uuid4()),  # generating random name
             is_anonymous=True,
