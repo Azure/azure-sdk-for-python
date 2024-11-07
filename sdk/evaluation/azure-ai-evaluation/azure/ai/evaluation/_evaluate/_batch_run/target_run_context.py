@@ -6,6 +6,7 @@ import types
 from typing import Optional, Type
 
 from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP
+from azure.ai.evaluation._constants import PF_DISABLE_TRACING
 
 
 class TargetRunContext:
@@ -29,6 +30,8 @@ class TargetRunContext:
         if not self._upload_snapshot:
             os.environ[PF_FLOW_ENTRY_IN_TMP] = "true"
 
+        os.environ[PF_DISABLE_TRACING] = "true"
+
     def __exit__(
         self,
         exc_type: Optional[Type[BaseException]],
@@ -39,3 +42,5 @@ class TargetRunContext:
 
         if not self._upload_snapshot:
             os.environ.pop(PF_FLOW_ENTRY_IN_TMP, None)
+
+        os.environ.pop(PF_DISABLE_TRACING, None)
