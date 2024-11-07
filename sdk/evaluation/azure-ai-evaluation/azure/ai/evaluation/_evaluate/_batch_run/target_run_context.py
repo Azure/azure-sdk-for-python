@@ -8,6 +8,7 @@ from typing import Optional, Type
 from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP
 from azure.ai.evaluation._constants import PF_DISABLE_TRACING
 
+
 class TargetRunContext:
     """Context manager for target batch run.
 
