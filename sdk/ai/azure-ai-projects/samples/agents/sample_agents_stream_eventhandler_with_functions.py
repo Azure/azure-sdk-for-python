@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """
 FILE: sample_agents_stream_eventhandler_with_functions.py
 

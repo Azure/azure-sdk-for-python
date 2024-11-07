@@ -40,9 +40,6 @@ project_client = AIProjectClient.from_connection_string(
 data_id = project_client.upload_file("./evaluate_test_data.jsonl")
 
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-if default_connection is None:
-    print("Azure OpenAI connection was not found.")
-    exit()
 
 deployment_name = "<>"
 api_version = "<>"

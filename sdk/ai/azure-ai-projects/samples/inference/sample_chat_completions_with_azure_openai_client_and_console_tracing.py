@@ -31,7 +31,6 @@ USAGE:
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
 """
-
 import os
 import sys
 from azure.ai.projects import AIProjectClient

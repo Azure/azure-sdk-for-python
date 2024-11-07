@@ -41,7 +41,7 @@ from azure.ai.projects.models import (
     RunStep,
 )
 from typing import Any
-from opentelemetry import trace  #type: ignore
+from opentelemetry import trace
 
 
 # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.

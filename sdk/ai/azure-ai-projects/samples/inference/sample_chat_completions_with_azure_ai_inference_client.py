@@ -20,10 +20,8 @@ USAGE:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
     * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
-from typing import cast
 
 import os
-from azure.ai.inference import ChatCompletionsClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
@@ -36,7 +34,7 @@ with AIProjectClient.from_connection_string(
     conn_str=project_connection_string,
 ) as project_client:
 
-    with cast(ChatCompletionsClient, project_client.inference.get_chat_completions_client()) as client:
+    with project_client.inference.get_chat_completions_client() as client:
 
         response = client.complete(
             model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]

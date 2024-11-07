@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to enumerate connections,
@@ -22,11 +23,11 @@ USAGE:
        in your AI Studio Hub page.
     3) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 """
-from typing import cast, Optional, Sequence
+from typing import cast
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ConnectionType, AuthenticationType, ConnectionProperties
+from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import TokenCredential
 
@@ -42,7 +43,7 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
 
     # List the properties of all connections
-    connections: Sequence[Optional[ConnectionProperties]] = project_client.connections.list()
+    connections = project_client.connections.list()
     print(f"====> Listing of all connections (found {len(connections)}):")
     for connection in connections:
         print(connection)
@@ -60,9 +61,6 @@ with project_client:
         connection_type=ConnectionType.AZURE_AI_SERVICES,
         with_credentials=True,  # Optional. Defaults to "False"
     )
-    if connection is None:
-        print(f"Connection of type {ConnectionType.AZURE_AI_SERVICES} was not found.")
-        exit()
     print("====> Get default Azure AI Services connection:")
     print(connection)
 
@@ -70,9 +68,6 @@ with project_client:
     connection = project_client.connections.get(
         connection_name=connection_name, with_credentials=True  # Optional. Defaults to "False"
     )
-    if connection is None:
-        print(f"Connection {connection_name} was not found.")
-        exit()
     print("====> Get connection by name:")
     print(connection)
 
