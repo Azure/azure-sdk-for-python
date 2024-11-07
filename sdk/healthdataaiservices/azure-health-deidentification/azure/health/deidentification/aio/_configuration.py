@@ -13,11 +13,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for DeidentificationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,14 +26,13 @@ class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-12-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-11-15".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-07-12-preview")
+        api_version: str = kwargs.pop("api_version", "2024-11-15")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
