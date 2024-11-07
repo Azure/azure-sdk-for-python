@@ -20,16 +20,9 @@ USAGE:
 """
 import asyncio
 import os
-from azure.ai.ml import MLClient
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import (
-    FileSearchTool,
-    VectorStoreDataSource,
-    VectorStoreDataSourceAssetType
-)
+from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
 
@@ -44,16 +37,9 @@ async def main():
 
     async with project_client:
 
-        ml_client = MLClient.from_config(credential)
         # We will upload the local file to Azure and will use it for vector store creation.
-        local_data = Data(name="products", path="../product_info_1.md", type=AssetTypes.URI_FILE)
-        # The new data object will contain the Azure ID of an uploaded file,
-        # which is the uri starting from azureml://.
-        uploaded_data = ml_client.data.create_or_update(local_data)
-        # create a vector store with no file and wait for it to be processed
-        ds = VectorStoreDataSource(
-            storage_uri=uploaded_data.path, asset_type=VectorStoreDataSourceAssetType.URI_ASSET
-        )
+        _, asset_uri = project_client.upload_file("../product_info_1.md")
+        ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
         vector_store = await project_client.agents.create_vector_store_and_poll(
             data_sources=[ds], name="sample_vector_store"
         )

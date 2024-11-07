@@ -21,9 +21,6 @@ USAGE:
 """
 import asyncio
 import os
-from azure.ai.ml._ml_client import MLClient
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import Data
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -62,15 +59,9 @@ async def main():
         thread = await project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        ml_client = MLClient.from_config(credential)
         # We will upload the local file to Azure and will use it for vector store creation.
-        local_data = Data(name="products", path="../product_info_1.md", type=AssetTypes.URI_FILE)
-        # The new data object will contain the Azure ID of an uploaded file,
-        # which is the uri starting from azureml://.
-        uploaded_data = ml_client.data.create_or_update(local_data)
-        ds = VectorStoreDataSource(
-            storage_uri=uploaded_data.path, asset_type=VectorStoreDataSourceAssetType.URI_ASSET
-        )
+        _, asset_uri = project_client.upload_file("../product_info_1.md")
+        ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
         # create a message with the attachment
         attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)

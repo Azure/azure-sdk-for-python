@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -133,7 +134,7 @@ class InferenceOperations:
         does not exist.
         Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
         is not installed.
- 
+
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -293,9 +294,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
-    def get(
-        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
@@ -2248,7 +2247,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2311,7 +2310,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2333,9 +2332,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not None:
             vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
         elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
-            store_configuration = (
-                _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
-            )
+            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
             vector_store = self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
@@ -2468,7 +2465,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.project.VectorStorageDataSource]
+        :paramtype data_sources: list[~azure.ai.client.project.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2657,7 +2654,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2717,7 +2714,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStorageDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest

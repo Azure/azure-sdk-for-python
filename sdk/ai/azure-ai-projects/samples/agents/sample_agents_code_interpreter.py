@@ -55,7 +55,7 @@ with project_client:
         tools=code_interpreter.definitions,
         tool_resources=code_interpreter.resources,
     )
-    # [END upload_file_and_creae_agent_with_code_interpreter]    
+    # [END upload_file_and_creae_agent_with_code_interpreter]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

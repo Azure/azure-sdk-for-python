@@ -3,10 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy, get_credential, set_bodiless_matcher
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    EnvironmentVariableLoader,
+    recorded_by_proxy,
+    get_credential,
+    set_bodiless_matcher,
+)
 
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
 from tests.evaluation.evaluation_test_base import EvaluationsTestBase, servicePreparerEvaluationsTests
+
 
 class TestEvaluation(EvaluationsTestBase):
 
@@ -20,7 +27,6 @@ class TestEvaluation(EvaluationsTestBase):
         deployment_name = kwargs.get("azure_ai_projects_evaluations_tests_deployment_name")
         api_version = kwargs.get("azure_ai_projects_evaluations_tests_api_version")
         dataset_id = kwargs.get("azure_ai_projects_evaluations_tests_dataset_id")
-
 
         evaluation = Evaluation(
             display_name="Remote Evaluation E2E Test",
@@ -53,7 +59,6 @@ class TestEvaluation(EvaluationsTestBase):
 
         assert created_evaluation.evaluators["relevance"] is not None
         assert created_evaluation.evaluators["relevance"].id is not None
-
 
         retrieved_evaluation = project_client.evaluations.get(created_evaluation.id)
 

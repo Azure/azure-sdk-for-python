@@ -434,7 +434,10 @@ class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensiti
 
 
 class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of vector storage configuration."""
+    """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
+    asset URI ID,
+    in the case of id_asset it should contain the data ID.
+    """
 
     URI_ASSET = "uri_asset"
     ID_ASSET = "id_asset"

@@ -3712,7 +3712,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
+         from Azure asset URIs. Default value is None.
         :paramtype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
@@ -3768,7 +3768,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
+         from Azure asset URIs. Default value is None.
         :paramtype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy

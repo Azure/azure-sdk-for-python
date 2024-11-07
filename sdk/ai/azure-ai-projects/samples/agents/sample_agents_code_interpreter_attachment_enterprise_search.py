@@ -26,7 +26,7 @@ from azure.ai.projects.models import (
     CodeInterpreterTool,
     MessageAttachment,
     VectorStoreDataSource,
-    VectorStoreDataSourceAssetType
+    VectorStoreDataSourceAssetType,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -57,8 +57,8 @@ with project_client:
     print(f"Created thread, thread ID: {thread.id}")
 
     # We will upload the local file to Azure and will use it for vector store creation.
-    _, asset_id = project_client.upload_file("./product_info_1.md")
-    ds = VectorStoreDataSource(storage_uri=asset_id, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+    _, asset_uri = project_client.upload_file("./product_info_1.md")
+    ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
     # create a message with the attachment
     attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)

@@ -46,7 +46,8 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# [START stream_event_handler]    
+
+# [START stream_event_handler]
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -71,7 +72,9 @@ class MyEventHandler(AgentEventHandler):
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
-# [END stream_event_handler]    
+
+
+# [END stream_event_handler]
 
 
 with project_client:
@@ -87,12 +90,12 @@ with project_client:
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print(f"Created message, message ID {message.id}")
 
-    # [START create_stream]    
+    # [START create_stream]
     with project_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         stream.until_done()
-    # [END create_stream]    
+    # [END create_stream]
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
