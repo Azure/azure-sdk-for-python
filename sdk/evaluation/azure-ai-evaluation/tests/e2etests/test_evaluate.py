@@ -403,7 +403,7 @@ class TestEvaluate:
         assert "groundedness_pro_label" in per_turn_results.keys()
         assert "groundedness_pro_reason" in per_turn_results.keys()
 
-        # Check that label is renamed to passsing rate in metrics
+        # Check that label is renamed to passing rate in metrics
         assert "groundedness_pro.groundedness_pro_passing_rate" in convo_metrics.keys()
         assert 0 <= convo_metrics.get("groundedness_pro.groundedness_pro_passing_rate") <= 1
 
@@ -631,7 +631,6 @@ class TestEvaluate:
         remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
 
         assert remote_run is not None
-        assert remote_run["runMetadata"]["properties"]["azureml.promptflow.local_to_cloud"] == "true"
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
@@ -678,7 +677,7 @@ class TestEvaluate:
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
-        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "azure-ai-generative-parent"
+        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.parametrize(

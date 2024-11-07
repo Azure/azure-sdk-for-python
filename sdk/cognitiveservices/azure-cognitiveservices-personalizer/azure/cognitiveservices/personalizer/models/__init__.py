@@ -32,13 +32,14 @@ from .personalizer_client_enums import (
 )
 
 __all__ = [
-    'InternalError',
-    'PersonalizerError',
-    'ErrorResponse', 'ErrorResponseException',
-    'RewardRequest',
-    'RankableAction',
-    'RankRequest',
-    'RankedAction',
-    'RankResponse',
-    'ErrorCode',
+    "InternalError",
+    "PersonalizerError",
+    "ErrorResponse",
+    "ErrorResponseException",
+    "RewardRequest",
+    "RankableAction",
+    "RankRequest",
+    "RankedAction",
+    "RankResponse",
+    "ErrorCode",
 ]

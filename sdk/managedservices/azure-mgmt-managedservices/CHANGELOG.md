@@ -1,5 +1,11 @@
 # Release History
 
+## 7.0.0b2 (2024-11-05)
+
+### Other Changes
+
+  - Update dependencies
+
 ## 7.0.0b1 (2022-10-31)
 
 ### Features Added

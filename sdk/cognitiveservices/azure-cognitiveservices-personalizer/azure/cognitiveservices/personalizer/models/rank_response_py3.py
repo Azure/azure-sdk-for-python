@@ -31,15 +31,15 @@ class RankResponse(Model):
     """
 
     _validation = {
-        'ranking': {'readonly': True},
-        'event_id': {'readonly': True, 'max_length': 256},
-        'reward_action_id': {'readonly': True, 'max_length': 256},
+        "ranking": {"readonly": True},
+        "event_id": {"readonly": True, "max_length": 256},
+        "reward_action_id": {"readonly": True, "max_length": 256},
     }
 
     _attribute_map = {
-        'ranking': {'key': 'ranking', 'type': '[RankedAction]'},
-        'event_id': {'key': 'eventId', 'type': 'str'},
-        'reward_action_id': {'key': 'rewardActionId', 'type': 'str'},
+        "ranking": {"key": "ranking", "type": "[RankedAction]"},
+        "event_id": {"key": "eventId", "type": "str"},
+        "reward_action_id": {"key": "rewardActionId", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:

@@ -218,7 +218,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         return {
             self.version_property_name: ChangeFeedStateVersion.V2.value,
             self.container_rid_property_name: self._container_rid,
-            self.change_feed_mode_property_name: "Incremental",
+            self.change_feed_mode_property_name: "LatestVersion",
             self.change_feed_start_from_property_name: self._change_feed_start_from.to_dict(),
             self.continuation_property_name: self._continuation.to_dict() if self._continuation is not None else None
         }
