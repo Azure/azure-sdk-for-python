@@ -10,7 +10,6 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common._experimental import experimental
 
 
-@experimental
 class ContentSafetyMultimodalEvaluatorBase(ABC):
     """
     Initialize a evaluator for a specified Evaluation Metric. Base class that is not

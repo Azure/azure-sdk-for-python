@@ -119,6 +119,34 @@ class TestUtils:
         except EvaluationException as ex:
             assert ex.message in "One of the messages should have assistant role"
     
+    def test_messages_with_missing_user_message(self):
+        conversation = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "Here is the picture you requested"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            },
+                        },
+                    ],
+                }
+            ]
+        }
+        try:
+            validate_conversation(conversation=conversation)
+        except EvaluationException as ex:
+            assert ex.message in "One of the messages should have user role"
+    
     def test_messages_with_more_than_one_assistant_message(self):
         conversation = {
             "messages": [
@@ -163,5 +191,5 @@ class TestUtils:
         try:
             validate_conversation(conversation=conversation)
         except EvaluationException as ex:
-            assert ex.message in "Only one of the messages should have assistant role"            
+            assert ex.message in "Single Turn conversation is allowed. Only one of the messages should have assistant role"            
     
