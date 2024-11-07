@@ -379,14 +379,17 @@ def validate_conversation(conversation):
                     message="Please install 'azure-ai-inference' package to use SystemMessage, AssistantMessage"
                 ) from ex
 
-            if isinstance(messages[0], ChatRequestMessage) and not isinstance(
+            if isinstance(message, ChatRequestMessage) and not isinstance(
                 message, (UserMessage, AssistantMessage, SystemMessage)
             ):
                 raise_exception(
                     f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
                     ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                 )
-
+            if isinstance(message, AssistantMessage):
+                assistantMessageCount = assistantMessageCount + 1
+            if isinstance(message, UserMessage):
+                userMessageCount = userMessageCount + 1
             if isinstance(message.content, list) and any(
                 isinstance(item, ImageContentItem) for item in message.content
             ):

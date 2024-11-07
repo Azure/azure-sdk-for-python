@@ -251,7 +251,7 @@ class TestEvaluate:
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
-            evaluation_name=f"test-mm-eval-dataset-img-url-{str(uuid.uuid4())}",
+            evaluation_name=f"test-mm-content-safety-eval-dataset-img-url-{str(uuid.uuid4())}",
             azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"content_safety": content_safety_eval},
