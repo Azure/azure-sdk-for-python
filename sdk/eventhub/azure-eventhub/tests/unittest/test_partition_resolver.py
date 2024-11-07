@@ -23,7 +23,7 @@ class TestPartitionResolver:
             "!c*_!I@1^c": 15372,
             "p4*!jioeO/z-!-;w:dh": -3104,
             "$0cb": 26269,
-            "-4189260826195535198": 453
+            "-4189260826195535198": 453,
         }
 
         for k, v in input.items():
@@ -33,7 +33,7 @@ class TestPartitionResolver:
     def test_basic_round_robin(self, partition_cnt):
         partitions = [str(i) for i in range(partition_cnt)]
         pr = PartitionResolver(partitions)
-        for i in range(2*partition_cnt):
+        for i in range(2 * partition_cnt):
             expected = str(i % partition_cnt)
             real = pr.get_next_partition_id()
             assert expected == real
@@ -52,7 +52,7 @@ class TestPartitionResolver:
             with lock:
                 dic[pid] += 1
 
-        for i in range(5*partition_cnt):
+        for i in range(5 * partition_cnt):
             exc.submit(gen_pid)
 
         exc.shutdown()

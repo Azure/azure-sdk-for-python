@@ -16,7 +16,7 @@ class TestPartitionResolver:
     async def test_basic_round_robin(self, partition_cnt):
         partitions = [str(i) for i in range(partition_cnt)]
         pr = PartitionResolver(partitions)
-        for i in range(2*partition_cnt):
+        for i in range(2 * partition_cnt):
             expected = str(i % partition_cnt)
             real = await pr.get_next_partition_id()
             assert expected == real
@@ -34,7 +34,7 @@ class TestPartitionResolver:
             async with lock:
                 dic[pid] += 1
 
-        futures = [asyncio.ensure_future(gen_pid()) for _ in range(5*partition_cnt)]
+        futures = [asyncio.ensure_future(gen_pid()) for _ in range(5 * partition_cnt)]
 
         for future in futures:
             await future

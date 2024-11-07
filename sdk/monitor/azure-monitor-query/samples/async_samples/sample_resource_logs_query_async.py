@@ -55,6 +55,7 @@ async def resource_logs_query():
             print(err)
     await credential.close()
 
+
 # [END resource_logs_query_async]
 
 if __name__ == "__main__":

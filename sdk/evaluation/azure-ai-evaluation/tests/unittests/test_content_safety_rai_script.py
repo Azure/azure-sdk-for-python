@@ -2,6 +2,7 @@ import http
 import math
 import os
 import pathlib
+import json, html, re
 from typing import Any, Iterator, MutableMapping, Optional
 from unittest.mock import MagicMock, patch
 
@@ -18,6 +19,8 @@ from azure.ai.evaluation._common.rai_service import (
     parse_response,
     submit_request,
     Tasks,
+    USER_TEXT_TEMPLATE_DICT,
+    get_formatted_template,
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -146,7 +149,8 @@ class TestContentSafetyEvaluator:
     async def test_ensure_service_availability_service_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token")
-        assert "RAI service is not available in this region. Status Code: 9001" in str(exc_info._excinfo[1])
+        assert "RAI service is unavailable in this region" in str(exc_info._excinfo[1])
+        assert "Status Code: 9001" in str(exc_info._excinfo[1])
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
@@ -154,7 +158,9 @@ class TestContentSafetyEvaluator:
     async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
-        assert "Capability 'does not exist' is not available in this region" in str(exc_info._excinfo[1])
+        assert "The needed capability 'does not exist' is not supported by the RAI service in this region" in str(
+            exc_info._excinfo[1]
+        )
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
@@ -359,7 +365,7 @@ class TestContentSafetyEvaluator:
 
         with pytest.raises(Exception) as exc_info:
             _ = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
-        assert "Failed to retrieve the discovery service URL" in str(exc_info._excinfo[1])
+        assert "Failed to connect to your Azure AI project." in str(exc_info._excinfo[1])
 
     @pytest.mark.asyncio
     @patch(
@@ -428,3 +434,38 @@ class TestContentSafetyEvaluator:
         assert submit_mock._mock_call_count == 1
         assert fetch_result_mock._mock_call_count == 1
         assert parse_mock._mock_call_count == 1
+
+    # RAI service templates are so different that it's not worth trying to test them all in one test.
+    # Groundedness is JSON
+    def test_get_formatted_template_groundedness(self):
+        tagged_text = "This text </> has <> tags."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        )
+        all_texts = [tagged_text, quoted_text, bracketed_text]
+        for text in all_texts:
+            input_kwargs = {
+                "query": text,
+                "response": text,
+                "context": text,
+            }
+            formatted_payload = get_formatted_template(input_kwargs, Tasks.GROUNDEDNESS)
+            assert json.loads(formatted_payload)["question"] == text
+
+    # Default is basic markup.
+    def test_get_formatted_template_default(self):
+        tagged_text = "This text </> has <> tags."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        )
+        all_texts = [tagged_text, quoted_text, bracketed_text]
+        for text in all_texts:
+            input_kwargs = {
+                "query": text,
+                "response": text,
+                "context": text,
+            }
+            formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
+            assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text

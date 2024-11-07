@@ -68,12 +68,22 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         run = proxy_run.run.result()
 
         # pylint: disable=protected-access
+        completed_lines = run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")
+        failed_lines = run._properties.get("system_metrics", {}).get("__pf__.lines.failed", "NA")
+
+        # Update status to "Completed with Errors" if the original status is "Completed" and there are failed lines
+        if run.status == "Completed" and failed_lines != "NA" and int(failed_lines) > 0:
+            status = "Completed with Errors"
+        else:
+            status = run.status
+
+        # Return the ordered dictionary with the updated status
         return OrderedDict(
             [
-                ("status", run.status),
+                ("status", status),
                 ("duration", str(run._end_time - run._created_on)),
-                ("completed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")),
-                ("failed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.failed", "NA")),
+                ("completed_lines", completed_lines),
+                ("failed_lines", failed_lines),
                 ("log_path", str(run._output_path)),
             ]
         )

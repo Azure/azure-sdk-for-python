@@ -23,6 +23,7 @@ class ErrorCategory(Enum):
     * SERVICE_UNAVAILABLE -> Service is unavailable
     * MISSING_PACKAGE -> Required package is missing
     * FAILED_REMOTE_TRACKING -> Remote tracking failed
+    * PROJECT_ACCESS_ERROR -> Access to project failed
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -35,6 +36,7 @@ class ErrorCategory(Enum):
     SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
     MISSING_PACKAGE = "MISSING PACKAGE"
     FAILED_REMOTE_TRACKING = "FAILED REMOTE TRACKING"
+    PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
 
 

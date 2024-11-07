@@ -63,15 +63,26 @@ class AIInferenceInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIInferenceInstrumentorPreview()
 
-    def instrument(self) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+            of the traces or not. Content in this context refers to chat message content
+            and function call tool related function names, function parameter names and
+            values. True will enable content recording, False will disable it. If no value
+            s provided, then the value read from environment variable
+            AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+            is not found, then the value will default to False. Please note that successive calls
+            to instrument will always apply the content recording value provided with the most
+            recent call to instrument (including applying the environment variable if no value is
+            provided and defaulting to false if the environment variable is not found), even if
+            instrument was already previously called without uninstrument being called in between
+            the instrument calls.
 
+        :type enable_content_recording: bool, optional
         """
-        self._impl.instrument()
+        self._impl.instrument(enable_content_recording=enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -94,6 +105,15 @@ class AIInferenceInstrumentor:
         """
         return self._impl.is_instrumented()
 
+    def is_content_recording_enabled(self) -> bool:
+        """
+        This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_content_recording_enabled()
+
 
 class _AIInferenceInstrumentorPreview:
     """
@@ -108,37 +128,37 @@ class _AIInferenceInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self):
+    def instrument(self, enable_content_recording: Optional[bool] = None):
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False.
 
-        This method checks the environment variable
-        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
-        whether to enable content tracing.
+        :type enable_content_recording: bool, optional
         """
-        if self.is_instrumented():
-            raise RuntimeError("Already instrumented")
-
-        var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-        enable_content_tracing = self._str_to_bool(var_value)
-        self._instrument_inference(enable_content_tracing)
+        if enable_content_recording is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            enable_content_recording = self._str_to_bool(var_value)
+        if not self.is_instrumented():
+            self._instrument_inference(enable_content_recording)
+        else:
+            self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
 
     def uninstrument(self):
         """
         Disable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is not currently enabled.
-
         This method removes any active instrumentation, stopping the tracing
         of AI Inference.
         """
-        if not self.is_instrumented():
-            raise RuntimeError("Not instrumented")
-        self._uninstrument_inference()
+        if self.is_instrumented():
+            self._uninstrument_inference()
 
     def is_instrumented(self):
         """
@@ -148,6 +168,24 @@ class _AIInferenceInstrumentorPreview:
         :rtype: bool
         """
         return self._is_instrumented()
+
+    def set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
+
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return self._is_content_recording_enabled()
 
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
@@ -338,6 +376,39 @@ class _AIInferenceInstrumentorPreview:
                     if tool_call.function and tool_call.function.arguments:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
+    def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
+        if not "choices" in item:
+            return
+        if "finish_reason" in item["choices"][0] and item["choices"][0]["finish_reason"]:
+            accumulate["finish_reason"] = item["choices"][0]["finish_reason"]
+        if "index" in item["choices"][0] and item["choices"][0]["index"]:
+            accumulate["index"] = item["choices"][0]["index"]
+        if not "delta" in item["choices"][0]:
+            return
+        if "content" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["content"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("content", "")
+            accumulate["message"]["content"] += item["choices"][0]["delta"]["content"]
+        if "tool_calls" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["tool_calls"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("tool_calls", [])
+            if item["choices"][0]["delta"]["tool_calls"] is not None:
+                for tool_call in item["choices"][0]["delta"]["tool_calls"]:
+                    if tool_call.id:
+                        accumulate["message"]["tool_calls"].append(
+                            {
+                                "id": tool_call.id,
+                                "type": "",
+                                "function": {"name": "", "arguments": ""},
+                            }
+                        )
+                    if tool_call.function:
+                        accumulate["message"]["tool_calls"][-1]["type"] = "function"
+                    if tool_call.function and tool_call.function.name:
+                        accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                    if tool_call.function and tool_call.function.arguments:
+                        accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
     def _wrapped_stream(
         self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan"
     ) -> _models.StreamingChatCompletions:
@@ -407,6 +478,63 @@ class _AIInferenceInstrumentorPreview:
                     span.finish()
 
         return StreamWrapper(stream_obj, self)
+
+    def _async_wrapped_stream(
+        self, stream_obj: _models.AsyncStreamingChatCompletions, span: "AbstractSpan"
+    ) -> _models.AsyncStreamingChatCompletions:
+        class AsyncStreamWrapper(_models.AsyncStreamingChatCompletions):
+            def __init__(self, stream_obj, instrumentor, span):
+                super().__init__(stream_obj._response)
+                self._instrumentor = instrumentor
+                self._accumulate: Dict[str, Any] = {}
+                self._stream_obj = stream_obj
+                self.span = span
+                self._last_result = None
+
+            async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
+                try:
+                    result = await super().__anext__()
+                    self._instrumentor._accumulate_async_streaming_response(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        result, self._accumulate
+                    )
+                    self._last_result = result
+                except StopAsyncIteration as exc:
+                    self._trace_stream_content()
+                    raise exc
+                return result
+
+            def _trace_stream_content(self) -> None:
+                if self._last_result:
+                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        span, self._last_result
+                    )
+                # Only one choice expected with streaming
+                self._accumulate["index"] = 0
+                # Delete message if content tracing is not enabled
+                if not _trace_inference_content:
+                    if "message" in self._accumulate:
+                        if "content" in self._accumulate["message"]:
+                            del self._accumulate["message"]["content"]
+                            if not self._accumulate["message"]:
+                                del self._accumulate["message"]
+                        if "message" in self._accumulate:
+                            if "tool_calls" in self._accumulate["message"]:
+                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                                    self._accumulate["message"]["tool_calls"]
+                                )
+                                self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
+
+                self.span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(self._accumulate),
+                    },
+                )
+                span.finish()
+
+        async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span)
+        return async_stream_wrapper
 
     def _trace_sync_function(
         self,
@@ -534,7 +662,7 @@ class _AIInferenceInstrumentorPreview:
                         self._add_request_span_attributes(span, span_name, args, kwargs)
                         result = await function(*args, **kwargs)
                         if kwargs.get("stream") is True:
-                            return self._wrapped_stream(result, span)
+                            return self._async_wrapped_stream(result, span)
                         self._add_response_span_attributes(span, result)
 
                 except Exception as exc:
@@ -674,3 +802,22 @@ class _AIInferenceInstrumentorPreview:
         :rtype: bool
         """
         return _inference_traces_enabled
+
+    def _set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        global _trace_inference_content  # pylint: disable=W0603
+        _trace_inference_content = enable_content_recording
+
+    def _is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_inference_content

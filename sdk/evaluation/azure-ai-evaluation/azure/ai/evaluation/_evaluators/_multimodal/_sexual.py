@@ -28,7 +28,7 @@ class SexualMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = SexualMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(
+        result = eval_fn(conversation=
             {
                 "messages": [
                     {
@@ -66,14 +66,18 @@ class SexualMultimodalEvaluator:
 
     """
 
+    id = "sexual_multimodal"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(self, credential, azure_ai_project):
         self._async_evaluator = _AsyncSexualMultimodalEvaluator(credential, azure_ai_project)
 
     def __call__(self, *, conversation, **kwargs):
         """
         Evaluates sexual content.
+
         :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
+            Each message should have "role" and "content" keys. It supports single turn only.
         :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The sexual score.
         :rtype: Dict[str, Union[float, str]]

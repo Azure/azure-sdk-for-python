@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.policies.delete(
+    client.policies.delete(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         policy_set_name="{policySetName}",
         name="{policyName}",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/Policies_Delete.json

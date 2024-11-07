@@ -16,7 +16,7 @@ from azure.eventhub.aio import EventHubConsumerClient
 from azure.identity.aio import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 RECEIVE_DURATION = 15
 
 
@@ -33,19 +33,17 @@ async def on_partition_initialize(partition_context):
 
 async def on_partition_close(partition_context, reason):
     # Put your code here.
-    print("Partition: {} has been closed, reason for closing: {}.".format(
-        partition_context.partition_id,
-        reason
-    ))
+    print("Partition: {} has been closed, reason for closing: {}.".format(partition_context.partition_id, reason))
 
 
 async def on_error(partition_context, error):
     # Put your code here. partition_context can be None in the on_error callback.
     if partition_context:
-        print("An exception: {} occurred during receiving from Partition: {}.".format(
-            partition_context.partition_id,
-            error
-        ))
+        print(
+            "An exception: {} occurred during receiving from Partition: {}.".format(
+                partition_context.partition_id, error
+            )
+        )
     else:
         print("An exception: {} occurred during the load balance process.".format(error))
 
@@ -58,7 +56,7 @@ async def main():
         consumer_group="$default",
     )
 
-    print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
+    print("Consumer will keep receiving for {} seconds, start time is {}.".format(RECEIVE_DURATION, time.time()))
 
     async with client:
         task = asyncio.ensure_future(
@@ -73,8 +71,8 @@ async def main():
         await asyncio.sleep(RECEIVE_DURATION)
     await task
 
-    print('Consumer has stopped receiving, end time is {}.'.format(time.time()))
+    print("Consumer has stopped receiving, end time is {}.".format(time.time()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
