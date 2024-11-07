@@ -14,6 +14,7 @@ import hmac
 import hashlib
 import base64
 import certifi
+import ssl
 
 try:
     from urllib.parse import quote as url_parse_quote
@@ -52,9 +53,15 @@ from servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
+from utilities import (
+    uamqp_transport as get_uamqp_transport,
+    ArgPasser,
+    socket_transport as get_socket_transport,
+    SocketArgPasser,
+)
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
+socket_transport_params, socket_transport_ids = get_socket_transport()
 
 
 class TestServiceBusClient(AzureMgmtRecordedTestCase):
@@ -567,6 +574,70 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         with client:
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("foo"))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @CachedServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("socket_transport", socket_transport_params, ids=socket_transport_ids)
+    @SocketArgPasser()
+    def test_sb_client_with_ssl_context(
+        self,
+        uamqp_transport,
+        socket_transport,
+        *,
+        servicebus_namespace=None,
+        servicebus_queue=None,
+        **kwargs,
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+
+        # Check that SSLContext with invalid/nonexistent cert file raises an error
+        context = ssl.SSLContext(cafile="fakecert.pem")
+        context.verify_mode = ssl.CERT_REQUIRED
+        client = ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            uamqp_transport=uamqp_transport,
+            ssl_context=context,
+            transport_type=socket_transport,
+            retry_total=0,
+        )
+        with client:
+            with pytest.raises(ServiceBusConnectionError):
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("test"))
+
+            with pytest.raises(ServiceBusConnectionError):
+                with client.get_queue_receiver(servicebus_queue.name) as receiver:
+                    messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
+
+        # Check that SSLContext with valid cert file doesn't raise an error
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.load_verify_locations(certifi.where())
+        purpose = ssl.Purpose.SERVER_AUTH
+        context.load_default_certs(purpose=purpose)
+
+        client = ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            uamqp_transport=uamqp_transport,
+            ssl_context=context,
+            transport_type=socket_transport,
+        )
+
+        with client:
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("test"))
+                sender.send_messages(ServiceBusMessage("test"))
+
+            with client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = receiver.receive_messages(max_message_count=2, max_wait_time=10)
+
+            assert len(messages) == 2
 
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     def test_backoff_fixed_retry(self, uamqp_transport):

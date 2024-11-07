@@ -13,6 +13,7 @@ import hmac
 import hashlib
 import base64
 import certifi
+import ssl
 from urllib.parse import quote as url_parse_quote
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, AccessToken
@@ -39,9 +40,16 @@ from tests.servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from tests.utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import (
+    get_logger,
+    uamqp_transport as get_uamqp_transport,
+    ArgPasserAsync,
+    SocketArgPasserAsync,
+    socket_transport as get_socket_transport,
+)
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
+socket_transport_params, socket_transport_ids = get_socket_transport()
 
 _logger = get_logger(logging.DEBUG)
 
@@ -552,6 +560,86 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @CachedServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("socket_transport", socket_transport_params, ids=socket_transport_ids)
+    @SocketArgPasserAsync()
+    async def test_sb_client_with_ssl_context_async(
+        self,
+        uamqp_transport,
+        socket_transport,
+        *,
+        servicebus_namespace=None,
+        servicebus_queue=None,
+        **kwargs,
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+
+        # Check that SSLContext with invalid/nonexistent cert file raises an error
+        context = ssl.SSLContext(cafile="fakecert.pem")
+        context.verify_mode = ssl.CERT_REQUIRED
+        client = ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            uamqp_transport=uamqp_transport,
+            ssl_context=context,
+            transport_type=socket_transport,
+            retry_total=0,
+        )
+        async with client:
+            with pytest.raises(ServiceBusConnectionError):
+                async with client.get_queue_sender(servicebus_queue.name) as sender:
+                    await sender.send_messages(ServiceBusMessage("test"))
+
+            with pytest.raises(ServiceBusConnectionError):
+                async with client.get_queue_receiver(servicebus_queue.name) as receiver:
+                    messages = await receiver.receive_messages(max_message_count=1, max_wait_time=1)
+
+        # Check that SSLContext with valid cert file doesn't raise an error
+        async def verify_context_async():
+            # asyncio.to_thread only available in Python 3.9+
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            await asyncio.to_thread(context.load_verify_locations, certifi.where())
+            purpose = ssl.Purpose.SERVER_AUTH
+            await asyncio.to_thread(context.load_default_certs, purpose=purpose)
+            return context
+
+        def verify_context():  # for Python 3.8
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.load_verify_locations(certifi.where())
+            purpose = ssl.Purpose.SERVER_AUTH
+            context.load_default_certs(purpose=purpose)
+            return context
+
+        if hasattr(asyncio, "to_thread"):
+            context = await verify_context_async()
+        else:
+            context = verify_context()
+
+        client = ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            uamqp_transport=uamqp_transport,
+            ssl_context=context,
+            transport_type=socket_transport,
+        )
+
+        async with client:
+            async with client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(ServiceBusMessage("test"))
+                await sender.send_messages(ServiceBusMessage("test"))
+
+            async with client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = await receiver.receive_messages(max_message_count=2, max_wait_time=10)
+
+            assert len(messages) == 2
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)

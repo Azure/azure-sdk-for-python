@@ -5,3 +5,4 @@ verifytypes = false
 pyright = false
 pylint = false
 black = false
+ci_enabled = false

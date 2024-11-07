@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import warnings
 from typing import Optional, Dict, Any, Union, TYPE_CHECKING
 from urllib.parse import urlparse
 
@@ -9,6 +10,7 @@ from azure.core.pipeline.policies import RetryMode
 from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from ._transport._base import AmqpTransport
     from .aio._transport._base_async import AmqpTransportAsync
 
@@ -35,6 +37,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         send_timeout: int = 60,
         custom_endpoint_address: Optional[str] = None,
         connection_verify: Optional[str] = None,
+        ssl_context: Optional["SSLContext"] = None,
         use_tls: bool = True,
         **kwargs: Any
     ):
@@ -54,6 +57,9 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.send_timeout = send_timeout
         self.custom_endpoint_address = custom_endpoint_address
         self.connection_verify = connection_verify
+        self.ssl_context = ssl_context
+        if self.ssl_context and self.connection_verify:
+            warnings.warn("ssl_context is specified, connection_verify will be ignored.")
         self.custom_endpoint_hostname = None
         self.hostname = hostname
         self.use_tls = use_tls

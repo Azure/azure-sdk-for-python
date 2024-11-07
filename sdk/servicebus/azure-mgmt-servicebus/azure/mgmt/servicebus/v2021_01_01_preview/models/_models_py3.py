@@ -8,15 +8,9 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -266,7 +260,7 @@ class ArmDisasterRecoveryListResult(_serialization.Model):
 class CheckNameAvailability(_serialization.Model):
     """Description of a Check Name availability request properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The Name to check the namespace name availability and The namespace name can
      contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
@@ -1375,7 +1369,7 @@ class RegenerateAccessKeyParameters(_serialization.Model):
     """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs
     to be reset.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_type: The access key to regenerate. Required. Known values are: "PrimaryKey" and
      "SecondaryKey".
@@ -1636,7 +1630,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1682,7 +1676,7 @@ class SBNamespace(TrackedResource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2198,7 +2192,7 @@ class SBQueueListResult(_serialization.Model):
 class SBSku(_serialization.Model):
     """SKU of the namespace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of this SKU. Required. Known values are: "Basic", "Standard", and "Premium".
     :vartype name: str or ~azure.mgmt.servicebus.v2021_01_01_preview.models.SkuName
@@ -2708,42 +2702,11 @@ class SqlRuleAction(Action):
     :vartype requires_preprocessing: bool
     """
 
-    _attribute_map = {
-        "sql_expression": {"key": "sqlExpression", "type": "str"},
-        "compatibility_level": {"key": "compatibilityLevel", "type": "int"},
-        "requires_preprocessing": {"key": "requiresPreprocessing", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        sql_expression: Optional[str] = None,
-        compatibility_level: Optional[int] = None,
-        requires_preprocessing: bool = True,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword sql_expression: SQL expression. e.g. MyProperty='ABC'.
-        :paramtype sql_expression: str
-        :keyword compatibility_level: This property is reserved for future use. An integer value
-         showing the compatibility level, currently hard-coded to 20.
-        :paramtype compatibility_level: int
-        :keyword requires_preprocessing: Value that indicates whether the rule action requires
-         preprocessing.
-        :paramtype requires_preprocessing: bool
-        """
-        super().__init__(
-            sql_expression=sql_expression,
-            compatibility_level=compatibility_level,
-            requires_preprocessing=requires_preprocessing,
-            **kwargs
-        )
-
 
 class Subnet(_serialization.Model):
     """Properties supplied for Subnet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID of Virtual Network Subnet. Required.
     :vartype id: str

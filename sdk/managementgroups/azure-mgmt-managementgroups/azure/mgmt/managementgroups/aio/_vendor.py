@@ -8,8 +8,6 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import HttpRequest
-
 from ._configuration import ManagementGroupsAPIConfiguration
 
 if TYPE_CHECKING:

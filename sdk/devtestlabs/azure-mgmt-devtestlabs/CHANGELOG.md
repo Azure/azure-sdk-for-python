@@ -1,5 +1,11 @@
 # Release History
 
+## 10.0.0b2 (2024-11-04)
+
+### Other Changes
+
+  - Update dependencies
+
 ## 10.0.0b1 (2022-10-28)
 
 ### Features Added

@@ -463,6 +463,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             keep_alive_interval=config.keep_alive,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
@@ -586,6 +587,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             receive_settle_mode=PyamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
             send_settle_mode=(
                 constants.SenderSettleMode.Settled
@@ -863,7 +865,6 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             timeout=config.auth_timeout,
             custom_endpoint_hostname=config.custom_endpoint_hostname,
             port=config.connection_port,
-            verify=config.connection_verify,
         )
 
     @staticmethod
