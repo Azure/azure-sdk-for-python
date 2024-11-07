@@ -483,7 +483,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection.play_media_to_all(
             play_source=file_prompt
@@ -512,7 +512,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection.play_media_to_all(
             play_source=file_prompt
@@ -541,7 +541,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection._play_media(
             play_source=file_prompt,
@@ -571,7 +571,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://contosoapp.com/abc.wav")]
 
         call_connection._play_media(
             play_source=file_prompt,
