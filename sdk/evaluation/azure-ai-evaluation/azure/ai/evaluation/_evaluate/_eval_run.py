@@ -34,14 +34,15 @@ try:
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
 except (ModuleNotFoundError, ImportError):
-    # If the above mentioned modules cannot be imported, we are running
-    # in local mode and MLClient in the constructor will be None, so
-    # we will not arrive to Azure-dependent code.
-
-    # We are logging the import failure only if debug logging level is set because:
-    # - If the project configuration was not provided this import is not needed.
-    # - If the project configuration was provided, the error will be raised by PFClient.
-    LOGGER.debug("promptflow.azure is not installed.")
+    raise EvaluationException(  # pylint: disable=raise-missing-from
+        message=(
+            "The required packages for remote tracking are missing.\n"
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
+        ),
+        target=ErrorTarget.EVALUATE,
+        category=ErrorCategory.MISSING_PACKAGE,
+        blame=ErrorBlame.USER_ERROR,
+    )
 
 
 @dataclasses.dataclass
@@ -103,7 +104,6 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     _SCOPE = "https://management.azure.com/.default"
 
     EVALUATION_ARTIFACT = "instance_results.jsonl"
-    EVALUATION_ARTIFACT_DUMMY_RUN = "eval_results.jsonl"
 
     def __init__(
         self,
