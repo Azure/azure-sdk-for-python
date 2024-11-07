@@ -294,7 +294,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     reason = ""
     if llm_output:
         try:
-            score_pattern = r"<S2>(.*?)</S2>"
+            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
             score_match = re.findall(score_pattern, llm_output, re.DOTALL)
             reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
