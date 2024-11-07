@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managedservices import ManagedServicesClient
 
 """
@@ -28,11 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.registration_definitions.delete(
+    client.registration_definitions.delete(
         registration_definition_id="26c128c2-fefa-4340-9bb1-6e081c90ada2",
         scope="subscription/0afefe50-734e-4610-8a82-a144ahf49dea",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/DeleteRegistrationDefinition.json

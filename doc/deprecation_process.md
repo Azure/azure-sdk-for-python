@@ -99,6 +99,20 @@ Replace ALL existing text with a disclaimer in the following format.
 
 - Update the `Development Status` classifier in `setup.py` to `Development Status :: 7 - Inactive`.
   - `Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
+ 
+## ci.yml
+
+- Ensure the package is listed under `Artifacts` so that the artifact is generated for release. If not listed, add it.
+
+ ```yml
+  extends:
+    parameters:
+      ...
+      Artifacts:
+      - name: azure-mypackage
+        safeName: azuremypackage
+  ```
+
 
 # Step 2: Resolve all open issues/PRs corresponding to the library.
 
@@ -115,6 +129,16 @@ Example PR to deprecate azure-cognitiveservices-language-spellcheck [here.](http
 Wait for the CI to run. Fix any issues related to deprecation in the PR, such as CHANGELOG.md or README.md formatting.
 
 There should not be any tests or mypy/pylint/etc. failures as these checks are disabled on `Inactive` packages.
+
+### Verify Readmes Failure
+
+If you see the "Verify Readmes" task in the "Analyze" job failing with `There were README verification failures, scroll up to see the issue(s)`, add a line to ignore the package in [`eng/.docsettings.yml` under `known_content_issues`](https://github.com/Azure/azure-sdk-for-python/blob/5136a43ac2c841e6ffe36f55df6c94f1ddd00a9d/eng/.docsettings.yml#L41). For example:
+
+```yml
+known_content_issues:
+  ...
+  - ['sdk/mypackage/azure-mypackage/README.md', '#4554']
+```
 
 ## Post your PR in the Python review channel
 
@@ -144,6 +168,10 @@ azure-sdk-for-python/eng/common/scripts> ./Prepare-Release.ps1 -PackageName azur
 A release here is the same as usual, triggering the release pipeline of your SDK. Note that local smoke testing and mypy/pylint/sphinx/etc. checks are not needed. More instructions on release can be found at: https://aka.ms/azsdk/release-checklist
 
 **Note: This release DOES NOT need to be done during during release week and can be done any time.**
+
+### Checks Failing on Other Packages
+
+You may see tests/mypy/pylint or other checks failing on other packages in the CI when releasing. To unblock the release of the deprecated package, you may add one or more `Skip.*` variables when you 'Run pipeline' to skip these checks. The `Skip.*` variables for all checks are listed [here](https://github.com/Azure/azure-sdk-for-python/blob/dc283ae7e8f7fe3bb1db8f27315d589e88bdf453/doc/eng_sys_checks.md?plain=1#L76).
 
 ## Post-Release
 

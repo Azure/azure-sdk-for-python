@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
+from typing import Dict, TypeVar, Union
 
 from typing_extensions import override
 
@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
 
-T = Union[str, float]
+T = TypeVar("T")
 
 
 class RaiServiceEvaluatorBase(EvaluatorBase[T]):
@@ -50,12 +50,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._credential = credential
 
     @override
-    def __call__(
+    def __call__(  # pylint: disable=docstring-missing-param
         self,
-        *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        conversation=None,
+        *args,
         **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
@@ -71,7 +68,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
-        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
@@ -108,7 +105,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
-        return await evaluate_with_rai_service(
+        return await evaluate_with_rai_service(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
             project_scope=self._azure_ai_project,

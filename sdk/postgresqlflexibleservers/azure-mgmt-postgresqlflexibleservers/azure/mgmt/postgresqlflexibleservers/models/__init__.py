@@ -19,6 +19,7 @@ from ._models_py3 import CapabilitiesListResult
 from ._models_py3 import CapabilityBase
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import Cluster
 from ._models_py3 import Configuration
 from ._models_py3 import ConfigurationForUpdate
 from ._models_py3 import ConfigurationListResult
@@ -38,6 +39,12 @@ from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import FlexibleServerCapability
 from ._models_py3 import FlexibleServerEditionCapability
 from ._models_py3 import HighAvailability
+from ._models_py3 import ImpactRecord
+from ._models_py3 import IndexRecommendationDetails
+from ._models_py3 import IndexRecommendationListResult
+from ._models_py3 import IndexRecommendationResource
+from ._models_py3 import IndexRecommendationResourcePropertiesAnalyzedWorkload
+from ._models_py3 import IndexRecommendationResourcePropertiesImplementationDetails
 from ._models_py3 import LogFile
 from ._models_py3 import LogFileListResult
 from ._models_py3 import LtrBackupRequest
@@ -55,6 +62,7 @@ from ._models_py3 import MigrationSecretParameters
 from ._models_py3 import MigrationStatus
 from ._models_py3 import MigrationSubStateDetails
 from ._models_py3 import NameAvailability
+from ._models_py3 import NameProperty
 from ._models_py3 import Network
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -66,6 +74,8 @@ from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
+from ._models_py3 import QuotaUsage
+from ._models_py3 import QuotaUsagesListResult
 from ._models_py3 import Replica
 from ._models_py3 import Resource
 from ._models_py3 import RestartParameter
@@ -84,8 +94,11 @@ from ._models_py3 import Storage
 from ._models_py3 import StorageEditionCapability
 from ._models_py3 import StorageMbCapability
 from ._models_py3 import StorageTierCapability
+from ._models_py3 import SupportedFeature
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import TuningOptionsListResult
+from ._models_py3 import TuningOptionsResource
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserIdentity
 from ._models_py3 import ValidationDetails
@@ -135,6 +148,8 @@ from ._postgre_sql_management_client_enums import PrincipalType
 from ._postgre_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._postgre_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
 from ._postgre_sql_management_client_enums import ReadReplicaPromoteMode
+from ._postgre_sql_management_client_enums import RecommendationType
+from ._postgre_sql_management_client_enums import RecommendationTypeEnum
 from ._postgre_sql_management_client_enums import ReplicationPromoteOption
 from ._postgre_sql_management_client_enums import ReplicationRole
 from ._postgre_sql_management_client_enums import ReplicationState
@@ -150,9 +165,11 @@ from ._postgre_sql_management_client_enums import StartDataMigrationEnum
 from ._postgre_sql_management_client_enums import StorageAutoGrow
 from ._postgre_sql_management_client_enums import StorageAutoGrowthSupportedEnum
 from ._postgre_sql_management_client_enums import StorageType
+from ._postgre_sql_management_client_enums import SupportedFeatureStatusEnum
 from ._postgre_sql_management_client_enums import ThreatProtectionName
 from ._postgre_sql_management_client_enums import ThreatProtectionState
 from ._postgre_sql_management_client_enums import TriggerCutoverEnum
+from ._postgre_sql_management_client_enums import TuningOptionEnum
 from ._postgre_sql_management_client_enums import ValidationState
 from ._postgre_sql_management_client_enums import VirtualEndpointType
 from ._postgre_sql_management_client_enums import ZoneRedundantHaAndGeoBackupSupportedEnum
@@ -175,6 +192,7 @@ __all__ = [
     "CapabilityBase",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
+    "Cluster",
     "Configuration",
     "ConfigurationForUpdate",
     "ConfigurationListResult",
@@ -194,6 +212,12 @@ __all__ = [
     "FlexibleServerCapability",
     "FlexibleServerEditionCapability",
     "HighAvailability",
+    "ImpactRecord",
+    "IndexRecommendationDetails",
+    "IndexRecommendationListResult",
+    "IndexRecommendationResource",
+    "IndexRecommendationResourcePropertiesAnalyzedWorkload",
+    "IndexRecommendationResourcePropertiesImplementationDetails",
     "LogFile",
     "LogFileListResult",
     "LtrBackupRequest",
@@ -211,6 +235,7 @@ __all__ = [
     "MigrationStatus",
     "MigrationSubStateDetails",
     "NameAvailability",
+    "NameProperty",
     "Network",
     "Operation",
     "OperationDisplay",
@@ -222,6 +247,8 @@ __all__ = [
     "PrivateLinkResourceListResult",
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
+    "QuotaUsage",
+    "QuotaUsagesListResult",
     "Replica",
     "Resource",
     "RestartParameter",
@@ -240,8 +267,11 @@ __all__ = [
     "StorageEditionCapability",
     "StorageMbCapability",
     "StorageTierCapability",
+    "SupportedFeature",
     "SystemData",
     "TrackedResource",
+    "TuningOptionsListResult",
+    "TuningOptionsResource",
     "UserAssignedIdentity",
     "UserIdentity",
     "ValidationDetails",
@@ -290,6 +320,8 @@ __all__ = [
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ReadReplicaPromoteMode",
+    "RecommendationType",
+    "RecommendationTypeEnum",
     "ReplicationPromoteOption",
     "ReplicationRole",
     "ReplicationState",
@@ -305,9 +337,11 @@ __all__ = [
     "StorageAutoGrow",
     "StorageAutoGrowthSupportedEnum",
     "StorageType",
+    "SupportedFeatureStatusEnum",
     "ThreatProtectionName",
     "ThreatProtectionState",
     "TriggerCutoverEnum",
+    "TuningOptionEnum",
     "ValidationState",
     "VirtualEndpointType",
     "ZoneRedundantHaAndGeoBackupSupportedEnum",

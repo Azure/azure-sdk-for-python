@@ -8,6 +8,7 @@ from typing import Any, Union, Optional
 
 from azure.core.exceptions import AzureError
 
+
 class ServiceBusError(AzureError):
     """Base exception for all Service Bus errors which can be used for default error handling.
 
@@ -21,12 +22,7 @@ class ServiceBusError(AzureError):
     :ivar str message: A stringified version of the message parameter
     """
 
-    def __init__(
-        self,
-        message: Optional[Union[str, bytes]],
-        *args: Any,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, message: Optional[Union[str, bytes]], *args: Any, **kwargs: Any) -> None:
         self._retryable = kwargs.pop("retryable", False)
         self._shutdown_handler = kwargs.pop("shutdown_handler", True)
         self._condition = kwargs.pop("condition", None)
@@ -50,69 +46,40 @@ class ServiceBusError(AzureError):
 class ServiceBusConnectionError(ServiceBusError):
     """An error occurred in the connection."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop("message", "An error occurred in the connection.")
-        super(ServiceBusConnectionError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+        super(ServiceBusConnectionError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class ServiceBusAuthenticationError(ServiceBusError):
     """An error occurred when authenticate the connection."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        message = kwargs.pop(
-            "message", "An error occurred when authenticating the connection."
-        )
-        super(ServiceBusAuthenticationError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+    def __init__(self, **kwargs: Any) -> None:
+        message = kwargs.pop("message", "An error occurred when authenticating the connection.")
+        super(ServiceBusAuthenticationError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class ServiceBusAuthorizationError(ServiceBusError):
     """An error occurred when authorizing the connection."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        message = kwargs.pop(
-            "message", "An error occurred when authorizing the connection."
-        )
-        super(ServiceBusAuthorizationError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+    def __init__(self, **kwargs: Any) -> None:
+        message = kwargs.pop("message", "An error occurred when authorizing the connection.")
+        super(ServiceBusAuthorizationError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop("message", "Operation timed out.")
-        super(OperationTimeoutError, self).__init__(
-            message, retryable=True, shutdown_handler=False, **kwargs
-        )
+        super(OperationTimeoutError, self).__init__(message, retryable=True, shutdown_handler=False, **kwargs)
 
 
 class MessageSizeExceededError(ServiceBusError, ValueError):
     """Message content is larger than the service bus frame size."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        message = kwargs.pop(
-            "message", "Message content is larger than the service bus frame size."
-        )
+    def __init__(self, **kwargs: Any) -> None:
+        message = kwargs.pop("message", "Message content is larger than the service bus frame size.")
         super(MessageSizeExceededError, self).__init__(
             message=message, retryable=False, shutdown_handler=False, **kwargs
         )
@@ -127,10 +94,7 @@ class MessageAlreadySettled(ValueError):
     been settled (completed, abandoned, dead-lettered or deferred).
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super(MessageAlreadySettled, self).__init__(
             "Unable to {} message; The message has either been deleted"
             " or already settled.".format(kwargs.get("action", "operate"))
@@ -142,19 +106,14 @@ class MessageAlreadySettled(ValueError):
 class MessageLockLostError(ServiceBusError):
     """The lock on the message is lost. Callers should call attempt to receive and process the message again."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "The lock on the message lock has expired. Callers should "
             + "call attempt to receive and process the message again.",
         )
 
-        super(MessageLockLostError, self).__init__(
-            message=message, retryable=False, shutdown_handler=False, **kwargs
-        )
+        super(MessageLockLostError, self).__init__(message=message, retryable=False, shutdown_handler=False, **kwargs)
 
 
 class SessionLockLostError(ServiceBusError):
@@ -163,18 +122,13 @@ class SessionLockLostError(ServiceBusError):
     All unsettled messages that have been received can no longer be settled.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "The lock on the session has expired. Callers should request the session again.",
         )
 
-        super(SessionLockLostError, self).__init__(
-            message, retryable=False, shutdown_handler=True, **kwargs
-        )
+        super(SessionLockLostError, self).__init__(message, retryable=False, shutdown_handler=True, **kwargs)
 
 
 class MessageNotFoundError(ServiceBusError):
@@ -185,14 +139,9 @@ class MessageNotFoundError(ServiceBusError):
     Check the deadletter queue to see if the message has been deadlettered.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop("message", "The requested message was not found.")
-        super(MessageNotFoundError, self).__init__(
-            message, retryable=False, shutdown_handler=False, **kwargs
-        )
+        super(MessageNotFoundError, self).__init__(message, retryable=False, shutdown_handler=False, **kwargs)
 
 
 class MessagingEntityNotFoundError(ServiceBusError):
@@ -202,46 +151,31 @@ class MessagingEntityNotFoundError(ServiceBusError):
     Please make sure the entity exists.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "A Service Bus resource cannot be found by the Service Bus service.",
         )
-        super(MessagingEntityNotFoundError, self).__init__(
-            message, retryable=False, shutdown_handler=True, **kwargs
-        )
+        super(MessagingEntityNotFoundError, self).__init__(message, retryable=False, shutdown_handler=True, **kwargs)
 
 
 class MessagingEntityDisabledError(ServiceBusError):
     """The Messaging Entity is disabled. Enable the entity again using Portal."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "The Messaging Entity is disabled. Enable the entity again using Portal.",
         )
 
-        super(MessagingEntityDisabledError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+        super(MessagingEntityDisabledError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class MessagingEntityAlreadyExistsError(ServiceBusError):
     """An entity with the same name exists under the same namespace."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        message = kwargs.pop(
-            "message", "An entity with the same name exists under the same namespace."
-        )
+    def __init__(self, **kwargs: Any) -> None:
+        message = kwargs.pop("message", "An entity with the same name exists under the same namespace.")
         super(MessagingEntityAlreadyExistsError, self).__init__(
             message, retryable=False, shutdown_handler=False, **kwargs
         )
@@ -255,19 +189,14 @@ class ServiceBusQuotaExceededError(ServiceBusError):
     has been exceeded. Create space in the entity by receiving messages from the entity or its subqueues.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "The quota applied to a Service Bus resource has been exceeded while "
             + "interacting with the Azure Service Bus service.",
         )
 
-        super(ServiceBusQuotaExceededError, self).__init__(
-            message, retryable=False, shutdown_handler=False, **kwargs
-        )
+        super(ServiceBusQuotaExceededError, self).__init__(message, retryable=False, shutdown_handler=False, **kwargs)
 
 
 class ServiceBusServerBusyError(ServiceBusError):
@@ -278,18 +207,13 @@ class ServiceBusServerBusyError(ServiceBusError):
     then retry the operation.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "The Azure Service Bus service reports that it is busy in response to a "
             + "client request to perform an operation.",
         )
-        super(ServiceBusServerBusyError, self).__init__(
-            message, retryable=True, shutdown_handler=False, **kwargs
-        )
+        super(ServiceBusServerBusyError, self).__init__(message, retryable=True, shutdown_handler=False, **kwargs)
 
 
 class ServiceBusCommunicationError(ServiceBusError):
@@ -301,18 +225,13 @@ class ServiceBusCommunicationError(ServiceBusError):
     the Service Bus domain/IP address and ports isn't blocked.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop(
             "message",
             "There was a general communications error encountered when interacting "
             + "with the Azure Service Bus service.",
         )
-        super(ServiceBusCommunicationError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+        super(ServiceBusCommunicationError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class SessionCannotBeLockedError(ServiceBusError):
@@ -322,14 +241,9 @@ class SessionCannotBeLockedError(ServiceBusError):
     Make sure the session is unlocked by other clients.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         message = kwargs.pop("message", "The requested session cannot be locked.")
-        super(SessionCannotBeLockedError, self).__init__(
-            message, retryable=True, shutdown_handler=True, **kwargs
-        )
+        super(SessionCannotBeLockedError, self).__init__(message, retryable=True, shutdown_handler=True, **kwargs)
 
 
 class AutoLockRenewFailed(ServiceBusError):

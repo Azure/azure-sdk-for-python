@@ -13,6 +13,7 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
@@ -32,9 +33,18 @@ class IndirectAttackSimulator(AdversarialSimulator):
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START indirect_attack_simulator]
+            :end-before: [END indirect_attack_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
     """
 
-    def __init__(self, *, azure_ai_project: dict, credential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
 
         try:
