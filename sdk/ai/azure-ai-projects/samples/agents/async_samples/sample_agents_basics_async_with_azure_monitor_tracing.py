@@ -27,17 +27,17 @@ import asyncio
 import time
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.tracing.agents import AIAgentsInstrumentor  # type: ignore
+from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
 from opentelemetry import trace
 import os
-from azure.monitor.opentelemetry import configure_azure_monitor  # type: ignore
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 
 tracer = trace.get_tracer(__name__)
 
 
 @tracer.start_as_current_span(__file__)
-async def main():
+async def main() -> None:
 
     # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"

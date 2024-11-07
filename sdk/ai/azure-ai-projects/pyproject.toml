@@ -1,8 +1,7 @@
 [tool.mypy]
 python_version = "3.8"
 exclude = [
-  "downloaded",
-  "samples"
+  "downloaded"
 ]
 warn_unused_configs = true
 follow_imports = "skip"

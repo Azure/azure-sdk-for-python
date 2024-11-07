@@ -23,7 +23,7 @@ USAGE:
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.inference.models import UserMessage  #type: ignore
+from azure.ai.inference.models import UserMessage
 from azure.identity.aio import DefaultAzureCredential
 
 async def sample_get_chat_completions_client_async():

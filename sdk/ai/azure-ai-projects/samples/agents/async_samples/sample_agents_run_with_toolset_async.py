@@ -24,7 +24,7 @@ USAGE:
 import os, asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.models import AsyncFunctionTool, AsyncToolSet, CodeInterpreterTool
+from azure.ai.projects.models import AsyncFunctionTool, AsyncToolSet
 from user_async_functions import user_async_functions
 
 
@@ -33,7 +33,7 @@ from user_async_functions import user_async_functions
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 
-async def main():
+async def main() -> None:
 
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(),

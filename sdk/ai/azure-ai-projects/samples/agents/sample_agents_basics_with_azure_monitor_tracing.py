@@ -28,7 +28,7 @@ import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
-from azure.monitor.opentelemetry import configure_azure_monitor  #type: ignore
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Create an AI Project Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"

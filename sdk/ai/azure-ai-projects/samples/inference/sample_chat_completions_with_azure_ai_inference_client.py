@@ -23,9 +23,9 @@ USAGE:
 from typing import cast
 
 import os
-from azure.ai.inference import ChatCompletionsClient  # type: ignore
+from azure.ai.inference import ChatCompletionsClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.inference.models import UserMessage  # type: ignore
+from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]

@@ -25,9 +25,8 @@ USAGE:
 
 """
 
-import os, sys
+import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
@@ -35,7 +34,7 @@ from azure.ai.projects.models import (
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
-    RunStep,
+    RunStep
 )
 from typing import Any
 from opentelemetry import trace
