@@ -3,9 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os, time
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet, SubmitToolOutputsAction, RequiredFunctionToolCall, MessageRole
+from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole
 
 
 class AgentTeamMember:

@@ -20,7 +20,7 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os, time
+import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from agent_team import AgentTeam
