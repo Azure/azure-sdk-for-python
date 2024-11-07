@@ -32,7 +32,6 @@ from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -327,6 +326,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :paramtype metadata: Optional[dict[str, str]]
+        :keyword str owner:
+            NFS only. The owner of the directory.
+        :keyword str group:
+            NFS only. The owning group of the directory.
+        :keyword str file_mode:
+            NFS only. The file mode of the directory.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -356,11 +361,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_change_time = kwargs.pop('file_change_time', None)
         file_permission = kwargs.pop('file_permission', None)
         file_permission_key = kwargs.pop('file_permission_key', None)
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
+        file_permission = _get_file_permission(file_permission, file_permission_key, None)
 
         try:
             return cast(Dict[str, Any], await self._client.directory.create(
-                file_attributes=str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -798,6 +803,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
+        :keyword str owner:
+            NFS only. The owner of the directory.
+        :keyword str group:
+            NFS only. The owning group of the directory.
+        :keyword str file_mode:
+            NFS only. The file mode of the directory.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -808,11 +819,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :rtype: dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
-        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], await self._client.directory.set_properties(
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
