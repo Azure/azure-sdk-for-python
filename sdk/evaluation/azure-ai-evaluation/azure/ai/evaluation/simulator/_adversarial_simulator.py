@@ -47,6 +47,16 @@ class AdversarialSimulator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with
+                2 conversation turns each (4 messages per result).
     """
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
@@ -151,28 +161,6 @@ class AdversarialSimulator:
 
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
         :rtype: List[Dict[str, Any]]
-
-        **Output format**
-
-        .. code-block:: python
-
-            return_value = [
-                {
-                    'template_parameters': {},
-                    'messages': [
-                        {
-                            'content': '<jailbreak prompt> <adversarial query>',
-                            'role': 'user'
-                        },
-                        {
-                            'content': "<response from endpoint>",
-                            'role': 'assistant',
-                            'context': None
-                        }
-                    ],
-                    '$schema': 'http://azureml/sdk-2-0/ChatConversation.json'
-                }
-            ]
         """
 
         # validate the inputs
