@@ -189,14 +189,11 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 def _setup_live_metrics(configurations):
     enable_live_metrics(**configurations)
 
+
 class _EntryPointDistFinder:
     @cached_property
     def _mapping(self):
-        return {
-            self._key_for(ep): dist
-            for dist in distributions()
-            for ep in dist.entry_points
-        }
+        return {self._key_for(ep): dist for dist in distributions() for ep in dist.entry_points}
 
     def dist_for(self, entry_point: EntryPoint):
         dist = getattr(entry_point, "dist", None)
@@ -208,6 +205,7 @@ class _EntryPointDistFinder:
     @staticmethod
     def _key_for(entry_point: EntryPoint):
         return f"{entry_point.group}:{entry_point.name}:{entry_point.value}"
+
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
     entry_point_finder = _EntryPointDistFinder()
