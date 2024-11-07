@@ -227,10 +227,10 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         )
 
         # # initial 15 seconds wait before attempting to fetch result
-        await asyncio.sleep(15)
+        await asyncio.sleep(30)
         import time
 
-        time.sleep(15)
+        time.sleep(30)
 
         async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
             response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg

@@ -9,6 +9,7 @@ import asyncio
 import logging
 import random
 import time
+import itertools
 from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime
 from tqdm import tqdm
@@ -114,12 +115,27 @@ class CustomAdversarialSimulator:
                 random.seed(seed)
             random.shuffle(pairs)
         return pairs
-
-    def _get_template_parameter_pairs(self, templates, randomize_order, randomization_seed):
-        template_parameter_pairs = [
-            (template, parameter.copy()) for template in templates for parameter in template.template_parameters
-        ]
-        return self._shuffle_pairs(template_parameter_pairs, randomize_order, randomization_seed)
+    
+    def _get_template_parameter_pairs(
+        self, templates, max_simulation_results, randomize_order=False, randomization_seed=None
+    ):
+        template_parameter_pairs = []
+        
+        # Extract the list of template_parameters from each template
+        params_lists = [template.template_parameters for template in templates]
+        
+        # Iterate in a round-robin fashion using zip_longest
+        for parameters in itertools.zip_longest(*params_lists):
+            for template, parameter in zip(templates, parameters):
+                if parameter is not None:
+                    # Append the (template, parameter) pair
+                    template_parameter_pairs.append((template, parameter.copy()))
+                    
+                    # Check if we've reached the maximum number of simulations
+                    if len(template_parameter_pairs) >= max_simulation_results:
+                        return template_parameter_pairs
+        
+        return template_parameter_pairs
 
     def _to_chat_protocol(self, *, conversation_history, template_parameters: Dict = None):
         if template_parameters is None:
@@ -208,9 +224,8 @@ class CustomAdversarialSimulator:
             unit="simulations",
         )
         template_parameter_pairs = self._get_template_parameter_pairs(
-            templates, randomize_order=randomize_order, randomization_seed=randomization_seed
+            templates, max_simulation_results=max_simulation_results, randomize_order=randomize_order, randomization_seed=randomization_seed
         )
-
         all_conversation_histories = []
         if personality is None:
             personality = ""
@@ -368,6 +383,9 @@ class CustomAdversarialSimulator:
             )
             extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
             await asyncio.sleep(api_call_delay_sec)
+            # Extract 'file_content' from 'extra_kwargs'
+            file_content = extra_kwargs.get('file_content', '')
+            
             self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
             start_time = time.time()
             first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
@@ -381,7 +399,7 @@ class CustomAdversarialSimulator:
             time_taken = end_time - start_time
             self.logger.info(f"Generated response for customizing first turn. Time taken: {time_taken:.4f} seconds")
             self.logger.info(f"Response: {first_turn}")
-
+            
             try:
                 first_prompt = first_turn
                 if language != SupportedLanguages.English:
@@ -391,7 +409,11 @@ class CustomAdversarialSimulator:
                             f"azure.ai.evaluation.simulator.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
                         )
                     first_prompt += f" {SUPPORTED_LANGUAGES_MAPPING[language]}"
-
+            
+                # Append 'file_content' to the first prompt
+                if file_content:
+                    first_prompt += f"\nFile Content: {file_content}"
+            
                 conversation_history = [
                     ConversationTurn(
                         role=user_bot.role,
@@ -413,18 +435,20 @@ class CustomAdversarialSimulator:
                     time_taken = end_time - start_time
                     self.logger.info(f"Generated response for turn {current_turn}. Time taken: {time_taken:.4f} seconds")
                     self.logger.info(f"Response: {response}")
+                    message = response["samples"][0]
+            
                     conversation_history.append(
                         ConversationTurn(
                             role=current_bot.role,
                             name=current_bot.name,
-                            message=response["samples"][0],
+                            message=message,
                             full_response=full_response,
                         )
                     )
                     progress_bar.update(1)
                     if api_call_delay_sec > 0:
                         await asyncio.sleep(api_call_delay_sec)
-
+            
                 chat_protocol_output = self._to_chat_protocol(
                     conversation_history=conversation_history, template_parameters=parameter
                 )
