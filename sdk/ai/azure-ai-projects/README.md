@@ -1,5 +1,5 @@
 
-# Azure Ai Projects client library for Python
+# Azure AI Projects client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
