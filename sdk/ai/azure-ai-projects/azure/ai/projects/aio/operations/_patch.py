@@ -53,7 +53,7 @@ if TYPE_CHECKING:
     from azure.ai.projects import _types
     from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
-    from azure.identity import get_bearer_token_provider
+    from azure.identity.aio import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)
 
@@ -243,7 +243,7 @@ class InferenceOperations:
         ):
 
             try:
-                from azure.identity import get_bearer_token_provider
+                from azure.identity.aio import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
@@ -282,7 +282,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.model.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -314,7 +314,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.models.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """

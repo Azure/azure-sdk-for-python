@@ -1,5 +1,4 @@
 
-
 # Azure Ai Projects client library for Python
 <!-- write necessary description of service -->
 
@@ -362,21 +361,6 @@ project_client.agents.delete_agent(agent.id)
 print("Deleted agent")
 ```
 
-## Examples
-
-```python
->>> from azure.ai.projects import AIProjectClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
-
->>> client = AIProjectClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
-```
-
 ## Troubleshooting
 
 ### Exceptions
@@ -395,19 +379,11 @@ except HttpResponseError as e:
     print(e.message)
 ```
 
-For example, when you provide a wrong authentication key:
+For example, when you provide wrong credentials:
 
 ```text
 Status code: 401 (Unauthorized)
 Operation returned an invalid status 'Unauthorized'
-```
-
-Or when you create an `EmbeddingsClient` and call `embed` on the client, but the endpoint does not
-support the `/embeddings` route:
-
-```text
-Status code: 405 (Method Not Allowed)
-Operation returned an invalid status 'Method Not Allowed'
 ```
 
 ### Logging
@@ -485,6 +461,3 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
-
-
-
