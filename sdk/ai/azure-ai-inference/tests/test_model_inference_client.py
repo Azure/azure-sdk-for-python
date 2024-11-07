@@ -856,7 +856,7 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_instrumenting_twice_causes_exception(self, **kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -864,22 +864,19 @@ class TestModelClient(ModelClientTestBase):
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
-        instrumented_once = False
         try:
             AIInferenceInstrumentor().instrument()
-            instrumented_once = True
             AIInferenceInstrumentor().instrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
         AIInferenceInstrumentor().uninstrument()
         client.close()
-        assert instrumented_once == True
-        assert exception_caught == True
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_uninstrumenting_uninstrumented_causes_exception(self, **kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -893,11 +890,11 @@ class TestModelClient(ModelClientTestBase):
             exception_caught = True
             print(e)
         client.close()
-        assert exception_caught == True
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_uninstrumenting_twice_causes_exception(self, **kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -909,14 +906,83 @@ class TestModelClient(ModelClientTestBase):
         try:
             AIInferenceInstrumentor().instrument()
             AIInferenceInstrumentor().uninstrument()
-            uninstrumented_once = True
             AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
         client.close()
-        assert uninstrumented_once == True
-        assert exception_caught == True
+        assert exception_caught == False
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_is_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
+        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+        client = self._create_chat_client(**kwargs)
+        exception_caught = False
+        uninstrumented_once = False
+        try:
+            # From environment variable instrumenting from uninstrumented
+            AIInferenceInstrumentor().instrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+
+            # From environment variable instrumenting from instrumented
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+
+            # From parameter instrumenting from uninstrumented
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument(enable_content_recording=False)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument(enable_content_recording=True)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+
+            # From parameter instrumenting from instrumented
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument(enable_content_recording=False)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument(enable_content_recording=True)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+        except RuntimeError as e:
+            exception_caught = True
+            print(e)
+        client.close()
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy

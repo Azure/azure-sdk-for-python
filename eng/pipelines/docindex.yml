@@ -12,7 +12,6 @@ jobs:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
-      DocValidationImageId: azuresdkimages.azurecr.io/pyrefautocr:latest
     steps:
       # py2docfx requires Python >= 3.11
       - task: UsePythonVersion@0
