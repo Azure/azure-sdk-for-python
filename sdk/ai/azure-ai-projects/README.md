@@ -1,5 +1,4 @@
 
-
 # Azure Ai Projects client library for Python
 <!-- write necessary description of service -->
 
@@ -362,20 +361,80 @@ project_client.agents.delete_agent(agent.id)
 print("Deleted agent")
 ```
 
-## Examples
+## Troubleshooting
+
+### Exceptions
+
+Client methods that make service calls raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will hold the HTTP response status code (with `reason` showing the friendly name). The exception's `error.message` contains a detailed message that may be helpful in diagnosing the issue:
 
 ```python
->>> from azure.ai.projects import AIProjectClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 
->>> client = AIProjectClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+...
 
+try:
+    result = client.connections.list()
+except HttpResponseError as e:
+    print(f"Status code: {e.status_code} ({e.reason})")
+    print(e.message)
 ```
+
+For example, when you provide wrong credentials:
+
+```text
+Status code: 401 (Unauthorized)
+Operation returned an invalid status 'Unauthorized'
+```
+
+### Logging
+
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following:
+
+```python
+import sys
+import logging
+
+# Acquire the logger for this client library. Use 'azure' to affect both
+# 'azure.core` and `azure.ai.inference' libraries.
+logger = logging.getLogger("azure")
+
+# Set the desired logging level. logging.INFO or logging.DEBUG are good options.
+logger.setLevel(logging.DEBUG)
+
+# Direct logging output to stdout:
+handler = logging.StreamHandler(stream=sys.stdout)
+# Or direct logging output to a file:
+# handler = logging.FileHandler(filename="sample.log")
+logger.addHandler(handler)
+
+# Optional: change the default logging format. Here we add a timestamp.
+#formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+#handler.setFormatter(formatter)
+```
+
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable = True` to the client constructor:
+
+```python
+client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=project_connection_string,
+    logging_enable = True
+)
+```
+
+Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
+
+Be sure to protect non redacted logs to avoid compromising security.
+
+For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
+
+### Reporting issues
+
+To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
+
+## Next steps
+
+Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
 ## Contributing
 
@@ -402,6 +461,3 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
-
-
-

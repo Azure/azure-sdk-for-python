@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity azure-ai-inference openai
 
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in the "Project overview"
@@ -27,11 +27,9 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
-from openai import AzureOpenAI
-from azure.ai.inference import ChatCompletionsClient
-from azure.ai.inference.models import UserMessage
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
+
+#from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 connection_name = os.environ["CONNECTION_NAME"]
@@ -77,6 +75,8 @@ with project_client:
 # Examples of how you would create Inference client
 if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
 
+    from openai import AzureOpenAI
+
     if connection.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating AzureOpenAI client using API key authentication")
         client = AzureOpenAI(
@@ -86,6 +86,8 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         )
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         print("====> Creating AzureOpenAI client using Entra ID authentication")
+        from azure.identity import get_bearer_token_provider
+
         client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
             azure_ad_token_provider=get_bearer_token_provider(
@@ -111,8 +113,13 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
 
 elif connection.connection_type == ConnectionType.SERVERLESS:
 
+    from azure.ai.inference import ChatCompletionsClient
+    from azure.ai.inference.models import UserMessage
+
     if connection.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating ChatCompletionsClient using API key authentication")
+        from azure.core.credentials import AzureKeyCredential
+
         client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key))
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         # MaaS models do not yet support EntraID auth
