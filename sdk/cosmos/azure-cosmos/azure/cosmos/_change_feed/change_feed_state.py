@@ -385,6 +385,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             collection_rid: str,
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
+        feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
             feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
         elif change_feed_state_context.get("partitionKey"):
