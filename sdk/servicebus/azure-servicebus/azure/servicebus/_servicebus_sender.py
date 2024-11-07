@@ -83,8 +83,6 @@ class SenderMixin:
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = kwargs.get("client_identifier") or f"SBSender-{uuid.uuid4()}"
-        self._max_message_size_on_link = 0
-        self._max_batch_size_on_link = 0
         self.entity_name: str = self._entity_name
 
     @classmethod
@@ -190,6 +188,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 topic_name=topic_name,
                 **kwargs,
             )
+        self._max_message_size_on_link = 0
+        self._max_batch_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientSync", "uamqp_SendClientSync"]
