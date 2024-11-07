@@ -293,14 +293,22 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     score = math.nan
     reason = ""
     if llm_output:
-        score_pattern = r"<S2>(.*?)</S2>"
-        reason_pattern = r"<S1>(.*?)</S1>"
-        score_match = re.findall(score_pattern, llm_output, re.DOTALL)
-        reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
-        if score_match:
-            score = float(score_match[0].strip())
-        if reason_match:
-            reason = reason_match[0].strip()
+        try:
+            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            reason_pattern = r"<S1>(.*?)</S1>"
+            score_match = re.findall(score_pattern, llm_output, re.DOTALL)
+            reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+            if score_match:
+                score = float(score_match[0].strip())
+            if reason_match:
+                reason = reason_match[0].strip()
+        except ValueError as exc:
+            raise EvaluationException(
+                message=f"Failed to parse model output: \n{llm_output}",
+                internal_message="Failed to parse model output.",
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.SYSTEM_ERROR,
+            ) from exc
 
     return score, reason
 
