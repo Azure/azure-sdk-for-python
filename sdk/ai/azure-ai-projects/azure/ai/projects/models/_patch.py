@@ -19,7 +19,7 @@ import re
 
 from azure.core.credentials import TokenCredential, AccessToken
 
-from ._enums import AgentStreamEvent, ConnectionType
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole
 from ._models import (
     GetConnectionResponse,
     MessageDeltaChunk,
@@ -1314,17 +1314,17 @@ class ThreadMessages:
                 return msg
         return None
 
-    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
-        """Returns the last text message from the specified sender.
+    def get_last_text_message_by_role(self, role: MessageRole) -> Optional[MessageTextContent]:
+        """Returns the last text message from a sender in the specified role.
 
-        :param sender: The role of the sender.
-        :type sender: str
+        :param role: The role of the sender.
+        :type role: str
 
-        :return: The last text message from the specified sender.
+        :return: The last text message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
         for msg in self._messages:
-            if msg.role == sender:
+            if msg.role == role:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
                         return content
