@@ -130,7 +130,10 @@ class ConnectionProperties:
     """
 
     def __init__(
-        self, *, connection: GetConnectionResponse, token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None
+        self,
+        *,
+        connection: GetConnectionResponse,
+        token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None,
     ) -> None:
         self.id = connection.id
         self.name = connection.name
