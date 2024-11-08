@@ -28,6 +28,10 @@ git checkout users/singankit/remote_evaluation_bug_bash
     pip uninstall azure-ai-project azure-ai-ml
 
    pip install azure-identity azure-ai-ml
+
+   # installing azure-ai-evaluation
+   pip install https://remoteevalbugbash.blob.core.windows.net/remoteevalbugbash/azure_ai_evaluation-1.0.0a20241022005-py3-none-any.whl
+
    # Optional: Upgrade pip if any issues occur in above two steps (pip install --upgrade pip)
    # installing azure-ai-project, SDK is same for remote, if already installed please ignore.
    pip install https://onlineevalbugbash.blob.core.windows.net/onlineevalbugbash/azure_ai_projects-1.0.0b3-py3-none-any.whl
@@ -57,7 +61,7 @@ git checkout users/singankit/remote_evaluation_bug_bash
 ### Appendix
 The following sections are optional for the bug bash and will be enhanced afterward.
 #### How to Get `Project Connection String`?
-- Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-eval-schedule-bugbash&tid=72f988bf-86f1-41af-91ab-2d7cd011db47) to the project overview page.
+- Connection string is needed to easily create `AIProjectClient` object. You can get the connection string from the project overview page > Quick reference section. Here is the [link](https://int.ai.azure.com/build/overview?tid=72f988bf-86f1-41af-91ab-2d7cd011db47&wsid=/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4/resourceGroups/shared-online-evaluation-rg/providers/Microsoft.MachineLearningServices/workspaces/ignite-onlineeval-bugbash-canary) to the project overview page.
 
 
 #### Instructions to view enriched data
