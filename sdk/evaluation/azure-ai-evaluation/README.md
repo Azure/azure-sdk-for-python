@@ -11,10 +11,6 @@ Azure AI SDK provides following to evaluate Generative AI Applications:
 - [Evaluators][evaluators] - Generate scores individually or when used together with `evaluate` API.
 - [Evaluate API][evaluate_api] - Python API to evaluate dataset or application using built-in or custom evaluators.
 
-## Evaluate API
-
-Combine multiple evaluators with the `evaluate()` API to get comprehensive scores covering different categories, when you [evaluate existing dataset][evaluate_dataset] or [generative AI application][evaluate_target].
-
 [Source code][source_code]
 | [Package (PyPI)][evaluation_pypi]
 | [API reference documentation][evaluation_ref_docs]
