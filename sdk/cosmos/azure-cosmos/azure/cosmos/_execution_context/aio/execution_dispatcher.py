@@ -29,7 +29,7 @@ from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregato
 from . import hybrid_search_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
+from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info, _is_hybrid_search_query
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -95,7 +95,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
                 self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
-            elif self._query and "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
+            elif self._query and _is_hybrid_search_query(self._query):  # had to add this logic since error returned from service is different, will need to ask Neil
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (self._query, self._resource_link))
                 self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
