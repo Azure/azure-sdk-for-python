@@ -948,6 +948,7 @@ class AsyncAgentEventHandler:
 
 StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
 
+
 class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
@@ -1005,7 +1006,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(Dict[str, StreamEventData], json.loads(event_data))
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
         except json.JSONDecodeError:
             parsed_data = event_data
 
@@ -1093,6 +1096,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                 pass  # The EventHandler handles the events
         except StopAsyncIteration:
             pass
+
 
 class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __init__(
