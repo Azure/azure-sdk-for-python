@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class JsonFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JsonFormat.
-    """
+    """JsonFormat."""
 
     #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_
     JSON = "json"
