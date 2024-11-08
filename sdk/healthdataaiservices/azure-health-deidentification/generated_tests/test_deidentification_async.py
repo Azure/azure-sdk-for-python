@@ -52,26 +52,6 @@ class TestDeidentificationAsync(DeidentificationClientTestBaseAsync):
 
     @DeidentificationPreparer()
     @recorded_by_proxy_async
-    async def test_list_jobs_internal(self, deidentification_endpoint):
-        client = self.create_async_client(endpoint=deidentification_endpoint)
-        response = client.list_jobs_internal()
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @DeidentificationPreparer()
-    @recorded_by_proxy_async
-    async def test_list_job_documents_internal(self, deidentification_endpoint):
-        client = self.create_async_client(endpoint=deidentification_endpoint)
-        response = client.list_job_documents_internal(
-            job_name="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @DeidentificationPreparer()
-    @recorded_by_proxy_async
     async def test_cancel_job(self, deidentification_endpoint):
         client = self.create_async_client(endpoint=deidentification_endpoint)
         response = await client.cancel_job(

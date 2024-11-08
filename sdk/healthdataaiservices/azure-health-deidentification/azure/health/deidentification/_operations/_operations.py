@@ -511,7 +511,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         )
 
     @distributed_trace
-    def list_jobs_internal(
+    def _list_jobs_internal(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.DeidentificationJob"]:
         """List de-identification jobs.
@@ -599,7 +599,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_job_documents_internal(
+    def _list_job_documents_internal(
         self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.DocumentDetails"]:
         """List processed documents within a job.
