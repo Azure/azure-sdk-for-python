@@ -22,6 +22,8 @@ from .._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MAX_MESSAGE_LENGTH_BYTES,
+    MAX_BATCH_SIZE_PREMIUM,
+    MAX_BATCH_SIZE_STANDARD,
 )
 from .._common import mgmt_handlers
 from .._common.utils import transform_outbound_messages
@@ -140,8 +142,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 topic_name=topic_name,
                 **kwargs,
             )
-
         self._max_message_size_on_link = 0
+        self._max_batch_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
@@ -215,6 +217,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
+            if self._max_message_size_on_link > MAX_BATCH_SIZE_PREMIUM:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+            else:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
             await self._close_handler()
             raise
@@ -458,14 +464,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not self._max_message_size_on_link:
             await self._open_with_retry()
 
-        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+        if max_size_in_bytes and max_size_in_bytes > self._max_batch_size_on_link:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {self._max_batch_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(
-            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            max_size_in_bytes=(max_size_in_bytes or self._max_batch_size_on_link),
             amqp_transport=self._amqp_transport,
             tracing_attributes={
                 TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,

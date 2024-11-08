@@ -116,6 +116,13 @@ class WorkspaceConfigurationOptions(object):
         ws = Workspace(name="ws-name", location="eastus", managed_network=network)
         # [END workspace_managed_network]
 
+        # [START workspace_managed_network_provision_now]
+        from azure.ai.ml.entities import IsolationMode, ManagedNetwork, Workspace
+
+        managed_net = ManagedNetwork(isolation_mode=IsolationMode.ALLOW_INTERNET_OUTBOUND)
+        ws = Workspace(name="ws-name", location="eastus", managed_network=managed_net, provision_network_now=True)
+        # [END workspace_managed_network_provision_now]
+
         # [START fqdn_outboundrule]
         from azure.ai.ml.entities import FqdnDestination
 
