@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, T
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
@@ -21,7 +20,6 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
-    EvaluationRunProperties,
     Prefixes,
     _InternalEvaluationMetrics,
 )
