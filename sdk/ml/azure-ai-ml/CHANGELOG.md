@@ -1,6 +1,11 @@
 # Release History
+## 1.23.0 (unreleased)
 
-## 1.22.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+
+## 1.22.0 (2024-11-05)
 
 ### Features Added
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
