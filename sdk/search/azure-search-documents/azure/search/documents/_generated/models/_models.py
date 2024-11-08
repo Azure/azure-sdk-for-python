@@ -777,7 +777,7 @@ class AzureMachineLearningParameters(_model_base.Model):
     :vartype authentication_key: str
     :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
      of the AML service. It should be in the format
-    subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
     :vartype resource_id: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
      API call.
@@ -951,7 +951,7 @@ class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
      of
      the AML service. It should be in the format
-    subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
     :vartype resource_id: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
      API call.

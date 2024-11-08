@@ -41,8 +41,8 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_service_statistics(self, client):
         result = client.get_service_statistics()
-        assert isinstance(result, dict)
-        assert set(result.keys()) == {"counters", "limits"}
+        assert "counters" in result.keys()
+        assert "limits" in result.keys()
 
     def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
@@ -63,10 +63,9 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_index_statistics(self, client, index_name):
         result = client.get_index_statistics(index_name)
-        keys = set(result.keys())
-        assert "document_count" in keys
-        assert "storage_size" in keys
-        assert "vector_index_size" in keys
+        assert result.document_count is not None
+        assert result.storage_size is not None
+        assert result.vector_index_size is not None
 
     def _test_create_index(self, client, index_name):
         fields = [

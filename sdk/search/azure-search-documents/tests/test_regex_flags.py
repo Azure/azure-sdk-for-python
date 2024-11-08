@@ -9,7 +9,7 @@ from azure.search.documents.indexes.models import (
     PatternAnalyzer,
     PatternTokenizer,
 )
-from azure.search.documents.indexes._generated.models import (
+from azure.search.documents._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
