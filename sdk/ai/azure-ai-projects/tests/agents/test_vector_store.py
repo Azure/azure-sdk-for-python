@@ -1,8 +1,7 @@
-"""
-Created on Oct 23, 2024
-
-@author: nirovins
-"""
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 import unittest
 from azure.ai.projects._model_base import _deserialize
@@ -36,8 +35,6 @@ class Test(unittest.TestCase):
         }
         # json_val = json.dumps(val)
         vct = _deserialize(_models.VectorStore, val)
-        vct
-
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

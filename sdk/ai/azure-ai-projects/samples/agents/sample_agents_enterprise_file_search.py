@@ -40,7 +40,7 @@ with project_client:
     _, asset_uri = project_client.upload_file("./product_info_1.md")
 
     # create a vector store with no file and wait for it to be processed
-    ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+    ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 

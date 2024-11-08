@@ -43,7 +43,7 @@ with project_client:
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+    ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
     # add the file to the vector store or you can supply data sources in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
         vector_store_id=vector_store.id, data_sources=[ds]

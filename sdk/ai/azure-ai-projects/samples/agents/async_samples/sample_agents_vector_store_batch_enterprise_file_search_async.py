@@ -41,7 +41,7 @@ async def main():
 
         # We will upload the local file to Azure and will use it for vector store creation.
         _, asset_uri = project_client.upload_file("../product_info_1.md")
-        ds = VectorStoreDataSource(storage_uri=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+        ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
         vector_store = await project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
 
