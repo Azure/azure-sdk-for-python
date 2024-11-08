@@ -233,6 +233,7 @@ class AMQPClientAsync(AMQPClientSync):
         """
         # pylint: disable=protected-access
         async with self._lock_async:
+            _logger.debug("Opening %r...", self.__class__.__name__, extra=self._network_trace_params)
             if self._session:
                 return  # already open.
             if connection:
@@ -279,23 +280,24 @@ class AMQPClientAsync(AMQPClientSync):
         If the client was opened using an external Connection,
         this will be left intact.
         """
-        self._shutdown = True
-        if not self._session:
-            return  # already closed.
-        await self._close_link_async()
-        if self._cbs_authenticator:
-            await self._cbs_authenticator.close()
-            self._cbs_authenticator = None
-        await self._session.end()
-        self._session = None
-        if not self._external_connection:
-            await self._connection.close()
-            self._connection = None
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = ""
-        self._network_trace_params["amqpSession"] = ""
+        async with self._lock_async:
+            self._shutdown = True
+            if not self._session:
+                return  # already closed.
+            await self._close_link_async()
+            if self._cbs_authenticator:
+                await self._cbs_authenticator.close()
+                self._cbs_authenticator = None
+            await self._session.end()
+            self._session = None
+            if not self._external_connection:
+                await self._connection.close()
+                self._connection = None
+            if self._keep_alive_thread:
+                await self._keep_alive_thread
+                self._keep_alive_thread = None
+            self._network_trace_params["amqpConnection"] = ""
+            self._network_trace_params["amqpSession"] = ""
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during

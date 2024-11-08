@@ -43,13 +43,15 @@ async def main():
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
-            loop = asyncio.get_event_loop()
+            print("Creating tasks")
             tasks = [
-                loop.create_task(send_single_message(sender)),
-                loop.create_task(send_single_message(sender)),
+                asyncio.create_task(send_single_message(sender)),
+                asyncio.create_task(send_single_message(sender)),
+                asyncio.create_task(send_single_message(sender)),
+                asyncio.create_task(send_single_message(sender)),
+                asyncio.create_task(send_single_message(sender)),
             ]
-            loop.run_until_complete(asyncio.gather(*tasks))
-            loop.close()
+            await asyncio.gather(*tasks)
             
     print("Send message is done.")
 
