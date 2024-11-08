@@ -25,7 +25,7 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent
 from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 import os
 

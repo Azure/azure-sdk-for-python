@@ -21,7 +21,7 @@ from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
 class AIProjectClient(ClientGenerated):
@@ -32,7 +32,7 @@ class AIProjectClient(ClientGenerated):
         subscription_id: str,
         resource_group_name: str,
         project_name: str,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         **kwargs: Any,
     ) -> None:
         # TODO: Validate input formats with regex match (e.g. subscription ID)
@@ -216,7 +216,7 @@ class AIProjectClient(ClientGenerated):
         await self._client3.__aexit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> "AIProjectClient":
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AIProjectClient":
         """
         Create an asynchronous AIProjectClient from a connection string.
 

@@ -25,7 +25,7 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FilePurpose
 from azure.ai.projects.models import FileSearchTool, MessageAttachment, ToolResources
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 import os
 

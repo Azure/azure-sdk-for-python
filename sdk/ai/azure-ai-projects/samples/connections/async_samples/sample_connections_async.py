@@ -29,7 +29,6 @@ import asyncio
 import os
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -80,6 +79,7 @@ async def sample_connections_async() -> None:
     if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
 
         from openai import AsyncAzureOpenAI
+        from azure.core.credentials_async import AsyncTokenCredential
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             print("====> Creating AzureOpenAI client using API key authentication")
@@ -123,22 +123,22 @@ async def sample_connections_async() -> None:
             print("====> Creating ChatCompletionsClient using API key authentication")
             from azure.core.credentials import AzureKeyCredential
 
-            ai_client = ChatCompletionsClient(
+            inference_client = ChatCompletionsClient(
                 endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or "")
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
-            ai_client = ChatCompletionsClient(
+            inference_client = ChatCompletionsClient(
                 endpoint=connection.endpoint_url, credential=cast(AsyncTokenCredential, connection.token_credential)
             )
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await ai_client.complete(
+        response = await inference_client.complete(
             model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
         )
-        await ai_client.close()
+        await inference_client.close()
         print(response.choices[0].message.content)
 
 

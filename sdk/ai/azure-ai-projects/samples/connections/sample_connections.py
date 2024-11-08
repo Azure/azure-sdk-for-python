@@ -29,7 +29,6 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import TokenCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 connection_name = os.environ["CONNECTION_NAME"]
@@ -86,6 +85,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         )
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         print("====> Creating AzureOpenAI client using Entra ID authentication")
+        from azure.core.credentials import TokenCredential
         from azure.identity import get_bearer_token_provider
 
         client = AzureOpenAI(

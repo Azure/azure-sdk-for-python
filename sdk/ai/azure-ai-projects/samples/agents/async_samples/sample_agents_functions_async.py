@@ -25,7 +25,7 @@ import time
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AsyncFunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 import os
 

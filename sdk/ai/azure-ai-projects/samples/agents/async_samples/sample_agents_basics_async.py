@@ -24,7 +24,7 @@ import asyncio
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 import os
 
