@@ -17,4 +17,3 @@ extend_skip_glob = [
   "*/doc/*",
   "*/.tox/*",
 ]
-

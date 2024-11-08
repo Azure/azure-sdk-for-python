@@ -130,6 +130,16 @@ Wait for the CI to run. Fix any issues related to deprecation in the PR, such as
 
 There should not be any tests or mypy/pylint/etc. failures as these checks are disabled on `Inactive` packages.
 
+### Verify Readmes Failure
+
+If you see the "Verify Readmes" task in the "Analyze" job failing with `There were README verification failures, scroll up to see the issue(s)`, add a line to ignore the package in [`eng/.docsettings.yml` under `known_content_issues`](https://github.com/Azure/azure-sdk-for-python/blob/5136a43ac2c841e6ffe36f55df6c94f1ddd00a9d/eng/.docsettings.yml#L41). For example:
+
+```yml
+known_content_issues:
+  ...
+  - ['sdk/mypackage/azure-mypackage/README.md', '#4554']
+```
+
 ## Post your PR in the Python review channel
 
 Post your PR in the [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) for verification that all requirements for deprecation have been met. If you are not the codeowner, please explicitly tag the codeowner in the post for approval.

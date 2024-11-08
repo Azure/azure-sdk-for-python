@@ -45,7 +45,7 @@ class AIProjectClient(ClientGenerated):
         if not project_name:
             raise ValueError("project_name is required")
         if not credential:
-            raise ValueError("Credential is required")
+            raise ValueError("credential is required")
         if "api_version" in kwargs:
             raise ValueError("No support for overriding the API version")
         if "credential_scopes" in kwargs:
@@ -252,7 +252,7 @@ class AIProjectClient(ClientGenerated):
             )
 
         data = Data(
-            path=file_path,
+            path=str(file_path),
             type=AssetTypes.URI_FILE,
             name=str(uuid.uuid4()),  # generating random name
             is_anonymous=True,

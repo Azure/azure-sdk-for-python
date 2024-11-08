@@ -4,12 +4,9 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_07_01_preview.models import Workspace
-from azure.ai.ml.constants._workspace import IsolationMode
-from azure.ai.ml.entities import (
-    ServerlessComputeSettings,
-    Workspace,
-)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace
+from azure.ai.ml.constants._workspace import FirewallSku, IsolationMode
+from azure.ai.ml.entities import ServerlessComputeSettings, Workspace
 
 
 @pytest.mark.unittest
@@ -81,6 +78,7 @@ class TestWorkspaceEntity:
 
         assert workspace.managed_network is not None
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+
         rules = workspace.managed_network.outbound_rules
         assert rules[0].name == "microsoft"
         assert rules[0].destination == "microsoft.com"
@@ -98,3 +96,25 @@ class TestWorkspaceEntity:
         assert rules[2].port_ranges == "80, 8080-8089"
         assert "168.63.129.16" in rules[2].address_prefixes
         assert "10.0.0.0/24" in rules[2].address_prefixes
+
+    def test_workspace_load_yamls_to_test_firewallsku_load(self):
+        workspace = load_workspace("./tests/test_configs/workspace/workspace_mvnet_with_firewallsku.yaml")
+
+        assert workspace.managed_network is not None
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        rules = workspace.managed_network.outbound_rules
+
+        assert workspace.managed_network.firewall_sku == "Basic"
+
+        assert rules[0].name == "microsoft"
+        assert rules[0].destination == "microsoft.com"
+
+        assert rules[1].name == "appGwRule"
+        assert rules[1].service_resource_id == "/someappgwid"
+        assert rules[1].spark_enabled == False
+        assert rules[1].subresource_target == "appGwPrivateFrontendIpIPv4"
+        assert "contoso.com" in rules[1].fqdns
+        assert "contoso2.com" in rules[1].fqdns
+
+        assert rules[2].name == "pytorch"
+        assert rules[2].destination == "*.pytorch.org"
