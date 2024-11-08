@@ -32,8 +32,7 @@ from ._index import (
     SearchIndex,
 )
 from . import _edm
-from ..._generated.models import SuggestOptions
-from .._generated.models import (
+from ..._generated.models import (
     SearchAlias,
     AIServicesAccountIdentity,
     AIServicesAccountKey,
@@ -473,7 +472,6 @@ __all__ = (
     "StopAnalyzer",
     "StopwordsList",
     "StopwordsTokenFilter",
-    "SuggestOptions",
     "SynonymMap",
     "SynonymTokenFilter",
     "TagScoringFunction",

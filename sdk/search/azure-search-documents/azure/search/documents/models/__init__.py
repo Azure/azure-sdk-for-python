@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 from .._generated.models import (
+    AutocompleteItem,
     AutocompleteMode,
     HybridCountAndFacetMode,
     HybridSearch,
@@ -45,6 +46,7 @@ from .._generated.models import (
     SemanticErrorMode,
     SemanticErrorReason,
     SemanticSearchResultsType,
+    SuggestResult,
     VectorFilterMode,
     VectorSimilarityThreshold,
     VectorThreshold,
@@ -58,6 +60,7 @@ from .._generated.models import (
 
 
 __all__ = (
+    "AutocompleteItem",
     "AutocompleteMode",
     "HybridCountAndFacetMode",
     "HybridSearch",
@@ -78,6 +81,7 @@ __all__ = (
     "SemanticErrorMode",
     "SemanticErrorReason",
     "SemanticSearchResultsType",
+    "SuggestResult",
     "VectorFilterMode",
     "VectorSimilarityThreshold",
     "VectorThreshold",

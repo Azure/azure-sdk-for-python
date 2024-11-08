@@ -3,15 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Any, Tuple, Dict
+from typing import Optional
 from azure.core import MatchConditions
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceNotModifiedError,
-)
 
 
 def quote_etag(etag: Optional[str]) -> Optional[str]:
@@ -40,33 +33,6 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> Optional[
     if match_condition == MatchConditions.IfMissing:
         return "*"
     return None
-
-
-def get_access_conditions(
-    model: Any, match_condition: MatchConditions = MatchConditions.Unconditionally
-) -> Tuple[Dict[int, Any], Dict[str, Optional[str]]]:
-    error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-
-    if isinstance(model, str):
-        if match_condition is not MatchConditions.Unconditionally:
-            raise ValueError("A model must be passed to use access conditions")
-        return error_map, {}
-
-    try:
-        if_match = prep_if_match(model.e_tag, match_condition)
-        if_none_match = prep_if_none_match(model.e_tag, match_condition)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        return error_map, {"if_match": if_match, "if_none_match": if_none_match}
-    except AttributeError as ex:
-        raise ValueError("Unable to get e_tag from the model") from ex
 
 
 def normalize_endpoint(endpoint):
