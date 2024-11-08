@@ -1208,7 +1208,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
         return event_type, event_data_obj, error_string
 
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
-        event_type, event_data_obj, error_string= self._parse_event_data(event_data_str)
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)

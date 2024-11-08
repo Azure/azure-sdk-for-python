@@ -63,11 +63,12 @@ class MyEventHandler(AgentEventHandler):
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         if len(message.content):
-            print(f"ThreadMessage created. ID: {message.id}, "
-                  f"Status: {message.status}, Content: {message.content[0].as_dict()}")
+            print(
+                f"ThreadMessage created. ID: {message.id}, "
+                f"Status: {message.status}, Content: {message.content[0].as_dict()}"
+            )
         else:
-            print(f"ThreadMessage created. ID: {message.id}, "
-                  f"Status: {message.status}") 
+            print(f"ThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")

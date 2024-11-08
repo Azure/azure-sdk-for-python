@@ -34,7 +34,7 @@ from azure.ai.projects.models import (
     SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
-    ToolOutput
+    ToolOutput,
 )
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions

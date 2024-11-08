@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.credentials import TokenCredential
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -262,7 +263,7 @@ class AIProjectClient(ClientGenerated):
             is_anonymous=True,
             version="1",
         )
-        # We have to wrap async method get_token of 
+        # We have to wrap async method get_token of
 
         ml_client = MLClient(
             _SyncCredentialWrapper(self._config3.credential),
@@ -288,6 +289,7 @@ __all__: List[str] = [
     "AIProjectClient",
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class _SyncCredentialWrapper(TokenCredential):
     """
     The class, synchronizing AsyncTokenCredential.
@@ -301,22 +303,19 @@ class _SyncCredentialWrapper(TokenCredential):
 
     def get_token(
         self,
-        *scopes:str, 
-        claims:Optional[str]=None, 
-        tenant_id:Optional[str]=None, 
-        enable_cae:bool=False, **
-        kwargs:Any) -> "AccessToken":
-        
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> "AccessToken":
+
         pool = concurrent.futures.ThreadPoolExecutor()
         return pool.submit(
             asyncio.run,
             self._async_credential.get_token(
-                *scopes,
-                claims=claims,
-                tenant_id=tenant_id,
-                enable_cae=enable_cae,
-                **kwargs
-            )
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            ),
         ).result()
 
 

@@ -22,11 +22,7 @@ USAGE:
 """
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models  import (
-    FilePurpose,
-    FileSearchTool,
-    MessageAttachment
-)
+from azure.ai.projects.models import FilePurpose, FileSearchTool, MessageAttachment
 from azure.identity import DefaultAzureCredential
 
 
