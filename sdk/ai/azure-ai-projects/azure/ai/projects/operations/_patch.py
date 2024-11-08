@@ -432,6 +432,9 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
     return None
 
 def _configure_tracing(span_exporter: Any) -> None:
+    if span_exporter is None:
+        return
+
     try:
         from opentelemetry import trace
         from opentelemetry.sdk.trace import TracerProvider
@@ -454,6 +457,9 @@ def _configure_tracing(span_exporter: Any) -> None:
     provider.add_span_processor(SimpleSpanProcessor(span_exporter))
 
 def _configure_logging(log_exporter: Any) -> None:
+    if log_exporter is None:
+        return
+
     try:
         # _events and _logs are considered beta (not internal) in
         # OpenTelemetry Python API/SDK.
@@ -463,7 +469,6 @@ def _configure_logging(log_exporter: Any) -> None:
         from opentelemetry.sdk._logs import LoggerProvider
         from opentelemetry.sdk._events import EventLoggerProvider
         from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor
-
 
         if not isinstance(_logs.get_logger_provider(), LoggerProvider):
             logger_provider = LoggerProvider()
