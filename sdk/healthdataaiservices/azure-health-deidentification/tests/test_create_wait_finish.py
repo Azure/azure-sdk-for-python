@@ -26,10 +26,9 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: LROPoller = client.begin_create_job(jobname, job)
+        lro: LROPoller = client.begin_deidentify_documents(jobname, job)
         lro.wait(timeout=60)
 
         finished_job: DeidentificationJob = lro.result()
@@ -37,13 +36,13 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         assert finished_job.status == JobStatus.SUCCEEDED
         assert finished_job.name == jobname
         assert finished_job.operation == OperationType.SURROGATE
-        assert finished_job.data_type == DocumentDataType.PLAINTEXT
+        assert finished_job.summary is not None
         assert finished_job.summary.total == 2
         assert finished_job.summary.successful == 2
         assert finished_job.summary.failed == 0
-        assert finished_job.started_at > finished_job.created_at
+        assert finished_job.started_at is not None and finished_job.started_at > finished_job.created_at
         assert finished_job.last_updated_at > finished_job.started_at
-        assert finished_job.redaction_format is None
+        assert finished_job.customizations is None
         assert finished_job.error is None
         assert finished_job.source_location.prefix == inputPrefix
 

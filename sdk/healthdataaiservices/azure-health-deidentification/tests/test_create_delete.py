@@ -31,7 +31,7 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        client.begin_create_job(jobname, job)
+        client.begin_deidentify_documents(jobname, job)
 
         job = client.get_job(jobname)
         while job.status == JobStatus.NOT_STARTED:

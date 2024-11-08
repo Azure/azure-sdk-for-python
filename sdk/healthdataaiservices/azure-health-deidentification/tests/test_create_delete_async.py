@@ -30,7 +30,7 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
         )
 
-        await client.begin_create_job(jobname, job)
+        await client.begin_deidentify_documents(jobname, job)
 
         job = await client.get_job(jobname)
         while job.status == JobStatus.NOT_STARTED:

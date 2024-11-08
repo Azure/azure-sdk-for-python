@@ -31,7 +31,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         lro.wait()
 
         finished_job: DeidentificationJob = await lro.result()

@@ -29,7 +29,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        client.begin_create_job(jobname, job)
+        client.begin_deidentify_documents(jobname, job)
         jobs = client.list_jobs()
 
         job = None

@@ -58,7 +58,7 @@ async def sample_create_and_wait_job_async():
     )
 
     async with client:
-        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         finished_job: DeidentificationJob = await lro.result()
 
     await credential.close()

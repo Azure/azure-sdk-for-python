@@ -30,7 +30,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        await client.begin_create_job(jobname, job)
+        await client.begin_deidentify_documents(jobname, job)
         jobs = client.list_jobs()
 
         job = None
