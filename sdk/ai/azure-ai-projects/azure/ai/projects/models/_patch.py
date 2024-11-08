@@ -36,6 +36,7 @@ from ._models import (
     FileSearchToolResource,
     BingGroundingToolDefinition,
     SharepointToolDefinition,
+    MicrosoftFabricToolDefinition,
     ToolConnection,
     ToolConnectionList,
     AzureAISearchResource,
@@ -596,6 +597,19 @@ class SharepointTool(ConnectionTool):
         """
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
+class FabricTool(ConnectionTool):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :return: A list of tool definitions.
+        """
+        return [MicrosoftFabricToolDefinition(microsoft_fabric=ToolConnectionList(connection_list=self.connection_ids))]
 
 """
     def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
@@ -1376,6 +1390,7 @@ __all__: List[str] = [
     "FunctionTool",
     "BingGroundingTool",
     "SharepointTool",
+    "FabricTool",
     "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
