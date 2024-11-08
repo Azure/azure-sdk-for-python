@@ -36,6 +36,10 @@ Use the returned token credential to authenticate the client:
 >>> client = AIProjectClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+TODO
+
 ## Examples
 
 ### Agents
