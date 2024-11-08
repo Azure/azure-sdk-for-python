@@ -400,7 +400,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         tp = cast(TracerProvider, trace.get_tracer_provider())
         tp.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
 
-    elif isinstance(destination, TextIO):
+    elif isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
             try:
