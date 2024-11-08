@@ -58,7 +58,7 @@ The following steps outline the typical sequence for interacting with agents:
 
 #### Create Project Client
 
-When you create an project client, you need to make the decision to use synchronous or asynchronous client. Use either:
+When you create a project client, you need to make the decision to use synchronous or asynchronous client. Use either:
 
 ```python
 from azure.ai.projects import AIProjectClient
@@ -99,7 +99,7 @@ async with project_client:
 
 ```
 
-In the sections below, we will only provide code snippets in synchronized functions.
+In the sections below, we will only provide code snippets in synchronous functions.
 
 #### Create Agent
 
