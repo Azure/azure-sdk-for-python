@@ -22,14 +22,15 @@ from ._generated.models import (
     CallLocator
 )
 if TYPE_CHECKING:
-    from ._models import ServerCallLocator, GroupCallLocator
+    from ._models import ServerCallLocator, GroupCallLocator, RoomCallLocator
 
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
+    args: List[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
+    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
     server_call_id: Optional[str],
-    group_call_id: Optional[str]
+    group_call_id: Optional[str],
+    room_id: Optional[str],
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -42,6 +43,8 @@ def build_call_locator(
     :type server_call_id: str or None
     :param group_call_id: If the new group_call_id was provided via keyword arg.
     :type group_call_id: str or None
+    :param room_id: If the new room_id was provided via keyword arg.
+    :type room_id: str or None
     :return: Generated CallLocator for the request body.
     """
     request: Optional[CallLocator] = None
@@ -71,8 +74,15 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
         request = CallLocator(server_call_id=server_call_id, kind="serverCallLocator")
+    if room_id:
+        if request is not None:
+            raise ValueError(
+                "Received multiple values for call locator. "
+                "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
+            )
+        request = CallLocator(room_id=room_id, kind="roomCallLocator")
     if request is None:
-        raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
+        raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
     return request
 
 

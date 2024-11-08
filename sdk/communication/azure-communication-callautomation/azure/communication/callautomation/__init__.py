@@ -20,8 +20,8 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingConfiguration,
-    TranscriptionConfiguration,
+    MediaStreamingOptions,
+    TranscriptionOptions,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -51,7 +51,8 @@ from ._generated.models._enums import (
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    VoiceKind
+    VoiceKind,
+    AudioFormat
 )
 from .streaming.models import (
     TranscriptionMetadata,
@@ -72,8 +73,8 @@ __all__ = [
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
-    "MediaStreamingConfiguration",
-    "TranscriptionConfiguration",
+    "MediaStreamingOptions",
+    "TranscriptionOptions",
 
     # models for output
     "CallConnectionProperties",
@@ -114,7 +115,8 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "VoiceKind"
+    "VoiceKind",
+    "AudioFormat"
 ]
 __version__ = VERSION
 

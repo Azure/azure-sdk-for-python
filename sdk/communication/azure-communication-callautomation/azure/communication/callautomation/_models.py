@@ -7,14 +7,16 @@ from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
-    TranscriptionConfiguration as TranscriptionConfigurationRest,
+    MediaStreamingOptions as MediaStreamingOptionsRest,
+    TranscriptionOptions as TranscriptionOptionsRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
     PlaySource as PlaySourceInternal,
     Choice as ChoiceInternal,
-    ChannelAffinity as ChannelAffinityInternal
+    ChannelAffinity as ChannelAffinityInternal,
+    MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
+    TranscriptionSubscription as TranscriptionSubscriptionInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -31,15 +33,19 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
+        MediaStreamingSubscriptionState,
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
+        TranscriptionSubscriptionState,
+        TranscriptionResultType,
         TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
         RecordingKind,
         VoiceKind,
-        DtmfTone
+        DtmfTone,
+        AudioFormat
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
@@ -87,6 +93,28 @@ class CallInvite:
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
 
+class RoomCallLocator:
+    """The locator to locate ongoing call, using room id.
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `room_id` directly.
+    :param room_id: The room id of ongoing call.
+    :type room_id: str
+    """
+    room_id: str
+    """The acs room id of ongoing call."""
+    kind: str = "roomCallLocator"
+    """This is for locating the call with acs room id."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        room_id: str,
+        **kwargs
+    ):
+        self.room_id = room_id
+        self.kind = "roomCallLocator"
+
+    def _to_generated(self):
+        return CallLocator(kind=self.kind, room_id=self.room_id)
 
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
@@ -336,7 +364,7 @@ class SsmlSource:
             play_source_cache_id=self.play_source_cache_id
         )
 
-class MediaStreamingConfiguration:
+class MediaStreamingOptions:
     """Configuration of Media streaming.
 
     :param transport_url: Transport URL for media streaming.
@@ -347,6 +375,10 @@ class MediaStreamingConfiguration:
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
     :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+    :param enable_bidirectional: A value indicating whether bidirectional streaming is enabled
+    :type enable_bidirectional: bool
+    :param audio_format: Specifies the audio format used for encoding
+    :type audio_format: ~azure.communication.callautomation.AudioFormat
     """
 
     transport_url: str
@@ -357,28 +389,38 @@ class MediaStreamingConfiguration:
     """Content type to stream, eg. audio, audio/video."""
     audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+    enable_bidirectional: Optional[bool] = None,
+    """A value indicating whether bidirectional streaming is enabled"""
+    audio_format: Optional[Union[str, 'AudioFormat']] = None,
+    """Specifies the audio format used for encoding."""
 
     def __init__(
         self,
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
+        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        enable_bidirectional: Optional[bool] = None,
+        audio_format: Optional[Union[str, 'AudioFormat']] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
+        self.enable_bidirectional = enable_bidirectional
+        self.audio_format = audio_format
 
     def to_generated(self):
-        return MediaStreamingConfigurationRest(
+        return MediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
+            audio_channel_type=self.audio_channel_type,
+            enable_bidirectional = self.enable_bidirectional,
+            audio_format=self.audio_format
         )
 
-class TranscriptionConfiguration:
+class TranscriptionOptions:
     """Configuration of live transcription.
 
     :param transport_url: Transport URL for live transcription. Required.
@@ -391,6 +433,10 @@ class TranscriptionConfiguration:
     :param start_transcription: Determines if the transcription should be started immediately after
      call is answered or not. Required.
     :type start_transcription: bool
+    :param speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed
+    :type speech_recognition_model_endpoint_id: str
+    :param enable_intermediate_results: Enables intermediate results for the transcribed speech
+    :type enable_intermediate_results: bool
     """
 
     transport_url: str
@@ -401,25 +447,125 @@ class TranscriptionConfiguration:
     """Defines the locale for the data."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
+    speech_recognition_model_endpoint_id: Optional[str] = None,
+    """Endpoint where the custom model was deployed."""
+    enable_intermediate_results: Optional[bool] = None,
+    """Enables intermediate results for the transcribed speech."""
 
     def __init__(
         self,
         transport_url: str,
         transport_type: Union[str, 'TranscriptionTransportType'],
         locale: str,
-        start_transcription: bool
+        start_transcription: bool,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        enable_intermediate_results: Optional[bool] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
         self.locale = locale
         self.start_transcription = start_transcription
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
+        self.enable_intermediate_results = enable_intermediate_results
 
     def to_generated(self):
-        return TranscriptionConfigurationRest(
+        return TranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             locale=self.locale,
-            start_transcription=self.start_transcription
+            start_transcription=self.start_transcription,
+            speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
+            enable_intermediate_results=self.enable_intermediate_results
+        )
+    
+class MediaStreamingSubscription:
+    """Media streaming Subscription Object.
+
+    :keyword id: Subscription Id.
+    :paramtype id: str
+    :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive", and
+    "active".
+    :paramtype state: str or
+    ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+    :keyword subscribed_content_types: Subscribed media streaming content types.
+    :paramtype subscribed_content_types: list[str or
+     ~azure.communication.callautomation.models.MediaStreamingContentType]
+    """
+
+    id: Optional[str]
+    """subscription id."""
+    state: Optional[Union[str, 'MediaStreamingSubscriptionState']]
+    """media streaming subscription state."""
+    subscribed_content_types: Optional[List[Union[str, 'MediaStreamingContentType']]]
+    """subscribed media streaming content types."""
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        state: Optional[Union[str, "MediaStreamingSubscriptionState"]] = None,
+        subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]] = None
+    ) -> None:
+        """
+        :keyword id: Subscription Id.
+        :paramtype id: str
+        :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive",
+         and "active".
+        :paramtype state: str or
+         ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+        :keyword subscribed_content_types: Subscribed media streaming content types.
+        :paramtype subscribed_content_types: list[str or
+         ~azure.communication.callautomation.models.MediaStreamingContentType]
+        """
+
+        self.id = id
+        self.state = state
+        self.subscribed_content_types = subscribed_content_types
+
+    def _to_generated(self):
+        return MediaStreamingSubscriptionInternal(
+            id=self.id,
+            state=self.state ,
+            subscribed_content_types=self.subscribed_content_types,
+        )
+
+class TranscriptionSubscription:
+    """Transcription Subscription Object.
+
+    :keyword id: Subscription Id.
+    :paramtype id: str
+    :keyword state: Transcription subscription state. Known values are: "disabled", "inactive", and
+     "active".
+    :paramtype state: str or
+     ~azure.communication.callautomation.models.TranscriptionSubscriptionState
+    :keyword subscribed_result_types: Subscribed transcription result types.
+    :paramtype subscribed_result_types: list[str or
+     ~azure.communication.callautomation.models.TranscriptionResultType]
+    """
+
+    id: Optional[str]
+    """subscription id."""
+    state: Optional[Union[str, 'TranscriptionSubscriptionState']]
+    """transcription subscription state."""
+    subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
+    """subscribed transcription result types."""
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
+        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None
+    ) -> None:
+        self.id = id
+        self.state = state
+        self.subscribed_result_types = subscribed_result_types
+
+    def _to_generated(self):
+        return TranscriptionSubscriptionInternal(
+            id=self.id,
+            state=self.state ,
+            subscribed_result_types=self.subscribed_result_types
         )
 
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
@@ -437,6 +583,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype callback_url: str
     :keyword media_subscription_id: SubscriptionId for media streaming.
     :paramtype media_subscription_id: str
+    :keyword data_subscription_id: SubscriptionId for transcription.
+    :paramtype data_subscription_id: str
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -450,6 +598,13 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype correlation_id: str
     :keyword answered_by: The identifier that answered the call
     :paramtype answered_by: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :keyword media_streaming_subscription: media_streaming_subscription for media streaming.
+    :paramtype media_streaming_subscription: ~azure.communication.callautomation.MediaStreamingSubscription
+    :keyword transcription_subscription: transcription_subscription for transcription.
+    :paramtype transcription_subscription: ~azure.communication.callautomation.TranscriptionSubscription
+    :keyword answered_for: Identity of the original Pstn target of an incoming Call. Only populated
+     when the original target is a Pstn number.
+    :paramtype answered_for: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
 
     call_connection_id: Optional[str]
@@ -464,6 +619,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The callback URL."""
     media_subscription_id: Optional[str]
     """SubscriptionId for media streaming."""
+    data_subscription_id: Optional[str] = None,
+    """SubscriptionId for transcription."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -474,9 +631,15 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """Source identity of the caller."""
     correlation_id: Optional[str]
     """Correlation ID of the call"""
+    media_streaming_subscription: Optional[MediaStreamingSubscription]
+    """Media streaming subscription."""
+    transcription_subscription: Optional[TranscriptionSubscription]
+    """Transcription subscription."""
     answered_by: Optional[CommunicationIdentifier]
     """The identifier that answered the call"""
-
+    answered_for: Optional[PhoneNumberIdentifier]
+    """The phone identifier that answered the call"""
+    
     def __init__(
         self,
         *,
@@ -486,11 +649,15 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
+        data_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None
+        answered_by: Optional[CommunicationUserIdentifier] = None,
+        media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
+        transcription_subscription: Optional[TranscriptionSubscription] = None,
+        answered_for: Optional[PhoneNumberIdentifier] = None,
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -498,11 +665,15 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
         self.media_subscription_id = media_subscription_id
+        self.data_subscription_id = data_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
+        self.media_streaming_subscription = media_streaming_subscription
+        self.transcription_subscription = transcription_subscription
+        self.answered_for = answered_for
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -517,6 +688,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
             media_subscription_id=call_connection_properties_generated.media_subscription_id,
+            data_subscription_id=call_connection_properties_generated.data_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
@@ -529,7 +701,13 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             answered_by=deserialize_comm_user_identifier(
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
-            else None
+            else None,
+            media_streaming_subscription=call_connection_properties_generated.media_streaming_subscription,
+            transcription_subscription=call_connection_properties_generated.transcription_subscription,
+            answered_for=deserialize_phone_identifier(
+            call_connection_properties_generated.answered_for)
+            if call_connection_properties_generated.answered_for
+            else None,
         )
 
 
@@ -787,3 +965,4 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
+    
