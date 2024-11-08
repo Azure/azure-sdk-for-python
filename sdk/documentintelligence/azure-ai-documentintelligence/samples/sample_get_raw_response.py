@@ -32,18 +32,22 @@ def sample_raw_response_hook():
 
     client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    responses = []
+    responses = {}
 
     def callback(response):
-        response_status_code = response.http_response.status_code
-        response_body = response.http_response.json()
-        responses.append(response_status_code)
-        responses.append(response_body)
+        responses["status_code"] = response.http_response.status_code
+        responses["response_body"] = response.http_response.json()
 
     client.get_resource_info(raw_response_hook=callback)
 
-    print(f"Response status code is: {responses[0]}")
-    print(f"Response body is: {responses[1]}")
+    print(f"Response status code is: {responses["status_code"]}")
+    response_body = responses["response_body"]
+    print(
+        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+    )
     # [END raw_response_hook]
 
 
