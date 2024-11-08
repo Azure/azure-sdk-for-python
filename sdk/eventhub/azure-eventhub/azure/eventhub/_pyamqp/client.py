@@ -168,8 +168,8 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         self._mgmt_links = {}
         self._mgmt_link_lock = threading.Lock()
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = kwargs.get("keep_alive_interval", 0)
-        self._keep_alive_interval = int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
+        self._keep_alive_interval = 0#kwargs.get("keep_alive_interval", 0)
+        self._keep_alive_interval = 0#int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
         self._keep_alive_thread = None
 
         # Connection settings
