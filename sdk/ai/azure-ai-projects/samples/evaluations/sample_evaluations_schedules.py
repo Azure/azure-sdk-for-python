@@ -48,9 +48,6 @@ def main():
     name = "CANARY-ONLINE-EVAL-TEST-WS-ENV-104"
     description = "Testing Online eval command job in CANARY environment"
     tags = {"tag1": "value1", "tag2": "value2"}
-    properties = {
-        "Environment": "azureml://registries/apeddau-online-evals-registry/environments/online-eval-env/versions/1"
-    }
 
     evaluation_schedule = EvaluationSchedule(
         data=app_insights_config,
