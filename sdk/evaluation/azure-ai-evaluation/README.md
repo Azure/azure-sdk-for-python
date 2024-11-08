@@ -48,10 +48,10 @@ Evaluators are custom or prebuilt classes or functions that are designed to meas
 Built-in evaluators are out of box evaluators provided by Microsoft:
 | Category  | Evaluator class                                                                                                                    |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------|
-| [Performance and quality](#performance-and-quality-evaluators) (AI-assisted)  | `GroundednessEvaluator`, `RelevanceEvaluator`, `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `RetrievalEvaluator` |
-| [Performance and quality](#performance-and-quality-evaluators) (NLP)  | `F1ScoreEvaluator`, `RougeScoreEvaluator`, `GleuScoreEvaluator`, `BleuScoreEvaluator`, `MeteorScoreEvaluator`|
-| [Risk and safety](#risk-and-safety-evaluators ) (AI-assisted)    | `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `IndirectAttackEvaluator`, `ProtectedMaterialEvaluator`                                             |
-| [Composite](#composite-evaluators) | `QAEvaluator`, `ContentSafetyEvaluator`                                             |
+| [Performance and quality][performance_and_quality_evaluators] (AI-assisted)  | `GroundednessEvaluator`, `RelevanceEvaluator`, `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `RetrievalEvaluator` |
+| [Performance and quality][performance_and_quality_evaluators] (NLP)  | `F1ScoreEvaluator`, `RougeScoreEvaluator`, `GleuScoreEvaluator`, `BleuScoreEvaluator`, `MeteorScoreEvaluator`|
+| [Risk and safety][risk_and_safety_evaluators] (AI-assisted)    | `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `IndirectAttackEvaluator`, `ProtectedMaterialEvaluator`                                             |
+| [Composite][composite_evaluators] | `QAEvaluator`, `ContentSafetyEvaluator`                                             |
 
 For more in-depth information on each evaluator definition and how it's calculated, see [Evaluation and monitoring metrics for generative AI][evaluation_metrics].
 
@@ -569,3 +569,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_custom
 [evaluate_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate
 [evaluation_metrics]: https://learn.microsoft.com/azure/ai-studio/concepts/evaluation-metrics-built-in
+[performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
+[risk_and_safety_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators
+[composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
