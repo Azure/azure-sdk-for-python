@@ -50,8 +50,8 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         count = 0
         for my_file in files:
             assert len(my_file.id) == 36  # GUID
-            assert my_file.input.path.startswith(inputPrefix)
+            assert my_file.input.location.startswith(inputPrefix)
             assert my_file.status == OperationState.SUCCEEDED
-            assert my_file.output.path.startswith(self.OUTPUT_PATH)
+            assert my_file.output is not None and my_file.output.location.startswith(self.OUTPUT_PATH)
             count += 1
         assert count == 2, f"Expected 2 files, found {count}"
