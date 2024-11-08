@@ -6,7 +6,7 @@
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy, get_credential, set_bodiless_matcher
 
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
-from tests.evaluation.evaluation_test_base import EvaluationsTestBase, servicePreparerEvaluationsTests
+from evaluation_test_base import EvaluationsTestBase, servicePreparerEvaluationsTests
 
 class TestEvaluation(EvaluationsTestBase):
 
