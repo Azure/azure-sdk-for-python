@@ -36,6 +36,7 @@ class Test(unittest.TestCase):
         # json_val = json.dumps(val)
         vct = _deserialize(_models.VectorStore, val)
 
+
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
