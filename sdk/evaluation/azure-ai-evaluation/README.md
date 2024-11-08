@@ -1,4 +1,4 @@
-# Azure AI Evaluation SDK for Python
+# Azure AI Evaluation client library for Python
 
 Use Azure AI Evaluation SDK to assess the performance of your generative AI applications. Generative AI application generations are quantitatively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as `evaluators`. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
 
@@ -53,7 +53,7 @@ Built-in evaluators are out of box evaluators provided by Microsoft:
 | [Risk and safety](#risk-and-safety-evaluators ) (AI-assisted)    | `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `IndirectAttackEvaluator`, `ProtectedMaterialEvaluator`                                             |
 | [Composite](#composite-evaluators) | `QAEvaluator`, `ContentSafetyEvaluator`                                             |
 
-For more in-depth information on each evaluator definition and how it's calculated, see [Evaluation and monitoring metrics for generative AI](../../concepts/evaluation-metrics-built-in.md).
+For more in-depth information on each evaluator definition and how it's calculated, see [Evaluation and monitoring metrics for generative AI][evaluation_metrics].
 
 ```python
 import os
@@ -147,7 +147,7 @@ result = evaluate(
     # Optionally provide your AI Studio project information to track your evaluation results in your Azure AI Studio project
     azure_ai_project = azure_ai_project,
     # Optionally provide an output path to dump a json of metric summary, row level data and metric and studio URL
-    output_path="./myevalresults.json"
+    output_path="./evaluation_results.json"
 )
 ```
 For more details refer to [Evaluate on test dataset using evaluate()][evaluate_dataset]
@@ -497,6 +497,16 @@ outputs = asyncio.run(
 
 print(outputs)
 ```
+
+## Examples
+
+In following section you will find examples of:
+- [Evaluate an application][evaluate_app]
+- [Evaluate different models][evaluate_models]
+- [Custom Evaluators][custom_evaluators]
+
+More examples can be found [here][evaluate_samples].
+
 ## Troubleshooting
 
 ### General
@@ -555,3 +565,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ai_studio]: https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio
 [ai_project]: https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-projects?tabs=ai-studio
 [azure_openai]: https://learn.microsoft.com/en-us/azure/ai-services/openai/
+[evaluate_models]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_endpoints
+[custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_custom
+[evaluate_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate
+[evaluation_metrics]: https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-metrics-built-in
