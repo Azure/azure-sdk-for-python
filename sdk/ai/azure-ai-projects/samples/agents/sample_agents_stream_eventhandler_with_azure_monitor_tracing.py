@@ -25,9 +25,8 @@ USAGE:
 
 """
 
-import os, sys
+import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
@@ -35,11 +34,11 @@ from azure.ai.projects.models import (
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
-    RunStep,
+    RunStep
 )
 from typing import Any
 from opentelemetry import trace
-from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.monitor.opentelemetry import configure_azure_monitor 
 
 # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -59,16 +58,18 @@ class MyEventHandler(AgentEventHandler):
                 print(f"Text delta received: {text_value}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        if len(message.content):
+            print(f"ThreadMessage created. ID: {message.id}, "
+                  f"Status: {message.status}, Content: {message.content[0].as_dict()}")
+        else:
+            print(f"ThreadMessage created. ID: {message.id}, "
+                  f"Status: {message.status}") 
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
-
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"Message status: {message.status}, Content: {message.content[0].as_dict()}")
 
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")

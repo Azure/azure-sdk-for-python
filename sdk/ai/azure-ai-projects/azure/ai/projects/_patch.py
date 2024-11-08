@@ -230,7 +230,7 @@ class AIProjectClient(ClientGenerated):
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
-    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str]:
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Studio project.
            This method required *azure-ai-ml* to be installed.
 

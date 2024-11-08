@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# cSpell:disable
 import unittest
 from azure.ai.projects._model_base import _deserialize
 from azure.ai.projects.models import _models

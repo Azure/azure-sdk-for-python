@@ -27,10 +27,14 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentEventHandler,
     FunctionTool,
+    MessageDeltaChunk,
     MessageDeltaTextContent,
     RequiredFunctionToolCall,
+    RunStep,
     SubmitToolOutputsAction,
-    ToolOutput,
+    ThreadMessage,
+    ThreadRun,
+    ToolOutput
 )
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions

@@ -21,7 +21,6 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
-import time
 import os
 
 from azure.ai.projects.aio import AIProjectClient

@@ -25,7 +25,6 @@ USAGE:
 """
 import asyncio
 import time
-import sys
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.tracing.agents import AIAgentsInstrumentor
@@ -38,7 +37,7 @@ tracer = trace.get_tracer(__name__)
 
 
 @tracer.start_as_current_span(__file__)
-async def main():
+async def main() -> None:
 
     # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"

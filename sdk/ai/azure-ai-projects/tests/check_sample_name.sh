@@ -1,6 +1,6 @@
 #!/bin/bash
 # This is simple helper script to chreck the name of a file
-# the name sgould encounter in two places:
+# the name should encounter in two places:
 # FILE: $fname
 # ...
 # python $fname

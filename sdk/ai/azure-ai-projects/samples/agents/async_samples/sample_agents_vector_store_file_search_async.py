@@ -23,7 +23,7 @@ import os
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
@@ -72,7 +72,7 @@ async def main():
         print(f"Created run, run ID: {run.id}")
 
         await project_client.agents.delete_vector_store(vector_store.id)
-        print("Deleted vectore store")
+        print("Deleted vector store")
 
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")

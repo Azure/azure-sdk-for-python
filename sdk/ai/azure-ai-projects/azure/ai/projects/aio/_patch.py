@@ -2,14 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.credentials import TokenCredential
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
+import concurrent.futures
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import List, Any, Union, Dict, Tuple, TYPE_CHECKING
+from typing import List, Any, Union, Dict, Optional, Tuple, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from typing_extensions import Self
@@ -22,6 +25,7 @@ from .operations._patch import InferenceOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AccessToken
 
 
 class AIProjectClient(ClientGenerated):
@@ -233,14 +237,14 @@ class AIProjectClient(ClientGenerated):
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
-    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str]:
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Studio project.
            This method required *azure-ai-ml* to be installed.
 
         :param file_path: The path to the file to upload.
         :type file_path: Union[str, Path, PathLike]
         :return: The tuple, containing asset id and asset URI of uploaded file.
-        :rtype: Tuple[str]
+        :rtype: Tuple[str, str]
         """
         try:
             from azure.ai.ml import MLClient  # type: ignore
@@ -258,9 +262,10 @@ class AIProjectClient(ClientGenerated):
             is_anonymous=True,
             version="1",
         )
+        # We have to wrap async method get_token of 
 
         ml_client = MLClient(
-            self._config3.credential,
+            _SyncCredentialWrapper(self._config3.credential),
             self._config3.subscription_id,
             self._config3.resource_group_name,
             self._config3.project_name,
@@ -282,6 +287,37 @@ class AIProjectClient(ClientGenerated):
 __all__: List[str] = [
     "AIProjectClient",
 ]  # Add all objects you want publicly available to users at this package level
+
+class _SyncCredentialWrapper(TokenCredential):
+    """
+    The class, synchronizing AsyncTokenCredential.
+
+    :param async_credential: The async credential to be synchronized.
+    :type async_credential: ~azure.core.credentials_async.AsyncTokenCredential
+    """
+
+    def __init__(self, async_credential: "AsyncTokenCredential"):
+        self._async_credential = async_credential
+
+    def get_token(
+        self,
+        *scopes:str, 
+        claims:Optional[str]=None, 
+        tenant_id:Optional[str]=None, 
+        enable_cae:bool=False, **
+        kwargs:Any) -> "AccessToken":
+        
+        pool = concurrent.futures.ThreadPoolExecutor()
+        return pool.submit(
+            asyncio.run,
+            self._async_credential.get_token(
+                *scopes,
+                claims=claims,
+                tenant_id=tenant_id,
+                enable_cae=enable_cae,
+                **kwargs
+            )
+        ).result()
 
 
 def patch_sdk():

@@ -26,7 +26,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
 from azure.ai.projects.models import MessageAttachment
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.

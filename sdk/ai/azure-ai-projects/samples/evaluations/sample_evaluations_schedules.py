@@ -4,7 +4,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     ApplicationInsightsConfiguration,
     EvaluatorConfiguration,
-    SamplingStrategy,
     EvaluationSchedule,
     CronTrigger,
     RecurrenceTrigger,

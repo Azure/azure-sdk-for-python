@@ -304,7 +304,7 @@ class _AIAgentsInstrumentorPreview:
         message_id: Optional[str] = None,
         thread_run_id: Optional[str] = None,
         message_status: Optional[str] = None,
-        incomplete_details: Optional[str] = None,
+        incomplete_details: Optional[MessageIncompleteDetails] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
         # TODO document new fields

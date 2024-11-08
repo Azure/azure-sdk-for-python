@@ -1,16 +1,9 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable
 import datetime
 import functools
 import json
@@ -35,10 +28,10 @@ from azure.ai.projects.models import (
     ToolResources,
     ToolSet,
     VectorStore,
-    VectorStoreAzureConfigurations,
-    VectorStorageConfiguration,
-    VectorStorageDataSource,
-    VectorStorageDataSourceAssetType,
+    VectorStoreConfigurations,
+    VectorStoreConfiguration,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
 )
 
 
@@ -1137,9 +1130,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
             ds = None
         else:
             ds = [
-                VectorStorageDataSource(
+                VectorStoreDataSource(
                     storage_uri=kwargs["azure_ai_projects_data_path"],
-                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
         vector_store = await ai_client.agents.create_vector_store_and_poll(
@@ -1172,9 +1165,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
             ds = None
         else:
             ds = [
-                VectorStorageDataSource(
+                VectorStoreDataSource(
                     storage_uri=kwargs["azure_ai_projects_data_path"],
-                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
@@ -1211,9 +1204,9 @@ class TestagentClientAsync(AzureRecordedTestCase):
         else:
             file_ids = None
             ds = [
-                VectorStorageDataSource(
+                VectorStoreDataSource(
                     storage_uri=kwargs["azure_ai_projects_data_path"],
-                    asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
@@ -1259,8 +1252,8 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
-        ds = VectorStorageDataSource(
-            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
         await self._do_test_message_attachment(data_sources=[ds], **kwargs)
 
@@ -1317,15 +1310,15 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert isinstance(ai_client, AIProjectClient)
 
         ds = [
-            VectorStorageDataSource(
+            VectorStoreDataSource(
                 storage_uri=kwargs["azure_ai_projects_data_path"],
-                asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
         fs = FileSearchToolResource(
             vector_stores=[
-                VectorStoreAzureConfigurations(
-                    store_name="my_vector_store", store_configuration=VectorStorageConfiguration(data_sources=ds)
+                VectorStoreConfigurations(
+                    store_name="my_vector_store", store_configuration=VectorStoreConfiguration(data_sources=ds)
                 )
             ]
         )
@@ -1358,8 +1351,8 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_assistant_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
-        ds = VectorStorageDataSource(
-            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
         await self._do_test_create_assistant_with_interpreter(data_sources=[ds], **kwargs)
 
@@ -1418,8 +1411,8 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_thread_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
-        ds = VectorStorageDataSource(
-            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
         await self._do_test_create_thread_with_interpreter(data_sources=[ds], **kwargs)
 
@@ -1482,15 +1475,15 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert isinstance(ai_client, AIProjectClient)
 
         ds = [
-            VectorStorageDataSource(
+            VectorStoreDataSource(
                 storage_uri=kwargs["azure_ai_projects_data_path"],
-                asset_type=VectorStorageDataSourceAssetType.URI_ASSET,
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
         fs = FileSearchToolResource(
             vector_stores=[
-                VectorStoreAzureConfigurations(
-                    store_name="my_vector_store", store_configuration=VectorStorageConfiguration(data_sources=ds)
+                VectorStoreConfigurations(
+                    store_name="my_vector_store", store_configuration=VectorStoreConfiguration(data_sources=ds)
                 )
             ]
         )
@@ -1523,8 +1516,8 @@ class TestagentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_attachment_in_thread_azure(self, **kwargs):
         """Create thread with message attachment inline with azure asset IDs."""
-        ds = VectorStorageDataSource(
-            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStorageDataSourceAssetType.URI_ASSET
+        ds = VectorStoreDataSource(
+            storage_uri=kwargs["azure_ai_projects_data_path"], asset_type=VectorStoreDataSourceAssetType.URI_ASSET
         )
         await self._do_test_create_attachment_in_thread_azure(data_sources=[ds], **kwargs)
 

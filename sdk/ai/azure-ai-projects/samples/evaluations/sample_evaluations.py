@@ -21,7 +21,7 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os, time
+import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
@@ -82,5 +82,6 @@ get_evaluation_response = project_client.evaluations.get(evaluation_response.id)
 print("----------------------------------------------------------------")
 print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
 print("Evaluation status: ", get_evaluation_response.status)
-print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+if isinstance(get_evaluation_response.properties, dict):
+    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
 print("----------------------------------------------------------------")
