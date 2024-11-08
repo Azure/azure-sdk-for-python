@@ -4,11 +4,11 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_ai_search.py
+FILE: sample_agents_sharepoint.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
-    Azure AI Search tool from the Azure Agents service using a synchronous client.
+    Sharepoint tool from the Azure Agents service using a synchronous client.
 
 USAGE:
     python sample_agents_azure_ai_search.py
@@ -36,8 +36,8 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# Initialize agent AI search tool and add the search index connection id
-sharepoint = SharepointTool()
+# Initialize Sharepoint tool with connection id 
+sharepoint = SharepointTool(connection_id="my_connection_id")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -58,7 +58,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="Hello, tell me about my health insurance options",
     )
     print(f"Created message, ID: {message.id}")
 

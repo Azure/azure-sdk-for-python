@@ -9,6 +9,8 @@ FILE: sample_agents_azure_ai_search.py
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     Azure AI Search tool from the Azure Agents service using a synchronous client.
+    To learn how to set up an Azure AI Search resource,
+    visit https://learn.microsoft.com/azure/search/search-get-started-portal
 
 USAGE:
     python sample_agents_azure_ai_search.py
@@ -24,7 +26,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool, ToolResources, AzureAISearchResource, IndexResource
+from azure.ai.projects.models import AzureAISearchTool
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -58,7 +60,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Tell me about Bill and Mellie",
+        content="What inventory is available currently?",
     )
     print(f"Created message, ID: {message.id}")
 
