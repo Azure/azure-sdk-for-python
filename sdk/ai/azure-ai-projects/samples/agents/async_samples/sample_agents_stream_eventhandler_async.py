@@ -32,7 +32,7 @@ from azure.ai.projects.models._models import (
     ThreadRun,
 )
 from azure.ai.projects.models._patch import AsyncAgentEventHandler
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 import os
 

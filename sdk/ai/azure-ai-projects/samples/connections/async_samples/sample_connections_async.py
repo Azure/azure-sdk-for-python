@@ -118,6 +118,7 @@ async def sample_connections_async() -> None:
 
         from azure.ai.inference.aio import ChatCompletionsClient
         from azure.ai.inference.models import UserMessage
+        from azure.core.credentials_async import AsyncTokenCredential
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             print("====> Creating ChatCompletionsClient using API key authentication")
