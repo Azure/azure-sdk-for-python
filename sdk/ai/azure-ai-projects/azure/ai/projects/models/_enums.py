@@ -433,6 +433,16 @@ class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensiti
     STATIC = "static"
 
 
+class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
+    asset URI ID,
+    in the case of id_asset it should contain the data ID.
+    """
+
+    URI_ASSET = "uri_asset"
+    ID_ASSET = "id_asset"
+
+
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the relationship between the days and the expiration of this vector store."""
 

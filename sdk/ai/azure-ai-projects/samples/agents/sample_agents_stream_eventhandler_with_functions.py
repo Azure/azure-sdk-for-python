@@ -107,7 +107,7 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
-    
+
     # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
 

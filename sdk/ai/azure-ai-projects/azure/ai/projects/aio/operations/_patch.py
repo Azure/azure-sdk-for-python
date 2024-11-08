@@ -27,7 +27,7 @@ from typing import (
     overload,
     Sequence,
     TYPE_CHECKING,
-    TextIO
+    TextIO,
 )
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -106,7 +106,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -173,7 +176,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -301,9 +307,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
-    async def get(
-        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
@@ -1210,7 +1214,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @distributed_trace_async
@@ -1731,7 +1734,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @overload
@@ -2116,6 +2118,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2132,6 +2135,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2177,6 +2182,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2192,6 +2198,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2212,11 +2220,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not None:
             vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif file_ids is not None or (name is not None and expires_after is not None):
+        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
+            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
             vector_store = await self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
                 name=name,
+                store_configuration=store_configuration,
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
@@ -2225,7 +2235,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError(
                 "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
-                "'file_ids', or 'name' and 'expires_after'."
+                "'file_ids', 'store_configuration', or 'name' and 'expires_after'."
             )
 
         while vector_store.status == "in_progress":
@@ -2267,6 +2277,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         *,
         file_ids: List[str],
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
@@ -2278,6 +2289,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type vector_store_id: str
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2325,7 +2338,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         body: Union[JSON, IO[bytes], None] = None,
         *,
-        file_ids: List[str] = _Unset,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2338,6 +2352,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2348,7 +2364,11 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is None:
             vector_store_file_batch = await super().create_vector_store_file_batch(
-                vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs
+                vector_store_id=vector_store_id,
+                file_ids=file_ids,
+                data_sources=data_sources,
+                chunking_strategy=chunking_strategy,
+                **kwargs,
             )
         else:
             content_type = kwargs.get("content_type", "application/json")
@@ -2363,6 +2383,146 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        *,
+        content_type: str = "application/json",
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if body is None:
+            vector_store_file = await super().create_vector_store_file(
+                vector_store_id=vector_store_id,
+                file_id=file_id,
+                data_sources=data_sources,
+                chunking_strategy=chunking_strategy,
+                **kwargs,
+            )
+        else:
+            content_type = kwargs.get("content_type", "application/json")
+            vector_store_file = await super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
+
+        while vector_store_file.status == "in_progress":
+            time.sleep(sleep_interval)
+            vector_store_file = await super().get_vector_store_file(
+                vector_store_id=vector_store_id, file_id=vector_store_file.id
+            )
+
+        return vector_store_file
 
     @distributed_trace_async
     async def get_file_content(self, file_id: str, **kwargs: Any) -> AsyncIterator[bytes]:

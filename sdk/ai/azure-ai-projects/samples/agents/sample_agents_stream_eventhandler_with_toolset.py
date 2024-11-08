@@ -90,7 +90,7 @@ with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
-    # [END create_agent_with_function_tool]    
+    # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

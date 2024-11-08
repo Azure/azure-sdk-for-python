@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 FILE: sample_agents_vector_store_batch_file_search.py
 
@@ -42,7 +41,7 @@ with project_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
-    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+    vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
@@ -63,7 +62,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
-    # [END create_agent_with_tools_and_tool_resources]    
+    # [END create_agent_with_tools_and_tool_resources]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
@@ -95,9 +94,6 @@ with project_client:
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-
-    project_client.agents.delete_file(file.id)
-    print("Deleted file")
 
     project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vector store")

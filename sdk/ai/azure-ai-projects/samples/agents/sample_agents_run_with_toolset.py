@@ -40,18 +40,18 @@ project_client = AIProjectClient.from_connection_string(
 # Create agent with toolset and process assistant run
 with project_client:
     # Initialize agent toolset with user functions and code interpreter
-    # [START create_agent_toolset]    
+    # [START create_agent_toolset]
     functions = FunctionTool(user_functions)
     code_interpreter = CodeInterpreterTool()
 
     toolset = ToolSet()
     toolset.add(functions)
     toolset.add(code_interpreter)
-        
+
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
-    # [END create_agent_toolset]    
+    # [END create_agent_toolset]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication

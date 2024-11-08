@@ -6,6 +6,7 @@
 
 ### Breaking Changes
 - The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
+- Parameters `query_response_generating_prompty_kwargs` and `user_simulator_prompty_kwargs` have been renamed to `query_response_generating_prompty_options` and `user_simulator_prompty_options` in the Simulator's __call__ method.
 
 ### Bugs Fixed
 - Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.

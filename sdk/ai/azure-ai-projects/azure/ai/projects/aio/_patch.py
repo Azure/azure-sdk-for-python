@@ -8,10 +8,11 @@ from azure.core.credentials import TokenCredential
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
+import concurrent.futures
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import List, Any, Union, Dict, Optional, TYPE_CHECKING
+from typing import List, Any, Union, Dict, Optional, Tuple, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from typing_extensions import Self
@@ -236,14 +237,14 @@ class AIProjectClient(ClientGenerated):
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
-    def upload_file(self, file_path: Union[Path, str, PathLike]) -> str:
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str]:
         """Upload a file to the Azure AI Studio project.
            This method required *azure-ai-ml* to be installed.
 
         :param file_path: The path to the file to upload.
         :type file_path: Union[str, Path, PathLike]
-        :return: The asset id of uploaded file.
-        :rtype: str
+        :return: The tuple, containing asset id and asset URI of uploaded file.
+        :rtype: Tuple[str]
         """
         try:
             from azure.ai.ml import MLClient  # type: ignore
@@ -272,7 +273,7 @@ class AIProjectClient(ClientGenerated):
 
         data_asset = ml_client.data.create_or_update(data)
 
-        return data_asset.id
+        return data_asset.id, data_asset.path
 
     @property
     def scope(self) -> Dict[str, str]:
@@ -306,7 +307,9 @@ class _SyncCredentialWrapper(TokenCredential):
         enable_cae:bool=False, **
         kwargs:Any) -> "AccessToken":
         
-        return asyncio.run(
+        pool = concurrent.futures.ThreadPoolExecutor()
+        return pool.submit(
+            asyncio.run,
             self._async_credential.get_token(
                 *scopes,
                 claims=claims,
@@ -314,7 +317,7 @@ class _SyncCredentialWrapper(TokenCredential):
                 enable_cae=enable_cae,
                 **kwargs
             )
-        )
+        ).result()
 
 
 def patch_sdk():
