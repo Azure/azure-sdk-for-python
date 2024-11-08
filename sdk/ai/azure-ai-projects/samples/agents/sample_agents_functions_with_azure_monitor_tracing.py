@@ -12,7 +12,7 @@ DESCRIPTION:
     View the results in the "Tracing" tab in your Azure AI Studio project page.
 
 USAGE:
-    python sample_agents_basics_with_azure_monitor_tracing.py
+    python sample_agents_functions_with_azure_monitor_tracing.py
 
     Before running the sample:
 
@@ -23,17 +23,12 @@ USAGE:
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
-
-import os, sys, time, json
 from typing import Any, Callable, Set
+
+import os, time, json
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import (
-    FunctionTool,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput
-)
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 

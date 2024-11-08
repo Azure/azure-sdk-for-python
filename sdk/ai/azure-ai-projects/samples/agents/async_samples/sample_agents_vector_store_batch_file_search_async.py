@@ -28,7 +28,7 @@ from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity.aio import DefaultAzureCredential
 
 
-async def main():
+async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables

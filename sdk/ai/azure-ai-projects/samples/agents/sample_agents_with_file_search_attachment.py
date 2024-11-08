@@ -20,12 +20,13 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
-
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import MessageAttachment
-from azure.ai.projects.models import FileSearchTool
+from azure.ai.projects.models  import (
+    FilePurpose,
+    FileSearchTool,
+    MessageAttachment
+)
 from azure.identity import DefaultAzureCredential
 
 

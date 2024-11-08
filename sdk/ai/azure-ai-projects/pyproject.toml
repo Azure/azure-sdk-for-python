@@ -11,6 +11,5 @@ exclude = [
   "sample_agents_with_file_search_attachment_async.py"
 ]
 warn_unused_configs = true
-follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false
