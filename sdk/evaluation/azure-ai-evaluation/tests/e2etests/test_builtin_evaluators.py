@@ -739,7 +739,7 @@ class TestBuiltInEvaluators:
         conversation = Conversation(
             messages=[
                 SystemMessage(
-                    content=[TextContentItem(text="You are an AI assitance who can describe images.")],
+                    content=[TextContentItem(text="You are an AI assistant who can describe images.")],
                 ),
                 UserMessage(
                     content=[

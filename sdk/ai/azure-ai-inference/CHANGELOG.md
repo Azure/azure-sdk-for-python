@@ -8,6 +8,7 @@
   * Method `AIInferenceInstrumentor().instrument()` updated with an input argument `enable_content_recording`.
   * Calling `AIInferenceInstrumentor().instrument()` twice no longer results in an exception.
   * Added method `AIInferenceInstrumentor().is_content_recording_enabled()`
+* Support [Prompty](https://github.com/microsoft/prompty) and prompt template from string. PromptTemplate class outputs an array of dictionary with OpenAI compatible message format.
 
 ### Bugs Fixed
 
