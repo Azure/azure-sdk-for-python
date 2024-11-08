@@ -458,6 +458,10 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             for e in entities:
                 pass
             client.delete_table(table_name)
+    
+    def check_request_auth(self, pipeline_request):
+        assert self.sas_token not in pipeline_request.http_request.url
+        assert pipeline_request.http_request.headers.get("Authorization") is not None
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
