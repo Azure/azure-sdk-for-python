@@ -12,6 +12,7 @@ from azure.ai.projects import AIProjectClient
 if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
     print("Failed to apply environment variables for azure-ai-projects tests.")
 
+
 class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
     RESOURCE_GROUP_NAME = "00000"
@@ -21,6 +22,7 @@ class SanitizedValues:
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
 
+
 @pytest.fixture(scope="session")
 def mock_project_scope():
     return {
@@ -29,17 +31,20 @@ def mock_project_scope():
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
+
 @pytest.fixture(scope="session")
 def mock_dataset_name():
     return {
         "dataset_name": f"{SanitizedValues.DATASET_NAME}",
     }
 
+
 @pytest.fixture(scope="session")
 def mock_connection_name():
     return {
         "connection_name": f"{SanitizedValues.CONNECTION_NAME}",
     }
+
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
@@ -76,11 +81,8 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_conne
             regex=r"/data/([-\w\._\(\)]+)", value=mock_dataset_name["dataset_name"], group_for_replace="1"
         )
 
-        add_general_regex_sanitizer(
-            regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1"
-        )
+        add_general_regex_sanitizer(regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1")
 
     azure_workspace_triad_sanitizer()
 
     remove_batch_sanitizers(["AZSDK3493"])
-

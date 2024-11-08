@@ -134,7 +134,7 @@ class InferenceOperations:
         does not exist.
         Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
         is not installed.
- 
+
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -297,9 +297,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
-    def get(
-        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
@@ -343,7 +341,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             return ConnectionProperties(connection=connection)
 
     @distributed_trace
-    def list(self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any) -> Sequence[ConnectionProperties]:
+    def list(
+        self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any
+    ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.

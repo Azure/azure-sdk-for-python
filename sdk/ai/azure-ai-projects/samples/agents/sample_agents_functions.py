@@ -23,12 +23,7 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import (
-    FunctionTool,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput
-)
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from user_functions import user_functions
 
 

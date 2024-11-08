@@ -42,11 +42,9 @@ with project_client:
     file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {file.id}")
 
-    vector_store = project_client.agents.create_vector_store_and_poll(
-        file_ids=[file.id], name="my_vectorstore"
-    )
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
     print(f"Created vector store, vector store ID: {vector_store.id}")
-    
+
     # Create file search tool with resources followed by creating agent
     file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
@@ -57,7 +55,7 @@ with project_client:
         tools=file_search.definitions,
     )
     # [END upload_file_create_vector_store_and_agent_with_file_search_tool]
-    
+
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread with file resources.

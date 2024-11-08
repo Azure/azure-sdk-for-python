@@ -29,7 +29,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential
 
-#from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+# from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 connection_name = os.environ["CONNECTION_NAME"]
