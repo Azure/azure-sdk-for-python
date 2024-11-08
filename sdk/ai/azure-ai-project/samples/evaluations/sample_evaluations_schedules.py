@@ -25,19 +25,18 @@ USAGE:
 """
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency
+from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency, ConnectionType
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator
 import pprint
 
 # Variables
 # Change the values of the below constants
 SAMPLE_NAME = "<sample-name>"
-EVALUATOR_NAME = "<evaluator-name>"
 
 # Copy the values from bug bash document
 PROJECT_CONNECTION_STRING = "<project_connection_string>"
 SAMPLE_RESOURCE_ID = "<sample-resource-id>"
 SAMPLE_QUERY = "<sample-query>"
-SAMPLE_EVALUATOR_ID = "<sample-evaluator-id>"
 APP_INSIGHTS_CONNECTION_STRING = "<app-insights-connection-string>"
 SERVICE_NAME = "<service-name>"
 
@@ -58,20 +57,31 @@ app_insights_config = ApplicationInsightsConfiguration(
 )
 
 f1_evaluator_config = EvaluatorConfiguration(
-    id=SAMPLE_EVALUATOR_ID,
+    id=F1ScoreEvaluator.id,
     init_params={},
     data_mapping={"response": "${data.message}", "ground_truth": "${data.ground_truth}"}
 )
 
+deployment_name = "gpt-4"
+api_version = "2024-08-01-preview"
+default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+model_config = default_connection.to_evaluator_model_config(deployment_name=deployment_name, api_version=api_version)
+relevance_evaluator_config =  EvaluatorConfiguration(
+    id=RelevanceEvaluator.id,
+    init_params={"model_config": model_config},
+    data_mapping={"response": "${data.query}", "ground_truth": "${data.response}"}
+)
+
 recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
 evaluators = {
-    EVALUATOR_NAME: f1_evaluator_config,
+    "f1_score": f1_evaluator_config,
+    "relevance": relevance_evaluator_config
 }
 
 name = SAMPLE_NAME
 description = f"{SAMPLE_NAME} description"
 tags = {"project": "online-eval-bug-bash"}
-properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6"}
+properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6", "AzureMSIClientId": "f67be261-fdc3-4eab-ba3b-ed38b28b2a3c"}
 
 
 def create_schedule():
