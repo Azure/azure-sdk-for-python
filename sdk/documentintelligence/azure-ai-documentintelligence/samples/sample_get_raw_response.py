@@ -40,7 +40,7 @@ def sample_raw_response_hook():
 
     client.get_resource_info(raw_response_hook=callback)
 
-    print(f"Response status code is: {responses["status_code"]}")
+    print(f"Response status code is: {responses['status_code']}")
     response_body = responses["response_body"]
     print(
         f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
