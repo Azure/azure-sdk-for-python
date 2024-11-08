@@ -49,6 +49,12 @@ def multimodal_file_with_imageurls():
 
 
 @pytest.fixture
+def multimodal_file_with_imageurls_with_target():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "dataset_messages_image_urls_target.jsonl")
+
+
+@pytest.fixture
 def multimodal_file_with_b64_images():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "dataset_messages_b64_images.jsonl")
@@ -251,7 +257,7 @@ class TestEvaluate:
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
-            evaluation_name=f"test-mm-eval-dataset-img-url-{str(uuid.uuid4())}",
+            evaluation_name=f"test-mm-content-safety-eval-dataset-img-url-{str(uuid.uuid4())}",
             azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"content_safety": content_safety_eval},
@@ -283,23 +289,23 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
     def test_evaluate_with_content_safety_multimodal_evaluator_with_target(
-        self, project_scope, azure_cred, multimodal_file_with_imageurls
+        self, project_scope, azure_cred, multimodal_file_with_imageurls_with_target
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         from .target_fn import target_multimodal_fn1
 
-        input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
+        input_data = pd.read_json(multimodal_file_with_imageurls_with_target, lines=True)
         content_safety_eval = ContentSafetyMultimodalEvaluator(
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
             azure_ai_project=project_scope,
-            data=multimodal_file_with_imageurls,
+            data=multimodal_file_with_imageurls_with_target,
             target=target_multimodal_fn1,
             evaluators={"content_safety": content_safety_eval},
             evaluator_config={
-                "content_safety": {"conversation": "${data.conversation}"},
+                "content_safety": {"conversation": "${target.conversation}"},
             },
         )
 
