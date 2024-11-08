@@ -11,7 +11,7 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client with tracing to console.
 
 USAGE:
-    python sample_agents_basics_with_console_tracing.py
+    python sample_agents_functions_with_console_tracing.py
 
     Before running the sample:
 

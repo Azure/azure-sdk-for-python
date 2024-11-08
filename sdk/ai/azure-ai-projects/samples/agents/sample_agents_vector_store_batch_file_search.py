@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_vector_store_batch_file_search_async.py
+FILE: sample_agents_vector_store_batch_file_search.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search_async.py
+    python sample_agents_vector_store_batch_file_search.py
 
     Before running the sample:
 
