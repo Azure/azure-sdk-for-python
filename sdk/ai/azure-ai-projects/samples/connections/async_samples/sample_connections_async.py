@@ -95,7 +95,8 @@ async def sample_connections_async() -> None:
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
-                    cast(AsyncTokenCredential, connection.token_credential), "https://cognitiveservices.azure.com/.default"
+                    cast(AsyncTokenCredential, connection.token_credential),
+                    "https://cognitiveservices.azure.com/.default",
                 ),
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs

@@ -91,8 +91,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
             azure_ad_token_provider=get_bearer_token_provider(
-                cast(TokenCredential, connection.token_credential),
-                "https://cognitiveservices.azure.com/.default"
+                cast(TokenCredential, connection.token_credential), "https://cognitiveservices.azure.com/.default"
             ),
             azure_endpoint=connection.endpoint_url,
             api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
@@ -121,7 +120,9 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
         print("====> Creating ChatCompletionsClient using API key authentication")
         from azure.core.credentials import AzureKeyCredential
 
-        client = ChatCompletionsClient(endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or ""))
+        client = ChatCompletionsClient(
+            endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or "")
+        )
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
