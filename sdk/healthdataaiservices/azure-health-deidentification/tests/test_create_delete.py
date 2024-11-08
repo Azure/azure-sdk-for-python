@@ -28,7 +28,6 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
         )
 
         client.begin_deidentify_documents(jobname, job)
