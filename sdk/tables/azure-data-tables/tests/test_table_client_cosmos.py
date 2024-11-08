@@ -365,7 +365,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         default_azure_credential = self.get_token_credential()
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_cosmos_account_key,
             resource_types=ResourceTypes.from_string("sco"),

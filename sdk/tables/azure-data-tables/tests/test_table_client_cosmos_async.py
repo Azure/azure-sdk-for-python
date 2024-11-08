@@ -457,7 +457,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 parameters={"pk": "dummy-pk"},
                 raw_request_hook=self.check_request_auth,
             )
-            for e in entities:
+            async for e in entities:
                 pass
             client.delete_table(table_name)
 
