@@ -29,7 +29,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
                 prefix="no_files_in_this_folder",
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
-            operation=OperationType.SURROGATE
+            operation=OperationType.SURROGATE,
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)

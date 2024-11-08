@@ -26,11 +26,12 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.REDACT,
-            customizations=JobCustomizationOptions(redaction_format="[{type}]")
+            customizations=JobCustomizationOptions(redaction_format="[{type}]"),
         )
 
         client.begin_deidentify_documents(jobname, job)
         jobs = client.list_jobs()
+        jobs = client.list_jobs_internal()  # TODO - this method should be private
 
         job = None
         jobsToLookThrough = 10
