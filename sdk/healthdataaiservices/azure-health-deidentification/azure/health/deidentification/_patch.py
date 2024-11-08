@@ -7,40 +7,40 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Iterable, List
+from client import DeidentificationClient as DeidentificationClientGenerated
 from models import DocumentDetails, DeidentificationJob
 import list_jobs_internal, list_job_documents_internal
 
 __all__: List[str] = [
-    "list_jobs",
-    "list_job_documents",
+    "DeidentificationClient",
 ]  # Add all objects you want publicly available to users at this package level
 
+class DeidentificationClient(DeidentificationClientGenerated):
 
-@classmethod
-def list_jobs(self) -> Iterable[DeidentificationJob]:
-    """
-    List de-identification jobs.
+    @classmethod
+    def list_jobs(cls) -> Iterable[DeidentificationJob]:
+        """
+        List de-identification jobs.
 
-    :return: An iterator like instance of DeidentificationJob
-    :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
-    :raises ~azure.core.exceptions.HttpResponseError:
-    """
-    return list_jobs_internal.list_job(self)
+        :return: An iterator like instance of DeidentificationJob
+        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return list_jobs_internal.list_job(cls)
 
 
-@classmethod
-def list_job_documents(self, job_name) -> Iterable[DocumentDetails]:
-    """
-    List processed documents within a job.
+    @classmethod
+    def list_job_documents(cls, job_name) -> Iterable[DocumentDetails]:
+        """
+        List processed documents within a job.
 
-    :param job_name: The name of a job. Required.
-    :type job_name: str
-    :return: An iterator like instance of DocumentDetails
-    :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
-    :raises ~azure.core.exceptions.HttpResponseError:
-    """
-    return list_job_documents_internal.list_job_documents(self, job_name)
-
+        :param job_name: The name of a job. Required.
+        :type job_name: str
+        :return: An iterator like instance of DocumentDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return list_job_documents_internal.list_job_documents(cls, job_name)
 
 def patch_sdk():
     """Do not remove from this file.
