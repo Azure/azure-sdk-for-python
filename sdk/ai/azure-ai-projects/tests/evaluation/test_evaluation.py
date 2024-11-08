@@ -12,7 +12,8 @@ from devtools_testutils import (
 )
 
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
-from tests.evaluation.evaluation_test_base import EvaluationsTestBase, servicePreparerEvaluationsTests
+from evaluation_test_base import EvaluationsTestBase, servicePreparerEvaluationsTests
+
 
 
 class TestEvaluation(EvaluationsTestBase):

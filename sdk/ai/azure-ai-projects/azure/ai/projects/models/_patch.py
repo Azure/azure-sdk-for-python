@@ -944,7 +944,10 @@ class AsyncAgentEventHandler:
         pass
 
 
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
+StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+
+
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -970,7 +973,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> Tuple[str, Any]:
+    async def __anext__(self) -> Tuple[str, StreamEventData]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -986,7 +989,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
@@ -1001,7 +1004,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data: Union[str, Dict[str, Any]] = cast(Dict[str, Any], json.loads(event_data))
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
         except json.JSONDecodeError:
             parsed_data = event_data
 
@@ -1047,7 +1052,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
 
         return event_type, event_data_obj
 
-    async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
         if (
@@ -1091,7 +1096,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             pass
 
 
-class AgentRunStream(Iterator[Tuple[str, Any]]):
+class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
@@ -1115,7 +1120,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __iter__(self):
         return self
 
-    def __next__(self) -> Tuple[str, Any]:
+    def __next__(self) -> Tuple[str, StreamEventData]:
         if self.done:
             raise StopIteration
         while True:
@@ -1133,7 +1138,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
@@ -1194,7 +1199,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
 
         return event_type, event_data_obj
 
-    def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
         if (

@@ -9,7 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys, io, logging, os, time
 from azure.core.exceptions import ResourceNotFoundError
-from io import TextIOWrapper
 from typing import List, Union, IO, Any, Dict, Optional, overload, Sequence, TYPE_CHECKING, Iterator, TextIO, cast
 from pathlib import Path
 
@@ -96,7 +95,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -163,7 +165,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -394,7 +399,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         tp = cast(TracerProvider, trace.get_tracer_provider())
         tp.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
 
-    elif isinstance(destination, TextIOWrapper):
+    elif isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
             try:
@@ -1302,13 +1307,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return response
 
     @distributed_trace
     def create_and_process_run(
         self,
         thread_id: str,
+        *,
         assistant_id: str,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1841,7 +1846,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return response
 
     @overload
