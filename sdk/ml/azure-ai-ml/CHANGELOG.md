@@ -1,12 +1,19 @@
 # Release History
+## 1.23.0 (unreleased)
 
-## 1.22.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+
+## 1.22.0 (2024-11-05)
 
 ### Features Added
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
   AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
   - Update TLS version from 1.0 to 1.2
   - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.distillation`
+  - Added Workspace property `ProvisionNetworkNow` to trigger the provisioning of the managed VNet with the default
+    Options when creating a Workspace with the managed VNet enabled, or else it does nothing
 ### Bugs Fixed
   - Fix send email notification issue in model monitoring
 
