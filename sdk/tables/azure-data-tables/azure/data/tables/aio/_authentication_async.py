@@ -10,7 +10,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
-from .._constants import STORAGE_OAUTH_SCOPE, COSMOS_OAUTH_SCOPE 
+from .._constants import STORAGE_OAUTH_SCOPE, COSMOS_OAUTH_SCOPE
 from .._authentication import _HttpChallenge, AzureSasCredentialPolicy, SharedKeyCredentialPolicy
 
 
@@ -95,7 +95,7 @@ def _configure_credential(
     credential: Optional[
         Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, SharedKeyCredentialPolicy]
     ],
-    cosmos_endpoint: bool = False
+    cosmos_endpoint: bool = False,
 ) -> Optional[Union[AsyncBearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(AsyncTokenCredential, credential)

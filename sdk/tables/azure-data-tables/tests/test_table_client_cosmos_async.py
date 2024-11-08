@@ -401,7 +401,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-        async with TableClient(f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential) as client:
+        async with TableClient(
+            f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential
+        ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -458,7 +460,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             for e in entities:
                 pass
             client.delete_table(table_name)
-    
+
     def check_request_auth(self, pipeline_request):
         assert self.sas_token not in pipeline_request.http_request.url
         assert pipeline_request.http_request.headers.get("Authorization") is not None

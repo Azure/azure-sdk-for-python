@@ -236,8 +236,10 @@ def _configure_credential(credential: None) -> None: ...
 
 
 def _configure_credential(
-    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]],
-    cosmos_endpoint: bool = False
+    credential: Optional[
+        Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]
+    ],
+    cosmos_endpoint: bool = False,
 ) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
