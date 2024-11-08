@@ -47,7 +47,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         assert finished_job.source_location.prefix == inputPrefix
 
         files = client.list_job_documents_internal(jobname)  # TODO - this method should be private
-        files = client.list_job_documents(jobname)
+        # files = client.list_job_documents(jobname)
         count = 0
         for my_file in files:
             assert len(my_file.id) == 36  # GUID
