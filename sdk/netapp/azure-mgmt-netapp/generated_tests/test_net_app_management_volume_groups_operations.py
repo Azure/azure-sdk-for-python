@@ -24,7 +24,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.volume_groups.list_by_net_app_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,6 +68,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                         "creationToken": "str",
                         "subnetId": "str",
                         "usageThreshold": 107374182400,
+                        "acceptGrowCapacityPoolForShortTermCloneSplit": "str",
                         "actualThroughputMibps": 0.0,
                         "avsDataStore": "Disabled",
                         "backupId": "str",
@@ -80,10 +81,13 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                         "dataProtection": {
                             "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
                             "replication": {
-                                "remoteVolumeResourceId": "str",
+                                "destinationReplications": [
+                                    {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
+                                ],
                                 "endpointType": "str",
                                 "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                                 "remoteVolumeRegion": "str",
+                                "remoteVolumeResourceId": "str",
                                 "replicationId": "str",
                                 "replicationSchedule": "str",
                             },
@@ -122,11 +126,13 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                         "fileAccessLogs": "Disabled",
                         "fileSystemId": "str",
                         "id": "str",
+                        "inheritedSizeInBytes": 0,
                         "isDefaultQuotaEnabled": False,
                         "isLargeVolume": False,
                         "isRestoring": bool,
                         "kerberosEnabled": False,
                         "keyVaultPrivateEndpointResourceId": "str",
+                        "language": "str",
                         "ldapEnabled": False,
                         "maximumNumberOfFiles": 0,
                         "mountTargets": [
@@ -162,7 +168,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -175,7 +181,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

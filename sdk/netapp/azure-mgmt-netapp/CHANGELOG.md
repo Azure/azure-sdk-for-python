@@ -1,5 +1,44 @@
 # Release History
 
+## 13.4.0b1 (2024-11-18)
+
+### Features Added
+
+  - Model `Backup` added property `is_large_volume`
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Model `EncryptionIdentity` added property `federated_client_id`
+  - Model `NetAppAccount` added property `nfs_v4_id_domain`
+  - Model `NetAppAccount` added property `is_multi_ad_enabled`
+  - Model `NetAppAccountPatch` added property `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` added property `is_multi_ad_enabled`
+  - Model `ReplicationObject` added property `destination_replications`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `Volume` added property `language`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `language`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Added model `ChangeKeyVault`
+  - Added model `DestinationReplication`
+  - Added model `EncryptionTransitionRequest`
+  - Added model `KeyVaultPrivateEndpoint`
+  - Added model `ListQuotaReportResponse`
+  - Added model `QuotaReport`
+  - Added enum `ReplicationType`
+  - Added enum `VolumeLanguage`
+  - Model `AccountsOperations` added method `begin_change_key_vault`
+  - Model `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Model `AccountsOperations` added method `begin_transition_to_cmk`
+  - Model `VolumesOperations` added method `begin_list_quota_report`
+  - Model `VolumesOperations` added method `begin_split_clone_from_parent`
+  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[ChangeKeyVault], content_type: str)`
+  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[EncryptionTransitionRequest], content_type: str)`
+  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
+
 ## 13.3.0 (2024-10-21)
 
 ### Features Added
