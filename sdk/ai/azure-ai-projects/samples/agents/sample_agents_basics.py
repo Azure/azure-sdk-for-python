@@ -37,17 +37,17 @@ project_client = AIProjectClient.from_connection_string(
 # [END create_project_client]
 
 with project_client:
-    
-    # [START create_agent]    
+
+    # [START create_agent]
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
     )
-    # [END create_agent]    
+    # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
 
-    # [START create_thread]    
+    # [START create_thread]
     thread = project_client.agents.create_thread()
-    # [END create_thread]    
+    # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
     # [START create_message]
@@ -63,7 +63,7 @@ with project_client:
         # wait for a second
         time.sleep(1)
         run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
-    # [END create_run]
+        # [END create_run]
         print(f"Run status: {run.status}")
 
     project_client.agents.delete_agent(agent.id)
@@ -72,5 +72,5 @@ with project_client:
     # [START list_messages]
     messages = project_client.agents.list_messages(thread_id=thread.id)
     # [END list_messages]
-    
+
     print(f"messages: {messages}")

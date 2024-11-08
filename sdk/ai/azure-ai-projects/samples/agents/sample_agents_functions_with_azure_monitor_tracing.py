@@ -28,12 +28,7 @@ import os, sys, time, json
 from typing import Any, Callable, Set
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import (
-    FunctionTool,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput
-)
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 

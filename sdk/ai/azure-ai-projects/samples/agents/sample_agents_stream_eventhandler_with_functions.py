@@ -30,7 +30,7 @@ from azure.ai.projects.models import (
     MessageDeltaTextContent,
     RequiredFunctionToolCall,
     SubmitToolOutputsAction,
-    ToolOutput
+    ToolOutput,
 )
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
@@ -103,7 +103,7 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
-    
+
     # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
 

@@ -63,7 +63,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
-    # [END create_agent_with_tools_and_tool_resources]    
+    # [END create_agent_with_tools_and_tool_resources]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

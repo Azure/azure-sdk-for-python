@@ -27,7 +27,7 @@ from typing import (
     overload,
     Sequence,
     TYPE_CHECKING,
-    TextIO
+    TextIO,
 )
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -181,7 +181,6 @@ class InferenceOperations:
             # from the end of the connection id.
             endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
-
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using API key authentication"
@@ -308,9 +307,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
-    async def get(
-        self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
