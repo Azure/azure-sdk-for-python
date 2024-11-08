@@ -58,7 +58,7 @@ The following steps outline the typical sequence for interacting with agents:
 
 #### Create Project Client
 
-When you create an project client, you need to make the decision to use synchronized or asynchronized client.  Use either:
+When you create an project client, you need to make the decision to use synchronous or asynchronous client. Use either:
 
 ```python
 from azure.ai.projects import AIProjectClient
@@ -81,7 +81,7 @@ project_client = AIProjectClient.from_connection_string(
 Because the client is under resource and context manager, you are required to use `with` or `async with` to consume the client object:
 
 ```python
-# For synchronize
+# For synchronous
 with project_client:
     agent = project_client.agents.create_agent(
                 model="gpt-4-1106-preview", 
@@ -89,7 +89,7 @@ with project_client:
                 instructions="You are helpful assistant"
  )
 
-# For asynchronize
+# For asynchronous
 async with project_client:
     agent = project_client.agents.create_agent(
                 model="gpt-4-1106-preview", 
@@ -99,7 +99,7 @@ async with project_client:
 
 ```
 
-In the sections below, we will only provide code snips in synchronized functions
+In the sections below, we will only provide code snippets in synchronized functions.
 
 #### Create Agent
 
@@ -185,9 +185,10 @@ agent = project_client.agents.create_agent(
 Again, you can define `toolset` instead of passing `tools` and `tool_resources`.
 
 #### Create Agent with File Upload for Code Interpreter
+
 Here is an example to upload a file and use it for code interpreter by an agent:
 
-<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_creae_agent_with_code_interpreter -->
+<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
 
 ```python
 file = project_client.agents.upload_file_and_poll(
@@ -232,7 +233,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-For asynchronized functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronized user functions](samples/agents/async_samples/user_async_functions.py):   
+For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](samples/agents/async_samples/user_async_functions.py):
 
 ```python
 from azure.ai.projects.aio import AIProjectClient
@@ -268,7 +269,7 @@ For each session or conversation, a thread is required.   Here is an example:
 
 #### Create Thread with Tool Resource
 
-In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector storre and upload a file, enable an agent for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
+In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector store and upload a file, enable an agent for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
 
 
 <!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->

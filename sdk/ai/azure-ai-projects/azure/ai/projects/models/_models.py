@@ -5929,7 +5929,7 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 
 
 class VectorStoreFileError(_model_base.Model):
-    """Details on the error that may have ocurred while processing a file for this vector store.
+    """Details on the error that may have occurred while processing a file for this vector store.
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
