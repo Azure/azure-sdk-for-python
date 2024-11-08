@@ -25,7 +25,13 @@ USAGE:
 """
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import ApplicationInsightsConfiguration, EvaluatorConfiguration, EvaluationSchedule, RecurrenceTrigger, Frequency, ConnectionType
+from azure.ai.projects.models import (
+    ApplicationInsightsConfiguration,
+    EvaluatorConfiguration,
+    EvaluationSchedule,
+    RecurrenceTrigger,
+    Frequency
+)
 from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator
 import pprint
 
@@ -37,8 +43,8 @@ SAMPLE_NAME = "<sample-name>"
 PROJECT_CONNECTION_STRING = "<project_connection_string>"
 SAMPLE_RESOURCE_ID = "<sample-resource-id>"
 SAMPLE_QUERY = "<sample-query>"
-APP_INSIGHTS_CONNECTION_STRING = "<app-insights-connection-string>"
 SERVICE_NAME = "<service-name>"
+
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -53,35 +59,48 @@ app_insights_config = ApplicationInsightsConfiguration(
     resource_id=SAMPLE_RESOURCE_ID,
     query=SAMPLE_QUERY,
     service_name=SERVICE_NAME,
-    connection_string=APP_INSIGHTS_CONNECTION_STRING
+    # connection_string=APP_INSIGHTS_CONNECTION_STRING
 )
 
+# F1ScoreEvaluator
 f1_evaluator_config = EvaluatorConfiguration(
     id=F1ScoreEvaluator.id,
     init_params={},
-    data_mapping={"response": "${data.message}", "ground_truth": "${data.ground_truth}"}
+    data_mapping={
+        "response": "${data.message}",
+        "ground_truth": "${data.ground_truth}"
+    }
 )
 
+# Azure OpenAI Service Connection Details
 deployment_name = "gpt-4"
 api_version = "2024-08-01-preview"
-default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-model_config = default_connection.to_evaluator_model_config(deployment_name=deployment_name, api_version=api_version)
-relevance_evaluator_config =  EvaluatorConfiguration(
+default_connection = project_client.connections._get_connection(
+    "onlineevaluati5132847906_aoai"
+)
+model_config = {
+    "azure_deployment": deployment_name,
+    "api_version": api_version,
+    "type": "azure_openai",
+    "azure_endpoint": default_connection.properties["target"]
+}
+# RelevanceEvaluator
+relevance_evaluator_config = EvaluatorConfiguration(
     id=RelevanceEvaluator.id,
     init_params={"model_config": model_config},
-    data_mapping={"response": "${data.query}", "ground_truth": "${data.response}"}
+    data_mapping={"query": "${data.query}", "response": "${data.response}"}
 )
 
-recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=1)
+recurrence_trigger = RecurrenceTrigger(frequency=Frequency.DAY, interval=2)
 evaluators = {
-    "f1_score": f1_evaluator_config,
-    "relevance": relevance_evaluator_config
+    "f1_score": f1_evaluator_config
+    # "relevance": relevance_evaluator_config
 }
 
 name = SAMPLE_NAME
 description = f"{SAMPLE_NAME} description"
 tags = {"project": "online-eval-bug-bash"}
-properties = {"Environment": "azureml://registries/azureml-staging/environments/azureml-evaluations-built-in/versions/6", "AzureMSIClientId": "f67be261-fdc3-4eab-ba3b-ed38b28b2a3c"}
+properties = {"AzureMSIClientId": "f67be261-fdc3-4eab-ba3b-ed38b28b2a3c"}
 
 
 def create_schedule():
