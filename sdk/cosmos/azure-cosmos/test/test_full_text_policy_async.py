@@ -40,20 +40,194 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.test_db.id)
         await self.client.close()
 
-    async def test_create_full_text_container_async(self):
-        return
+    async def test_create_full_text_container(self):
+        # Create a container with a valid full text policy and full text indexing policy
+        full_text_policy = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract",
+                    "language": "en-US"
+                }
+            ]
+        }
+        indexing_policy = {
+            "fullTextIndexes": [
+                {"path": "/abstract"}
+            ]
+        }
+        created_container = await self.test_db.create_container(
+            id='full_text_container' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            full_text_policy=full_text_policy,
+            indexing_policy=indexing_policy
+        )
+        properties = await created_container.read()
+        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        await self.test_db.delete_container(created_container.id)
 
-    async def test_fail_create_vector_embedding_policy_async(self):
-        return
+        # Create a container with a full text policy containing only default language
+        full_text_policy_no_paths = {
+            "defaultLanguage": "en-US"
+        }
+        created_container = await self.test_db.create_container(
+            id='full_text_container' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            full_text_policy=full_text_policy_no_paths,
+        )
+        properties = await created_container.read()
+        assert properties["fullTextPolicy"] == full_text_policy_no_paths
+        await self.test_db.delete_container(created_container.id)
 
-    async def test_fail_create_full_text_indexing_policy_async(self):
-        return
+    async def test_fail_create_full_text_policy(self):
+        # Pass a full text policy with a wrongly formatted path
+        full_text_policy_wrong_path = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "abstract",
+                    "language": "en-US"
+                }
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                full_text_policy=full_text_policy_wrong_path
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
 
-    async def test_replace_full_text_policy_async(self):
-        return
+        # Pass a full text policy without language attached to the path
+        full_text_policy_no_langs = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract"
+                }
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                full_text_policy=full_text_policy_no_langs
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Full Text Policy contains invalid syntax" in e.http_error_message
 
-    async def test_replace_full_text_indexing_policy_async(self):
-        return
+        # Pass a full text policy with an unsupported default language
+        full_text_policy_wrong_default = {
+            "defaultLanguage": "spa-SPA",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract",
+                    "language": "en-US"
+                }
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                full_text_policy=full_text_policy_wrong_default
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
+                   in e.http_error_message
+
+        # Pass a full text policy with an unsupported path language
+        full_text_policy_wrong_default = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract",
+                    "language": "spa-SPA"
+                }
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                full_text_policy=full_text_policy_wrong_default
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
+                   in e.http_error_message
+
+    async def test_fail_create_full_text_indexing_policy(self):
+        full_text_policy = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract",
+                    "language": "en-US"
+                }
+            ]
+        }
+        # Pass a full text indexing policy with a path not present in the full text policy
+        indexing_policy_wrong_path = {
+            "fullTextIndexes": [
+                {"path": "/path"}
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy_wrong_path,
+                full_text_policy=full_text_policy
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy"\
+                   in e.http_error_message
+
+        # Pass a full text indexing policy with a wrongly formatted path
+        indexing_policy_wrong_path = {
+            "fullTextIndexes": [
+                {"path": "abstract"}
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy_wrong_path
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "Full-text index specification at index (0) contains invalid path" in e.http_error_message
+
+        # Pass a full text indexing policy without a path field
+        indexing_policy_no_path = {
+            "fullTextIndexes": [
+                {"not_path": "abstract"}
+            ]
+        }
+        try:
+            await self.test_db.create_container(
+                id='full_text_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy_no_path
+            )
+            pytest.fail("Container creation should have failed for lack of embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "Missing path in full-text index specification at index (0)" in e.http_error_message
 
 
 if __name__ == '__main__':
