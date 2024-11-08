@@ -81,6 +81,9 @@ class Workspace(Resource):
     :type primary_user_assigned_identity: str
     :param managed_network: workspace's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :param provision_network_now: Set to trigger the provisioning of the managed vnet with the default options when
+        creating a workspace with the managed vnet enable, or else it does nothing
+    :type provision_network_now: Optional[bool]
     :param system_datastores_auth_mode: The authentication mode for system datastores.
     :type system_datastores_auth_mode: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
@@ -104,6 +107,7 @@ class Workspace(Resource):
             :caption: Creating a Workspace object.
     """
 
+    # pylint: disable=too-many-locals
     def __init__(
         self,
         *,
@@ -124,6 +128,7 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        provision_network_now: Optional[bool] = None,
         system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
         allow_roleassignment_on_rg: Optional[bool] = None,
@@ -164,6 +169,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.provision_network_now = provision_network_now
         self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
         self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
@@ -363,6 +369,11 @@ class Workspace(Resource):
                     rest_obj.managed_network
                 )
 
+        # TODO: Remove once it's included in response
+        provision_network_now = None
+        if hasattr(rest_obj, "provision_network_now"):
+            provision_network_now = rest_obj.provision_network_now
+
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
@@ -407,6 +418,7 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            provision_network_now=provision_network_now,
             system_datastores_auth_mode=system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
@@ -454,6 +466,7 @@ class Workspace(Resource):
                 if self.managed_network
                 else None
             ),  # pylint: disable=protected-access
+            provision_network_now=self.provision_network_now,
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
