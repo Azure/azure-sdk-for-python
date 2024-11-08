@@ -14,7 +14,6 @@ import os
 import time
 from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
-from io import TextIOWrapper
 from typing import (
     IO,
     Any,
@@ -107,7 +106,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -174,7 +176,11 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
