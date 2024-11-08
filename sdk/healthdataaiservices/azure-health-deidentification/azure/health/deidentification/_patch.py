@@ -7,18 +7,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Iterable, List
-from client import DeidentificationClient as DeidentificationClientGenerated
+from ._client import DeidentificationClient as DeidentificationClientGenerated
 from models import DocumentDetails, DeidentificationJob
-import list_jobs_internal, list_job_documents_internal
 
 __all__: List[str] = [
     "DeidentificationClient",
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class DeidentificationClient(DeidentificationClientGenerated):
 
-    @classmethod
-    def list_jobs(cls) -> Iterable[DeidentificationJob]:
+    def list_jobs(self) -> Iterable[DeidentificationJob]:
         """
         List de-identification jobs.
 
@@ -26,11 +25,9 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return list_jobs_internal.list_job(cls)
+        return self.list_jobs_internal()
 
-
-    @classmethod
-    def list_job_documents(cls, job_name) -> Iterable[DocumentDetails]:
+    def list_job_documents(self, job_name) -> Iterable[DocumentDetails]:
         """
         List processed documents within a job.
 
@@ -40,7 +37,8 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return list_job_documents_internal.list_job_documents(cls, job_name)
+        return self.list_job_documents_internal(job_name)
+
 
 def patch_sdk():
     """Do not remove from this file.
