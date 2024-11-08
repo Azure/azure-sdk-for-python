@@ -473,7 +473,6 @@ def _apply_target_to_data(
             flow=target,
             display_name=evaluation_name,
             data=data,
-            properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
             stream=True,
             name=_run_name,
         )
