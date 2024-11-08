@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-projects"
-PACKAGE_PPRINT_NAME = "Azure Ai Projects"
+PACKAGE_PPRINT_NAME = "Azure AI Projects"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
