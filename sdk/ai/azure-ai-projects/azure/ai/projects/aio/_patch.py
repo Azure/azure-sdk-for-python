@@ -237,14 +237,14 @@ class AIProjectClient(ClientGenerated):
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
-    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str]:
+    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Studio project.
            This method required *azure-ai-ml* to be installed.
 
         :param file_path: The path to the file to upload.
         :type file_path: Union[str, Path, PathLike]
         :return: The tuple, containing asset id and asset URI of uploaded file.
-        :rtype: Tuple[str]
+        :rtype: Tuple[str, str]
         """
         try:
             from azure.ai.ml import MLClient  # type: ignore
