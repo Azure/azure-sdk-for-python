@@ -18,6 +18,7 @@ import asyncio
 import re
 
 from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
@@ -129,7 +130,7 @@ class ConnectionProperties:
     """
 
     def __init__(
-        self, *, connection: GetConnectionResponse, token_credential: Optional[TokenCredential] = None
+        self, *, connection: GetConnectionResponse, token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None
     ) -> None:
         self.id = connection.id
         self.name = connection.name
