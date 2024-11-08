@@ -12,7 +12,7 @@ DESCRIPTION:
     View the results in the "Tracing" tab in your Azure AI Studio project page.
 
 USAGE:
-    python sample_agents_basics_with_azure_monitor_tracing.py
+    python sample_agents_functions_with_azure_monitor_tracing.py
 
     Before running the sample:
 

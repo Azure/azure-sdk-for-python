@@ -1,4 +1,7 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -301,7 +304,7 @@ class _AIAgentsInstrumentorPreview:
         message_id: Optional[str] = None,
         thread_run_id: Optional[str] = None,
         message_status: Optional[str] = None,
-        incomplete_details: Optional[MessageIncompleteDetails] = None,
+        incomplete_details: Optional[str] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
         # TODO document new fields

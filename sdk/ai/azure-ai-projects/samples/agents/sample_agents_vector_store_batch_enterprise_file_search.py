@@ -3,18 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_batch_file_search.py
+FILE: sample_agents_vector_store_batch_enterprise_file_search.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to create the vector store with the list of files.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search.py
+    python sample_agents_vector_store_batch_enterprise_file_search.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure.ai.projects azure-identity azure-ai-ml
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -22,7 +21,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
 
@@ -30,28 +29,28 @@ from azure.identity import DefaultAzureCredential
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
+credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:
 
-    # upload a file and wait for it to be processed
-    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {file.id}")
+    # We will upload the local file to Azure and will use it for vector store creation.
+    _, asset_uri = project_client.upload_file("./product_info_1.md")
 
     # create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    # add the file to the vector store or you can supply file ids in the vector store creation
+    ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+    # add the file to the vector store or you can supply data sources in the vector store creation
     vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
-        vector_store_id=vector_store.id, file_ids=[file.id]
+        vector_store_id=vector_store.id, data_sources=[ds]
     )
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
     # create a file search tool
-    # [START create_agent_with_tools_and_tool_resources]
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
@@ -62,7 +61,6 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
-    # [END create_agent_with_tools_and_tool_resources]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
