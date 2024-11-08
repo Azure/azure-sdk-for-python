@@ -486,7 +486,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
-        :raises ~azure.core.exceptions.ResourceNotFoundError
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists

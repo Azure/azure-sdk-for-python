@@ -5746,14 +5746,14 @@ class VectorStoreDataSource(_model_base.Model):
 
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
-    :ivar asset_type: The asset type *. Required. Known values are: "uri_asset" and "id_asset".
+    :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
     :vartype asset_type: str or ~azure.ai.projects.models.VectorStoreDataSourceAssetType
     """
 
     asset_identifier: str = rest_field(name="uri")
     """Asset URI. Required."""
     asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(name="type")
-    """The asset type *. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
+    """The asset type. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
 
     @overload
     def __init__(
