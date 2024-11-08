@@ -57,7 +57,7 @@ def sample_list_job_documents():
     )
 
     print(f"Creating job with name: {jobname}")
-    poller: LROPoller = client.begin_create_job(jobname, job)
+    poller: LROPoller = client.begin_deidentify_documents(jobname, job)
     poller.wait(timeout=60)
 
     job = poller.result()

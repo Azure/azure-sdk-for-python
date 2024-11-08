@@ -34,7 +34,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         with pytest.raises(HttpResponseError):
             await lro.wait()
 

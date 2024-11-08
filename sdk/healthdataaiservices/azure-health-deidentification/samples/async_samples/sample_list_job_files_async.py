@@ -58,7 +58,7 @@ async def sample_list_job_documents_async():
 
     print(f"Creating job with name: {jobname}")
     async with client:
-        poller: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        poller: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         job = await poller.result()
         print(f"Job Status: {job.status}")
 

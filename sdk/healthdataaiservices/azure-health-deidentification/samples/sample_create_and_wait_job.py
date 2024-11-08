@@ -57,7 +57,7 @@ def sample_create_and_wait_job():
         target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
     )
 
-    lro: LROPoller = client.begin_create_job(jobname, job)
+    lro: LROPoller = client.begin_deidentify_documents(jobname, job)
     lro.wait(timeout=60)
 
     finished_job: DeidentificationJob = lro.result()

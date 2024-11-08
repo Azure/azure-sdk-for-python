@@ -33,7 +33,7 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: LROPoller = client.begin_create_job(jobname, job)
+        lro: LROPoller = client.begin_deidentify_documents(jobname, job)
         with pytest.raises(HttpResponseError):
             lro.wait(timeout=60)
 
