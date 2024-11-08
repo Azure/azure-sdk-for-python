@@ -1,21 +1,19 @@
-# Azure AI Evaluation client library for Python
+# Azure AI Evaluation SDK for Python
 
 Use Azure AI Evaluation SDK to assess the performance of your generative AI applications. Generative AI application generations are quantitatively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as `evaluators`. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
 
 Use Azure AI Evaluation SDK to:
-- Evaluate existing data from generative ai applications
-- Evaluate generative ai applications
+- Evaluate existing data from generative AI applications
+- Evaluate generative AI applications
 - Evaluate by generating mathematical, AI-assisted quality and safety metrics
 
 Azure AI SDK provides following to evaluate Generative AI Applications:
 - [Evaluators][evaluators] - Generate scores individually or when used together with `evaluate` API.
 - [Evaluate API][evaluate_api] - Python API to evaluate dataset or application using built-in or custom evaluators.
 
-
-
 ## Evaluate API
 
-Combine multiple evaluators with the `evaluate()` API to get comprehensive scores covering different categories, when you [evaluate existing dataset][evaluate_dataset] or [generative ai application][evaluate_target].
+Combine multiple evaluators with the `evaluate()` API to get comprehensive scores covering different categories, when you [evaluate existing dataset][evaluate_dataset] or [generative AI application][evaluate_target].
 
 [Source code][source_code]
 | [Package (PyPI)][evaluation_pypi]
@@ -32,7 +30,7 @@ Combine multiple evaluators with the `evaluate()` API to get comprehensive score
 
 ### Install the package
 
-Install the Azure AI Evaluation library for Python with [pip][pip_link]:
+Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-evaluation
@@ -40,11 +38,11 @@ pip install azure-ai-evaluation
 
 ## Key concepts
 
-## Evaluators
+### Evaluators
 
-Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative ai applications.
+Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
 
-### Built-in evaluators
+#### Built-in evaluators
 
 Built-in evaluators are out of box evaluators provided by Microsoft:
 | Category  | Evaluator class                                                                                                                    |
@@ -95,7 +93,7 @@ result = violence_evaluator(
 )
 ```
 
-### Custom evaluators
+#### Custom evaluators
 
 Built-in evaluators are great out of the box to start evaluating your application's generations. However you can build your own code-based or prompt-based evaluator to cater to your specific evaluation needs.
 
@@ -105,7 +103,7 @@ Built-in evaluators are great out of the box to start evaluating your applicatio
 def response_length(response, **kwargs):
     return len(response)
 
-# Custom class based evaluator to calculate answer length
+# Custom class based evaluator to check for blocked words
 class BlocklistEvaluator:
     def __init__(self, blocklist):
         self._blocklist = blocklist
@@ -121,10 +119,10 @@ result = blocklist_evaluator(answer="The capital of Japan is Tokyo.")
 
 ```
 
-## Evaluate API
-The package provides an `evaluate` API which can be used to run multiple evaluators together to evaluate generative ai application response.
+### Evaluate API
+The package provides an `evaluate` API which can be used to run multiple evaluators together to evaluate generative AI application response.
 
-### Evaluate existing dataset
+#### Evaluate existing dataset
 
 ```python
 from azure.ai.evaluation import evaluate
@@ -153,7 +151,7 @@ result = evaluate(
 ```
 For more details refer to [Evaluate on test dataset using evaluate()][evaluate_dataset]
 
-### Evaluate Generative AI Application
+#### Evaluate generative AI application
 ```python
 from askwiki import askwiki
 
@@ -502,7 +500,7 @@ print(outputs)
 
 ### General
 
-Azure ML clients raise exceptions defined in [Azure Core][azure_core_readme].
+Please refer to [troubleshooting][evaluation_tsg] for common issues.
 
 ### Logging
 
@@ -552,3 +550,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [evaluators]: https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
 [evaluate_api]: https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview#azure-ai-evaluation-evaluate
 [evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_app
+[evaluation_tsg]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/evaluation/azure-ai-evaluation/TROUBLESHOOTING.md
