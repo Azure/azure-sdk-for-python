@@ -444,7 +444,7 @@ class TestEvaluate:
         assert "outputs.protected_material.fictional_characters_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
-        
+
         assert "protected_material.fictional_characters_label" in metrics.keys()
         assert "protected_material.logos_and_brands_label" in metrics.keys()
         assert "protected_material.artwork_label" in metrics.keys()
