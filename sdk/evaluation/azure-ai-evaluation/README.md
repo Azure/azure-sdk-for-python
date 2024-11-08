@@ -31,6 +31,10 @@ Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 ```bash
 pip install azure-ai-evaluation
 ```
+If you want to track results in [AI Studio][ai_studio], install `remote` extra
+```python
+pip install azure-ai-evaluation[remote]
+```
 
 ## Key concepts
 
@@ -547,3 +551,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [evaluate_api]: https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview#azure-ai-evaluation-evaluate
 [evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_app
 [evaluation_tsg]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/evaluation/azure-ai-evaluation/TROUBLESHOOTING.md
+[ai_studio]: https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio
