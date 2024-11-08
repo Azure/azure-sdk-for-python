@@ -3,13 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_batch_file_search_async.py
+FILE: sample_agents_enterprise_file_search.py
 
 DESCRIPTION:
     This sample demonstrates how to add files to agent during the vector store creation.
 
 USAGE:
-    python sample_agents_vector_store_file_search.py
+    python sample_agents_enterprise_file_search.py
 
     Before running the sample:
 

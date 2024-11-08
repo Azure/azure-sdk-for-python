@@ -3,14 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_code_interpreter_attachment.py
+FILE: sample_agents_code_interpreter_attachment_enterprise_search_async.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_code_interpreter_attachment.py
+    python sample_agents_code_interpreter_attachment_enterprise_search_async.py
 
     Before running the sample:
 
