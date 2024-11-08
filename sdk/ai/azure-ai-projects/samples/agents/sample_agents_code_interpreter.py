@@ -79,17 +79,15 @@ with project_client:
     project_client.agents.delete_file(file.id)
     print("Deleted file")
 
+    # [START get_messages_and_save_files]
     messages = project_client.agents.get_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
-    last_msg = messages.get_last_text_message_by_sender("assistant")
-    if last_msg:
-        print(f"Last Message: {last_msg.text.value}")
-
     for image_content in messages.image_contents:
-        print(f"Image File ID: {image_content.image_file.file_id}")
-        file_name = f"{image_content.image_file.file_id}_image_file.png"
-        project_client.agents.save_file(file_id=image_content.image_file.file_id, file_name=file_name)
+        file_id = image_content.image_file.file_id
+        print(f"Image File ID: {file_id}")
+        file_name = f"{file_id}_image_file.png"
+        project_client.agents.save_file(file_id=file_id, file_name=file_name)
         print(f"Saved image file to: {Path.cwd() / file_name}")
 
     for file_path_annotation in messages.file_path_annotations:
@@ -99,6 +97,11 @@ with project_client:
         print(f"File ID: {file_path_annotation.file_path.file_id}")
         print(f"Start Index: {file_path_annotation.start_index}")
         print(f"End Index: {file_path_annotation.end_index}")
+    # [END get_messages_and_save_files]
+
+    last_msg = messages.get_last_text_message_by_sender("assistant")
+    if last_msg:
+        print(f"Last Message: {last_msg.text.value}")
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")

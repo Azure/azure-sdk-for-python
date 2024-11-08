@@ -57,7 +57,9 @@ The following steps outline the typical sequence for interacting with agents:
     - <a href='#create-message-with-code-interpreter-file-attachment'>Code interpreter attachment</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
   - <a href='#retrieve-messages'>Retrieve messages</a>
+  - <a href='#retrieve-messages'>Retrieve file</a>
   - <a href='#teardown'>Tear down by deleting resources</a>
+  - <a href='#tracing'>Tracing</a>
 
 
 #### Create Project Client
@@ -111,10 +113,9 @@ Now you should have your project client.  From the project client, you create an
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-   
- agent = project_client.agents.create_agent(
-     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
- )
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+)
 ```
 
 <!-- END SNIPPET -->
@@ -124,17 +125,16 @@ In order to use tools, you can provide toolset.  Here is an example:
 <!-- SNIPPET:sample_agents_run_with_toolset.create_agent_toolset -->
 
 ```python
-   
- functions = FunctionTool(user_functions)
- code_interpreter = CodeInterpreterTool()
+functions = FunctionTool(user_functions)
+code_interpreter = CodeInterpreterTool()
 
- toolset = ToolSet()
- toolset.add(functions)
- toolset.add(code_interpreter)
-     
- agent = project_client.agents.create_agent(
-     model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
- )
+toolset = ToolSet()
+toolset.add(functions)
+toolset.add(code_interpreter)
+
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+)
 ```
 
 <!-- END SNIPPET -->
@@ -167,9 +167,7 @@ Here is an example:
 file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
 print(f"Uploaded file, file ID: {file.id}")
 
-vector_store = project_client.agents.create_vector_store_and_poll(
-    file_ids=[file.id], name="my_vectorstore"
-)
+vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 # Create file search tool with resources followed by creating agent
@@ -266,8 +264,7 @@ For each session or conversation, a thread is required.   Here is an example:
 <!-- SNIPPET:sample_agents_basics.create_thread -->
 
 ```python
-   
- thread = project_client.agents.create_thread()
+thread = project_client.agents.create_thread()
 ```
 
 <!-- END SNIPPET -->
@@ -283,9 +280,7 @@ In some scenarios, you might need to assign specific resources to individual thr
 file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
 print(f"Uploaded file, file ID: {file.id}")
 
-vector_store = project_client.agents.create_vector_store_and_poll(
-    file_ids=[file.id], name="my_vectorstore"
-)
+vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 # Create file search tool with resources followed by creating agent
@@ -334,7 +329,7 @@ Here is an example to pass `CodeInterpreterTool` as tool:
 <!-- SNIPPET:sample_agents_with_code_interpreter_file_attachment.create_agent_and_message_with_code_interpreter_file_attachment -->
 
 ```python
-# notice that CodeInterpreter must be enabled in the agent creation, 
+# notice that CodeInterpreter must be enabled in the agent creation,
 # otherwise the agent will not be able to see the file attachment for code interpretation
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
@@ -355,7 +350,7 @@ message = project_client.agents.create_message(
     thread_id=thread.id,
     role="user",
     content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-    attachments=[attachment]
+    attachments=[attachment],
 )
 ```
 
@@ -402,11 +397,10 @@ Here is an example:
 <!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
 
 ```python
-   
- with project_client.agents.create_stream(
-     thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
- ) as stream:
-     stream.until_done()
+with project_client.agents.create_stream(
+    thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+) as stream:
+    stream.until_done()
 ```
 
 <!-- END SNIPPET -->
@@ -416,31 +410,30 @@ The event handler is optional. Here is an example:
 <!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
 
 ```python
-   
 class MyEventHandler(AgentEventHandler):
- def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-     for content_part in delta.delta.content:
-         if isinstance(content_part, MessageDeltaTextContent):
-             text_value = content_part.text.value if content_part.text else "No text"
-             print(f"Text delta received: {text_value}")
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+        for content_part in delta.delta.content:
+            if isinstance(content_part, MessageDeltaTextContent):
+                text_value = content_part.text.value if content_part.text else "No text"
+                print(f"Text delta received: {text_value}")
 
- def on_thread_message(self, message: "ThreadMessage") -> None:
-     print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+    def on_thread_message(self, message: "ThreadMessage") -> None:
+        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
- def on_thread_run(self, run: "ThreadRun") -> None:
-     print(f"ThreadRun status: {run.status}")
+    def on_thread_run(self, run: "ThreadRun") -> None:
+        print(f"ThreadRun status: {run.status}")
 
- def on_run_step(self, step: "RunStep") -> None:
-     print(f"RunStep type: {step.type}, Status: {step.status}")
+    def on_run_step(self, step: "RunStep") -> None:
+        print(f"RunStep type: {step.type}, Status: {step.status}")
 
- def on_error(self, data: str) -> None:
-     print(f"An error occurred. Data: {data}")
+    def on_error(self, data: str) -> None:
+        print(f"An error occurred. Data: {data}")
 
- def on_done(self) -> None:
-     print("Stream completed.")
+    def on_done(self) -> None:
+        print("Stream completed.")
 
- def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-     print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 ```
 
 <!-- END SNIPPET -->
@@ -455,9 +448,75 @@ To retrieve messages from agents, use the following example:
 
 ```python
 messages = project_client.agents.list_messages(thread_id=thread.id)
+last_message_content = messages.data[-1].content[-1].text.value
+print(f"Last message content: {last_message_content}")
 ```
 
 <!-- END SNIPPET -->
+
+Depending on the use case, if you expect the agents to return only text messages, `list_messages` should be sufficient.
+If you are using tools, consider using the `get_messages` function instead. This function classifies the message content and returns properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations`.
+
+### Retrieve File
+
+Files uploaded by agents cannot be retrieved back.  If your use case need to access the file content uploaded by the agents, you are adviced to keep an additional copy accessible by your application.   However, files generated by agents are retrievable by `save_file` or `get_file_content`.  
+
+Here is an example retrieving file ids from messages and save to the local drive:
+
+<!-- SNIPPET:sample_agents_code_interpreter.get_messages_and_save_files -->
+
+```python
+messages = project_client.agents.get_messages(thread_id=thread.id)
+print(f"Messages: {messages}")
+
+for image_content in messages.image_contents:
+    file_id = image_content.image_file.file_id
+    print(f"Image File ID: {file_id}")
+    file_name = f"{file_id}_image_file.png"
+    project_client.agents.save_file(file_id=file_id, file_name=file_name)
+    print(f"Saved image file to: {Path.cwd() / file_name}")
+
+for file_path_annotation in messages.file_path_annotations:
+    print(f"File Paths:")
+    print(f"Type: {file_path_annotation.type}")
+    print(f"Text: {file_path_annotation.text}")
+    print(f"File ID: {file_path_annotation.file_path.file_id}")
+    print(f"Start Index: {file_path_annotation.start_index}")
+    print(f"End Index: {file_path_annotation.end_index}")
+```
+
+<!-- END SNIPPET -->
+
+Here is an example to use `get_file_content`:
+
+```python
+from pathlib import Path
+
+async def save_file_content(client, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None):
+    # Determine the target directory
+    path = Path(target_dir).expanduser().resolve() if target_dir else Path.cwd()
+    path.mkdir(parents=True, exist_ok=True)
+
+    # Retrieve the file content
+    file_content_stream = await client.get_file_content(file_id)
+    if not file_content_stream:
+        raise RuntimeError(f"No content retrievable for file ID '{file_id}'.")
+
+    # Collect all chunks asynchronously
+    chunks = []
+    async for chunk in file_content_stream:
+        if isinstance(chunk, (bytes, bytearray)):
+            chunks.append(chunk)
+        else:
+            raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
+
+    target_file_path = path / file_name
+
+    # Write the collected content to the file synchronously
+    with open(target_file_path, "wb") as file:
+        for chunk in chunks:
+            file.write(chunk)
+```
 
 #### Teardown
 
@@ -476,6 +535,41 @@ print("Deleted file")
 # Delete the agent when done
 project_client.agents.delete_agent(agent.id)
 print("Deleted agent")
+```
+
+<!-- END SNIPPET -->
+
+#### Tracing
+
+As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor.Typically you might want to start tracing before you create an agent.   Here is a code snip to be included above `create_agent`:
+
+<!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
+
+```python
+from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
+
+# Enable Azure Monitor tracing
+application_insights_connection_string = project_client.telemetry.get_connection_string()
+if not application_insights_connection_string:
+    print("Application Insights was not enabled for this project.")
+    print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+    exit()
+configure_azure_monitor(connection_string=application_insights_connection_string)
+
+scenario = os.path.basename(__file__)
+tracer = trace.get_tracer(__name__)
+
+with tracer.start_as_current_span(scenario):
+    with project_client:
+```
+
+<!-- END SNIPPET -->
+
+In additional, you might find helpful to see the tracing logs in console.   You can achieve by the following code:
+
+```python
+project_client.telemetry.enable(destination=sys.stdout)
 ```
 
 ## Troubleshooting
