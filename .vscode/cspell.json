@@ -1325,7 +1325,8 @@
     {
       "filename": "sdk/ai/azure-ai-projects/**",
       "words": [
-        "aiservices"
+        "aiservices",
+        "OTEL"
       ]
     },
     {
