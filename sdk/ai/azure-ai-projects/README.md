@@ -211,14 +211,15 @@ agent = project_client.agents.create_agent(
 <!-- END SNIPPET -->
 
 #### Create Agent with Function Tool
+
 You can enhance your agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
 - `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
 - `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
  
-For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](samples/agents/sample_agents_functions.py).
+For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
-Here is an example to use [user functions](samples/agents/user_function.py) in `toolset`:
+Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_function.py) in `toolset`:
 <!-- SNIPPET:sample_agents_stream_eventhandler_with_toolset.create_agent_with_function_tool -->
 
 ```python
@@ -233,7 +234,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](samples/agents/async_samples/user_async_functions.py):
+For asynchronous functions, you must import `AIProjectClient` from `azure.ai.projects.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
 
 ```python
 from azure.ai.projects.aio import AIProjectClient
@@ -360,7 +361,7 @@ message = project_client.agents.create_message(
 
 To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
 
-`create_run` requests the agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](samples/agents/sample_agents_functions.py).
+`create_run` requests the agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
 Here is an example of `create_run` and poll until the run is completed:
 
