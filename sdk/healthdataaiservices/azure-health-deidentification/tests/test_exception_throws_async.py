@@ -31,7 +31,6 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
         )
 
         lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
@@ -43,4 +42,5 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
         assert job.status == JobStatus.FAILED
         assert job.error is not None
         assert job.error.code == "JobValidationError"
+        assert job.error.message is not None 
         assert len(job.error.message) > 10
