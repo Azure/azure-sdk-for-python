@@ -31,7 +31,6 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
 
         client.begin_deidentify_documents(jobname, job)
         jobs = client.list_jobs()
-        jobs = client.list_jobs_internal()  # TODO - this method should be private
 
         job = None
         jobsToLookThrough = 10
