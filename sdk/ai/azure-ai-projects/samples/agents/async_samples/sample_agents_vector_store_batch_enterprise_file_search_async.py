@@ -95,7 +95,7 @@ async def main():
         print(f"Created run, run ID: {run.id}")
 
         await project_client.agents.delete_vector_store(vector_store.id)
-        print("Deleted vectore store")
+        print("Deleted vector store")
 
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")

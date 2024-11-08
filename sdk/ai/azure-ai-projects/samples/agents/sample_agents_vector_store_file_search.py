@@ -70,7 +70,7 @@ with project_client:
     print(f"Created run, run ID: {run.id}")
 
     project_client.agents.delete_vector_store(vector_store.id)
-    print("Deleted vectore store")
+    print("Deleted vector store")
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
