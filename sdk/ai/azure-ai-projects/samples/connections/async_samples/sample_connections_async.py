@@ -113,6 +113,7 @@ async def sample_connections_async() -> None:
                 },
             ],
         )
+        await aoai_client.close()
         print(response.choices[0].message.content)
 
     elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
