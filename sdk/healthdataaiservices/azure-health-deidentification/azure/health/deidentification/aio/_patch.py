@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import AsyncIterable, List
+from typing import Any, AsyncIterable, List
 
 from ._client import DeidentificationClient as DeidentificationClientGenerated
 from azure.health.deidentification.models import DocumentDetails, DeidentificationJob
@@ -14,11 +14,9 @@ from azure.health.deidentification.models import DocumentDetails, Deidentificati
 __all__: List[str] = [
     "DeidentificationClient",
 ]  # Add all objects you want publicly available to users at this package level
-
-
 class DeidentificationClient(DeidentificationClientGenerated):
 
-    def list_jobs(self) -> AsyncIterable[DeidentificationJob]:
+    def list_jobs(self, **kwargs: Any) -> AsyncIterable[DeidentificationJob]:
         """
         List de-identification jobs.
 
@@ -26,9 +24,9 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._list_jobs_internal()
+        return super()._list_jobs_internal(continuation_token_parameter=None, **kwargs)
 
-    def list_job_documents(self, job_name) -> AsyncIterable[DocumentDetails]:
+    def list_job_documents(self, job_name, **kwargs: Any) -> AsyncIterable[DocumentDetails]:
         """
         List processed documents within a job.
 
@@ -38,7 +36,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._list_job_documents_internal(job_name)
+        return super()._list_job_documents_internal(job_name=job_name, continuation_token_parameter=None, **kwargs)
 
 
 def patch_sdk():

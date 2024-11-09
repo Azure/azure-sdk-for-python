@@ -30,7 +30,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         )
 
         await client.begin_deidentify_documents(jobname, job)
-        jobs = client.list_jobs()
+        jobs = client.list_jobs(maxpagesize=1)
 
         job = None
         jobsToLookThrough = 10
