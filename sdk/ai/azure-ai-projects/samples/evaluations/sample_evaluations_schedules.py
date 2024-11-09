@@ -36,7 +36,12 @@ def main():
 
     f1_evaluator_config = EvaluatorConfiguration(
         id="azureml://registries/model-evaluation-dev-01/models/F1ScoreEval/versions/1",
-        init_params={"column_mapping": {"response": "${data.message}", "ground_truth": "${data.itemType}"}},
+        init_params={
+            "column_mapping": {
+                "response": "${data.message}",
+                "ground_truth": "${data.itemType}",
+            }
+        },
     )
 
     recurrence_trigger = RecurrenceTrigger(frequency="daily", interval=1)
@@ -54,10 +59,11 @@ def main():
         trigger=recurrence_trigger,
         description=description,
         tags=tags,
-        properties=properties,
     )
 
-    evaluation_schedule = ai_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
+    evaluation_schedule = ai_client.evaluations.create_or_replace_schedule(
+        name, evaluation_schedule
+    )
     print(evaluation_schedule.provisioning_status)
     print(evaluation_schedule)
 

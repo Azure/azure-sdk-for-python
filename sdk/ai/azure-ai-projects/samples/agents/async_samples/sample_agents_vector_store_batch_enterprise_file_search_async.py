@@ -23,7 +23,11 @@ import asyncio
 import os
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
+from azure.ai.projects.models import (
+    FileSearchTool,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -41,15 +45,24 @@ async def main():
 
         # We will upload the local file to Azure and will use it for vector store creation.
         _, asset_uri = project_client.upload_file("../product_info_1.md")
-        ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-        vector_store = await project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+        ds = VectorStoreDataSource(
+            asset_identifier=asset_uri,
+            asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+        )
+        vector_store = await project_client.agents.create_vector_store_and_poll(
+            file_ids=[], name="sample_vector_store"
+        )
         print(f"Created vector store, vector store ID: {vector_store.id}")
 
         # add the file to the vector store or you can supply file ids in the vector store creation
-        vector_store_file_batch = await project_client.agents.create_vector_store_file_batch_and_poll(
-            vector_store_id=vector_store.id, data_sources=[ds]
+        vector_store_file_batch = (
+            await project_client.agents.create_vector_store_file_batch_and_poll(
+                vector_store_id=vector_store.id, data_sources=[ds]
+            )
         )
-        print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
+        print(
+            f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}"
+        )
 
         # create a file search tool
         file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -68,18 +81,26 @@ async def main():
         print(f"Created thread, thread ID: {thread.id}")
 
         message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+            thread_id=thread.id,
+            role="user",
+            content="What feature does Smart Eyewear offer?",
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await project_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
         print(f"Created run, run ID: {run.id}")
 
         await file_search_tool.remove_vector_store(vector_store.id)
-        print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
+        print(
+            f"Removed vector store from file search, vector store ID: {vector_store.id}"
+        )
 
         await project_client.agents.update_agent(
-            assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
+            assistant_id=agent.id,
+            tools=file_search_tool.definitions,
+            tool_resources=file_search_tool.resources,
         )
         print(f"Updated agent, agent ID: {agent.id}")
 
@@ -87,11 +108,15 @@ async def main():
         print(f"Created thread, thread ID: {thread.id}")
 
         message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+            thread_id=thread.id,
+            role="user",
+            content="What feature does Smart Eyewear offer?",
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await project_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
         print(f"Created run, run ID: {run.id}")
 
         await project_client.agents.delete_vector_store(vector_store.id)
