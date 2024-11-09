@@ -7998,7 +7998,7 @@ class SearchIndexerDataUserAssignedIdentity(
 
     :ivar resource_id: The fully qualified Azure resource Id of a user assigned managed identity
      typically in the form
-    "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
+     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
      that should have been assigned to the search service. Required.
     :vartype resource_id: str
     :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
