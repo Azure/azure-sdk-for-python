@@ -129,7 +129,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         facets = response.facets
         if facets is not None and self._facets is None:
             assert facets.items() is not None  # Hint for mypy
-            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
+            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}  # type: ignore
         return self._facets
 
     @_ensure_response
