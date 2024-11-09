@@ -10,7 +10,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NetworkAcls(RestTranslatableMixin):
-    class IPRule:
+    class IPRule(RestTranslatableMixin):
         """Represents an IP rule with a value.
 
         :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
@@ -24,15 +24,18 @@ class NetworkAcls(RestTranslatableMixin):
         def __repr__(self):
             return f"IPRule(value={self.value})"
 
-        def to_rest_object(self) -> RestIPRule:
+        def _to_rest_object(self) -> RestIPRule:
             return RestIPRule(value=self.value)
 
         @classmethod
-        def from_rest_object(cls, rest_obj: RestIPRule) -> "NetworkAcls.IPRule":
-            return cls(value=rest_obj.value)
+        def _from_rest_object(cls, obj: RestIPRule) -> "NetworkAcls.IPRule":
+            return cls(value=obj.value)
 
     class DefaultActionType:
-        """Specifies the default action when no IP rules are matched."""
+        """Specifies the default action when no IP rules are matched.
+        'Deny' if IP rules are non-empty, allowing only specified IPs/ranges;
+        'Allow' if no IP rules are defined, allowing all access.
+        """
 
         DENY = "Deny"
         ALLOW = "Allow"
@@ -59,40 +62,26 @@ class NetworkAcls(RestTranslatableMixin):
         self.default_action = default_action
         self.resource_access_rules = resource_access_rules if resource_access_rules is not None else []
 
-    def convert_to_ip_allowlist(self) -> List[str]:
-        """Converts the IP rules to an IP allowlist.
-
-        :return: A list of IP addresses or IP ranges.
-        :rtype: List[str]
-        """
-        return [rule.value for rule in self.ip_rules if rule.value is not None]
-
-    @classmethod
-    def parse(cls, ip_allowlist: Optional[List[str]]) -> "NetworkAcls":
-        """Parses a list of IP allowlist strings into a NetworkAcls object.
-
-        :param ip_allowlist: A list of IP addresses or IP ranges in CIDR notation.
-        :type ip_allowlist: Optional[List[str]]
-        :return: A NetworkAcls object.
-        :rtype: NetworkAcls
-        """
-        default_action = (
-            NetworkAcls.DefaultActionType.DENY
-            if ip_allowlist and len(ip_allowlist) > 0
-            else NetworkAcls.DefaultActionType.ALLOW
-        )
-        ip_rules = [NetworkAcls.IPRule(value=ip) for ip in ip_allowlist] if ip_allowlist else []
-        return cls(ip_rules=ip_rules, default_action=default_action)
-
-    def to_rest_object(self) -> RestNetworkAcls:
+    def _to_rest_object(self) -> RestNetworkAcls:
         return RestNetworkAcls(
             default_action=self.default_action,
-            ip_rules=[ip_rule.to_rest_object() for ip_rule in self.ip_rules] if self.ip_rules else None,
+            ip_rules=(
+                [ip_rule._to_rest_object() for ip_rule in self.ip_rules]  # pylint: disable=protected-access
+                if self.ip_rules
+                else None
+            ),
         )
 
     @classmethod
-    def from_rest_object(cls, obj: RestNetworkAcls) -> "NetworkAcls":
+    def _from_rest_object(cls, obj: RestNetworkAcls) -> "NetworkAcls":
         return cls(
-            ip_rules=[NetworkAcls.IPRule.from_rest_object(ip_rule) for ip_rule in obj.ip_rules] if obj.ip_rules else [],
+            ip_rules=(
+                [
+                    NetworkAcls.IPRule._from_rest_object(ip_rule)  # pylint: disable=protected-access
+                    for ip_rule in obj.ip_rules
+                ]
+                if obj.ip_rules
+                else []
+            ),
             default_action=obj.default_action,
         )
