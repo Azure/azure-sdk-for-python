@@ -15,8 +15,6 @@ __all__: List[str] = [
     "DeidentificationClient",
 ]  # Add all objects you want publicly available to users at this package level
 
-# __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
 
 class DeidentificationClient(DeidentificationClientGenerated):
 
@@ -28,7 +26,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DeidentificationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._list_jobs_internal()
+        return super()._list_jobs_internal()
 
     def list_job_documents(self, job_name) -> AsyncIterable[DocumentDetails]:
         """
@@ -40,7 +38,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._list_job_documents_internal(job_name)
+        return super()._list_job_documents_internal(job_name)
 
 
 def patch_sdk():
