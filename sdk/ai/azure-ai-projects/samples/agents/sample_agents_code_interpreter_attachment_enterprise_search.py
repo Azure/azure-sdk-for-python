@@ -56,6 +56,7 @@ with project_client:
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
+    # [START upload_file_and_create_message_with_code_interpreter]
     # We will upload the local file to Azure and will use it for vector store creation.
     _, asset_uri = project_client.upload_file("./product_info_1.md")
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
@@ -65,6 +66,8 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
     )
+    # [END upload_file_and_create_message_with_code_interpreter]
+
     print(f"Created message, message ID: {message.id}")
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
