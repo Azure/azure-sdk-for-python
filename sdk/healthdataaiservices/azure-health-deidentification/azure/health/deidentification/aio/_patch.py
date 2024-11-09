@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, AsyncIterable, List
 
 from ._client import DeidentificationClient as DeidentificationClientGenerated
+from azure.core.tracing.decorator import distributed_trace
 from azure.health.deidentification.models import DocumentDetails, DeidentificationJob
 
 __all__: List[str] = [
@@ -16,6 +17,7 @@ __all__: List[str] = [
 ]  # Add all objects you want publicly available to users at this package level
 class DeidentificationClient(DeidentificationClientGenerated):
 
+    @distributed_trace
     def list_jobs(self, **kwargs: Any) -> AsyncIterable[DeidentificationJob]:
         """
         List de-identification jobs.
@@ -26,6 +28,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         """
         return super()._list_jobs_internal(continuation_token_parameter=None, **kwargs)
 
+    @distributed_trace
     def list_job_documents(self, job_name, **kwargs: Any) -> AsyncIterable[DocumentDetails]:
         """
         List processed documents within a job.
