@@ -1,6 +1,15 @@
 # Azure AI Evaluation client library for Python
 
-We are excited to introduce the public preview of the Azure AI Evaluation SDK. 
+Use Azure AI Evaluation SDK to assess the performance of your generative AI applications. Generative AI application generations are quantitatively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as `evaluators`. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+
+Use Azure AI Evaluation SDK to:
+- Evaluate existing data from generative AI applications
+- Evaluate generative AI applications
+- Evaluate by generating mathematical, AI-assisted quality and safety metrics
+
+Azure AI SDK provides following to evaluate Generative AI Applications:
+- [Evaluators][evaluators] - Generate scores individually or when used together with `evaluate` API.
+- [Evaluate API][evaluate_api] - Python API to evaluate dataset or application using built-in or custom evaluators.
 
 [Source code][source_code]
 | [Package (PyPI)][evaluation_pypi]
@@ -8,100 +17,166 @@ We are excited to introduce the public preview of the Azure AI Evaluation SDK.
 | [Product documentation][product_documentation]
 | [Samples][evaluation_samples]
 
-This package has been tested with Python 3.8, 3.9, 3.10, 3.11, and 3.12.
-
-For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
 ## Getting started
 
 ### Prerequisites
 
 - Python 3.8 or later is required to use this package.
+- [Optional] You must have [Azure AI Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
 
 ### Install the package
 
-Install the Azure AI Evaluation library for Python with [pip][pip_link]::
+Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-evaluation
 ```
+If you want to track results in [AI Studio][ai_studio], install `remote` extra:
+```python
+pip install azure-ai-evaluation[remote]
+```
 
 ## Key concepts
 
-Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models.
-
-## Examples
-
 ### Evaluators
 
-Users can create evaluator runs on the local machine as shown in the example below:
+Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
+
+#### Built-in evaluators
+
+Built-in evaluators are out of box evaluators provided by Microsoft:
+| Category  | Evaluator class                                                                                                                    |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------|
+| [Performance and quality][performance_and_quality_evaluators] (AI-assisted)  | `GroundednessEvaluator`, `RelevanceEvaluator`, `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `RetrievalEvaluator` |
+| [Performance and quality][performance_and_quality_evaluators] (NLP)  | `F1ScoreEvaluator`, `RougeScoreEvaluator`, `GleuScoreEvaluator`, `BleuScoreEvaluator`, `MeteorScoreEvaluator`|
+| [Risk and safety][risk_and_safety_evaluators] (AI-assisted)    | `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `IndirectAttackEvaluator`, `ProtectedMaterialEvaluator`                                             |
+| [Composite][composite_evaluators] | `QAEvaluator`, `ContentSafetyEvaluator`                                             |
+
+For more in-depth information on each evaluator definition and how it's calculated, see [Evaluation and monitoring metrics for generative AI][evaluation_metrics].
 
 ```python
 import os
-from pprint import pprint
 
-from azure.ai.evaluation import evaluate, RelevanceEvaluator, ViolenceEvaluator
+from azure.ai.evaluation import evaluate, RelevanceEvaluator, ViolenceEvaluator, BleuScoreEvaluator
 
+# NLP bleu score evaluator
+bleu_score_evaluator = BleuScoreEvaluator()
+result = bleu_score(
+    response="Tokyo is the capital of Japan.",
+    ground_truth="The capital of Japan is Tokyo."
+)
 
-def response_length(response, **kwargs):
-    return {"value": len(response)}
+# AI assisted quality evaluator
+model_config = {
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "api_key": os.environ.get("AZURE_OPENAI_API_KEY"),
+    "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+}
 
+relevance_evaluator = RelevanceEvaluator(model_config)
+result = relevance_evaluator(
+    query="What is the capital of Japan?",
+    response="The capital of Japan is Tokyo."
+)
 
-if __name__ == "__main__":
-    # Built-in evaluators
-    # Initialize Azure OpenAI Model Configuration
-    model_config = {
-        "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-        "api_key": os.environ.get("AZURE_OPENAI_KEY"),
-        "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
-    }
+# AI assisted safety evaluator
+azure_ai_project = {
+    "subscription_id": "<subscription_id>",
+    "resource_group_name": "<resource_group_name>",
+    "project_name": "<project_name>",
+}
 
-    # Initialzing Relevance Evaluator
-    relevance_eval = RelevanceEvaluator(model_config)
-
-    # Running Relevance Evaluator on single input row
-    relevance_score = relevance_eval(
-        response="The Alpine Explorer Tent is the most waterproof.",
-        query="Which tent is the most waterproof?",
-    )
-
-    pprint(relevance_score)
-    # {'gpt_relevance': 5.0}
-
-    # Content Safety Evaluator
-
-    # Initialize Project Scope
-    azure_ai_project = {
-        "subscription_id": <subscription_id>,
-        "resource_group_name": <resource_group_name>,
-        "project_name": <project_name>
-    }
-
-    violence_eval = ViolenceEvaluator(azure_ai_project)
-    violence_score = violence_eval(query="What is the capital of France?", response="Paris.")
-    pprint(violence_score)
-    # {'violence': 'Very low',
-    # 'violence_reason': "The system's response is a straightforward factual response "
-    #                    'to a geography question. There is no violent content or '
-    #                    'language present.',
-    # 'violence_score': 0}
-
-    # Code based evaluator
-    response_length("The Alpine Explorer Tent is the most waterproof.")
-    # {'value': 48}
-
-    # Using multiple evaluators together using `Evaluate` API
-
-    result = evaluate(
-        data="evaluate_test_data.jsonl",
-        evaluators={
-            "response_length": response_length,
-            "violence": violence_eval,
-        },
-    )
-
-    pprint(result)
+violence_evaluator = ViolenceEvaluator(azure_ai_project)
+result = violence_evaluator(
+    query="What is the capital of France?",
+    response="Paris."
+)
 ```
+
+#### Custom evaluators
+
+Built-in evaluators are great out of the box to start evaluating your application's generations. However you can build your own code-based or prompt-based evaluator to cater to your specific evaluation needs.
+
+```python
+
+# Custom evaluator as a function to calculate response length
+def response_length(response, **kwargs):
+    return len(response)
+
+# Custom class based evaluator to check for blocked words
+class BlocklistEvaluator:
+    def __init__(self, blocklist):
+        self._blocklist = blocklist
+
+    def __call__(self, *, response: str, **kwargs):
+        score = any([word in answer for word in self._blocklist])
+        return {"score": score}
+
+blocklist_evaluator = BlocklistEvaluator(blocklist=["bad, worst, terrible"])
+
+result = response_length("The capital of Japan is Tokyo.")
+result = blocklist_evaluator(answer="The capital of Japan is Tokyo.")
+
+```
+
+### Evaluate API
+The package provides an `evaluate` API which can be used to run multiple evaluators together to evaluate generative AI application response.
+
+#### Evaluate existing dataset
+
+```python
+from azure.ai.evaluation import evaluate
+
+result = evaluate(
+    data="data.jsonl", # provide your data here
+    evaluators={
+        "blocklist": blocklist_evaluator,
+        "relevance": relevance_evaluator
+    },
+    # column mapping
+    evaluator_config={
+        "relevance": {
+            "column_mapping": {
+                "query": "${data.queries}"
+                "ground_truth": "${data.ground_truth}"
+                "response": "${outputs.response}"
+            } 
+        }
+    }
+    # Optionally provide your AI Studio project information to track your evaluation results in your Azure AI Studio project
+    azure_ai_project = azure_ai_project,
+    # Optionally provide an output path to dump a json of metric summary, row level data and metric and studio URL
+    output_path="./evaluation_results.json"
+)
+```
+For more details refer to [Evaluate on test dataset using evaluate()][evaluate_dataset]
+
+#### Evaluate generative AI application
+```python
+from askwiki import askwiki
+
+result = evaluate(
+    data="data.jsonl",
+    target=askwiki,
+    evaluators={
+        "relevance": relevance_eval
+    },
+    evaluator_config={
+        "default": {
+            "column_mapping": {
+                "query": "${data.queries}"
+                "context": "${outputs.context}"
+                "response": "${outputs.response}"
+            } 
+        }
+    }
+)
+```
+Above code snippet refers to askwiki application in this [sample][evaluate_app].
+
+For more details refer to [Evaluate on a target][evaluate_target]
+
 ### Simulator
 
 
@@ -422,11 +497,21 @@ outputs = asyncio.run(
 
 print(outputs)
 ```
+
+## Examples
+
+In following section you will find examples of:
+- [Evaluate an application][evaluate_app]
+- [Evaluate different models][evaluate_models]
+- [Custom Evaluators][custom_evaluators]
+
+More examples can be found [here][evaluate_samples].
+
 ## Troubleshooting
 
 ### General
 
-Azure ML clients raise exceptions defined in [Azure Core][azure_core_readme].
+Please refer to [troubleshooting][evaluation_tsg] for common issues.
 
 ### Logging
 
@@ -471,3 +556,19 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[evaluate_target]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#evaluate-on-a-target
+[evaluate_dataset]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#evaluate-on-test-dataset-using-evaluate
+[evaluators]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
+[evaluate_api]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview#azure-ai-evaluation-evaluate
+[evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_app
+[evaluation_tsg]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/evaluation/azure-ai-evaluation/TROUBLESHOOTING.md
+[ai_studio]: https://learn.microsoft.com/azure/ai-studio/what-is-ai-studio
+[ai_project]: https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio
+[azure_openai]: https://learn.microsoft.com/azure/ai-services/openai/
+[evaluate_models]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_endpoints
+[custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_custom
+[evaluate_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate
+[evaluation_metrics]: https://learn.microsoft.com/azure/ai-studio/concepts/evaluation-metrics-built-in
+[performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
+[risk_and_safety_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators
+[composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
