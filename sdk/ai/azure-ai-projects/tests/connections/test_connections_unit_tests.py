@@ -11,7 +11,7 @@ from azure.ai.projects.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 from connection_test_base import ConnectionsTestBase
-from azure.ai.projects.models._patch import ConnectionProperties
+from azure.ai.projects.models import ConnectionProperties
 from azure.ai.projects.models._models import GetConnectionResponse
 from unittest.mock import MagicMock, patch
 

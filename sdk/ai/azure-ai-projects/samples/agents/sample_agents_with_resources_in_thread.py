@@ -23,7 +23,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._patch import FileSearchTool
+from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
 

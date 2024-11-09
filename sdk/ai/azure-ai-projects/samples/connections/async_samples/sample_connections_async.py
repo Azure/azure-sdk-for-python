@@ -83,7 +83,7 @@ async def sample_connections_async() -> None:
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             print("====> Creating AzureOpenAI client using API key authentication")
-            client = AsyncAzureOpenAI(
+            aoai_client = AsyncAzureOpenAI(
                 api_key=connection.key,
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
@@ -92,7 +92,7 @@ async def sample_connections_async() -> None:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
             from azure.identity.aio import get_bearer_token_provider
 
-            client = AsyncAzureOpenAI(
+            aoai_client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
                     cast(AsyncTokenCredential, connection.token_credential),
@@ -104,7 +104,7 @@ async def sample_connections_async() -> None:
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await client.chat.completions.create(
+        response = await aoai_client.chat.completions.create(
             model=model_deployment_name,
             messages=[
                 {
@@ -113,6 +113,7 @@ async def sample_connections_async() -> None:
                 },
             ],
         )
+        await aoai_client.close()
         print(response.choices[0].message.content)
 
     elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
