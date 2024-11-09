@@ -776,7 +776,8 @@ class AzureMachineLearningParameters(_model_base.Model):
     :ivar authentication_key: (Required for key authentication) The key for the AML service.
     :vartype authentication_key: str
     :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
-     of the AML service. It should be in the format
+     of
+     the AML service. It should be in the format
      subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
     :vartype resource_id: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
@@ -800,8 +801,8 @@ class AzureMachineLearningParameters(_model_base.Model):
     authentication_key: Optional[str] = rest_field(name="key")
     """(Required for key authentication) The key for the AML service."""
     resource_id: Optional[str] = rest_field(name="resourceId")
-    """(Required for token authentication). The Azure Resource Manager resource ID of the AML service.
-     It should be in the format
+    """(Required for token authentication). The Azure Resource Manager resource ID of
+     the AML service. It should be in the format
      subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long"""
     timeout: Optional[datetime.timedelta] = rest_field()
     """(Optional) When specified, indicates the timeout for the http client making the
@@ -11190,8 +11191,8 @@ class VectorQuery(_model_base.Model):
     VectorizableImageBinaryQuery, VectorizableImageUrlQuery, VectorizableTextQuery, VectorizedQuery
 
 
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -11228,7 +11229,7 @@ class VectorQuery(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    k: Optional[int] = rest_field()
+    k_nearest_neighbors: Optional[int] = rest_field(name="k")
     """Number of nearest neighbors to return as top hits."""
     fields: Optional[str] = rest_field()
     """Vector Fields of type Collection(Edm.Single) to be included in the vector
@@ -11266,7 +11267,7 @@ class VectorQuery(_model_base.Model):
         self,
         *,
         kind: str,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -11291,8 +11292,8 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     an image that needs to be vectorized is provided.
 
 
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -11344,7 +11345,7 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     def __init__(
         self,
         *,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -11370,8 +11371,8 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     image value that needs to be vectorized is provided.
 
 
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -11421,7 +11422,7 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     def __init__(
         self,
         *,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -11447,8 +11448,8 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
     be vectorized is provided.
 
 
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -11504,7 +11505,7 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
         self,
         *,
         text: str,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -11530,8 +11531,8 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
     provided.
 
 
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -11580,7 +11581,7 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
         self,
         *,
         vector: List[float],
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
