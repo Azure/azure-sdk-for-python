@@ -78,7 +78,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
 
     if connection.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating AzureOpenAI client using API key authentication")
-        client = AzureOpenAI(
+        aoai_client = AzureOpenAI(
             api_key=connection.key,
             azure_endpoint=connection.endpoint_url,
             api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
@@ -88,7 +88,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
         from azure.core.credentials import TokenCredential
         from azure.identity import get_bearer_token_provider
 
-        client = AzureOpenAI(
+        aoai_client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
             azure_ad_token_provider=get_bearer_token_provider(
                 cast(TokenCredential, connection.token_credential), "https://cognitiveservices.azure.com/.default"
@@ -99,7 +99,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-    response = client.chat.completions.create(
+    response = aoai_client.chat.completions.create(
         model=model_deployment_name,
         messages=[
             {
@@ -108,7 +108,7 @@ if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
             },
         ],
     )
-    client.close()
+    aoai_client.close()
     print(response.choices[0].message.content)
 
 elif connection.connection_type == ConnectionType.SERVERLESS:
@@ -120,7 +120,7 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
         print("====> Creating ChatCompletionsClient using API key authentication")
         from azure.core.credentials import AzureKeyCredential
 
-        client = ChatCompletionsClient(
+        inference_client = ChatCompletionsClient(
             endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or "")
         )
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:

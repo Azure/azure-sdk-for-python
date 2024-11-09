@@ -31,7 +31,7 @@ from azure.ai.projects.models._models import (
     ThreadMessage,
     ThreadRun,
 )
-from azure.ai.projects.models._patch import AsyncAgentEventHandler
+from azure.ai.projects.models import AsyncAgentEventHandler
 from azure.identity.aio import DefaultAzureCredential
 
 import os
