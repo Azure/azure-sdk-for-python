@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Iterable, List
 from ._client import DeidentificationClient as DeidentificationClientGenerated
-from models import DocumentDetails, DeidentificationJob
+from azure.health.deidentification.models import DocumentDetails, DeidentificationJob
 
 # from io import IOBase
 # import json
