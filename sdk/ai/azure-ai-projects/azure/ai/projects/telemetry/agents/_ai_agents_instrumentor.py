@@ -38,7 +38,26 @@ from azure.ai.projects.models._models import (
 )
 from azure.ai.projects.models._patch import AgentEventHandler, ToolSet
 from azure.ai.projects.operations import AgentsOperations
-from azure.ai.projects.telemetry.agents._utils import *  # pylint: disable=unused-wildcard-import
+from azure.ai.projects.telemetry.agents._utils import (
+    AZ_AI_AGENT_SYSTEM,
+    ERROR_TYPE,
+    GEN_AI_AGENT_DESCRIPTION,
+    GEN_AI_AGENT_ID,
+    GEN_AI_AGENT_NAME,
+    GEN_AI_EVENT_CONTENT,
+    GEN_AI_MESSAGE_ID,
+    GEN_AI_MESSAGE_STATUS,
+    GEN_AI_RESPONSE_MODEL,
+    GEN_AI_SYSTEM,
+    GEN_AI_SYSTEM_MESSAGE,
+    GEN_AI_THREAD_ID,
+    GEN_AI_THREAD_RUN_ID,
+    GEN_AI_THREAD_RUN_STATUS,
+    GEN_AI_USAGE_INPUT_TOKENS,
+    GEN_AI_USAGE_OUTPUT_TOKENS,
+    OperationName,
+    start_span,
+)
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 
