@@ -43,7 +43,7 @@ TODO
 ## Examples
 
 ### Agents
-The following steps outline the typical sequence for interacting with agents:
+Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with agents:
 
   - <a href='#create-project-client'>Create project client</a>
   - <a href='#create-agent'>Create agent</a> with:
@@ -59,7 +59,8 @@ The following steps outline the typical sequence for interacting with agents:
   - <a href='#create-message'>Create a message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
     - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
-    - <a href='#create-message-with-code-interpreter-attachment-in-blob-store'>Code interpreter attachment in blob store</a>
+    - <a href='#create-message-with-file-search-attachment-with-file-in-blob-store'>File search attachment with file in blob store</a>
+    - <a href='#create-message-with-code-interpreter-attachment-with-file-in-blob-store'>Code interpreter attachment with file in blob store</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
   - <a href='#retrieve-message'>Retrieve message</a>
   - <a href='#retrieve-file'>Retrieve file</a>
@@ -114,7 +115,9 @@ In the sections below, we will only provide code snippets in synchronous functio
 
 #### Create Agent
 
-Now you should have your project client.  From the project client, you create an agent to serve the end users.  An agent should Here is an example of create an agent:
+Now you should have your project client.  From the project client, you create an agent to serve the end users.  
+
+Here is an example of create an agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
@@ -145,7 +148,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-Also notices that if you use asynchronous client, you use `AsyncToolSet` instead.  Additional information related to function call tool will be discussed in the later sections.
+Also notices that if you use asynchronous client, you use `AsyncToolSet` instead.  Additional information related to `AsyncFunctionTool` be discussed in the later sections.
 
 Here is an example to use `tools` and `tool_resources`:
 <!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
@@ -399,6 +402,12 @@ agent = project_client.agents.create_agent(
     instructions="Hello, you are helpful assistant and can search information from uploaded files",
     tools=file_search.definitions,
 )
+
+print(f"Created agent, ID: {agent.id}")
+
+# Create thread with file resources.
+# If the agent has multiple threads, only this thread can search this file.
+thread = project_client.agents.create_thread(tool_resources=file_search.resources)
 ```
 
 <!-- END SNIPPET -->
@@ -463,7 +472,11 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
-#### Create Message with Code Interpreter Attachment in Blob Store
+#### Create Message with File Search Attachment with File in Blob Store
+
+Coming Soon
+
+#### Create Message with Code Interpreter Attachment with File in Blob Store
 Alternatively you can upload a file to blob store, attach to the message as file attachment.   Here is an example: 
 
 Here is an example to pass `CodeInterpreterTool` as tool:
