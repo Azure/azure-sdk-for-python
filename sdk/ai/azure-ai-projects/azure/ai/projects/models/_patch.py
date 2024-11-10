@@ -333,13 +333,11 @@ class Tool(ABC):
     @abstractmethod
     def definitions(self) -> List[ToolDefinition]:
         """Get the tool definitions."""
-        pass
 
     @property
     @abstractmethod
     def resources(self) -> ToolResources:
         """Get the tool resources."""
-        pass
 
     @abstractmethod
     def execute(self, tool_call: Any) -> Any:
@@ -349,7 +347,6 @@ class Tool(ABC):
         :param tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
-        pass
 
 
 class BaseFunctionTool(Tool):
@@ -882,70 +879,54 @@ class AgentEventHandler:
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     async def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     async def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
 StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
