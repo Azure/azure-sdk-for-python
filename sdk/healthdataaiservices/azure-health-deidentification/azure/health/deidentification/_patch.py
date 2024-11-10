@@ -7,9 +7,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Iterable, List
-from ._client import DeidentificationClient as DeidentificationClientGenerated
 from azure.core.tracing.decorator import distributed_trace
 from azure.health.deidentification.models import DocumentDetails, DeidentificationJob
+from ._client import DeidentificationClient as DeidentificationClientGenerated
 
 __all__: List[str] = [
     "DeidentificationClient",
@@ -29,7 +29,7 @@ class DeidentificationClient(DeidentificationClientGenerated):
         return super()._list_jobs_internal(continuation_token_parameter=None, **kwargs)
 
     @distributed_trace
-    def list_job_documents(self, job_name, **kwargs: Any) -> Iterable[DocumentDetails]:
+    def list_job_documents(self, job_name: str, **kwargs: Any) -> Iterable[DocumentDetails]:
         """
         List processed documents within a job.
 
