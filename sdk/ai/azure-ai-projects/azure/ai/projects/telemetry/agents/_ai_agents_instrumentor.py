@@ -1185,25 +1185,25 @@ class _AIAgentsInstrumentorPreview:
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
                 return self.trace_create_agent(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_thread"):
+            if class_function_name.startswith("AgentsOperations.create_thread"):
                 return self.trace_create_thread(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_message"):
+            if class_function_name.startswith("AgentsOperations.create_message"):
                 return self.trace_create_message(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_run"):
+            if class_function_name.startswith("AgentsOperations.create_run"):
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_and_process_run"):
+            if class_function_name.startswith("AgentsOperations.create_and_process_run"):
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
                 return self.trace_submit_tool_outputs(True, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
+            if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_stream"):
+            if class_function_name.startswith("AgentsOperations.create_stream"):
                 return self.trace_create_stream(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.list_messages"):
+            if class_function_name.startswith("AgentsOperations.list_messages"):
                 return self.trace_list_messages(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentRunStream.__exit__"):
+            if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return
@@ -1245,23 +1245,23 @@ class _AIAgentsInstrumentorPreview:
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
                 return await self.trace_create_agent_async(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_thread"):
+            if class_function_name.startswith("AgentsOperations.create_thread"):
                 return await self.trace_create_thread_async(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_message"):
+            if class_function_name.startswith("AgentsOperations.create_message"):
                 return await self.trace_create_message_async(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_run"):
+            if class_function_name.startswith("AgentsOperations.create_run"):
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_and_process_run"):
+            if class_function_name.startswith("AgentsOperations.create_and_process_run"):
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
                 return await self.trace_submit_tool_outputs_async(function, False, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+            if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
                 return await self.trace_submit_tool_outputs_async(function, True, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
+            if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.create_stream"):
+            if class_function_name.startswith("AgentsOperations.create_stream"):
                 return await self.trace_create_stream_async(function, *args, **kwargs)
-            elif class_function_name.startswith("AgentsOperations.list_messages"):
+            if class_function_name.startswith("AgentsOperations.list_messages"):
                 return await self.trace_list_messages_async(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return

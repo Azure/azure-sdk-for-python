@@ -289,9 +289,9 @@ def _map_type(annotation) -> Dict[str, Any]:
         args = get_args(annotation)
         item_type = args[0] if args else str
         return {"type": "array", "items": _map_type(item_type)}
-    elif origin in {dict, Dict}:
+    if origin in {dict, Dict}:
         return {"type": "object"}
-    elif origin is Union:
+    if origin is Union:
         args = get_args(annotation)
         # If Union contains None, it is an optional parameter
         if type(None) in args:
@@ -309,7 +309,7 @@ def _map_type(annotation) -> Dict[str, Any]:
                 return schema
         # If Union contains multiple types, it is a oneOf parameter
         return {"oneOf": [_map_type(arg) for arg in args]}
-    elif isinstance(annotation, type):
+    if isinstance(annotation, type):
         schema_type = type_map.get(annotation.__name__, "string")
         return {"type": schema_type}
 
@@ -484,8 +484,7 @@ class AsyncFunctionTool(BaseFunctionTool):
         try:
             if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
-            else:
-                return function(**parsed_arguments) if parsed_arguments else function()
+            return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)

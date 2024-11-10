@@ -306,8 +306,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return await self.get(
                     connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
                 )
-            else:
-                return connection_properties_list[0]
+            return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
@@ -334,7 +333,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             )
             if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
-            elif connection.properties.auth_type == AuthenticationType.SAS:
+            if connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
@@ -350,9 +349,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return ConnectionProperties(connection=connection, token_credential=token_credential)
 
             return ConnectionProperties(connection=connection)
-        else:
-            connection = await self._get_connection(connection_name=connection_name, **kwargs)
-            return ConnectionProperties(connection=connection)
+        connection = await self._get_connection(connection_name=connection_name, **kwargs)
+        return ConnectionProperties(connection=connection)
 
     @distributed_trace_async
     async def list(
