@@ -45,12 +45,15 @@ TODO
 ### Agents
 The following steps outline the typical sequence for interacting with agents:
 
-  - <a href='#create-project-client'>Create a project client</a>
-  - <a href='#create-agent'>Create an agent</a> with:
+  - <a href='#create-project-client'>Create project client</a>
+  - <a href='#create-agent'>Create agent</a> with:
     - <a href='#create-agent-with-file-search'>File Search</a>
-    - <a href='#create-agent-with-code-interpreter'>Code Interpreter</a>
-    - <a href='#create-agent-with-file-search-in-blob-store'>File Search with file in blob store</a>
-    - <a href='#create-agent-with-function-tool'>Function calls</a>
+    - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
+    - <a href='#create-agent-with-file-search-with-file-in-blob-store'>File search with file in blob store</a>
+    - <a href='#create-agent-with-code-interpreter-with-file-in-blob-store'>Code interpreter with file in blob store</a>
+    - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
+    - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
+    - <a href='#create-agent-with-function-call'>Function call</a>
   - <a href='#create-thread'>Create a thread</a> with
      - <a href='#create-thread-with-tool-resource'>Tool resource</a>
   - <a href='#create-message'>Create a message</a> with:
@@ -58,9 +61,9 @@ The following steps outline the typical sequence for interacting with agents:
     - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
     - <a href='#create-message-with-code-interpreter-attachment-in-blob-store'>Code interpreter attachment in blob store</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
-  - <a href='#retrieve-messages'>Retrieve messages</a>
-  - <a href='#retrieve-files'>Retrieve files</a>
-  - <a href='#teardown'>Tear down by deleting resources</a>
+  - <a href='#retrieve-message'>Retrieve message</a>
+  - <a href='#retrieve-file'>Retrieve file</a>
+  - <a href='#teardown'>Tear down by deleting resource</a>
   - <a href='#tracing'>Tracing</a>
 
 
@@ -142,6 +145,8 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
+Also notices that if you use asynchronous client, you use `AsyncToolSet` instead.  Additional information related to function call tool will be discussed in the later sections.
+
 Here is an example to use `tools` and `tool_resources`:
 <!-- SNIPPET:sample_agents_vector_store_batch_file_search.create_agent_with_tools_and_tool_resources -->
 
@@ -217,7 +222,7 @@ agent = project_client.agents.create_agent(
 <!-- END SNIPPET -->
 
 
-#### Create Agent with File Search in Blob Store
+#### Create Agent with File Search with File in Blob Store
 The sections above demonstrated uploading files only for agents to perform file search and code interpreter.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
 Here is an example:
 
@@ -247,7 +252,74 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-#### Create Agent with Function Tool
+#### Create Agent with Code Interpreter with File in Blob Store
+
+Coming soon
+
+#### Create Agent with Bing Grounding
+To enable your agent to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
+
+```python
+bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
+conn_id = bing_connection.id
+
+print(conn_id)
+
+# Initialize agent bing tool and add the connection id
+bing = BingGroundingTool(connection_id=conn_id)
+
+# Create agent with the bing tool and process assistant run
+with project_client:
+    agent = project_client.agents.create_agent(
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=bing.definitions,
+        headers={"x-ms-enable-preview": "true"},
+    )
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with Azure AI Search
+Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation
+
+Here is an example to integrate Azure AI Search:
+
+<!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
+
+```python
+conn_list = project_client.connections.list()
+conn_id = ""
+for conn in conn_list:
+    if conn.connection_type == "CognitiveSearch":
+        conn_id = conn.id
+        break
+
+print(conn_id)
+
+# Initialize agent AI search tool and add the search index connection id
+ai_search = AzureAISearchTool()
+ai_search.add_index(conn_id, "sample_index")
+
+# Create agent with AI search tool and process assistant run
+with project_client:
+    agent = project_client.agents.create_agent(
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=ai_search.definitions,
+        headers={"x-ms-enable-preview": "true"},
+    )
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with Function Call
 
 You can enhance your agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
@@ -496,7 +568,7 @@ class MyEventHandler(AgentEventHandler):
 <!-- END SNIPPET -->
 
 
-#### Retrieve Messages
+#### Retrieve Message
 
 To retrieve messages from agents, use the following example:
 
@@ -513,7 +585,7 @@ print(f"Last message content: {last_message_content}")
 Depending on the use case, if you expect the agents to return only text messages, `list_messages` should be sufficient.
 If you are using tools, consider using the `get_messages` function instead. This function classifies the message content and returns properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations`.
 
-### Retrieve Files
+### Retrieve File
 
 Files uploaded by agents cannot be retrieved back.  If your use case need to access the file content uploaded by the agents, you are adviced to keep an additional copy accessible by your application.   However, files generated by agents are retrievable by `save_file` or `get_file_content`.  
 
