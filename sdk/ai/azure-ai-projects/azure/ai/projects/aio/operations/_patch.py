@@ -7,51 +7,53 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ..._vendor import FileType
-import io, asyncio
+import asyncio
+import io
 import logging
 import os
 import time
 from pathlib import Path
-from azure.core.exceptions import ResourceNotFoundError
 from typing import (
     IO,
+    TYPE_CHECKING,
     Any,
     AsyncIterator,
     Dict,
     List,
     MutableMapping,
     Optional,
+    Sequence,
+    TextIO,
     Union,
     cast,
     overload,
-    Sequence,
-    TYPE_CHECKING,
-    TextIO,
 )
 
-from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
-from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ._operations import TelemetryOperations as TelemetryOperationsGenerated
-from ...models._patch import ConnectionProperties
-from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
-from ...models._models import (
-    GetConnectionResponse,
-    ListConnectionsResponse,
-    GetAppInsightsResponse,
-    GetWorkspaceResponse,
-    InternalConnectionPropertiesSASAuth,
-)
-from ... import models as _models
-from ...operations._patch import _enable_telemetry
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ... import models as _models
+from ..._vendor import FileType
+from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
+from ...models._models import (
+    GetAppInsightsResponse,
+    GetConnectionResponse,
+    GetWorkspaceResponse,
+    InternalConnectionPropertiesSASAuth,
+    ListConnectionsResponse,
+)
+from ...models._patch import ConnectionProperties
+from ...operations._patch import _enable_telemetry
+from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
+from ._operations import TelemetryOperations as TelemetryOperationsGenerated
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.ai.projects import _types
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
+
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.projects import _types
     from azure.identity.aio import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)

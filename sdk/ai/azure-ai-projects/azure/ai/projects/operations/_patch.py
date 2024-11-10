@@ -7,29 +7,31 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys, io, logging, os, time
-from azure.core.exceptions import ResourceNotFoundError
-from typing import List, Union, IO, Any, Dict, Optional, overload, Sequence, TYPE_CHECKING, Iterator, TextIO, cast
+import io
+import logging
+import os
+import sys
+import time
 from pathlib import Path
+from typing import IO, TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, TextIO, Union, cast, overload
 
-from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
-from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ._operations import TelemetryOperations as TelemetryOperationsGenerated
-from ..models._enums import AuthenticationType, ConnectionType
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
+
+from .. import models as _models
+from .._vendor import FileType
+from ..models._enums import AuthenticationType, ConnectionType, FilePurpose
 from ..models._models import (
-    GetConnectionResponse,
-    ListConnectionsResponse,
     GetAppInsightsResponse,
+    GetConnectionResponse,
     GetWorkspaceResponse,
     InternalConnectionPropertiesSASAuth,
+    ListConnectionsResponse,
 )
-
 from ..models._patch import ConnectionProperties
-from ..models._enums import FilePurpose
-from .._vendor import FileType
-from .. import models as _models
-
-from azure.core.tracing.decorator import distributed_trace
+from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
+from ._operations import TelemetryOperations as TelemetryOperationsGenerated
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -38,10 +40,12 @@ else:
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from .. import _types
-    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
     from openai import AzureOpenAI
+
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
     from azure.identity import get_bearer_token_provider
+
+    from .. import _types
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()

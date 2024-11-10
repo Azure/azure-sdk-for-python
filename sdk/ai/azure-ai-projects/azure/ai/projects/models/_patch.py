@@ -7,67 +7,66 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
+import base64
 import datetime
 import inspect
 import json
 import logging
 import math
-import base64
-import asyncio
 import re
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
-from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    GetConnectionResponse,
-    MessageDeltaChunk,
-    SubmitToolOutputsAction,
-    ThreadRun,
-    RunStep,
-    RunStepDeltaChunk,
-    FunctionToolDefinition,
-    FunctionDefinition,
-    ToolDefinition,
-    ToolResources,
-    FileSearchToolDefinition,
-    FileSearchToolResource,
-    BingGroundingToolDefinition,
-    SharepointToolDefinition,
-    ToolConnection,
-    ToolConnectionList,
     AzureAISearchResource,
-    IndexResource,
     AzureAISearchToolDefinition,
+    BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
-    RequiredFunctionToolCall,
-    OpenAIPageableListOfThreadMessage,
-    ThreadMessage,
-    MessageTextContent,
+    FileSearchToolDefinition,
+    FileSearchToolResource,
+    FunctionDefinition,
+    FunctionToolDefinition,
+    GetConnectionResponse,
+    IndexResource,
+    MessageDeltaChunk,
     MessageImageFileContent,
+    MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
-)
-
-from abc import ABC, abstractmethod
-from typing import (
-    AsyncIterator,
-    Awaitable,
-    Callable,
-    List,
-    Dict,
-    Any,
-    Type,
-    Optional,
-    Iterator,
-    Tuple,
-    Set,
-    get_origin,
-    cast,
-    get_args,
-    Union,
+    OpenAIPageableListOfThreadMessage,
+    RequiredFunctionToolCall,
+    RunStep,
+    RunStepDeltaChunk,
+    SharepointToolDefinition,
+    SubmitToolOutputsAction,
+    ThreadMessage,
+    ThreadRun,
+    ToolConnection,
+    ToolConnectionList,
+    ToolDefinition,
+    ToolResources,
 )
 
 logger = logging.getLogger(__name__)

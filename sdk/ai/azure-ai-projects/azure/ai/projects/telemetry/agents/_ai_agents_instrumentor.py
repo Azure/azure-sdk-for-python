@@ -7,24 +7,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import copy
-from enum import Enum
 import functools
-import json
 import importlib
+import json
 import logging
 import os
-from azure.ai.projects import _types
+from enum import Enum
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
-from azure.ai.projects.telemetry.agents._utils import *  # pylint: disable=unused-wildcard-import
 
-# pylint: disable = no-name-in-module
-from azure.core import CaseInsensitiveEnumMeta  # type: ignore
-from azure.core.settings import settings
-from azure.ai.projects.operations import AgentsOperations
+from azure.ai.projects import _types
 from azure.ai.projects.aio.operations import AgentsOperations as AsyncAgentOperations
-from azure.ai.projects.models import _models, AgentRunStream
-from azure.ai.projects.models._enums import MessageRole, RunStepStatus, AgentsApiResponseFormatMode
+from azure.ai.projects.models import AgentRunStream, _models
+from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.projects.models._models import (
     MessageAttachment,
     MessageDeltaChunk,
@@ -42,13 +37,18 @@ from azure.ai.projects.models._models import (
     ToolResources,
 )
 from azure.ai.projects.models._patch import AgentEventHandler, ToolSet
+from azure.ai.projects.operations import AgentsOperations
+from azure.ai.projects.telemetry.agents._utils import *  # pylint: disable=unused-wildcard-import
+from azure.core import CaseInsensitiveEnumMeta  # type: ignore
+from azure.core.settings import settings
 
 _Unset: Any = object()
 
 try:
     # pylint: disable = no-name-in-module
+    from opentelemetry.trace import Span, StatusCode
+
     from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
-    from opentelemetry.trace import StatusCode, Span
 
     _tracing_library_available = True
 except ModuleNotFoundError:

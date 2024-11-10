@@ -9,15 +9,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import List, Any, Union, Dict, Tuple
+from typing import Any, Dict, List, Tuple, Union
+
 from typing_extensions import Self
-from azure.core.credentials import TokenCredential
+
 from azure.core import PipelineClient
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
+
+from ._client import AIProjectClient as ClientGenerated
 from ._configuration import AIProjectClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
-from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
 
@@ -241,8 +244,8 @@ class AIProjectClient(ClientGenerated):
         """
         try:
             from azure.ai.ml import MLClient  # type: ignore
-            from azure.ai.ml.entities import Data  # type: ignore
             from azure.ai.ml.constants import AssetTypes  # type: ignore
+            from azure.ai.ml.entities import Data  # type: ignore
         except ImportError:
             raise ImportError(
                 "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
