@@ -3978,8 +3978,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             credential=storage_account_key
         )
 
-        create_owner, create_group, create_file_mode = "345", "123", "7777"
-        set_owner, set_group, set_file_mode = "0", "0", "0644"
+        create_owner, create_group, create_file_mode = '345', '123', '7777'
+        set_owner, set_group, set_file_mode = '0', '0', '0644'
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline'

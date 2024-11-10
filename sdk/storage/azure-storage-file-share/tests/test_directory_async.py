@@ -1562,8 +1562,8 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name, storage_account_key, protocols='NFS')
 
-        create_owner, create_group, create_file_mode = "345", "123", "7777"
-        set_owner, set_group, set_file_mode = "0", "0", "0755"
+        create_owner, create_group, create_file_mode = '345', '123', '7777'
+        set_owner, set_group, set_file_mode = '0', '0', '0755'
 
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = ShareDirectoryClient(

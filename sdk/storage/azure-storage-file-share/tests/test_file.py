@@ -3862,8 +3862,8 @@ class TestStorageFile(StorageRecordedTestCase):
             credential=storage_account_key
         )
 
-        create_owner, create_group, create_file_mode = "345", "123", "7777"
-        set_owner, set_group, set_file_mode = "0", "0", "0644"
+        create_owner, create_group, create_file_mode = '345', '123', '7777'
+        set_owner, set_group, set_file_mode = '0', '0', '0644'
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline'
@@ -3900,5 +3900,28 @@ class TestStorageFile(StorageRecordedTestCase):
             assert props.permission_key is None
         finally:
             file_client.delete_file()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_download_and_copy_file_nfs(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key, protocols='NFS')
+        file_client = self._create_file()
+
+        data = b'abcdefghijklmnop' * 32
+        file_client.upload_range(data, offset=0, length=512)
+
+        props = file_client.download_file().properties
+        assert props is not None
+        assert props.owner == '0'
+        assert props.group == '0'
+        assert props.file_mode == '0664'
+        assert props.link_count == 1
+        assert props.file_attributes is None
+        assert props.permission_key is None
+
+        # file_client.delete_file()
 
 # ------------------------------------------------------------------------------
