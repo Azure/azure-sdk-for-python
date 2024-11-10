@@ -1522,7 +1522,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             self.inner_handler.on_thread_message(message)
 
-        if message.status == "completed" or message.status == "incomplete":
+        if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
     def on_thread_run(self, run: "ThreadRun") -> None:

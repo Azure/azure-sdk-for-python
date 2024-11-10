@@ -246,11 +246,7 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif (
-            connection.authentication_type == AuthenticationType.ENTRA_ID
-            or connection.authentication_type == AuthenticationType.SAS
-        ):
-
+        elif connection.authentication_type in {AuthenticationType.ENTRA_ID, AuthenticationType.SAS}:
             try:
                 from azure.identity.aio import get_bearer_token_provider
             except ModuleNotFoundError as e:
