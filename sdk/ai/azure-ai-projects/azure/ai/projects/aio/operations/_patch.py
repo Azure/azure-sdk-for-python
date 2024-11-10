@@ -100,10 +100,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -171,10 +171,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -234,8 +234,10 @@ class InferenceOperations:
 
         try:
             from openai import AsyncAzureOpenAI
-        except ModuleNotFoundError as _:
-            raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai-async'")
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "OpenAI SDK is not installed. Please install it using 'pip install openai-async'"
+            ) from e
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -251,10 +253,10 @@ class InferenceOperations:
 
             try:
                 from azure.identity.aio import get_bearer_token_provider
-            except ModuleNotFoundError as _:
+            except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
-                )
+                ) from e
             if connection.authentication_type == AuthenticationType.ENTRA_ID:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
@@ -1983,7 +1985,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 return await super().upload_file(file=file_content, purpose=purpose, **kwargs)
             except IOError as e:
-                raise IOError(f"Unable to read file: {file_path}. Reason: {str(e)}")
+                raise IOError(f"Unable to read file: {file_path}.") from e
 
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 

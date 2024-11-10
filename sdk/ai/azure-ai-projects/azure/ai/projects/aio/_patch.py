@@ -252,10 +252,10 @@ class AIProjectClient(ClientGenerated):
             from azure.ai.ml import MLClient  # type: ignore
             from azure.ai.ml.constants import AssetTypes  # type: ignore
             from azure.ai.ml.entities import Data  # type: ignore
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
-            )
+            ) from e
 
         data = Data(
             path=str(file_path),

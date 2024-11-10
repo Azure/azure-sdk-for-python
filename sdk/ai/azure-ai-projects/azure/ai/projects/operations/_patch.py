@@ -91,10 +91,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference import ChatCompletionsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -162,10 +162,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference import EmbeddingsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -226,8 +226,10 @@ class InferenceOperations:
 
         try:
             from openai import AzureOpenAI
-        except ModuleNotFoundError as _:
-            raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai'")
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
+            ) from e
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -242,10 +244,10 @@ class InferenceOperations:
         ):
             try:
                 from azure.identity import get_bearer_token_provider
-            except ModuleNotFoundError as _:
+            except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-                )
+                ) from e
             if connection.authentication_type == AuthenticationType.ENTRA_ID:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
@@ -376,10 +378,10 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
         # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
         try:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
-            )
+            ) from e
         return OTLPSpanExporter(endpoint=destination)
 
     if isinstance(destination, io.TextIOWrapper):
@@ -387,10 +389,10 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
             try:
                 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-            except ModuleNotFoundError as _:
+            except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
-                )
+                ) from e
 
             return ConsoleSpanExporter()
         else:
@@ -511,7 +513,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         from azure.core.settings import settings
 
         settings.tracing_implementation = "opentelemetry"
-    except ModuleNotFoundError as _:
+    except ModuleNotFoundError:
         logger.warning(
             "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
         )
@@ -522,7 +524,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         instrumentor = AIInferenceInstrumentor()
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
-    except ModuleNotFoundError as _:
+    except ModuleNotFoundError:
         logger.warning(
             "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
         )
@@ -540,7 +542,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor  # type: ignore
 
         OpenAIInstrumentor().instrument()
-    except ModuleNotFoundError as _:
+    except ModuleNotFoundError:
         logger.warning(
             "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai-v2` is not installed"
         )
@@ -549,7 +551,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         from opentelemetry.instrumentation.langchain import LangchainInstrumentor  # type: ignore
 
         LangchainInstrumentor().instrument()
-    except ModuleNotFoundError as _:
+    except ModuleNotFoundError:
         logger.warning(
             "Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed"
         )
@@ -2179,7 +2181,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 return super().upload_file(file=file_content, purpose=purpose, **kwargs)
             except IOError as e:
-                raise IOError(f"Unable to read file: {file_path}. Reason: {str(e)}")
+                raise IOError(f"Unable to read file: {file_path}") from e
 
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 

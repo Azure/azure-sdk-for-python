@@ -968,7 +968,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return await self._process_event(event_data_str)
-                raise StopAsyncIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
@@ -1119,7 +1119,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return self._process_event(event_data_str)
-                raise StopIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
