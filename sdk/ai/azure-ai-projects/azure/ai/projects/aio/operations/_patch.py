@@ -441,6 +441,10 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
 class AgentsOperations(AgentsOperationsGenerated):
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._toolset: Optional[_models.AsyncToolSet] = None
+
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -948,9 +952,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: The toolset for the agent. If not set, returns None.
         :rtype: ~azure.ai.projects.models.AsyncToolSet
         """
-        if hasattr(self, "_toolset"):
-            return self._toolset
-        return None
+        return self._toolset
 
     @overload
     async def create_run(
