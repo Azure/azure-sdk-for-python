@@ -426,7 +426,7 @@ class BaseFunctionTool(Tool):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            logging.error(f"Function '{function_name}' not found.")
+            logging.error("Function '%s' not found.", function_name)
             raise ValueError(f"Function '{function_name}' not found.")
 
         function = self._functions[function_name]
@@ -434,11 +434,11 @@ class BaseFunctionTool(Tool):
         try:
             parsed_arguments = json.loads(arguments)
         except json.JSONDecodeError as e:
-            logging.error(f"Invalid JSON arguments for function '{function_name}': {e}")
+            logging.error("Invalid JSON arguments for function '%s': %s", function_name, e)
             raise ValueError(f"Invalid JSON arguments: {e}") from e
 
         if not isinstance(parsed_arguments, dict):
-            logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
+            logging.error("Arguments must be a JSON object for function '%s'.", function_name)
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
@@ -725,7 +725,7 @@ class BaseToolSet:
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
-                logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
+                logging.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
@@ -762,7 +762,7 @@ class BaseToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logging.error(f"Error creating ToolResources: {e}")
+            logging.error("Error creating ToolResources: %s", e)
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -827,7 +827,7 @@ class ToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
@@ -869,7 +869,7 @@ class AsyncToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
@@ -1067,7 +1067,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 
@@ -1216,7 +1216,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 

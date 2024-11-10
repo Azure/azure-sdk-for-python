@@ -248,7 +248,7 @@ class InferenceOperations:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
                 auth = "Creating AzureOpenAI using SAS authentication"
-            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
+            logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -2076,7 +2076,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.warning("Toolset is not available in the client.")
                 return
 
-            logger.info(f"Tool outputs: {tool_outputs}")
+            logger.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
                 with self.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
@@ -2685,10 +2685,10 @@ class AgentsOperations(AgentsOperationsGenerated):
                     else:
                         raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
 
-            logger.debug(f"File '{sanitized_file_name}' saved successfully at '{target_file_path}'.")
+            logger.debug("File '%s' saved successfully at '%s'.", sanitized_file_name, target_file_path)
 
         except (ValueError, RuntimeError, TypeError, IOError) as e:
-            logger.error(f"An error occurred in save_file: {e}")
+            logger.error("An error occurred in save_file: %s", e)
             raise
 
     @overload
