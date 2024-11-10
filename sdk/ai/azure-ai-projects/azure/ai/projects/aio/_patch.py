@@ -65,7 +65,7 @@ class AIProjectClient(ClientGenerated):
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
         # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
-        _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
+        _endpoint0 = "https://management.azure.com"  # pylint: disable=line-too-long
         self._config0: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

@@ -399,7 +399,7 @@ class _AIAgentsInstrumentorPreview:
         )
 
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
-        span.span_instance.add_event(name=f"gen_ai.assistant.message", attributes=attributes)
+        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: ThreadRun) -> None:
         if span and span.span_instance.is_recording:

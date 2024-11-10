@@ -177,13 +177,13 @@ class ConnectionProperties:
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
         if self.key:
-            out += f' "key": "REDACTED"\n'
+            out += ' "key": "REDACTED"\n'
         else:
-            out += f' "key": null\n'
+            out += ' "key": null\n'
         if self.token_credential:
-            out += f' "token_credential": "REDACTED"\n'
+            out += ' "token_credential": "REDACTED"\n'
         else:
-            out += f' "token_credential": null\n'
+            out += ' "token_credential": null\n'
         out += "}\n"
         return out
 
