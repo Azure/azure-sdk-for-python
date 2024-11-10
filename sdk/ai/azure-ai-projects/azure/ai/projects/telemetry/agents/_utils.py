@@ -6,12 +6,10 @@
 from enum import Enum
 from typing import Optional
 
-from azure.core.tracing import SpanKind  # type: ignore
+from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 try:
-    # pylint: disable = no-name-in-module
-    from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
     from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
 
     _span_impl_type = settings.tracing_implementation()
