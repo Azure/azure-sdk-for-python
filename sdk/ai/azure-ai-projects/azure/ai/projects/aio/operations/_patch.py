@@ -54,7 +54,6 @@ if TYPE_CHECKING:
 
     from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from azure.ai.projects import _types
-    from azure.identity.aio import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)
 

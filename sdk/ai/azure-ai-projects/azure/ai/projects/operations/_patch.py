@@ -43,7 +43,6 @@ if TYPE_CHECKING:
     from openai import AzureOpenAI
 
     from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
-    from azure.identity import get_bearer_token_provider
 
     from .. import _types
 

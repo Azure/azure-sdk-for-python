@@ -13,11 +13,10 @@ import json
 import logging
 import os
 from enum import Enum
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 
 from azure.ai.projects import _types
-from azure.ai.projects.aio.operations import AgentsOperations as AsyncAgentOperations
 from azure.ai.projects.models import AgentRunStream, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.projects.models._models import (
@@ -28,16 +27,13 @@ from azure.ai.projects.models._models import (
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
-    SubmitToolOutputsAction,
     ThreadMessage,
-    ThreadMessageOptions,
     ThreadRun,
     ToolDefinition,
     ToolOutput,
     ToolResources,
 )
 from azure.ai.projects.models._patch import AgentEventHandler, ToolSet
-from azure.ai.projects.operations import AgentsOperations
 from azure.ai.projects.telemetry.agents._utils import (
     AZ_AI_AGENT_SYSTEM,
     ERROR_TYPE,
