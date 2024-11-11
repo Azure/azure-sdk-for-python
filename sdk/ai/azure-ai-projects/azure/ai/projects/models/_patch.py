@@ -7,67 +7,66 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
+import base64
 import datetime
 import inspect
 import json
 import logging
 import math
-import base64
-import asyncio
 import re
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
-from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    GetConnectionResponse,
-    MessageDeltaChunk,
-    SubmitToolOutputsAction,
-    ThreadRun,
-    RunStep,
-    RunStepDeltaChunk,
-    FunctionToolDefinition,
-    FunctionDefinition,
-    ToolDefinition,
-    ToolResources,
-    FileSearchToolDefinition,
-    FileSearchToolResource,
-    BingGroundingToolDefinition,
-    SharepointToolDefinition,
-    ToolConnection,
-    ToolConnectionList,
     AzureAISearchResource,
-    IndexResource,
     AzureAISearchToolDefinition,
+    BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
-    RequiredFunctionToolCall,
-    OpenAIPageableListOfThreadMessage,
-    ThreadMessage,
-    MessageTextContent,
+    FileSearchToolDefinition,
+    FileSearchToolResource,
+    FunctionDefinition,
+    FunctionToolDefinition,
+    GetConnectionResponse,
+    IndexResource,
+    MessageDeltaChunk,
     MessageImageFileContent,
+    MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
-)
-
-from abc import ABC, abstractmethod
-from typing import (
-    AsyncIterator,
-    Awaitable,
-    Callable,
-    List,
-    Dict,
-    Any,
-    Type,
-    Optional,
-    Iterator,
-    Tuple,
-    Set,
-    get_origin,
-    cast,
-    get_args,
-    Union,
+    OpenAIPageableListOfThreadMessage,
+    RequiredFunctionToolCall,
+    RunStep,
+    RunStepDeltaChunk,
+    SharepointToolDefinition,
+    SubmitToolOutputsAction,
+    ThreadMessage,
+    ThreadRun,
+    ToolConnection,
+    ToolConnectionList,
+    ToolDefinition,
+    ToolResources,
 )
 
 logger = logging.getLogger(__name__)
@@ -178,13 +177,13 @@ class ConnectionProperties:
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
         if self.key:
-            out += f' "key": "REDACTED"\n'
+            out += ' "key": "REDACTED"\n'
         else:
-            out += f' "key": null\n'
+            out += ' "key": null\n'
         if self.token_credential:
-            out += f' "token_credential": "REDACTED"\n'
+            out += ' "token_credential": "REDACTED"\n'
         else:
-            out += f' "token_credential": null\n'
+            out += ' "token_credential": null\n'
         out += "}\n"
         return out
 
@@ -290,9 +289,9 @@ def _map_type(annotation) -> Dict[str, Any]:
         args = get_args(annotation)
         item_type = args[0] if args else str
         return {"type": "array", "items": _map_type(item_type)}
-    elif origin in {dict, Dict}:
+    if origin in {dict, Dict}:
         return {"type": "object"}
-    elif origin is Union:
+    if origin is Union:
         args = get_args(annotation)
         # If Union contains None, it is an optional parameter
         if type(None) in args:
@@ -310,7 +309,7 @@ def _map_type(annotation) -> Dict[str, Any]:
                 return schema
         # If Union contains multiple types, it is a oneOf parameter
         return {"oneOf": [_map_type(arg) for arg in args]}
-    elif isinstance(annotation, type):
+    if isinstance(annotation, type):
         schema_type = type_map.get(annotation.__name__, "string")
         return {"type": schema_type}
 
@@ -334,13 +333,11 @@ class Tool(ABC):
     @abstractmethod
     def definitions(self) -> List[ToolDefinition]:
         """Get the tool definitions."""
-        pass
 
     @property
     @abstractmethod
     def resources(self) -> ToolResources:
         """Get the tool resources."""
-        pass
 
     @abstractmethod
     def execute(self, tool_call: Any) -> Any:
@@ -350,7 +347,6 @@ class Tool(ABC):
         :param tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
-        pass
 
 
 class BaseFunctionTool(Tool):
@@ -430,7 +426,7 @@ class BaseFunctionTool(Tool):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            logging.error(f"Function '{function_name}' not found.")
+            logging.error("Function '%s' not found.", function_name)
             raise ValueError(f"Function '{function_name}' not found.")
 
         function = self._functions[function_name]
@@ -438,11 +434,11 @@ class BaseFunctionTool(Tool):
         try:
             parsed_arguments = json.loads(arguments)
         except json.JSONDecodeError as e:
-            logging.error(f"Invalid JSON arguments for function '{function_name}': {e}")
+            logging.error("Invalid JSON arguments for function '%s': %s", function_name, e)
             raise ValueError(f"Invalid JSON arguments: {e}") from e
 
         if not isinstance(parsed_arguments, dict):
-            logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
+            logging.error("Arguments must be a JSON object for function '%s'.", function_name)
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
@@ -488,8 +484,7 @@ class AsyncFunctionTool(BaseFunctionTool):
         try:
             if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
-            else:
-                return function(**parsed_arguments) if parsed_arguments else function()
+            return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
@@ -730,7 +725,7 @@ class BaseToolSet:
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
-                logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
+                logging.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
@@ -767,7 +762,7 @@ class BaseToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logging.error(f"Error creating ToolResources: {e}")
+            logging.error("Error creating ToolResources: %s", e)
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -832,7 +827,7 @@ class ToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
@@ -874,7 +869,7 @@ class AsyncToolSet(BaseToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
@@ -883,70 +878,54 @@ class AgentEventHandler:
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     async def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     async def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
 StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
@@ -988,7 +967,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return await self._process_event(event_data_str)
-                raise StopAsyncIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
@@ -1088,7 +1067,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 
@@ -1139,7 +1118,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return self._process_event(event_data_str)
-                raise StopIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
@@ -1237,7 +1216,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 
