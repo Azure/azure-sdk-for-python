@@ -773,6 +773,7 @@ class BaseToolSet:
         :param resources: A dictionary of tool resources. Should be a mapping
             accepted by ~azure.ai.projects.models.AzureAISearchResource
         :type resources: Dict[str, Any]
+        :return: A ToolResources instance.
         """
         try:
             return ToolResources(**resources)
