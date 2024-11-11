@@ -61,10 +61,7 @@ def main():
         tags=tags,
     )
 
-    evaluation_schedule = ai_client.evaluations.create_or_replace_schedule(
-        name, evaluation_schedule
-    )
-    print(evaluation_schedule.provisioning_state)
+    evaluation_schedule = ai_client.evaluations.create_or_replace_schedule(name, evaluation_schedule)
     print(evaluation_schedule)
 
     # Sample for get an evaluation schedule with name
