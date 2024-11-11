@@ -36,6 +36,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
+    # [START upload_file_and_create_agent_with_file_search]
     # We will upload the local file to Azure and will use it for vector store creation.
     _, asset_uri = project_client.upload_file("./product_info_1.md")
 
@@ -55,6 +56,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
+    # [END upload_file_and_create_agent_with_file_search]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
