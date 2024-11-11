@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
+import os
 import logging
 import functools
 from azure.ai.projects import AIProjectClient
@@ -12,7 +13,7 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 servicePreparerInferenceTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_inference_tests",
-    azure_ai_projects_inference_tests_project_connection_string="azure-region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
+    azure_ai_projects_inference_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
     azure_ai_projects_inference_tests_aoai_api_version="aoai-api-version",
     azure_ai_projects_inference_tests_aoai_model_deployment_name="aoai-model-deployment-name",
     azure_ai_projects_inference_tests_aiservices_model_deployment_name="aoai-model-deployment-name",
@@ -33,6 +34,8 @@ if LOGGING_ENABLED:
 
 
 class InferenceTestBase(AzureRecordedTestCase):
+
+    live_tests_without_recordings : bool = os.getenv("AAZURE_TEST_RUN_LIVE") == "true" and os.getenv("AZURE_SKIP_LIVE_RECORDING") == "true"
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")

@@ -5,7 +5,7 @@
 import os
 
 import pytest
-from devtools_testutils import remove_batch_sanitizers, get_credential, test_proxy, add_general_regex_sanitizer
+from devtools_testutils import remove_batch_sanitizers, get_credential, test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer
 from dotenv import load_dotenv, find_dotenv
 from azure.ai.projects import AIProjectClient
 
@@ -21,6 +21,7 @@ class SanitizedValues:
     DATASET_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+    API_KEY = "00000000000000000000000000000000000000000000000000000000000000000000"
 
 
 @pytest.fixture(scope="session")
@@ -82,6 +83,8 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_conne
         )
 
         add_general_regex_sanitizer(regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1")
+
+        add_body_key_sanitizer(json_path="$..key", value="Sanitized")
 
     azure_workspace_triad_sanitizer()
 

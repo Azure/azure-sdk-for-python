@@ -21,18 +21,22 @@ class TestInferenceAsync(InferenceTestBase):
             async with await project_client.inference.get_azure_openai_client(
                 api_version=api_version
             ) as azure_openai_client:
-                response = await azure_openai_client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": "How many feet are in a mile?",
-                        }
-                    ],
-                    model=model,
-                )
-                pprint.pprint(response)
-                contains = ["5280", "5,280"]
-                assert any(item in response.choices[0].message.content for item in contains)
+                if InferenceTestBase.live_tests_without_recordings:
+                    response = await azure_openai_client.chat.completions.create(
+                        messages=[
+                            {
+                                "role": "user",
+                                "content": "How many feet are in a mile?",
+                            }
+                        ],
+                        model=model,
+                    )
+                    pprint.pprint(response)
+                    contains = ["5280", "5,280"]
+                    assert any(item in response.choices[0].message.content for item in contains)
+                else:
+                    print("Skipped chat completions call with AOAI client, because it cannot be recorded.")
+                    pass
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
