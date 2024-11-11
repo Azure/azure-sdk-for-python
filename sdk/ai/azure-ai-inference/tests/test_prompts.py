@@ -19,6 +19,7 @@ class TestPrompts:
         prompty_file_path = os.path.join(script_dir, "sample1.prompty")
         prompt_template = PromptTemplate.from_prompty(prompty_file_path)
         assert prompt_template.model_name == "gpt-4o-mini"
+        assert prompt_template.prompty.model.configuration["api_version"] == "mock-api-version"
         assert prompt_template.parameters["temperature"] == 1
         assert prompt_template.parameters["frequency_penalty"] == 0.5
         assert prompt_template.parameters["presence_penalty"] == 0.5
