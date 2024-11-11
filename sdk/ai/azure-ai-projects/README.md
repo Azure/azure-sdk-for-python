@@ -674,7 +674,9 @@ print("Deleted agent")
 
 #### Tracing
 
-As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor.Typically you might want to start tracing before you create an agent.   Here is a code snip to be included above `create_agent`:
+As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor.  Typically you might want to start tracing before you create an agent.   
+
+Here is a code snip to be included above `create_agent`:
 
 <!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
 
