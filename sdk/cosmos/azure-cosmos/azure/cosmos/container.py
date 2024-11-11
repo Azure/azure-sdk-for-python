@@ -351,7 +351,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype priority: Optional[Literal["High", "Low"]]
         :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -389,7 +389,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype priority: Optional[Literal["High", "Low"]]
         :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -421,7 +421,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype priority: Optional[Literal["High", "Low"]]
         :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -458,7 +458,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype priority: Optional[Literal["High", "Low"]]
         :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -494,7 +494,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword mode: The change feed mode enum to use when processing change feed items.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either 'fromNow'(default)
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.

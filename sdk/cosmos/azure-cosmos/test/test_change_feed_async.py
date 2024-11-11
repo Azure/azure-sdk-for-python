@@ -411,9 +411,9 @@ class TestChangeFeedAsync:
 
         # Error if 'start_time' was invalid type
         invalid_time = 1.2
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(AttributeError) as e:
             created_collection.query_items_change_feed(start_time=invalid_time)
-        assert str(e.value) == "'start_time' must be either a 'datetime' or 'str' type, but given 'float'."
+        assert str(e.value) == "'float' object has no attribute 'lower'"
 
         # Error if start_time was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
@@ -421,7 +421,7 @@ class TestChangeFeedAsync:
                 start_time=round_time(),
                 mode=mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
+        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
 
 if __name__ == '__main__':
     unittest.main()

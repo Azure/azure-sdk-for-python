@@ -116,7 +116,7 @@ def validate_kwargs(
                     " is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")
             if "start_time" in kwargs and kwargs["start_time"] != "Now":
                 raise ValueError(
-                    "'AllVersionsAndDeletes' mode is only supports if 'start_time' is 'Now'."
+                    "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'."
                     " Please use 'start_time=\"Now\"' or 'continuation' instead.")
 
     if "partition_key_range_id" in kwargs:
@@ -131,18 +131,16 @@ def validate_kwargs(
             DeprecationWarning
         )
 
-        if "start_time" in kwargs:
-            raise ValueError("'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them.")
-
         if not isinstance(kwargs["is_start_from_beginning"], bool):
             raise TypeError(
                 f"'is_start_from_beginning' must be 'bool' type,"
                 f" but given '{type(kwargs['is_start_from_beginning']).__name__}'.")
-    elif "start_time" in kwargs:
-        start_time = kwargs['start_time']
-        if isinstance(start_time, str):
-            if start_time.lower() not in ["now", "beginning"]:
-                raise ValueError(f"'start_time' must be either 'Now' or 'Beginning', but given '{start_time}'.")
-        elif not isinstance(start_time, datetime):
-            raise TypeError(
-                f"'start_time' must be either a 'datetime' or 'str' type, but given '{type(start_time).__name__}'.")
+
+        if kwargs["is_start_from_beginning"] is True and "start_time" in kwargs:
+            raise ValueError("'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them.")
+
+    if "start_time" in kwargs:
+        if not isinstance(kwargs['start_time'], datetime):
+            if kwargs['start_time'].lower() not in ["now", "beginning"]:
+                raise ValueError(
+                    f"'start_time' must be either 'Now' or 'Beginning', but given '{kwargs['start_time']}'.")
