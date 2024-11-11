@@ -9,15 +9,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import List, Any, Union, Dict, Tuple
+from typing import Any, Dict, List, Tuple, Union
+
 from typing_extensions import Self
-from azure.core.credentials import TokenCredential
+
 from azure.core import PipelineClient
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
+
+from ._client import AIProjectClient as ClientGenerated
 from ._configuration import AIProjectClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
-from ._client import AIProjectClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
 
@@ -56,7 +59,7 @@ class AIProjectClient(ClientGenerated):
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
         # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
-        _endpoint0 = f"https://management.azure.com"  # pylint: disable=line-too-long
+        _endpoint0 = "https://management.azure.com"  # pylint: disable=line-too-long
         self._config0: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
@@ -241,12 +244,12 @@ class AIProjectClient(ClientGenerated):
         """
         try:
             from azure.ai.ml import MLClient  # type: ignore
-            from azure.ai.ml.entities import Data  # type: ignore
             from azure.ai.ml.constants import AssetTypes  # type: ignore
-        except ImportError:
+            from azure.ai.ml.entities import Data  # type: ignore
+        except ImportError as e:
             raise ImportError(
                 "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
-            )
+            ) from e
 
         data = Data(
             path=str(file_path),

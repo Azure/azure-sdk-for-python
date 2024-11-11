@@ -36,6 +36,7 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+# [START create_agent_with_bing_grounding_tool]
 bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
 conn_id = bing_connection.id
 
@@ -53,6 +54,8 @@ with project_client:
         tools=bing.definitions,
         headers={"x-ms-enable-preview": "true"},
     )
+    # [END create_agent_with_bing_grounding_tool]
+
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication

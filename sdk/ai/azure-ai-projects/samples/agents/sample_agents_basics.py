@@ -71,6 +71,8 @@ with project_client:
 
     # [START list_messages]
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    # [END list_messages]
+    last_message_content = messages.data[-1].content[-1].text.value
+    print(f"Last message content: {last_message_content}")
 
-    print(f"messages: {messages}")
+    # [END list_messages]
+    print(f"Messages: {messages}")
