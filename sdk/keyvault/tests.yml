@@ -14,14 +14,11 @@ extends:
       Packages: ${{ parameters.Services }}
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      #CloudConfig:
-      #  Public:
-      #  UsGov:
-      #    MatrixFilters:
-      #      - ArmTemplateParameters=^(?!.*enableHsm.*true)
-      #  China:
-      #    MatrixFilters:
-      #      - ArmTemplateParameters=^(?!.*enableHsm.*true)
+      CloudConfig:
+        UsGov:
+          ServiceConnection: azure-sdk-tests-usgov
+          MatrixFilters:
+            - ArmTemplateParameters=^(?!.*enableHsm.*true)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
