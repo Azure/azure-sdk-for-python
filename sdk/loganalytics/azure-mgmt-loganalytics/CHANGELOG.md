@@ -1,5 +1,11 @@
 # Release History
 
+## 13.0.0b7 (2024-11-05)
+
+### Other Changes
+
+  - Update dependencies
+
 ## 13.0.0b6 (2022-12-12)
 
 ### Features Added

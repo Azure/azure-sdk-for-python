@@ -55,7 +55,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -71,7 +71,8 @@ class Resource(_serialization.Model):
 
 
 class ApplicableSchedule(Resource):
-    """Schedules applicable to a virtual machine. The schedules may have been defined on a VM or on lab level.
+    """Schedules applicable to a virtual machine. The schedules may have been defined on a VM or on
+    lab level.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -116,8 +117,8 @@ class ApplicableSchedule(Resource):
         tags: Optional[Dict[str, str]] = None,
         lab_vms_shutdown: Optional["_models.Schedule"] = None,
         lab_vms_startup: Optional["_models.Schedule"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -146,7 +147,7 @@ class UpdateResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
@@ -156,22 +157,12 @@ class UpdateResource(_serialization.Model):
 
 
 class ApplicableScheduleFragment(UpdateResource):
-    """Schedules applicable to a virtual machine. The schedules may have been defined on a VM or on lab level.
+    """Schedules applicable to a virtual machine. The schedules may have been defined on a VM or on
+    lab level.
 
     :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
 
 
 class ApplyArtifactsRequest(_serialization.Model):
@@ -185,7 +176,7 @@ class ApplyArtifactsRequest(_serialization.Model):
         "artifacts": {"key": "artifacts", "type": "[ArtifactInstallProperties]"},
     }
 
-    def __init__(self, *, artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None, **kwargs):
+    def __init__(self, *, artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword artifacts: The list of artifacts to apply.
         :paramtype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
@@ -262,7 +253,7 @@ class ArmTemplate(Resource):  # pylint: disable=too-many-instance-attributes
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -294,7 +285,7 @@ class ArmTemplateInfo(_serialization.Model):
         "parameters": {"key": "parameters", "type": "object"},
     }
 
-    def __init__(self, *, template: Optional[JSON] = None, parameters: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, template: Optional[JSON] = None, parameters: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword template: The template's contents.
         :paramtype template: JSON
@@ -321,8 +312,8 @@ class ArmTemplateList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ArmTemplate"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ArmTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.ArmTemplate]
@@ -348,7 +339,7 @@ class ArmTemplateParameterProperties(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the template parameter.
         :paramtype name: str
@@ -423,7 +414,7 @@ class Artifact(Resource):  # pylint: disable=too-many-instance-attributes
         "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -464,8 +455,8 @@ class ArtifactDeploymentStatusProperties(_serialization.Model):
         deployment_status: Optional[str] = None,
         artifacts_applied: Optional[int] = None,
         total_artifacts: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deployment_status: The deployment status of the artifact.
         :paramtype deployment_status: str
@@ -519,8 +510,8 @@ class ArtifactInstallProperties(_serialization.Model):
         deployment_status_message: Optional[str] = None,
         vm_extension_status_message: Optional[str] = None,
         install_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword artifact_id: The artifact's identifier.
         :paramtype artifact_id: str
@@ -561,7 +552,9 @@ class ArtifactList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Artifact"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Artifact"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Artifact]
@@ -587,7 +580,7 @@ class ArtifactParameterProperties(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the artifact parameter.
         :paramtype name: str
@@ -681,8 +674,8 @@ class ArtifactSource(Resource):  # pylint: disable=too-many-instance-attributes
         branch_ref: Optional[str] = None,
         security_token: Optional[str] = None,
         status: Optional[Union[str, "_models.EnableStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -728,17 +721,6 @@ class ArtifactSourceFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class ArtifactSourceList(_serialization.Model):
     """The response of a list operation.
@@ -755,8 +737,8 @@ class ArtifactSourceList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ArtifactSource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ArtifactSource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.ArtifactSource]
@@ -780,7 +762,7 @@ class AttachDiskProperties(_serialization.Model):
         "leased_by_lab_vm_id": {"key": "leasedByLabVmId", "type": "str"},
     }
 
-    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword leased_by_lab_vm_id: The resource ID of the Lab virtual machine to which the disk is
          attached.
@@ -814,8 +796,8 @@ class AttachNewDataDiskOptions(_serialization.Model):
         disk_size_gi_b: Optional[int] = None,
         disk_name: Optional[str] = None,
         disk_type: Optional[Union[str, "_models.StorageType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_size_gi_b: Size of the disk to be attached in Gibibytes.
         :paramtype disk_size_gi_b: int
@@ -842,7 +824,7 @@ class BulkCreationParameters(_serialization.Model):
         "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
-    def __init__(self, *, instance_count: Optional[int] = None, **kwargs):
+    def __init__(self, *, instance_count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword instance_count: The number of virtual machine instances to create.
         :paramtype instance_count: int
@@ -878,8 +860,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -925,8 +907,8 @@ class ComputeDataDisk(_serialization.Model):
         disk_uri: Optional[str] = None,
         managed_disk_id: Optional[str] = None,
         disk_size_gi_b: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets data disk name.
         :paramtype name: str
@@ -968,8 +950,8 @@ class ComputeVmInstanceViewStatus(_serialization.Model):
         code: Optional[str] = None,
         display_status: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Gets the status Code.
         :paramtype code: str
@@ -1023,8 +1005,8 @@ class ComputeVmProperties(_serialization.Model):
         os_disk_id: Optional[str] = None,
         data_disk_ids: Optional[List[str]] = None,
         data_disks: Optional[List["_models.ComputeDataDisk"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword statuses: Gets the statuses of the virtual machine.
         :paramtype statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus]
@@ -1086,8 +1068,8 @@ class CostThresholdProperties(_serialization.Model):
         display_on_chart: Optional[Union[str, "_models.CostThresholdStatus"]] = None,
         send_notification_when_exceeded: Optional[Union[str, "_models.CostThresholdStatus"]] = None,
         notification_sent: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword threshold_id: The ID of the cost threshold item.
         :paramtype threshold_id: str
@@ -1199,8 +1181,8 @@ class CustomImage(Resource):  # pylint: disable=too-many-instance-attributes
         data_disk_storage_info: Optional[List["_models.DataDiskStorageTypeInfo"]] = None,
         custom_image_plan: Optional["_models.CustomImagePropertiesFromPlan"] = None,
         is_plan_authorized: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -1249,17 +1231,6 @@ class CustomImageFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class CustomImageList(_serialization.Model):
     """The response of a list operation.
@@ -1276,8 +1247,8 @@ class CustomImageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CustomImage"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.CustomImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.CustomImage]
@@ -1292,7 +1263,7 @@ class CustomImageList(_serialization.Model):
 class CustomImagePropertiesCustom(_serialization.Model):
     """Properties for creating a custom image from a VHD.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar image_name: The image name.
     :vartype image_name: str
@@ -1319,8 +1290,8 @@ class CustomImagePropertiesCustom(_serialization.Model):
         os_type: Union[str, "_models.CustomImageOsType"],
         image_name: Optional[str] = None,
         sys_prep: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_name: The image name.
         :paramtype image_name: str
@@ -1361,8 +1332,8 @@ class CustomImagePropertiesFromPlan(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the plan, equivalent to name of the plan.
         :paramtype id: str
@@ -1402,8 +1373,8 @@ class CustomImagePropertiesFromVm(_serialization.Model):
         source_vm_id: Optional[str] = None,
         windows_os_info: Optional["_models.WindowsOsInfo"] = None,
         linux_os_info: Optional["_models.LinuxOsInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_vm_id: The source vm identifier.
         :paramtype source_vm_id: str
@@ -1443,8 +1414,8 @@ class DataDiskProperties(_serialization.Model):
         attach_new_data_disk_options: Optional["_models.AttachNewDataDiskOptions"] = None,
         existing_lab_disk_id: Optional[str] = None,
         host_caching: Optional[Union[str, "_models.HostCachingOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
          machine.
@@ -1478,8 +1449,12 @@ class DataDiskStorageTypeInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, lun: Optional[str] = None, storage_type: Optional[Union[str, "_models.StorageType"]] = None, **kwargs
-    ):
+        self,
+        *,
+        lun: Optional[str] = None,
+        storage_type: Optional[Union[str, "_models.StorageType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lun: Disk Lun.
         :paramtype lun: str
@@ -1503,7 +1478,7 @@ class DayDetails(_serialization.Model):
         "time": {"key": "time", "type": "str"},
     }
 
-    def __init__(self, *, time: Optional[str] = None, **kwargs):
+    def __init__(self, *, time: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword time: The time of day the schedule will occur.
         :paramtype time: str
@@ -1523,7 +1498,7 @@ class DetachDataDiskProperties(_serialization.Model):
         "existing_lab_disk_id": {"key": "existingLabDiskId", "type": "str"},
     }
 
-    def __init__(self, *, existing_lab_disk_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, existing_lab_disk_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword existing_lab_disk_id: Specifies the disk resource ID to detach from virtual machine.
         :paramtype existing_lab_disk_id: str
@@ -1543,7 +1518,7 @@ class DetachDiskProperties(_serialization.Model):
         "leased_by_lab_vm_id": {"key": "leasedByLabVmId", "type": "str"},
     }
 
-    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword leased_by_lab_vm_id: The resource ID of the Lab VM to which the disk is attached.
         :paramtype leased_by_lab_vm_id: str
@@ -1634,8 +1609,8 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         storage_account_id: Optional[str] = None,
         host_caching: Optional[str] = None,
         managed_disk_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -1681,17 +1656,6 @@ class DiskFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class DiskList(_serialization.Model):
     """The response of a list operation.
@@ -1707,7 +1671,9 @@ class DiskList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Disk"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Disk"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Disk]
@@ -1781,8 +1747,8 @@ class DtlEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict[str, str]] = None,
         deployment_properties: Optional["_models.EnvironmentDeploymentProperties"] = None,
         arm_template_display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -1811,17 +1777,6 @@ class DtlEnvironmentFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class DtlEnvironmentList(_serialization.Model):
     """The response of a list operation.
@@ -1838,8 +1793,8 @@ class DtlEnvironmentList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DtlEnvironment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.DtlEnvironment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.DtlEnvironment]
@@ -1870,8 +1825,8 @@ class EnvironmentDeploymentProperties(_serialization.Model):
         *,
         arm_template_id: Optional[str] = None,
         parameters: Optional[List["_models.ArmTemplateParameterProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword arm_template_id: The Azure Resource Manager template's identifier.
         :paramtype arm_template_id: str
@@ -1910,8 +1865,8 @@ class EvaluatePoliciesProperties(_serialization.Model):
         fact_data: Optional[str] = None,
         value_offset: Optional[str] = None,
         user_object_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fact_name: The fact name.
         :paramtype fact_name: str
@@ -1940,7 +1895,7 @@ class EvaluatePoliciesRequest(_serialization.Model):
         "policies": {"key": "policies", "type": "[EvaluatePoliciesProperties]"},
     }
 
-    def __init__(self, *, policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None, **kwargs):
+    def __init__(self, *, policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword policies: Policies to evaluate.
         :paramtype policies: list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
@@ -1960,7 +1915,7 @@ class EvaluatePoliciesResponse(_serialization.Model):
         "results": {"key": "results", "type": "[PolicySetResult]"},
     }
 
-    def __init__(self, *, results: Optional[List["_models.PolicySetResult"]] = None, **kwargs):
+    def __init__(self, *, results: Optional[List["_models.PolicySetResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword results: Results of evaluating a policy set.
         :paramtype results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
@@ -1981,7 +1936,9 @@ class Event(_serialization.Model):
         "event_name": {"key": "eventName", "type": "str"},
     }
 
-    def __init__(self, *, event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None, **kwargs):
+    def __init__(
+        self, *, event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
          Cost). Known values are: "AutoShutdown" and "Cost".
@@ -2012,8 +1969,8 @@ class ExportResourceUsageParameters(_serialization.Model):
         *,
         blob_storage_absolute_sas_uri: Optional[str] = None,
         usage_start_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_storage_absolute_sas_uri: The blob storage absolute sas uri with write permission
          to the container which the usage data needs to be uploaded to.
@@ -2042,8 +1999,12 @@ class ExternalSubnet(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, name: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Gets or sets the identifier.
         :paramtype id: str
@@ -2123,8 +2084,8 @@ class Formula(Resource):  # pylint: disable=too-many-instance-attributes
         os_type: Optional[str] = None,
         formula_content: Optional["_models.LabVirtualMachineCreationParameter"] = None,
         vm: Optional["_models.FormulaPropertiesFromVm"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -2157,17 +2118,6 @@ class FormulaFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class FormulaList(_serialization.Model):
     """The response of a list operation.
@@ -2183,7 +2133,9 @@ class FormulaList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Formula"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Formula"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Formula]
@@ -2206,7 +2158,7 @@ class FormulaPropertiesFromVm(_serialization.Model):
         "lab_vm_id": {"key": "labVmId", "type": "str"},
     }
 
-    def __init__(self, *, lab_vm_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, lab_vm_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword lab_vm_id: The identifier of the VM from which a formula is to be created.
         :paramtype lab_vm_id: str
@@ -2284,8 +2236,8 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         enabled: Optional[bool] = None,
         plan_id: Optional[str] = None,
         is_plan_authorized: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -2333,8 +2285,8 @@ class GalleryImageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GalleryImage"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.GalleryImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.GalleryImage]
@@ -2377,8 +2329,8 @@ class GalleryImageReference(_serialization.Model):
         sku: Optional[str] = None,
         os_type: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword offer: The offer of the gallery image.
         :paramtype offer: str
@@ -2428,8 +2380,8 @@ class GenerateArmTemplateRequest(_serialization.Model):
         parameters: Optional[List["_models.ParameterInfo"]] = None,
         location: Optional[str] = None,
         file_upload_options: Optional[Union[str, "_models.FileUploadOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_machine_name: The resource name of the virtual machine.
         :paramtype virtual_machine_name: str
@@ -2460,7 +2412,7 @@ class GenerateUploadUriParameter(_serialization.Model):
         "blob_name": {"key": "blobName", "type": "str"},
     }
 
-    def __init__(self, *, blob_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, blob_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword blob_name: The blob name of the upload URI.
         :paramtype blob_name: str
@@ -2480,7 +2432,7 @@ class GenerateUploadUriResponse(_serialization.Model):
         "upload_uri": {"key": "uploadUri", "type": "str"},
     }
 
-    def __init__(self, *, upload_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, upload_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword upload_uri: The upload URI for the VHD.
         :paramtype upload_uri: str
@@ -2500,7 +2452,7 @@ class HourDetails(_serialization.Model):
         "minute": {"key": "minute", "type": "int"},
     }
 
-    def __init__(self, *, minute: Optional[int] = None, **kwargs):
+    def __init__(self, *, minute: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword minute: Minutes of the hour the schedule will run.
         :paramtype minute: int
@@ -2537,8 +2489,8 @@ class IdentityProperties(_serialization.Model):
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_secret_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Managed identity. Known values are: "None", "SystemAssigned", "UserAssigned",
          and "SystemAssigned,UserAssigned".
@@ -2558,7 +2510,8 @@ class IdentityProperties(_serialization.Model):
 
 
 class ImportLabVirtualMachineRequest(_serialization.Model):
-    """This represents the payload required to import a virtual machine from a different lab into the current one.
+    """This represents the payload required to import a virtual machine from a different lab into the
+    current one.
 
     :ivar source_virtual_machine_resource_id: The full resource ID of the virtual machine to be
      imported.
@@ -2577,8 +2530,8 @@ class ImportLabVirtualMachineRequest(_serialization.Model):
         *,
         source_virtual_machine_resource_id: Optional[str] = None,
         destination_virtual_machine_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_virtual_machine_resource_id: The full resource ID of the virtual machine to be
          imported.
@@ -2593,7 +2546,8 @@ class ImportLabVirtualMachineRequest(_serialization.Model):
 
 
 class InboundNatRule(_serialization.Model):
-    """A rule for NAT - exposing a VM's port (backendPort) on the public IP address using a load balancer.
+    """A rule for NAT - exposing a VM's port (backendPort) on the public IP address using a load
+    balancer.
 
     :ivar transport_protocol: The transport protocol for the endpoint. Known values are: "Tcp" and
      "Udp".
@@ -2617,8 +2571,8 @@ class InboundNatRule(_serialization.Model):
         transport_protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword transport_protocol: The transport protocol for the endpoint. Known values are: "Tcp"
          and "Udp".
@@ -2768,8 +2722,8 @@ class Lab(Resource):  # pylint: disable=too-many-instance-attributes
         announcement: Optional["_models.LabAnnouncementProperties"] = None,
         support: Optional["_models.LabSupportProperties"] = None,
         extended_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -2870,8 +2824,8 @@ class LabAnnouncementProperties(_serialization.Model):
         enabled: Optional[Union[str, "_models.EnableStatus"]] = None,
         expiration_date: Optional[datetime.datetime] = None,
         expired: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword title: The plain text title for the lab announcement.
         :paramtype title: str
@@ -2972,8 +2926,8 @@ class LabCost(Resource):  # pylint: disable=too-many-instance-attributes
         start_date_time: Optional[datetime.datetime] = None,
         end_date_time: Optional[datetime.datetime] = None,
         created_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -3027,8 +2981,8 @@ class LabCostDetailsProperties(_serialization.Model):
         date: Optional[datetime.datetime] = None,
         cost: Optional[float] = None,
         cost_type: Optional[Union[str, "_models.CostType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date: The date of the cost item.
         :paramtype date: ~datetime.datetime
@@ -3055,7 +3009,7 @@ class LabCostSummaryProperties(_serialization.Model):
         "estimated_lab_cost": {"key": "estimatedLabCost", "type": "float"},
     }
 
-    def __init__(self, *, estimated_lab_cost: Optional[float] = None, **kwargs):
+    def __init__(self, *, estimated_lab_cost: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword estimated_lab_cost: The cost component of the cost item.
         :paramtype estimated_lab_cost: float
@@ -3070,17 +3024,6 @@ class LabFragment(UpdateResource):
     :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
 
 
 class LabList(_serialization.Model):
@@ -3097,7 +3040,9 @@ class LabList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Lab"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Lab"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Lab]
@@ -3156,8 +3101,8 @@ class LabResourceCostProperties(_serialization.Model):
         resource_status: Optional[str] = None,
         resource_id: Optional[str] = None,
         external_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resourcename: The name of the resource.
         :paramtype resourcename: str
@@ -3207,8 +3152,12 @@ class LabSupportProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: Optional[Union[str, "_models.EnableStatus"]] = None, markdown: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        enabled: Optional[Union[str, "_models.EnableStatus"]] = None,
+        markdown: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is the lab support banner active/enabled at this time?. Known values are:
          "Enabled" and "Disabled".
@@ -3233,7 +3182,7 @@ class LabVhd(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The URI to the VHD.
         :paramtype id: str
@@ -3256,7 +3205,9 @@ class LabVhdList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.LabVhd"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.LabVhd"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.LabVhd]
@@ -3456,8 +3407,8 @@ class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attribut
         environment_id: Optional[str] = None,
         data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
         schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -3677,8 +3628,8 @@ class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disab
         environment_id: Optional[str] = None,
         data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
         schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the virtual machine or environment.
         :paramtype name: str
@@ -3777,17 +3728,6 @@ class LabVirtualMachineFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class LabVirtualMachineList(_serialization.Model):
     """The response of a list operation.
@@ -3804,8 +3744,12 @@ class LabVirtualMachineList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LabVirtualMachine"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.LabVirtualMachine"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.LabVirtualMachine]
@@ -3830,7 +3774,7 @@ class LinuxOsInfo(_serialization.Model):
         "linux_os_state": {"key": "linuxOsState", "type": "str"},
     }
 
-    def __init__(self, *, linux_os_state: Optional[Union[str, "_models.LinuxOsState"]] = None, **kwargs):
+    def __init__(self, *, linux_os_state: Optional[Union[str, "_models.LinuxOsState"]] = None, **kwargs: Any) -> None:
         """
         :keyword linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned,
          DeprovisionRequested, DeprovisionApplied). Known values are: "NonDeprovisioned",
@@ -3895,8 +3839,8 @@ class NetworkInterfaceProperties(_serialization.Model):
         rdp_authority: Optional[str] = None,
         ssh_authority: Optional[str] = None,
         shared_public_ip_address_configuration: Optional["_models.SharedPublicIpAddressConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_id: The resource ID of the virtual network.
         :paramtype virtual_network_id: str
@@ -4003,8 +3947,8 @@ class NotificationChannel(Resource):  # pylint: disable=too-many-instance-attrib
         notification_locale: Optional[str] = None,
         description: Optional[str] = None,
         events: Optional[List["_models.Event"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -4041,17 +3985,6 @@ class NotificationChannelFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class NotificationChannelList(_serialization.Model):
     """The response of a list operation.
@@ -4068,8 +4001,12 @@ class NotificationChannelList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NotificationChannel"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NotificationChannel"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.NotificationChannel]
@@ -4115,8 +4052,8 @@ class NotificationSettings(_serialization.Model):
         webhook_url: Optional[str] = None,
         email_recipient: Optional[str] = None,
         notification_locale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: If notifications are enabled for this schedule (i.e. Enabled, Disabled). Known
          values are: "Enabled" and "Disabled".
@@ -4160,8 +4097,8 @@ class NotifyParameters(_serialization.Model):
         *,
         event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None,
         json_payload: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_name: The type of event (i.e. AutoShutdown, Cost). Known values are:
          "AutoShutdown" and "Cost".
@@ -4188,7 +4125,7 @@ class OperationError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The error code of the operation error.
         :paramtype code: str
@@ -4215,8 +4152,8 @@ class OperationMetadata(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, display: Optional["_models.OperationMetadataDisplay"] = None, **kwargs
-    ):
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationMetadataDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -4255,8 +4192,8 @@ class OperationMetadataDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -4288,8 +4225,8 @@ class OperationResult(_serialization.Model):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-     "HttpVersionNotSupported".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
     :ivar error: Error details for the operation in case of a failure.
     :vartype error: ~azure.mgmt.devtestlabs.models.OperationError
@@ -4307,8 +4244,8 @@ class OperationResult(_serialization.Model):
         status: Optional[str] = None,
         status_code: Optional[Union[str, "_models.HttpStatusCode"]] = None,
         error: Optional["_models.OperationError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The operation status.
         :paramtype status: str
@@ -4321,8 +4258,8 @@ class OperationResult(_serialization.Model):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-         "HttpVersionNotSupported".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
         :keyword error: Error details for the operation in case of a failure.
         :paramtype error: ~azure.mgmt.devtestlabs.models.OperationError
@@ -4347,7 +4284,7 @@ class ParameterInfo(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the artifact parameter.
         :paramtype name: str
@@ -4373,7 +4310,9 @@ class ParametersValueFileInfo(_serialization.Model):
         "parameters_value_info": {"key": "parametersValueInfo", "type": "object"},
     }
 
-    def __init__(self, *, file_name: Optional[str] = None, parameters_value_info: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, file_name: Optional[str] = None, parameters_value_info: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword file_name: File name.
         :paramtype file_name: str
@@ -4396,7 +4335,7 @@ class PercentageCostThresholdProperties(_serialization.Model):
         "threshold_value": {"key": "thresholdValue", "type": "float"},
     }
 
-    def __init__(self, *, threshold_value: Optional[float] = None, **kwargs):
+    def __init__(self, *, threshold_value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword threshold_value: The cost threshold value.
         :paramtype threshold_value: float
@@ -4482,8 +4421,8 @@ class Policy(Resource):  # pylint: disable=too-many-instance-attributes
         fact_data: Optional[str] = None,
         threshold: Optional[str] = None,
         evaluator_type: Optional[Union[str, "_models.PolicyEvaluatorType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -4527,17 +4466,6 @@ class PolicyFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class PolicyList(_serialization.Model):
     """The response of a list operation.
@@ -4553,7 +4481,9 @@ class PolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Policy]
@@ -4585,8 +4515,8 @@ class PolicySetResult(_serialization.Model):
         *,
         has_error: Optional[bool] = None,
         policy_violations: Optional[List["_models.PolicyViolation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword has_error: A value indicating whether this policy set evaluation has discovered
          violations.
@@ -4613,7 +4543,7 @@ class PolicyViolation(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The code of the policy violation.
         :paramtype code: str
@@ -4644,8 +4574,8 @@ class Port(_serialization.Model):
         *,
         transport_protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         backend_port: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword transport_protocol: Protocol type of the port. Known values are: "Tcp" and "Udp".
         :paramtype transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
@@ -4677,7 +4607,7 @@ class ProviderOperationResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OperationMetadata"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.OperationMetadata"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.OperationMetadata]
@@ -4698,7 +4628,7 @@ class RdpConnection(_serialization.Model):
         "contents": {"key": "contents", "type": "str"},
     }
 
-    def __init__(self, *, contents: Optional[str] = None, **kwargs):
+    def __init__(self, *, contents: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword contents: The contents of the .rdp file.
         :paramtype contents: str
@@ -4718,7 +4648,7 @@ class ResizeLabVirtualMachineProperties(_serialization.Model):
         "size": {"key": "size", "type": "str"},
     }
 
-    def __init__(self, *, size: Optional[str] = None, **kwargs):
+    def __init__(self, *, size: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword size: Specifies the size of the virtual machine.
         :paramtype size: str
@@ -4744,8 +4674,8 @@ class RetargetScheduleProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, current_resource_id: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs
-    ):
+        self, *, current_resource_id: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword current_resource_id: The resource Id of the virtual machine on which the schedule
          operates.
@@ -4788,7 +4718,10 @@ class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
      recurrence.
     :vartype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-    :ivar time_zone_id: The time zone ID (e.g. Pacific Standard time).
+    :ivar time_zone_id: The time zone ID (e.g. China Standard Time, Greenland Standard Time,
+     Pacific Standard time, etc.). The possible values for this property can be found in
+     ``IReadOnlyCollection<string> TimeZoneConverter.TZConvert.KnownWindowsTimeZoneIds``
+     (https://github.com/mattjohnsonpint/TimeZoneConverter/blob/main/README.md).
     :vartype time_zone_id: str
     :ivar notification_settings: Notification settings.
     :vartype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
@@ -4843,8 +4776,8 @@ class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
         time_zone_id: Optional[str] = None,
         notification_settings: Optional["_models.NotificationSettings"] = None,
         target_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -4864,7 +4797,10 @@ class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
          recurrence.
         :paramtype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-        :keyword time_zone_id: The time zone ID (e.g. Pacific Standard time).
+        :keyword time_zone_id: The time zone ID (e.g. China Standard Time, Greenland Standard Time,
+         Pacific Standard time, etc.). The possible values for this property can be found in
+         ``IReadOnlyCollection<string> TimeZoneConverter.TZConvert.KnownWindowsTimeZoneIds``
+         (https://github.com/mattjohnsonpint/TimeZoneConverter/blob/main/README.md).
         :paramtype time_zone_id: str
         :keyword notification_settings: Notification settings.
         :paramtype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
@@ -4910,7 +4846,10 @@ class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-ma
     :ivar hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
      recurrence.
     :vartype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-    :ivar time_zone_id: The time zone ID (e.g. Pacific Standard time).
+    :ivar time_zone_id: The time zone ID (e.g. China Standard Time, Greenland Standard Time,
+     Pacific Standard time, etc.). The possible values for this property can be found in
+     ``IReadOnlyCollection<string> TimeZoneConverter.TZConvert.KnownWindowsTimeZoneIds``
+     (https://github.com/mattjohnsonpint/TimeZoneConverter/blob/main/README.md).
     :vartype time_zone_id: str
     :ivar notification_settings: Notification settings.
     :vartype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
@@ -4949,8 +4888,8 @@ class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-ma
         time_zone_id: Optional[str] = None,
         notification_settings: Optional["_models.NotificationSettings"] = None,
         target_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the virtual machine or environment.
         :paramtype name: str
@@ -4970,7 +4909,10 @@ class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-ma
         :keyword hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
          recurrence.
         :paramtype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-        :keyword time_zone_id: The time zone ID (e.g. Pacific Standard time).
+        :keyword time_zone_id: The time zone ID (e.g. China Standard Time, Greenland Standard Time,
+         Pacific Standard time, etc.). The possible values for this property can be found in
+         ``IReadOnlyCollection<string> TimeZoneConverter.TZConvert.KnownWindowsTimeZoneIds``
+         (https://github.com/mattjohnsonpint/TimeZoneConverter/blob/main/README.md).
         :paramtype time_zone_id: str
         :keyword notification_settings: Notification settings.
         :paramtype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
@@ -4998,17 +4940,6 @@ class ScheduleFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class ScheduleList(_serialization.Model):
     """The response of a list operation.
@@ -5024,7 +4955,9 @@ class ScheduleList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Schedule]
@@ -5084,8 +5017,8 @@ class Secret(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -5107,17 +5040,6 @@ class SecretFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class SecretList(_serialization.Model):
     """The response of a list operation.
@@ -5133,7 +5055,9 @@ class SecretList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.Secret]
@@ -5202,8 +5126,8 @@ class ServiceFabric(Resource):
         tags: Optional[Dict[str, str]] = None,
         external_service_fabric_id: Optional[str] = None,
         environment_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -5230,17 +5154,6 @@ class ServiceFabricFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class ServiceFabricList(_serialization.Model):
     """The response of a list operation.
@@ -5257,8 +5170,8 @@ class ServiceFabricList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServiceFabric"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ServiceFabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.ServiceFabric]
@@ -5310,8 +5223,8 @@ class ServiceRunner(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.IdentityProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -5339,8 +5252,8 @@ class ServiceRunnerList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServiceRunner"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ServiceRunner"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.ServiceRunner]
@@ -5363,7 +5276,7 @@ class SharedPublicIpAddressConfiguration(_serialization.Model):
         "inbound_nat_rules": {"key": "inboundNatRules", "type": "[InboundNatRule]"},
     }
 
-    def __init__(self, *, inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None, **kwargs):
+    def __init__(self, *, inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword inbound_nat_rules: The incoming NAT rules.
         :paramtype inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRule]
@@ -5373,7 +5286,8 @@ class SharedPublicIpAddressConfiguration(_serialization.Model):
 
 
 class ShutdownNotificationContent(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The contents of a shutdown notification. Webhooks can use this type to deserialize the request body when they get notified of an imminent shutdown.
+    """The contents of a shutdown notification. Webhooks can use this type to deserialize the request
+    body when they get notified of an imminent shutdown.
 
     :ivar skip_url: The URL to skip auto-shutdown.
     :vartype skip_url: str
@@ -5435,8 +5349,8 @@ class ShutdownNotificationContent(_serialization.Model):  # pylint: disable=too-
         subscription_id: Optional[str] = None,
         resource_group_name: Optional[str] = None,
         lab_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword skip_url: The URL to skip auto-shutdown.
         :paramtype skip_url: str
@@ -5505,8 +5419,8 @@ class Subnet(_serialization.Model):
         resource_id: Optional[str] = None,
         lab_subnet_name: Optional[str] = None,
         allow_public_ip: Optional[Union[str, "_models.UsagePermissionType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The resource ID of the subnet.
         :paramtype resource_id: str
@@ -5567,8 +5481,8 @@ class SubnetOverride(_serialization.Model):
         use_public_ip_address_permission: Optional[Union[str, "_models.UsagePermissionType"]] = None,
         shared_public_ip_address_configuration: Optional["_models.SubnetSharedPublicIpAddressConfiguration"] = None,
         virtual_network_pool_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The resource ID of the subnet.
         :paramtype resource_id: str
@@ -5610,7 +5524,7 @@ class SubnetSharedPublicIpAddressConfiguration(_serialization.Model):
         "allowed_ports": {"key": "allowedPorts", "type": "[Port]"},
     }
 
-    def __init__(self, *, allowed_ports: Optional[List["_models.Port"]] = None, **kwargs):
+    def __init__(self, *, allowed_ports: Optional[List["_models.Port"]] = None, **kwargs: Any) -> None:
         """
         :keyword allowed_ports: Backend ports that virtual machines on this subnet are allowed to
          expose.
@@ -5655,8 +5569,8 @@ class TargetCostProperties(_serialization.Model):
         cycle_start_date_time: Optional[datetime.datetime] = None,
         cycle_end_date_time: Optional[datetime.datetime] = None,
         cycle_type: Optional[Union[str, "_models.ReportingCycleType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Target cost status. Known values are: "Enabled" and "Disabled".
         :paramtype status: str or ~azure.mgmt.devtestlabs.models.TargetCostStatus
@@ -5736,8 +5650,8 @@ class User(Resource):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.UserIdentity"] = None,
         secret_store: Optional["_models.UserSecretStore"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -5762,17 +5676,6 @@ class UserFragment(UpdateResource):
     :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
 
 
 class UserIdentity(_serialization.Model):
@@ -5808,8 +5711,8 @@ class UserIdentity(_serialization.Model):
         tenant_id: Optional[str] = None,
         object_id: Optional[str] = None,
         app_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_name: Set to the principal name / UPN of the client JWT making the request.
         :paramtype principal_name: str
@@ -5846,7 +5749,9 @@ class UserList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.User"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.User"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.User]
@@ -5872,7 +5777,9 @@ class UserSecretStore(_serialization.Model):
         "key_vault_id": {"key": "keyVaultId", "type": "str"},
     }
 
-    def __init__(self, *, key_vault_uri: Optional[str] = None, key_vault_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, key_vault_uri: Optional[str] = None, key_vault_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_uri: The URI of the user's Key vault.
         :paramtype key_vault_uri: str
@@ -5953,8 +5860,8 @@ class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         external_provider_resource_id: Optional[str] = None,
         subnet_overrides: Optional[List["_models.SubnetOverride"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -5988,17 +5895,6 @@ class VirtualNetworkFragment(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class VirtualNetworkList(_serialization.Model):
     """The response of a list operation.
@@ -6015,8 +5911,8 @@ class VirtualNetworkList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of the list operation.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.VirtualNetwork]
@@ -6043,7 +5939,7 @@ class WeekDetails(_serialization.Model):
         "time": {"key": "time", "type": "str"},
     }
 
-    def __init__(self, *, weekdays: Optional[List[str]] = None, time: Optional[str] = None, **kwargs):
+    def __init__(self, *, weekdays: Optional[List[str]] = None, time: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
          Tuesday, etc.).
@@ -6068,7 +5964,9 @@ class WindowsOsInfo(_serialization.Model):
         "windows_os_state": {"key": "windowsOsState", "type": "str"},
     }
 
-    def __init__(self, *, windows_os_state: Optional[Union[str, "_models.WindowsOsState"]] = None, **kwargs):
+    def __init__(
+        self, *, windows_os_state: Optional[Union[str, "_models.WindowsOsState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
          SysprepApplied). Known values are: "NonSysprepped", "SysprepRequested", and "SysprepApplied".

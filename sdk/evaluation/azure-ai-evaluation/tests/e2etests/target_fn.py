@@ -34,4 +34,4 @@ def target_multimodal_fn1(conversation) -> str:
             }
         )
         conversation["messages"] = messages
-    return conversation
+    return {"conversation": conversation}

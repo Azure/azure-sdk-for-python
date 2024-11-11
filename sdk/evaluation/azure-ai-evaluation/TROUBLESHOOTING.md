@@ -23,7 +23,7 @@ This guide walks you through how to investigate failures, common errors in the `
     pip install azure-ai-evaluation[remote]
     ```
 
-- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://review.learn.microsoft.com/azure/ai-studio/how-to/disable-local-auth).
+- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
 
     ```Shell
     az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
@@ -41,6 +41,16 @@ This guide walks you through how to investigate failures, common errors in the `
 ### Adversarial Simulation Supported Regions
 
 Adversarial simulators use Azure AI Studio safety evaluation backend service to generate an adversarial dataset against your application. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaiadvsimulator-regionsupport).
+
+### Need to generate simulations for specific harm type
+
+The Adversarial simulator does not support selecting individual harms, instead we recommend running the `AdversarialSimulator` for 4x the number of specific harms as the `max_simulation_results`
+
+
+### Simulator is slow
+
+Identify the type of simulations being run (adversarial or non-adversarial).
+Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute. 
 
 ## Logging
 
