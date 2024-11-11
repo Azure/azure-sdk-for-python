@@ -156,6 +156,19 @@ def disable_schedule(name):
     except Exception as e:
         print(f"Error occurred while disabling the online evaluation schedule - {name}, Error={e}")
 
+def list_schedule_runs(name):
+    try:
+        count = 0
+        for run in project_client.evaluations.list(params = {"scheduleName":name}):
+            count += 1
+            print(f"{count}. {run.display_name} "
+                  f"[Status: {run.status}]")
+        print(f"Total evaluation schedule runs: {count}")
+    except Exception as e:
+        print(
+            f"\nError occurred while fetching the online evaluation schedule runs,"
+            f"Error={e}"
+        )
 
 # Comment the below sections to run CRUD operations on Online Evaluation Schedule
 # -------CREATE ONLINE EVALUATION SCHEDULE-------------
@@ -172,4 +185,8 @@ create_schedule()
 
 # ------SOFT DELETE (DISABLE) ONLINE EVALUATION SCHEDULE-------------
 # disable_schedule(name)
+# -------------------------------------------------------------------
+
+# ------List of Schedule Runs ---------------------------------------
+# list_schedule_runs(name)
 # -------------------------------------------------------------------
