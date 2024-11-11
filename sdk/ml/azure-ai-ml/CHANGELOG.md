@@ -6,7 +6,7 @@
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
   AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
   - Update TLS version from 1.0 to 1.2
-  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.distillation`
+  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.model_customization`
 ### Bugs Fixed
   - Fix send email notification issue in model monitoring
 
