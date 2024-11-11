@@ -150,8 +150,6 @@ class ReceiverLink(Link):
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
         self._received_delivery_tags.remove(delivery_tag)
-        delivery.start = time.time()
-        delivery.sent = True
 
         # Track dispositions for settling messages
         if on_disposition:
