@@ -28,6 +28,10 @@ Programming language to supply to metadata
 .PARAMETER RepoId
 GitHub repository ID of the SDK. Typically of the form: 'Azure/azure-sdk-for-js'
 
+.PARAMETER DocValidationImageId
+The docker image id in format of '$containerRegistry/$imageName:$tag'
+e.g. azuresdkimages.azurecr.io/jsrefautocr:latest
+
 #>
 
 param(
@@ -42,6 +46,9 @@ param(
 
   [Parameter(Mandatory = $false)]
   [string]$RepoId,
+
+  [Parameter(Mandatory = $false)]
+  [string]$DocValidationImageId,
 
   [Parameter(Mandatory = $false)]
   [string]$PackageSourceOverride
@@ -193,6 +200,7 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
     $isValid = &$ValidateDocsMsPackagesFn `
       -PackageInfos $packageInfo `
       -PackageSourceOverride $PackageSourceOverride `
+      -DocValidationImageId $DocValidationImageId `
       -DocRepoLocation $DocRepoLocation
 
     if (!$isValid) {

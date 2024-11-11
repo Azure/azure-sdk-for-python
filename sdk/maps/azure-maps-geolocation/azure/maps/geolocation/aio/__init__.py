@@ -7,5 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._geolocation_client_async import MapsGeolocationClient
-
-__all__ = ["MapsGeolocationClient"]
+__all__ = ['MapsGeolocationClient']

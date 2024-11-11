@@ -5,7 +5,6 @@
 
 from typing import Optional
 
-
 class CountryRegionResult(object):
     """Represents coordinate latitude and longitude
 
@@ -17,7 +16,10 @@ class CountryRegionResult(object):
         Please note, IP address in ranges reserved for special purpose will return Null for country/region.
     :paramtype iso_code: Optional[str]
     """
-
-    def __init__(self, ip_address: Optional[str] = None, iso_code: Optional[str] = None):
+    def __init__(
+        self,
+        ip_address: Optional[str] = None,
+        iso_code: Optional[str] = None
+    ):
         self.ip_address = ip_address
         self.iso_code = iso_code

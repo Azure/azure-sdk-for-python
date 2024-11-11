@@ -1,4 +1,9 @@
-from ._models import CountryRegionResult
+
+from ._models import (
+    CountryRegionResult
+)
 
 
-__all__ = ["CountryRegionResult"]
+__all__ = [
+    'CountryRegionResult'
+]

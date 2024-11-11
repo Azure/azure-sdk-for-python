@@ -136,7 +136,6 @@ class TestWorkspaceOperation:
                     ),
                 ],
             )
-            ws.provision_network_now = True
             ws.system_datastores_auth_mode = "identity"
             ws.allow_roleassignment_on_rg = True
             return ws._to_rest_object()
@@ -163,8 +162,6 @@ class TestWorkspaceOperation:
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
-
-        assert ws.provision_network_now == True
 
     def test_create_get_exception_swallow(
         self,

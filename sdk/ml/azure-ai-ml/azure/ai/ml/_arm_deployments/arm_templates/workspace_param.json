@@ -134,9 +134,6 @@
     "managedNetwork": {
         "value": {}
     },
-    "provisionNetworkNow": {
-        "value": "false"
-    },
     "spark_runtime_version" : {
         "value": null
     },

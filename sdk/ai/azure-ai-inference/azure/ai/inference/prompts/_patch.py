@@ -15,7 +15,6 @@ from typing_extensions import Self
 from ._core import Prompty
 from ._mustache import render
 from ._prompty_utils import load, prepare
-from ._utils import remove_leading_empty_space
 
 
 class PromptTemplate:
@@ -106,8 +105,7 @@ class PromptTemplate:
             parsed = prepare(self.prompty, data)
             return parsed
         elif "prompt_template" in self._config:
-            prompt_template = remove_leading_empty_space(self._config["prompt_template"])
-            system_prompt = render(prompt_template, data)
+            system_prompt = render(self._config["prompt_template"], data)
             return [{"role": "system", "content": system_prompt}]
         else:
             raise ValueError("Please provide valid prompt template")

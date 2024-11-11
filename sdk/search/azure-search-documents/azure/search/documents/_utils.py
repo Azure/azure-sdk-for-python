@@ -8,7 +8,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
-from ._generated.models import QueryAnswerType, QueryRewritesType
+from ._generated.models import QueryAnswerType
 
 DEFAULT_AUDIENCE = "https://search.azure.com"
 
@@ -26,16 +26,6 @@ def get_answer_query(
     if query_answer_threshold:
         answers = f"{answers}{separator}threshold-{query_answer_threshold}"
     return answers
-
-
-def get_rewrites_query(
-    query_rewrites: Optional[Union[str, QueryRewritesType]] = None, query_rewrites_count: Optional[int] = None
-) -> Optional[Union[str, QueryRewritesType]]:
-    rewrites = query_rewrites
-    separator = "|"
-    if query_rewrites_count:
-        rewrites = f"{rewrites}{separator}count-{query_rewrites_count}"
-    return rewrites
 
 
 def is_retryable_status_code(status_code: Optional[int]) -> bool:

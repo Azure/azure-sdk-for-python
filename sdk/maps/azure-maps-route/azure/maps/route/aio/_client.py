@@ -78,7 +78,10 @@ class MapsRouteClient(RouteOperations):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         super().__init__(
-            client=self._client, config=self._config, serializer=self._serialize, deserializer=self._deserialize
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
         )
 
     def send_request(

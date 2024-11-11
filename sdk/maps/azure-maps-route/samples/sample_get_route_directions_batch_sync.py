@@ -20,7 +20,6 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-
 def get_route_directions_batch_sync():
     # [START get_route_directions_batch_sync]
     from azure.core.credentials import AzureKeyCredential
@@ -29,7 +28,9 @@ def get_route_directions_batch_sync():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_route_client.get_route_directions_batch_sync(
-        queries=["47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"]
+        queries=[
+            "47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+        ]
     )
 
     if result.batch_summary is not None and result.batch_items is not None:
@@ -39,6 +40,5 @@ def get_route_directions_batch_sync():
         print(result.batch_items[0].response.routes[0].summary.arrival_time)
     # [END get_route_directions_batch_sync]
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     get_route_directions_batch_sync()

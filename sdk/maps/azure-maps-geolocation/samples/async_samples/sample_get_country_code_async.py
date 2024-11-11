@@ -21,7 +21,6 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-
 async def get_country_code_async():
     # [START get_country_code_async]
     from azure.core.credentials import AzureKeyCredential
@@ -36,6 +35,5 @@ async def get_country_code_async():
     print(result.iso_code)
     # [END get_country_code_async]
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(get_country_code_async())
