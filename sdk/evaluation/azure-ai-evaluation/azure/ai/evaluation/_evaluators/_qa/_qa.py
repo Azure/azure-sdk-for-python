@@ -5,7 +5,7 @@
 from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
 
-from ..._external._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from ..._promptflow.tracing._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator

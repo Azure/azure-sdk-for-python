@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, Optional, Union
 import pandas as pd
 from promptflow.client import PFClient
 from promptflow.entities import Run
-from ..._external._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from ..._promptflow.tracing._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 LOGGER = logging.getLogger(__name__)
 
