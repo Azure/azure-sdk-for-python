@@ -81,8 +81,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     **Note:** Classes inherited from the model check that the parameters are present
     in the list of attributes and if they are not, the error is being raised. This check may not
     be relevant for classes, not inherited from azure.ai.projects._model_base.Model.
-    :param model_class: The class of model to be used.
+    :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
+    :type parameters: Union[str, Dict[str, Any]]
     :return: The dictionary with all invalid parameters removed.
     """
     new_params = {}
@@ -100,8 +101,9 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     """
     Instantiate class with the set of parameters from the server.
 
-    :param model_class: The class of model to be used.
+    :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
+    :type parameters: Union[str, Dict[str, Any]]
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
     """
     if not isinstance(parameters, dict):
@@ -348,7 +350,7 @@ class Tool(ABC):
         """
         Execute the tool with the provided tool call.
 
-        :param tool_call: The tool call to execute.
+        :param Any tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
 
@@ -510,8 +512,8 @@ class AzureAISearchTool(Tool):
         """
         Add an index ID to the list of indices used to search.
 
-        :param index: The index connection id.
-        :param name: The index name.
+        :param str index: The index connection id.
+        :param str name: The index name.
         """
         # TODO
         self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
@@ -715,7 +717,7 @@ class BaseToolSet:
         """
         Add a tool to the tool set.
 
-        :param tool: The tool to add.
+        :param Tool tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
         self.validate_tool_type(tool)
@@ -728,7 +730,7 @@ class BaseToolSet:
         """
         Remove a tool of the specified type from the tool set.
 
-        :param tool_type: The type of tool to remove.
+        :param Type[Tool] tool_type: The type of tool to remove.
         :raises ValueError: If a tool of the specified type is not found.
         """
         for i, tool in enumerate(self._tools):
@@ -770,6 +772,7 @@ class BaseToolSet:
 
         :param resources: A dictionary of tool resources. Should be a mapping
             accepted by ~azure.ai.projects.models.AzureAISearchResource
+        :type resources: Dict[str, Any]
         """
         try:
             return ToolResources(**resources)
@@ -792,7 +795,7 @@ class BaseToolSet:
         """
         Get a tool of the specified type from the tool set.
 
-        :param tool_type: The type of tool to get.
+        :param Type[Tool] tool_type: The type of tool to get.
         :return: The tool of the specified type.
         :raises ValueError: If a tool of the specified type is not found.
         """
@@ -811,7 +814,7 @@ class ToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool: The type of the tool to validate.
+        :param Tool tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, AsyncFunctionTool):
@@ -824,7 +827,7 @@ class ToolSet(BaseToolSet):
         """
         Execute a tool of the specified type with the provided tool calls.
 
-        :param tool_calls: A list of tool calls to execute.
+        :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         """
         tool_outputs = []
@@ -854,7 +857,7 @@ class AsyncToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool: The type of the tool to validate.
+        :param Tool tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, FunctionTool):
@@ -867,7 +870,7 @@ class AsyncToolSet(BaseToolSet):
         """
         Execute a tool of the specified type with the provided tool calls.
 
-        :param tool_calls: A list of tool calls to execute.
+        :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         """
         tool_outputs = []
@@ -893,37 +896,37 @@ class AgentEventHandler:
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
-        :param delta: The message delta.
+        :param MessageDeltaChunk delta: The message delta.
         """
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
-        :param message: The thread message.
+        :param ThreadMessage message: The thread message.
         """
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events.
 
-        :param run: The thread run.
+        :param ThreadRun run: The thread run.
         """
 
     def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events.
 
-        :param step: The run step.
+        :param RunStep step: The run step.
         """
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events.
 
-        :param delta: The run step delta.
+        :param RunStepDeltaChunk delta: The run step delta.
         """
 
     def on_error(self, data: str) -> None:
         """Handle error events.
 
-        :param data: The error event's data.
+        :param str data: The error event's data.
         """
 
     def on_done(self) -> None:
@@ -932,8 +935,8 @@ class AgentEventHandler:
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types.
 
-        :param event_type: The event type.
-        :param event_data: The event's data.
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
         """
 
 
@@ -942,37 +945,37 @@ class AsyncAgentEventHandler:
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
-        :param delta: The message delta.
+        :param MessageDeltaChunk delta: The message delta.
         """
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
-        :param message: The thread message.
+        :param ThreadMessage message: The thread message.
         """
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events.
 
-        :param run: The thread run.
+        :param ThreadRun run: The thread run.
         """
 
     async def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events.
 
-        :param step: The run step.
+        :param RunStep step: The run step.
         """
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events.
 
-        :param delta: The run step delta.
+        :param RunStepDeltaChunk delta: The run step delta.
         """
 
     async def on_error(self, data: str) -> None:
         """Handle error events.
 
-        :param data: The error event's data.
+        :param str data: The error event's data.
         """
 
     async def on_done(self) -> None:
@@ -981,8 +984,8 @@ class AsyncAgentEventHandler:
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types.
 
-        :param event_type: The event type.
-        :param event_data: The event's data.
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
         """
 
 

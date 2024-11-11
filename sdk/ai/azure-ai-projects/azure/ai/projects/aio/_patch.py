@@ -227,8 +227,8 @@ class AIProjectClient(ClientGenerated):
         """
         Create an asynchronous AIProjectClient from a connection string.
 
-        :param conn_str: The connection string, copied from your AI Studio project.
-        :param credential: Credential used to authenticate requests to the service.
+        :param str conn_str: The connection string, copied from your AI Studio project.
+        :param AsyncTokenCredential credential: Credential used to authenticate requests to the service.
         """
         if not conn_str:
             raise ValueError("Connection string is required")

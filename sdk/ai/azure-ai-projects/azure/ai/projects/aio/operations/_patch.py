@@ -622,19 +622,32 @@ class AgentsOperations(AgentsOperationsGenerated):
         Creates a new agent with various configurations, delegating to the generated operations.
 
         :param body: JSON or IO[bytes]. Required if `model` is not provided.
+        :type body: Union[JSON, IO[bytes]]
         :keyword model: The ID of the model to use. Required if `body` is not provided.
+        :paramtype model: str
         :keyword name: The name of the new agent.
+        :paramtype name: Optional[str]
         :keyword description: A description for the new agent.
+        :paramtype description: Optional[str]
         :keyword instructions: System instructions for the agent.
+        :paramtype instructions: Optional[str]
         :keyword tools: List of tools definitions for the agent.
+        :paramtype tools: Optional[List[_models.ToolDefinition]]
         :keyword tool_resources: Resources used by the agent's tools.
+        :paramtype tool_resources: Optional[_models.ToolResources]
         :keyword toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions).
+        :paramtype toolset: Optional[_models.AsyncToolSet]
         :keyword temperature: Sampling temperature for generating agent responses.
+        :paramtype temperature: Optional[float]
         :keyword top_p: Nucleus sampling parameter.
+        :paramtype top_p: Optional[float]
         :keyword response_format: Response format for tool calls.
+        :paramtype response_format: Optional["_types.AgentsApiResponseFormatOption"]
         :keyword metadata: Key/value pairs for storing additional information.
+        :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
+        :paramtype content_type: str
         :keyword kwargs: Additional parameters.
         :return: An Agent object.
         :raises: HttpResponseError for HTTP errors.
@@ -1952,11 +1965,16 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
+        :type body: Optional[JSON]
         :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :paramtype file_path: Optional[str]
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
+        :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
@@ -2065,11 +2083,16 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
+        :type body: Optional[JSON]
         :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :paramtype file_path: Optional[str]
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
+        :paramtype filename: Optional[str]
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
