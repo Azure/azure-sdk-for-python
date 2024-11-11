@@ -89,7 +89,7 @@ async def storing_session_tokens_container_feed_ranges(container):
     # to store session tokens in a cache by feed range from the partition key.
     feed_ranges_and_session_tokens = []
     previous_session_token = ""
-    feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+    feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
 
     # populating cache with session tokens
     for i in range(5):
