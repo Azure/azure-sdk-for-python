@@ -144,8 +144,8 @@ class ConnectionProperties:
         )
         self.key: Optional[str] = None
         if hasattr(connection.properties, "credentials"):
-            if hasattr(connection.properties.credentials, "key"): # type: ignore
-                self.key = connection.properties.credentials.key # type: ignore
+            if hasattr(connection.properties.credentials, "key"):  # type: ignore
+                self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
@@ -187,6 +187,7 @@ class ConnectionProperties:
             out += f' "token_credential": null\n'
         out += "}\n"
         return out
+
 
 # TODO: Look into adding an async version of this class
 class SASTokenCredential(TokenCredential):

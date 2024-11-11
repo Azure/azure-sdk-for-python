@@ -117,7 +117,9 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            raise ValueError("Getting chat completions client from a connection with SAS authentication is not yet supported")
+            raise ValueError(
+                "Getting chat completions client from a connection with SAS authentication is not yet supported"
+            )
         else:
             raise ValueError("Unknown authentication type")
 
