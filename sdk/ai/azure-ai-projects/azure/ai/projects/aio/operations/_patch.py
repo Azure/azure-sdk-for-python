@@ -7,52 +7,53 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ..._vendor import FileType
-import io, asyncio
+import asyncio
+import io
 import logging
 import os
 import time
 from pathlib import Path
-from azure.core.exceptions import ResourceNotFoundError
 from typing import (
     IO,
+    TYPE_CHECKING,
     Any,
     AsyncIterator,
     Dict,
     List,
     MutableMapping,
     Optional,
+    Sequence,
+    TextIO,
     Union,
     cast,
     overload,
-    Sequence,
-    TYPE_CHECKING,
-    TextIO,
 )
 
-from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
-from ._operations import AgentsOperations as AgentsOperationsGenerated
-from ._operations import TelemetryOperations as TelemetryOperationsGenerated
-from ...models._patch import ConnectionProperties
-from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
-from ...models._models import (
-    GetConnectionResponse,
-    ListConnectionsResponse,
-    GetAppInsightsResponse,
-    GetWorkspaceResponse,
-    InternalConnectionPropertiesSASAuth,
-)
-from ... import models as _models
-from ...operations._patch import _enable_telemetry
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ... import models as _models
+from ..._vendor import FileType
+from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
+from ...models._models import (
+    GetAppInsightsResponse,
+    GetConnectionResponse,
+    GetWorkspaceResponse,
+    InternalConnectionPropertiesSASAuth,
+    ListConnectionsResponse,
+)
+from ...models._patch import ConnectionProperties
+from ...operations._patch import _enable_telemetry
+from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
+from ._operations import TelemetryOperations as TelemetryOperationsGenerated
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.ai.projects import _types
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
     from openai import AsyncAzureOpenAI
-    from azure.identity.aio import get_bearer_token_provider
+
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.projects import _types
 
 logger = logging.getLogger(__name__)
 
@@ -98,10 +99,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -169,10 +170,10 @@ class InferenceOperations:
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
-        except ModuleNotFoundError as _:
+        except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            )
+            ) from e
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
@@ -232,8 +233,10 @@ class InferenceOperations:
 
         try:
             from openai import AsyncAzureOpenAI
-        except ModuleNotFoundError as _:
-            raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai-async'")
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "OpenAI SDK is not installed. Please install it using 'pip install openai-async'"
+            ) from e
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -242,22 +245,18 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif (
-            connection.authentication_type == AuthenticationType.ENTRA_ID
-            or connection.authentication_type == AuthenticationType.SAS
-        ):
-
+        elif connection.authentication_type in {AuthenticationType.ENTRA_ID, AuthenticationType.SAS}:
             try:
                 from azure.identity.aio import get_bearer_token_provider
-            except ModuleNotFoundError as _:
+            except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
-                )
+                ) from e
             if connection.authentication_type == AuthenticationType.ENTRA_ID:
                 auth = "Creating AzureOpenAI using Entra ID authentication"
             else:
                 auth = "Creating AzureOpenAI using SAS authentication"
-            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
+            logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -302,8 +301,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return await self.get(
                     connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
                 )
-            else:
-                return connection_properties_list[0]
+            return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
@@ -330,7 +328,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             )
             if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
-            elif connection.properties.auth_type == AuthenticationType.SAS:
+            if connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
@@ -346,9 +344,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return ConnectionProperties(connection=connection, token_credential=token_credential)
 
             return ConnectionProperties(connection=connection)
-        else:
-            connection = await self._get_connection(connection_name=connection_name, **kwargs)
-            return ConnectionProperties(connection=connection)
+        connection = await self._get_connection(connection_name=connection_name, **kwargs)
+        return ConnectionProperties(connection=connection)
 
     @distributed_trace_async
     async def list(
@@ -443,6 +440,10 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
 
 class AgentsOperations(AgentsOperationsGenerated):
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._toolset: Optional[_models.AsyncToolSet] = None
 
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -951,9 +952,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: The toolset for the agent. If not set, returns None.
         :rtype: ~azure.ai.projects.models.AsyncToolSet
         """
-        if hasattr(self, "_toolset"):
-            return self._toolset
-        return None
+        return self._toolset
 
     @overload
     async def create_run(
@@ -1221,6 +1220,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def create_and_process_run(
         self,
         thread_id: str,
+        *,
         assistant_id: str,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1880,7 +1880,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.warning("Toolset is not available in the client.")
                 return
 
-            logger.info(f"Tool outputs: {tool_outputs}")
+            logger.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
                 async with await self.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
@@ -1981,7 +1981,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 return await super().upload_file(file=file_content, purpose=purpose, **kwargs)
             except IOError as e:
-                raise IOError(f"Unable to read file: {file_path}. Reason: {str(e)}")
+                raise IOError(f"Unable to read file: {file_path}.") from e
 
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
@@ -2636,10 +2636,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(None, write_file, chunks)
 
-            logger.debug(f"File '{sanitized_file_name}' saved successfully at '{target_file_path}'.")
+            logger.debug("File '%s' saved successfully at '%s'.", sanitized_file_name, target_file_path)
 
         except (ValueError, RuntimeError, TypeError, IOError) as e:
-            logger.error(f"An error occurred in save_file: {e}")
+            logger.error("An error occurred in save_file: %s", e)
             raise
 
 

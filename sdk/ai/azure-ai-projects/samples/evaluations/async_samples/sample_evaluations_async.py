@@ -25,7 +25,12 @@ import os
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
+from azure.ai.projects.models import (
+    Evaluation,
+    Dataset,
+    EvaluatorConfiguration,
+    ConnectionType,
+)
 from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator
 
 
@@ -38,7 +43,9 @@ async def main():
     # Upload data for evaluation
     data_id, _ = project_client.upload_file("./data/evaluate_test_data.jsonl")
 
-    default_connection = await project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+    default_connection = await project_client.connections.get_default(
+        connection_type=ConnectionType.AZURE_OPEN_AI
+    )
 
     deployment_name = "<>"
     api_version = "<>"
@@ -75,12 +82,18 @@ async def main():
         evaluation_response = await project_client.evaluations.create(evaluation)
 
         # Get evaluation
-        get_evaluation_response = await project_client.evaluations.get(evaluation_response.id)
+        get_evaluation_response = await project_client.evaluations.get(
+            evaluation_response.id
+        )
 
         print("----------------------------------------------------------------")
         print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
         print("Evaluation status: ", get_evaluation_response.status)
-        print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+        if isinstance(get_evaluation_response.properties, dict):
+            print(
+                "AI Studio URI: ",
+                get_evaluation_response.properties["AiStudioEvaluationUri"],
+            )
         print("----------------------------------------------------------------")
 
 
