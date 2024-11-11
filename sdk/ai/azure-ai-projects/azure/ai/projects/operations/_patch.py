@@ -418,7 +418,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
             try:
                 from opentelemetry.sdk._logs.export import ConsoleLogExporter
-            except ModuleNotFoundError as _:
+            except ModuleNotFoundError as ex:
                 # since OTel logging is still in beta in Python, we're going to swallow any errors
                 # and just warn about them.
                 logger.warning(

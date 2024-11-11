@@ -24,6 +24,7 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import MessageTextContent
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -40,7 +41,9 @@ with project_client:
 
     # [START create_agent]
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+        model="gpt-4-1106-preview",
+        name="my-assistant",
+        instructions="You are helpful assistant",
     )
     # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
@@ -51,7 +54,9 @@ with project_client:
     print(f"Created thread, thread ID: {thread.id}")
 
     # [START create_message]
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    message = project_client.agents.create_message(
+        thread_id=thread.id, role="user", content="Hello, tell me a joke"
+    )
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
@@ -71,8 +76,13 @@ with project_client:
 
     # [START list_messages]
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    last_message_content = messages.data[-1].content[-1].text.value
-    print(f"Last message content: {last_message_content}")
+
+    # The messages are following in the reverse order,
+    # we will iterate them and output only text contents.
+    for data_point in reversed(messages.data):
+        last_message_content = data_point.content[-1]
+        if isinstance(last_message_content, MessageTextContent):
+            print(f"{data_point.role}: {last_message_content.text.value}")
 
     # [END list_messages]
     print(f"Messages: {messages}")
