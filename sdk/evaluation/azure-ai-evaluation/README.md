@@ -256,23 +256,11 @@ outputs = asyncio.run(
 
 print(outputs.to_eval_qr_json_lines())
 ```
-#### Direct Attack Simulator
 
-```python
-scenario = AdversarialScenario.ADVERSARIAL_QA
-simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
-
-outputs = asyncio.run(
-    simulator(
-        scenario=scenario,
-        max_conversation_turns=1,
-        max_simulation_results=2,
-        target=callback
-    )
-)
-
-print(outputs)
-```
+For more details about the simulator, visit the following links:
+- [Adversarial Simulation docs][adversarial_simulation_docs]
+- [Adversarial scenarios][adversarial_simulation_scenarios]
+- [Simulating jailbreak attacks][adversarial_jailbreak]
 
 ## Examples
 
@@ -350,5 +338,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
 [risk_and_safety_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators
 [composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
+[adversarial_simulation_docs]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#generate-adversarial-simulations-for-safety-evaluation
+[adversarial_simulation_scenarios]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios
 [adversarial_simulation]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/simulate_adversarial
 [simulate_with_conversation_starter]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/simulate_conversation_starter
+[adversarial_jailbreak]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#simulating-jailbreak-attacks
