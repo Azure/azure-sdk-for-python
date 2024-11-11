@@ -415,7 +415,8 @@ class TelemetryOperations(TelemetryOperationsGenerated):
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
     async def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
-        """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
+        """Enables distributed tracing and logging with OpenTelemetry for Azure AI clients and
+        popular GenAI libraries.
 
         Following instrumentations are enabled (when corresponding packages are installed):
 
@@ -431,11 +432,11 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         stdout or OTLP (OpenTelemetry protocol) gRPC endpoint. It's recommended for local
         development only. For production use, make sure to configure OpenTelemetry SDK directly.
 
-        :keyword destination: Recommended for local testing only. Set it to `sys.stdout` for
-            tracing to console output, or a string holding the OpenTelemetry protocol (OTLP)
-            endpoint such as "http://localhost:4317.
+        :keyword destination: Recommended for local testing only. Set it to `sys.stdout` to print
+            traces and logs to console output, or a string holding the OpenTelemetry protocol (OTLP)
+            endpoint such as "http://localhost:4317".
             If not provided, the method enables instrumentations, but does not configure OpenTelemetry
-            SDK to export traces.
+            SDK to export traces and logs.
         :paramtype destination: Union[TextIO, str, None]
         """
         _enable_telemetry(destination=destination, **kwargs)

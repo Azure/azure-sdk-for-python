@@ -365,59 +365,142 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         return connection_properties_list
 
 
-# Internal helper function to enable tracing, used by both sync and async clients
-def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
-    """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
-
-    :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-        OpenTelemetry protocol (OTLP) endpoint.
-        If not provided, this method enables instrumentation, but does not configure OpenTelemetry
-        SDK to export traces.
-    :paramtype destination: Union[TextIO, str, None]
-    """
+# Internal helper functions to enable OpenTelemetry, used by both sync and async clients
+def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
     if isinstance(destination, str):
         # `destination` is the OTLP endpoint
         # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
-        try:
-            from opentelemetry import trace
-            from opentelemetry.sdk.trace import TracerProvider
-            from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-        except ModuleNotFoundError as _:
-            raise ModuleNotFoundError(
-                "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
-            )
         try:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError(
                 "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
             )
-        trace.set_tracer_provider(TracerProvider())
-        # get_tracer_provider returns opentelemetry.trace.TracerProvider
-        # however, we have opentelemetry.sdk.trace.TracerProvider, which implements
-        # add_span_processor method, though we need to cast it to fix type checking.
-        tp = cast(TracerProvider, trace.get_tracer_provider())
-        tp.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint=destination)))
+        return OTLPSpanExporter(endpoint=destination)
 
-    elif isinstance(destination, io.TextIOWrapper):
+    if isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
             try:
-                from opentelemetry import trace
-                from opentelemetry.sdk.trace import TracerProvider
-                from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+                from opentelemetry.sdk.trace.export import ConsoleSpanExporter
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
                 )
-            trace.set_tracer_provider(TracerProvider())
-            # get_tracer_provider returns opentelemetry.trace.TracerProvider
-            # however, we have opentelemetry.sdk.trace.TracerProvider, which implements
-            # add_span_processor method, though we need to cast it to fix type checking.
-            tp = cast(TracerProvider, trace.get_tracer_provider())
-            tp.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+
+            return ConsoleSpanExporter()
         else:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+
+    return None
+
+def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
+    if isinstance(destination, str):
+        # `destination` is the OTLP endpoint
+        # See: https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html#usage
+        try:
+            # _logs are considered beta (not internal) in OpenTelemetry Python API/SDK.
+            # So it's ok to use it for local development, but we'll swallow
+            # any errors in case of any breaking changes on OTel side.
+            from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter  # type: ignore
+        except Exception as ex:
+            # since OTel logging is still in beta in Python, we're going to swallow any errors
+            # and just warn about them.
+            logger.warning(
+                "Failed to configure OpenTelemetry logging.", exc_info=ex
+            )
+            return None
+
+        return OTLPLogExporter(endpoint=destination)
+
+    if isinstance(destination, io.TextIOWrapper):
+        if destination is sys.stdout:
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            try:
+                from opentelemetry.sdk._logs.export import ConsoleLogExporter
+            except ModuleNotFoundError as _:
+                # since OTel logging is still in beta in Python, we're going to swallow any errors
+                # and just warn about them.
+                logger.warning(
+                    "Failed to configure OpenTelemetry logging.", exc_info=ex
+                )
+
+            return ConsoleLogExporter()
+        else:
+            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+
+    return None
+
+def _configure_tracing(span_exporter: Any) -> None:
+    if span_exporter is None:
+        return
+
+    try:
+        from opentelemetry import trace
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    except ModuleNotFoundError as _:
+        raise ModuleNotFoundError(
+            "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
+        )
+
+    # if tracing was not setup before, we need to create a new TracerProvider
+    if not isinstance(trace.get_tracer_provider(), TracerProvider):
+        # If the provider is NoOpTracerProvider, we need to create a new TracerProvider
+        provider = TracerProvider()
+        trace.set_tracer_provider(provider)
+
+    # get_tracer_provider returns opentelemetry.trace.TracerProvider
+    # however, we have opentelemetry.sdk.trace.TracerProvider, which implements
+    # add_span_processor method, though we need to cast it to fix type checking.
+    provider = cast(TracerProvider, trace.get_tracer_provider())
+    provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+
+def _configure_logging(log_exporter: Any) -> None:
+    if log_exporter is None:
+        return
+
+    try:
+        # _events and _logs are considered beta (not internal) in
+        # OpenTelemetry Python API/SDK.
+        # So it's ok to use them for local development, but we'll swallow
+        # any errors in case of any breaking changes on OTel side.
+        from opentelemetry import _logs, _events
+        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.sdk._events import EventLoggerProvider
+        from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor
+
+        if not isinstance(_logs.get_logger_provider(), LoggerProvider):
+            logger_provider = LoggerProvider()
+            _logs.set_logger_provider(logger_provider)
+
+        # get_logger_provider returns opentelemetry._logs.LoggerProvider
+        # however, we have opentelemetry.sdk._logs.LoggerProvider, which implements
+        # add_log_record_processor method, though we need to cast it to fix type checking.
+        logger_provider = cast(LoggerProvider, _logs.get_logger_provider())
+        logger_provider.add_log_record_processor(SimpleLogRecordProcessor(log_exporter))
+        _events.set_event_logger_provider(EventLoggerProvider(logger_provider))
+    except Exception as ex:
+        # since OTel logging is still in beta in Python, we're going to swallow any errors
+        # and just warn about them.
+        logger.warning(
+            "Failed to configure OpenTelemetry logging.", exc_info=ex
+        )
+
+def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
+    """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
+
+    :keyword destination: `sys.stdout` to print telemetry to console or a string holding the
+        OpenTelemetry protocol (OTLP) endpoint.
+        If not provided, this method enables instrumentation, but does not configure OpenTelemetry
+        SDK to export traces and logs.
+    :paramtype destination: Union[TextIO, str, None]
+    """
+    span_exporter = _get_trace_exporter(destination)
+    _configure_tracing(span_exporter)
+
+    log_exporter = _get_log_exporter(destination)
+    _configure_logging(log_exporter)
 
     # Silently try to load a set of relevant Instrumentors
     try:
@@ -447,7 +530,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         if not instrumentor.is_instrumented():
             instrumentor.instrument()
     except Exception as exc:
-        logger.warning("Could not call `AIAgentsInstrumentor().instrument()` " + str(exc))
+        logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
     try:
         from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor  # type: ignore
@@ -455,7 +538,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError as _:
         logger.warning(
-            "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai` is not installed"
+            "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai-v2` is not installed"
         )
 
     try:
