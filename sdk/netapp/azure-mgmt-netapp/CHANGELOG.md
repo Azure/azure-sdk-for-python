@@ -29,15 +29,11 @@
   - Added model `QuotaReport`
   - Added enum `ReplicationType`
   - Added enum `VolumeLanguage`
-  - Model `AccountsOperations` added method `begin_change_key_vault`
-  - Model `AccountsOperations` added method `begin_get_change_key_vault_information`
-  - Model `AccountsOperations` added method `begin_transition_to_cmk`
-  - Model `VolumesOperations` added method `begin_list_quota_report`
-  - Model `VolumesOperations` added method `begin_split_clone_from_parent`
-  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[ChangeKeyVault], content_type: str)`
-  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[EncryptionTransitionRequest], content_type: str)`
-  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Operations `AccountsOperations` added method `begin_change_key_vault`
+  - Operations `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operations `AccountsOperations` added method `begin_transition_to_cmk`
+  - Operations `VolumesOperations` added method `begin_list_quota_report`
+  - Operations `VolumesOperations` added method `begin_split_clone_from_parent`
 
 ## 13.3.0 (2024-10-21)
 
