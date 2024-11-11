@@ -509,6 +509,9 @@ class AzureAISearchTool(Tool):
     def add_index(self, index: str, name: str):
         """
         Add an index ID to the list of indices used to search.
+
+        :param index: The index connection id.
+        :param name: The index name.
         """
         # TODO
         self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
@@ -764,6 +767,9 @@ class BaseToolSet:
     def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
         """
         Safely converts a dictionary into a ToolResources instance.
+
+        :param resources: A dictionary of tool resources. Should be a mapping
+            accepted by ~azure.ai.projects.models.AzureAISearchResource
         """
         try:
             return ToolResources(**resources)
@@ -885,55 +891,99 @@ class AsyncToolSet(BaseToolSet):
 class AgentEventHandler:
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events."""
+        """Handle message delta events.
+
+        :param delta: The message delta.
+        """
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events."""
+        """Handle thread message events.
+
+        :param message: The thread message.
+        """
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events."""
+        """Handle thread run events.
+
+        :param run: The thread run.
+        """
 
     def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events."""
+        """Handle run step events.
+
+        :param step: The run step.
+        """
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events."""
+        """Handle run step delta events.
+
+        :param delta: The run step delta.
+        """
 
     def on_error(self, data: str) -> None:
-        """Handle error events."""
+        """Handle error events.
+
+        :param data: The error event's data.
+        """
 
     def on_done(self) -> None:
         """Handle the completion of the stream."""
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types."""
+        """Handle any unhandled event types.
+
+        :param event_type: The event type.
+        :param event_data: The event's data.
+        """
 
 
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events."""
+        """Handle message delta events.
+
+        :param delta: The message delta.
+        """
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events."""
+        """Handle thread message events.
+
+        :param message: The thread message.
+        """
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events."""
+        """Handle thread run events.
+
+        :param run: The thread run.
+        """
 
     async def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events."""
+        """Handle run step events.
+
+        :param step: The run step.
+        """
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events."""
+        """Handle run step delta events.
+
+        :param delta: The run step delta.
+        """
 
     async def on_error(self, data: str) -> None:
-        """Handle error events."""
+        """Handle error events.
+
+        :param data: The error event's data.
+        """
 
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types."""
+        """Handle any unhandled event types.
+
+        :param event_type: The event type.
+        :param event_data: The event's data.
+        """
 
 
 class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]):

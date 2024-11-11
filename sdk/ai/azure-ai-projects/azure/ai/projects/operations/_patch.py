@@ -496,7 +496,7 @@ def _configure_logging(log_exporter: Any) -> None:
 def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
-    :keyword destination: `sys.stdout` to print telemetry to console or a string holding the
+    :param destination: `sys.stdout` to print telemetry to console or a string holding the
         OpenTelemetry protocol (OTLP) endpoint.
         If not provided, this method enables instrumentation, but does not configure OpenTelemetry
         SDK to export traces and logs.
