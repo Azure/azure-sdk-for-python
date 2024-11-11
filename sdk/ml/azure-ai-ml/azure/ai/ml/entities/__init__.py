@@ -300,12 +300,12 @@ from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace._ai_workspaces.hub import Hub
 from ._workspace._ai_workspaces.project import Project
-from ._workspace.network_acls import NetworkAcls
 from ._workspace.workspace_keys import (
     ContainerRegistryCredential,
     NotebookAccessKeys,
     WorkspaceKeys,
 )
+from ._workspace.network_acls import NetworkAcls
 
 __all__ = [
     "Resource",
