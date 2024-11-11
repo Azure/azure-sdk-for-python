@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
+../azure-ai-inference
 ../../core/azure-core
 ../../identity/azure-identity
 ../../core/azure-core-tracing-opentelemetry
