@@ -5,7 +5,7 @@ import logging
 from concurrent.futures import as_completed
 from typing import Callable, Dict, List, Union
 
-from ..._external._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from ..._promptflow.tracing._context_utils import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_conversation
 from ._hate_unfairness import HateUnfairnessMultimodalEvaluator

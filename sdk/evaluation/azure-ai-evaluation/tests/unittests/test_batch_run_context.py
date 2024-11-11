@@ -34,7 +34,7 @@ class TestEvalRunContext:
             "promptflow._utils.user_agent_utils.ClientUserAgentUtil.append_user_agent"
         )
 
-        with EvalRunContext(code_client_mock):
+        with EvalRunContext(pf_client_mock):
             mock_append_user_agent.assert_not_called()
 
     def test_batch_timeout_default(self):
