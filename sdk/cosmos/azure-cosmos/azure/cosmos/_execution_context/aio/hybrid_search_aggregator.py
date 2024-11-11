@@ -99,7 +99,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._hybrid_search_query_info = hybrid_search_query_info
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
         self._final_results = None
-        self.skip = hybrid_search_query_info['skip']
+        self.skip = hybrid_search_query_info['skip'] or 0
         self.take = hybrid_search_query_info['take']
         self.original_query = query
         self._aggregated_global_statistics = None
@@ -221,11 +221,13 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'])
-        self._final_results = drained_results
+        self._final_results = drained_results[-(self.take + self.skip):-self.skip]
 
     def _format_singleton_response(self, results):
         # Strip off everything but the payload and emit those documents
         self._final_results = [{'payload': result['payload']} for result in results]
+        self._final_results = self._final_results[self.skip:self.skip+self.take]
+        self._final_results.reverse()
         return True
 
     def _format_component_query(self, format_string):

@@ -25,11 +25,10 @@ Cosmos database service.
 
 import os
 from azure.cosmos._execution_context.aio import endpoint_component, multi_execution_aggregator
-from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator
-from . import hybrid_search_aggregator
+from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator, hybrid_search_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
+from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info, _is_hybrid_search_query
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -90,14 +89,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         try:
             return await self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e): #cross partition query not servable
+            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
                 query_to_use = self._query if self._query is not None else "Select * from root r"
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
-                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
-            elif self._query and "FullTextScore(" in self._query:  # had to add this logic since error returned from service is different, will need to ask Neil
-                query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
-                                                                      (self._query, self._resource_link))
                 self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
@@ -133,6 +128,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             await execution_context_aggregator._configure_partition_ranges()
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            if not hybrid_search_query_info['take']:
+                raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
+                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                 " of the two filters with your hybrid search query.")
             execution_context_aggregator = \
                 hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
                                                                         self._resource_link,
