@@ -3908,20 +3908,42 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, protocols='NFS')
-        file_client = self._create_file()
-
+        owner, group, file_mode = '0', '0', '0664'
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512)
+        file_client = self._create_file()
+        new_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=storage_account_key
+        )
 
-        props = file_client.download_file().properties
-        assert props is not None
-        assert props.owner == '0'
-        assert props.group == '0'
-        assert props.file_mode == '0664'
-        assert props.link_count == 1
-        assert props.file_attributes is None
-        assert props.permission_key is None
+        try:
+            file_client.upload_range(data, offset=0, length=512)
+            props = file_client.download_file().properties
+            assert props is not None
+            assert props.owner == owner
+            assert props.group == group
+            assert props.file_mode == file_mode
+            assert props.link_count == 1
+            assert props.file_attributes is None
+            assert props.permission_key is None
 
-        # file_client.delete_file()
+            copy = new_client.start_copy_from_url(file_client.url, owner=owner, group=group, file_mode=file_mode)
+            assert copy is not None
+            assert copy['copy_status'] == 'success'
+            assert copy['copy_id'] is not None
+
+            props = new_client.get_file_properties()
+            assert props is not None
+            assert props.owner == owner
+            assert props.group == group
+            assert props.file_mode == file_mode
+            assert props.link_count == 1
+            assert props.file_attributes is None
+            assert props.permission_key is None
+        finally:
+            file_client.delete_file()
+            new_client.delete_file()
 
 # ------------------------------------------------------------------------------

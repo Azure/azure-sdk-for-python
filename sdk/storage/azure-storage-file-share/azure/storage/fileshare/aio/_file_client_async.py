@@ -714,6 +714,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -735,6 +741,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         metadata = kwargs.pop('metadata', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
+        owner = kwargs.pop('owner', None)
+        group = kwargs.pop('group', None)
+        file_mode = kwargs.pop('file_mode', None)
+        file_mode_copy_mode = 'override' if file_mode else None
+        file_owner_copy_mode = 'override' if owner or group else None
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         kwargs.update(get_smb_properties(kwargs))
@@ -743,6 +754,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 source_url,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
+                owner=owner,
+                group=group,
+                file_mode=file_mode,
+                file_mode_copy_mode=file_mode_copy_mode,
+                file_owner_copy_mode=file_owner_copy_mode,
                 headers=headers,
                 cls=return_response_headers,
                 timeout=timeout,
