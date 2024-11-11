@@ -72,7 +72,7 @@
   - Added model `UserAssignedIdentity`
   - Operations `ClustersOperations` added method `begin_continue_update_version`
   - Operations `ClustersOperations` added method `begin_scan_runtime`
-  - Added model `KubernetesClusterFeaturesOperations`
+  - Added operations `KubernetesClusterFeaturesOperations`
 
 ### Breaking Changes
 
