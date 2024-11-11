@@ -10,6 +10,21 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NetworkAcls(RestTranslatableMixin):
+    """Network Access Setting for Workspace
+
+    :param default_action: Specifies the default action when no IP rules are matched.
+    :type default_action: str
+    :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
+    :type ip_rules: Optional[List[IPRule]]
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START workspace_network_access_settings]
+            :end-before: [END workspace_network_access_settings]
+            :language: python
+            :dedent: 8
+            :caption: Examples to choose one of three Public network access settings.
+    """
+
     class IPRule(RestTranslatableMixin):
         """Represents an IP rule with a value.
 
@@ -46,13 +61,6 @@ class NetworkAcls(RestTranslatableMixin):
         default_action: str = DefaultActionType.ALLOW,
         ip_rules: Optional[List[IPRule]] = None,
     ):
-        """Initializes the NetworkAcls object.
-
-        :param bypass: Specifies whether to bypass the default action.
-        :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
-        :type ip_rules: Optional[List[IPRule]]
-        :param resource_access_rules: Rules governing the accessibility of a resource.
-        """
         self.ip_rules = ip_rules if ip_rules is not None else []
         self.default_action = default_action
 
@@ -70,7 +78,7 @@ class NetworkAcls(RestTranslatableMixin):
             ),
         )
 
-    def convert_to_ip_allowlist(self) -> List[str]:
+    def _convert_to_ip_allowlist(self) -> List[str]:
         """Converts the IP rules to an IP allowlist.
         :return: A list of IP addresses or IP ranges.
         :rtype: List[str]
@@ -78,7 +86,7 @@ class NetworkAcls(RestTranslatableMixin):
         return [rule.value for rule in self.ip_rules if rule.value is not None]
 
     @classmethod
-    def parse(cls, ip_allowlist: Optional[List[str]]) -> "NetworkAcls":
+    def _parse(cls, ip_allowlist: Optional[List[str]]) -> "NetworkAcls":
         """Parses a list of IP allowlist strings into a NetworkAcls object.
         :param ip_allowlist: A list of IP addresses or IP ranges in CIDR notation.
         :type ip_allowlist: Optional[List[str]]

@@ -363,7 +363,7 @@ class WorkspaceOperationsBase(ABC):
         ip_allowlist = None
         if network_acls:
             # backward compatibility to ip_allowlist
-            ip_allowlist = network_acls.convert_to_ip_allowlist()
+            ip_allowlist = network_acls._convert_to_ip_allowlist()  # pylint: disable=protected-access
             network_acls = network_acls._to_rest_object()  # pylint: disable=protected-access
 
         if public_network_access == "Disabled" or (

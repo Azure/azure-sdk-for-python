@@ -397,7 +397,7 @@ class Workspace(Resource):
                 network_acls = NetworkAcls._from_rest_object(rest_obj.network_acls)  # pylint: disable=protected-access
 
         if network_acls is None and rest_obj.ip_allowlist is not None:
-            network_acls = NetworkAcls.parse(rest_obj.ip_allowlist)
+            network_acls = NetworkAcls._parse(rest_obj.ip_allowlist)  # pylint: disable=protected-access
 
         return cls(
             name=rest_obj.name,
