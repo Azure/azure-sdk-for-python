@@ -1,4 +1,4 @@
 directory: specification/healthdataaiservices/HealthDataAIServices.DeidServices
-commit: <replace with your value>
-repo: <replace with your value>
+commit: e5ad7a2048e1b6778fbf11b024bee152a282853a
+repo: Azure/azure-rest-api-specs
 additionalDirectories: 
