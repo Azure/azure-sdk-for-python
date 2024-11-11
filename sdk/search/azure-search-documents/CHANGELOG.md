@@ -30,6 +30,7 @@
 ### Other Changes
 
 - Updated the API version to "2024-1-01-preview"
+- Test
 
 ## 11.6.0b6 (2024-10-08)
 
