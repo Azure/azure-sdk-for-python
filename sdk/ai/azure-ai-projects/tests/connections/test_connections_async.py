@@ -15,8 +15,8 @@ class TestConnectionsAsync(ConnectionsTestBase):
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
     async def test_connections_get_async(self, **kwargs):
-        aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        aiservices_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
+        aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_default_aoai_connection_name")
+        aiservices_connection = kwargs.pop("azure_ai_projects_connections_tests_default_aiservices_connection_name")
 
         async with self.get_async_client(**kwargs) as project_client:
 
