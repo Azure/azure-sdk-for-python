@@ -148,7 +148,8 @@ def test_basic_send_single_events_round_robin(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         credential=credential(),
-        consumer_group="$default", uamqp_transport=uamqp_transport
+        consumer_group="$default",
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -203,20 +204,14 @@ def test_basic_send_single_events_round_robin(
             # ensure it's buffered sending
             for pid in partitions:
                 assert len(sent_events[pid]) < total_single_event_cnt // partitions_cnt
-            assert (
-                sum([len(sent_events[pid]) for pid in partitions])
-                < total_single_event_cnt
-            )
+            assert sum([len(sent_events[pid]) for pid in partitions]) < total_single_event_cnt
         else:
             if flush_after_sending:
                 producer.flush()
             if close_after_sending:
                 producer.close()
             # ensure all events are sent after calling flush
-            assert (
-                sum([len(sent_events[pid]) for pid in partitions])
-                == total_single_event_cnt
-            )
+            assert sum([len(sent_events[pid]) for pid in partitions]) == total_single_event_cnt
 
         # give some time for producer to complete sending and consumer to complete receiving
         time.sleep(10)
@@ -269,7 +264,7 @@ def test_basic_send_batch_events_round_robin(
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -347,9 +342,7 @@ def test_basic_send_batch_events_round_robin(
             if close_after_sending:
                 producer.close()
             # ensure all events are sent
-            assert (
-                sum([len(sent_events[pid]) for pid in partitions]) == total_events_cnt
-            )
+            assert sum([len(sent_events[pid]) for pid in partitions]) == total_events_cnt
 
         time.sleep(20)
         assert len(sent_events) == len(received_events) == partitions_cnt
@@ -389,7 +382,7 @@ def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -461,17 +454,11 @@ def test_send_with_hybrid_partition_assignment(auth_credentials, uamqp_transport
 
             for sent_event in sent_events[pid]:
                 if int(sent_event.body_as_str()) in expected_event_idx_to_partition:
-                    assert (
-                        expected_event_idx_to_partition[int(sent_event.body_as_str())]
-                        == pid
-                    )
+                    assert expected_event_idx_to_partition[int(sent_event.body_as_str())] == pid
 
             for recv_event in received_events[pid]:
                 if int(sent_event.body_as_str()) in expected_event_idx_to_partition:
-                    assert (
-                        expected_event_idx_to_partition[int(sent_event.body_as_str())]
-                        == pid
-                    )
+                    assert expected_event_idx_to_partition[int(sent_event.body_as_str())] == pid
 
                 assert recv_event.body_as_str() not in visited
                 visited.add(recv_event.body_as_str())
@@ -495,7 +482,7 @@ def test_send_with_timing_configuration(auth_credentials, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -587,7 +574,7 @@ def test_long_sleep(auth_credentials, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
@@ -641,7 +628,7 @@ def test_long_wait_small_buffer(auth_credentials, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True

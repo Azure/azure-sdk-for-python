@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class CheckNameAvailability(_serialization.Model):
     """Description of a Check Name availability request properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The Name to check the namespace name availability and The namespace name can
      contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
@@ -143,7 +143,7 @@ class NamespaceCreateOrUpdateParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Namespace location. Required.
     :vartype location: str
@@ -571,7 +571,7 @@ class QueueCreateOrUpdateParameters(_serialization.Model):  # pylint: disable=to
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Queue name.
     :vartype name: str
@@ -1128,7 +1128,7 @@ class ResourceListKeys(_serialization.Model):
         self.key_name = key_name
 
 
-class SharedAccessAuthorizationRuleCreateOrUpdateParameters(_serialization.Model):
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters supplied to the Create Or Update Authorization Rules operation.
 
     :ivar location: data center location.
@@ -1254,7 +1254,7 @@ class SharedAccessAuthorizationRuleResource(Resource):
 class Sku(_serialization.Model):
     """SKU of the namespace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of this SKU. Known values are: "Basic", "Standard", and "Premium".
     :vartype name: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuName
@@ -1303,7 +1303,7 @@ class SubscriptionCreateOrUpdateParameters(_serialization.Model):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Subscription data center location. Required.
     :vartype location: str
@@ -1668,7 +1668,7 @@ class TopicCreateOrUpdateParameters(_serialization.Model):  # pylint: disable=to
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Topic name.
     :vartype name: str

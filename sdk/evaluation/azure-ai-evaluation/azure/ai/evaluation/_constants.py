@@ -1,18 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Literal
 
 
 class EvaluationMetrics:
     """Metrics for model evaluation."""
 
-    GPT_GROUNDEDNESS = "gpt_groundedness"
-    GPT_RELEVANCE = "gpt_relevance"
-    GPT_COHERENCE = "gpt_coherence"
-    GPT_FLUENCY = "gpt_fluency"
-    GPT_SIMILARITY = "gpt_similarity"
+    GROUNDEDNESS = "groundedness"
+    RELEVANCE = "relevance"
+    COHERENCE = "coherence"
+    FLUENCY = "fluency"
+    SIMILARITY = "similarity"
     F1_SCORE = "f1_score"
-    GPT_RETRIEVAL_SCORE = "gpt_retrieval_score"
+    RETRIEVAL_SCORE = "retrieval_score"
     HATE_FAIRNESS = "hate_fairness"
     HATE_UNFAIRNESS = "hate_unfairness"
     VIOLENCE = "violence"
@@ -48,16 +49,24 @@ class DefaultOpenEncoding:
     """SDK Default Encoding when writing a file"""
 
 
+class EvaluationRunProperties:
+    """Defines properties used to identify an evaluation run by UI"""
+
+    RUN_TYPE = "runType"
+    EVALUATION_RUN = "_azureml.evaluation_run"
+
+
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
 CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT = 4
 
 PF_BATCH_TIMEOUT_SEC_DEFAULT = 3600
 PF_BATCH_TIMEOUT_SEC = "PF_BATCH_TIMEOUT_SEC"
+PF_DISABLE_TRACING = "PF_DISABLE_TRACING"
 
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT = "OTEL_EXPORTER_OTLP_TRACES_TIMEOUT"
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
 
-AZURE_OPENAI_TYPE = "azure_openai"
+AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
-OPENAI_TYPE = "openai"
+OPENAI_TYPE: Literal["openai"] = "openai"
