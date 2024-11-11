@@ -9,9 +9,6 @@ from devtools_testutils import remove_batch_sanitizers, get_credential, test_pro
 from dotenv import load_dotenv, find_dotenv
 from azure.ai.projects import AIProjectClient
 
-if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
-    print("Failed to apply environment variables for azure-ai-projects tests.")
-
 
 class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
