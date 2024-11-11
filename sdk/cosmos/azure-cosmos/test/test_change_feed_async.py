@@ -42,7 +42,7 @@ class TestChangeFeedAsync:
     async def test_get_feed_ranges(self, setup):
         created_collection = await setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
-        result = [feed_range async for feed_range in await created_collection.read_feed_ranges()]
+        result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
@@ -57,7 +57,7 @@ class TestChangeFeedAsync:
         elif change_feed_filter_param == "partitionKeyRangeId":
             filter_param = {"partition_key_range_id": "0"}
         elif change_feed_filter_param == "feedRange":
-            feed_ranges = [feed_range async for feed_range in await created_collection.read_feed_ranges()]
+            feed_ranges = [feed_range async for feed_range in created_collection.read_feed_ranges()]
             assert len(feed_ranges) == 1
             filter_param = {"feed_range": feed_ranges[0]}
         else:
@@ -69,7 +69,7 @@ class TestChangeFeedAsync:
         assert len(iter_list) == 0
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(filter_param)
+        query_iterable = created_collection.query_items_change_feed(**filter_param)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
         if 'Etag' in created_collection.client_connection.last_response_headers:

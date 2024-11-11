@@ -190,7 +190,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     @staticmethod
     async def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
-        container_feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        container_feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         target_feed_range = None
         for feed_range in container_feed_ranges:
             if await container.is_feed_range_subset(feed_range, pk_feed_range):
