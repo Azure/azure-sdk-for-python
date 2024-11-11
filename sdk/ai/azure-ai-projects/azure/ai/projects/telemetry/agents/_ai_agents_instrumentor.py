@@ -432,6 +432,7 @@ class _AIAgentsInstrumentorPreview:
         :param response_format: The response format.
         :type response_format: ~azure.ai.projects._types.AgentsApiResponseFormatOption
         :returns: string for the response_format.
+        :rtype: Optional[str]
         :raises: Value error if response_format is not of type AgentsApiResponseFormatOption.
         """
         if isinstance(response_format, str) or response_format is None:

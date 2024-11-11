@@ -85,6 +85,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     :param parameters: The parsed dictionary with parameters.
     :type parameters: Union[str, Dict[str, Any]]
     :return: The dictionary with all invalid parameters removed.
+    :rtype: Dict[str, Any]
     """
     new_params = {}
     valid_parameters = set(
@@ -105,6 +106,7 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     :param parameters: The parsed dictionary with parameters.
     :type parameters: Union[str, Dict[str, Any]]
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
+    :rtype: Any
     """
     if not isinstance(parameters, dict):
         return parameters
@@ -455,6 +457,7 @@ class BaseFunctionTool(Tool):
         Get the function definitions.
 
         :return: A list of function definitions.
+        :rtype: List[ToolDefinition]
         """
         return cast(List[ToolDefinition], self._definitions)
 
@@ -464,6 +467,7 @@ class BaseFunctionTool(Tool):
         Get the tool resources for the agent.
 
         :return: An empty ToolResources as FunctionTool doesn't have specific resources.
+        :rtype: ToolResources
         """
         return ToolResources()
 
@@ -522,6 +526,8 @@ class AzureAISearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Azure AI search tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [AzureAISearchToolDefinition()]
 
@@ -529,6 +535,8 @@ class AzureAISearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the Azure AI search resources.
+
+        :rtype: ToolResources
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
@@ -554,6 +562,8 @@ class ConnectionTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the connection tool resources.
+
+        :rtype: ToolResources
         """
         return ToolResources()
 
@@ -570,6 +580,8 @@ class BingGroundingTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Bing grounding tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -583,6 +595,8 @@ class SharepointTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Sharepoint tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -636,6 +650,8 @@ class FileSearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the file search tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [FileSearchToolDefinition()]
 
@@ -643,6 +659,8 @@ class FileSearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the file search resources.
+
+        :rtype: ToolResources
         """
         return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
@@ -686,6 +704,8 @@ class CodeInterpreterTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the code interpreter tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [CodeInterpreterToolDefinition()]
 
@@ -693,6 +713,8 @@ class CodeInterpreterTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the code interpreter resources.
+
+        :rtype: ToolResources
         """
         if not self.file_ids:
             return ToolResources()
@@ -744,6 +766,8 @@ class BaseToolSet:
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
+
+        :rtype: List[ToolDefinition]
         """
         tools = []
         for tool in self._tools:
@@ -754,6 +778,8 @@ class BaseToolSet:
     def resources(self) -> ToolResources:
         """
         Get the resources for all tools in the tool set.
+
+        :rtype: ToolResources
         """
         tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
@@ -774,6 +800,7 @@ class BaseToolSet:
             accepted by ~azure.ai.projects.models.AzureAISearchResource
         :type resources: Dict[str, Any]
         :return: A ToolResources instance.
+        :rtype: ToolResources
         """
         try:
             return ToolResources(**resources)
@@ -786,6 +813,7 @@ class BaseToolSet:
         Get the definitions and resources for all tools in the tool set.
 
         :return: A dictionary containing the tool resources and definitions.
+        :rtype: Dict[str, Any]
         """
         return {
             "tool_resources": self.resources,
@@ -798,6 +826,7 @@ class BaseToolSet:
 
         :param Type[Tool] tool_type: The type of tool to get.
         :return: The tool of the specified type.
+        :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found.
         """
         for tool in self._tools:
@@ -830,6 +859,7 @@ class ToolSet(BaseToolSet):
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
+        :rtype: Any
         """
         tool_outputs = []
 
@@ -873,6 +903,7 @@ class AsyncToolSet(BaseToolSet):
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
+        :rtype: Any
         """
         tool_outputs = []
 
@@ -1306,12 +1337,19 @@ class ThreadMessages:
 
     @property
     def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the messages."""
+        """Returns all messages in the messages.
+
+
+        :rtype: List[ThreadMessage]
+        """
         return self._messages
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
-        """Returns all text message contents in the messages."""
+        """Returns all text message contents in the messages.
+
+        :rtype: List[MessageTextContent]
+        """
         texts = [
             content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)
         ]
@@ -1319,14 +1357,20 @@ class ThreadMessages:
 
     @property
     def image_contents(self) -> List[MessageImageFileContent]:
-        """Returns all image file contents from image message contents in the messages."""
+        """Returns all image file contents from image message contents in the messages.
+
+        :rtype: List[MessageImageFileContent]
+        """
         return [
             content for msg in self._messages for content in msg.content if isinstance(content, MessageImageFileContent)
         ]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
-        """Returns all file citation annotations from text message annotations in the messages."""
+        """Returns all file citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFileCitationAnnotation]
+        """
         annotations = [
             annotation
             for msg in self._messages
@@ -1339,7 +1383,10 @@ class ThreadMessages:
 
     @property
     def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
-        """Returns all file path annotations from text message annotations in the messages."""
+        """Returns all file path annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFilePathAnnotation]
+        """
         annotations = [
             annotation
             for msg in self._messages

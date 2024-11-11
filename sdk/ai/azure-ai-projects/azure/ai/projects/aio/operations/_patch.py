@@ -650,6 +650,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype content_type: str
         :keyword kwargs: Additional parameters.
         :return: An Agent object.
+        :rtype: _models.Agent
         :raises: HttpResponseError for HTTP errors.
         """
         if body is not _Unset:
@@ -1976,6 +1977,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
@@ -2097,6 +2099,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
