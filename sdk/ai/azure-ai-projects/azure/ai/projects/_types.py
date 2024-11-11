@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from . import models as _models
 AgentsApiResponseFormatOption = Union[
-    str, str, "_models.AgentsApiResponseFormatMode", "_models.AgentsApiResponseFormat"
+    str, "_models.AgentsApiResponseFormatMode", "_models.AgentsApiResponseFormat"
 ]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
-AgentsApiToolChoiceOption = Union[str, str, "_models.AgentsApiToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
+AgentsApiToolChoiceOption = Union[str, "_models.AgentsApiToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]

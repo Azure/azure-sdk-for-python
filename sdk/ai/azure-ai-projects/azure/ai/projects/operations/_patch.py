@@ -114,11 +114,10 @@ class InferenceOperations:
             )
             client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
-            # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential)
+            raise ValueError("Getting chat completions client from a connection with SAS authentication is not yet supported")
         else:
             raise ValueError("Unknown authentication type")
 
@@ -184,11 +183,10 @@ class InferenceOperations:
             )
             client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
-            # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential)
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
             raise ValueError("Unknown authentication type")
 

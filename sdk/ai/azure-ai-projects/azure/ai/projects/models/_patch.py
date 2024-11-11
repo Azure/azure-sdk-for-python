@@ -188,7 +188,7 @@ class ConnectionProperties:
         out += "}\n"
         return out
 
-
+# TODO: Look into adding an async version of this class
 class SASTokenCredential(TokenCredential):
     def __init__(
         self,
