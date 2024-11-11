@@ -92,7 +92,7 @@ async def main():
         )
         print(f"Created run, run ID: {run.id}")
 
-        await file_search_tool.remove_vector_store(vector_store.id)
+        file_search_tool.remove_vector_store(vector_store.id)
         print(
             f"Removed vector store from file search, vector store ID: {vector_store.id}"
         )

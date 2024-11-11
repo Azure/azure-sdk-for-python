@@ -40,7 +40,7 @@ import os
 tracer = trace.get_tracer(__name__)
 
 
-@tracer.start_as_current_span(__file__)
+@tracer.start_as_current_span(*[__file__])
 async def main() -> None:
 
     # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.

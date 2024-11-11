@@ -52,7 +52,7 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
-with tracer.start_as_current_span(scenario):
+with tracer.start_as_current_span(*[scenario]):
     with project_client:
 
         # [END enable_tracing]
