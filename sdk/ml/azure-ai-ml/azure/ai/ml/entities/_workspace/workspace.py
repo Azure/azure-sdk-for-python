@@ -77,6 +77,8 @@ class Workspace(Resource):
     :param public_network_access: Whether to allow public endpoint connectivity
         when a workspace is private link enabled.
     :type public_network_access: str
+    :param network_acls: The network access control list (ACL) settings of the workspace.
+    :type network_acls: ~azure.ai.ml.entities.NetworkAcls
     :param identity: workspace's Managed Identity (user assigned, or system assigned)
     :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param primary_user_assigned_identity: The workspace's primary user assigned identity
