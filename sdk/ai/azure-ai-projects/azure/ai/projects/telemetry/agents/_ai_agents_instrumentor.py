@@ -381,7 +381,7 @@ class _AIAgentsInstrumentorPreview:
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body)
         span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
 
-    def _get_role(self, role: Union[str, MessageRole]) -> str:
+    def _get_role(self, role: Optional[Union[str, MessageRole]]) -> str:
         if role is None or role is _Unset:
             return "user"
 
@@ -416,11 +416,11 @@ class _AIAgentsInstrumentorPreview:
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
-    def set_end_run(self, span: "AbstractSpan", run: ThreadRun) -> None:
-        if span and span.span_instance.is_recording:
+    def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
+        if run and span and span.span_instance.is_recording:
             span.add_attribute(GEN_AI_THREAD_RUN_STATUS, run.status)
             span.add_attribute(GEN_AI_RESPONSE_MODEL, run.model)
-            if run.usage:
+            if run and run.usage:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
 
@@ -446,8 +446,8 @@ class _AIAgentsInstrumentorPreview:
         self,
         operation_name: OperationName,
         project_name: str,
-        thread_id: str,
-        agent_id: str,
+        thread_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -484,9 +484,9 @@ class _AIAgentsInstrumentorPreview:
     def start_submit_tool_outputs_span(
         self,
         project_name: str,
-        thread_id: str,
-        run_id: str,
-        tool_outputs: List[ToolOutput] = _Unset,
+        thread_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+        tool_outputs: Optional[List[ToolOutput]] = None,
         event_handler: Optional[AgentEventHandler] = None,
     ) -> "Optional[AbstractSpan]":
 
@@ -498,8 +498,10 @@ class _AIAgentsInstrumentorPreview:
             self._add_tool_message_events(span, tool_outputs)
         return span
 
-    def _add_tool_message_events(self, span: "Optional[AbstractSpan]", tool_outputs: List[ToolOutput]) -> bool:
-        if span and span.span_instance.is_recording:
+    def _add_tool_message_events(
+        self, span: "Optional[AbstractSpan]", tool_outputs: Optional[List[ToolOutput]]
+    ) -> bool:
+        if span and span.span_instance.is_recording and tool_outputs:
             for tool_output in tool_outputs:
                 body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
                 span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body)})
@@ -510,7 +512,7 @@ class _AIAgentsInstrumentorPreview:
     def start_create_agent_span(
         self,
         project_name: str,
-        model: str = _Unset,
+        model: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -552,7 +554,7 @@ class _AIAgentsInstrumentorPreview:
 
         return span
 
-    def start_list_messages_span(self, project_name: str, thread_id: str) -> "Optional[AbstractSpan]":
+    def start_list_messages_span(self, project_name: str, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
@@ -568,7 +570,7 @@ class _AIAgentsInstrumentorPreview:
         top_p = kwargs.get("top_p")
         response_format = kwargs.get("response_format")
 
-        with self.start_create_agent_span(
+        span = self.start_create_agent_span(
             project_name=project_name,
             name=name,
             model=model,
@@ -580,7 +582,12 @@ class _AIAgentsInstrumentorPreview:
             temperature=temperature,
             top_p=top_p,
             response_format=response_format,
-        ) as span:
+        )
+
+        if span == None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
@@ -612,7 +619,7 @@ class _AIAgentsInstrumentorPreview:
         top_p = kwargs.get("top_p")
         response_format = kwargs.get("response_format")
 
-        with self.start_create_agent_span(
+        span = self.start_create_agent_span(
             project_name=project_name,
             name=name,
             model=model,
@@ -624,7 +631,12 @@ class _AIAgentsInstrumentorPreview:
             temperature=temperature,
             top_p=top_p,
             response_format=response_format,
-        ) as span:
+        )
+
+        if span == None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
@@ -647,7 +659,12 @@ class _AIAgentsInstrumentorPreview:
         project_name = args[0]._config.project_name
         messages = kwargs.get("messages")
 
-        with self.start_create_thread_span(project_name=project_name, messages=messages) as span:
+        span = self.start_create_thread_span(project_name=project_name, messages=messages)
+
+        if span == None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
@@ -670,7 +687,12 @@ class _AIAgentsInstrumentorPreview:
         project_name = args[0]._config.project_name
         messages = kwargs.get("messages")
 
-        with self.start_create_thread_span(project_name=project_name, messages=messages) as span:
+        span = self.start_create_thread_span(project_name=project_name, messages=messages)
+
+        if span == None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
@@ -691,15 +713,19 @@ class _AIAgentsInstrumentorPreview:
 
     def trace_create_message(self, function, *args, **kwargs):
         project_name = args[0]._config.project_name
-        messages = kwargs.get("messages")
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
         attachments = kwargs.get("attachments")
 
-        with self.start_create_message_span(
+        span = self.start_create_message_span(
             project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
-        ) as span:
+        )
+
+        if span == None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
@@ -720,15 +746,19 @@ class _AIAgentsInstrumentorPreview:
 
     async def trace_create_message_async(self, function, *args, **kwargs):
         project_name = args[0]._config.project_name
-        messages = kwargs.get("messages")
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
         attachments = kwargs.get("attachments")
 
-        with self.start_create_message_span(
+        span = self.start_create_message_span(
             project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
-        ) as span:
+        )
+
+        if span == None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
@@ -762,7 +792,7 @@ class _AIAgentsInstrumentorPreview:
         max_completion_tokens = kwargs.get("max_completion_tokens")
         response_format = kwargs.get("response_format")
 
-        with self.start_thread_run_span(
+        span = self.start_thread_run_span(
             operation_name,
             project_name,
             thread_id,
@@ -777,7 +807,12 @@ class _AIAgentsInstrumentorPreview:
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
             response_format=response_format,
-        ) as span:
+        )
+
+        if span == None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
                 result = function(*args, **kwargs)
                 self.set_end_run(span, result)
@@ -811,7 +846,7 @@ class _AIAgentsInstrumentorPreview:
         max_completion_tokens = kwargs.get("max_completion_tokens")
         response_format = kwargs.get("response_format")
 
-        with self.start_thread_run_span(
+        span = self.start_thread_run_span(
             operation_name,
             project_name,
             thread_id,
@@ -826,7 +861,12 @@ class _AIAgentsInstrumentorPreview:
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
             response_format=response_format,
-        ) as span:
+        )
+
+        if span == None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 result = await function(*args, **kwargs)
                 if span.span_instance.is_recording:
@@ -858,15 +898,20 @@ class _AIAgentsInstrumentorPreview:
         tool_outputs = kwargs.get("tool_outputs")
         event_handler = kwargs.get("event_handler")
 
-        with self.start_submit_tool_outputs_span(
+        span = self.start_submit_tool_outputs_span(
             project_name=project_name,
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,
             event_handler=event_handler,
-        ) as span:
+        )
+
+        if span == None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
-                if stream:
+                if stream and event_handler:
                     kwargs["event_handler"] = self.wrap_handler(event_handler, span)
 
                 result = function(*args, **kwargs)
@@ -894,13 +939,18 @@ class _AIAgentsInstrumentorPreview:
         tool_outputs = kwargs.get("tool_outputs")
         event_handler = kwargs.get("event_handler")
 
-        with self.start_submit_tool_outputs_span(
+        span = self.start_submit_tool_outputs_span(
             project_name=project_name,
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,
             event_handler=event_handler,
-        ) as span:
+        )
+
+        if span is None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 if stream:
                     kwargs["event_handler"] = self.wrap_handler(event_handler, span)
@@ -928,6 +978,10 @@ class _AIAgentsInstrumentorPreview:
         if event_handler is None:
             event_handler = args[2]
         span = getattr(event_handler, "span", None)
+
+        if span is None:
+            return function(*args, **kwargs)
+
         with span.change_context(span.span_instance):
             try:
                 result = function(*args, **kwargs)
@@ -951,6 +1005,10 @@ class _AIAgentsInstrumentorPreview:
         if event_handler is None:
             event_handler = args[2]
         span = getattr(event_handler, "span", None)
+
+        if span is None:
+            return await function(*args, **kwargs)
+
         with span.change_context(span.span_instance):
             try:
                 result = await function(*args, **kwargs)
@@ -1002,6 +1060,9 @@ class _AIAgentsInstrumentorPreview:
             max_completion_tokens=max_completion_tokens,
             response_format=response_format,
         )
+
+        if span is None:
+            return function(*args, **kwargs)
 
         # TODO: how to keep span active in the current context without existing?
         # TODO: dummy span for none
@@ -1058,6 +1119,9 @@ class _AIAgentsInstrumentorPreview:
             response_format=response_format,
         )
 
+        if span is None:
+            return await function(*args, **kwargs)
+
         # TODO: how to keep span active in the current context without existing?
         # TODO: dummy span for none
         with span.change_context(span.span_instance):
@@ -1083,7 +1147,12 @@ class _AIAgentsInstrumentorPreview:
         project_name = args[0]._config.project_name
         thread_id = kwargs.get("thread_id")
 
-        with self.start_list_messages_span(project_name=project_name, thread_id=thread_id) as span:
+        span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
             try:
                 result = function(*args, **kwargs)
                 for message in result.data:
@@ -1108,7 +1177,12 @@ class _AIAgentsInstrumentorPreview:
         project_name = args[0]._config.project_name
         thread_id = kwargs.get("thread_id")
 
-        with self.start_list_messages_span(project_name=project_name, thread_id=thread_id) as span:
+        span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
+
+        if span is None:
+            return await function(*args, **kwargs)
+
+        with span:
             try:
                 result = await function(*args, **kwargs)
                 for message in result.data:
@@ -1142,21 +1216,23 @@ class _AIAgentsInstrumentorPreview:
         ):
             agent_run_stream.event_handler.__exit__(exc_type, exc_val, exc_tb)
 
-    def wrap_handler(self, handler: "AgentEventHandler", span: "AbstractSpan") -> "AgentEventHandler":
+    def wrap_handler(
+        self, handler: "Optional[AgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
+    ) -> "Optional[AgentEventHandler]":
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
         if span and span.span_instance.is_recording:
-            return _AgentEventHandlerTraceWrapper(handler, self, span)
+            return _AgentEventHandlerTraceWrapper(self, span, handler)
 
         return handler
 
     def start_create_message_span(
         self,
         project_name: str,
-        thread_id: str,
-        content: str,
-        role: Union[str, MessageRole] = _Unset,
+        thread_id: Optional[str] = None,
+        content: Optional[str] = None,
+        role: Optional[Union[str, MessageRole]] = None,
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
         role_str = self._get_role(role)
@@ -1500,7 +1576,10 @@ class _AIAgentsInstrumentorPreview:
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def __init__(
-        self, inner_handler: AgentEventHandler, instrumentor: _AIAgentsInstrumentorPreview, span: "AbstractSpan"
+        self,
+        instrumentor: _AIAgentsInstrumentorPreview,
+        span: "AbstractSpan",
+        inner_handler: Optional[AgentEventHandler] = None,
     ):
         super().__init__()
         self.span = span
@@ -1562,8 +1641,10 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.ended = True
             self.instrumentor.set_end_run(self.span, self.last_run)
 
-            if self.last_run.last_error:
-                self.span.set_status(StatusCode.ERROR, self.last_run.last_error.message)
+            if self.last_run and self.last_run.last_error:
+                self.span.set_status(
+                    StatusCode.ERROR, self.last_run.last_error.message
+                )  # pyright: ignore [reportPossiblyUnboundVariable]
                 self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
             self.span.__exit__(exc_type, exc_val, exc_tb)
