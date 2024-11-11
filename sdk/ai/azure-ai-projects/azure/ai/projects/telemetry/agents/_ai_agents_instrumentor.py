@@ -210,10 +210,10 @@ class _AIAgentsInstrumentorPreview:
     def set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
         """This function sets the content recording value.
 
-        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
-        :type enable_content_tracing: bool
+        :type enable_content_recording: bool
         """
         self._set_enable_content_recording(enable_content_recording=enable_content_recording)
 
@@ -1557,10 +1557,10 @@ class _AIAgentsInstrumentorPreview:
     def _set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
         """This function sets the content recording value.
 
-        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
-        :type enable_content_tracing: bool
+        :type enable_content_recording: bool
         """
         global _trace_agents_content
         _trace_agents_content = enable_content_recording

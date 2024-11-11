@@ -276,9 +276,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
-        :param connection_type: The connection type. Required.
+        :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
-        :param with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
@@ -306,9 +306,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
-        :param connection_name: Connection Name. Required.
+        :keyword connection_name: Connection Name. Required.
         :type connection_name: str
-        :param with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
@@ -350,8 +350,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
-        :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
-            If not provided, all connections are listed.
+        :keyword connection_type: The connection type. Optional. If provided, this method lists connections of this
+            type. If not provided, all connections are listed.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :return: A list of connection properties
         :rtype: Sequence[~azure.ai.projects.models._models.ConnectionProperties]
@@ -799,20 +799,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         Creates a new agent with various configurations, delegating to the generated operations.
 
         :param body: JSON or IO[bytes]. Required if `model` is not provided.
-        :param model: The ID of the model to use. Required if `body` is not provided.
-        :param name: The name of the new agent.
-        :param description: A description for the new agent.
-        :param instructions: System instructions for the agent.
-        :param tools: List of tools definitions for the agent.
-        :param tool_resources: Resources used by the agent's tools.
-        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
+        :keyword model: The ID of the model to use. Required if `body` is not provided.
+        :keyword name: The name of the new agent.
+        :keyword description: A description for the new agent.
+        :keyword instructions: System instructions for the agent.
+        :keyword tools: List of tools definitions for the agent.
+        :keyword tool_resources: Resources used by the agent's tools.
+        :keyword toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions).
-        :param temperature: Sampling temperature for generating agent responses.
-        :param top_p: Nucleus sampling parameter.
-        :param response_format: Response format for tool calls.
-        :param metadata: Key/value pairs for storing additional information.
-        :param content_type: Content type of the body.
-        :param kwargs: Additional parameters.
+        :keyword temperature: Sampling temperature for generating agent responses.
+        :keyword top_p: Nucleus sampling parameter.
+        :keyword response_format: Response format for tool calls.
+        :keyword metadata: Key/value pairs for storing additional information.
+        :keyword content_type: Content type of the body.
         :return: An Agent object.
         :raises: HttpResponseError for HTTP errors.
         """
@@ -1919,8 +1918,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :param event_handler: The event handler to use for processing events during the run.
-        :param kwargs: Additional parameters.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2043,8 +2041,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :param event_handler: The event handler to use for processing events during the run.
-        :param kwargs: Additional parameters.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2129,7 +2126,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param file_path: Required.
+        :keyword file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
@@ -2154,12 +2151,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
-        :param file: File content. Required if `body` and `purpose` are not provided.
-        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        :param filename: The name of the file.
-        :param kwargs: Additional parameters.
+        :keyword filename: The name of the file.
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
@@ -2239,7 +2235,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param file_path: Required.
+        :keyword file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
@@ -2268,15 +2264,14 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
-        :param file: File content. Required if `body` and `purpose` are not provided.
-        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        :param filename: The name of the file.
+        :keyword filename: The name of the file.
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :param kwargs: Additional parameters.
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.

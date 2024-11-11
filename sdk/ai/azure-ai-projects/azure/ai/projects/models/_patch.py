@@ -805,7 +805,7 @@ class ToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool_type: The type of the tool to validate.
+        :param tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, AsyncFunctionTool):
@@ -848,7 +848,7 @@ class AsyncToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool_type: The type of the tool to validate.
+        :param tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, FunctionTool):
