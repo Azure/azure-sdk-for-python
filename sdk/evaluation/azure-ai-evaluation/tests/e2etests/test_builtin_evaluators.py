@@ -739,7 +739,7 @@ class TestBuiltInEvaluators:
         conversation = Conversation(
             messages=[
                 SystemMessage(
-                    content=[TextContentItem(text="You are an AI assitance who can describe images.")],
+                    content=[TextContentItem(text="You are an AI assistant who can describe images.")],
                 ),
                 UserMessage(
                     content=[
@@ -973,9 +973,9 @@ class TestBuiltInEvaluators:
         score = evaluator(conversation=conversation)
 
         assert score is not None
-        # assert not result["artwork_label"]
-        # assert "artwork was not found" in result["artwork_reason"]
-        # assert not result["protected_material_label"]
-        # assert "material was not found" in result["protected_material_reason"]
-        # assert not result["protected_material_label"]
-        # assert "material was not found" in result["protected_material_reason"]
+        assert score["artwork_label"] in [True, False]
+        assert score["artwork_reason"], "artwork_reason must not be None or empty."
+        assert score["fictional_characters_label"] in [True, False]
+        assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
+        assert score["logos_and_brands_label"] in [True, False]
+        assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
