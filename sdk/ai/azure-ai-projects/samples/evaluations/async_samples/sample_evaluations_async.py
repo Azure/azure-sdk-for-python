@@ -89,11 +89,9 @@ async def main():
         print("----------------------------------------------------------------")
         print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
         print("Evaluation status: ", get_evaluation_response.status)
-        if isinstance(get_evaluation_response.properties, dict):
-            print(
-                "AI Studio URI: ",
-                get_evaluation_response.properties["AiStudioEvaluationUri"],
-            )
+        properties = get_evaluation_response.properties
+        if properties is not None:
+            print("AI Studio URI: ", properties["AiStudioEvaluationUri"])
         print("----------------------------------------------------------------")
 
 
