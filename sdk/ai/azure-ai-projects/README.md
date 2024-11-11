@@ -101,14 +101,6 @@ with project_client:
                 instructions="You are helpful assistant"
  )
 
-# For asynchronous
-async with project_client:
-    agent = project_client.agents.create_agent(
-                model="gpt-4-1106-preview", 
-                name="my-assistant", 
-                instructions="You are helpful assistant"
- )
-
 ```
 
 In the sections below, we will only provide code snippets in synchronous functions.
