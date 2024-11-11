@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class PendingDisposition(object):
     def __init__(self, **kwargs):
         self.sent = kwargs.get("sent")
@@ -31,7 +32,7 @@ class PendingDisposition(object):
         self.transfer_state = kwargs.get("transfer_state")
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
-        self._network_trace_params = kwargs.get('network_trace_params')
+        self._network_trace_params = kwargs.get("network_trace_params")
 
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
@@ -39,11 +40,10 @@ class PendingDisposition(object):
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Disposition 'on_delivery_settled' callback failed: %r",
-                    e,
-                    extra=self._network_trace_params
+                    "Disposition 'on_delivery_settled' callback failed: %r", e, extra=self._network_trace_params
                 )
         self.settled = True
+
 
 class ReceiverLink(Link):
     def __init__(self, session, handle, source_address, **kwargs):
@@ -161,13 +161,11 @@ class ReceiverLink(Link):
                 settled=settled,
                 transfer_state=state,
                 start=time.time(),
-                sent=True
-
+                sent=True,
             )
             self._pending_receipts.append(delivery)
-            
-        self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
+        self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
 
     def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return
@@ -183,7 +181,6 @@ class ReceiverLink(Link):
                 continue
             unsettled.append(delivery)
         self._pending_receipts = unsettled
-
 
     def _remove_pending_deliveries(self):
         self._pending_receipts = []
@@ -207,12 +204,8 @@ class ReceiverLink(Link):
     ):
         self._check_if_closed()
         self._outgoing_disposition(
-            first_delivery_id,
-            last_delivery_id,
-            settled,
-            delivery_state,
-            batchable,
-            on_disposition=on_disposition
+            first_delivery_id, last_delivery_id, delivery_tag, settled,
+            delivery_state, batchable, on_disposition=on_disposition
         )
         if not settled:
             self._wait_for_response(wait)

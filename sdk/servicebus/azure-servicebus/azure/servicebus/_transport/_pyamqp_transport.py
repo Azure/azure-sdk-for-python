@@ -27,7 +27,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
-    AMQPLinkError
+    AMQPLinkError,
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -759,8 +759,10 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         # pylint: disable=protected-access
         try:
             if handler._link._is_closed:  # pylint: disable=protected-access
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
-                    description="Message received on a different link than the current receiver link.")
+                raise AMQPLinkError(
+                    condition=ErrorCondition.LinkDetachForced,
+                    description="Message received on a different link than the current receiver link.",
+                )
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, "accepted")
             if settle_operation == MESSAGE_ABANDON:

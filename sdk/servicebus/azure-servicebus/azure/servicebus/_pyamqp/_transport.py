@@ -756,6 +756,7 @@ class WebSocketTransport(_AbstractTransport):
         :rtype: bytearray
         """
         from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
+
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))

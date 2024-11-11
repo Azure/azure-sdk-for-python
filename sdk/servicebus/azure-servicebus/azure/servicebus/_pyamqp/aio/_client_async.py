@@ -918,13 +918,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                         message_delivery,
                         condition=error_info[0][0],
                         description=error_info[0][1],
-                        info=error_info[0][2]
+                        info=error_info[0][2],
                     )
                 except TypeError:
-                    self._process_receive_error(
-                        message_delivery,
-                        condition=ErrorCondition.UnknownError
-                    )
+                    self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
         # TODO: Confirm if the following statements below are needed, do we want a TimeOut to be set?
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
@@ -933,11 +930,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
-            self._process_receive_error(
-                message_delivery,
-                condition=ErrorCondition.UnknownError
-            )
-
+            self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
 
     @overload
     async def settle_messages_async(
@@ -947,8 +940,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     async def settle_messages_async(
@@ -958,8 +950,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     async def settle_messages_async(
@@ -970,8 +961,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         *,
         error: Optional[AMQPError] = None,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     async def settle_messages_async(
@@ -984,8 +974,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
     @overload
     async def settle_messages_async(
@@ -997,16 +986,21 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         section_number: int,
         section_offset: int,
         batchable: Optional[bool] = None
-    ):
-        ...
+    ): ...
 
-    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
-        batchable = kwargs.pop('batchable', None)
+    async def settle_messages_async(
+        self,
+        delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
+        outcome: str,
+        **kwargs
+    ):
+        batchable = kwargs.pop("batchable", None)
         # TODO: timeout is not used, should it be?
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
 
-        if outcome.lower() == 'accepted':
+        if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
             state = Released()
@@ -1025,22 +1019,18 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             last = None
 
         # Create a Message Delivery object for the Disposition
-        message_delivery = _MessageDelivery(
-            None,
-            MessageDeliveryState.WaitingToBeSent,
-            expire_time
-        )
+        message_delivery = _MessageDelivery(None, MessageDeliveryState.WaitingToBeSent, expire_time)
         on_disposition_received = partial(self._on_disposition_received_async, message_delivery)
 
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=False, # True 
+            settled=False,  # True
             delivery_state=state,
             batchable=batchable,
             wait=True,
-            on_disposition = on_disposition_received,
+            on_disposition=on_disposition_received,
         )
 
         # Wait for the message to be settled
@@ -1052,19 +1042,18 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
-                condition=ErrorCondition.ClientError,
-                description="Settlement failed - connection not running."
+                condition=ErrorCondition.ClientError, description="Settlement failed - connection not running."
             )
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
             MessageDeliveryState.Cancelled,
-            MessageDeliveryState.Timeout
+            MessageDeliveryState.Timeout,
         ):
             try:
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(
-                    condition=ErrorCondition.UnknownError,
-                    description="Settlement failed.") from None
+                    condition=ErrorCondition.UnknownError, description="Settlement failed."
+                ) from None

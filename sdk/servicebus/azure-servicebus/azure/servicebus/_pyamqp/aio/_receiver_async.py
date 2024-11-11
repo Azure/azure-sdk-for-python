@@ -18,14 +18,13 @@ from ..performatives import (
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
 from ..error import AMQPException, ErrorCondition
-from ..receiver import PendingDisposition
-from ..constants import MessageDeliveryState
 
 if TYPE_CHECKING:
     from ..message import _MessageDelivery
 
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class PendingDisposition(object):
     def __init__(self, **kwargs):
@@ -36,7 +35,7 @@ class PendingDisposition(object):
         self.transfer_state = kwargs.get("transfer_state", None)
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
-        self._network_trace_params = kwargs.get('network_trace_params')
+        self._network_trace_params = kwargs.get("network_trace_params")
 
     async def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
@@ -44,11 +43,10 @@ class PendingDisposition(object):
                 await self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Disposition 'on_delivery_settled' callback failed: %r",
-                    e,
-                    extra=self._network_trace_params
+                    "Disposition 'on_delivery_settled' callback failed: %r", e, extra=self._network_trace_params
                 )
         self.settled = True
+
 
 class ReceiverLink(Link):
     def __init__(self, session, handle, source_address, **kwargs):
@@ -122,7 +120,7 @@ class ReceiverLink(Link):
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         # TODO: Can we remove this method?
         if wait is True:
-            await self._session._connection.listen(wait=False) # pylint: disable=protected-access
+            await self._session._connection.listen(wait=False)  # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 if self._error:
                     raise self._error
@@ -157,7 +155,7 @@ class ReceiverLink(Link):
         # If trying to settle a message, keep track of the disposition
         if on_disposition:
             delivery = PendingDisposition(
-                on_delivery_settled = on_disposition,
+                on_delivery_settled=on_disposition,
                 frame=disposition_frame,
                 settled=settled,
                 transfer_state=state,
@@ -166,8 +164,7 @@ class ReceiverLink(Link):
             )
             self._pending_receipts.append(delivery)
 
-
-        await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        await self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
 
     async def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return
@@ -204,12 +201,8 @@ class ReceiverLink(Link):
     ):
         self._check_if_closed()
         await self._outgoing_disposition(
-            first_delivery_id,
-            last_delivery_id,
-            settled,
-            delivery_state,
-            batchable,
-            on_disposition=on_disposition
+            first_delivery_id, last_delivery_id, delivery_tag, settled,
+            delivery_state, batchable, on_disposition=on_disposition
         )
         if not settled:
             await self._wait_for_response(wait)

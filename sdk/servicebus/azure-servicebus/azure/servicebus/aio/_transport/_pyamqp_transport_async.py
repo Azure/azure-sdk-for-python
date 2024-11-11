@@ -309,13 +309,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        from ..._pyamqp.error import ErrorCondition
         try:
-            # If receiver Link is not the same as the one that received the message, we need to settle the message over mgmt
+            # If receiver Link is not the same as the one that
+            # received the message, we need to settle the message over mgmt
 
             if handler._link._is_closed:  # pylint: disable=protected-access
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
-                                    description="Message received on a different link than the current receiver link.")
+                raise AMQPLinkError(
+                    condition=ErrorCondition.LinkDetachForced,
+                    description="Message received on a different link than the current receiver link.",
+                )
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, "accepted")
             if settle_operation == MESSAGE_ABANDON:
