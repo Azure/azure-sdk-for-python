@@ -48,6 +48,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_quickpulse_projection_map,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DATA_FIELD_NAMES,
     _DEPENDENCY_DATA_FIELD_NAMES,
     _KNOWN_STRING_FIELD_NAMES,
     _REQUEST_DATA_FIELD_NAMES,
@@ -190,7 +191,6 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
         # Skip duplicate ids
         if metric_info.id in seen_ids:
             continue
-        # Validate derived metric info
         if not _validate_derived_metric_info(metric_info):
             continue
         telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
@@ -235,13 +235,90 @@ def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _Telemetr
     return match
 
 
-# pylint: disable=unused-argument
 def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
+    if not filters:
+        return True
     # # All of the filters need to match for this to return true (and operation).
-    # for filter in filters:
-    #     # TODO: apply filter logic
-    #     pass
-    return True
+    for filter in filters:
+        name = filter.field_name
+        predicate = filter.predicate
+        comparand = filter.comparand
+        if name == "*":
+            return _check_any_field_filter(filter, data)
+        elif name.startswith("CustomDimensions."):
+            return _check_custom_dim_field_filter(filter, data.custom_dimensions)
+        field_names = _DATA_FIELD_NAMES.get(type(data))
+        if field_names is None:
+            field_names = {}
+        field_name = field_names.get(name.lower(), "")
+        val = getattr(data, field_name, "")
+        if name == "Success":
+            if predicate == PredicateType.EQUAL:
+                return str(val).lower() == comparand.lower()
+            elif predicate == PredicateType.NOT_EQUAL:
+                return str(val).lower() != comparand.lower()
+        elif name in ("ResultCode", "ResponseCode", "Duration"):
+            try:
+                val = int(val)
+            except Exception:
+                return False
+            numerical_val = _filter_time_stamp_to_ms(comparand) if name == "Duration" else int(comparand)
+            if numerical_val is None:
+                return False
+            if predicate == PredicateType.EQUAL:
+                return val == numerical_val
+            elif predicate == PredicateType.NOT_EQUAL:
+                return val != numerical_val
+            elif predicate == PredicateType.GREATER_THAN:
+                return val > numerical_val
+            elif predicate == PredicateType.GREATER_THAN_OR_EQUAL:
+                return val >= numerical_val
+            elif predicate == PredicateType.LESS_THAN:
+                return val < numerical_val
+            elif predicate == PredicateType.LESS_THAN_OR_EQUAL:
+                return val <= numerical_val
+        else:
+            # string fields
+            return _field_string_compare(str(val), comparand, predicate)
+
+    return False
+
+
+def _check_any_field_filter(filter: FilterInfo, data: _TelemetryData) -> bool:
+    # At this point, the only predicates possible to pass in are Contains and DoesNotContain
+    # At config validation time the predicate is checked to be one of these two.
+    for field in fields(data):
+        if field.name == "custom_dimensions":
+            for val in data.custom_dimensions.values():
+                if _field_string_compare(str(val), filter.comparand, filter.predicate):
+                    return True
+        else:
+            val = getattr(data, field.name, None)
+            if val is not None:
+                if _field_string_compare(str(val), filter.comparand, filter.predicate):
+                    return True
+    return False
+
+
+def _check_custom_dim_field_filter(filter: FilterInfo, custom_dimensions: Dict[str, str]) -> bool:
+    field = filter.field_name.replace("CustomDimensions.", "")
+    value = custom_dimensions.get(field)
+    if value is not None:
+        return _field_string_compare(str(value), filter.comparand, filter.predicate)
+    else:
+        return False
+    
+
+def _field_string_compare(value: str, comparand: str, predicate: str) -> bool:
+    if predicate == PredicateType.EQUAL:
+        return value == comparand
+    elif predicate == PredicateType.NOT_EQUAL:
+        return value != comparand
+    elif predicate == PredicateType.CONTAINS:
+        return comparand.lower() in value.lower()
+    elif predicate == PredicateType.DOES_NOT_CONTAIN:
+        return comparand.lower() not in value.lower()
+    return False
 
 
 # Validation
