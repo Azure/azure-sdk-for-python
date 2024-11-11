@@ -16,7 +16,7 @@ class TargetRunContext:
     :type upload_snapshot: bool
     """
 
-    def __init__(self, upload_snapshot: bool) -> None:
+    def __init__(self, upload_snapshot: bool = False) -> None:
         self._upload_snapshot = upload_snapshot
         self._original_cwd = os.getcwd()
 

@@ -21,6 +21,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_route_directions():
     # [START get_route_directions_async]
     from azure.core.credentials import AzureKeyCredential
@@ -29,9 +30,7 @@ async def get_route_directions():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_route_client:
-        result = await maps_route_client.get_route_directions(
-            route_points=[(52.50931,13.42936), (52.50274,13.43872)]
-        )
+        result = await maps_route_client.get_route_directions(route_points=[(52.50931, 13.42936), (52.50274, 13.43872)])
 
     if result.routes is not None:
         print("Get Route Directions with list of coordinates:")
@@ -39,5 +38,6 @@ async def get_route_directions():
         print(result.routes[0].sections[0])
     # [END get_route_directions_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_route_directions())
