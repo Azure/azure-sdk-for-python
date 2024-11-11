@@ -11,6 +11,8 @@
 - Support to manage the rooms/servercall/group call using connect API
 - Support for the audio streaming
 - Expose original PSTN number target from incoming call event in call connection properties
+- Added CreateCallFailed event to signify when create call API fails to establish a call
+- Added AnswerFailed event to signify when answer call API fails to answer a call
 
 ### Breaking Changes
 
