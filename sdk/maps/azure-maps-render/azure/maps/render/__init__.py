@@ -27,14 +27,14 @@ from ._patch import patch_sdk as _patch_sdk
 
 
 __all__ = [
-    'TilesetID',
-    'StaticMapLayer',
-    'ResponseFormat',
-    'RasterTileFormat',
-    'MapTileSize',
-    'MapImageStyle',
-    'LocalizedMapView',
-    'IncludeText',
+    "TilesetID",
+    "StaticMapLayer",
+    "ResponseFormat",
+    "RasterTileFormat",
+    "MapTileSize",
+    "MapImageStyle",
+    "LocalizedMapView",
+    "IncludeText",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])
