@@ -12,7 +12,7 @@ DESCRIPTION:
     View the results in the "Tracing" tab in your Azure AI Studio project page.
 
 USAGE:
-    python sample_agents_basics_with_azure_monitor_tracing.py
+    python sample_agents_functions_with_azure_monitor_tracing.py
 
     Before running the sample:
 
@@ -23,13 +23,12 @@ USAGE:
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
-
-import os, sys,time, json
 from typing import Any, Callable, Set
+
+import os, time, json
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
-from user_functions import user_functions
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
@@ -39,8 +38,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 # Enable Azure Monitor tracing
@@ -54,9 +52,10 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
+
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("fetch_weather") # type: ignore
+@tracer.start_as_current_span("fetch_weather")  # type: ignore
 def fetch_weather(location: str) -> str:
     """
     Fetches the weather information for the specified location.
@@ -76,6 +75,7 @@ def fetch_weather(location: str) -> str:
     weather = mock_weather_data.get(location, "Weather data not available for this location.")
     weather_json = json.dumps({"weather": weather})
     return weather_json
+
 
 # Statically defined user functions for fast reference
 user_functions: Set[Callable[..., Any]] = {
@@ -125,16 +125,20 @@ with tracer.start_as_current_span(scenario):
                     if isinstance(tool_call, RequiredFunctionToolCall):
                         try:
                             output = functions.execute(tool_call)
-                            tool_outputs.append({
-                                "tool_call_id": tool_call.id,
-                                "output": output,
-                            })
+                            tool_outputs.append(
+                                ToolOutput(
+                                    tool_call_id=tool_call.id,
+                                    output=output,
+                                )
+                            )
                         except Exception as e:
                             print(f"Error executing tool_call {tool_call.id}: {e}")
 
                 print(f"Tool outputs: {tool_outputs}")
                 if tool_outputs:
-                    project_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+                    project_client.agents.submit_tool_outputs_to_run(
+                        thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                    )
 
             print(f"Current run status: {run.status}")
 

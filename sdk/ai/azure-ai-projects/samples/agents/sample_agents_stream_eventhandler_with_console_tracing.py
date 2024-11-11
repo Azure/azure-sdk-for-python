@@ -29,9 +29,8 @@ USAGE:
       messages, which may contain personal data. False by default.
 """
 
-import os,sys
+import os, sys
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
@@ -63,16 +62,19 @@ class MyEventHandler(AgentEventHandler):
                 print(f"Text delta received: {text_value}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        if len(message.content):
+            print(
+                f"ThreadMessage created. ID: {message.id}, "
+                f"Status: {message.status}, Content: {message.content[0].as_dict()}"
+            )
+        else:
+            print(f"ThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
-
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"Message status: {message.status}, Content: {message.content[0].as_dict()}")
 
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")
@@ -82,6 +84,7 @@ class MyEventHandler(AgentEventHandler):
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+
 
 # Enable console tracing
 # or, if you have local OTLP endpoint running, change it to
@@ -102,7 +105,9 @@ with tracer.start_as_current_span(scenario):
         thread = project_client.agents.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        message = project_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, tell me a joke"
+        )
         print(f"Created message, message ID {message.id}")
 
         with project_client.agents.create_stream(

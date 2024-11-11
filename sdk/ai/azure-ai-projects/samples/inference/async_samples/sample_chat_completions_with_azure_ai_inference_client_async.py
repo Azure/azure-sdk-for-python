@@ -24,7 +24,7 @@ import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.inference.models import UserMessage
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def sample_get_chat_completions_client_async():
@@ -39,7 +39,9 @@ async def sample_get_chat_completions_client_async():
 
         async with await project_client.inference.get_chat_completions_client() as client:
 
-            response = await client.complete(model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")])
+            response = await client.complete(
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            )
             print(response.choices[0].message.content)
 
 

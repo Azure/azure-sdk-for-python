@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0b6 (2024-11-11)
+
+### Features Added
+
+* OpenTelemetry tracing:
+  * Method `AIInferenceInstrumentor().instrument()` updated with an input argument `enable_content_recording`.
+  * Calling `AIInferenceInstrumentor().instrument()` twice no longer results in an exception.
+  * Added method `AIInferenceInstrumentor().is_content_recording_enabled()`
+* Support [Prompty](https://github.com/microsoft/prompty) and prompt template from string. PromptTemplate class outputs an array of dictionary with OpenAI compatible message format.
+
+### Bugs Fixed
+
+* Fix tracing for asynchronous streaming.
+
 ## 1.0.0b5 (2024-10-16)
 
 ### Features Added

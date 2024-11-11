@@ -27,6 +27,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
 content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelClient(ModelClientTestBase):
 
@@ -559,7 +560,7 @@ class TestModelClient(ModelClientTestBase):
 
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "chat-completion" # TODO: This should be chat_comletions according to REST API spec...
+            response1, "chat-completion"  # TODO: This should be chat_comletions according to REST API spec...
         )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
@@ -810,7 +811,6 @@ class TestModelClient(ModelClientTestBase):
         client.close()
         assert exception_caught
 
-
     # **********************************************************************************
     #
     #                            TRACING TESTS - CHAT COMPLETIONS
@@ -856,7 +856,7 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_instrumenting_twice_causes_exception(self, **kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -864,22 +864,19 @@ class TestModelClient(ModelClientTestBase):
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
-        instrumented_once = False
         try:
             AIInferenceInstrumentor().instrument()
-            instrumented_once = True
             AIInferenceInstrumentor().instrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
         AIInferenceInstrumentor().uninstrument()
         client.close()
-        assert instrumented_once == True
-        assert exception_caught == True
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_uninstrumenting_uninstrumented_causes_exception(self, **kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -893,11 +890,11 @@ class TestModelClient(ModelClientTestBase):
             exception_caught = True
             print(e)
         client.close()
-        assert exception_caught == True
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
-    def test_uninstrumenting_twice_causes_exception(self, **kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIInferenceInstrumentor().uninstrument()
@@ -909,14 +906,83 @@ class TestModelClient(ModelClientTestBase):
         try:
             AIInferenceInstrumentor().instrument()
             AIInferenceInstrumentor().uninstrument()
-            uninstrumented_once = True
             AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
         client.close()
-        assert uninstrumented_once == True
-        assert exception_caught == True
+        assert exception_caught == False
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_is_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
+        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+        client = self._create_chat_client(**kwargs)
+        exception_caught = False
+        uninstrumented_once = False
+        try:
+            # From environment variable instrumenting from uninstrumented
+            AIInferenceInstrumentor().instrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+
+            # From environment variable instrumenting from instrumented
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
+            AIInferenceInstrumentor().instrument()
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+
+            # From parameter instrumenting from uninstrumented
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument(enable_content_recording=False)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            AIInferenceInstrumentor().uninstrument()
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument(enable_content_recording=True)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+
+            # From parameter instrumenting from instrumented
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            AIInferenceInstrumentor().instrument(enable_content_recording=False)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == False
+            self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+            AIInferenceInstrumentor().instrument(enable_content_recording=True)
+            content_recording_enabled = AIInferenceInstrumentor().is_content_recording_enabled()
+            assert content_recording_enabled == True
+        except RuntimeError as e:
+            exception_caught = True
+            print(e)
+        client.close()
+        assert exception_caught == False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
@@ -942,25 +1008,27 @@ class TestModelClient(ModelClientTestBase):
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 1
         span = spans[0]
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                               ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', 'chat'),
-                               ('server.address', ''),
-                               ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-large'),
-                               ('gen_ai.usage.input_tokens', '+'),
-                               ('gen_ai.usage.output_tokens', '+'),
-                               ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
-            {                
-                'name': 'gen_ai.choice',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"finish_reason": "stop", "index": 0}'
-                }
+            {
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
             }
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
@@ -991,40 +1059,42 @@ class TestModelClient(ModelClientTestBase):
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 1
         span = spans[0]
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                               ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', 'chat'),
-                               ('server.address', ''),
-                               ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-large'),
-                               ('gen_ai.usage.input_tokens', '+'),
-                               ('gen_ai.usage.output_tokens', '+'),
-                               ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
             {
-                'name': 'gen_ai.system.message',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"role": "system", "content": "You are a helpful assistant."}'
-                }
+                "name": "gen_ai.system.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful assistant."}',
+                },
             },
             {
-                'name': 'gen_ai.user.message',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"role": "user", "content": "What is the capital of France?"}'
-                }
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the capital of France?"}',
+                },
             },
             {
-                'name': 'gen_ai.choice',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}'
-                }
-            }
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}',
+                },
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
@@ -1047,7 +1117,7 @@ class TestModelClient(ModelClientTestBase):
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="What is the capital of France?"),
             ],
-            stream=True
+            stream=True,
         )
         response_content = ""
         for update in response:
@@ -1061,25 +1131,27 @@ class TestModelClient(ModelClientTestBase):
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 1
         span = spans[0]
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                               ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', 'chat'),
-                               ('server.address', ''),
-                               ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-large'),
-                               ('gen_ai.usage.input_tokens', '+'),
-                               ('gen_ai.usage.output_tokens', '+'),
-                               ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
             {
-                'name': 'gen_ai.choice',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"finish_reason": "stop", "index": 0}'
-                }
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
             }
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
@@ -1103,7 +1175,7 @@ class TestModelClient(ModelClientTestBase):
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
                 sdk.models.UserMessage(content="What is the capital of France?"),
             ],
-            stream=True
+            stream=True,
         )
         response_content = ""
         for update in response:
@@ -1117,40 +1189,42 @@ class TestModelClient(ModelClientTestBase):
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 1
         span = spans[0]
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                               ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', 'chat'),
-                               ('server.address', ''),
-                               ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-large'),
-                               ('gen_ai.usage.input_tokens', '+'),
-                               ('gen_ai.usage.output_tokens', '+'),
-                               ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
             {
-                'name': 'gen_ai.system.message',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"role": "system", "content": "You are a helpful assistant."}'
-                }
+                "name": "gen_ai.system.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful assistant."}',
+                },
             },
             {
-                'name': 'gen_ai.user.message',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"role": "user", "content": "What is the capital of France?"}'
-                }
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the capital of France?"}',
+                },
             },
             {
-                'name': 'gen_ai.choice',
-                'attributes': {
-                    'gen_ai.system': 'az.ai.inference',
-                    'gen_ai.event.content': '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}'
-                }
-            }
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}',
+                },
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
@@ -1165,7 +1239,16 @@ class TestModelClient(ModelClientTestBase):
         except RuntimeError as e:
             pass
         import json
-        from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+        from azure.ai.inference.models import (
+            SystemMessage,
+            UserMessage,
+            CompletionsFinishReason,
+            ToolMessage,
+            AssistantMessage,
+            ChatCompletionsToolCall,
+            ChatCompletionsToolDefinition,
+            FunctionDefinition,
+        )
         from azure.ai.inference import ChatCompletionsClient
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
@@ -1197,7 +1280,7 @@ class TestModelClient(ModelClientTestBase):
                 },
             )
         )
-        messages=[
+        messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant."),
             sdk.models.UserMessage(content="What is the weather in Seattle?"),
         ]
@@ -1225,26 +1308,30 @@ class TestModelClient(ModelClientTestBase):
         if len(spans) == 0:
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 2
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('tool_calls',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("tool_calls",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[0], expected_attributes)
         assert attributes_match == True
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[1], expected_attributes)
         assert attributes_match == True
 
@@ -1254,25 +1341,25 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful assistant.\"}"
-                }
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful assistant."}',
+                },
             },
             {
                 "name": "gen_ai.user.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
-                }
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the weather in Seattle?"}',
+                },
             },
             {
                 "name": "gen_ai.choice",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"message\": {\"content\": \"\", \"tool_calls\": [{\"function\": {\"arguments\": \"{\\\"city\\\":\\\"Seattle\\\"}\", \"call_id\": null, \"name\": \"get_weather\"}, \"id\": \"*\", \"type\": \"function\"}]}, \"finish_reason\": \"tool_calls\", \"index\": 0}"
-                }
-            }
+                    "gen_ai.event.content": '{"message": {"content": "", "tool_calls": [{"function": {"arguments": "{\\"city\\":\\"Seattle\\"}", "call_id": null, "name": "get_weather"}, "id": "*", "type": "function"}]}, "finish_reason": "tool_calls", "index": 0}',
+                },
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(spans[0], expected_events)
         assert events_match == True
@@ -1283,43 +1370,43 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful assistant.\"}"
-                }
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful assistant."}',
+                },
             },
             {
                 "name": "gen_ai.user.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
-                }
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the weather in Seattle?"}',
+                },
             },
             {
                 "name": "gen_ai.assistant.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"arguments\": \"{\\\"city\\\": \\\"Seattle\\\"}\", \"call_id\": null, \"name\": \"get_weather\"}, \"id\": \"*\", \"type\": \"function\"}]}"
-                }
+                    "gen_ai.event.content": '{"role": "assistant", "tool_calls": [{"function": {"arguments": "{\\"city\\": \\"Seattle\\"}", "call_id": null, "name": "get_weather"}, "id": "*", "type": "function"}]}',
+                },
             },
             {
                 "name": "gen_ai.tool.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"tool\", \"tool_call_id\": \"*\", \"content\": \"Nice weather\"}"
-                }
+                    "gen_ai.event.content": '{"role": "tool", "tool_call_id": "*", "content": "Nice weather"}',
+                },
             },
             {
                 "name": "gen_ai.choice",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"message\": {\"content\": \"*\"}, \"finish_reason\": \"stop\", \"index\": 0}"
-                }
-            }
-        ] 
-        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
+                    "gen_ai.event.content": '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)
         assert events_match == True
 
         AIInferenceInstrumentor().uninstrument()
@@ -1333,7 +1420,16 @@ class TestModelClient(ModelClientTestBase):
         except RuntimeError as e:
             pass
         import json
-        from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+        from azure.ai.inference.models import (
+            SystemMessage,
+            UserMessage,
+            CompletionsFinishReason,
+            ToolMessage,
+            AssistantMessage,
+            ChatCompletionsToolCall,
+            ChatCompletionsToolDefinition,
+            FunctionDefinition,
+        )
         from azure.ai.inference import ChatCompletionsClient
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
@@ -1365,7 +1461,7 @@ class TestModelClient(ModelClientTestBase):
                 },
             )
         )
-        messages=[
+        messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant."),
             sdk.models.UserMessage(content="What is the weather in Seattle?"),
         ]
@@ -1393,26 +1489,30 @@ class TestModelClient(ModelClientTestBase):
         if len(spans) == 0:
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 2
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('tool_calls',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("tool_calls",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[0], expected_attributes)
         assert attributes_match == True
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[1], expected_attributes)
         assert attributes_match == True
 
@@ -1422,8 +1522,8 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"finish_reason\": \"tool_calls\", \"index\": 0, \"message\": {\"tool_calls\": [{\"function\": {\"call_id\": null}, \"id\": \"*\", \"type\": \"function\"}]}}"
-                }
+                    "gen_ai.event.content": '{"finish_reason": "tool_calls", "index": 0, "message": {"tool_calls": [{"function": {"call_id": null}, "id": "*", "type": "function"}]}}',
+                },
             }
         ]
         events_match = GenAiTraceVerifier().check_span_events(spans[0], expected_events)
@@ -1435,11 +1535,11 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"finish_reason\": \"stop\", \"index\": 0}"
-                }
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
             }
-        ] 
-        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)
         assert events_match == True
 
         AIInferenceInstrumentor().uninstrument()
@@ -1453,7 +1553,17 @@ class TestModelClient(ModelClientTestBase):
         except RuntimeError as e:
             pass
         import json
-        from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, FunctionCall, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+        from azure.ai.inference.models import (
+            SystemMessage,
+            UserMessage,
+            CompletionsFinishReason,
+            FunctionCall,
+            ToolMessage,
+            AssistantMessage,
+            ChatCompletionsToolCall,
+            ChatCompletionsToolDefinition,
+            FunctionDefinition,
+        )
         from azure.ai.inference import ChatCompletionsClient
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
@@ -1485,15 +1595,12 @@ class TestModelClient(ModelClientTestBase):
                 },
             )
         )
-        messages=[
+        messages = [
             sdk.models.SystemMessage(content="You are a helpful AI assistant."),
             sdk.models.UserMessage(content="What is the weather in Seattle?"),
         ]
 
-        response = client.complete(
-            messages=messages,
-            tools=[weather_description],
-            stream=True)
+        response = client.complete(messages=messages, tools=[weather_description], stream=True)
 
         # At this point we expect a function tool call in the model response
         tool_call_id: str = ""
@@ -1506,17 +1613,13 @@ class TestModelClient(ModelClientTestBase):
                 if update.choices[0].delta.tool_calls[0].id is not None:
                     tool_call_id = update.choices[0].delta.tool_calls[0].id
                 function_args += update.choices[0].delta.tool_calls[0].function.arguments or ""
-        
+
         # Append the previous model response to the chat history
         messages.append(
             AssistantMessage(
                 tool_calls=[
                     ChatCompletionsToolCall(
-                        id=tool_call_id,
-                        function=FunctionCall(
-                            name=function_name,
-                            arguments=function_args
-                        )
+                        id=tool_call_id, function=FunctionCall(name=function_name, arguments=function_args)
                     )
                 ]
             )
@@ -1528,19 +1631,10 @@ class TestModelClient(ModelClientTestBase):
         function_response = callable_func(**function_args_mapping)
 
         # Append the function response as a tool message to the chat history
-        messages.append(
-            ToolMessage(
-                tool_call_id=tool_call_id,
-                content=function_response
-            )
-        )
+        messages.append(ToolMessage(tool_call_id=tool_call_id, content=function_response))
 
         # With the additional tools information on hand, get another streaming response from the model
-        response = client.complete(
-            messages=messages,
-            tools=[weather_description],
-            stream=True
-        )
+        response = client.complete(messages=messages, tools=[weather_description], stream=True)
 
         content = ""
         for update in response:
@@ -1551,26 +1645,30 @@ class TestModelClient(ModelClientTestBase):
         if len(spans) == 0:
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 2
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('tool_calls',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("tool_calls",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[0], expected_attributes)
         assert attributes_match == True
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[1], expected_attributes)
         assert attributes_match == True
 
@@ -1580,25 +1678,25 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful AI assistant.\"}"
-                }
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful AI assistant."}',
+                },
             },
             {
                 "name": "gen_ai.user.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
-                }
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the weather in Seattle?"}',
+                },
             },
             {
                 "name": "gen_ai.choice",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"finish_reason\": \"tool_calls\", \"message\": {\"tool_calls\": [{\"id\": \"*\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seattle\\\"}\"}}]}, \"index\": 0}"
-                }
-            }
+                    "gen_ai.event.content": '{"finish_reason": "tool_calls", "message": {"tool_calls": [{"id": "*", "type": "function", "function": {"name": "get_weather", "arguments": "{\\"city\\": \\"Seattle\\"}"}}]}, "index": 0}',
+                },
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(spans[0], expected_events)
         assert events_match == True
@@ -1609,43 +1707,43 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful AI assistant.\"}"
-                }
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful AI assistant."}',
+                },
             },
             {
                 "name": "gen_ai.user.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
-                }
+                    "gen_ai.event.content": '{"role": "user", "content": "What is the weather in Seattle?"}',
+                },
             },
             {
                 "name": "gen_ai.assistant.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"assistant\", \"tool_calls\": [{\"id\": \"*\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seattle\\\"}\"}, \"type\": \"function\"}]}"
-                }
+                    "gen_ai.event.content": '{"role": "assistant", "tool_calls": [{"id": "*", "function": {"name": "get_weather", "arguments": "{\\"city\\": \\"Seattle\\"}"}, "type": "function"}]}',
+                },
             },
             {
                 "name": "gen_ai.tool.message",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"role\": \"tool\", \"tool_call_id\": \"*\", \"content\": \"Nice weather\"}"
-                }
+                    "gen_ai.event.content": '{"role": "tool", "tool_call_id": "*", "content": "Nice weather"}',
+                },
             },
             {
                 "name": "gen_ai.choice",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"message\": {\"content\": \"*\"}, \"finish_reason\": \"stop\", \"index\": 0}"
-                }
-            }
-        ] 
-        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
+                    "gen_ai.event.content": '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)
         assert events_match == True
 
         AIInferenceInstrumentor().uninstrument()
@@ -1659,7 +1757,17 @@ class TestModelClient(ModelClientTestBase):
         except RuntimeError as e:
             pass
         import json
-        from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, FunctionCall, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+        from azure.ai.inference.models import (
+            SystemMessage,
+            UserMessage,
+            CompletionsFinishReason,
+            FunctionCall,
+            ToolMessage,
+            AssistantMessage,
+            ChatCompletionsToolCall,
+            ChatCompletionsToolDefinition,
+            FunctionDefinition,
+        )
         from azure.ai.inference import ChatCompletionsClient
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
@@ -1691,15 +1799,12 @@ class TestModelClient(ModelClientTestBase):
                 },
             )
         )
-        messages=[
+        messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant."),
             sdk.models.UserMessage(content="What is the weather in Seattle?"),
         ]
 
-        response = client.complete(
-            messages=messages,
-            tools=[weather_description],
-            stream=True)
+        response = client.complete(messages=messages, tools=[weather_description], stream=True)
 
         # At this point we expect a function tool call in the model response
         tool_call_id: str = ""
@@ -1712,17 +1817,13 @@ class TestModelClient(ModelClientTestBase):
                 if update.choices[0].delta.tool_calls[0].id is not None:
                     tool_call_id = update.choices[0].delta.tool_calls[0].id
                 function_args += update.choices[0].delta.tool_calls[0].function.arguments or ""
-        
+
         # Append the previous model response to the chat history
         messages.append(
             AssistantMessage(
                 tool_calls=[
                     ChatCompletionsToolCall(
-                        id=tool_call_id,
-                        function=FunctionCall(
-                            name=function_name,
-                            arguments=function_args
-                        )
+                        id=tool_call_id, function=FunctionCall(name=function_name, arguments=function_args)
                     )
                 ]
             )
@@ -1734,19 +1835,10 @@ class TestModelClient(ModelClientTestBase):
         function_response = callable_func(**function_args_mapping)
 
         # Append the function response as a tool message to the chat history
-        messages.append(
-            ToolMessage(
-                tool_call_id=tool_call_id,
-                content=function_response
-            )
-        )
+        messages.append(ToolMessage(tool_call_id=tool_call_id, content=function_response))
 
         # With the additional tools information on hand, get another streaming response from the model
-        response = client.complete(
-            messages=messages,
-            tools=[weather_description],
-            stream=True
-        )
+        response = client.complete(messages=messages, tools=[weather_description], stream=True)
 
         content = ""
         for update in response:
@@ -1757,26 +1849,30 @@ class TestModelClient(ModelClientTestBase):
         if len(spans) == 0:
             spans = exporter.get_spans_by_name("chat")
         assert len(spans) == 2
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('tool_calls',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("tool_calls",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[0], expected_attributes)
         assert attributes_match == True
-        expected_attributes = [('gen_ai.operation.name', 'chat'),
-                                ('gen_ai.system', 'az.ai.inference'),
-                                ('gen_ai.request.model', 'chat'),
-                                ('server.address', ''),
-                                ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-large'),
-                                ('gen_ai.usage.input_tokens', '+'),
-                                ('gen_ai.usage.output_tokens', '+'),
-                                ('gen_ai.response.finish_reasons', ('stop',))]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(spans[1], expected_attributes)
         assert attributes_match == True
 
@@ -1786,8 +1882,8 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"finish_reason\": \"tool_calls\", \"message\": {\"tool_calls\": [{\"id\": \"*\", \"type\": \"function\"}]}, \"index\": 0}"
-                }
+                    "gen_ai.event.content": '{"finish_reason": "tool_calls", "message": {"tool_calls": [{"id": "*", "type": "function"}]}, "index": 0}',
+                },
             }
         ]
         events_match = GenAiTraceVerifier().check_span_events(spans[0], expected_events)
@@ -1799,11 +1895,11 @@ class TestModelClient(ModelClientTestBase):
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": "{\"finish_reason\": \"stop\", \"index\": 0}"
-                }
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
             }
-        ] 
-        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)
         assert events_match == True
 
         AIInferenceInstrumentor().uninstrument()

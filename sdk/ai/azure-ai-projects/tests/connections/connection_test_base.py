@@ -38,6 +38,16 @@ if LOGGING_ENABLED:
 
 class ConnectionsTestBase(AzureRecordedTestCase):
 
+    NON_EXISTING_CONNECTION_NAME = "non-existing-connection-name"
+    EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME = (
+        f"Connection {NON_EXISTING_CONNECTION_NAME} can't be found in this workspace"
+    )
+
+    NON_EXISTING_CONNECTION_TYPE = "non-existing-connection-type"
+    EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_TYPE = (
+        f"No connection of type {NON_EXISTING_CONNECTION_TYPE} found"
+    )
+
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_connections_tests_project_connection_string")
         project_client = AIProjectClient.from_connection_string(
@@ -64,7 +74,7 @@ class ConnectionsTestBase(AzureRecordedTestCase):
         *,
         expected_connection_type: ConnectionType = None,
         expected_connection_name: str = None,
-        expected_authentication_type: AuthenticationType = None
+        expected_authentication_type: AuthenticationType = None,
     ):
         assert connection.id is not None
 

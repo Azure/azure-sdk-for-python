@@ -1,5 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -9,16 +8,28 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ..._vendor import FileType
-import sys, io, asyncio
+import io, asyncio
 import logging
 import os
 import time
 from pathlib import Path
 from azure.core.exceptions import ResourceNotFoundError
-from io import TextIOWrapper
-from typing import IO, Any, AsyncIterator, Dict, List, Iterable, MutableMapping, Optional, Union, cast, overload
+from typing import (
+    IO,
+    Any,
+    AsyncIterator,
+    Dict,
+    List,
+    MutableMapping,
+    Optional,
+    Union,
+    cast,
+    overload,
+    Sequence,
+    TYPE_CHECKING,
+    TextIO,
+)
 
-from azure.ai.projects import _types
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ._operations import AgentsOperations as AgentsOperationsGenerated
 from ._operations import TelemetryOperations as TelemetryOperationsGenerated
@@ -29,10 +40,19 @@ from ...models._models import (
     ListConnectionsResponse,
     GetAppInsightsResponse,
     GetWorkspaceResponse,
+    InternalConnectionPropertiesSASAuth,
 )
 from ... import models as _models
 from ...operations._patch import _enable_telemetry
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.ai.projects import _types
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from openai import AsyncAzureOpenAI
+    from azure.identity.aio import get_bearer_token_provider
 
 logger = logging.getLogger(__name__)
 
@@ -50,29 +70,31 @@ class InferenceOperations:
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
+        is not installed.
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
         else:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
@@ -84,7 +106,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -92,23 +117,20 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
-        elif connection.authentication_type == AuthenticationType.AAD:
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
-            # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential)
+            raise ValueError(
+                "Getting chat completions client from a connection with SAS authentication is not yet supported"
+            )
         else:
             raise ValueError("Unknown authentication type")
 
@@ -119,29 +141,31 @@ class InferenceOperations:
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
         in this resource. The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
+        is not installed.
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
 
-        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on 
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection : bool = (os.getenv("USE_SERVERLESS_CONNECTION", None) == "true")
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
         else:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
             )
-            if not connection:
-                return None
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
@@ -153,7 +177,10 @@ class InferenceOperations:
         if use_serverless_connection:
             endpoint = connection.endpoint_url
         else:
-            endpoint = f"https://{connection.name}.services.ai.azure.com/models"
+            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
+            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
+            # from the end of the connection id.
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -162,29 +189,30 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
-        elif connection.authentication_type == AuthenticationType.AAD:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
-            # TODO - Not yet supported by the service. Expected 9/27.
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential)
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, *, api_version: str | None = None, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
+        does not exist.
+        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `openai` package
+        is not installed.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
@@ -193,14 +221,14 @@ class InferenceOperations:
         :paramtype api_version: str
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ModuleNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
         connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
         )
-        if not connection:
-            raise ValueError("No Azure OpenAI connection found.")
 
         try:
             from openai import AsyncAzureOpenAI
@@ -214,27 +242,24 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == AuthenticationType.AAD:
-            logger.debug(
-                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
-            )
+        elif (
+            connection.authentication_type == AuthenticationType.ENTRA_ID
+            or connection.authentication_type == AuthenticationType.SAS
+        ):
+
             try:
-                from azure.identity import get_bearer_token_provider
+                from azure.identity.aio import get_bearer_token_provider
             except ModuleNotFoundError as _:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure-identity'"
                 )
+            if connection.authentication_type == AuthenticationType.ENTRA_ID:
+                auth = "Creating AzureOpenAI using Entra ID authentication"
+            else:
+                auth = "Creating AzureOpenAI using SAS authentication"
+            logger.debug(f"[InferenceOperations.get_azure_openai_client] {auth}")
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                azure_ad_token_provider=get_bearer_token_provider(
-                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
-                ),
-                azure_endpoint=connection.endpoint_url,
-                api_version=api_version,
-            )
-        elif connection.authentication_type == AuthenticationType.SAS:
-            logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
-            client = AsyncAzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -254,14 +279,16 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
-        populating authentication credentials.
+        populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
+        exception if a connection with the given name was not found.
 
         :param connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.model.ConnectionProperties
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
@@ -277,39 +304,39 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 )
             else:
                 return connection_properties_list[0]
-        else:
-            return None
+        raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
     async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
-        populating authentication credentials.
+        populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
+        exception if a connection with the given name was not found.
 
         :param connection_name: Connection Name. Required.
         :type connection_name: str
         :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
-        :rtype: ~azure.ai.projects.models._models.ConnectionProperties
+        :rtype: ~azure.ai.projects.models.ConnectionProperties
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
         if with_credentials:
-            try:
-                connection: GetConnectionResponse = await self._get_connection_with_secrets(
-                    connection_name=connection_name, ignored="ignore", **kwargs
-                )
-            except ResourceNotFoundError as _:
-                return None
-            if connection.properties.auth_type == AuthenticationType.AAD:
+            connection: GetConnectionResponse = await self._get_connection_with_secrets(
+                connection_name=connection_name, ignored="ignore", **kwargs
+            )
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
 
+                cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
+
                 token_credential = SASTokenCredential(
-                    sas_token=connection.properties.credentials.sas,
+                    sas_token=cred_prop.credentials.sas,
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
@@ -320,16 +347,13 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
             return ConnectionProperties(connection=connection)
         else:
-            try:
-                connection=await self._get_connection(connection_name=connection_name, **kwargs)
-            except ResourceNotFoundError as _:
-                return None
+            connection = await self._get_connection(connection_name=connection_name, **kwargs)
             return ConnectionProperties(connection=connection)
 
     @distributed_trace_async
     async def list(
-        self, *, connection_type: ConnectionType | None = None, **kwargs: Any
-    ) -> Iterable[ConnectionProperties]:
+        self, *, connection_type: Optional[ConnectionType] = None, **kwargs: Any
+    ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
         :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
@@ -355,7 +379,6 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 class TelemetryOperations(TelemetryOperationsGenerated):
 
     _connection_string: Optional[str] = None
-    _get_connection_string_called: bool = False
 
     def __init__(self, *args, **kwargs):
         self._outer_instance = kwargs.pop("outer_instance")
@@ -364,37 +387,56 @@ class TelemetryOperations(TelemetryOperationsGenerated):
     async def get_connection_string(self) -> str:
         """
         Get the Application Insights connection string associated with the Project's Application Insights resource.
-        On first call, this method makes a GET call to the Application Insights resource URL to get the connection string.
-        Subsequent calls return the cached connection string.
+        On first call, this method makes a service call to the Application Insights resource URL to get the connection string.
+        Subsequent calls return the cached connection string, if one exists.
+        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Application Insights resource was not
+        enabled for this project.
 
-        :return: The connection string, or `None` if an Application Insights resource was not enabled for the Project.
+        :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
-        if not self._get_connection_string_called:
+        if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
 
-            # Continue only if Application Insights resource was enabled for this Project
-            if get_workspace_response.properties.application_insights:
+            if not get_workspace_response.properties.application_insights:
+                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
 
-                # Make a GET call to the Application Insights resource URL to get the connection string
-                app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
-                    app_insights_resource_url=get_workspace_response.properties.application_insights
-                )
+            # Make a GET call to the Application Insights resource URL to get the connection string
+            app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
+                app_insights_resource_url=get_workspace_response.properties.application_insights
+            )
 
-                self._connection_string = app_insights_respose.properties.connection_string
+            self._connection_string = app_insights_respose.properties.connection_string
 
-        self._get_connection_string_called = True
         return self._connection_string
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    def enable(self, *, destination: Union[TextIOWrapper, str], **kwargs) -> None:
-        """Enable tracing to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) collector.
+    async def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
+        """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
 
-        :keyword destination: `sys.stdout` for tracing to console output, or a string holding the
-         endpoint URL of the OpenTelemetry Protocol (OTLP) collector. Required.
-        :paramtype destination: Union[TextIOWrapper, str]
+        Following instrumentations are enabled (when corresponding packages are installed):
+
+        - Azure AI Inference (`azure-ai-inference`)
+        - Azure AI Projects (`azure-ai-projects`)
+        - OpenAI (`opentelemetry-instrumentation-openai-v2`)
+        - Langchain (`opentelemetry-instrumentation-langchain`)
+
+        The recording of prompt and completion messages is disabled by default. To enable it, set the
+        `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable to `true`.
+
+        When destination is provided, the method configures OpenTelemetry SDK to export traces to
+        stdout or OTLP (OpenTelemetry protocol) gRPC endpoint. It's recommended for local
+        development only. For production use, make sure to configure OpenTelemetry SDK directly.
+
+        :keyword destination: Recommended for local testing only. Set it to `sys.stdout` for
+            tracing to console output, or a string holding the OpenTelemetry protocol (OTLP)
+            endpoint such as "http://localhost:4317.
+            If not provided, the method enables instrumentations, but does not configure OpenTelemetry
+            SDK to export traces.
+        :paramtype destination: Union[TextIO, str, None]
         """
         _enable_telemetry(destination=destination, **kwargs)
 
@@ -487,7 +529,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -615,7 +657,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
+
     @overload
     async def update_agent(
         self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -650,7 +692,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -701,7 +743,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
     @overload
     async def update_agent(
         self,
@@ -712,12 +754,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -763,7 +805,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
 
     @overload
     async def update_agent(
@@ -795,13 +836,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.AsyncToolSet] = None,        
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -855,7 +896,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_tools_and_tool_resources(tools, tool_resources)
-        
+
         if body is not _Unset:
             if isinstance(body, io.IOBase):
                 return await super().update_agent(body=body, content_type=content_type, **kwargs)
@@ -880,18 +921,27 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
-    def _validate_tools_and_tool_resources(self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]):
+
+    def _validate_tools_and_tool_resources(
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
+    ):
         if tool_resources is None:
             return
         if tools is None:
             tools = []
-            
-        if tool_resources.file_search is not None and not any(isinstance(tool, _models.FileSearchToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided")
-        if tool_resources.code_interpreter is not None and not any(isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools):
-            raise ValueError("Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided")
-        
+
+        if tool_resources.file_search is not None and not any(
+            isinstance(tool, _models.FileSearchToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+            )
+        if tool_resources.code_interpreter is not None and not any(
+            isinstance(tool, _models.CodeInterpreterToolDefinition) for tool in tools
+        ):
+            raise ValueError(
+                "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
 
     def _get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """
@@ -1164,7 +1214,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @distributed_trace_async
@@ -1310,24 +1359,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         return run
 
     @overload
-    def create_stream(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
-        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
     async def create_stream(
         self,
         thread_id: str,
@@ -1429,7 +1460,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_stream(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1703,7 +1734,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        # If streaming is enabled, return the custom stream object
         return await response
 
     @overload
@@ -1887,7 +1917,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1955,7 +1985,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    async def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, *, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -1997,7 +2027,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -2088,6 +2118,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2104,6 +2135,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2149,6 +2182,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2164,6 +2198,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -2184,11 +2220,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not None:
             vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif file_ids is not None or (name is not None and expires_after is not None):
+        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
+            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
             vector_store = await self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
                 name=name,
+                store_configuration=store_configuration,
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
@@ -2197,7 +2235,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError(
                 "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
-                "'file_ids', or 'name' and 'expires_after'."
+                "'file_ids', 'store_configuration', or 'name' and 'expires_after'."
             )
 
         while vector_store.status == "in_progress":
@@ -2239,6 +2277,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         *,
         file_ids: List[str],
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
@@ -2250,6 +2289,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type vector_store_id: str
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2297,7 +2338,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         body: Union[JSON, IO[bytes], None] = None,
         *,
-        file_ids: List[str] = _Unset,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2310,6 +2352,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2320,7 +2364,11 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is None:
             vector_store_file_batch = await super().create_vector_store_file_batch(
-                vector_store_id=vector_store_id, file_ids=file_ids, chunking_strategy=chunking_strategy, **kwargs
+                vector_store_id=vector_store_id,
+                file_ids=file_ids,
+                data_sources=data_sources,
+                chunking_strategy=chunking_strategy,
+                **kwargs,
             )
         else:
             content_type = kwargs.get("content_type", "application/json")
@@ -2335,6 +2383,146 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file_batch
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        *,
+        content_type: str = "application/json",
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_vector_store_file_and_poll(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if body is None:
+            vector_store_file = await super().create_vector_store_file(
+                vector_store_id=vector_store_id,
+                file_id=file_id,
+                data_sources=data_sources,
+                chunking_strategy=chunking_strategy,
+                **kwargs,
+            )
+        else:
+            content_type = kwargs.get("content_type", "application/json")
+            vector_store_file = await super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
+
+        while vector_store_file.status == "in_progress":
+            time.sleep(sleep_interval)
+            vector_store_file = await super().get_vector_store_file(
+                vector_store_id=vector_store_id, file_id=vector_store_file.id
+            )
+
+        return vector_store_file
 
     @distributed_trace_async
     async def get_file_content(self, file_id: str, **kwargs: Any) -> AsyncIterator[bytes]:

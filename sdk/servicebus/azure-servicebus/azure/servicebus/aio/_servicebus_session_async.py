@@ -99,9 +99,7 @@ class ServiceBusSession(BaseSession):
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        state = (
-            state.encode(self._encoding) if isinstance(state, str) else state
-        )
+        state = state.encode(self._encoding) if isinstance(state, str) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {
@@ -149,8 +147,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0
-        self._locked_until_utc = utc_from_timestamp(
-            expiry_timestamp
-        )  # type: datetime.datetime
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
 
         return self._locked_until_utc

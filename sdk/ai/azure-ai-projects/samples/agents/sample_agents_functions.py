@@ -23,7 +23,7 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from user_functions import user_functions
 
 
@@ -79,10 +79,10 @@ with project_client:
                         print(f"Executing tool call: {tool_call}")
                         output = functions.execute(tool_call)
                         tool_outputs.append(
-                            {
-                                "tool_call_id": tool_call.id,
-                                "output": output,
-                            }
+                            ToolOutput(
+                                tool_call_id=tool_call.id,
+                                output=output,
+                            )
                         )
                     except Exception as e:
                         print(f"Error executing tool_call {tool_call.id}: {e}")

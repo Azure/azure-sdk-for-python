@@ -1,6 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,11 +11,13 @@ import datetime
 import inspect
 import json
 import logging
+import math
 import base64
 import asyncio
 import re
 
 from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
@@ -26,7 +26,6 @@ from ._models import (
     SubmitToolOutputsAction,
     ThreadRun,
     RunStep,
-    ThreadMessage,
     RunStepDeltaChunk,
     FunctionToolDefinition,
     FunctionDefinition,
@@ -34,6 +33,13 @@ from ._models import (
     ToolResources,
     FileSearchToolDefinition,
     FileSearchToolResource,
+    BingGroundingToolDefinition,
+    SharepointToolDefinition,
+    ToolConnection,
+    ToolConnectionList,
+    AzureAISearchResource,
+    IndexResource,
+    AzureAISearchToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     RequiredFunctionToolCall,
@@ -59,6 +65,7 @@ from typing import (
     Tuple,
     Set,
     get_origin,
+    cast,
     get_args,
     Union,
 )
@@ -88,7 +95,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Any:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -120,20 +127,25 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: GetConnectionResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(
+        self,
+        *,
+        connection: GetConnectionResponse,
+        token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None,
+    ) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.connection_type = connection.properties.category
+        self.connection_type = cast(ConnectionType, connection.properties.category)
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
             else connection.properties.target
         )
-        self.key: str = None
+        self.key: Optional[str] = None
         if hasattr(connection.properties, "credentials"):
-            if hasattr(connection.properties.credentials, "key"):
-                self.key = connection.properties.credentials.key
+            if hasattr(connection.properties.credentials, "key"):  # type: ignore
+                self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
@@ -177,6 +189,7 @@ class ConnectionProperties:
         return out
 
 
+# TODO: Look into adding an async version of this class
 class SASTokenCredential(TokenCredential):
     def __init__(
         self,
@@ -198,7 +211,7 @@ class SASTokenCredential(TokenCredential):
         logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
 
     @classmethod
-    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime:
+    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime.datetime:
         payload = jwt_token.split(".")[1]
         padded_payload = payload + "=" * (4 - len(payload) % 4)  # Add padding if necessary
         decoded_bytes = base64.urlsafe_b64decode(padded_payload)
@@ -221,15 +234,38 @@ class SASTokenCredential(TokenCredential):
 
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
-        self._sas_token = connection.properties.credentials.sas
+        self._sas_token = ""
+        if connection is not None and connection.token_credential is not None:
+            sas_credential = cast(SASTokenCredential, connection.token_credential)
+            self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
-    def get_token(self) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
         logger.debug("SASTokenCredential.get_token] Enter")
         if self._expires_on < datetime.datetime.now(datetime.timezone.utc):
             self._refresh_token()
-        return AccessToken(self._sas_token, self._expires_on.timestamp())
+        return AccessToken(self._sas_token, math.floor(self._expires_on.timestamp()))
 
 
 # Define type_map to translate Python type annotations to JSON Schema types
@@ -253,10 +289,7 @@ def _map_type(annotation) -> Dict[str, Any]:
     if origin in {list, List}:
         args = get_args(annotation)
         item_type = args[0] if args else str
-        return {
-            "type": "array",
-            "items": _map_type(item_type)
-        }
+        return {"type": "array", "items": _map_type(item_type)}
     elif origin in {dict, Dict}:
         return {"type": "object"}
     elif origin is Union:
@@ -337,8 +370,8 @@ class BaseFunctionTool(Tool):
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
         return {func.__name__: func for func in functions}
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
-        specs = []
+    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
+        specs: List[FunctionToolDefinition] = []
         # Flexible regex to capture ':param <name>: <description>'
         param_pattern = re.compile(
             r"""
@@ -350,7 +383,7 @@ class BaseFunctionTool(Tool):
             \s*:\s*                                # Colon ':' surrounded by optional whitespace
             (?P<description>.+)                    # Description (rest of the line)
             """,
-            re.VERBOSE
+            re.VERBOSE,
         )
 
         for name, func in functions.items():
@@ -359,27 +392,24 @@ class BaseFunctionTool(Tool):
             docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
 
-            param_descs = {}
+            param_descriptions = {}
             for line in docstring.splitlines():
                 line = line.strip()
                 match = param_pattern.match(line)
                 if match:
                     groups = match.groupdict()
-                    param_name = groups.get('name')
-                    param_desc = groups.get('description')
+                    param_name = groups.get("name")
+                    param_desc = groups.get("description")
                     param_desc = param_desc.strip() if param_desc else "No description"
-                    param_descs[param_name] = param_desc.strip()
+                    param_descriptions[param_name] = param_desc.strip()
 
             properties = {}
             required = []
             for param_name, param in params.items():
                 param_type_info = _map_type(param.annotation)
-                param_description = param_descs.get(param_name, "No description")
+                param_description = param_descriptions.get(param_name, "No description")
 
-                properties[param_name] = {
-                    **param_type_info,
-                    "description": param_description
-                }
+                properties[param_name] = {**param_type_info, "description": param_description}
 
                 # If the parameter has no default value and is not optional, add it to the required list
                 if param.default is inspect.Parameter.empty and not is_optional(param.annotation):
@@ -388,11 +418,7 @@ class BaseFunctionTool(Tool):
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={
-                    "type": "object",
-                    "properties": properties,
-                    "required": required
-                },
+                parameters={"type": "object", "properties": properties, "required": required},
             )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
@@ -428,7 +454,7 @@ class BaseFunctionTool(Tool):
 
         :return: A list of function definitions.
         """
-        return self._definitions
+        return cast(List[ToolDefinition], self._definitions)
 
     @property
     def resources(self) -> ToolResources:
@@ -469,6 +495,101 @@ class AsyncFunctionTool(BaseFunctionTool):
             logging.error(error_message)
             # Return error message as JSON string back to agent in order to make possible self correction to the function call
             return json.dumps({"error": error_message})
+
+
+class AzureAISearchTool(Tool):
+    """
+    A tool that searches for information using Azure AI Search.
+    """
+
+    def __init__(self):
+        self.index_list = []
+
+    def add_index(self, index: str, name: str):
+        """
+        Add an index ID to the list of indices used to search.
+        """
+        # TODO
+        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+        """
+        return [AzureAISearchToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+        """
+        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ConnectionTool(Tool):
+    """
+    A tool that requires connection ids.
+    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize ConnectionTool with a connection_id.
+
+        :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        """
+        self.connection_ids = [ToolConnection(connection_id=connection_id)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BingGroundingTool(ConnectionTool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+        """
+        return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+class SharepointTool(ConnectionTool):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+        """
+        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+"""
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+#        use connection_list to auto-update connections for bing search tool if no pre-existing
+        if self.connection_ids.__len__() == 0:
+            for id, connection_type in connection_list:
+                if connection_type == "ApiKey":
+                    self.connection_ids.append(id)
+                    return
+"""
 
 
 class FileSearchTool(Tool):
@@ -580,12 +701,12 @@ class BaseToolSet:
     Abstract class for a collection of tools that can be used by an agent.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._tools: List[Tool] = []
 
     def validate_tool_type(self, tool: Tool) -> None:
         pass
-    
+
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
@@ -628,7 +749,7 @@ class BaseToolSet:
         """
         Get the resources for all tools in the tool set.
         """
-        tool_resources = {}
+        tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
             resources = tool.resources
             for key, value in resources.items():
@@ -718,7 +839,7 @@ class ToolSet(BaseToolSet):
 
 class AsyncToolSet(BaseToolSet):
     """
-    A collection of tools that can be used by an asynchronize agent.
+    A collection of tools that can be used by an asynchronous agent.
     """
 
     def validate_tool_type(self, tool: Tool) -> None:
@@ -828,7 +949,10 @@ class AsyncAgentEventHandler:
         pass
 
 
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
+StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+
+
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -854,7 +978,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> Tuple[str, Any]:
+    async def __anext__(self) -> Tuple[str, StreamEventData]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -870,10 +994,11 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -885,7 +1010,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data = json.loads(event_data)
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
         except json.JSONDecodeError:
             parsed_data = event_data
 
@@ -928,11 +1055,12 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -953,7 +1081,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     await self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    await self.event_handler.on_error(event_data_obj)
+                    await self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     await self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
@@ -975,7 +1103,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             pass
 
 
-class AgentRunStream(Iterator[Tuple[str, Any]]):
+class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
@@ -999,7 +1127,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __iter__(self):
         return self
 
-    def __next__(self) -> Tuple[str, Any]:
+    def __next__(self) -> Tuple[str, StreamEventData]:
         if self.done:
             raise StopIteration
         while True:
@@ -1017,10 +1145,11 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -1075,11 +1204,12 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -1100,7 +1230,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    self.event_handler.on_error(event_data_obj)
+                    self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
@@ -1225,6 +1355,9 @@ __all__: List[str] = [
     "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
+    "BingGroundingTool",
+    "SharepointTool",
+    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",

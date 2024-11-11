@@ -9,9 +9,9 @@ from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cas
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
-
+from promptflow.core._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -293,14 +293,22 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     score = math.nan
     reason = ""
     if llm_output:
-        score_pattern = r"<S2>(.*?)</S2>"
-        reason_pattern = r"<S1>(.*?)</S1>"
-        score_match = re.findall(score_pattern, llm_output, re.DOTALL)
-        reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
-        if score_match:
-            score = float(score_match[0].strip())
-        if reason_match:
-            reason = reason_match[0].strip()
+        try:
+            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            reason_pattern = r"<S1>(.*?)</S1>"
+            score_match = re.findall(score_pattern, llm_output, re.DOTALL)
+            reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+            if score_match:
+                score = float(score_match[0].strip())
+            if reason_match:
+                reason = reason_match[0].strip()
+        except ValueError as exc:
+            raise EvaluationException(
+                message=f"Failed to parse model output: \n{llm_output}",
+                internal_message="Failed to parse model output.",
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.SYSTEM_ERROR,
+            ) from exc
 
     return score, reason
 
@@ -312,3 +320,126 @@ def remove_optional_singletons(eval_class, singletons):
             if param in singletons:
                 del required_singletons[param]
     return required_singletons
+
+
+def retrieve_content_type(assistant_messages: List, metric: str) -> str:
+    """Get the content type for service payload.
+
+    :param assistant_messages: The list of messages to be annotated by evaluation service
+    :type assistant_messages: list
+    :param metric: A string representing the metric type
+    :type metric: str
+    :return: A text representing the content type. Example: 'text', or 'image'
+    :rtype: str
+    """
+    # Check if metric is "protected_material"
+    if metric == "protected_material":
+        return "image"
+
+    # Iterate through each message
+    for message in assistant_messages:
+        # Ensure "content" exists in the message and is iterable
+        if isinstance(message.get("content", []), list):
+            for content in message.get("content", []):
+                if content.get("type") == "image_url":
+                    return "image"
+    # Default return if no image was found
+    return "text"
+
+
+def validate_conversation(conversation):
+    def raise_exception(msg, target):
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=target,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    if not conversation or "messages" not in conversation:
+        raise_exception(
+            "Attribute 'messages' is missing in the request",
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+        )
+    messages = conversation["messages"]
+    if not isinstance(messages, list):
+        raise_exception(
+            "'messages' parameter must be a JSON-compatible list of chat messages",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    expected_roles = {"user", "assistant", "system"}
+    image_found = False
+    assistant_message_count = 0
+    user_message_count = 0
+    for num, message in enumerate(messages, 1):
+        if not isinstance(message, dict):
+            try:
+                from azure.ai.inference.models import (
+                    ChatRequestMessage,
+                    UserMessage,
+                    AssistantMessage,
+                    SystemMessage,
+                    ImageContentItem,
+                )
+            except ImportError as ex:
+                raise MissingRequiredPackage(
+                    message="Please install 'azure-ai-inference' package to use SystemMessage, "
+                    "UserMessage or AssistantMessage."
+                ) from ex
+
+            if isinstance(message, ChatRequestMessage) and not isinstance(
+                message, (UserMessage, AssistantMessage, SystemMessage)
+            ):
+                raise_exception(
+                    f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
+                    ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                )
+            if isinstance(message, AssistantMessage):
+                assistant_message_count += 1
+            if isinstance(message, UserMessage):
+                user_message_count += 1
+            if isinstance(message.content, list) and any(
+                isinstance(item, ImageContentItem) for item in message.content
+            ):
+                image_found = True
+            continue
+        if message.get("role") not in expected_roles:
+            raise_exception(
+                f"Invalid role provided: {message.get('role')}. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        if message.get("role") == "assistant":
+            assistant_message_count += 1
+        if message.get("role") == "user":
+            user_message_count += 1
+        content = message.get("content")
+        if not isinstance(content, (str, list)):
+            raise_exception(
+                f"Content in each turn must be a string or array. Message number: {num}",
+                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            )
+        if isinstance(content, list):
+            if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+                image_found = True
+    if not image_found:
+        raise_exception(
+            "Message needs to have multi-modal input like images.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    if assistant_message_count == 0:
+        raise_exception(
+            "Assistant role required in one of the messages.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    if user_message_count == 0:
+        raise_exception(
+            "User role required in one of the messages.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )
+    if assistant_message_count > 1:
+        raise_exception(
+            "Evaluators for multimodal conversations only support single turn. "
+            "User and assistant role expected as the only role in each message.",
+            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+        )

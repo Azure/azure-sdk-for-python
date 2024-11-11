@@ -21,10 +21,8 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    Agent,
     MessageDeltaChunk,
     MessageDeltaTextContent,
     RunStep,
@@ -32,7 +30,6 @@ from azure.ai.projects.models import (
     ThreadRun,
 )
 from azure.ai.projects.models import AgentEventHandler
-from azure.ai.projects.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, ToolSet
 
@@ -85,6 +82,7 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
+    # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
     toolset = ToolSet()
     toolset.add(functions)
@@ -92,6 +90,7 @@ with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
+    # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

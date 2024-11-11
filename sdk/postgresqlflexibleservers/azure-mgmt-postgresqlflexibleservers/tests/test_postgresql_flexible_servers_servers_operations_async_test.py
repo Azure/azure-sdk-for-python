@@ -27,4 +27,3 @@ class TestPostgreSQLManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        

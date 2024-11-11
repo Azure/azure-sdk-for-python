@@ -46,8 +46,7 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     async def _upload(  # pylint: disable=inconsistent-return-statements
@@ -59,8 +58,7 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @distributed_trace_async
     async def _upload(  # pylint: disable=inconsistent-return-statements

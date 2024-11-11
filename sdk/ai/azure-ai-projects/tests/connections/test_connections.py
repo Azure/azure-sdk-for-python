@@ -6,6 +6,7 @@
 from devtools_testutils import recorded_by_proxy
 from connection_test_base import ConnectionsTestBase, servicePreparerConnectionsTests
 from azure.ai.projects.models import ConnectionType
+from azure.core.exceptions import ResourceNotFoundError
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -20,13 +21,16 @@ class TestConnections(ConnectionsTestBase):
 
         with self.get_sync_client(**kwargs) as project_client:
 
-            assert project_client.connections.get(
-                connection_name="Some non-existing name", with_credentials=False
-            ) == None
-
-            assert project_client.connections.get(
-                connection_name="Some non-existing name", with_credentials=True
-            ) == None
+            for with_credentials in [True, False]:
+                try:
+                    connection_properties = project_client.connections.get(
+                        connection_name=ConnectionsTestBase.NON_EXISTING_CONNECTION_NAME,
+                        with_credentials=with_credentials,
+                    )
+                    assert False
+                except ResourceNotFoundError as e:
+                    print(e)
+                    assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
             connection = project_client.connections.get(connection_name=aoai_connection, with_credentials=False)
             print(connection)
@@ -75,13 +79,16 @@ class TestConnections(ConnectionsTestBase):
 
         with self.get_sync_client(**kwargs) as project_client:
 
-            assert project_client.connections.get_default(
-                connection_type="Some unrecognized type", with_credentials=False
-            ) == None
-
-            assert project_client.connections.get_default(
-                connection_type="Some unrecognized type", with_credentials=True
-            ) == None
+            for with_credentials in [True, False]:
+                try:
+                    connection_properties = project_client.connections.get_default(
+                        connection_type=ConnectionsTestBase.NON_EXISTING_CONNECTION_TYPE,
+                        with_credentials=with_credentials,
+                    )
+                    assert False
+                except ResourceNotFoundError as e:
+                    print(e)
+                    assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_TYPE in e.message
 
             connection = project_client.connections.get_default(
                 connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=False

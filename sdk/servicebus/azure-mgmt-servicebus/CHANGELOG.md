@@ -1,5 +1,11 @@
 # Release History
 
+## 8.2.1 (2024-11-05)
+
+### Other Changes
+
+  - Update dependencies
+
 ## 8.2.0 (2023-02-15)
 
 ### Features Added

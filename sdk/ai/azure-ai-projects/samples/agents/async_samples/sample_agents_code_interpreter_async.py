@@ -25,13 +25,13 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
 from azure.ai.projects.models import FilePurpose
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from pathlib import Path
 
 import os
 
 
-async def main():
+async def main() -> None:
 
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -63,7 +63,9 @@ async def main():
         print(f"Created thread, thread ID: {thread.id}")
 
         message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?"
+            thread_id=thread.id,
+            role="user",
+            content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
         )
         print(f"Created message, message ID: {message.id}")
 

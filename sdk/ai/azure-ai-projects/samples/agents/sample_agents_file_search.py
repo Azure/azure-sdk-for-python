@@ -23,7 +23,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._patch import FileSearchTool
+from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
 
@@ -37,18 +37,17 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    openai_file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
-    print(f"Uploaded file, file ID: {openai_file.id}")
+    # Upload file and create vector store
+    # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
+    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+    print(f"Uploaded file, file ID: {file.id}")
 
-    openai_vectorstore = project_client.agents.create_vector_store_and_poll(
-        file_ids=[openai_file.id], name="my_vectorstore"
-    )
-    print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
+    print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    # Create file search tool with resources
-    file_search = FileSearchTool(vector_store_ids=[openai_vectorstore.id])
+    # Create file search tool with resources followed by creating agent
+    file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
-    # Create agent with file search tool and process assistant run
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
@@ -56,6 +55,8 @@ with project_client:
         tools=file_search.definitions,
         tool_resources=file_search.resources,
     )
+    # [END upload_file_create_vector_store_and_agent_with_file_search_tool]
+
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -76,13 +77,18 @@ with project_client:
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
         print(f"Run failed: {run.last_error}")
 
+    # [START teardown]
     # Delete the file when done
-    project_client.agents.delete_vector_store(openai_vectorstore.id)
+    project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vector store")
+
+    project_client.agents.delete_file(file_id=file.id)
+    print("Deleted file")
 
     # Delete the agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
+    # [END teardown]
 
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)

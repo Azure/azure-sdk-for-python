@@ -4,10 +4,16 @@
 # ------------------------------------
 # cSpell:disable
 import datetime
+import jwt
+import time
+
 from azure.ai.projects.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 from connection_test_base import ConnectionsTestBase
+from azure.ai.projects.models import ConnectionProperties
+from azure.ai.projects.models._models import GetConnectionResponse
+from unittest.mock import MagicMock, patch
 
 
 class FakeTokenCredential(TokenCredential):
@@ -28,12 +34,7 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
     # **********************************************************************************
 
     def test_sas_token_credential_class_mocked(self, **kwargs):
-        import jwt
-        import datetime
-        import time
-
         # Create a simple JWT with 10 seconds expiration time
-        token_duration_sec = 5
         secret_key = "my_secret_key"
         token_duration_sec = 5
         sas_token_expiration: datetime = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
@@ -70,11 +71,51 @@ class TestConnectionsUnitTests(ConnectionsTestBase):
             for _ in range(token_duration_sec + 2):
                 print("Looping...")
                 time.sleep(1)
-                access_token = sas_token_credential.get_token()
+                sas_token_credential.get_token()
         except HttpResponseError as e:
             exception_caught = True
             print(e)
         assert exception_caught
+
+    def _get_fake_token(self, exiration):
+        """Return the fake sas token."""
+        secret_key = "my_secret_key"
+        payload = {"exp": exiration}
+        sas_token = jwt.encode(payload, secret_key)
+        return SASTokenCredential(
+            sas_token=sas_token,
+            credential=FakeTokenCredential(),
+            subscription_id="fake_subscription_id",
+            resource_group_name="fake_resource_group",
+            project_name="fake_project_name",
+            connection_name="fake_connection_name",
+        )
+
+    def test_mock_subscription_refresh_token(self):
+        """Test refreshing token with mock subscription"""
+        token_duration_sec = 5
+        # Let our token be already expired.
+        sas_token_expiration: datetime = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+            seconds=token_duration_sec
+        )
+        sas_token_expiration = sas_token_expiration.replace(microsecond=0)
+        sas_token_credential = self._get_fake_token(sas_token_expiration)
+        assert sas_token_credential._expires_on == sas_token_expiration
+        new_expiration: datetime = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+            seconds=token_duration_sec
+        )
+        new_token_credential = self._get_fake_token(new_expiration)
+
+        mock_properties = MagicMock()
+        mock_properties.auth_type = "sas_token"
+        mock_properties.category = "fake_category"
+        mock_properties.target = "microsoft.com"
+        mock_properties.credentials.key = "very secret key"
+        conn_resp = GetConnectionResponse(id="12334", name="Fake_connection", properties=mock_properties)
+        conn = ConnectionProperties(connection=conn_resp, token_credential=new_token_credential)
+        with patch("azure.ai.projects.operations.ConnectionsOperations.get", return_value=conn):
+            new_token = sas_token_credential.get_token()
+        assert new_token.expires_on == int(new_expiration.timestamp())
 
     # Unit tests for the SASTokenCredential class
     def test_sas_token_credential_class_real(self, **kwargs):

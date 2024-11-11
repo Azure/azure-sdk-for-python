@@ -25,7 +25,7 @@ USAGE:
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def sample_get_azure_openai_client_async():

@@ -2,42 +2,45 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import warnings
 from typing import Optional, Dict, Any, Union, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import RetryMode
 from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
+
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from ._transport._base import AmqpTransport
     from .aio._transport._base_async import AmqpTransportAsync
 
 
-
 class Configuration:  # pylint:disable=too-many-instance-attributes
     def __init__(
-            self,  # pylint:disable=unused-argument
-            *,
-            hostname: str,
-            amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
-            socket_timeout: Optional[float] = None,
-            user_agent: Optional[str] = None,
-            retry_total: int = 3,
-            retry_mode: Union[str, RetryMode] = RetryMode.Exponential,
-            retry_backoff_factor: float = 0.8,
-            retry_backoff_max: int = 120,
-            network_tracing: bool = False,
-            http_proxy: Optional[Dict[str, Any]] = None,
-            transport_type: TransportType = TransportType.Amqp,
-            auth_timeout: int = 60,
-            prefetch: int = 300,
-            max_batch_size: int = 300,
-            receive_timeout: int = 0,
-            send_timeout: int = 60,
-            custom_endpoint_address: Optional[str] = None,
-            connection_verify: Optional[str] = None,
-            use_tls: bool = True,
-            **kwargs: Any
-        ):
+        self,  # pylint:disable=unused-argument
+        *,
+        hostname: str,
+        amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
+        socket_timeout: Optional[float] = None,
+        user_agent: Optional[str] = None,
+        retry_total: int = 3,
+        retry_mode: Union[str, RetryMode] = RetryMode.Exponential,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: int = 120,
+        network_tracing: bool = False,
+        http_proxy: Optional[Dict[str, Any]] = None,
+        transport_type: TransportType = TransportType.Amqp,
+        auth_timeout: int = 60,
+        prefetch: int = 300,
+        max_batch_size: int = 300,
+        receive_timeout: int = 0,
+        send_timeout: int = 60,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        ssl_context: Optional["SSLContext"] = None,
+        use_tls: bool = True,
+        **kwargs: Any
+    ):
         self.user_agent = user_agent
         self.retry_total = retry_total
         self.max_retries = self.retry_total
@@ -46,11 +49,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.backoff_max = retry_backoff_max
         self.network_tracing = network_tracing
         self.http_proxy = http_proxy
-        self.transport_type = (
-            TransportType.AmqpOverWebsocket
-            if self.http_proxy
-            else transport_type
-        )
+        self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy else transport_type
         self.auth_timeout = auth_timeout
         self.prefetch = prefetch
         self.max_batch_size = max_batch_size
@@ -58,6 +57,9 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.send_timeout = send_timeout
         self.custom_endpoint_address = custom_endpoint_address
         self.connection_verify = connection_verify
+        self.ssl_context = ssl_context
+        if self.ssl_context and self.connection_verify:
+            warnings.warn("ssl_context is specified, connection_verify will be ignored.")
         self.custom_endpoint_hostname = None
         self.hostname = hostname
         self.use_tls = use_tls
@@ -69,7 +71,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
             if amqp_transport.KIND == "pyamqp":
                 self.hostname += "/$servicebus/websocket"
         else:
-            self.socket_timeout = socket_timeout or .2
+            self.socket_timeout = socket_timeout or 0.2
             self.connection_port = DEFAULT_AMQPS_PORT
 
         # custom end point

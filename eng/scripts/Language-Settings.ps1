@@ -49,7 +49,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
     # handle any changes under sdk/<file>.<extension>
     if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
-      changedServices += "template"
+      $changedServices += "template"
     }
   }
   foreach ($changedService in $changedServices) {
@@ -438,36 +438,6 @@ function Import-Dev-Cert-python
 {
   Write-Host "Python no longer requires an out of proc trust methodology." `
     "The variables SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE are now dynamically set in proxy_startup.py"
-}
-
-# Defined in common.ps1 as:
-# $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
-function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
-{
-  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
-  if (!$PackageInfos) {
-    $PackageInfos =  @($PackageInfo)
-  }
-
-  $allSucceeded = $true
-  foreach ($item in $PackageInfos) {
-    # If the Version is IGNORE that means it's a source install and those aren't run through ValidatePackage
-    if ($item.Version -eq 'IGNORE') {
-      continue
-    }
-
-    $result = ValidatePackage `
-      -packageName $item.Name `
-      -packageVersion "==$($item.Version)" `
-      -PackageSourceOverride $PackageSourceOverride `
-      -DocValidationImageId $DocValidationImageId
-
-    if (!$result) {
-      $allSucceeded = $false
-    }
-  }
-
-  return $allSucceeded
 }
 
 function Get-python-EmitterName() {

@@ -2,16 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
-FILE: sample_agents_vector_store_batch_file_search_async.py
+FILE: sample_agents_vector_store_batch_file_search.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations to add files to an existing vector store and perform search from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_vector_store_batch_file_search_async.py
+    python sample_agents_vector_store_batch_file_search.py
 
     Before running the sample:
 
@@ -42,7 +41,7 @@ with project_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with no file and wait for it to be processed
-    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+    vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # add the file to the vector store or you can supply file ids in the vector store creation
@@ -52,6 +51,7 @@ with project_client:
     print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
     # create a file search tool
+    # [START create_agent_with_tools_and_tool_resources]
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
@@ -62,6 +62,7 @@ with project_client:
         tools=file_search_tool.definitions,
         tool_resources=file_search_tool.resources,
     )
+    # [END create_agent_with_tools_and_tool_resources]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
@@ -78,7 +79,7 @@ with project_client:
     file_search_tool.remove_vector_store(vector_store.id)
     print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
-    await project_client.agents.update_agent(
+    project_client.agents.update_agent(
         assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
     )
     print(f"Updated agent, agent ID: {agent.id}")
@@ -93,9 +94,6 @@ with project_client:
 
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-
-    project_client.agents.delete_file(file.id)
-    print("Deleted file")
 
     project_client.agents.delete_vector_store(vector_store.id)
     print("Deleted vector store")
