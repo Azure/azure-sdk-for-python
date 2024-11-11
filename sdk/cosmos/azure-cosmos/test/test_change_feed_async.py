@@ -69,7 +69,7 @@ class TestChangeFeedAsync:
         assert len(iter_list) == 0
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(filter_param)
+        query_iterable = created_collection.query_items_change_feed(**filter_param)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
         if 'Etag' in created_collection.client_connection.last_response_headers:

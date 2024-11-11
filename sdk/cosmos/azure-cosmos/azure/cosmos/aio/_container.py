@@ -614,7 +614,6 @@ class ContainerProxy:
     @distributed_trace
     def query_items_change_feed( # pylint: disable=unused-argument
             self,
-            *args: Any,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
 
@@ -636,7 +635,6 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :param Any args: args
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
