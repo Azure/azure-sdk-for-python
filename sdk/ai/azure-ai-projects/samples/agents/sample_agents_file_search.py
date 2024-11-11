@@ -23,7 +23,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._patch import FileSearchTool
+from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
 
@@ -42,9 +42,7 @@ with project_client:
     file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {file.id}")
 
-    vector_store = project_client.agents.create_vector_store_and_poll(
-        file_ids=[file.id], name="my_vectorstore"
-    )
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # Create file search tool with resources followed by creating agent
@@ -58,7 +56,7 @@ with project_client:
         tool_resources=file_search.resources,
     )
     # [END upload_file_create_vector_store_and_agent_with_file_search_tool]
-    
+
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication

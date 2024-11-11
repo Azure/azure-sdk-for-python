@@ -25,9 +25,8 @@ USAGE:
 
 """
 
-import os, sys
+import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
@@ -59,16 +58,19 @@ class MyEventHandler(AgentEventHandler):
                 print(f"Text delta received: {text_value}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        if len(message.content):
+            print(
+                f"ThreadMessage created. ID: {message.id}, "
+                f"Status: {message.status}, Content: {message.content[0].as_dict()}"
+            )
+        else:
+            print(f"ThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
-
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"Message status: {message.status}, Content: {message.content[0].as_dict()}")
 
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")

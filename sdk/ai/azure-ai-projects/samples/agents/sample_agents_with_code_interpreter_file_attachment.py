@@ -46,7 +46,7 @@ with project_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     # [START create_agent_and_message_with_code_interpreter_file_attachment]
-    # notice that CodeInterpreter must be enabled in the agent creation, 
+    # notice that CodeInterpreter must be enabled in the agent creation,
     # otherwise the agent will not be able to see the file attachment for code interpretation
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
@@ -61,13 +61,13 @@ with project_client:
 
     # create an attachment
     attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
-    
+
     # create a message
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
         content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-        attachments=[attachment]
+        attachments=[attachment],
     )
     # [END create_agent_and_message_with_code_interpreter_file_attachment]
     print(f"Created message, message ID: {message.id}")

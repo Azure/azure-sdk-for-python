@@ -22,7 +22,10 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
             for with_credentials in [True, False]:
                 try:
-                    connection_properties = await project_client.connections.get(connection_name=ConnectionsTestBase.NON_EXISTING_CONNECTION_NAME, with_credentials=with_credentials)
+                    connection_properties = await project_client.connections.get(
+                        connection_name=ConnectionsTestBase.NON_EXISTING_CONNECTION_NAME,
+                        with_credentials=with_credentials,
+                    )
                     assert False
                 except ResourceNotFoundError as e:
                     print(e)
@@ -81,7 +84,10 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
             for with_credentials in [True, False]:
                 try:
-                    connection_properties = await project_client.connections.get_default(connection_type=ConnectionsTestBase.NON_EXISTING_CONNECTION_TYPE, with_credentials=with_credentials)
+                    connection_properties = await project_client.connections.get_default(
+                        connection_type=ConnectionsTestBase.NON_EXISTING_CONNECTION_TYPE,
+                        with_credentials=with_credentials,
+                    )
                     assert False
                 except ResourceNotFoundError as e:
                     print(e)

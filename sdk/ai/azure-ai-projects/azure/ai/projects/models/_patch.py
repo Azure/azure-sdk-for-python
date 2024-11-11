@@ -1,5 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,6 +17,7 @@ import asyncio
 import re
 
 from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
@@ -26,7 +26,6 @@ from ._models import (
     SubmitToolOutputsAction,
     ThreadRun,
     RunStep,
-    ThreadMessage,
     RunStepDeltaChunk,
     FunctionToolDefinition,
     FunctionDefinition,
@@ -129,7 +128,10 @@ class ConnectionProperties:
     """
 
     def __init__(
-        self, *, connection: GetConnectionResponse, token_credential: Optional[TokenCredential] = None
+        self,
+        *,
+        connection: GetConnectionResponse,
+        token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None,
     ) -> None:
         self.id = connection.id
         self.name = connection.name
@@ -142,8 +144,8 @@ class ConnectionProperties:
         )
         self.key: Optional[str] = None
         if hasattr(connection.properties, "credentials"):
-            if hasattr(connection.properties.credentials, "key"):
-                self.key = connection.properties.credentials.key
+            if hasattr(connection.properties.credentials, "key"):  # type: ignore
+                self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
@@ -187,6 +189,7 @@ class ConnectionProperties:
         return out
 
 
+# TODO: Look into adding an async version of this class
 class SASTokenCredential(TokenCredential):
     def __init__(
         self,
@@ -946,7 +949,10 @@ class AsyncAgentEventHandler:
         pass
 
 
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
+StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+
+
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -972,7 +978,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> Tuple[str, Any]:
+    async def __anext__(self) -> Tuple[str, StreamEventData]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -988,10 +994,11 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -1003,7 +1010,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data: Union[str, Dict[str, Any]] = cast(Dict[str, Any], json.loads(event_data))
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
         except json.JSONDecodeError:
             parsed_data = event_data
 
@@ -1046,11 +1055,12 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -1071,7 +1081,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     await self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    await self.event_handler.on_error(event_data_obj)
+                    await self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     await self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
@@ -1093,7 +1103,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             pass
 
 
-class AgentRunStream(Iterator[Tuple[str, Any]]):
+class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
@@ -1117,7 +1127,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __iter__(self):
         return self
 
-    def __next__(self) -> Tuple[str, Any]:
+    def __next__(self) -> Tuple[str, StreamEventData]:
         if self.done:
             raise StopIteration
         while True:
@@ -1135,10 +1145,11 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -1193,11 +1204,12 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -1218,7 +1230,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    self.event_handler.on_error(event_data_obj)
+                    self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     self.event_handler.on_done()
                     self.done = True  # Mark the stream as done

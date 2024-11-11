@@ -11,7 +11,7 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client with tracing to console.
 
 USAGE:
-    python sample_agents_basics_with_console_tracing.py
+    python sample_agents_functions_with_console_tracing.py
 
     Before running the sample:
 
@@ -28,16 +28,12 @@ USAGE:
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
+from typing import Any, Callable, Set
 
 import os, sys, time, json
-from typing import Any, Callable, Set
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import (
-    FunctionTool,
-    RequiredFunctionToolCall,
-    SubmitToolOutputsAction, 
-    ToolOutput)
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 
 

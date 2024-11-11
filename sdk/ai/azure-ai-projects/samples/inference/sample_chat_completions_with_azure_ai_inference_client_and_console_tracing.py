@@ -30,8 +30,8 @@ USAGE:
 """
 import os
 import sys
-from azure.ai.projects import AIProjectClient
 from azure.ai.inference.models import UserMessage
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]

@@ -24,7 +24,7 @@ import asyncio
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AsyncFunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction
+from azure.ai.projects.models import AsyncFunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -32,7 +32,7 @@ import os
 from user_async_functions import user_async_functions
 
 
-async def main():
+async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
@@ -86,10 +86,10 @@ async def main():
                         try:
                             output = await functions.execute(tool_call)
                             tool_outputs.append(
-                                {
-                                    "tool_call_id": tool_call.id,
-                                    "output": output,
-                                }
+                                ToolOutput(
+                                    tool_call_id=tool_call.id,
+                                    output=output,
+                                )
                             )
                         except Exception as e:
                             print(f"Error executing tool_call {tool_call.id}: {e}")

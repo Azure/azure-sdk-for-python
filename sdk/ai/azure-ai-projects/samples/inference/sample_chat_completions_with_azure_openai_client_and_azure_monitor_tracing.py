@@ -20,7 +20,7 @@ USAGE:
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
-    * OTEL_INSTRUMENTATION_OPENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    * OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
