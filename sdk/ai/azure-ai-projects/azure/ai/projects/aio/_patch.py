@@ -63,8 +63,9 @@ class AIProjectClient(ClientGenerated):
         kwargs3 = kwargs.copy()
 
         # For getting AppInsights connection string from the AppInsights resource.
-        # The AppInsights resource URL is not known at this point. We need to get it from the AzureML "Workspace - Get" REST API call. It will have
-        # the form: https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name}
+        # The AppInsights resource URL is not known at this point. We need to get it from the
+        # AzureML "Workspace - Get" REST API call. It will have the form:
+        # https://management.azure.com/subscriptions/{appinsights_subscription_id}/resourceGroups/{appinsights_resource_group_name}/providers/microsoft.insights/components/{appinsights_resource_name} # pylint: disable=line-too-long
         _endpoint0 = "https://management.azure.com"  # pylint: disable=line-too-long
         self._config0: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
@@ -97,7 +98,7 @@ class AIProjectClient(ClientGenerated):
         self._client0: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
 
         # For Endpoints operations (enumerating connections, getting SAS tokens)
-        _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
+        _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"
         self._config1: AIProjectClientConfiguration = AIProjectClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

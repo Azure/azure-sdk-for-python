@@ -105,7 +105,8 @@ class InferenceOperations:
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
@@ -113,12 +114,14 @@ class InferenceOperations:
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using SAS authentication"
             )
             raise ValueError(
                 "Getting chat completions client from a connection with SAS authentication is not yet supported"
@@ -250,7 +253,7 @@ class InferenceOperations:
                 auth = "Creating AzureOpenAI using SAS authentication"
             logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
-                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -275,7 +278,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         :param connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
-        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :param with_credentials: Whether to populate the connection properties with authentication credentials.
+            Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
@@ -304,7 +308,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         :param connection_name: Connection Name. Required.
         :type connection_name: str
-        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :param with_credentials: Whether to populate the connection properties with authentication credentials.
+            Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
@@ -374,13 +379,14 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
+                "OpenTelemetry OTLP exporter is not installed. "
+                + "Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
             ) from e
         return OTLPSpanExporter(endpoint=destination)
 
     if isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
-            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter # pylint: disable=line-too-long
             try:
                 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
             except ModuleNotFoundError as e:
@@ -394,6 +400,7 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
 
     return None
 
+
 def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
     if isinstance(destination, str):
         # `destination` is the OTLP endpoint
@@ -406,16 +413,14 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
         except Exception as ex:
             # since OTel logging is still in beta in Python, we're going to swallow any errors
             # and just warn about them.
-            logger.warning(
-                "Failed to configure OpenTelemetry logging.", exc_info=ex
-            )
+            logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
 
         return OTLPLogExporter(endpoint=destination)
 
     if isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
-            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter # pylint: disable=line-too-long
             try:
                 from opentelemetry.sdk._logs.export import ConsoleLogExporter
                 return ConsoleLogExporter()
@@ -430,6 +435,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
+
 
 def _configure_tracing(span_exporter: Any) -> None:
     if span_exporter is None:
@@ -455,6 +461,7 @@ def _configure_tracing(span_exporter: Any) -> None:
     # add_span_processor method, though we need to cast it to fix type checking.
     provider = cast(TracerProvider, trace.get_tracer_provider())
     provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+
 
 def _configure_logging(log_exporter: Any) -> None:
     if log_exporter is None:
@@ -483,9 +490,8 @@ def _configure_logging(log_exporter: Any) -> None:
     except Exception as ex:
         # since OTel logging is still in beta in Python, we're going to swallow any errors
         # and just warn about them.
-        logger.warning(
-            "Failed to configure OpenTelemetry logging.", exc_info=ex
-        )
+        logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
+
 
 def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
@@ -509,7 +515,8 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         settings.tracing_implementation = "opentelemetry"
     except ModuleNotFoundError:
         logger.warning(
-            "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
+            "Azure SDK tracing plugin is not installed. "
+            + "Please install it using 'pip install azure-core-tracing-opentelemetry'"
         )
 
     try:
@@ -538,7 +545,8 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError:
         logger.warning(
-            "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai-v2` is not installed"
+            "Could not call `OpenAIInstrumentor().instrument()` since "
+            + "`opentelemetry-instrumentation-openai-v2` is not installed"
         )
 
     try:
@@ -547,7 +555,8 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         LangchainInstrumentor().instrument()
     except ModuleNotFoundError:
         logger.warning(
-            "Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed"
+            "Could not call LangchainInstrumentor().instrument()` since "
+            + "`opentelemetry-instrumentation-langchain` is not installed"
         )
 
 
@@ -560,16 +569,12 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         super().__init__(*args, **kwargs)
 
     def get_connection_string(self) -> str:
-        """
-        Get the Application Insights connection string associated with the Project's Application Insights resource.
-        On first call, this method makes a service call to the Application Insights resource URL to get the connection string.
-        Subsequent calls return the cached connection string, if one exists.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Application Insights resource was not
-        enabled for this project.
+        """Get the Application Insights connection string associated with the Project's Application Insights resource.
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights resource was not
+            enabled for this project.
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
@@ -1541,7 +1546,9 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_stream(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new stream for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1659,7 +1666,9 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_stream(
         self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new run for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1696,7 +1705,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream:
-        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new run for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str

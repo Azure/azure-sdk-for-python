@@ -227,7 +227,9 @@ class SASTokenCredential(TokenCredential):
 
         project_client = AIProjectClient(
             credential=self._credential,
-            endpoint="not-needed",  # Since we are only going to use the "connections" operations, we don't need to supply an endpoint. http://management.azure.com is hard coded in the SDK.
+            # Since we are only going to use the "connections" operations, we don't need to supply an endpoint.
+            # http://management.azure.com is hard coded in the SDK.
+            endpoint="not-needed",
             subscription_id=self._subscription_id,
             resource_group_name=self._resource_group_name,
             project_name=self._project_name,
@@ -474,7 +476,8 @@ class FunctionTool(BaseFunctionTool):
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
-            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            # Return error message as JSON string back to agent in order to make possible self
+            # correction to the function call
             return json.dumps({"error": error_message})
 
 
@@ -490,7 +493,8 @@ class AsyncFunctionTool(BaseFunctionTool):
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
-            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            # Return error message as JSON string back to agent in order to make possible self correction
+            # to the function call
             return json.dumps({"error": error_message})
 
 
@@ -806,7 +810,8 @@ class ToolSet(BaseToolSet):
         """
         if isinstance(tool, AsyncFunctionTool):
             raise ValueError(
-                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
+                "AsyncFunctionTool is not supported in ToolSet.  "
+                + "To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
             )
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
@@ -848,7 +853,8 @@ class AsyncToolSet(BaseToolSet):
         """
         if isinstance(tool, FunctionTool):
             raise ValueError(
-                "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
+                "FunctionTool is not supported in AsyncToolSet.  "
+                + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
