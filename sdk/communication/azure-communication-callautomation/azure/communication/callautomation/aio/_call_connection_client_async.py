@@ -505,7 +505,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -550,7 +551,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def _play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -610,7 +612,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -663,7 +666,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union[Union['FileSource', 'TextSource', 'SsmlSource'],List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+        play_prompt: Optional[Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                                    List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -1072,13 +1076,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> None:
         """Stops transcription in the call.
-
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         stop_transcription_request = StopTranscriptionRequest(
             operation_context=operation_context,
             **kwargs

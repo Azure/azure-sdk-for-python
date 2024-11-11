@@ -19,11 +19,36 @@ from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
-    CallLocator
+    CallLocator,
+    ExternalStorage,
+    RecordingStorageKind
 )
 if TYPE_CHECKING:
-    from ._models import ServerCallLocator, GroupCallLocator, RoomCallLocator
+    from ._models import (
+    ServerCallLocator,
+    GroupCallLocator,
+    RoomCallLocator,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage
+)
 
+def build_external_storage(
+    recording_storage: Union['AzureCommunicationsRecordingStorage',
+                             'AzureBlobContainerRecordingStorage'] = None
+) -> Optional[ExternalStorage]:
+    request: Optional[ExternalStorage] = None
+    if recording_storage:
+        if recording_storage.kind == RecordingStorageKind.AZURE_BLOB_STORAGE:
+            if not recording_storage.container_url:
+                raise ValueError(
+                    "Please provide container_url"
+                    "when you set the recording_storage as AzureBlobContainerRecordingStorage"
+                    )
+            request = ExternalStorage(
+                recording_storage_kind=recording_storage.kind,
+                recording_destination_container_url=recording_storage.container_url
+                )
+    return request
 
 def build_call_locator(
     args: List[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
@@ -82,7 +107,8 @@ def build_call_locator(
             )
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
     if request is None:
-        raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
+        raise ValueError("Call locator required. "
+                        "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
     return request
 
 

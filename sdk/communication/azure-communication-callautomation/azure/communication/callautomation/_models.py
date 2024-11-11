@@ -167,38 +167,38 @@ class GroupCallLocator:
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
 
-    class RecordingStorage:
-        """Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: str
-        """
-        kind: str
-        """The recording storage kind"""
+class RecordingStorage:
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: str
+    """
+    kind: str
+    """The recording storage kind"""
 
-    class AzureCommunicationsRecordingStorage(RecordingStorage):
-        """
-        Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
-        """
-        kind: Literal[RecordingStorageKind
+class AzureCommunicationsRecordingStorage(RecordingStorage):
+    """
+    Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    """
+    kind: Literal[RecordingStorageKind
                       .AZURE_COMMUNICATION_SERVICES
                       ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
-        """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
+    """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
 
-    class AzureBlobContainerRecordingStorage(RecordingStorage):
-        """Recording Storage for the recording.
-        :param kind: Defines the kind of external storage.
-        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
-        :param container_url: Defines the kind of external storage. Required.
-        :type container_url: str
-        """
-        kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
-        """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
-        container_url: str
-        """The container url for the AZURE_BLOB_STORAGE type"""
-        def __init__(self, container_url: str):
-            self.container_url = container_url
+class AzureBlobContainerRecordingStorage(RecordingStorage):
+    """Recording Storage for the recording.
+    :param kind: Defines the kind of external storage.
+    :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+    :param container_url: Defines the kind of external storage. Required.
+    :type container_url: str
+    """
+    kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
+    """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
+    container_url: str
+    """The container url for the AZURE_BLOB_STORAGE type"""
+    def __init__(self, container_url: str):
+        self.container_url = container_url
 
 
 class ChannelAffinity:
@@ -375,6 +375,9 @@ class MediaStreamingOptions:
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
     :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+    :keyword start_media_streaming: Determines if the media streaming should be started immediately
+     after call is answered or not. Required.
+    :paramtype start_media_streaming: bool
     :param enable_bidirectional: A value indicating whether bidirectional streaming is enabled
     :type enable_bidirectional: bool
     :param audio_format: Specifies the audio format used for encoding
@@ -389,9 +392,12 @@ class MediaStreamingOptions:
     """Content type to stream, eg. audio, audio/video."""
     audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-    enable_bidirectional: Optional[bool] = None,
+    start_media_streaming: Optional[bool] = None
+    """Determines if the media streaming should be started immediately
+     after call is answered or not"""
+    enable_bidirectional: Optional[bool] = None
     """A value indicating whether bidirectional streaming is enabled"""
-    audio_format: Optional[Union[str, 'AudioFormat']] = None,
+    audio_format: Optional[Union[str, 'AudioFormat']] = None
     """Specifies the audio format used for encoding."""
 
     def __init__(
@@ -400,6 +406,7 @@ class MediaStreamingOptions:
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        start_media_streaming: Optional[bool] = None,
         enable_bidirectional: Optional[bool] = None,
         audio_format: Optional[Union[str, 'AudioFormat']] = None,
     ):
@@ -407,6 +414,7 @@ class MediaStreamingOptions:
         self.transport_type = transport_type
         self.content_type = content_type
         self.audio_channel_type = audio_channel_type
+        self.start_media_streaming = start_media_streaming
         self.enable_bidirectional = enable_bidirectional
         self.audio_format = audio_format
 
@@ -416,6 +424,7 @@ class MediaStreamingOptions:
             transport_type=self.transport_type,
             content_type=self.content_type,
             audio_channel_type=self.audio_channel_type,
+            start_media_streaming=self.start_media_streaming,
             enable_bidirectional = self.enable_bidirectional,
             audio_format=self.audio_format
         )
@@ -447,9 +456,9 @@ class TranscriptionOptions:
     """Defines the locale for the data."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
-    speech_recognition_model_endpoint_id: Optional[str] = None,
+    speech_recognition_model_endpoint_id: Optional[str] = None
     """Endpoint where the custom model was deployed."""
-    enable_intermediate_results: Optional[bool] = None,
+    enable_intermediate_results: Optional[bool] = None
     """Enables intermediate results for the transcribed speech."""
 
     def __init__(
@@ -477,7 +486,7 @@ class TranscriptionOptions:
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
             enable_intermediate_results=self.enable_intermediate_results
         )
-    
+
 class MediaStreamingSubscription:
     """Media streaming Subscription Object.
 
@@ -619,7 +628,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The callback URL."""
     media_subscription_id: Optional[str]
     """SubscriptionId for media streaming."""
-    data_subscription_id: Optional[str] = None,
+    data_subscription_id: Optional[str] = None
     """SubscriptionId for transcription."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
@@ -639,7 +648,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The identifier that answered the call"""
     answered_for: Optional[PhoneNumberIdentifier]
     """The phone identifier that answered the call"""
-    
+
     def __init__(
         self,
         *,
@@ -965,4 +974,3 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
-    

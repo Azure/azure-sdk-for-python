@@ -26,6 +26,8 @@ from ._models import (
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -75,6 +77,8 @@ __all__ = [
     "ChannelAffinity",
     "MediaStreamingOptions",
     "TranscriptionOptions",
+    "AzureBlobContainerRecordingStorage",
+    "AzureCommunicationsRecordingStorage",
 
     # models for output
     "CallConnectionProperties",

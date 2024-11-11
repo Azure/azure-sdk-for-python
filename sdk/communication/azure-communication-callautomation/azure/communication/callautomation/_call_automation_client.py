@@ -31,10 +31,13 @@ from ._models import (
     CallConnectionProperties,
     RecordingProperties,
     ChannelAffinity,
-    CallInvite
+    CallInvite,
+    AzureCommunicationsRecordingStorage,
+    AzureBlobContainerRecordingStorage
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
+    build_external_storage,
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
@@ -47,7 +50,7 @@ if TYPE_CHECKING:
         GroupCallLocator,
         RoomCallLocator,
         MediaStreamingOptions,
-        TranscriptionOptions,
+        TranscriptionOptions
     )
     from azure.core.credentials import (
         TokenCredential,
@@ -282,8 +285,10 @@ class CallAutomationClient:
             cognitive_services_endpoint=cognitive_services_endpoint
             ) if cognitive_services_endpoint else None
 
-        media_streaming_options = kwargs.get("media_streaming", None)
-        transcription_options = kwargs.get("transcription", None)
+        media_streaming_options : Optional[MediaStreamingOptions] = None
+        transcription_options : Optional[TranscriptionOptions] = None
+        media_streaming_options = kwargs.pop("media_streaming", None)
+        transcription_options = kwargs.pop("transcription", None)
         call_locator = build_call_locator(
             args,
             kwargs.pop("call_locator", None),
@@ -297,7 +302,7 @@ class CallAutomationClient:
             operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_streaming_options.to_generated() if media_streaming_options else None,
-            transcription_options=transcription_options.to_genrated() if transcription_options else None
+            transcription_options=transcription_options.to_generated() if transcription_options else None
         )
 
         process_repeatability_first_sent(kwargs)
@@ -610,8 +615,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -639,12 +644,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+         If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -663,8 +666,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -692,12 +695,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+         If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -716,8 +717,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -745,12 +746,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+         If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -769,8 +768,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -798,12 +797,10 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+         If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -827,6 +824,7 @@ class CallAutomationClient:
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None)
         )
+        external_storage = build_external_storage(kwargs.pop("recording_storage", None))
         call_connection_id = kwargs.pop("call_connection_id", None)
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator if call_locator else None,
@@ -836,8 +834,7 @@ class CallAutomationClient:
             recording_channel_type=kwargs.pop("recording_channel_type", None),
             recording_format_type=kwargs.pop("recording_format_type", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
-            recording_storage_type=kwargs.pop("recording_storage_type", None),
-            external_storage_location=kwargs.pop("external_storage_location", None),
+            external_storage=external_storage,
             channel_affinity=channel_affinity_internal,
             pause_on_start=kwargs.pop("pause_on_start", None)
         )
