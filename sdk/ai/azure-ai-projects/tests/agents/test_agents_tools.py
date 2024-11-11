@@ -43,7 +43,7 @@ if LOGGING_ENABLED:
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
-    azure_ai_projects_connection_string_agents_tests="foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_projects_agents_tests_project_connection_string="foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 agentClientPreparer = functools.partial(
@@ -89,7 +89,7 @@ class TestAgentClient(AzureRecordedTestCase):
     # helper function: create client using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("azure_ai_projects_connection_string_agents_tests")
+        connection_string = kwargs.pop("azure_ai_projects_agents_tests_project_connection_string")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         # create and return client

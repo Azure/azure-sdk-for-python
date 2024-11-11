@@ -34,10 +34,7 @@ from azure.identity import DefaultAzureCredential
 
 """
 issues I've noticed with the code: 
-    delete_thread(thread.id) fails
     cancel_thread(thread.id) expires/times out occasionally
-    added time.sleep() to the beginning of my last few tests to avoid limits
-    when using the endpoint from Howie, delete_agent(agent.id) did not work but would not cause an error
 """
 
 # Set to True to enable SDK logging
@@ -97,8 +94,8 @@ def fetch_current_datetime_recordings():
 
 
 # Statically defined user functions for fast reference
-user_functions_recording = [fetch_current_datetime_recordings]
-user_functions_live = [fetch_current_datetime_live]
+user_functions_recording = {fetch_current_datetime_recordings}
+user_functions_live = {fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -164,7 +161,7 @@ class TestAgentClient(AzureRecordedTestCase):
     # test agent creation and deletion
     @agentClientPreparer()
     @recorded_by_proxy
-    def test_create_delete_agent(self, **kwargs):
+    def test_create_update_delete_agent(self, **kwargs):
         # create client
         # client = self.create_client(**kwargs)
         with self.create_client(**kwargs) as client:
@@ -188,225 +185,217 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_agent_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
-        print("Created client")
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+            print("Created client")
 
-        # create body for agent
-        body = {
-            "name": "my-agent",
-            "model": "gpt-4o",
-            "instructions": "You are helpful agent"
-        }
+            # create body for agent
+            body = {
+                "name": "my-agent",
+                "model": "gpt-4o",
+                "instructions": "You are helpful agent"
+            }
 
-        # create agent
-        agent = client.agents.create_agent(body=body)
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
-        
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # create agent
+            agent = client.agents.create_agent(body=body)
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+            
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test agent creation with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_agent_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
-        print("Created client")
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+            print("Created client")
 
-        # create body for agent
-        body = {
-            "name": "my-agent",
-            "model": "gpt-4o",
-            "instructions": "You are helpful agent"
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for agent
+            body = {
+                "name": "my-agent",
+                "model": "gpt-4o",
+                "instructions": "You are helpful agent"
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # create agent
-        agent = client.agents.create_agent(body=io.BytesIO(binary_body))
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
-        assert agent.name == "my-agent"
-        assert agent.model == "gpt-4o"
-        
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # create agent
+            agent = client.agents.create_agent(body=io.BytesIO(binary_body))
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+            assert agent.name == "my-agent"
+            assert agent.model == "gpt-4o"
+            
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test agent creation with tools
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_agent_with_tools(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # initialize agent functions
-        functions = FunctionTool(user_functions_recording)
+            # initialize agent functions
+            functions = FunctionTool(user_functions_recording)
 
-        # create agent with tools
-        agent = client.agents.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
-        )
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
-        assert agent.tools
-        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
-        # assert agent.tools[0] == functions.definitions TODO ask howie why he changed this because it fails
-        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+            # create agent with tools
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+            assert agent.tools
+            assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
         
     # test agent creation with tools
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_agent_with_tools_and_resources(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # initialize agent functions
-        functions = FunctionTool(functions=user_functions_recording)
+            # initialize agent functions
+            functions = FunctionTool(functions=user_functions_recording)
 
-        # create agent with tools
-        agent = client.agents.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
-        )
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
-        assert agent.tools
-        assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
-        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+            # create agent with tools
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+            assert agent.tools
+            assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()        
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        
+
 
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_agent(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
 
-        # update agent and confirm changes went through
-        agent.update(name="my-agent2", instructions="You are helpful agent")
-        assert agent.name
-        assert agent.name == "my-agent2"
+            # update agent and confirm changes went through
+            agent.update(name="my-agent2", instructions="You are helpful agent")
+            assert agent.name
+            assert agent.name == "my-agent2"
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test update agent without body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_agent_2(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create body for agent
-        body = {
-            "name": "my-agent",
-            "model": "gpt-4o",
-            "instructions": "You are helpful agent"
-        }
+            # create body for agent
+            body = {
+                "name": "my-agent",
+                "model": "gpt-4o",
+                "instructions": "You are helpful agent"
+            }
 
-        # create agent
-        agent = client.agents.create_agent(body=body)
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(body=body)
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # update agent and confirm changes went through
-        agent = client.agents.update_agent(agent.id, name="my-agent2")
-        assert agent.name
-        assert agent.name == "my-agent2"
+            # update agent and confirm changes went through
+            agent = client.agents.update_agent(agent.id, name="my-agent2")
+            assert agent.name
+            assert agent.name == "my-agent2"
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test update agent with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_agent_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create body for agent
-        body = {
-            "name": "my-agent",
-            "model": "gpt-4o",
-            "instructions": "You are helpful agent"
-        }
+            # create body for agent
+            body = {
+                "name": "my-agent",
+                "model": "gpt-4o",
+                "instructions": "You are helpful agent"
+            }
 
-        # create agent
-        agent = client.agents.create_agent(body=body)
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(body=body)
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create body for agent
-        body2 = {
-            "name": "my-agent2",
-            "instructions": "You are helpful agent"
-        }
+            # create body for agent
+            body2 = {
+                "name": "my-agent2",
+                "instructions": "You are helpful agent"
+            }
 
-        # update agent and confirm changes went through
-        agent = client.agents.update_agent(agent.id, body=body2)
-        assert agent.name
-        assert agent.name == "my-agent2"
+            # update agent and confirm changes went through
+            agent = client.agents.update_agent(agent.id, body=body2)
+            assert agent.name
+            assert agent.name == "my-agent2"
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
-    # NOTE update_agent with overloads isn't working
     # test update agent with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_agent_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
 
-        # create body for agent
-        body = {
-            "name": "my-agent2",
-            "instructions": "You are helpful agent"
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for agent
+            body = {
+                "name": "my-agent2",
+                "instructions": "You are helpful agent"
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # update agent and confirm changes went through
-        agent = client.agents.update_agent(agent.id, body=io.BytesIO(binary_body))
-        assert agent.name
-        assert agent.name == "my-agent2"
+            # update agent and confirm changes went through
+            agent = client.agents.update_agent(agent.id, body=io.BytesIO(binary_body))
+            assert agent.name
+            assert agent.name == "my-agent2"
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     """
     DISABLED: can't perform consistently on shared resource
@@ -451,151 +440,140 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_thread(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert isinstance(thread, AgentThread)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert isinstance(thread, AgentThread)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test creating thread with no body
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_with_metadata(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create metadata for thread
-        metadata = {"key1": "value1", "key2": "value2"}
+            # create metadata for thread
+            metadata = {"key1": "value1", "key2": "value2"}
 
-        # create thread
-        thread = client.agents.create_thread(metadata=metadata)
-        assert isinstance(thread, AgentThread) 
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
+            # create thread
+            thread = client.agents.create_thread(metadata=metadata)
+            assert isinstance(thread, AgentThread) 
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
-        # close client
-        print("Deleted agent")
-        client.close()
+            # close client
+            print("Deleted agent")
 
     # test creating thread with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create body for thread
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"},
-        }
+            # create body for thread
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"},
+            }
 
-        # create thread
-        thread = client.agents.create_thread(body=body)
-        assert isinstance(thread, AgentThread) 
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
-
-        # close client
-        print("Deleted agent")
-        client.close()
+            # create thread
+            thread = client.agents.create_thread(body=body)
+            assert isinstance(thread, AgentThread) 
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
     # test creating thread with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create body for thread
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"},
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for thread
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"},
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # create thread
-        thread = client.agents.create_thread(body=io.BytesIO(binary_body))
-        assert isinstance(thread, AgentThread) 
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
+            # create thread
+            thread = client.agents.create_thread(body=io.BytesIO(binary_body))
+            assert isinstance(thread, AgentThread) 
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
-        # close client
-        print("Deleted agent")
-        client.close()
 
     # test getting thread
     @agentClientPreparer()
     @recorded_by_proxy
     def test_get_thread(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # get thread
-        thread2 = client.agents.get_thread(thread.id)
-        assert thread2.id
-        assert thread.id == thread2.id
-        print("Got thread, thread ID", thread2.id)
+            # get thread
+            thread2 = client.agents.get_thread(thread.id)
+            assert thread2.id
+            assert thread.id == thread2.id
+            print("Got thread, thread ID", thread2.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test updating thread  
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_thread(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
-        
-        # update thread
-        thread = client.agents.update_thread(thread.id, metadata={"key1": "value1", "key2": "value2"})
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
-        
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+            
+            # update thread
+            thread = client.agents.update_thread(thread.id, metadata={"key1": "value1", "key2": "value2"})
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
+            
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
         
     # test updating thread without body 
@@ -603,77 +581,70 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_update_thread_with_metadata(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # set metadata
-        metadata = {"key1": "value1", "key2": "value2"}
+            # set metadata
+            metadata = {"key1": "value1", "key2": "value2"}
 
-        # create thread
-        thread = client.agents.create_thread(metadata=metadata)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread(metadata=metadata)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # set metadata
-        metadata2 = {"key1": "value1", "key2": "newvalue2"}
+            # set metadata
+            metadata2 = {"key1": "value1", "key2": "newvalue2"}
 
-        # update thread
-        thread = client.agents.update_thread(thread.id, metadata=metadata2)
-        assert thread.metadata == {"key1": "value1", "key2": "newvalue2"}
+            # update thread
+            thread = client.agents.update_thread(thread.id, metadata=metadata2)
+            assert thread.metadata == {"key1": "value1", "key2": "newvalue2"}
 
-        # close client
-        client.close()
 
     # test updating thread with body: JSON 
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_thread_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # set metadata
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
+            # set metadata
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
 
-        # update thread
-        thread = client.agents.update_thread(thread.id, body=body)
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
+            # update thread
+            thread = client.agents.update_thread(thread.id, body=body)
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
-        # close client
-        client.close()
 
     # test updating thread with body: IO[bytes] 
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_thread_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # set metadata
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # set metadata
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # update thread
-        thread = client.agents.update_thread(thread.id, body=io.BytesIO(binary_body))
-        assert thread.metadata == {"key1": "value1", "key2": "value2"}
-
-        # close client
-        client.close()
+            # update thread
+            thread = client.agents.update_thread(thread.id, body=io.BytesIO(binary_body))
+            assert thread.metadata == {"key1": "value1", "key2": "value2"}
 
     
     # test deleting thread
@@ -681,30 +652,29 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_delete_thread(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert isinstance(thread, AgentThread)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert isinstance(thread, AgentThread)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # delete thread
-        deletion_status = client.agents.delete_thread(thread.id)
-        assert deletion_status.id == thread.id
-        assert deletion_status.deleted == True
-        print("Deleted thread, thread ID", deletion_status.id)
+            # delete thread
+            deletion_status = client.agents.delete_thread(thread.id)
+            assert deletion_status.id == thread.id
+            assert deletion_status.deleted == True
+            print("Deleted thread, thread ID", deletion_status.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
     
 
     # # **********************************************************************************
@@ -718,28 +688,27 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_message(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
 
     # test creating message in a thread with body: JSON
@@ -747,263 +716,249 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_message_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create body for message
-        body = {
-            "role": "user",
-            "content": "Hello, tell me a joke"
-        }
+            # create body for message
+            body = {
+                "role": "user",
+                "content": "Hello, tell me a joke"
+            }
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, body=body)
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, body=body)
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # close client
-        client.close()
 
     # test creating message in a thread with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_message_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create body for message
-        body = {
-            "role": "user",
-            "content": "Hello, tell me a joke"
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for message
+            body = {
+                "role": "user",
+                "content": "Hello, tell me a joke"
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, body=io.BytesIO(binary_body))
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, body=io.BytesIO(binary_body))
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # close client
-        client.close()
 
     # test creating multiple messages in a thread
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_multiple_messages(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create messages
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
-        message2 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
-        assert message2.id
-        print("Created message, message ID", message2.id)
-        message3 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
-        assert message3.id
-        print("Created message, message ID", message3.id)
+            # create messages
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
+            message2 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+            assert message2.id
+            print("Created message, message ID", message2.id)
+            message3 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+            assert message3.id
+            print("Created message, message ID", message3.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test listing messages in a thread
     @agentClientPreparer()
     @recorded_by_proxy
     def test_list_messages(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # check that initial message list is empty
-        messages0 = client.agents.list_messages(thread_id=thread.id)
-        print(messages0.data)
-        assert messages0.data.__len__() == 0
+            # check that initial message list is empty
+            messages0 = client.agents.list_messages(thread_id=thread.id)
+            print(messages0.data)
+            assert messages0.data.__len__() == 0
 
-        # create messages and check message list for each one
-        message1 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message1.id
-        print("Created message, message ID", message1.id)
-        messages1 = client.agents.list_messages(thread_id=thread.id)
-        assert messages1.data.__len__() == 1
-        assert messages1.data[0].id == message1.id
+            # create messages and check message list for each one
+            message1 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message1.id
+            print("Created message, message ID", message1.id)
+            messages1 = client.agents.list_messages(thread_id=thread.id)
+            assert messages1.data.__len__() == 1
+            assert messages1.data[0].id == message1.id
 
-        message2 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
-        assert message2.id
-        print("Created message, message ID", message2.id)
-        messages2 = client.agents.list_messages(thread_id=thread.id)
-        assert messages2.data.__len__() == 2
-        assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
+            message2 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+            assert message2.id
+            print("Created message, message ID", message2.id)
+            messages2 = client.agents.list_messages(thread_id=thread.id)
+            assert messages2.data.__len__() == 2
+            assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
 
-        message3 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
-        assert message3.id
-        print("Created message, message ID", message3.id)
-        messages3 = client.agents.list_messages(thread_id=thread.id)
-        assert messages3.data.__len__() == 3
-        assert (
-            messages3.data[0].id == message3.id
-            or messages3.data[1].id == message2.id
-            or messages3.data[2].id == message2.id
-        )
+            message3 = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+            assert message3.id
+            print("Created message, message ID", message3.id)
+            messages3 = client.agents.list_messages(thread_id=thread.id)
+            assert messages3.data.__len__() == 3
+            assert (
+                messages3.data[0].id == message3.id
+                or messages3.data[1].id == message2.id
+                or messages3.data[2].id == message2.id
+            )
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test getting message in a thread
     @agentClientPreparer()
     @recorded_by_proxy
     def test_get_message(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # get message
-        message2 = client.agents.get_message(thread_id=thread.id, message_id=message.id)
-        assert message2.id
-        assert message.id == message2.id
-        print("Got message, message ID", message.id)
+            # get message
+            message2 = client.agents.get_message(thread_id=thread.id, message_id=message.id)
+            assert message2.id
+            assert message.id == message2.id
+            print("Got message, message ID", message.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test updating message in a thread without body
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_message(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # update message
-        message = client.agents.update_message(thread_id=thread.id, message_id=message.id, metadata={"key1": "value1", "key2": "value2"})
-        assert message.metadata == {"key1": "value1", "key2": "value2"}
+            # update message
+            message = client.agents.update_message(thread_id=thread.id, message_id=message.id, metadata={"key1": "value1", "key2": "value2"})
+            assert message.metadata == {"key1": "value1", "key2": "value2"}
 
-        # close client
-        client.close()
 
     # test updating message in a thread with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_message_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create body for message
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
+            # create body for message
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
 
-        # update message
-        message = client.agents.update_message(thread_id=thread.id, message_id=message.id, body=body)
-        assert message.metadata == {"key1": "value1", "key2": "value2"}
+            # update message
+            message = client.agents.update_message(thread_id=thread.id, message_id=message.id, body=body)
+            assert message.metadata == {"key1": "value1", "key2": "value2"}
 
-        # close client
-        client.close()
 
     # test updating message in a thread with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_message_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create body for message
-        body = {
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for message
+            body = {
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # update message
-        message = client.agents.update_message(thread_id=thread.id, message_id=message.id, body=io.BytesIO(binary_body))
-        assert message.metadata == {"key1": "value1", "key2": "value2"}
-
-        # close client
-        client.close()
+            # update message
+            message = client.agents.update_message(thread_id=thread.id, message_id=message.id, body=io.BytesIO(binary_body))
+            assert message.metadata == {"key1": "value1", "key2": "value2"}
     
 
     # # **********************************************************************************
@@ -1017,28 +972,27 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_run(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
 
     # test creating run without body
@@ -1046,64 +1000,63 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_run_with_metadata(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
 
     # test creating run with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_run_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create body for run
-        body = {
-            "assistant_id": agent.id,
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
+            # create body for run
+            body = {
+                "assistant_id": agent.id,
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, body=body)
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, body=body)
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     
     # test creating run with body: IO[bytes]
@@ -1111,70 +1064,69 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_create_run_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create body for run
-        body = {
-            "assistant_id": agent.id,
-            "metadata": {"key1": "value1", "key2": "value2"}
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for run
+            body = {
+                "assistant_id": agent.id,
+                "metadata": {"key1": "value1", "key2": "value2"}
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, body=io.BytesIO(binary_body))
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, body=io.BytesIO(binary_body))
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            
 
     # test getting run
     @agentClientPreparer()
     @recorded_by_proxy
     def test_get_run(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # get run
-        run2 = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        assert run2.id
-        assert run.id == run2.id
-        print("Got run, run ID", run2.id)
+            # get run
+            run2 = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            assert run2.id
+            assert run.id == run2.id
+            print("Got run, run ID", run2.id)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     
     # test sucessful run status 
@@ -1182,53 +1134,53 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_run_status(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # check status
-        assert run.status in [
-            "queued",
-            "in_progress",
-            "requires_action",
-            "cancelling",
-            "cancelled",
-            "failed",
-            "completed",
-            "expired",
-        ]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            print("Run status:", run.status)
+            # check status
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+                print("Run status:", run.status)
 
-        assert run.status in ["cancelled", "failed", "completed", "expired"]
-        print("Run completed with status:", run.status)
+            assert run.status in ["cancelled", "failed", "completed", "expired"]
+            print("Run completed with status:", run.status)
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        
 
     """
     # TODO another, but check that the number of runs decreases after cancelling runs
@@ -1283,423 +1235,428 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_update_run(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # update run
-        while run.status in ["queued", "in_progress"]:
-            time.sleep(5)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        run = client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"})
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
+            # update run
+            while run.status in ["queued", "in_progress"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"})
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test updating run without body
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_run_with_metadata(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # update run
-        while run.status in ["queued", "in_progress"]:
-            time.sleep(5)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        run = client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "newvalue2"})
-        assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
+            # update run
+            while run.status in ["queued", "in_progress"]:
+                time.sleep(5)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "newvalue2"})
+            assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            
 
     # test updating run with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_run_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # create body for run
-        body = {
-            "metadata": {"key1": "value1", "key2": "newvalue2"}
-        }
+            # create body for run
+            body = {
+                "metadata": {"key1": "value1", "key2": "newvalue2"}
+            }
 
-        # update run
-        while run.status in ["queued", "in_progress"]:
-            time.sleep(5)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        run = client.agents.update_run(thread_id=thread.id, run_id=run.id, body=body)
-        assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
+            # update run
+            while run.status in ["queued", "in_progress"]:
+                time.sleep(5)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.agents.update_run(thread_id=thread.id, run_id=run.id, body=body)
+            assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        
 
     # test updating run with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_update_run_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
-        assert run.id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            assert run.id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # create body for run
-        body = {
-            "metadata": {"key1": "value1", "key2": "newvalue2"}
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for run
+            body = {
+                "metadata": {"key1": "value1", "key2": "newvalue2"}
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # update run
-        while run.status in ["queued", "in_progress"]:
-            time.sleep(5)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        run = client.agents.update_run(thread_id=thread.id, run_id=run.id, body=io.BytesIO(binary_body))
-        assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
+            # update run
+            while run.status in ["queued", "in_progress"]:
+                time.sleep(5)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = client.agents.update_run(thread_id=thread.id, run_id=run.id, body=io.BytesIO(binary_body))
+            assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        
 
     # test submitting tool outputs to run
     @agentClientPreparer()
     @recorded_by_proxy
     def test_submit_tool_outputs_to_run(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # Initialize agent tools
-        functions = FunctionTool(user_functions_recording) 
-        # TODO add files for code interpreter tool
-        # code_interpreter = CodeInterpreterTool()
+            # Initialize agent tools
+            functions = FunctionTool(functions=user_functions_recording)
+            # TODO add files for code interpreter tool
+            # code_interpreter = CodeInterpreterTool()
 
-        toolset = ToolSet()
-        toolset.add(functions)
-        # toolset.add(code_interpreter)
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
 
-        # create agent
-        agent = client.agents.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
-        )
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # check that tools are uploaded
-        assert run.tools
-        assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
-        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+            # check that tools are uploaded
+            assert run.tools
+            assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
-        # check status
-        assert run.status in [
-            "queued",
-            "in_progress",
-            "requires_action",
-            "cancelling",
-            "cancelled",
-            "failed",
-            "completed",
-            "expired",
-        ]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            # check status
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-            # check if tools are needed
-            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
-                print("Requires action: submit tool outputs")
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    print(
-                        "No tool calls provided - cancelling run"
-                    )
-                    client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                    break
+                # check if tools are needed
+                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                    print("Requires action: submit tool outputs")
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    if not tool_calls:
+                        print(
+                            "No tool calls provided - cancelling run"
+                        )
+                        client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                        break
 
-                # submit tool outputs to run
-                tool_outputs = toolset.execute_tool_calls(tool_calls) 
-                print("Tool outputs:", tool_outputs)
-                if tool_outputs:
-                    client.agents.submit_tool_outputs_to_run(
-                        thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                    )
+                    # submit tool outputs to run
+                    tool_outputs = toolset.execute_tool_calls(tool_calls) 
+                    print("Tool outputs:", tool_outputs)
+                    if tool_outputs:
+                        client.agents.submit_tool_outputs_to_run(
+                            thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        print("Tool outputs submitted")
 
-            print("Current run status:", run.status)
+                print("Current run status:", run.status)
 
-        print("Run completed with status:", run.status)
+            print("Run completed with status:", run.status)
 
-        # check that messages used the tool
-        messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-        tool_message = messages["data"][0]["content"][0]["text"]["value"]
-        hour12 = time.strftime("%H")
-        hour24 = time.strftime("%I")
-        minute = time.strftime("%M")
-        assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
-        print("Used tool_outputs")
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+            tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # hour12 = time.strftime("%H")
+            # hour24 = time.strftime("%I")
+            # minute = time.strftime("%M")
+            # assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
+            assert "12:30" in tool_message
+            print("Used tool_outputs")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
         client.close()
+
 
     # test submitting tool outputs to run with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_submit_tool_outputs_to_run_with_body(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # Initialize agent tools
-        functions = FunctionTool(user_functions_live)
-        # code_interpreter = CodeInterpreterTool()
+            # Initialize agent tools
+            functions = FunctionTool(user_functions_live)
+            # code_interpreter = CodeInterpreterTool()
 
-        toolset = ToolSet()
-        toolset.add(functions)
-        # toolset.add(code_interpreter)
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # check that tools are uploaded
-        assert run.tools
-        assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
-        print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
+            # check that tools are uploaded
+            assert run.tools
+            assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
+            print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
 
-        # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            # check status
+            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-            # check if tools are needed
-            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
-                print("Requires action: submit tool outputs")
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    print("No tool calls provided - cancelling run") 
-                    client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                    break
+                # check if tools are needed
+                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                    print("Requires action: submit tool outputs")
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    if not tool_calls:
+                        print("No tool calls provided - cancelling run") 
+                        client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                        break
 
-                # submit tool outputs to run
-                tool_outputs = toolset.execute_tool_calls(tool_calls)
-                print("Tool outputs:", tool_outputs)
-                if tool_outputs:
-                    body = {
-                        "tool_outputs": tool_outputs
-                    }
-                    client.agents.submit_tool_outputs_to_run(
-                        thread_id=thread.id, run_id=run.id, body=body
-                    )
+                    # submit tool outputs to run
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+                    print("Tool outputs:", tool_outputs)
+                    if tool_outputs:
+                        body = {
+                            "tool_outputs": tool_outputs
+                        }
+                        client.agents.submit_tool_outputs_to_run(
+                            thread_id=thread.id, run_id=run.id, body=body
+                        )
 
-            print("Current run status:", run.status)
+                print("Current run status:", run.status)
 
-        print("Run completed with status:", run.status)
+            print("Run completed with status:", run.status)
 
-        
-        # check that messages used the tool
-        messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-        tool_message = messages['data'][0]['content'][0]['text']['value']
-        hour12 = time.strftime("%H")
-        hour24 = time.strftime("%I")
-        minute = time.strftime("%M")
-        assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
-        print("Used tool_outputs")
+            
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+            tool_message = messages['data'][0]['content'][0]['text']['value']
+            hour12 = time.strftime("%H")
+            hour24 = time.strftime("%I")
+            minute = time.strftime("%M")
+            assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
+            # if user_functions_recording is used, the time will be 12:30
+            # assert "12:30" in tool_message
+            print("Used tool_outputs")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test submitting tool outputs to run with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_submit_tool_outputs_to_run_with_iobytes(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # Initialize agent tools
-        functions = FunctionTool(user_functions_live)
-        # code_interpreter = CodeInterpreterTool()
+            # Initialize agent tools
+            functions = FunctionTool(user_functions_live)
+            # code_interpreter = CodeInterpreterTool()
 
-        toolset = ToolSet()
-        toolset.add(functions)
-        # toolset.add(code_interpreter)
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        # check that tools are uploaded
-        assert run.tools
-        assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
-        print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
+            # check that tools are uploaded
+            assert run.tools
+            assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
+            print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
 
-        # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            # check status
+            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-            # check if tools are needed
-            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
-                print("Requires action: submit tool outputs")
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    print("No tool calls provided - cancelling run")
-                    client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                    break
+                # check if tools are needed
+                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                    print("Requires action: submit tool outputs")
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    if not tool_calls:
+                        print("No tool calls provided - cancelling run")
+                        client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                        break
 
-                # submit tool outputs to run
-                tool_outputs = toolset.execute_tool_calls(tool_calls)
-                print("Tool outputs:", tool_outputs)
-                if tool_outputs:
-                    body = {
-                        "tool_outputs": tool_outputs
-                    }
-                    binary_body = json.dumps(body).encode("utf-8")
-                    client.agents.submit_tool_outputs_to_run(
-                        thread_id=thread.id, run_id=run.id, body=io.BytesIO(binary_body)
-                    )
+                    # submit tool outputs to run
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+                    print("Tool outputs:", tool_outputs)
+                    if tool_outputs:
+                        body = {
+                            "tool_outputs": tool_outputs
+                        }
+                        binary_body = json.dumps(body).encode("utf-8")
+                        client.agents.submit_tool_outputs_to_run(
+                            thread_id=thread.id, run_id=run.id, body=io.BytesIO(binary_body)
+                        )
 
-            print("Current run status:", run.status)
+                print("Current run status:", run.status)
 
-        print("Run completed with status:", run.status)
+            print("Run completed with status:", run.status)
 
-        
-        # check that messages used the tool
-        messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-        tool_message = messages['data'][0]['content'][0]['text']['value']
-        hour12 = time.strftime("%H")
-        hour24 = time.strftime("%I")
-        minute = time.strftime("%M")
-        assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
-        print("Used tool_outputs")
+            
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+            tool_message = messages['data'][0]['content'][0]['text']['value']
+            hour12 = time.strftime("%H")
+            hour24 = time.strftime("%I")
+            minute = time.strftime("%M")
+            assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
+            # if user_functions_recording is used, the time will be 12:30
+            # assert "12:30" in tool_message
+            print("Used tool_outputs")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     """
     # DISABLED: rewrite to ensure run is not complete when cancel_run is called
@@ -1752,151 +1709,147 @@ class TestAgentClient(AzureRecordedTestCase):
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_and_run(self, **kwargs):
-        time.sleep(26)
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread and run
-        run = client.agents.create_thread_and_run(assistant_id=agent.id)
-        assert run.id
-        assert run.thread_id
-        print("Created run, run ID", run.id)
+            # create thread and run
+            run = client.agents.create_thread_and_run(assistant_id=agent.id)
+            assert run.id
+            assert run.thread_id
+            print("Created run, run ID", run.id)
 
-        # get thread
-        thread = client.agents.get_thread(run.thread_id)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # get thread
+            thread = client.agents.get_thread(run.thread_id)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # check status
-        assert run.status in [
-            "queued",
-            "in_progress",
-            "requires_action",
-            "cancelling",
-            "cancelled",
-            "failed",
-            "completed",
-            "expired",
-        ]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
-            print("Run status:", run.status)
+            # check status
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+                # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                print("Run status:", run.status)
 
-        assert run.status == "completed"
-        print("Run completed")
+            assert run.status == "completed"
+            print("Run completed")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            
 
     # test create thread and run with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_and_run_with_body(self, **kwargs):
-        # time.sleep(26)
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create body for thread
-        body = {
-            "assistant_id": agent.id,
-            "metadata": {"key1": "value1", "key2": "value2"},
-        }
+            # create body for thread
+            body = {
+                "assistant_id": agent.id,
+                "metadata": {"key1": "value1", "key2": "value2"},
+            }
 
-        # create thread and run
-        run = client.agents.create_thread_and_run(body=body)
-        assert run.id
-        assert run.thread_id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create thread and run
+            run = client.agents.create_thread_and_run(body=body)
+            assert run.id
+            assert run.thread_id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # get thread
-        thread = client.agents.get_thread(run.thread_id)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # get thread
+            thread = client.agents.get_thread(run.thread_id)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
-            print("Run status:", run.status)
+            # check status
+            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+                # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                print("Run status:", run.status)
 
-        assert run.status == "completed"
-        print("Run completed")
+            assert run.status == "completed"
+            print("Run completed")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
     # test create thread and run with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy
     def test_create_thread_and_run_with_iobytes(self, **kwargs):
-        # time.sleep(26)
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create body for thread
-        body = {
-            "assistant_id": agent.id,
-            "metadata": {"key1": "value1", "key2": "value2"},
-        }
-        binary_body = json.dumps(body).encode("utf-8")
+            # create body for thread
+            body = {
+                "assistant_id": agent.id,
+                "metadata": {"key1": "value1", "key2": "value2"},
+            }
+            binary_body = json.dumps(body).encode("utf-8")
 
-        # create thread and run
-        run = client.agents.create_thread_and_run(body=io.BytesIO(binary_body))
-        assert run.id
-        assert run.thread_id
-        assert run.metadata == {"key1": "value1", "key2": "value2"}
-        print("Created run, run ID", run.id)
+            # create thread and run
+            run = client.agents.create_thread_and_run(body=io.BytesIO(binary_body))
+            assert run.id
+            assert run.thread_id
+            assert run.metadata == {"key1": "value1", "key2": "value2"}
+            print("Created run, run ID", run.id)
 
-        # get thread
-        thread = client.agents.get_thread(run.thread_id)
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # get thread
+            thread = client.agents.get_thread(run.thread_id)
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # check status
-        assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
-            print("Run status:", run.status)
+            # check status
+            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+                # assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                print("Run status:", run.status)
 
-        assert run.status == "completed"
-        print("Run completed")
+            assert run.status == "completed"
+            print("Run completed")
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            
 
     """
     # test listing run steps
@@ -1958,104 +1911,62 @@ class TestAgentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_get_run_step(self, **kwargs):
         # create client
-        client = self.create_client(**kwargs)
-        assert isinstance(client, AIProjectClient)
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
 
-        # create agent
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert agent.id
-        print("Created agent, agent ID", agent.id)
+            # create agent
+            agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
 
-        # create thread
-        thread = client.agents.create_thread()
-        assert thread.id
-        print("Created thread, thread ID", thread.id)
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
 
-        # create message
-        message = client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
-        )
-        assert message.id
-        print("Created message, message ID", message.id)
+            # create message
+            message = client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, can you tell me a joke?"
+            )
+            assert message.id
+            print("Created message, message ID", message.id)
 
-        # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        assert run.id
-        print("Created run, run ID", run.id)
+            # create run
+            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.id
+            print("Created run, run ID", run.id)
 
-        if run.status == "failed":
-            assert run.last_error
-            print(run.last_error)
-            print("FAILED HERE")
-
-        # check status
-        assert run.status in ["queued", "in_progress", "requires_action", "completed"]
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            if run.status == "failed": # TODO maybe can remove this? 
+            if run.status == "failed":
                 assert run.last_error
                 print(run.last_error)
                 print("FAILED HERE")
+
+            # check status
             assert run.status in ["queued", "in_progress", "requires_action", "completed"]
-            print("Run status:", run.status)
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+                if run.status == "failed": # TODO maybe can remove this? 
+                    assert run.last_error
+                    print(run.last_error)
+                    print("FAILED HERE")
+                assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                print("Run status:", run.status)
 
-        # list steps, check that get_run_step works with first step_id
-        steps = client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
-        assert steps["data"].__len__() > 0
-        step = steps["data"][0]
-        get_step = client.agents.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
-        assert step == get_step
+            # list steps, check that get_run_step works with first step_id
+            steps = client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
+            assert steps["data"].__len__() > 0
+            step = steps["data"][0]
+            get_step = client.agents.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
+            assert step == get_step
 
-        # delete agent and close client
-        client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-        client.close()
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
         
-    """    
-    # test agent creation with invalid tool resource
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_create_agent_with_invalid_code_interpreter_tool_resource(self, **kwargs):
-        # create client
-        with self.create_client(**kwargs) as client:
-
-            # initialize resources
-            tool_resources = ToolResources()
-            tool_resources.code_interpreter = CodeInterpreterToolResource()
-
-            exception_message = ""
-            try:
-                client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
-                )
-            except ValueError as e:
-                exception_message = e.args[0]
-
-            assert exception_message == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
-
-    # test agent creation with invalid tool resource
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_create_agent_with_invalid_file_search_tool_resource(self, **kwargs):
-        # create client
-        with self.create_client(**kwargs) as client:
-
-            # initialize resources
-            tool_resources = ToolResources()
-            tool_resources.file_search = FileSearchToolResource()
-
-            exception_message = ""
-            try:
-                client.agents.create_agent(
-                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
-                )
-            except ValueError as e:
-                exception_message = e.args[0]
-
-            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
-    """
+    
+    
     
     # # **********************************************************************************
     # #
@@ -2124,19 +2035,12 @@ class TestAgentClient(AzureRecordedTestCase):
             # create body for stream
             body = {
                 "assistant_id": agent.id,
-                # "metadata": {"key1": "value1", "key2": "value2"},
+                "stream": True
             }
 
             # create stream
-            with client.agents.create_stream(thread_id=thread.id, body={"assistant_id": agent.id}) as stream:
+            with client.agents.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
                 assert isinstance(stream, AgentRunStream)
-                print("stream: ", stream)
-                print("stream type: ", type(stream))
-                for event_type in stream:
-                    print("event type: ", event_type)
-                
-                for event_data in stream:
-                    print("event data: ", event_data)
                 
                 for event_type, event_data in stream:
                     print("event type: event data")
@@ -2174,12 +2078,12 @@ class TestAgentClient(AzureRecordedTestCase):
             # create body for stream
             body = {
                 "assistant_id": agent.id,
-                "metadata": {"key1": "value1", "key2": "value2"},
+                "stream": True
             }
             binary_body = json.dumps(body).encode("utf-8")
 
             # create stream
-            with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body)) as stream:
+            with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
                 assert isinstance(stream, AgentRunStream)
                 for event_type, event_data in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
@@ -2189,7 +2093,7 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
 
-    # test creating stream with body: IO[bytes]
+    # test submit_tool_outputs_to_stream
     @agentClientPreparer()
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream(self, **kwargs):
@@ -2198,9 +2102,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert isinstance(client, AIProjectClient)
 
             # Initialize agent tools
-            functions = FunctionTool(user_functions_recording) 
-            # TODO add files for code interpreter tool
-            # code_interpreter = CodeInterpreterTool()
+            functions = FunctionTool(functions=user_functions_recording) 
 
             toolset = ToolSet()
             toolset.add(functions)
@@ -2208,7 +2110,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create agent
             agent = client.agents.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions, tool_resources=functions.resources 
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
@@ -2227,113 +2129,233 @@ class TestAgentClient(AzureRecordedTestCase):
             with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
                 assert isinstance(stream, AgentRunStream)
                 for event_type, event_data in stream:
+                    
                     # Check if tools are needed
                     if event_type == AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION and event_data.required_action.submit_tool_outputs:
-                        # TODO event type is thread run requires action, but run status is completed? 
-                        run = client.agents.get_run(thread_id=thread.id, run_id=event_data.id)
-                        if run.status == "completed":
-                            print("Run completed even though it shouldn't be") 
-                            continue
-                        assert run.status == "requires_action"
-                        
                         print("Requires action: submit tool outputs")
                         tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
+                        
                         if not tool_calls:
                             print("No tool calls provided - cancelling run")
-                            client.agents.cancel_run(thread_id=thread.id, run_id=event_data.id) # TODO check ThreadRun object attribute run_id
+                            client.agents.cancel_run(thread_id=thread.id, run_id=event_data.id) 
                             break
 
                         # submit tool outputs to stream
                         tool_outputs = toolset.execute_tool_calls(tool_calls)
                         if tool_outputs:
-                            client.agents.submit_tool_outputs_to_stream(
+                            with client.agents.submit_tool_outputs_to_stream(
                                 thread_id=thread.id, run_id=event_data.id, tool_outputs=tool_outputs
-                            )
+                            ) as tool_stream:
+                                assert isinstance(tool_stream, AgentRunStream)
+                                for tool_event_type, tool_event_data in tool_stream:
+                                    assert isinstance(tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or tool_event_type == AgentStreamEvent.DONE
+                            print("Submitted tool outputs to stream")
 
                 print("Stream processing completed")
-            client.agents.delete_agent(agent.id)
-            print("Deleted agent")
-            client.close()
-                                  
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            # # create run
-            # run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-            # assert run.id
-            # print("Created run, run ID", run.id)
 
-            # # check that tools are uploaded
-            # assert run.tools
-            # assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
-            # print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
-
-            # # check status
-            # assert run.status in [
-            #     "queued",
-            #     "in_progress",
-            #     "requires_action",
-            #     "cancelling",
-            #     "cancelled",
-            #     "failed",
-            #     "completed",
-            #     "expired",
-            # ]
-            # while run.status in ["queued", "in_progress", "requires_action"]:
-            #     time.sleep(1)
-            #     run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-
-            #     # check if tools are needed
-            #     if run.status == "requires_action" and run.required_action.submit_tool_outputs:
-            #         print("Requires action: submit tool outputs")
-            #         tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            #         if not tool_calls:
-            #             print(
-            #                 "No tool calls provided - cancelling run"
-            #             )
-            #             client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-            #             break
-
-            #         # submit tool outputs to run
-            #         tool_outputs = toolset.execute_tool_calls(tool_calls) 
-            #         print("Tool outputs:", tool_outputs)
-            #         if tool_outputs:
-            #             client.agents.submit_tool_outputs_to_run(
-            #                 thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-            #             )
-
-            #     print("Current run status:", run.status)
-
-            # print("Run completed with status:", run.status)
-
-            # # check that messages used the tool
-            # messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-            # tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id)
+            print("Messages: ", messages)
+            tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # TODO if testing live, uncomment these  
             # hour12 = time.strftime("%H")
             # hour24 = time.strftime("%I")
             # minute = time.strftime("%M")
-            # assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
-            # print("Used tool_outputs")
+            # hour12string = str(hour12)+":"+str(minute)
+            # hour24string = str(hour24)+":"+str(minute)
+            # assert hour12string in tool_message or hour24string in tool_message
+            recorded_time = "12:30"
+            assert recorded_time in tool_message 
+            print("Used tool_outputs")
 
             # delete agent and close client
-            
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            # client.close()
 
 
+    # test submit_tool_outputs_to_stream with tool_outputs in body: JSON
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_submit_tool_outputs_to_stream_with_body(self, **kwargs): 
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # Initialize agent tools
+            functions = FunctionTool(functions=user_functions_recording) 
+
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
+
+            # create agent
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions, tool_resources=functions.resources 
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+                assert isinstance(stream, AgentRunStream)
+                for event_type, event_data in stream:
+                    
+                    # Check if tools are needed
+                    if event_type == AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION and event_data.required_action.submit_tool_outputs:
+                        print("Requires action: submit tool outputs")
+                        tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
+                        
+                        if not tool_calls:
+                            print("No tool calls provided - cancelling run")
+                            client.agents.cancel_run(thread_id=thread.id, run_id=event_data.id) 
+                            break
+
+                        # submit tool outputs to stream
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                        body = {
+                            "tool_outputs": tool_outputs,
+                            "stream": True
+                        }
+                        if tool_outputs:
+                            with client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id, run_id=event_data.id, body=body, stream=True
+                            ) as tool_stream:
+                                assert isinstance(tool_stream, AgentRunStream)
+                                for tool_event_type, tool_event_data in tool_stream:
+                                    assert isinstance(tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or tool_event_type == AgentStreamEvent.DONE
+                            print("Submitted tool outputs to stream")
+
+                print("Stream processing completed")
+
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id)
+            print("Messages: ", messages)
+            tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # TODO if testing live, uncomment these  
+            # hour12 = time.strftime("%H")
+            # hour24 = time.strftime("%I")
+            # minute = time.strftime("%M")
+            # hour12string = str(hour12)+":"+str(minute)
+            # hour24string = str(hour24)+":"+str(minute)
+            # assert hour12string in tool_message or hour24string in tool_message
+            recorded_time = "12:30"
+            assert recorded_time in tool_message 
+            print("Used tool_outputs")
+
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            # client.close()
+                                  
+
+        # test submit_tool_outputs_to_stream with tool_outputs in body: JSON
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_submit_tool_outputs_to_stream_with_iobytes(self, **kwargs): 
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # Initialize agent tools
+            functions = FunctionTool(functions=user_functions_recording) 
+
+            toolset = ToolSet()
+            toolset.add(functions)
+            # toolset.add(code_interpreter)
+
+            # create agent
+            agent = client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions, tool_resources=functions.resources 
+            )
+            assert agent.id
+            print("Created agent, agent ID", agent.id)
+
+            # create thread
+            thread = client.agents.create_thread()
+            assert thread.id
+            print("Created thread, thread ID", thread.id)
+
+            # create message
+            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            assert message.id
+            print("Created message, message ID", message.id)
+
+            # create stream
+            with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+                assert isinstance(stream, AgentRunStream)
+                for event_type, event_data in stream:
+                    
+                    # Check if tools are needed
+                    if event_type == AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION and event_data.required_action.submit_tool_outputs:
+                        print("Requires action: submit tool outputs")
+                        tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
+                        
+                        if not tool_calls:
+                            print("No tool calls provided - cancelling run")
+                            client.agents.cancel_run(thread_id=thread.id, run_id=event_data.id) 
+                            break
+
+                        # submit tool outputs to stream
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                        body = {
+                            "tool_outputs": tool_outputs,
+                            "stream": True
+                        }
+                        binary_body = json.dumps(body).encode("utf-8")
+
+                        if tool_outputs:
+                            with client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id, run_id=event_data.id, body=io.BytesIO(binary_body), stream=True
+                            ) as tool_stream:
+                                assert isinstance(tool_stream, AgentRunStream)
+                                for tool_event_type, tool_event_data in tool_stream:
+                                    assert isinstance(tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or tool_event_type == AgentStreamEvent.DONE
+                            print("Submitted tool outputs to stream")
+
+                print("Stream processing completed")
+
+            # check that messages used the tool
+            messages = client.agents.list_messages(thread_id=thread.id)
+            print("Messages: ", messages)
+            tool_message = messages["data"][0]["content"][0]["text"]["value"]
+            # TODO if testing live, uncomment these  
+            # hour12 = time.strftime("%H")
+            # hour24 = time.strftime("%I")
+            # minute = time.strftime("%M")
+            # hour12string = str(hour12)+":"+str(minute)
+            # hour24string = str(hour24)+":"+str(minute)
+            # assert hour12string in tool_message or hour24string in tool_message
+            recorded_time = "12:30"
+            assert recorded_time in tool_message 
+            print("Used tool_outputs")
+
+            # delete agent and close client
+            client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            # client.close()
+
             
+    
+    # # **********************************************************************************
+    # #
+    # #                      HAPPY PATH SERVICE TESTS - User function APIs
+    # #
+    # # **********************************************************************************
+
+
+
+
 
 
     # # **********************************************************************************
@@ -2341,6 +2363,66 @@ class TestAgentClient(AzureRecordedTestCase):
     # #         NEGATIVE TESTS 
     # #
     # # **********************************************************************************
+
+    '''
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_code_interpreter_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.code_interpreter = CodeInterpreterToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o",
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=[],
+                    tool_resources=tool_resources,
+                )
+            except:
+                print("exception here")
+                # except ValueError as e:
+                #     exception_message = e.args[0]
+            else: 
+                print("no exception")
+
+            assert (
+                exception_message
+                == "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
+            )
+            
+
+    # test agent creation with invalid tool resource
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_agent_with_invalid_file_search_tool_resource(self, **kwargs):
+        # create client
+        with self.create_client(**kwargs) as client:
+
+            # initialize resources
+            tool_resources = ToolResources()
+            tool_resources.file_search = FileSearchToolResource()
+
+            exception_message = ""
+            try:
+                client.agents.create_agent(
+                    model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
+                )
+            except:
+                print("exception here")
+                # except ValueError as e:
+                #     exception_message = e.args[0]
+            else: 
+                print("no exception")
+
+            assert exception_message == "Tools must contain a FileSearchToolDefinition when tool_resources.file_search is provided"
+    '''
 
     """
     # DISABLED, PASSES LIVE ONLY: recordings don't capture DNS lookup errors
