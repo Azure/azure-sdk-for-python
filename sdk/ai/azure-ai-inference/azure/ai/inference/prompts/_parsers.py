@@ -60,8 +60,7 @@ def _inline_image(path: Union[Path, None], image_item: str) -> str:
         return image_item
     # otherwise, it's a local file - need to base64 encode it
     else:
-        file_path: Path = path
-        image_path = file_path / image_item
+        image_path = (path if path is not None else Path(".")) / image_item
         with open(image_path, "rb") as f:
             base64_image = base64.b64encode(f.read()).decode("utf-8")
 
