@@ -12,6 +12,10 @@ from azure.ai.projects import AIProjectClient
 if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
     print("Failed to apply environment variables for azure-ai-projects tests.")
 
+def pytest_collection_modifyitems(items):
+    for item in items: 
+        if 'agents ' in item.fspath.strpath:
+            item.add_marker(pytest.mark.skip(reason="Skipping all Agents tests until test recordings are available. They will be run locally."))
 
 class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
