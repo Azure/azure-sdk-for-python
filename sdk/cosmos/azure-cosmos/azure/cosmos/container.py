@@ -721,7 +721,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        item_link = self._get_document_link(item)
+        try:
+            item_link = self._get_document_link(item)
+        except KeyError:
+            item_link = self.container_link + "/docs/" + item.get('id')
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -978,7 +982,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        item_link = self._get_document_link(item)
+        try:
+            item_link = self._get_document_link(item)
+        except KeyError:
+            item_link = self.container_link + "/docs/" + item
         result = self.client_connection.PatchItem(
                 document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
         return result
