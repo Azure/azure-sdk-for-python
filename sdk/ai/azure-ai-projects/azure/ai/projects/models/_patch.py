@@ -74,6 +74,7 @@ logger = logging.getLogger(__name__)
 
 StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
 
+
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
     """
     Remove the parameters, non present in class public fields; return shallow copy of a dictionary.
@@ -81,9 +82,11 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     **Note:** Classes inherited from the model check that the parameters are present
     in the list of attributes and if they are not, the error is being raised. This check may not
     be relevant for classes, not inherited from azure.ai.projects._model_base.Model.
-    :param model_class: The class of model to be used.
+    :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
+    :type parameters: Union[str, Dict[str, Any]]
     :return: The dictionary with all invalid parameters removed.
+    :rtype: Dict[str, Any]
     """
     new_params = {}
     valid_parameters = set(
@@ -100,9 +103,11 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     """
     Instantiate class with the set of parameters from the server.
 
-    :param model_class: The class of model to be used.
+    :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
+    :type parameters: Union[str, Dict[str, Any]]
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
+    :rtype: Any
     """
     if not isinstance(parameters, dict):
         return parameters
@@ -227,7 +232,9 @@ class SASTokenCredential(TokenCredential):
 
         project_client = AIProjectClient(
             credential=self._credential,
-            endpoint="not-needed",  # Since we are only going to use the "connections" operations, we don't need to supply an endpoint. http://management.azure.com is hard coded in the SDK.
+            # Since we are only going to use the "connections" operations, we don't need to supply an endpoint.
+            # http://management.azure.com is hard coded in the SDK.
+            endpoint="not-needed",
             subscription_id=self._subscription_id,
             resource_group_name=self._resource_group_name,
             project_name=self._project_name,
@@ -346,7 +353,7 @@ class Tool(ABC):
         """
         Execute the tool with the provided tool call.
 
-        :param tool_call: The tool call to execute.
+        :param Any tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
 
@@ -451,6 +458,7 @@ class BaseFunctionTool(Tool):
         Get the function definitions.
 
         :return: A list of function definitions.
+        :rtype: List[ToolDefinition]
         """
         return cast(List[ToolDefinition], self._definitions)
 
@@ -460,6 +468,7 @@ class BaseFunctionTool(Tool):
         Get the tool resources for the agent.
 
         :return: An empty ToolResources as FunctionTool doesn't have specific resources.
+        :rtype: ToolResources
         """
         return ToolResources()
 
@@ -474,7 +483,8 @@ class FunctionTool(BaseFunctionTool):
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
-            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            # Return error message as JSON string back to agent in order to make possible self
+            # correction to the function call
             return json.dumps({"error": error_message})
 
 
@@ -490,7 +500,8 @@ class AsyncFunctionTool(BaseFunctionTool):
         except TypeError as e:
             error_message = f"Error executing function '{tool_call.function.name}': {e}"
             logging.error(error_message)
-            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            # Return error message as JSON string back to agent in order to make possible self correction
+            # to the function call
             return json.dumps({"error": error_message})
 
 
@@ -505,6 +516,9 @@ class AzureAISearchTool(Tool):
     def add_index(self, index: str, name: str):
         """
         Add an index ID to the list of indices used to search.
+
+        :param str index: The index connection id.
+        :param str name: The index name.
         """
         # TODO
         self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
@@ -513,6 +527,8 @@ class AzureAISearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Azure AI search tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [AzureAISearchToolDefinition()]
 
@@ -520,6 +536,8 @@ class AzureAISearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the Azure AI search resources.
+
+        :rtype: ToolResources
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
@@ -545,6 +563,8 @@ class ConnectionTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the connection tool resources.
+
+        :rtype: ToolResources
         """
         return ToolResources()
 
@@ -561,6 +581,8 @@ class BingGroundingTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Bing grounding tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -574,6 +596,8 @@ class SharepointTool(ConnectionTool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Sharepoint tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
@@ -627,6 +651,8 @@ class FileSearchTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the file search tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [FileSearchToolDefinition()]
 
@@ -634,6 +660,8 @@ class FileSearchTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the file search resources.
+
+        :rtype: ToolResources
         """
         return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
@@ -677,6 +705,8 @@ class CodeInterpreterTool(Tool):
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the code interpreter tool definitions.
+
+        :rtype: List[ToolDefinition]
         """
         return [CodeInterpreterToolDefinition()]
 
@@ -684,6 +714,8 @@ class CodeInterpreterTool(Tool):
     def resources(self) -> ToolResources:
         """
         Get the code interpreter resources.
+
+        :rtype: ToolResources
         """
         if not self.file_ids:
             return ToolResources()
@@ -708,7 +740,7 @@ class BaseToolSet:
         """
         Add a tool to the tool set.
 
-        :param tool: The tool to add.
+        :param Tool tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
         self.validate_tool_type(tool)
@@ -721,7 +753,7 @@ class BaseToolSet:
         """
         Remove a tool of the specified type from the tool set.
 
-        :param tool_type: The type of tool to remove.
+        :param Type[Tool] tool_type: The type of tool to remove.
         :raises ValueError: If a tool of the specified type is not found.
         """
         for i, tool in enumerate(self._tools):
@@ -735,6 +767,8 @@ class BaseToolSet:
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
+
+        :rtype: List[ToolDefinition]
         """
         tools = []
         for tool in self._tools:
@@ -745,6 +779,8 @@ class BaseToolSet:
     def resources(self) -> ToolResources:
         """
         Get the resources for all tools in the tool set.
+
+        :rtype: ToolResources
         """
         tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
@@ -760,6 +796,12 @@ class BaseToolSet:
     def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
         """
         Safely converts a dictionary into a ToolResources instance.
+
+        :param resources: A dictionary of tool resources. Should be a mapping
+            accepted by ~azure.ai.projects.models.AzureAISearchResource
+        :type resources: Dict[str, Any]
+        :return: A ToolResources instance.
+        :rtype: ToolResources
         """
         try:
             return ToolResources(**resources)
@@ -772,6 +814,7 @@ class BaseToolSet:
         Get the definitions and resources for all tools in the tool set.
 
         :return: A dictionary containing the tool resources and definitions.
+        :rtype: Dict[str, Any]
         """
         return {
             "tool_resources": self.resources,
@@ -782,8 +825,9 @@ class BaseToolSet:
         """
         Get a tool of the specified type from the tool set.
 
-        :param tool_type: The type of tool to get.
+        :param Type[Tool] tool_type: The type of tool to get.
         :return: The tool of the specified type.
+        :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found.
         """
         for tool in self._tools:
@@ -801,20 +845,22 @@ class ToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool_type: The type of the tool to validate.
+        :param Tool tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, AsyncFunctionTool):
             raise ValueError(
-                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
+                "AsyncFunctionTool is not supported in ToolSet.  "
+                + "To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
             )
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
 
-        :param tool_calls: A list of tool calls to execute.
+        :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
+        :rtype: Any
         """
         tool_outputs = []
 
@@ -843,20 +889,22 @@ class AsyncToolSet(BaseToolSet):
         """
         Validate the type of the tool.
 
-        :param tool_type: The type of the tool to validate.
+        :param Tool tool: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool, FunctionTool):
             raise ValueError(
-                "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
+                "FunctionTool is not supported in AsyncToolSet.  "
+                + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
 
-        :param tool_calls: A list of tool calls to execute.
+        :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
+        :rtype: Any
         """
         tool_outputs = []
 
@@ -879,55 +927,99 @@ class AsyncToolSet(BaseToolSet):
 class AgentEventHandler:
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events."""
+        """Handle message delta events.
+
+        :param MessageDeltaChunk delta: The message delta.
+        """
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events."""
+        """Handle thread message events.
+
+        :param ThreadMessage message: The thread message.
+        """
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events."""
+        """Handle thread run events.
+
+        :param ThreadRun run: The thread run.
+        """
 
     def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events."""
+        """Handle run step events.
+
+        :param RunStep step: The run step.
+        """
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events."""
+        """Handle run step delta events.
+
+        :param RunStepDeltaChunk delta: The run step delta.
+        """
 
     def on_error(self, data: str) -> None:
-        """Handle error events."""
+        """Handle error events.
+
+        :param str data: The error event's data.
+        """
 
     def on_done(self) -> None:
         """Handle the completion of the stream."""
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types."""
+        """Handle any unhandled event types.
+
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
+        """
 
 
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events."""
+        """Handle message delta events.
+
+        :param MessageDeltaChunk delta: The message delta.
+        """
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events."""
+        """Handle thread message events.
+
+        :param ThreadMessage message: The thread message.
+        """
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events."""
+        """Handle thread run events.
+
+        :param ThreadRun run: The thread run.
+        """
 
     async def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events."""
+        """Handle run step events.
+
+        :param RunStep step: The run step.
+        """
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events."""
+        """Handle run step delta events.
+
+        :param RunStepDeltaChunk delta: The run step delta.
+        """
 
     async def on_error(self, data: str) -> None:
-        """Handle error events."""
+        """Handle error events.
+
+        :param str data: The error event's data.
+        """
 
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types."""
+        """Handle any unhandled event types.
+
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
+        """
 
 
 class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]):
@@ -1246,12 +1338,19 @@ class ThreadMessages:
 
     @property
     def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the messages."""
+        """Returns all messages in the messages.
+
+
+        :rtype: List[ThreadMessage]
+        """
         return self._messages
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
-        """Returns all text message contents in the messages."""
+        """Returns all text message contents in the messages.
+
+        :rtype: List[MessageTextContent]
+        """
         texts = [
             content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)
         ]
@@ -1259,14 +1358,20 @@ class ThreadMessages:
 
     @property
     def image_contents(self) -> List[MessageImageFileContent]:
-        """Returns all image file contents from image message contents in the messages."""
+        """Returns all image file contents from image message contents in the messages.
+
+        :rtype: List[MessageImageFileContent]
+        """
         return [
             content for msg in self._messages for content in msg.content if isinstance(content, MessageImageFileContent)
         ]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
-        """Returns all file citation annotations from text message annotations in the messages."""
+        """Returns all file citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFileCitationAnnotation]
+        """
         annotations = [
             annotation
             for msg in self._messages
@@ -1279,7 +1384,10 @@ class ThreadMessages:
 
     @property
     def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
-        """Returns all file path annotations from text message annotations in the messages."""
+        """Returns all file path annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFilePathAnnotation]
+        """
         annotations = [
             annotation
             for msg in self._messages
