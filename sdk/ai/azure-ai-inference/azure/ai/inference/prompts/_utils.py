@@ -11,11 +11,6 @@ import sys
 from typing import Any, Dict
 from pathlib import Path
 
-try:
-    import yaml  # type: ignore
-except ImportError as exc:
-    raise ImportError("Please install pyyaml to use this function. Run `pip install pyyaml`.") from exc
-
 
 _yaml_regex = re.compile(
     r"^\s*" + r"(?:---|\+\+\+)" + r"(.*?)" + r"(?:---|\+\+\+)" + r"\s*(.+)$",
@@ -50,6 +45,11 @@ def load_prompty(file_path, encoding="utf-8") -> Dict[str, Any]:
 
 
 def parse(contents):
+    try:
+        import yaml  # type: ignore
+    except ImportError as exc:
+        raise ImportError("Please install pyyaml to use this function. Run `pip install pyyaml`.") from exc
+
     global _yaml_regex
 
     fmatter = ""
