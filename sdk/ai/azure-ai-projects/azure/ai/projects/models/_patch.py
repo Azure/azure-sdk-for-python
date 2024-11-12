@@ -490,7 +490,7 @@ class FunctionTool(BaseFunctionTool):
 
 class AsyncFunctionTool(BaseFunctionTool):
 
-    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:  # pylint: disable=invalid-overridden-method
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
