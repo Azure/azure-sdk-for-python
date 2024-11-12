@@ -63,7 +63,7 @@ try:
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import Span, StatusCode
 
-    from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
+    from azure.core.tracing import AbstractSpan  # type: ignore
 
     _tracing_library_available = True
 except ModuleNotFoundError:
@@ -1643,8 +1643,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
             if self.last_run and self.last_run.last_error:
                 self.span.set_status(
-                    StatusCode.ERROR, self.last_run.last_error.message
-                )  # pyright: ignore [reportPossiblyUnboundVariable]
+                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                    self.last_run.last_error.message
+                )
                 self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
             self.span.__exit__(exc_type, exc_val, exc_tb)
