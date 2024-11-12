@@ -219,8 +219,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         _compute_rrf_scores(ranks, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
-        drained_results.sort(key=lambda x: x['Score'])
-        self._final_results = drained_results[-(self.take + self.skip):-self.skip]
+        drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        self._final_results = drained_results[self.skip:self.skip+self.take]
+        self._final_results.reverse()
+        print(3)
 
     def _format_singleton_response(self, results):
         # Strip off everything but the payload and emit those documents
