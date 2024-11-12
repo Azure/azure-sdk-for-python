@@ -63,7 +63,7 @@ try:
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import Span, StatusCode
 
-    from azure.core.tracing import AbstractSpan  # type: ignore
+    from azure.core.tracing import AbstractSpan  # pylint: disable=C0412  # type: ignore
 
     _tracing_library_available = True
 except ModuleNotFoundError:
@@ -154,6 +154,7 @@ class AIAgentsInstrumentor:
 
 
 class _AIAgentsInstrumentorPreview:
+    # pylint: disable=R0904
     """
     A class for managing the trace instrumentation of AI Agents.
 
@@ -455,7 +456,7 @@ class _AIAgentsInstrumentorPreview:
         additional_messages: Optional[List[ThreadMessage]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        tools: Optional[List[ToolDefinition]] = None,
+        _tools: Optional[List[ToolDefinition]] = None,
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -517,9 +518,9 @@ class _AIAgentsInstrumentorPreview:
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        tools: Optional[List[ToolDefinition]] = None,
-        tool_resources: Optional[ToolResources] = None,
-        toolset: Optional[ToolSet] = None,
+        _tools: Optional[List[ToolDefinition]] = None,
+        _tool_resources: Optional[ToolResources] = None,
+        _toolset: Optional[ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -546,7 +547,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         project_name: str,
         messages: Optional[List[ThreadMessage]] = None,
-        tool_resources: Optional[ToolResources] = None,
+        _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, project_name)
         if span and span.span_instance.is_recording:
@@ -559,7 +560,9 @@ class _AIAgentsInstrumentorPreview:
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         name = kwargs.get("name")
         model = kwargs.get("model")
         description = kwargs.get("description")
@@ -577,15 +580,15 @@ class _AIAgentsInstrumentorPreview:
             model=model,
             description=description,
             instructions=instructions,
-            tools=tools,
-            tool_resources=tool_resources,
-            toolset=toolset,
+            _tools=tools,
+            _tool_resources=tool_resources,
+            _toolset=toolset,
             temperature=temperature,
             top_p=top_p,
             response_format=response_format,
         )
 
-        if span == None:
+        if span is None:
             return function(*args, **kwargs)
 
         with span:
@@ -608,7 +611,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_agent_async(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         name = kwargs.get("name")
         model = kwargs.get("model")
         description = kwargs.get("description")
@@ -626,15 +631,15 @@ class _AIAgentsInstrumentorPreview:
             model=model,
             description=description,
             instructions=instructions,
-            tools=tools,
-            tool_resources=tool_resources,
-            toolset=toolset,
+            _tools=tools,
+            _tool_resources=tool_resources,
+            _toolset=toolset,
             temperature=temperature,
             top_p=top_p,
             response_format=response_format,
         )
 
-        if span == None:
+        if span is None:
             return await function(*args, **kwargs)
 
         with span:
@@ -657,12 +662,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_thread(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         messages = kwargs.get("messages")
 
         span = self.start_create_thread_span(project_name=project_name, messages=messages)
 
-        if span == None:
+        if span is None:
             return function(*args, **kwargs)
 
         with span:
@@ -685,12 +692,14 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_thread_async(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         messages = kwargs.get("messages")
 
         span = self.start_create_thread_span(project_name=project_name, messages=messages)
 
-        if span == None:
+        if span is None:
             return await function(*args, **kwargs)
 
         with span:
@@ -713,7 +722,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_message(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
@@ -723,7 +734,7 @@ class _AIAgentsInstrumentorPreview:
             project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
         )
 
-        if span == None:
+        if span is None:
             return function(*args, **kwargs)
 
         with span:
@@ -746,7 +757,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_message_async(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         role = kwargs.get("role")
         content = kwargs.get("content")
@@ -756,7 +769,7 @@ class _AIAgentsInstrumentorPreview:
             project_name=project_name, thread_id=thread_id, content=content, role=role, attachments=attachments
         )
 
-        if span == None:
+        if span is None:
             return await function(*args, **kwargs)
 
         with span:
@@ -779,7 +792,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_create_run(self, operation_name, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
         model = kwargs.get("model")
@@ -803,14 +818,14 @@ class _AIAgentsInstrumentorPreview:
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             temperature=temperature,
-            tools=tools,
+            _tools=tools,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
             response_format=response_format,
         )
 
-        if span == None:
+        if span is None:
             return function(*args, **kwargs)
 
         with span:
@@ -833,7 +848,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_create_run_async(self, operation_name, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
         model = kwargs.get("model")
@@ -857,14 +874,14 @@ class _AIAgentsInstrumentorPreview:
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             temperature=temperature,
-            tools=tools,
+            _tools=tools,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
             response_format=response_format,
         )
 
-        if span == None:
+        if span is None:
             return await function(*args, **kwargs)
 
         with span:
@@ -893,7 +910,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_submit_tool_outputs(self, stream, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
         tool_outputs = kwargs.get("tool_outputs")
@@ -907,7 +926,7 @@ class _AIAgentsInstrumentorPreview:
             event_handler=event_handler,
         )
 
-        if span == None:
+        if span is None:
             return function(*args, **kwargs)
 
         with span:
@@ -934,7 +953,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_submit_tool_outputs_async(self, stream, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         run_id = kwargs.get("run_id")
         tool_outputs = kwargs.get("tool_outputs")
@@ -1030,7 +1051,9 @@ class _AIAgentsInstrumentorPreview:
 
     def trace_create_stream(self, function, *args, **kwargs):
         operation_name = OperationName.PROCESS_THREAD_RUN
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
         model = kwargs.get("model")
@@ -1055,7 +1078,7 @@ class _AIAgentsInstrumentorPreview:
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             temperature=temperature,
-            tools=tools,
+            _tools=tools,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
@@ -1088,7 +1111,9 @@ class _AIAgentsInstrumentorPreview:
 
     async def trace_create_stream_async(self, function, *args, **kwargs):
         operation_name = OperationName.PROCESS_THREAD_RUN
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
         assistant_id = kwargs.get("assistant_id")
         model = kwargs.get("model")
@@ -1113,7 +1138,7 @@ class _AIAgentsInstrumentorPreview:
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             temperature=temperature,
-            tools=tools,
+            _tools=tools,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
@@ -1145,7 +1170,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     def trace_list_messages(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
 
         span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
@@ -1175,7 +1202,9 @@ class _AIAgentsInstrumentorPreview:
         return result
 
     async def trace_list_messages_async(self, function, *args, **kwargs):
-        project_name = args[0]._config.project_name
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
         thread_id = kwargs.get("thread_id")
 
         span = self.start_list_messages_span(project_name=project_name, thread_id=thread_id)
@@ -1204,7 +1233,7 @@ class _AIAgentsInstrumentorPreview:
 
         return result
 
-    def handle_run_stream_exit(self, function, *args, **kwargs):
+    def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
         exc_type = kwargs.get("exc_type")
         exc_val = kwargs.get("exc_val")
@@ -1267,9 +1296,9 @@ class _AIAgentsInstrumentorPreview:
         """
 
         @functools.wraps(function)
-        def inner(*args, **kwargs):
+        def inner(*args, **kwargs):  # pylint: disable=R0911
 
-            span_impl_type = settings.tracing_implementation()
+            span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
                 return function(*args, **kwargs)
 
@@ -1327,9 +1356,9 @@ class _AIAgentsInstrumentorPreview:
         """
 
         @functools.wraps(function)
-        async def inner(*args, **kwargs):
+        async def inner(*args, **kwargs):  # pylint: disable=R0911
 
-            span_impl_type = settings.tracing_implementation()
+            span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
                 return function(*args, **kwargs)
 
@@ -1563,7 +1592,7 @@ class _AIAgentsInstrumentorPreview:
                                     parameter names and parameter values are traced.
         :type enable_content_recording: bool
         """
-        global _trace_agents_content
+        global _trace_agents_content  # pylint: disable=W0603
         _trace_agents_content = enable_content_recording
 
     def _is_content_recording_enabled(self) -> bool:
@@ -1615,7 +1644,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
         # todo - report errors for failure statuses here and in run ?
         if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
-            self.instrumentor._add_tool_assistant_message_event(self.span, step)
+            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, step
+            )
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
