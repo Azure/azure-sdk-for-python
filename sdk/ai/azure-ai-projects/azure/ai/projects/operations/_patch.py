@@ -409,7 +409,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             # So it's ok to use it for local development, but we'll swallow
             # any errors in case of any breaking changes on OTel side.
             from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter  # type: ignore
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             # since OTel logging is still in beta in Python, we're going to swallow any errors
             # and just warn about them.
             logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
@@ -484,7 +484,7 @@ def _configure_logging(log_exporter: Any) -> None:
         logger_provider = cast(LoggerProvider, _logs.get_logger_provider())
         logger_provider.add_log_record_processor(SimpleLogRecordProcessor(log_exporter))
         _events.set_event_logger_provider(EventLoggerProvider(logger_provider))
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         # since OTel logging is still in beta in Python, we're going to swallow any errors
         # and just warn about them.
         logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
@@ -533,7 +533,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         agents_instrumentor = AIAgentsInstrumentor()
         if not agents_instrumentor.is_instrumented():
             agents_instrumentor.instrument()
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
     try:

@@ -863,7 +863,7 @@ class ToolSet(BaseToolSet):
                         "output": output,
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
@@ -907,7 +907,7 @@ class AsyncToolSet(BaseToolSet):
                         "output": output,
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
@@ -1146,7 +1146,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]
                     self.done = True  # Mark the stream as done
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
@@ -1295,7 +1295,7 @@ class AgentRunStream(Iterator[Tuple[str, Union[str, StreamEventData]]]):
                     self.done = True  # Mark the stream as done
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
