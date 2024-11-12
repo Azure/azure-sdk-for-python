@@ -86,7 +86,7 @@ user_functions: Set[Callable[..., Any]] = {
 # Initialize function tool with user function
 functions = FunctionTool(functions=user_functions)
 
-with tracer.start_as_current_span(*[scenario]):
+with tracer.start_as_current_span(scenario):
     with project_client:
         # Create an agent and run user's request with function calls
         agent = project_client.agents.create_agent(
