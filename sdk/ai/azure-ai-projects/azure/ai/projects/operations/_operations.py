@@ -2007,7 +2007,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def update_agent(
+    def update_agent(  # pylint: disable=too-many-locals
         self,
         assistant_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3346,7 +3346,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_run(
+    def create_run(  # pylint: disable=too-many-locals
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -4235,7 +4235,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_thread_and_run(
+    def create_thread_and_run(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
