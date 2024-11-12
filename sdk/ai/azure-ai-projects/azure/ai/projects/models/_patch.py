@@ -395,7 +395,7 @@ class BaseFunctionTool(Tool):
             sig = inspect.signature(func)
             params = sig.parameters
             docstring = inspect.getdoc(func) or ""
-            description = docstring.split("\n")[0] if docstring else "No description"
+            description = docstring.split("\n", maxsplit=1)[0] if docstring else "No description"
 
             param_descriptions = {}
             for line in docstring.splitlines():
