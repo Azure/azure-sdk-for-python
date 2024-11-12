@@ -3,14 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_code_interpreter_attachment_enterprise_search.py
+FILE: sample_agents_file_search_attachment_enterprise.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with code interpreter from
+    This sample demonstrates how to use agent operations with file search from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_code_interpreter_attachment_enterprise_search.py
+    python sample_agents_file_search_attachment_enterprise.py
 
     Before running the sample:
 
@@ -23,11 +23,10 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    CodeInterpreterTool,
     MessageAttachment,
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
-    CodeInterpreterToolDefinition,
+    FileSearchToolDefinition,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -43,31 +42,29 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    code_interpreter = CodeInterpreterTool()
-
-    # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+    # [START upload_file_and_create_message_with_file_search]
+    # notice that FileSearch must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="You are helpful assistant",
-        tools=code_interpreter.definitions,
+        tools=[FileSearchToolDefinition()],
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # [START upload_file_and_create_message_with_code_interpreter]
     # We will upload the local file to Azure and will use it for vector store creation.
     _, asset_uri = project_client.upload_file("./product_info_1.md")
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
     # create a message with the attachment
-    attachment = MessageAttachment(data_sources=[ds], tools=[CodeInterpreterToolDefinition()])
+    attachment = MessageAttachment(data_sources=[ds], tools=[FileSearchToolDefinition()])
     message = project_client.agents.create_message(
         thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
     )
-    # [END upload_file_and_create_message_with_code_interpreter]
+    # [END upload_file_and_create_message_with_file_search]
 
     print(f"Created message, message ID: {message.id}")
 

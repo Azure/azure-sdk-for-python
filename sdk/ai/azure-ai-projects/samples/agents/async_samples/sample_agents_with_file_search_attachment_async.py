@@ -24,7 +24,7 @@ import asyncio
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import FileSearchTool, MessageAttachment, ToolResources
+from azure.ai.projects.models import MessageAttachment, FileSearchToolDefinition
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -58,7 +58,7 @@ async def main() -> None:
 
         # Create a message with the file search attachment
         # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
-        attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
+        attachment = MessageAttachment(file_id=file.id, tools=[FileSearchToolDefinition()])
         message = await project_client.agents.create_message(
             thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
         )

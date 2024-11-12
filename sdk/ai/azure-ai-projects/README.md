@@ -45,11 +45,13 @@ TODO
 ### Agents
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with agents:
 
+For a quick start and on-boarding, please refer to the [Agents Quick Start Guide](https://github.com/Azure/azure-ai-agents/blob/main/quickstart.md). Below is the detailed documentation:
+
   - <a href='#create-project-client'>Create project client</a>
   - <a href='#create-agent'>Create agent</a> with:
     - <a href='#create-agent-with-file-search'>File Search</a>
-    - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
     - <a href='#create-agent-with-file-search-with-file-in-blob-store'>File search with file in blob store</a>
+    - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
     - <a href='#create-agent-with-code-interpreter-with-file-in-blob-store'>Code interpreter with file in blob store</a>
     - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
     - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
@@ -58,8 +60,8 @@ Agents in the Azure AI Projects client library are designed to facilitate variou
      - <a href='#create-thread-with-tool-resource'>Tool resource</a>
   - <a href='#create-message'>Create a message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
-    - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
     - <a href='#create-message-with-file-search-attachment-with-file-in-blob-store'>File search attachment with file in blob store</a>
+    - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
     - <a href='#create-message-with-code-interpreter-attachment-with-file-in-blob-store'>Code interpreter attachment with file in blob store</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
   - <a href='#retrieve-message'>Retrieve message</a>
@@ -189,36 +191,8 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-
-#### Create Agent with Code Interpreter
-
-Here is an example to upload a file and use it for code interpreter by an agent:
-
-<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
-
-```python
-file = project_client.agents.upload_file_and_poll(
-    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-)
-print(f"Uploaded file, file ID: {file.id}")
-
-code_interpreter = CodeInterpreterTool(file_ids=[file.id])
-
-# create agent with code interpreter tool and tools_resources
-agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=code_interpreter.definitions,
-    tool_resources=code_interpreter.resources,
-)
-```
-
-<!-- END SNIPPET -->
-
-
 #### Create Agent with File Search with File in Blob Store
-The sections above demonstrated uploading files only for agents to perform file search and code interpreter.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
+The sections above demonstrated uploading files only for agents to perform file search.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
 Here is an example:
 
 <!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
@@ -247,9 +221,57 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
+#### Create Agent with Code Interpreter
+
+Here is an example to upload a file and use it for code interpreter by an agent:
+
+<!-- SNIPPET:sample_agents_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
+
+```python
+file = project_client.agents.upload_file_and_poll(
+    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
+)
+print(f"Uploaded file, file ID: {file.id}")
+
+code_interpreter = CodeInterpreterTool(file_ids=[file.id])
+
+# create agent with code interpreter tool and tools_resources
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=code_interpreter.definitions,
+    tool_resources=code_interpreter.resources,
+)
+```
+
+<!-- END SNIPPET -->
+
 #### Create Agent with Code Interpreter with File in Blob Store
 
-Coming soon
+The sections above demonstrated uploading files only for agents to perform code interpreter.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
+
+<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search -->
+
+```python
+file = project_client.agents.upload_file_and_poll(
+    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
+)
+print(f"Uploaded file, file ID: {file.id}")
+
+code_interpreter = CodeInterpreterTool(file_ids=[file.id])
+
+# create agent with code interpreter tool and tools_resources
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=code_interpreter.definitions,
+    tool_resources=code_interpreter.resources,
+)
+```
+
+<!-- END SNIPPET -->
 
 #### Create Agent with Bing Grounding
 To enable your agent to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
@@ -429,6 +451,22 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+#### Create Message with File Search Attachment with File in Blob Store
+
+Alternatively you can upload a file to blob store, attach to the message as file attachment.   Here is an example: 
+
+<!-- SNIPPET:sample_agents_file_search_attachment_enterprise.upload_file_and_create_message_with_file_search -->
+
+```python
+attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
+
+
 #### Create Message with Code Interpreter Attachment
 To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`.  You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
 
@@ -463,10 +501,6 @@ message = project_client.agents.create_message(
 ```
 
 <!-- END SNIPPET -->
-
-#### Create Message with File Search Attachment with File in Blob Store
-
-Coming Soon
 
 #### Create Message with Code Interpreter Attachment with File in Blob Store
 Alternatively you can upload a file to blob store, attach to the message as file attachment.   Here is an example: 
