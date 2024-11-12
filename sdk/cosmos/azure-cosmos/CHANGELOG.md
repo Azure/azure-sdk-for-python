@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.7.1 (Unreleased)
+### 4.8.0 (2024-11-12)
 This version and all future versions will support Python 3.13.
 
 #### Features Added
