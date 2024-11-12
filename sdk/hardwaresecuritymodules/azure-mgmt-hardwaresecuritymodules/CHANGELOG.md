@@ -29,12 +29,12 @@
   - Added enum `PublicNetworkAccess`
   - Added model `RestoreRequestProperties`
   - Added model `RestoreResult`
-  - Operations `CloudHsmClustersOperations` added method `begin_backup`
-  - Operations `CloudHsmClustersOperations` added method `begin_restore`
-  - Operations `CloudHsmClustersOperations` added method `begin_validate_backup_properties`
-  - Operations `CloudHsmClustersOperations` added method `begin_validate_restore_properties`
-  - Added operations `CloudHsmClusterBackupStatusOperations`
-  - Added operations `CloudHsmClusterRestoreStatusOperations`
+  - Operation group `CloudHsmClustersOperations` added method `begin_backup`
+  - Operation group `CloudHsmClustersOperations` added method `begin_restore`
+  - Operation group `CloudHsmClustersOperations` added method `begin_validate_backup_properties`
+  - Operation group `CloudHsmClustersOperations` added method `begin_validate_restore_properties`
+  - Added operation group `CloudHsmClusterBackupStatusOperations`
+  - Added operation group `CloudHsmClusterRestoreStatusOperations`
 
 ### Breaking Changes
 
