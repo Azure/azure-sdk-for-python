@@ -602,17 +602,6 @@ class SharepointTool(ConnectionTool):
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-"""
-    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
-#        use connection_list to auto-update connections for bing search tool if no pre-existing
-        if self.connection_ids.__len__() == 0:
-            for id, connection_type in connection_list:
-                if connection_type == "ApiKey":
-                    self.connection_ids.append(id)
-                    return
-"""
-
-
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
