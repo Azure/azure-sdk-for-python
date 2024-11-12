@@ -3,3 +3,5 @@
 ../../identity/azure-identity
 ../../core/azure-core-tracing-opentelemetry
 aiohttp
+azure-ai-inference
+openai

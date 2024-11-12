@@ -16,8 +16,6 @@ servicePreparerConnectionsTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_connections_tests",
     azure_ai_projects_connections_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
-    azure_ai_projects_connections_tests_default_aoai_connection_name="default-aoai-connection-name",
-    azure_ai_projects_connections_tests_default_aiservices_connection_name="default-aiservices-connection-name",
     azure_ai_projects_connections_tests_aoai_connection_name="aoai-connection-name",
     azure_ai_projects_connections_tests_aiservices_connection_name="aiservices-connection-name",
 )

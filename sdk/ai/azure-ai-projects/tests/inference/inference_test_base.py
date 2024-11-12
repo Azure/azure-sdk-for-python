@@ -35,8 +35,6 @@ if LOGGING_ENABLED:
 
 class InferenceTestBase(AzureRecordedTestCase):
 
-    live_tests_without_recordings : bool = os.getenv("AAZURE_TEST_RUN_LIVE") == "true" and os.getenv("AZURE_SKIP_LIVE_RECORDING") == "true"
-
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")
         project_client = AIProjectClient.from_connection_string(

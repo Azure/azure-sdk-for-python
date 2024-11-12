@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pprint
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
 
@@ -19,7 +19,7 @@ class TestInference(InferenceTestBase):
         with self.get_sync_client(**kwargs) as project_client:
             # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
             with project_client.inference.get_azure_openai_client(api_version=api_version) as azure_openai_client:
-                if InferenceTestBase.live_tests_without_recordings:
+                if is_live_and_not_recording():
                     response = azure_openai_client.chat.completions.create(
                         messages=[
                             {
@@ -29,6 +29,7 @@ class TestInference(InferenceTestBase):
                         ],
                         model=model,
                     )
+                    print("\nAzureOpenAI response:")
                     pprint.pprint(response)
                     contains = ["5280", "5,280"]
                     assert any(item in response.choices[0].message.content for item in contains)
@@ -49,6 +50,7 @@ class TestInference(InferenceTestBase):
                         UserMessage(content="How many feet are in a mile?"),
                     ],
                 )
+                print("\nChatCompletionsClient response:")
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)

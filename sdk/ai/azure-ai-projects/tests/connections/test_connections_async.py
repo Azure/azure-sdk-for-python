@@ -22,7 +22,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
             for with_credentials in [True, False]:
                 try:
-                    connection_properties = await project_client.connections.get(
+                    _ = await project_client.connections.get(
                         connection_name=ConnectionsTestBase.NON_EXISTING_CONNECTION_NAME,
                         with_credentials=with_credentials,
                     )
@@ -31,60 +31,41 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     print(e)
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
-            connection = await project_client.connections.get(connection_name=aoai_connection, with_credentials=False)
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                False,
-                expected_connection_name=aoai_connection,
-                expected_connection_type=ConnectionType.AZURE_OPEN_AI,
-            )
+                connection = await project_client.connections.get(connection_name=aoai_connection, with_credentials=with_credentials)
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    with_credentials,
+                    expected_connection_name=aoai_connection,
+                    expected_connection_type=ConnectionType.AZURE_OPEN_AI,
+                )
 
-            connection = await project_client.connections.get(connection_name=aoai_connection, with_credentials=True)
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                True,
-                expected_connection_name=aoai_connection,
-                expected_connection_type=ConnectionType.AZURE_OPEN_AI,
-            )
+                connection = await project_client.connections.get(
+                    connection_name=aiservices_connection, with_credentials=with_credentials
+                )
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    with_credentials,
+                    expected_connection_name=aiservices_connection,
+                    expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
+                )
 
-            connection = await project_client.connections.get(
-                connection_name=aiservices_connection, with_credentials=False
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                False,
-                expected_connection_name=aiservices_connection,
-                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
-            )
-
-            connection = await project_client.connections.get(
-                connection_name=aiservices_connection, with_credentials=True
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                True,
-                expected_connection_name=aiservices_connection,
-                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
-            )
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
     async def test_connections_get_default_async(self, **kwargs):
 
-        default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_default_aoai_connection_name")
+        default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
         default_serverless_connection = kwargs.pop(
-            "azure_ai_projects_connections_tests_default_aiservices_connection_name"
+            "azure_ai_projects_connections_tests_aiservices_connection_name"
         )
 
         async with self.get_async_client(**kwargs) as project_client:
 
             for with_credentials in [True, False]:
                 try:
-                    connection_properties = await project_client.connections.get_default(
+                    _ = await project_client.connections.get_default(
                         connection_type=ConnectionsTestBase.NON_EXISTING_CONNECTION_TYPE,
                         with_credentials=with_credentials,
                     )
@@ -93,49 +74,28 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     print(e)
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_TYPE in e.message
 
-            connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=False
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                False,
-                expected_connection_name=default_aoai_connection,
-                expected_connection_type=ConnectionType.AZURE_OPEN_AI,
-            )
+                connection = await project_client.connections.get_default(
+                    connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=with_credentials
+                )
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    with_credentials,
+                    expected_connection_name=default_aoai_connection,
+                    expected_connection_type=ConnectionType.AZURE_OPEN_AI,
+                )
 
-            connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                True,
-                expected_connection_name=default_aoai_connection,
-                expected_connection_type=ConnectionType.AZURE_OPEN_AI,
-            )
+                connection = await project_client.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=with_credentials
+                )
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    with_credentials,
+                    expected_connection_name=default_serverless_connection,
+                    expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
+                )
 
-            connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=False
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                False,
-                expected_connection_name=default_serverless_connection,
-                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
-            )
-
-            connection = await project_client.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True
-            )
-            print(connection)
-            ConnectionsTestBase.validate_connection(
-                connection,
-                True,
-                expected_connection_name=default_serverless_connection,
-                expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
-            )
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
@@ -153,7 +113,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
                 connection_type=ConnectionType.AZURE_OPEN_AI,
             )
             count_aoai = len(connections)
-            print("====> Listing of all Azure Open AI connections (found {count_aoai}):")
+            print(f"====> Listing of all Azure Open AI connections (found {count_aoai}):")
             for connection in connections:
                 print(connection)
                 ConnectionsTestBase.validate_connection(connection, False)
@@ -162,7 +122,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
                 connection_type=ConnectionType.AZURE_AI_SERVICES,
             )
             count_serverless = len(connections)
-            print("====> Listing of all Serverless connections (found {count_serverless}):")
+            print(f"====> Listing of all Serverless connections (found {count_serverless}):")
             for connection in connections:
                 print(connection)
                 ConnectionsTestBase.validate_connection(connection, False)
