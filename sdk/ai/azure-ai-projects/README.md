@@ -116,7 +116,9 @@ Here is an example of create an agent:
 
 ```python
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
 )
 ```
 
@@ -193,6 +195,7 @@ agent = project_client.agents.create_agent(
 
 #### Create Agent with File Search with File in Blob Store
 The sections above demonstrated uploading files only for agents to perform file search.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
+
 Here is an example:
 
 <!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
@@ -251,15 +254,19 @@ agent = project_client.agents.create_agent(
 
 The sections above demonstrated uploading files only for agents to perform code interpreter.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
 
-<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search -->
+<!-- SNIPPET:sample_agents_enterprise_code_interpreter.upload_file_and_create_agent_with_code_interpreter -->
 
 ```python
-file = project_client.agents.upload_file_and_poll(
-    file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
-)
-print(f"Uploaded file, file ID: {file.id}")
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
 
-code_interpreter = CodeInterpreterTool(file_ids=[file.id])
+# create a vector store with no file and wait for it to be processed
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# create code interpreter tool and resource
+code_interpreter = CodeInterpreterTool()
+code_interpreter_resource = CodeInterpreterToolResource(data_sources=[ds])
+tool_resources = ToolResources(code_interpreter=code_interpreter_resource)
 
 # create agent with code interpreter tool and tools_resources
 agent = project_client.agents.create_agent(
@@ -432,7 +439,9 @@ To create a message for assistant to process, you pass `user` as `role` and a qu
 <!-- SNIPPET:sample_agents_basics.create_message -->
 
 ```python
-message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="Hello, tell me a joke"
+)
 ```
 
 <!-- END SNIPPET -->
@@ -458,9 +467,26 @@ Alternatively you can upload a file to blob store, attach to the message as file
 <!-- SNIPPET:sample_agents_file_search_attachment_enterprise.upload_file_and_create_message_with_file_search -->
 
 ```python
-attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
+# notice that FileSearch must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=[FileSearchToolDefinition()],
+)
+print(f"Created agent, agent ID: {agent.id}")
+
+thread = project_client.agents.create_thread()
+print(f"Created thread, thread ID: {thread.id}")
+
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# create a message with the attachment
+attachment = MessageAttachment(data_sources=[ds], tools=[FileSearchToolDefinition()])
 message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
+    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
 )
 ```
 
@@ -481,7 +507,7 @@ agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
     instructions="You are helpful assistant",
-    tools=CodeInterpreterTool().definitions,
+    tools=[CodeInterpreterToolDefinition()],
 )
 print(f"Created agent, agent ID: {agent.id}")
 
@@ -489,7 +515,7 @@ thread = project_client.agents.create_thread()
 print(f"Created thread, thread ID: {thread.id}")
 
 # create an attachment
-attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
+attachment = MessageAttachment(file_id=file.id, tools=[CodeInterpreterToolDefinition()])
 
 # create a message
 message = project_client.agents.create_message(
@@ -515,7 +541,7 @@ _, asset_uri = project_client.upload_file("./product_info_1.md")
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
 # create a message with the attachment
-attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)
+attachment = MessageAttachment(data_sources=[ds], tools=[CodeInterpreterToolDefinition()])
 message = project_client.agents.create_message(
     thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
 )
@@ -615,8 +641,13 @@ To retrieve messages from agents, use the following example:
 
 ```python
 messages = project_client.agents.list_messages(thread_id=thread.id)
-last_message_content = messages.data[-1].content[-1].text.value
-print(f"Last message content: {last_message_content}")
+
+# The messages are following in the reverse order,
+# we will iterate them and output only text contents.
+for data_point in reversed(messages.data):
+    last_message_content = data_point.content[-1]
+    if isinstance(last_message_content, MessageTextContent):
+        print(f"{data_point.role}: {last_message_content.text.value}")
 ```
 
 <!-- END SNIPPET -->

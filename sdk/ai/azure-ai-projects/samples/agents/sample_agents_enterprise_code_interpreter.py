@@ -3,13 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_enterprise_file_search.py
+FILE: sample_agents_enterprise_code_interpreter.py
 
 DESCRIPTION:
-    This sample demonstrates how to add files to agent during the vector store creation.
+    This sample demonstrates how to add files for code interpreter to agent during the vector store creation.
 
 USAGE:
-    python sample_agents_enterprise_file_search.py
+    python sample_agents_enterprise_code_interpreter.py
 
     Before running the sample:
 
