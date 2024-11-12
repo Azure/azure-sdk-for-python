@@ -1,12 +1,10 @@
 # Release History
 
-## 7.12.4 (Unreleased)
+## 7.13.0 (2024-11-12)
 
 ### Features Added
 
 - Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -14,7 +12,7 @@
 
 ### Other Changes
 
-- Added logging to track received messages.
+- Added debug logging to track received messages.
 
 ## 7.12.3 (2024-09-19)
 
