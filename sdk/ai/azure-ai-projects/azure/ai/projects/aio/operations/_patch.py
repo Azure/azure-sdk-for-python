@@ -1718,7 +1718,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,  # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool

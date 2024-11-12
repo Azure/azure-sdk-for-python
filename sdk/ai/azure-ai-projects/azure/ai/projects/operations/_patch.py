@@ -490,7 +490,7 @@ def _configure_logging(log_exporter: Any) -> None:
         logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
 
 
-def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
+def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:  # pylint: disable=unused-argument
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
     :param destination: `sys.stdout` to print telemetry to console or a string holding the
@@ -1914,7 +1914,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,  # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
