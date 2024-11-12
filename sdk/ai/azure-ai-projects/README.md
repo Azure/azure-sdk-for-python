@@ -42,25 +42,23 @@ TODO
 
 ## Examples
 
-### Agents
+### Agents (Private Preview)
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with agents:
+
+Agents are actively being developed. A sign-up form for private preview is coming soon.
 
   - <a href='#create-project-client'>Create project client</a>
   - <a href='#create-agent'>Create agent</a> with:
     - <a href='#create-agent-with-file-search'>File Search</a>
     - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
-    - <a href='#create-agent-with-file-search-with-file-in-blob-store'>File search with file in blob store</a>
-    - <a href='#create-agent-with-code-interpreter-with-file-in-blob-store'>Code interpreter with file in blob store</a>
     - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
     - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
     - <a href='#create-agent-with-function-call'>Function call</a>
-  - <a href='#create-thread'>Create a thread</a> with
+  - <a href='#create-thread'>Create thread</a> with
      - <a href='#create-thread-with-tool-resource'>Tool resource</a>
-  - <a href='#create-message'>Create a message</a> with:
+  - <a href='#create-message'>Create message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
     - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
-    - <a href='#create-message-with-file-search-attachment-with-file-in-blob-store'>File search attachment with file in blob store</a>
-    - <a href='#create-message-with-code-interpreter-attachment-with-file-in-blob-store'>Code interpreter attachment with file in blob store</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
   - <a href='#retrieve-message'>Retrieve message</a>
   - <a href='#retrieve-file'>Retrieve file</a>
@@ -216,40 +214,6 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-
-#### Create Agent with File Search with File in Blob Store
-The sections above demonstrated uploading files only for agents to perform file search and code interpreter.   In some use case, you might want to have the files more reusable for other projects.   You might consider uploading files into blob store instead.
-Here is an example:
-
-<!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
-
-```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-
-# create a vector store with no file and wait for it to be processed
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
-print(f"Created vector store, vector store ID: {vector_store.id}")
-
-# create a file search tool
-file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
-
-# notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
-agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=file_search_tool.definitions,
-    tool_resources=file_search_tool.resources,
-)
-```
-
-<!-- END SNIPPET -->
-
-#### Create Agent with Code Interpreter with File in Blob Store
-
-Coming soon
 
 #### Create Agent with Bing Grounding
 To enable your agent to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
@@ -464,32 +428,6 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
-#### Create Message with File Search Attachment with File in Blob Store
-
-Coming Soon
-
-#### Create Message with Code Interpreter Attachment with File in Blob Store
-Alternatively you can upload a file to blob store, attach to the message as file attachment.   Here is an example: 
-
-Here is an example to pass `CodeInterpreterTool` as tool:
-
-<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.upload_file_and_create_message_with_code_interpreter -->
-
-```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-
-# create a message with the attachment
-attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)
-message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-)
-```
-
-<!-- END SNIPPET -->
-
-
 #### Create Run, Run_and_Process, or Stream
 
 To process your message, you can use `create_run`, `create_and_process_run`, or `create_stream`.
@@ -676,6 +614,24 @@ print("Deleted agent")
 
 As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor.  Typically you might want to start tracing before you create an agent.   
 
+##### Installation
+
+Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
+
+```bash
+pip install opentelemetry
+pip install azure-core-tracing-opentelemetry
+```
+
+You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
+
+To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
+
+```bash
+pip install opentelemetry-exporter-otlp
+```
+
+##### Examples
 Here is a code snip to be included above `create_agent`:
 
 <!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->

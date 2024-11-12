@@ -614,7 +614,6 @@ class ContainerProxy:
     @distributed_trace
     def query_items_change_feed( # pylint: disable=unused-argument
             self,
-            *args: Any,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
 
@@ -636,7 +635,6 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :param Any args: args
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -1292,10 +1290,11 @@ class ContainerProxy:
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
-    async def read_feed_ranges(
+    @distributed_trace
+    def read_feed_ranges(
             self,
             *,
-            force_refresh: Optional[bool] = False,
+            force_refresh: bool = False,
             **kwargs: Any
     ) -> AsyncIterable[Dict[str, Any]]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
@@ -1313,17 +1312,26 @@ class ContainerProxy:
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        partition_key_ranges =\
-            await self.client_connection._routing_map_provider.get_overlapping_ranges(
-                self.container_link,
-                # default to full range
-                [Range("", "FF", True, False)],
-                **kwargs)
+        async def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+            partition_key_ranges = \
+                await self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                    self.container_link,
+                    # default to full range
+                    [Range("", "FF", True, False)],
+                    **kwargs)
 
-        feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                for partitionKeyRange in partition_key_ranges]
+            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+                       for partitionKeyRange in partition_key_ranges]
 
-        return AsyncList(feed_ranges)
+            return feed_ranges
+
+        async def extract_data(feed_ranges_response: List[Dict[str, Any]]):
+            return None, AsyncList(feed_ranges_response)
+
+        return AsyncItemPaged(
+            get_next,
+            extract_data
+        )
 
     async def get_latest_session_token(
             self,

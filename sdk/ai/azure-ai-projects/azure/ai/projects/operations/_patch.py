@@ -105,7 +105,8 @@ class InferenceOperations:
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
@@ -113,12 +114,14 @@ class InferenceOperations:
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
-                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
+                "[InferenceOperations.get_chat_completions_client] "
+                + "Creating ChatCompletionsClient using SAS authentication"
             )
             raise ValueError(
                 "Getting chat completions client from a connection with SAS authentication is not yet supported"
@@ -250,7 +253,7 @@ class InferenceOperations:
                 auth = "Creating AzureOpenAI using SAS authentication"
             logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
-                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -273,9 +276,10 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
-        :param connection_type: The connection type. Required.
+        :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
-        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+            Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
@@ -302,9 +306,10 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
-        :param connection_name: Connection Name. Required.
+        :keyword connection_name: Connection Name. Required.
         :type connection_name: str
-        :param with_credentials: Whether to populate the connection properties with authentication credentials. Optional.
+        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+            Optional.
         :type with_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
@@ -345,8 +350,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     ) -> Sequence[ConnectionProperties]:
         """List the properties of all connections, or all connections of a certain connection type.
 
-        :param connection_type: The connection type. Optional. If provided, this method lists connections of this type.
-            If not provided, all connections are listed.
+        :keyword connection_type: The connection type. Optional. If provided, this method lists connections of this
+            type. If not provided, all connections are listed.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :return: A list of connection properties
         :rtype: Sequence[~azure.ai.projects.models._models.ConnectionProperties]
@@ -374,13 +379,14 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter  # type: ignore
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                "OpenTelemetry OTLP exporter is not installed. Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
+                "OpenTelemetry OTLP exporter is not installed. "
+                + "Please install it using 'pip install opentelemetry-exporter-otlp-proto-grpc'"
             ) from e
         return OTLPSpanExporter(endpoint=destination)
 
     if isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
-            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter # pylint: disable=line-too-long
             try:
                 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
             except ModuleNotFoundError as e:
@@ -394,6 +400,7 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
 
     return None
 
+
 def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
     if isinstance(destination, str):
         # `destination` is the OTLP endpoint
@@ -406,30 +413,28 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
         except Exception as ex:
             # since OTel logging is still in beta in Python, we're going to swallow any errors
             # and just warn about them.
-            logger.warning(
-                "Failed to configure OpenTelemetry logging.", exc_info=ex
-            )
+            logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
 
         return OTLPLogExporter(endpoint=destination)
 
     if isinstance(destination, io.TextIOWrapper):
         if destination is sys.stdout:
-            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter
+            # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter # pylint: disable=line-too-long
             try:
                 from opentelemetry.sdk._logs.export import ConsoleLogExporter
+
+                return ConsoleLogExporter()
             except ModuleNotFoundError as ex:
                 # since OTel logging is still in beta in Python, we're going to swallow any errors
                 # and just warn about them.
-                logger.warning(
-                    "Failed to configure OpenTelemetry logging.", exc_info=ex
-                )
-
-            return ConsoleLogExporter()
+                logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
+            return None
         else:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
+
 
 def _configure_tracing(span_exporter: Any) -> None:
     if span_exporter is None:
@@ -455,6 +460,7 @@ def _configure_tracing(span_exporter: Any) -> None:
     # add_span_processor method, though we need to cast it to fix type checking.
     provider = cast(TracerProvider, trace.get_tracer_provider())
     provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+
 
 def _configure_logging(log_exporter: Any) -> None:
     if log_exporter is None:
@@ -483,18 +489,17 @@ def _configure_logging(log_exporter: Any) -> None:
     except Exception as ex:
         # since OTel logging is still in beta in Python, we're going to swallow any errors
         # and just warn about them.
-        logger.warning(
-            "Failed to configure OpenTelemetry logging.", exc_info=ex
-        )
+        logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
+
 
 def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
-    :keyword destination: `sys.stdout` to print telemetry to console or a string holding the
+    :param destination: `sys.stdout` to print telemetry to console or a string holding the
         OpenTelemetry protocol (OTLP) endpoint.
         If not provided, this method enables instrumentation, but does not configure OpenTelemetry
         SDK to export traces and logs.
-    :paramtype destination: Union[TextIO, str, None]
+    :type destination: Union[TextIO, str, None]
     """
     span_exporter = _get_trace_exporter(destination)
     _configure_tracing(span_exporter)
@@ -509,15 +514,16 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         settings.tracing_implementation = "opentelemetry"
     except ModuleNotFoundError:
         logger.warning(
-            "Azure SDK tracing plugin is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'"
+            "Azure SDK tracing plugin is not installed. "
+            + "Please install it using 'pip install azure-core-tracing-opentelemetry'"
         )
 
     try:
         from azure.ai.inference.tracing import AIInferenceInstrumentor  # type: ignore
 
-        instrumentor = AIInferenceInstrumentor()
-        if not instrumentor.is_instrumented():
-            instrumentor.instrument()
+        inference_instrumentor = AIInferenceInstrumentor()
+        if not inference_instrumentor.is_instrumented():
+            inference_instrumentor.instrument()
     except ModuleNotFoundError:
         logger.warning(
             "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
@@ -526,9 +532,9 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     try:
         from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
 
-        instrumentor = AIAgentsInstrumentor()
-        if not instrumentor.is_instrumented():
-            instrumentor.instrument()
+        agents_instrumentor = AIAgentsInstrumentor()
+        if not agents_instrumentor.is_instrumented():
+            agents_instrumentor.instrument()
     except Exception as exc:
         logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
@@ -538,7 +544,8 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         OpenAIInstrumentor().instrument()
     except ModuleNotFoundError:
         logger.warning(
-            "Could not call `OpenAIInstrumentor().instrument()` since `opentelemetry-instrumentation-openai-v2` is not installed"
+            "Could not call `OpenAIInstrumentor().instrument()` since "
+            + "`opentelemetry-instrumentation-openai-v2` is not installed"
         )
 
     try:
@@ -547,7 +554,8 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         LangchainInstrumentor().instrument()
     except ModuleNotFoundError:
         logger.warning(
-            "Could not call LangchainInstrumentor().instrument()` since `opentelemetry-instrumentation-langchain` is not installed"
+            "Could not call LangchainInstrumentor().instrument()` since "
+            + "`opentelemetry-instrumentation-langchain` is not installed"
         )
 
 
@@ -560,16 +568,12 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         super().__init__(*args, **kwargs)
 
     def get_connection_string(self) -> str:
-        """
-        Get the Application Insights connection string associated with the Project's Application Insights resource.
-        On first call, this method makes a service call to the Application Insights resource URL to get the connection string.
-        Subsequent calls return the cached connection string, if one exists.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Application Insights resource was not
-        enabled for this project.
+        """Get the Application Insights connection string associated with the Project's Application Insights resource.
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights resource was not
+            enabled for this project.
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
@@ -794,21 +798,34 @@ class AgentsOperations(AgentsOperationsGenerated):
         Creates a new agent with various configurations, delegating to the generated operations.
 
         :param body: JSON or IO[bytes]. Required if `model` is not provided.
-        :param model: The ID of the model to use. Required if `body` is not provided.
-        :param name: The name of the new agent.
-        :param description: A description for the new agent.
-        :param instructions: System instructions for the agent.
-        :param tools: List of tools definitions for the agent.
-        :param tool_resources: Resources used by the agent's tools.
-        :param toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
+        :type body:  Union[JSON, IO[bytes]]
+        :keyword model: The ID of the model to use. Required if `body` is not provided.
+        :paramtype model: str
+        :keyword name: The name of the new agent.
+        :paramtype name: Optional[str]
+        :keyword description: A description for the new agent.
+        :paramtype description: Optional[str]
+        :keyword instructions: System instructions for the agent.
+        :paramtype instructions: Optional[str]
+        :keyword tools: List of tools definitions for the agent.
+        :paramtype tools: Optional[List[_models.ToolDefinition]]
+        :keyword tool_resources: Resources used by the agent's tools.
+        :paramtype tool_resources: Optional[_models.ToolResources]
+        :keyword toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions).
-        :param temperature: Sampling temperature for generating agent responses.
-        :param top_p: Nucleus sampling parameter.
-        :param response_format: Response format for tool calls.
-        :param metadata: Key/value pairs for storing additional information.
-        :param content_type: Content type of the body.
-        :param kwargs: Additional parameters.
+        :paramtype toolset: Optional[_models.ToolSet]
+        :keyword temperature: Sampling temperature for generating agent responses.
+        :paramtype temperature: Optional[float]
+        :keyword top_p: Nucleus sampling parameter.
+        :paramtype top_p: Optional[float]
+        :keyword response_format: Response format for tool calls.
+        :paramtype response_format: Optional["_types.AgentsApiResponseFormatOption"]
+        :keyword metadata: Key/value pairs for storing additional information.
+        :paramtype metadata: Optional[Dict[str, str]]
+        :keyword content_type: Content type of the body.
+        :paramtype content_type: str
         :return: An Agent object.
+        :rtype: _models.Agent
         :raises: HttpResponseError for HTTP errors.
         """
 
@@ -1541,7 +1558,9 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_stream(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new stream for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1659,7 +1678,9 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_stream(
         self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new run for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1696,7 +1717,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream:
-        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+        """Creates a new run for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1908,8 +1931,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :param event_handler: The event handler to use for processing events during the run.
-        :param kwargs: Additional parameters.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2032,8 +2054,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :param event_handler: The event handler to use for processing events during the run.
-        :param kwargs: Additional parameters.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2118,7 +2139,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param file_path: Required.
+        :keyword file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
@@ -2143,13 +2164,18 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
-        :param file: File content. Required if `body` and `purpose` are not provided.
-        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :type body: Optional[JSON]
+        :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :paramtype file: Optional[FileType]
+        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :paramtype file_path: Optional[str]
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        :param filename: The name of the file.
-        :param kwargs: Additional parameters.
+        :keyword filename: The name of the file.
+        :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
@@ -2228,7 +2254,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param file_path: Required.
+        :keyword file_path: Required.
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
@@ -2257,16 +2283,21 @@ class AgentsOperations(AgentsOperationsGenerated):
         Uploads a file for use by other operations, delegating to the generated operations.
 
         :param body: JSON. Required if `file` and `purpose` are not provided.
-        :param file: File content. Required if `body` and `purpose` are not provided.
-        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        :type body: Optional[JSON]
+        :keyword file: File content. Required if `body` and `purpose` are not provided.
+        :paramtype file: Optional[FileType]
+        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :paramtype file_path: Optional[str]
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        :param filename: The name of the file.
+        :paramtype purpose: Union[str, _models.FilePurpose, None]
+        :keyword filename: The name of the file.
+        :paramtype filename: Optional[str]
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
-        :param kwargs: Additional parameters.
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
@@ -2653,6 +2684,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param file_name: The name of the file to be saved.
         :type file_name: str
         :param target_dir: The directory where the file should be saved. Defaults to the current working directory.
+        :type target_dir: Optional[Union[str, Path]]
         :raises ValueError: If the target path is not a directory or the file name is invalid.
         :raises RuntimeError: If file content retrieval fails or no content is found.
         :raises TypeError: If retrieved chunks are not bytes-like objects.

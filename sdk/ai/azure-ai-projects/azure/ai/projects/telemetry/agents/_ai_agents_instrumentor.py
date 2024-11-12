@@ -63,7 +63,7 @@ try:
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import Span, StatusCode
 
-    from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
+    from azure.core.tracing import AbstractSpan  # type: ignore
 
     _tracing_library_available = True
 except ModuleNotFoundError:
@@ -210,10 +210,10 @@ class _AIAgentsInstrumentorPreview:
     def set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
         """This function sets the content recording value.
 
-        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
-        :type enable_content_tracing: bool
+        :type enable_content_recording: bool
         """
         self._set_enable_content_recording(enable_content_recording=enable_content_recording)
 
@@ -432,6 +432,7 @@ class _AIAgentsInstrumentorPreview:
         :param response_format: The response format.
         :type response_format: ~azure.ai.projects._types.AgentsApiResponseFormatOption
         :returns: string for the response_format.
+        :rtype: Optional[str]
         :raises: Value error if response_format is not of type AgentsApiResponseFormatOption.
         """
         if isinstance(response_format, str) or response_format is None:
@@ -1557,10 +1558,10 @@ class _AIAgentsInstrumentorPreview:
     def _set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
         """This function sets the content recording value.
 
-        :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
-        :type enable_content_tracing: bool
+        :type enable_content_recording: bool
         """
         global _trace_agents_content
         _trace_agents_content = enable_content_recording
@@ -1643,8 +1644,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
             if self.last_run and self.last_run.last_error:
                 self.span.set_status(
-                    StatusCode.ERROR, self.last_run.last_error.message
-                )  # pyright: ignore [reportPossiblyUnboundVariable]
+                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                    self.last_run.last_error.message,
+                )
                 self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
             self.span.__exit__(exc_type, exc_val, exc_tb)

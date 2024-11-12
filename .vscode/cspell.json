@@ -1328,7 +1328,9 @@
       "filename": "sdk/ai/azure-ai-projects/**",
       "words": [
         "aiservices",
-        "OTEL"
+        "OTEL",
+        "GENAI",
+        "fspath"
       ]
     },
     {
