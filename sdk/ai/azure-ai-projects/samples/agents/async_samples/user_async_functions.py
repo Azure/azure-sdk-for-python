@@ -6,6 +6,7 @@
 import asyncio
 import os
 import sys
+from typing import Any, Callable, Set
 
 
 # Add parent directory to sys.path to import user_functions
@@ -22,8 +23,8 @@ async def send_email_async(recipient: str, subject: str, body: str) -> str:
 
 
 # Statically defined user functions for fast reference with send_email as async but the rest as sync
-user_async_functions = {
-    "fetch_current_datetime": fetch_current_datetime,
-    "fetch_weather": fetch_weather,
-    "send_email": send_email_async,
+user_async_functions: Set[Callable[..., Any]] = {
+    fetch_current_datetime,
+    fetch_weather,
+    send_email_async,
 }

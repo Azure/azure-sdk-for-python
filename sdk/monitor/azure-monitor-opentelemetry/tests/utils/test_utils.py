@@ -35,21 +35,15 @@ class TestUtils(TestCase):
         reload(_utils)
         self.assertEqual(_utils._EXTENSION_VERSION, "disabled")
 
-    @patch.dict(
-        "os.environ", {"APPLICATIONINSIGHTS_CONNECTION_STRING": TEST_CONN_STR}
-    )
+    @patch.dict("os.environ", {"APPLICATIONINSIGHTS_CONNECTION_STRING": TEST_CONN_STR})
     def test_ikey(self):
         reload(_utils)
-        self.assertEqual(
-            _utils._get_customer_ikey_from_env_var(), TEST_IKEY
-        )
+        self.assertEqual(_utils._get_customer_ikey_from_env_var(), TEST_IKEY)
 
     def test_ikey_defaults(self):
         clear_env_var("APPLICATIONINSIGHTS_CONNECTION_STRING")
         reload(_utils)
-        self.assertEqual(
-            _utils._get_customer_ikey_from_env_var(), "unknown"
-        )
+        self.assertEqual(_utils._get_customer_ikey_from_env_var(), "unknown")
 
     @patch.dict("os.environ", {"WEBSITE_SITE_NAME": TEST_VALUE})
     def test_diagnostics_enabled(self):
@@ -66,9 +60,7 @@ class TestUtils(TestCase):
         return_value="Linux",
     )
     def test_log_path_linux(self, mock_system):
-        self.assertEqual(
-            _utils._get_log_path(), "/var/log/applicationinsights"
-        )
+        self.assertEqual(_utils._get_log_path(), "/var/log/applicationinsights")
 
     @patch(
         "azure.monitor.opentelemetry._utils.platform.system",
@@ -126,6 +118,4 @@ class TestUtils(TestCase):
 
     @patch.dict("os.environ", {})
     def test_env_var_or_default_empty_with_defaults(self):
-        self.assertEqual(
-            _utils._env_var_or_default("key", default_val="value"), "value"
-        )
+        self.assertEqual(_utils._env_var_or_default("key", default_val="value"), "value")

@@ -14,6 +14,7 @@ from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT,
     PF_BATCH_TIMEOUT_SEC,
     PF_BATCH_TIMEOUT_SEC_DEFAULT,
+    PF_DISABLE_TRACING,
 )
 
 from ..._user_agent import USER_AGENT
@@ -36,8 +37,12 @@ class EvalRunContext:
         self.client = client
         self._is_batch_timeout_set_by_system = False
         self._is_otel_timeout_set_by_system = False
+        self._original_cwd = os.getcwd()
 
     def __enter__(self) -> None:
+        # Preserve current working directory, as PF may change it without restoring it afterward
+        self._original_cwd = os.getcwd()
+
         if isinstance(self.client, CodeClient):
             ClientUserAgentUtil.append_user_agent(USER_AGENT)
             inject_openai_api()
@@ -45,6 +50,7 @@ class EvalRunContext:
         if isinstance(self.client, ProxyClient):
             os.environ[PF_FLOW_ENTRY_IN_TMP] = "true"
             os.environ[PF_FLOW_META_LOAD_IN_SUBPROCESS] = "false"
+            os.environ[PF_DISABLE_TRACING] = "true"
 
             if os.environ.get(PF_BATCH_TIMEOUT_SEC) is None:
                 os.environ[PF_BATCH_TIMEOUT_SEC] = str(PF_BATCH_TIMEOUT_SEC_DEFAULT)
@@ -64,12 +70,15 @@ class EvalRunContext:
         exc_value: Optional[BaseException],
         exc_tb: Optional[types.TracebackType],
     ) -> None:
+        os.chdir(self._original_cwd)
+
         if isinstance(self.client, CodeClient):
             recover_openai_api()
 
         if isinstance(self.client, ProxyClient):
             os.environ.pop(PF_FLOW_ENTRY_IN_TMP, None)
             os.environ.pop(PF_FLOW_META_LOAD_IN_SUBPROCESS, None)
+            os.environ.pop(PF_DISABLE_TRACING, None)
 
             if self._is_batch_timeout_set_by_system:
                 os.environ.pop(PF_BATCH_TIMEOUT_SEC, None)

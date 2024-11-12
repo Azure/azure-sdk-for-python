@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -25,10 +25,10 @@ import asyncio
 import os
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
-async def main():
+async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
@@ -40,7 +40,9 @@ async def main():
     async with project_client:
 
         # upload a file and wait for it to be processed
-        file = await project_client.agents.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.AGENTS)
+        file = await project_client.agents.upload_file_and_poll(
+            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
+        )
         print(f"Uploaded file, file ID: {file.id}")
 
         # create a vector store with no file and wait for it to be processed
@@ -80,23 +82,27 @@ async def main():
         file_search_tool.remove_vector_store(vector_store.id)
         print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
-        await project_client.agents.update_agent(assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources)
+        await project_client.agents.update_agent(
+            assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
+        )
         print(f"Updated agent, agent ID: {agent.id}")
 
         thread = await project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        message = await project_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
+        message = await project_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+        )
         print(f"Created message, message ID: {message.id}")
 
         run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-        print(f"Created run, run ID: {run.id}")       
+        print(f"Created run, run ID: {run.id}")
 
         await project_client.agents.delete_file(file.id)
         print("Deleted file")
 
         await project_client.agents.delete_vector_store(vector_store.id)
-        print("Deleted vectore store")
+        print("Deleted vector store")
 
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")

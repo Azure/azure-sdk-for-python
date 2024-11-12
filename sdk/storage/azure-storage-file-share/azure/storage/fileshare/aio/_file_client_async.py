@@ -532,7 +532,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             already validate. Note that this MD5 hash is not stored with the
             file.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword lease:
@@ -804,7 +806,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash

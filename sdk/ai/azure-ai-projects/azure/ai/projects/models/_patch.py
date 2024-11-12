@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,37 +7,67 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
+import base64
 import datetime
 import inspect
 import json
 import logging
-import base64
-import asyncio
+import math
+import re
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
-from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
-    ConnectionsListSecretsResponse,
-    MessageDeltaChunk,
-    SubmitToolOutputsAction,
-    ThreadRun,
-    RunStep,
-    ThreadMessage,
-    RunStepDeltaChunk,
-    FunctionToolDefinition,
-    FunctionDefinition,
-    ToolDefinition,
-    ToolResources,
-    FileSearchToolDefinition,
-    FileSearchToolResource,
+    AzureAISearchResource,
+    AzureAISearchToolDefinition,
+    BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
+    FileSearchToolDefinition,
+    FileSearchToolResource,
+    FunctionDefinition,
+    FunctionToolDefinition,
+    GetConnectionResponse,
+    IndexResource,
+    MessageDeltaChunk,
+    MessageImageFileContent,
+    MessageTextContent,
+    MessageTextFileCitationAnnotation,
+    MessageTextFilePathAnnotation,
+    OpenAIPageableListOfThreadMessage,
     RequiredFunctionToolCall,
+    RunStep,
+    RunStepDeltaChunk,
+    SharepointToolDefinition,
+    SubmitToolOutputsAction,
+    ThreadMessage,
+    ThreadRun,
+    ToolConnection,
+    ToolConnectionList,
+    ToolDefinition,
+    ToolResources,
 )
-
-from abc import ABC, abstractmethod
-from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, Set, get_origin
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +94,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Dict[str, Any]) -> Any:
+def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Any:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -95,20 +126,25 @@ class ConnectionProperties:
     :vartype token_credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
+    def __init__(
+        self,
+        *,
+        connection: GetConnectionResponse,
+        token_credential: Union[TokenCredential, AsyncTokenCredential, None] = None,
+    ) -> None:
         self.id = connection.id
         self.name = connection.name
         self.authentication_type = connection.properties.auth_type
-        self.connection_type = connection.properties.category
+        self.connection_type = cast(ConnectionType, connection.properties.category)
         self.endpoint_url = (
             connection.properties.target[:-1]
             if connection.properties.target.endswith("/")
             else connection.properties.target
         )
-        self.key: str = None
+        self.key: Optional[str] = None
         if hasattr(connection.properties, "credentials"):
-            if hasattr(connection.properties.credentials, "key"):
-                self.key = connection.properties.credentials.key
+            if hasattr(connection.properties.credentials, "key"):  # type: ignore
+                self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
     def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
@@ -141,18 +177,18 @@ class ConnectionProperties:
         out += f' "connection_type": "{self.connection_type}",\n'
         out += f' "endpoint_url": "{self.endpoint_url}",\n'
         if self.key:
-            out += f' "key": "{self.key}",\n'
+            out += ' "key": "REDACTED"\n'
         else:
-            out += f' "key": null,\n'
+            out += ' "key": null\n'
         if self.token_credential:
-            access_token = self.token_credential.get_token("https://cognitiveservices.azure.com/.default")
-            out += f' "token_credential": "{access_token.token}", expires on {access_token.expires_on} ({datetime.datetime.fromtimestamp(access_token.expires_on, datetime.timezone.utc)})\n'
+            out += ' "token_credential": "REDACTED"\n'
         else:
-            out += f' "token_credential": null\n'
+            out += ' "token_credential": null\n'
         out += "}\n"
         return out
 
 
+# TODO: Look into adding an async version of this class
 class SASTokenCredential(TokenCredential):
     def __init__(
         self,
@@ -174,7 +210,7 @@ class SASTokenCredential(TokenCredential):
         logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
 
     @classmethod
-    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime:
+    def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime.datetime:
         payload = jwt_token.split(".")[1]
         padded_payload = payload + "=" * (4 - len(payload) % 4)  # Add padding if necessary
         decoded_bytes = base64.urlsafe_b64decode(padded_payload)
@@ -197,15 +233,38 @@ class SASTokenCredential(TokenCredential):
 
         connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
 
-        self._sas_token = connection.properties.credentials.sas
+        self._sas_token = ""
+        if connection is not None and connection.token_credential is not None:
+            sas_credential = cast(SASTokenCredential, connection.token_credential)
+            self._sas_token = sas_credential._sas_token
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
-    def get_token(self) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
         logger.debug("SASTokenCredential.get_token] Enter")
         if self._expires_on < datetime.datetime.now(datetime.timezone.utc):
             self._refresh_token()
-        return AccessToken(self._sas_token, self._expires_on.timestamp())
+        return AccessToken(self._sas_token, math.floor(self._expires_on.timestamp()))
 
 
 # Define type_map to translate Python type annotations to JSON Schema types
@@ -214,31 +273,55 @@ type_map = {
     "int": "integer",
     "float": "number",
     "bool": "boolean",
-    "bytes": "string",  # Typically encoded as base64-encoded strings in JSON
     "NoneType": "null",
-    "datetime": "string",  # Use format "date-time"
-    "date": "string",  # Use format "date"
-    "UUID": "string",  # Use format "uuid"
+    "list": "array",
+    "dict": "object",
 }
 
 
-def _map_type(annotation) -> str:
-
+def _map_type(annotation) -> Dict[str, Any]:
     if annotation == inspect.Parameter.empty:
-        return "string"  # Default type if annotation is missing
+        return {"type": "string"}  # Default type if annotation is missing
 
     origin = get_origin(annotation)
 
     if origin in {list, List}:
-        return "array"
-    elif origin in {dict, Dict}:
-        return "object"
-    elif hasattr(annotation, "__name__"):
-        return type_map.get(annotation.__name__, "string")
-    elif isinstance(annotation, type):
-        return type_map.get(annotation.__name__, "string")
+        args = get_args(annotation)
+        item_type = args[0] if args else str
+        return {"type": "array", "items": _map_type(item_type)}
+    if origin in {dict, Dict}:
+        return {"type": "object"}
+    if origin is Union:
+        args = get_args(annotation)
+        # If Union contains None, it is an optional parameter
+        if type(None) in args:
+            # If Union contains only one non-None type, it is a nullable parameter
+            non_none_args = [arg for arg in args if arg is not type(None)]
+            if len(non_none_args) == 1:
+                schema = _map_type(non_none_args[0])
+                if "type" in schema:
+                    if isinstance(schema["type"], str):
+                        schema["type"] = [schema["type"], "null"]
+                    elif "null" not in schema["type"]:
+                        schema["type"].append("null")
+                else:
+                    schema["type"] = ["null"]
+                return schema
+        # If Union contains multiple types, it is a oneOf parameter
+        return {"oneOf": [_map_type(arg) for arg in args]}
+    if isinstance(annotation, type):
+        schema_type = type_map.get(annotation.__name__, "string")
+        return {"type": schema_type}
 
-    return "string"  # Fallback to "string" if type is unrecognized
+    return {"type": "string"}  # Fallback to "string" if type is unrecognized
+
+
+def is_optional(annotation) -> bool:
+    origin = get_origin(annotation)
+    if origin is Union:
+        args = get_args(annotation)
+        return type(None) in args
+    return False
 
 
 class Tool(ABC):
@@ -250,13 +333,11 @@ class Tool(ABC):
     @abstractmethod
     def definitions(self) -> List[ToolDefinition]:
         """Get the tool definitions."""
-        pass
 
     @property
     @abstractmethod
     def resources(self) -> ToolResources:
         """Get the tool resources."""
-        pass
 
     @abstractmethod
     def execute(self, tool_call: Any) -> Any:
@@ -266,10 +347,9 @@ class Tool(ABC):
         :param tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
-        pass
 
 
-class FunctionTool(Tool):
+class BaseFunctionTool(Tool):
     """
     A tool that executes user-defined functions.
     """
@@ -283,31 +363,62 @@ class FunctionTool(Tool):
         self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(self._functions)
 
-    def _create_function_dict(self, funcs: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
-        func_dict = {func.__name__: func for func in funcs}
-        return func_dict
+    def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
+        return {func.__name__: func for func in functions}
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
-        specs = []
+    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
+        specs: List[FunctionToolDefinition] = []
+        # Flexible regex to capture ':param <name>: <description>'
+        param_pattern = re.compile(
+            r"""
+            ^\s*                                   # Optional leading whitespace
+            :param                                 # Literal ':param'
+            \s+                                    # At least one whitespace character
+            (?P<name>[^:\s\(\)]+)                  # Parameter name (no spaces, colons, or parentheses)
+            (?:\s*\(\s*(?P<type>[^)]+?)\s*\))?     # Optional type in parentheses, allowing internal spaces
+            \s*:\s*                                # Colon ':' surrounded by optional whitespace
+            (?P<description>.+)                    # Description (rest of the line)
+            """,
+            re.VERBOSE,
+        )
+
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
-            docstring = inspect.getdoc(func)
+            docstring = inspect.getdoc(func) or ""
             description = docstring.split("\n")[0] if docstring else "No description"
 
+            param_descriptions = {}
+            for line in docstring.splitlines():
+                line = line.strip()
+                match = param_pattern.match(line)
+                if match:
+                    groups = match.groupdict()
+                    param_name = groups.get("name")
+                    param_desc = groups.get("description")
+                    param_desc = param_desc.strip() if param_desc else "No description"
+                    param_descriptions[param_name] = param_desc.strip()
+
             properties = {}
+            required = []
             for param_name, param in params.items():
-                param_type = _map_type(param.annotation)
-                param_description = param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None
-                properties[param_name] = {"type": param_type, "description": param_description}
+                param_type_info = _map_type(param.annotation)
+                param_description = param_descriptions.get(param_name, "No description")
+
+                properties[param_name] = {**param_type_info, "description": param_description}
+
+                # If the parameter has no default value and is not optional, add it to the required list
+                if param.default is inspect.Parameter.empty and not is_optional(param.annotation):
+                    required.append(param_name)
 
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
+                parameters={"type": "object", "properties": properties, "required": required},
             )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
+
         return specs
 
     def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
@@ -315,7 +426,7 @@ class FunctionTool(Tool):
         arguments = tool_call.function.arguments
 
         if function_name not in self._functions:
-            logging.error(f"Function '{function_name}' not found.")
+            logging.error("Function '%s' not found.", function_name)
             raise ValueError(f"Function '{function_name}' not found.")
 
         function = self._functions[function_name]
@@ -323,23 +434,14 @@ class FunctionTool(Tool):
         try:
             parsed_arguments = json.loads(arguments)
         except json.JSONDecodeError as e:
-            logging.error(f"Invalid JSON arguments for function '{function_name}': {e}")
+            logging.error("Invalid JSON arguments for function '%s': %s", function_name, e)
             raise ValueError(f"Invalid JSON arguments: {e}") from e
 
         if not isinstance(parsed_arguments, dict):
-            logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
+            logging.error("Arguments must be a JSON object for function '%s'.", function_name)
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
-
-    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        function, parsed_arguments = self._get_func_and_args(tool_call)
-
-        try:
-            return function(**parsed_arguments) if parsed_arguments else function()
-        except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -348,7 +450,7 @@ class FunctionTool(Tool):
 
         :return: A list of function definitions.
         """
-        return self._definitions
+        return cast(List[ToolDefinition], self._definitions)
 
     @property
     def resources(self) -> ToolResources:
@@ -360,7 +462,21 @@ class FunctionTool(Tool):
         return ToolResources()
 
 
-class AsyncFunctionTool(FunctionTool):
+class FunctionTool(BaseFunctionTool):
+
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        function, parsed_arguments = self._get_func_and_args(tool_call)
+
+        try:
+            return function(**parsed_arguments) if parsed_arguments else function()
+        except TypeError as e:
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
+
+
+class AsyncFunctionTool(BaseFunctionTool):
 
     async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
@@ -368,30 +484,140 @@ class AsyncFunctionTool(FunctionTool):
         try:
             if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
-            else:
-                return function(**parsed_arguments) if parsed_arguments else function()
+            return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
-            raise
+            error_message = f"Error executing function '{tool_call.function.name}': {e}"
+            logging.error(error_message)
+            # Return error message as JSON string back to agent in order to make possible self correction to the function call
+            return json.dumps({"error": error_message})
+
+
+class AzureAISearchTool(Tool):
+    """
+    A tool that searches for information using Azure AI Search.
+    """
+
+    def __init__(self):
+        self.index_list = []
+
+    def add_index(self, index: str, name: str):
+        """
+        Add an index ID to the list of indices used to search.
+        """
+        # TODO
+        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+        """
+        return [AzureAISearchToolDefinition()]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+        """
+        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ConnectionTool(Tool):
+    """
+    A tool that requires connection ids.
+    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize ConnectionTool with a connection_id.
+
+        :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        """
+        self.connection_ids = [ToolConnection(connection_id=connection_id)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BingGroundingTool(ConnectionTool):
+    """
+    A tool that searches for information using Bing.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+        """
+        return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+class SharepointTool(ConnectionTool):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+        """
+        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+"""
+    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
+#        use connection_list to auto-update connections for bing search tool if no pre-existing
+        if self.connection_ids.__len__() == 0:
+            for id, connection_type in connection_list:
+                if connection_type == "ApiKey":
+                    self.connection_ids.append(id)
+                    return
+"""
 
 
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
+
+    :param vector_store_ids: A list of vector store IDs to search for files.
+    :type vector_store_ids: list[str]
     """
 
-    def __init__(self, vector_store_ids: List[str] = []):
-        self.vector_store_ids = vector_store_ids
+    def __init__(self, vector_store_ids: Optional[List[str]] = None):
+        if vector_store_ids is None:
+            self.vector_store_ids = set()
+        else:
+            self.vector_store_ids = set(vector_store_ids)
 
-    def add_vector_store(self, store_id: str):
+    def add_vector_store(self, store_id: str) -> None:
         """
         Add a vector store ID to the list of vector stores to search for files.
-        """
-        self.vector_store_ids.append(store_id)
 
-    def remove_vector_store(self, store_id: str):
+        :param store_id: The ID of the vector store to search for files.
+        :type store_id: str
+
+        """
+        self.vector_store_ids.add(store_id)
+
+    def remove_vector_store(self, store_id: str) -> None:
         """
         Remove a vector store ID from the list of vector stores to search for files.
+
+        :param store_id: The ID of the vector store to remove.
+        :type store_id: str
+
         """
         self.vector_store_ids.remove(store_id)
 
@@ -407,7 +633,7 @@ class FileSearchTool(Tool):
         """
         Get the file search resources.
         """
-        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=self.vector_store_ids))
+        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=list(self.vector_store_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -416,24 +642,32 @@ class FileSearchTool(Tool):
 class CodeInterpreterTool(Tool):
     """
     A tool that interprets code files uploaded to the agent.
+
+    :param file_ids: A list of file IDs to interpret.
+    :type file_ids: list[str]
     """
 
-    def __init__(self):
-        self.file_ids = []
+    def __init__(self, file_ids: Optional[List[str]] = None):
+        if file_ids is None:
+            self.file_ids = set()
+        else:
+            self.file_ids = set(file_ids)
 
-    def add_file(self, file_id: str):
+    def add_file(self, file_id: str) -> None:
         """
         Add a file ID to the list of files to interpret.
 
         :param file_id: The ID of the file to interpret.
+        :type file_id: str
         """
-        self.file_ids.append(file_id)
+        self.file_ids.add(file_id)
 
-    def remove_file(self, file_id: str):
+    def remove_file(self, file_id: str) -> None:
         """
         Remove a file ID from the list of files to interpret.
 
         :param file_id: The ID of the file to remove.
+        :type file_id: str
         """
         self.file_ids.remove(file_id)
 
@@ -449,31 +683,24 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=self.file_ids))
+        if not self.file_ids:
+            return ToolResources()
+        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
 
     def execute(self, tool_call: Any) -> Any:
         pass
 
 
-class ToolSet:
+class BaseToolSet:
     """
-    A collection of tools that can be used by an agent.
+    Abstract class for a collection of tools that can be used by an agent.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._tools: List[Tool] = []
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
-        """
-        Validate the type of the tool.
-
-        :param tool_type: The type of the tool to validate.
-        :raises ValueError: If the tool type is not a subclass of Tool.
-        """
-        if isinstance(tool_type, AsyncFunctionTool):
-            raise ValueError(
-                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
-            )
+    def validate_tool_type(self, tool: Tool) -> None:
+        pass
 
     def add(self, tool: Tool):
         """
@@ -482,7 +709,7 @@ class ToolSet:
         :param tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
-        self.validate_tool_type(type(tool))
+        self.validate_tool_type(tool)
 
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
@@ -498,7 +725,7 @@ class ToolSet:
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
-                logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
+                logging.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
@@ -517,7 +744,7 @@ class ToolSet:
         """
         Get the resources for all tools in the tool set.
         """
-        tool_resources = {}
+        tool_resources: Dict[str, Any] = {}
         for tool in self._tools:
             resources = tool.resources
             for key, value in resources.items():
@@ -535,7 +762,7 @@ class ToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logging.error(f"Error creating ToolResources: {e}")
+            logging.error("Error creating ToolResources: %s", e)
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -562,6 +789,24 @@ class ToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+
+class ToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an synchronize agent.
+    """
+
+    def validate_tool_type(self, tool: Tool) -> None:
+        """
+        Validate the type of the tool.
+
+        :param tool_type: The type of the tool to validate.
+        :raises ValueError: If the tool type is not a subclass of Tool.
+        """
+        if isinstance(tool, AsyncFunctionTool):
+            raise ValueError(
+                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
+            )
+
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
@@ -582,21 +827,24 @@ class ToolSet:
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
 
-class AsyncToolSet(ToolSet):
+class AsyncToolSet(BaseToolSet):
+    """
+    A collection of tools that can be used by an asynchronous agent.
+    """
 
-    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
+    def validate_tool_type(self, tool: Tool) -> None:
         """
         Validate the type of the tool.
 
         :param tool_type: The type of the tool to validate.
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
-        if isinstance(tool_type, FunctionTool):
+        if isinstance(tool, FunctionTool):
             raise ValueError(
                 "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
@@ -621,7 +869,7 @@ class AsyncToolSet(ToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
 
@@ -630,73 +878,60 @@ class AgentEventHandler:
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
-        pass
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events."""
-        pass
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         """Handle thread run events."""
-        pass
 
     async def on_run_step(self, step: "RunStep") -> None:
         """Handle run step events."""
-        pass
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
         """Handle run step delta events."""
-        pass
 
     async def on_error(self, data: str) -> None:
         """Handle error events."""
-        pass
 
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
-        pass
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass
 
 
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
+StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+
+
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -722,7 +957,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> Tuple[str, Any]:
+    async def __anext__(self) -> Tuple[str, StreamEventData]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -732,16 +967,17 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return await self._process_event(event_data_str)
-                raise StopAsyncIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -753,7 +989,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             raise ValueError("Event type not specified in the event data.")
 
         try:
-            parsed_data = json.loads(event_data)
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
         except json.JSONDecodeError:
             parsed_data = event_data
 
@@ -796,11 +1034,12 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -821,14 +1060,14 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     await self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    await self.event_handler.on_error(event_data_obj)
+                    await self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     await self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 
@@ -843,7 +1082,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             pass
 
 
-class AgentRunStream(Iterator[Tuple[str, Any]]):
+class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
@@ -867,7 +1106,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __iter__(self):
         return self
 
-    def __next__(self) -> Tuple[str, Any]:
+    def __next__(self) -> Tuple[str, StreamEventData]:
         if self.done:
             raise StopIteration
         while True:
@@ -879,16 +1118,17 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
                         return self._process_event(event_data_str)
-                raise StopIteration
+                raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
+        error_string = ""
 
         for line in event_lines:
             if line.startswith("event:"):
@@ -943,11 +1183,12 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
             event_data_obj = parsed_data
+            error_string = str(parsed_data)
 
-        return event_type, event_data_obj
+        return event_type, event_data_obj, error_string
 
-    def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
             isinstance(event_data_obj, ThreadRun)
@@ -968,14 +1209,14 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AgentStreamEvent.ERROR:
-                    self.event_handler.on_error(event_data_obj)
+                    self.event_handler.on_error(error_string)
                 elif event_type == AgentStreamEvent.DONE:
                     self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
 
@@ -990,6 +1231,97 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
             pass
 
 
+class ThreadMessages:
+    """
+    Represents a collection of messages in a thread.
+
+    :param pageable_list: The pageable list of messages.
+    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
+
+    :return: A collection of messages.
+    :rtype: ~azure.ai.projects.models.ThreadMessages
+    """
+
+    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
+        self._messages = pageable_list.data
+
+    @property
+    def messages(self) -> List[ThreadMessage]:
+        """Returns all messages in the messages."""
+        return self._messages
+
+    @property
+    def text_messages(self) -> List[MessageTextContent]:
+        """Returns all text message contents in the messages."""
+        texts = [
+            content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)
+        ]
+        return texts
+
+    @property
+    def image_contents(self) -> List[MessageImageFileContent]:
+        """Returns all image file contents from image message contents in the messages."""
+        return [
+            content for msg in self._messages for content in msg.content if isinstance(content, MessageImageFileContent)
+        ]
+
+    @property
+    def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
+        """Returns all file citation annotations from text message annotations in the messages."""
+        annotations = [
+            annotation
+            for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFileCitationAnnotation)
+        ]
+        return annotations
+
+    @property
+    def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
+        """Returns all file path annotations from text message annotations in the messages."""
+        annotations = [
+            annotation
+            for msg in self._messages
+            for content in msg.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFilePathAnnotation)
+        ]
+        return annotations
+
+    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
+        """Returns the last message from the specified sender.
+
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last message from the specified sender.
+        :rtype: ~azure.ai.projects.models.ThreadMessage
+        """
+        for msg in self._messages:
+            if msg.role == sender:
+                return msg
+        return None
+
+    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
+        """Returns the last text message from the specified sender.
+
+        :param sender: The role of the sender.
+        :type sender: str
+
+        :return: The last text message from the specified sender.
+        :rtype: ~azure.ai.projects.models.MessageTextContent
+        """
+        for msg in self._messages:
+            if msg.role == sender:
+                for content in msg.content:
+                    if isinstance(content, MessageTextContent):
+                        return content
+        return None
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -998,8 +1330,13 @@ __all__: List[str] = [
     "AsyncFunctionTool",
     "AsyncToolSet",
     "CodeInterpreterTool",
+    "ConnectionProperties",
+    "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
+    "BingGroundingTool",
+    "SharepointTool",
+    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",

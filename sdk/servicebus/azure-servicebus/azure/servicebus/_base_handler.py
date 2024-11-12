@@ -36,6 +36,7 @@ from ._common.constants import (
 
 if TYPE_CHECKING:
     from .exceptions import ServiceBusError
+
     try:
         # pylint:disable=unused-import
         from uamqp import AMQPClient as uamqp_AMQPClientSync
@@ -50,13 +51,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _parse_conn_str(
-    conn_str: str,
-    check_case: Optional[bool] = False
+    conn_str: str, check_case: Optional[bool] = False
 ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path: Optional[str]= None
+    entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry: Optional[int] = None
 
@@ -64,7 +64,7 @@ def _parse_conn_str(
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
     if any(len(tup) != 2 for tup in conn_properties):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_properties)   # type: ignore
+    conn_settings = dict(conn_properties)  # type: ignore
 
     # case sensitive check when parsing for connection string properties
     if check_case:
@@ -81,7 +81,7 @@ def _parse_conn_str(
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
                 shared_access_signature_expiry = int(
-                    shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                    shared_access_signature.split("se=")[1].split("&")[0]  # type: ignore
                 )
             except (
                 IndexError,
@@ -112,20 +112,12 @@ def _parse_conn_str(
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
 
-    if any([shared_access_key, shared_access_key_name]) and not all(
-        [shared_access_key, shared_access_key_name]
-    ):
-        raise ValueError(
-            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
-        )
+    if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
+        raise ValueError("Connection string must have both SharedAccessKeyName and SharedAccessKey.")
     if shared_access_signature and shared_access_key:
-        raise ValueError(
-            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
-        )
+        raise ValueError("Only one of the SharedAccessKey or SharedAccessSignature must be present.")
     if not shared_access_signature and not shared_access_key:
-        raise ValueError(
-            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
-        )
+        raise ValueError("At least one of the SharedAccessKey or SharedAccessSignature must be present.")
 
     return (
         host,
@@ -137,9 +129,7 @@ def _parse_conn_str(
     )
 
 
-def _generate_sas_token(
-    uri: str, policy: str, key: str, expiry: Optional[timedelta] = None
-) -> AccessToken:
+def _generate_sas_token(uri: str, policy: str, key: str, expiry: Optional[timedelta] = None) -> AccessToken:
     """Create a shared access signiture token as a string literal.
     :param str uri: The resource URI.
     :param str policy: The name of the shared access policy.
@@ -155,12 +145,14 @@ def _generate_sas_token(
     token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
+
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
+
 
 class ServiceBusSASTokenCredential(object):
     """The shared access token credential used for authentication.
@@ -228,6 +220,7 @@ class ServiceBusAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
+
     def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
@@ -249,32 +242,26 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         fully_qualified_namespace: str,
         entity_name: str,
         credential: Union["TokenCredential", AzureSasCredential, AzureNamedKeyCredential],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(
-            fully_qualified_namespace.strip()
-        )
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
-        self._entity_path = self._entity_name + (
-            ("/Subscriptions/" + subscription_name) if subscription_name else ""
-        )
+        self._entity_path = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else "")
         self._mgmt_target = f"{self._entity_path}{MANAGEMENT_PATH_SUFFIX}"
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
-            self._credential = credential # type: ignore
+            self._credential = credential  # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(
-            hostname=self.fully_qualified_namespace,
-            amqp_transport=self._amqp_transport,
-            **kwargs
+            hostname=self.fully_qualified_namespace, amqp_transport=self._amqp_transport, **kwargs
         )
         self._running = False
         self._handler: Optional[Union["uamqp_AMQPClientSync", "pyamqp_AMQPClientSync"]] = None
@@ -286,12 +273,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._shutdown = threading.Event()
 
     @classmethod
-    def _convert_connection_string_to_kwargs(
-        cls, conn_str: str, **kwargs: Any
-    ) -> Dict[str, Any]:
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
-            conn_str
-        )
+    def _convert_connection_string_to_kwargs(cls, conn_str: str, **kwargs: Any) -> Dict[str, Any]:
+        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
@@ -301,16 +284,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
 
         if queue_name and topic_name:
-            raise ValueError(
-                "`queue_name` and `topic_name` can not be specified simultaneously."
-            )
+            raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
 
         entity_in_kwargs = queue_name or topic_name
-        if (
-            entity_in_conn_str
-            and entity_in_kwargs
-            and (entity_in_conn_str != entity_in_kwargs)
-        ):
+        if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
             raise ValueError(
                 f"The queue or topic name provided: {entity_in_conn_str} which does not match the EntityPath in"
                 f" the connection string passed to the ServiceBusClient constructor: {entity_in_kwargs}."
@@ -364,8 +341,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
+                "The handler has already been shutdown. Please use ServiceBusClient to create a new instance."
             )
         # The following client validation is for two purposes in a session receiver:
         # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
@@ -378,18 +354,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # Eventually this should be a fix in the uamqp library.
         # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
         try:
-            if self._session and (
-                self._session._lock_lost or self._session._lock_expired
-            ):
+            if self._session and (self._session._lock_lost or self._session._lock_expired):
                 raise SessionLockLostError(error=self._session.auto_renew_error)
         except AttributeError:
             pass
 
-    def _do_retryable_operation( # pylint: disable=inconsistent-return-statements
-        self,
-        operation: Callable,
-        timeout: Optional[float] = None,
-        **kwargs: Any
+    def _do_retryable_operation(  # pylint: disable=inconsistent-return-statements
+        self, operation: Callable, timeout: Optional[float] = None, **kwargs: Any
     ) -> Any:
         # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
@@ -397,11 +368,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         max_retries = self._config.retry_total
 
-        abs_timeout_time = (
-            (time.time() + timeout)
-            if (operation_requires_timeout and timeout)
-            else None
-        )
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
@@ -426,9 +393,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         last_exception,
                     )
                     if isinstance(last_exception, OperationTimeoutError):
-                        description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
-                            "use max_wait_time on the ServiceBusReceiver to control the"\
-                                " timeout."
+                        description = (
+                            "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                            "use max_wait_time on the ServiceBusReceiver to control the"
+                            " timeout."
+                        )
                         error = OperationTimeoutError(
                             message=description,
                         )
@@ -445,15 +414,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times: int,
         last_exception: Exception,
         abs_timeout_time: Optional[float] = None,
-        entity_name: Optional[str] = None
+        entity_name: Optional[str] = None,
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
-                    self._config.retry_mode,
-                    self._config.retry_backoff_factor,
-                    self._config.retry_backoff_max,
-                    retried_times,
-                )
+            self._config.retry_mode,
+            self._config.retry_backoff_factor,
+            self._config.retry_backoff_max,
+            retried_times,
+        )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):  # pylint:disable=no-else-return
@@ -470,9 +439,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 last_exception,
             )
             if isinstance(last_exception, OperationTimeoutError):
-                description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
-                    "use max_wait_time on the ServiceBusReceiver to control the"\
-                        " timeout."
+                description = (
+                    "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                    "use max_wait_time on the ServiceBusReceiver to control the"
+                    " timeout."
+                )
                 error = OperationTimeoutError(
                     message=description,
                 )
@@ -487,7 +458,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         callback: Callable,
         keep_alive_associated_link: bool = True,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "pyamqp_Message":
         """
         Execute an amqp management operation.
@@ -523,7 +494,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             application_properties=application_properties,
             config=self._config,
             reply_to=self._mgmt_target,
-            **kwargs
+            **kwargs,
         )
 
         try:
@@ -534,7 +505,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=timeout,
-                callback=callback
+                callback=callback,
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
@@ -547,7 +518,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         message: Dict[str, Any],
         callback: Callable,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Any:
         return self._do_retryable_operation(
             self._mgmt_request_response,
@@ -556,7 +527,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             callback=callback,
             timeout=timeout,
             operation_requires_timeout=True,
-            **kwargs
+            **kwargs,
         )
 
     def _open(self):

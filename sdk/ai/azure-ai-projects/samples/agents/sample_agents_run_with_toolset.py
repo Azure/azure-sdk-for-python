@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -37,19 +37,21 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# Initialize agent toolset with user functions and code interpreter
-functions = FunctionTool(user_functions)
-code_interpreter = CodeInterpreterTool()
-
-toolset = ToolSet()
-toolset.add(functions)
-toolset.add(code_interpreter)
-
 # Create agent with toolset and process assistant run
 with project_client:
+    # Initialize agent toolset with user functions and code interpreter
+    # [START create_agent_toolset]
+    functions = FunctionTool(user_functions)
+    code_interpreter = CodeInterpreterTool()
+
+    toolset = ToolSet()
+    toolset.add(functions)
+    toolset.add(code_interpreter)
+
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
+    # [END create_agent_toolset]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -65,7 +67,9 @@ with project_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
+    # [START create_and_process_run]
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    # [END create_and_process_run]
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":

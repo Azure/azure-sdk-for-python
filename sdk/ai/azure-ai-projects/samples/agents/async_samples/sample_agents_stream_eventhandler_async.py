@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -24,9 +24,15 @@ import asyncio
 from typing import Any
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models._models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
-from azure.ai.projects.models._patch import AsyncAgentEventHandler
-from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models._models import (
+    MessageDeltaChunk,
+    MessageDeltaTextContent,
+    RunStep,
+    ThreadMessage,
+    ThreadRun,
+)
+from azure.ai.projects.models import AsyncAgentEventHandler
+from azure.identity.aio import DefaultAzureCredential
 
 import os
 
@@ -57,7 +63,7 @@ class MyEventHandler(AsyncAgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
-async def main():
+async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables

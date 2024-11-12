@@ -218,7 +218,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         return {
             self.version_property_name: ChangeFeedStateVersion.V2.value,
             self.container_rid_property_name: self._container_rid,
-            self.change_feed_mode_property_name: "Incremental",
+            self.change_feed_mode_property_name: "LatestVersion",
             self.change_feed_start_from_property_name: self._change_feed_start_from.to_dict(),
             self.continuation_property_name: self._continuation.to_dict() if self._continuation is not None else None
         }
@@ -383,9 +383,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
-            feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
-            feed_range_json = json.loads(feed_range_str)
-            feed_range = FeedRangeInternalEpk.from_json(feed_range_json)
+            feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
         elif change_feed_state_context.get("partitionKey"):
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\

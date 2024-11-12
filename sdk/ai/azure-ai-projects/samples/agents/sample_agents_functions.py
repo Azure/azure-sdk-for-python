@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -23,7 +23,7 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
+from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from user_functions import user_functions
 
 
@@ -76,12 +76,13 @@ with project_client:
             for tool_call in tool_calls:
                 if isinstance(tool_call, RequiredFunctionToolCall):
                     try:
+                        print(f"Executing tool call: {tool_call}")
                         output = functions.execute(tool_call)
                         tool_outputs.append(
-                            {
-                                "tool_call_id": tool_call.id,
-                                "output": output,
-                            }
+                            ToolOutput(
+                                tool_call_id=tool_call.id,
+                                output=output,
+                            )
                         )
                     except Exception as e:
                         print(f"Error executing tool_call {tool_call.id}: {e}")

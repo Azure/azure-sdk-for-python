@@ -12,8 +12,7 @@ from logger import get_base_logger
 
 
 class ProcessMonitor:
-    def __init__(self, log_filename, logger_name, log_interval=30.0, print_console=False,
-                 process_id=None, **kwargs):
+    def __init__(self, log_filename, logger_name, log_interval=30.0, print_console=False, process_id=None, **kwargs):
         """
         Process Monitor monitors the CPU usage, memory usage of a specific process.
         :param logger_filename: The log filename for the logger.
@@ -25,10 +24,7 @@ class ProcessMonitor:
         """
         self._monitor_thread = None
         self._logger = get_base_logger(
-            log_filename=log_filename,
-            logger_name=logger_name,
-            print_console=print_console,
-            **kwargs
+            log_filename=log_filename, logger_name=logger_name, print_console=print_console, **kwargs
         )
         self._pid = process_id or os.getpid()
         self._process_instance = psutil.Process(self._pid)
@@ -36,13 +32,13 @@ class ProcessMonitor:
         self.running = False
 
     def __enter__(self):
-        print('Process monitor start working.')
+        print("Process monitor start working.")
         self.start()
         return self
 
     def __exit__(self, *args):
         self.stop()
-        print('Process monitor stop working.')
+        print("Process monitor stop working.")
 
     def _monitor_work(self):
         while self.running:
@@ -51,7 +47,7 @@ class ProcessMonitor:
                 log_content,
                 self._process_instance.status(),
                 self._process_instance.cpu_percent(),
-                self._process_instance.memory_percent()
+                self._process_instance.memory_percent(),
             )
             time.sleep(self._log_interval)
 

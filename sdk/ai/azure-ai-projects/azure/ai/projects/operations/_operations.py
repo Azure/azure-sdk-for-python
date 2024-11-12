@@ -1164,7 +1164,26 @@ def build_agents_list_vector_store_file_batch_files_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_list_request(
+def build_connections_get_workspace_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_connections_list_connections_request(  # pylint: disable=name-too-long
     *,
     category: Optional[Union[str, _models.ConnectionType]] = None,
     include_all: Optional[bool] = None,
@@ -1195,7 +1214,7 @@ def build_connections_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_request(connection_name: str, **kwargs: Any) -> HttpRequest:
+def build_connections_get_connection_request(connection_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1219,7 +1238,9 @@ def build_connections_get_request(connection_name: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_list_secrets_request(connection_name: str, **kwargs: Any) -> HttpRequest:
+def build_connections_get_connection_with_secrets_request(  # pylint: disable=name-too-long
+    connection_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1244,6 +1265,30 @@ def build_connections_list_secrets_request(connection_name: str, **kwargs: Any) 
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_telemetry_get_app_insights_request(app_insights_resource_url: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{appInsightsResourceUrl}"
+    path_format_arguments = {
+        "appInsightsResourceUrl": _SERIALIZER.url("app_insights_resource_url", app_insights_resource_url, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_evaluations_get_request(id: str, **kwargs: Any) -> HttpRequest:
@@ -1426,15 +1471,17 @@ def build_evaluations_list_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_evaluations_disable_schedule_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluations/schedules/{name}"
+    _url = "/evaluations/schedules/{name}/disable"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1442,12 +1489,12 @@ def build_evaluations_delete_schedule_request(name: str, **kwargs: Any) -> HttpR
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class AgentsOperations:  # pylint: disable=too-many-public-methods
@@ -2670,10 +2717,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
 
          * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
+           cases to represent user-generated messages.
          * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into
-           the conversation. Known values are: "user" and "assistant". Required.
+           messages from the agent into the
+           conversation. Known values are: "user" and "assistant". Required.
         :paramtype role: str or ~azure.ai.projects.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
          images and annotated text may only be provided via
@@ -2735,10 +2782,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
 
          * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
+           cases to represent user-generated messages.
          * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into
-           the conversation. Known values are: "user" and "assistant". Required.
+           messages from the agent into the
+           conversation. Known values are: "user" and "assistant". Required.
         :paramtype role: str or ~azure.ai.projects.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
          images and annotated text may only be provided via
@@ -4864,13 +4911,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_file_content(self, file_id: str, **kwargs: Any) -> _models.FileContentResponse:
-        """Returns information about a specific file. Does not retrieve file content.
+    def _get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+        """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: FileContentResponse. The FileContentResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.FileContentResponse
+        :return: bytes
+        :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4884,7 +4931,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FileContentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
         _request = build_agents_get_file_content_request(
             file_id=file_id,
@@ -4921,7 +4968,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FileContentResponse, response.json())
+            deserialized = _deserialize(bytes, response.json(), format="base64")
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5042,6 +5089,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -5057,6 +5105,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset URIs. Default value is None.
+        :paramtype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -5095,6 +5146,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -5109,6 +5161,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_ids: list[str]
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset URIs. Default value is None.
+        :paramtype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
         :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
@@ -5140,6 +5195,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if body is _Unset:
             body = {
                 "chunking_strategy": chunking_strategy,
+                "configuration": store_configuration,
                 "expires_after": expires_after,
                 "file_ids": file_ids,
                 "metadata": metadata,
@@ -5616,8 +5672,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
-        file_id: str,
         content_type: str = "application/json",
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5625,11 +5682,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_id: Identifier of the file. Required.
-        :paramtype file_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -5662,7 +5721,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_id: str = _Unset,
+        file_id: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5672,8 +5732,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_id: Identifier of the file. Required.
+        :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
+        :keyword data_sources: Azure asset ID. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -5696,9 +5758,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if file_id is _Unset:
-                raise TypeError("missing required argument: file_id")
-            body = {"chunking_strategy": chunking_strategy, "file_id": file_id}
+            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_id": file_id}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -5915,8 +5975,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         vector_store_id: str,
         *,
-        file_ids: List[str],
         content_type: str = "application/json",
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -5924,11 +5985,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_ids: List of file identifiers. Required.
-        :paramtype file_ids: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword file_ids: List of file identifiers. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -5961,7 +6024,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        file_ids: List[str] = _Unset,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFileBatch:
@@ -5971,8 +6035,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_ids: List of file identifiers. Required.
+        :keyword file_ids: List of file identifiers. Default value is None.
         :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -5995,9 +6061,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if file_ids is _Unset:
-                raise TypeError("missing required argument: file_ids")
-            body = {"chunking_strategy": chunking_strategy, "file_ids": file_ids}
+            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_ids": file_ids}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -6314,26 +6378,11 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _list(
-        self,
-        *,
-        category: Optional[Union[str, _models.ConnectionType]] = None,
-        include_all: Optional[bool] = None,
-        target: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models._models.ConnectionsListResponse:
-        """List the details of all the connections (not including their credentials).
+    def _get_workspace(self, **kwargs: Any) -> _models._models.GetWorkspaceResponse:
+        """Gets the properties of the specified machine learning workspace.
 
-        :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", and "AIServices". Default value is None.
-        :paramtype category: str or ~azure.ai.projects.models.ConnectionType
-        :keyword include_all: Indicates whether to list datastores. Service default: do not list
-         datastores. Default value is None.
-        :paramtype include_all: bool
-        :keyword target: Target of the workspace connection. Default value is None.
-        :paramtype target: str
-        :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models._models.ConnectionsListResponse
+        :return: GetWorkspaceResponse. The GetWorkspaceResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.GetWorkspaceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6347,9 +6396,88 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.GetWorkspaceResponse] = kwargs.pop("cls", None)
 
-        _request = build_connections_list_request(
+        _request = build_connections_get_workspace_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.GetWorkspaceResponse, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _list_connections(
+        self,
+        *,
+        category: Optional[Union[str, _models.ConnectionType]] = None,
+        include_all: Optional[bool] = None,
+        target: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models._models.ListConnectionsResponse:
+        """List the details of all the connections (not including their credentials).
+
+        :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
+         "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch". Default value is None.
+        :paramtype category: str or ~azure.ai.projects.models.ConnectionType
+        :keyword include_all: Indicates whether to list datastores. Service default: do not list
+         datastores. Default value is None.
+        :paramtype include_all: bool
+        :keyword target: Target of the workspace connection. Default value is None.
+        :paramtype target: str
+        :return: ListConnectionsResponse. The ListConnectionsResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.ListConnectionsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ListConnectionsResponse] = kwargs.pop("cls", None)
+
+        _request = build_connections_list_connections_request(
             category=category,
             include_all=include_all,
             target=target,
@@ -6387,7 +6515,7 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ConnectionsListResponse, response.json()  # pylint: disable=protected-access
+                _models._models.ListConnectionsResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -6396,14 +6524,13 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get(self, connection_name: str, **kwargs: Any) -> _models._models.ConnectionsListSecretsResponse:
+    def _get_connection(self, connection_name: str, **kwargs: Any) -> _models._models.GetConnectionResponse:
         """Get the details of a single connection, without credentials.
 
         :param connection_name: Connection Name. Required.
         :type connection_name: str
-        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models._models.ConnectionsListSecretsResponse
+        :return: GetConnectionResponse. The GetConnectionResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.GetConnectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6417,9 +6544,9 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop("cls", None)
 
-        _request = build_connections_get_request(
+        _request = build_connections_get_connection_request(
             connection_name=connection_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6455,7 +6582,7 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ConnectionsListSecretsResponse, response.json()  # pylint: disable=protected-access
+                _models._models.GetConnectionResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -6464,22 +6591,22 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _list_secrets(
+    def _get_connection_with_secrets(
         self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ConnectionsListSecretsResponse: ...
+    ) -> _models._models.GetConnectionResponse: ...
     @overload
-    def _list_secrets(
+    def _get_connection_with_secrets(
         self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ConnectionsListSecretsResponse: ...
+    ) -> _models._models.GetConnectionResponse: ...
     @overload
-    def _list_secrets(
+    def _get_connection_with_secrets(
         self, connection_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ConnectionsListSecretsResponse: ...
+    ) -> _models._models.GetConnectionResponse: ...
 
     @distributed_trace
-    def _list_secrets(
+    def _get_connection_with_secrets(
         self, connection_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, ignored: str = _Unset, **kwargs: Any
-    ) -> _models._models.ConnectionsListSecretsResponse:
+    ) -> _models._models.GetConnectionResponse:
         """Get the details of a single connection, including credentials (if available).
 
         :param connection_name: Connection Name. Required.
@@ -6488,9 +6615,8 @@ class ConnectionsOperations:
         :type body: JSON or IO[bytes]
         :keyword ignored: The body is ignored. TODO: Can we remove this?. Required.
         :paramtype ignored: str
-        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models._models.ConnectionsListSecretsResponse
+        :return: GetConnectionResponse. The GetConnectionResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.GetConnectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6505,7 +6631,7 @@ class ConnectionsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.GetConnectionResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if ignored is _Unset:
@@ -6519,7 +6645,7 @@ class ConnectionsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_connections_list_secrets_request(
+        _request = build_connections_get_connection_with_secrets_request(
             connection_name=connection_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6557,7 +6683,98 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ConnectionsListSecretsResponse, response.json()  # pylint: disable=protected-access
+                _models._models.GetConnectionResponse, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class TelemetryOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`telemetry` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def _get_app_insights(
+        self, app_insights_resource_url: str, **kwargs: Any
+    ) -> _models._models.GetAppInsightsResponse:
+        # pylint: disable=line-too-long
+        """Gets the properties of the specified Application Insights resource.
+
+        :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the
+         format:
+         '/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resourcename}'.
+         Required.
+        :type app_insights_resource_url: str
+        :return: GetAppInsightsResponse. The GetAppInsightsResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.GetAppInsightsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.GetAppInsightsResponse] = kwargs.pop("cls", None)
+
+        _request = build_telemetry_get_app_insights_request(
+            app_insights_resource_url=app_insights_resource_url,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.GetAppInsightsResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -7337,11 +7554,10 @@ class EvaluationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Resource delete operation template.
+    def disable_schedule(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Disable the evaluation schedule.
 
-        :param name: Name of the schedule, which also serves as the unique identifier for the
-         evaluation. Required.
+        :param name: Name of the evaluation schedule. Required.
         :type name: str
         :return: None
         :rtype: None
@@ -7360,7 +7576,7 @@ class EvaluationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluations_delete_schedule_request(
+        _request = build_evaluations_disable_schedule_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7387,10 +7603,5 @@ class EvaluationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore

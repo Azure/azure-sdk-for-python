@@ -223,7 +223,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint", and "azure_ai_search".
+     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -232,7 +232,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint\", and \"azure_ai_search\"."""
+     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -367,6 +367,18 @@ class AgentThreadCreationOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class AppInsightsProperties(_model_base.Model):
+    """The properties of the Application Insights resource.
+
+
+    :ivar connection_string: Authentication type of the connection target. Required.
+    :vartype connection_string: str
+    """
+
+    connection_string: str = rest_field(name="ConnectionString")
+    """Authentication type of the connection target. Required."""
 
 
 class InputData(_model_base.Model):
@@ -555,15 +567,21 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
+    :ivar bing_grounding: The list of connections used by the bing grounding tool. Required.
+    :vartype bing_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
+    bing_grounding: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the bing grounding tool. Required."""
 
     @overload
     def __init__(
         self,
+        *,
+        bing_grounding: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -613,18 +631,24 @@ class CodeInterpreterToolResource(_model_base.Model):
      be a maximum of 20 files
      associated with the tool.
     :vartype file_ids: list[str]
+    :ivar data_sources: The data sources to be used. This option is mutually exclusive with
+     fileIds.
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
     file_ids: Optional[List[str]] = rest_field()
     """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
      20 files
      associated with the tool."""
+    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    """The data sources to be used. This option is mutually exclusive with fileIds."""
 
     @overload
     def __init__(
         self,
         *,
         file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -636,195 +660,6 @@ class CodeInterpreterToolResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ConnectionListResource(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint`` tools.
-
-    :ivar connection_list: The connections attached to this agent. There can be a maximum of 1
-     connection
-     resource attached to the agent.
-    :vartype connection_list: list[~azure.ai.projects.models.ConnectionResource]
-    """
-
-    connection_list: Optional[List["_models.ConnectionResource"]] = rest_field(name="connections")
-    """The connections attached to this agent. There can be a maximum of 1 connection
-     resource attached to the agent."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_list: Optional[List["_models.ConnectionResource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConnectionProperties(_model_base.Model):
-    """Connection properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
-
-
-    :ivar auth_type: Authentication type of the connection target. Required. Known values are:
-     "ApiKey", "AAD", and "SAS".
-    :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    auth_type: str = rest_discriminator(name="authType")
-    """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
-     and \"SAS\"."""
-
-
-class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
-    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
-    ).
-
-
-    :ivar auth_type: Authentication type of the connection target. Required. Entra ID
-     authentication
-    :vartype auth_type: str or ~azure.ai.projects.models.AAD
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
-    :vartype category: str or ~azure.ai.projects.models.ConnectionType
-    :ivar target: The connection URL to be used for this service. Required.
-    :vartype target: str
-    """
-
-    auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
-    """Authentication type of the connection target. Required. Entra ID authentication"""
-    category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
-    target: str = rest_field()
-    """The connection URL to be used for this service. Required."""
-
-
-class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
-    """Connection properties for connections with API key authentication.
-
-
-    :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
-    :vartype auth_type: str or ~azure.ai.projects.models.API_KEY
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
-    :vartype category: str or ~azure.ai.projects.models.ConnectionType
-    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
-    :vartype credentials: ~azure.ai.projects.models._models.CredentialsApiKeyAuth
-    :ivar target: The connection URL to be used for this service. Required.
-    :vartype target: str
-    """
-
-    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
-    """Authentication type of the connection target. Required. API Key authentication"""
-    category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
-    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
-    """Credentials will only be present for authType=ApiKey. Required."""
-    target: str = rest_field()
-    """The connection URL to be used for this service. Required."""
-
-
-class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
-    """Connection properties for connections with SAS authentication.
-
-
-    :ivar auth_type: Authentication type of the connection target. Required. Shared Access
-     Signature (SAS) authentication
-    :vartype auth_type: str or ~azure.ai.projects.models.SAS
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", and "AIServices".
-    :vartype category: str or ~azure.ai.projects.models.ConnectionType
-    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
-    :vartype credentials: ~azure.ai.projects.models._models.CredentialsSASAuth
-    :ivar target: The connection URL to be used for this service. Required.
-    :vartype target: str
-    """
-
-    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
-    """Authentication type of the connection target. Required. Shared Access Signature (SAS)
-     authentication"""
-    category: Union[str, "_models.ConnectionType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", and \"AIServices\"."""
-    credentials: "_models._models.CredentialsSASAuth" = rest_field()
-    """Credentials will only be present for authType=ApiKey. Required."""
-    target: str = rest_field()
-    """The connection URL to be used for this service. Required."""
-
-
-class ConnectionResource(_model_base.Model):
-    """A connection resource.
-
-
-    :ivar connection_id: A connection in a ConnectionListResource attached to this agent. Required.
-    :vartype connection_id: str
-    """
-
-    connection_id: str = rest_field()
-    """A connection in a ConnectionListResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConnectionsListResponse(_model_base.Model):
-    """Response from the list operation.
-
-
-    :ivar value: A list of connection list secrets. Required.
-    :vartype value: list[~azure.ai.projects.models._models.ConnectionsListSecretsResponse]
-    """
-
-    value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
-    """A list of connection list secrets. Required."""
-
-
-class ConnectionsListSecretsResponse(_model_base.Model):
-    """Response from the listSecrets operation.
-
-
-    :ivar id: A unique identifier for the connection. Required.
-    :vartype id: str
-    :ivar name: The name of the resource. Required.
-    :vartype name: str
-    :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.projects.models._models.ConnectionProperties
-    """
-
-    id: str = rest_field()
-    """A unique identifier for the connection. Required."""
-    name: str = rest_field()
-    """The name of the resource. Required."""
-    properties: "_models._models.ConnectionProperties" = rest_field()
-    """The properties of the resource. Required."""
 
 
 class CredentialsApiKeyAuth(_model_base.Model):
@@ -1044,19 +879,20 @@ class EvaluationSchedule(_model_base.Model):
     :vartype description: str
     :ivar system_data: Metadata containing createdBy and modifiedBy information.
     :vartype system_data: ~azure.ai.projects.models.SystemData
-    :ivar provisioning_status: Status of the evaluation. It is set by service and is read-only.
-    :vartype provisioning_status: str
+    :ivar provisioning_state: Provisioning State of the evaluation. It is set by service and is
+     read-only.
+    :vartype provisioning_state: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
     :vartype tags: dict[str, str]
     :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
      property cannot be removed.
     :vartype properties: dict[str, str]
+    :ivar is_enabled: Enabled status of the evaluation. It is set by service and is read-only.
+    :vartype is_enabled: str
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar trigger: Trigger for the evaluation. Required.
     :vartype trigger: ~azure.ai.projects.models.Trigger
-    :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
-    :vartype sampling_strategy: ~azure.ai.projects.models.SamplingStrategy
     """
 
     name: str = rest_field(visibility=["read"])
@@ -1068,19 +904,19 @@ class EvaluationSchedule(_model_base.Model):
      evaluation and is mutable."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata containing createdBy and modifiedBy information."""
-    provisioning_status: Optional[str] = rest_field(name="provisioningStatus", visibility=["read"])
-    """Status of the evaluation. It is set by service and is read-only."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Provisioning State of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
     properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
+    is_enabled: Optional[str] = rest_field(name="isEnabled", visibility=["read"])
+    """Enabled status of the evaluation. It is set by service and is read-only."""
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
     trigger: "_models.Trigger" = rest_field()
     """Trigger for the evaluation. Required."""
-    sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
-    """Sampling strategy for the evaluation. Required."""
 
     @overload
     def __init__(
@@ -1089,7 +925,6 @@ class EvaluationSchedule(_model_base.Model):
         data: "_models.ApplicationInsightsConfiguration",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         trigger: "_models.Trigger",
-        sampling_strategy: "_models.SamplingStrategy",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -1132,35 +967,6 @@ class EvaluatorConfiguration(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         init_params: Optional[Dict[str, Any]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FileContentResponse(_model_base.Model):
-    """A response from a file get content operation.
-
-
-    :ivar content: The content of the file, in bytes. Required.
-    :vartype content: bytes
-    """
-
-    content: bytes = rest_field(format="base64")
-    """The content of the file, in bytes. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: bytes,
     ) -> None: ...
 
     @overload
@@ -1251,6 +1057,40 @@ class FileListResponse(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class FileSearchRankingOptions(_model_base.Model):
+    """Ranking options for file search.
+
+
+    :ivar ranker: File search ranker. Required.
+    :vartype ranker: str
+    :ivar score_threshold: Ranker search threshold. Required.
+    :vartype score_threshold: float
+    """
+
+    ranker: str = rest_field()
+    """File search ranker. Required."""
+    score_threshold: float = rest_field()
+    """Ranker search threshold. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ranker: str,
+        score_threshold: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
 
@@ -1295,6 +1135,8 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information.
     :vartype max_num_results: int
+    :ivar ranking_options:
+    :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     """
 
     max_num_results: Optional[int] = rest_field()
@@ -1303,12 +1145,14 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
 
     @overload
     def __init__(
         self,
         *,
         max_num_results: Optional[int] = None,
+        ranking_options: Optional["_models.FileSearchRankingOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -1329,17 +1173,27 @@ class FileSearchToolResource(_model_base.Model):
      maximum of 1 vector
      store attached to the agent.
     :vartype vector_store_ids: list[str]
+    :ivar vector_stores: The list of vector store configuration objects from Azure. This list is
+     limited to one
+     element. The only element of this list contains
+     the list of azure asset IDs used by the search tool.
+    :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreConfigurations]
     """
 
     vector_store_ids: Optional[List[str]] = rest_field()
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
+    vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field()
+    """The list of vector store configuration objects from Azure. This list is limited to one
+     element. The only element of this list contains
+     the list of azure asset IDs used by the search tool."""
 
     @overload
     def __init__(
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
+        vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = None,
     ) -> None: ...
 
     @overload
@@ -1458,6 +1312,66 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
         super().__init__(*args, type="function", **kwargs)
 
 
+class GetAppInsightsResponse(_model_base.Model):
+    """Response from getting properties of the Application Insights resource.
+
+
+    :ivar id: A unique identifier for the resource. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models._models.AppInsightsProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the resource. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models._models.AppInsightsProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+
+class GetConnectionResponse(_model_base.Model):
+    """Response from the listSecrets operation.
+
+
+    :ivar id: A unique identifier for the connection. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models._models.InternalConnectionProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the connection. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models._models.InternalConnectionProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+
+class GetWorkspaceResponse(_model_base.Model):
+    """Response from the Workspace - Get operation.
+
+
+    :ivar id: A unique identifier for the resource. Required.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar properties: The properties of the resource. Required.
+    :vartype properties: ~azure.ai.projects.models._models.WorkspaceProperties
+    """
+
+    id: str = rest_field()
+    """A unique identifier for the resource. Required."""
+    name: str = rest_field()
+    """The name of the resource. Required."""
+    properties: "_models._models.WorkspaceProperties" = rest_field()
+    """The properties of the resource. Required."""
+
+
 class IndexResource(_model_base.Model):
     """A Index resource.
 
@@ -1493,19 +1407,128 @@ class IndexResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class InternalConnectionProperties(_model_base.Model):
+    """Connection properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth,
+    InternalConnectionPropertiesSASAuth
+
+
+    :ivar auth_type: Authentication type of the connection target. Required. Known values are:
+     "ApiKey", "AAD", and "SAS".
+    :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    auth_type: str = rest_discriminator(name="authType")
+    """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
+     and \"SAS\"."""
+    category: Union[str, "_models.ConnectionType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
+     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
+    target: str = rest_field()
+    """The connection URL to be used for this service. Required."""
+
+
+class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
+    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
+    ).
+
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. Entra ID
+     authentication (formerly known as AAD)
+    :vartype auth_type: str or ~azure.ai.projects.models.ENTRA_ID
+    """
+
+    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. Entra ID authentication (formerly known
+     as AAD)"""
+
+
+class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
+    """Connection properties for connections with API key authentication.
+
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
+    :vartype auth_type: str or ~azure.ai.projects.models.API_KEY
+    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
+    :vartype credentials: ~azure.ai.projects.models._models.CredentialsApiKeyAuth
+    """
+
+    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. API Key authentication"""
+    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
+    """Credentials will only be present for authType=ApiKey. Required."""
+
+
+class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
+    """Connection properties for connections with SAS authentication.
+
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. Shared Access
+     Signature (SAS) authentication
+    :vartype auth_type: str or ~azure.ai.projects.models.SAS
+    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
+    :vartype credentials: ~azure.ai.projects.models._models.CredentialsSASAuth
+    """
+
+    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. Shared Access Signature (SAS)
+     authentication"""
+    credentials: "_models._models.CredentialsSASAuth" = rest_field()
+    """Credentials will only be present for authType=ApiKey. Required."""
+
+
+class ListConnectionsResponse(_model_base.Model):
+    """Response from the list operation.
+
+
+    :ivar value: A list of connection list secrets. Required.
+    :vartype value: list[~azure.ai.projects.models._models.GetConnectionResponse]
+    """
+
+    value: List["_models._models.GetConnectionResponse"] = rest_field()
+    """A list of connection list secrets. Required."""
+
+
 class MessageAttachment(_model_base.Model):
     """This describes to which tools a file has been attached.
 
 
-    :ivar file_id: The ID of the file to attach to the message. Required.
+    :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
+    :ivar data_sources: Azure asset ID.
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     :ivar tools: The tools to add to this file. Required.
     :vartype tools: list[~azure.ai.projects.models.CodeInterpreterToolDefinition or
      ~azure.ai.projects.models.FileSearchToolDefinition]
     """
 
-    file_id: str = rest_field()
-    """The ID of the file to attach to the message. Required."""
+    file_id: Optional[str] = rest_field()
+    """The ID of the file to attach to the message."""
+    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    """Azure asset ID."""
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
 
@@ -1513,8 +1536,9 @@ class MessageAttachment(_model_base.Model):
     def __init__(
         self,
         *,
-        file_id: str,
         tools: List["_types.MessageAttachmentToolDefinition"],
+        file_id: Optional[str] = None,
+        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -2393,15 +2417,21 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fab
     :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
      "microsoft_fabric".
     :vartype type: str
+    :ivar microsoft_fabric: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype microsoft_fabric: ~azure.ai.projects.models.ToolConnectionList
     """
 
     type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'microsoft_fabric'. Required. Default value is
      \"microsoft_fabric\"."""
+    microsoft_fabric: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the Microsoft Fabric tool. Required."""
 
     @overload
     def __init__(
         self,
+        *,
+        microsoft_fabric: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -4509,7 +4539,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         super().__init__(*args, type="microsoft_fabric", **kwargs)
 
 
-class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
@@ -4518,16 +4548,17 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
     :vartype type: str
     :ivar share_point: Reserved for future use. Required.
     :vartype share_point: dict[str, str]
     """
 
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
-    share_point: Dict[str, str] = rest_field(name="sharepoint")
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    share_point: Dict[str, str] = rest_field(name="sharepoint_grounding")
     """Reserved for future use. Required."""
 
     @overload
@@ -4546,7 +4577,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
@@ -4584,22 +4615,28 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
-class SamplingStrategy(_model_base.Model):
-    """SamplingStrategy Definition.
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
+    """The input definition information for a sharepoint tool as used to configure an agent.
 
 
-    :ivar rate: Sampling rate. Required.
-    :vartype rate: float
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
+    :vartype type: str
+    :ivar sharepoint_grounding: The list of connections used by the SharePoint tool. Required.
+    :vartype sharepoint_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    rate: float = rest_field()
-    """Sampling rate. Required."""
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: "_models.ToolConnectionList" = rest_field()
+    """The list of connections used by the SharePoint tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        rate: float,
+        sharepoint_grounding: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -4610,35 +4647,7 @@ class SamplingStrategy(_model_base.Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
-    """The input definition information for a sharepoint tool as used to configure an agent.
-
-
-    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
-     "sharepoint".
-    :vartype type: str
-    """
-
-    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="sharepoint", **kwargs)
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
@@ -4899,10 +4908,10 @@ class ThreadMessageOptions(_model_base.Model):
 
 
      * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-     cases to represent user-generated messages.
+       cases to represent user-generated messages.
      * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: "user" and "assistant".
+       messages from the agent into the
+       conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -4921,11 +4930,11 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``\ : Indicates the message is sent by an actual user and should be used in most cases
-     to represent user-generated messages.
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
+       cases to represent user-generated messages.
      * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into
-       the conversation. Required. Known values are: \"user\" and \"assistant\"."""
+       messages from the agent into the
+       conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
@@ -5158,6 +5167,67 @@ class ThreadRun(_model_base.Model):
         self.object: Literal["thread.run"] = "thread.run"
 
 
+class ToolConnection(_model_base.Model):
+    """A connection resource.
+
+
+    :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """A connection in a ToolConnectionList attached to this tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolConnectionList(_model_base.Model):
+    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
+    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
+
+    :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
+     connection
+     resource attached to the tool.
+    :vartype connection_list: list[~azure.ai.projects.models.ToolConnection]
+    """
+
+    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(name="connections")
+    """The connections attached to this tool. There can be a maximum of 1 connection
+     resource attached to the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_list: Optional[List["_models.ToolConnection"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ToolOutput(_model_base.Model):
     """The data provided during a tool outputs submission to resolve pending tool calls and allow the
     model to continue.
@@ -5207,15 +5277,6 @@ class ToolResources(_model_base.Model):
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
     :vartype file_search: ~azure.ai.projects.models.FileSearchToolResource
-    :ivar bing_grounding: Resources to be used by the ``bing_grounding`` tool consisting of
-     connection IDs.
-    :vartype bing_grounding: ~azure.ai.projects.models.ConnectionListResource
-    :ivar microsoft_fabric: Resources to be used by the ``microsoft_fabric`` tool consisting of
-     connection IDs.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ConnectionListResource
-    :ivar share_point: Resources to be used by the ``sharepoint`` tool consisting of connection
-     IDs.
-    :vartype share_point: ~azure.ai.projects.models.ConnectionListResource
     :ivar azure_ai_search: Resources to be used by the ``azure_ai_search`` tool consisting of index
      IDs and names.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
@@ -5225,12 +5286,6 @@ class ToolResources(_model_base.Model):
     """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
-    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
-    """Resources to be used by the ``bing_grounding`` tool consisting of connection IDs."""
-    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
-    """Resources to be used by the ``microsoft_fabric`` tool consisting of connection IDs."""
-    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
-    """Resources to be used by the ``sharepoint`` tool consisting of connection IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
     """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
@@ -5240,9 +5295,6 @@ class ToolResources(_model_base.Model):
         *,
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
-        bing_grounding: Optional["_models.ConnectionListResource"] = None,
-        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
-        share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ) -> None: ...
 
@@ -5373,15 +5425,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
     :vartype file_search: ~azure.ai.projects.models.UpdateFileSearchToolResourceOptions
-    :ivar bing_grounding: Overrides the list of connections to be used by the ``bing_grounding``
-     tool consisting of connection IDs.
-    :vartype bing_grounding: ~azure.ai.projects.models.ConnectionListResource
-    :ivar microsoft_fabric: Overrides the list of connections to be used by the
-     ``microsoft_fabric`` tool consisting of connection IDs.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ConnectionListResource
-    :ivar share_point: Overrides the list of connections to be used by the ``sharepoint`` tool
-     consisting of connection IDs.
-    :vartype share_point: ~azure.ai.projects.models.ConnectionListResource
     :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
      consisting of index IDs and names.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
@@ -5394,15 +5437,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
-    bing_grounding: Optional["_models.ConnectionListResource"] = rest_field()
-    """Overrides the list of connections to be used by the ``bing_grounding`` tool consisting of
-     connection IDs."""
-    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
-    """Overrides the list of connections to be used by the ``microsoft_fabric`` tool consisting of
-     connection IDs."""
-    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
-    """Overrides the list of connections to be used by the ``sharepoint`` tool consisting of
-     connection IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
     """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
      names."""
@@ -5413,9 +5447,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
         *,
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
-        bing_grounding: Optional["_models.ConnectionListResource"] = None,
-        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
-        share_point: Optional["_models.ConnectionListResource"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ) -> None: ...
 
@@ -5645,6 +5676,107 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.OTHER, **kwargs)
+
+
+class VectorStoreConfiguration(_model_base.Model):
+    """Vector storage configuration is the list of data sources, used when multiple
+    files can be used for the enterprise file search.
+
+
+    :ivar data_sources: Data sources. Required.
+    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+    """
+
+    data_sources: List["_models.VectorStoreDataSource"] = rest_field()
+    """Data sources. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_sources: List["_models.VectorStoreDataSource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorStoreConfigurations(_model_base.Model):
+    """The structure, containing the list of vector storage configurations i.e. the list of azure
+    asset IDs.
+
+
+    :ivar store_name: Name. Required.
+    :vartype store_name: str
+    :ivar store_configuration: Configurations. Required.
+    :vartype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
+    """
+
+    store_name: str = rest_field(name="name")
+    """Name. Required."""
+    store_configuration: "_models.VectorStoreConfiguration" = rest_field(name="configuration")
+    """Configurations. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        store_name: str,
+        store_configuration: "_models.VectorStoreConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorStoreDataSource(_model_base.Model):
+    """The structure, containing Azure asset URI path and the asset type of the file used as a data
+    source
+    for the enterprise file search.
+
+
+    :ivar asset_identifier: Asset URI. Required.
+    :vartype asset_identifier: str
+    :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
+    :vartype asset_type: str or ~azure.ai.projects.models.VectorStoreDataSourceAssetType
+    """
+
+    asset_identifier: str = rest_field(name="uri")
+    """Asset URI. Required."""
+    asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(name="type")
+    """The asset type. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        asset_identifier: str,
+        asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VectorStoreDeletionStatus(_model_base.Model):
@@ -5963,7 +6095,7 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 
 
 class VectorStoreFileError(_model_base.Model):
-    """Details on the error that may have ocurred while processing a file for this vector store.
+    """Details on the error that may have occurred while processing a file for this vector store.
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
@@ -6007,7 +6139,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     :vartype max_chunk_size_tokens: int
     :ivar chunk_overlap_tokens: The number of tokens that overlap between chunks. The default value
      is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required.
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required.
     :vartype chunk_overlap_tokens: int
     """
 
@@ -6016,7 +6148,7 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
      and the maximum value is 4096. Required."""
     chunk_overlap_tokens: int = rest_field()
     """The number of tokens that overlap between chunks. The default value is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens.     *. Required."""
+     Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
 
     @overload
     def __init__(
@@ -6104,3 +6236,15 @@ class VectorStoreStaticChunkingStrategyResponse(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.STATIC, **kwargs)
+
+
+class WorkspaceProperties(_model_base.Model):
+    """workspace properties.
+
+
+    :ivar application_insights: Authentication type of the connection target. Required.
+    :vartype application_insights: str
+    """
+
+    application_insights: str = rest_field(name="applicationInsights")
+    """Authentication type of the connection target. Required."""

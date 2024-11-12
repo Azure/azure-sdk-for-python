@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -25,12 +25,12 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FilePurpose
 from azure.ai.projects.models import FileSearchTool, MessageAttachment, ToolResources
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 import os
 
 
-async def main():
+async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
@@ -41,9 +41,11 @@ async def main():
 
     # upload a file and wait for it to be processed
     async with project_client:
-        file = await project_client.agents.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.AGENTS)
+        file = await project_client.agents.upload_file_and_poll(
+            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
+        )
 
-        # Create agent with file search tool
+        # Create agent
         agent = await project_client.agents.create_agent(
             model="gpt-4-1106-preview",
             name="my-assistant",

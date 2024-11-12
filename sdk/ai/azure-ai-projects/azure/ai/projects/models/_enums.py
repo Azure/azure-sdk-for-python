@@ -41,8 +41,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_grounding``"""
     MICROSOFT_FABRIC = "microsoft_fabric"
     """Tool type ``microsoft_fabric``"""
-    SHAREPOINT = "sharepoint"
-    """Tool type ``sharepoint``"""
+    SHAREPOINT = "sharepoint_grounding"
+    """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
 
@@ -137,8 +137,8 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     API_KEY = "ApiKey"
     """API Key authentication"""
-    AAD = "AAD"
-    """Entra ID authentication"""
+    ENTRA_ID = "AAD"
+    """Entra ID authentication (formerly known as AAD)"""
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
 
@@ -147,13 +147,15 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI service"""
+    """Azure OpenAI Service"""
     SERVERLESS = "Serverless"
-    """Serverless API service"""
+    """Serverless API Service"""
     AZURE_BLOB_STORAGE = "AzureBlob"
     """Azure Blob Storage"""
-    AI_SERVICES = "AIServices"
+    AZURE_AI_SERVICES = "AIServices"
     """Azure AI Services"""
+    AZURE_AI_SEARCH = "CognitiveSearch"
+    """Azure AI Search"""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -429,6 +431,16 @@ class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensiti
 
     OTHER = "other"
     STATIC = "static"
+
+
+class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
+    asset URI ID,
+    in the case of id_asset it should contain the data ID.
+    """
+
+    URI_ASSET = "uri_asset"
+    ID_ASSET = "id_asset"
 
 
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -105,22 +105,12 @@ class InMemoryCheckpointStore(CheckpointStore):
         )
 
     def list_ownership(
-        self,
-        fully_qualified_namespace: str,
-        eventhub_name: str,
-        consumer_group: str,
-        **kwargs: Any
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
-        consumer_group_node = self._ownerships_trie.lookup(
-            (fully_qualified_namespace, eventhub_name, consumer_group)
-        )
+        consumer_group_node = self._ownerships_trie.lookup((fully_qualified_namespace, eventhub_name, consumer_group))
         return self._ownerships_trie.list_leaves(consumer_group_node)
 
-    def claim_ownership(
-        self,
-        ownership_list: Iterable[Dict[str, Any]],
-        **kwargs: Any
-    ) -> Iterable[Dict[str, Any]]:
+    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any) -> Iterable[Dict[str, Any]]:
         result = []
         for ownership in ownership_list:
             fully_qualified_namespace = ownership["fully_qualified_namespace"]
@@ -137,9 +127,7 @@ class InMemoryCheckpointStore(CheckpointStore):
                     ownership["etag"] = str(uuid.uuid4())
                     ownership["last_modified_time"] = time.time()
                     old_ownership["etag"] = ownership["etag"]
-                    old_ownership["last_modified_time"] = ownership[
-                        "last_modified_time"
-                    ]
+                    old_ownership["last_modified_time"] = ownership["last_modified_time"]
                     old_ownership["owner_id"] = ownership["owner_id"]
                     result.append(old_ownership)
             else:
@@ -152,10 +140,6 @@ class InMemoryCheckpointStore(CheckpointStore):
     def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any) -> None:
         return self._checkpoints_trie.set_ele(checkpoint)
 
-    def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        consumer_group_node = self._checkpoints_trie.lookup(
-            (fully_qualified_namespace, eventhub_name, consumer_group)
-        )
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+        consumer_group_node = self._checkpoints_trie.lookup((fully_qualified_namespace, eventhub_name, consumer_group))
         return self._checkpoints_trie.list_leaves(consumer_group_node)

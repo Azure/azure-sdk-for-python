@@ -3,27 +3,44 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
+# cSpell:disable
+import datetime
+import functools
 import json
-import time
+import logging
 import functools
 import datetime
-import logging
+import os
+import pytest
 import sys
 import io
 import asyncio
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet, AgentThread
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
-from azure.ai.projects.models import FunctionTool
 from azure.identity import DefaultAzureCredential
 from devtools_testutils.aio import recorded_by_proxy_async
-
-# TODO change models to import Async....
+from azure.ai.projects.models import (
+    AgentThread,
+    CodeInterpreterTool,
+    CodeInterpreterToolResource,
+    FilePurpose,
+    FileSearchTool,
+    FileSearchToolResource,
+    FunctionTool,
+    MessageAttachment,
+    ThreadMessageOptions,
+    ToolResources,
+    ToolSet,
+    VectorStore,
+    VectorStoreConfigurations,
+    VectorStoreConfiguration,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
+)
 # TODO clean this up / get rid of anything not in use
 
 """
@@ -52,6 +69,7 @@ agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
     azure_ai_projects_agents_tests_project_connection_string="foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_projects_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 """
 agentClientPreparer = functools.partial(
@@ -91,8 +109,8 @@ def fetch_current_datetime_recordings():
 
 
 # Statically defined user functions for fast reference
-user_functions_recording = [fetch_current_datetime_recordings]
-user_functions_live = [fetch_current_datetime_live]
+user_functions_recording = {fetch_current_datetime_recordings}
+user_functions_live = {fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -111,6 +129,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
 
         return client
+
+    def _get_data_file(self) -> str:
+        """Return the test file name."""
+        return os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "test_data", "product_info_1.md"
+        )
 
     # for debugging purposes: if a test fails and its agent has not been deleted, it will continue to show up in the agents list
     """
@@ -149,8 +173,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_client(self, **kwargs):
         # create client
-        async with self.create_client(**kwargs) as client:
-            print("Created client")
+        client = self.create_client(**kwargs)
+        assert isinstance(client, AIProjectClient)
+        print("Created client")
 
         # close client
         await client.close()
@@ -165,69 +190,16 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        
-
-    # test agent creation with body: JSON
-    @agentClientPreparer()
-    @recorded_by_proxy_async
-    async def test_create_agent_with_body(self, **kwargs):
-        # create client
-        async with self.create_client(**kwargs) as client:
-            assert isinstance(client, AIProjectClient)
-            print("Created client")
-
-            # create body for agent
-            body = {
-                "name": "my-agent",
-                "model": "gpt-4o",
-                "instructions": "You are helpful agent"
-            }
-
-            # create agent
-            agent = await client.agents.create_agent(body=body)
-            assert agent.id
-            print("Created agent, agent ID", agent.id)
             
-            # delete agent and close client
-            await client.agents.delete_agent(agent.id)
-            print("Deleted agent")
-        # await client.close()
-
-    # test agent creation with body: IO[bytes]
-    @agentClientPreparer()
-    @recorded_by_proxy_async
-    async def test_create_agent_with_iobytes(self, **kwargs):
-        # create client
-        async with self.create_client(**kwargs) as client:
-            assert isinstance(client, AIProjectClient)
-            print("Created client")
-
-            # create body for agent
-            body = {
-                "name": "my-agent",
-                "model": "gpt-4o",
-                "instructions": "You are helpful agent"
-            }
-            binary_body = json.dumps(body).encode("utf-8")
-
-            # create agent
-            agent = await client.agents.create_agent(body=io.BytesIO(binary_body))
-            assert agent.id
-            print("Created agent, agent ID", agent.id)
-            assert agent.name == "my-agent"
-            assert agent.model == "gpt-4o"
-            
-            # delete agent and close client
-            await client.agents.delete_agent(agent.id)
-            print("Deleted agent")
-        await client.close()
 
     # test agent creation with tools
     @agentClientPreparer()
@@ -235,25 +207,34 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     async def test_create_agent_with_tools(self, **kwargs):
         # create client
         async with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
             print("Created client")
 
             # initialize agent functions
-            functions = FunctionTool(user_functions_recording)
+            functions = FunctionTool(functions=user_functions_recording)
 
             # create agent with tools
             agent = await client.agents.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
+                model="gpt-4o", 
+                name="my-agent", 
+                instructions="You are helpful agent", 
+                tools=functions.definitions
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
             assert agent.tools
-            assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
-            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+            assert (
+                agent.tools[0]["function"]["name"] 
+                == functions.definitions[0]["function"]["name"]
+            )
+            print(
+                "Tool successfully submitted:", functions.definitions[0]["function"]["name"]
+            )
 
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
+            
 
     # test update agent without body: JSON
     @agentClientPreparer()
@@ -261,6 +242,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     async def test_update_agent(self, **kwargs):
         # create client
         async with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
             print("Created client")
 
             # create body for agent
@@ -285,7 +267,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-    # NOTE update_agent with overloads isn't working
+    
     # test update agent with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -332,7 +314,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
 
             # create body for agent
@@ -362,7 +346,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         list_length = await client.agents.list_agents().data.__len__()
 
         # create agent and check that it appears in the list
-        agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+       agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
         assert client.agents.list_agents().data.__len__() == list_length + 1
         assert client.agents.list_agents().data[0].id == agent.id 
 
@@ -399,7 +385,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -412,7 +400,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
+            
 
     # test creating thread with no body
     @agentClientPreparer()
@@ -494,7 +482,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -512,7 +502,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
+        
 
     # test updating thread  
     @agentClientPreparer()
@@ -523,7 +513,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -629,7 +621,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -666,7 +660,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -676,7 +672,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -750,7 +748,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -760,13 +760,19 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create messages
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
-            message2 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+            message2 = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me another joke"
+            )
             assert message2.id
             print("Created message, message ID", message2.id)
-            message3 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+            message3 = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a third joke"
+            )
             assert message3.id
             print("Created message, message ID", message3.id)
 
@@ -784,7 +790,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -799,21 +807,29 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert messages0.data.__len__() == 0
 
             # create messages and check message list for each one
-            message1 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message1 = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message1.id
             print("Created message, message ID", message1.id)
             messages1 = await client.agents.list_messages(thread_id=thread.id)
             assert messages1.data.__len__() == 1
             assert messages1.data[0].id == message1.id
 
-            message2 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me another joke")
+            message2 = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me another joke"
+            )
             assert message2.id
             print("Created message, message ID", message2.id)
             messages2 = await client.agents.list_messages(thread_id=thread.id)
             assert messages2.data.__len__() == 2
-            assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
+            assert (
+                messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
+            )
 
-            message3 = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
+            message3 = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a third joke"
+            )
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = await client.agents.list_messages(thread_id=thread.id)
@@ -838,7 +854,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -848,12 +866,16 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
             # get message
-            message2 = await client.agents.get_message(thread_id=thread.id, message_id=message.id)
+            message2 = await client.agents.get_message(
+                thread_id=thread.id, message_id=message.id
+            )
             assert message2.id
             assert message.id == message2.id
             print("Got message, message ID", message.id)
@@ -861,7 +883,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
 
     # test updating message in a thread without body
     @agentClientPreparer()
@@ -877,12 +898,18 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
             # update message
-            message = await client.agents.update_message(thread_id=thread.id, message_id=message.id, metadata={"key1": "value1", "key2": "value2"})
+            message = await client.agents.update_message(
+                thread_id=thread.id, 
+                message_id=message.id, 
+                metadata={"key1": "value1", "key2": "value2"}
+            )
             assert message.metadata == {"key1": "value1", "key2": "value2"}
 
         # close client
@@ -902,7 +929,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -912,7 +941,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             }
 
             # update message
-            message = await client.agents.update_message(thread_id=thread.id, message_id=message.id, body=body)
+            message = await client.agents.update_message(
+                thread_id=thread.id, message_id=message.id, body=body
+            )
             assert message.metadata == {"key1": "value1", "key2": "value2"}
 
         # close client
@@ -932,7 +963,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -943,7 +976,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             binary_body = json.dumps(body).encode("utf-8")
 
             # update message
-            message = await client.agents.update_message(thread_id=thread.id, message_id=message.id, body=io.BytesIO(binary_body))
+            message = await client.agents.update_message(
+                thread_id=thread.id, message_id=message.id, body=io.BytesIO(binary_body)
+            )
             assert message.metadata == {"key1": "value1", "key2": "value2"}
 
         # close client
@@ -965,7 +1000,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -994,7 +1031,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1023,7 +1062,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1059,7 +1100,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1095,7 +1138,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1130,7 +1175,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1140,7 +1187,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1186,7 +1235,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
         # create agent
-        agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
@@ -1231,7 +1282,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1266,7 +1319,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1302,7 +1357,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1343,7 +1400,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1395,7 +1454,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create agent
             agent = await client.agents.create_agent(
-                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+                model="gpt-4o", 
+                name="my-agent", 
+                instructions="You are helpful agent", 
+                toolset=toolset
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
@@ -1406,7 +1468,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, what time is it?"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1417,7 +1481,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # check that tools are uploaded
             assert run.tools
-            assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            assert (
+                run.tools[0]["function"]["name"]
+                == functions.definitions[0]["function"]["name"]
+            )
             print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
             # check status
@@ -1436,14 +1503,17 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
                 # check if tools are needed
-                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                if (
+                    run.status == "requires_action"
+                    and run.required_action.submit_tool_outputs
+                ):
                     print("Requires action: submit tool outputs")
                     tool_calls = run.required_action.submit_tool_outputs.tool_calls
                     if not tool_calls:
                         print(
                             "No tool calls provided - cancelling run"
                         )
-                        client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                        await client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
                         break
 
                     # submit tool outputs to run
@@ -1470,7 +1540,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
 
     # test submitting tool outputs to run with body: JSON
     @agentClientPreparer()
@@ -1489,7 +1558,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # toolset.add(code_interpreter)
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
+            agent = await client.agents.create_agent(
+                model="gpt-4o", 
+                name="my-agent", 
+                instructions="You are helpful agent", 
+                toolset=toolset
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1575,7 +1649,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # toolset.add(code_interpreter)
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset)
+            agent = await client.agents.create_agent(
+                model="gpt-4o", 
+                name="my-agent", 
+                instructions="You are helpful agent", 
+                toolset=toolset
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1656,7 +1735,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
         # create agent
-        agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
         assert agent.id
         print("Created agent, agent ID", agent.id)
 
@@ -1702,7 +1783,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1741,7 +1824,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        await client.close()
+        
 
     # test create thread and run with body: JSON
     @agentClientPreparer()
@@ -1753,7 +1836,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1802,7 +1887,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1854,7 +1941,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1864,7 +1953,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, what time is it?"
+            )
             assert message.id
             print("Created message, message ID", message.id)
 
@@ -1883,10 +1974,17 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 # wait for a second
                 time.sleep(1)
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
-                assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                assert run.status in [
+                    "queued",
+                    "in_progress",
+                    "requires_action",
+                    "completed",
+                ]
                 print("Run status:", run.status)
-                steps = await client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
-                assert steps["data"].__len__() > 0 
+                steps = await client.agents.list_run_steps(
+                    thread_id=thread.id, run_id=run.id
+                )
+            assert steps["data"].__len__() > 0 
 
             assert run.status == "completed"
             print("Run completed")
@@ -1906,7 +2004,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create agent
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
             assert agent.id
             print("Created agent, agent ID", agent.id)
 
@@ -1942,20 +2042,563 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     assert run.last_error
                     print(run.last_error)
                     print("FAILED HERE")
-                assert run.status in ["queued", "in_progress", "requires_action", "completed"]
+                assert run.status in [
+                    "queued",
+                    "in_progress",
+                    "requires_action",
+                    "completed",
+                ]
                 print("Run status:", run.status)
 
             # list steps, check that get_run_step works with first step_id
             steps = await client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
             assert steps["data"].__len__() > 0
             step = steps["data"][0]
-            get_step = await client.agents.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
+            get_step = await client.agents.get_run_step(
+                thread_id=thread.id, run_id=run.id, step_id=step.id
+            )
             assert step == get_step
 
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
         await client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_azure(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(**kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_file_id(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    async def _do_test_create_vector_store(self, **kwargs):
+        """Test the agent with vector store creation."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        file_ids = [file_id] if file_id else None
+        if file_ids:
+            ds = None
+        else:
+            ds = [
+                VectorStoreDataSource(
+                    asset_identifier=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+                )
+            ]
+        vector_store = await ai_client.agents.create_vector_store_and_poll(
+            file_ids=file_ids, data_sources=ds, name="my_vectorstore"
+        )
+        assert vector_store.id
+        await self._test_file_search(ai_client, vector_store, file_id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_file_id(self, **kwargs):
+        """Test adding single file to vector store withn file ID."""
+        await self._do_test_create_vector_store_add_file(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_azure(self, **kwargs):
+        """Test adding single file to vector store with azure asset ID."""
+        await self._do_test_create_vector_store_add_file(**kwargs)
+
+    async def _do_test_create_vector_store_add_file(self, **kwargs):
+        """Test adding single file to vector store."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        if file_id:
+            ds = None
+        else:
+            ds = [
+                VectorStoreDataSource(
+                    asset_identifier=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+                )
+            ]
+        vector_store = await ai_client.agents.create_vector_store_and_poll(
+            file_ids=[], name="sample_vector_store"
+        )
+        assert vector_store.id
+        vector_store_file = await ai_client.agents.create_vector_store_file(
+            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
+        )
+        assert vector_store_file.id
+        await self._test_file_search(ai_client, vector_store, file_id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_file_ids(self, **kwargs):
+        """Test adding multiple files to vector store with file IDs."""
+        await self._do_test_create_vector_store_batch(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_azure(self, **kwargs):
+        """Test adding multiple files to vector store with azure asset IDs."""
+        await self._do_test_create_vector_store_batch(**kwargs)
+
+    async def _do_test_create_vector_store_batch(self, **kwargs):
+        """Test the agent with vector store creation."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+        if file_id:
+            file_ids = [file_id]
+            ds = None
+        else:
+            file_ids = None
+            ds = [
+                VectorStoreDataSource(
+                    asset_identifier=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+                )
+            ]
+        vector_store = await ai_client.agents.create_vector_store_and_poll(
+            file_ids=[], name="sample_vector_store"
+        )
+        assert vector_store.id
+        vector_store_file_batch = (
+            await ai_client.agents.create_vector_store_file_batch_and_poll(
+                vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
+            )
+        )
+        assert vector_store_file_batch.id
+        await self._test_file_search(ai_client, vector_store, file_id)
+
+    async def _test_file_search(
+        self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str
+    ) -> None:
+        """Test the file search"""
+        file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=file_search.resources,
+        )
+        assert agent.id
+        thread = await ai_client.agents.create_thread()
+        assert thread.id
+        # create message
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?"
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        await ai_client.agents.delete_vector_store(vector_store.id)
+        assert run.status == "completed"
+        messages = await ai_client.agents.list_messages(thread_id=thread.id)
+        assert len(messages)
+        self._remove_file_maybe(file_id, ai_client)
+        # delete agent and close client
+        await ai_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        await ai_client.close()
+
+    @agentClientPreparer()
+    @pytest.mark.skip("The API is not supported yet.")
+    @recorded_by_proxy_async
+    async def test_message_attachement_azure(self, **kwargs):
+        """Test message attachment with azure ID."""
+        ds = VectorStoreDataSource(
+            asset_identifier=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+        )
+        await self._do_test_message_attachment(data_sources=[ds], **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_message_attachement_file_ids(self, **kwargs):
+        """Test message attachment with file ID."""
+        await self._do_test_message_attachment(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    async def _do_test_message_attachment(self, **kwargs):
+        """Test agent with the message attachment."""
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+
+        # Create agent with file search tool
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+        )
+        assert agent.id, "Agent was not created"
+
+        thread = await ai_client.agents.create_thread()
+        assert thread.id, "The thread was not created."
+
+        # Create a message with the file search attachment
+        # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
+        attachment = MessageAttachment(
+            file_id=file_id,
+            data_sources=kwargs.get("data_sources"),
+            tools=[
+                FileSearchTool().definitions[0],
+                CodeInterpreterTool().definitions[0],
+            ],
+        )
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id,
+            role="user",
+            content="What does the attachment say?",
+            attachments=[attachment],
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.id, "The run was not created."
+        await self._remove_file_maybe(file_id, ai_client)
+        await ai_client.agents.delete_agent(agent.id)
+
+        messages = await ai_client.agents.list_messages(thread_id=thread.id)
+        assert len(messages), "No messages were created"
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_vector_store_threads_file_search_azure(self, **kwargs):
+        """Test file search when azure asset ids are supplied during thread creation."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        fs = FileSearchToolResource(
+            vector_stores=[
+                VectorStoreConfigurations(
+                    store_name="my_vector_store",
+                    store_configuration=VectorStoreConfiguration(data_sources=ds),
+                )
+            ]
+        )
+        file_search = FileSearchTool()
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=file_search.resources,
+        )
+        assert agent.id
+
+        thread = await ai_client.agents.create_thread(
+            tool_resources=ToolResources(file_search=fs)
+        )
+        assert thread.id
+        # create message
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?"
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        messages = await ai_client.agents.list_messages(thread.id)
+        assert len(messages)
+        await ai_client.agents.delete_agent(agent.id)
+        await ai_client.close()
+
+    @agentClientPreparer()
+    @pytest.mark.skip("The API is not supported yet.")
+    @recorded_by_proxy_async
+    async def test_create_assistant_with_interpreter_azure(self, **kwargs):
+        """Test Create assistant with code interpreter with azure asset ids."""
+        ds = VectorStoreDataSource(
+            asset_identifier=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+        )
+        await self._do_test_create_assistant_with_interpreter(
+            data_sources=[ds], **kwargs
+        )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_assistant_with_interpreter_file_ids(self, **kwargs):
+        """Test Create assistant with code interpreter with file IDs."""
+        await self._do_test_create_assistant_with_interpreter(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    async def _do_test_create_assistant_with_interpreter(self, **kwargs):
+        """Test create assistant with code interpreter and project asset id"""
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        code_interpreter = CodeInterpreterTool()
+
+        file_id = None
+        if "file_path" in kwargs:
+            file = await ai_client.agents.upload_file_and_poll(
+                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
+            )
+            assert file.id, "The file was not uploaded."
+            file_id = file.id
+
+        cdr = CodeInterpreterToolResource(
+            file_ids=[file_id] if file_id else None,
+            data_sources=kwargs.get("data_sources"),
+        )
+        tr = ToolResources(code_interpreter=cdr)
+        # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=code_interpreter.definitions,
+            tool_resources=tr,
+        )
+        assert agent.id, "Agent was not created"
+
+        thread = await ai_client.agents.create_thread()
+        assert thread.id, "The thread was not created."
+
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?"
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.id, "The run was not created."
+        await self._remove_file_maybe(file_id, ai_client)
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        await ai_client.agents.delete_agent(agent.id)
+        messages = await ai_client.agents.list_messages(thread_id=thread.id)
+        assert len(messages), "No messages were created"
+
+    @agentClientPreparer()
+    @pytest.mark.skip("The API is not supported yet.")
+    @recorded_by_proxy_async
+    async def test_create_thread_with_interpreter_azure(self, **kwargs):
+        """Test Create assistant with code interpreter with azure asset ids."""
+        ds = VectorStoreDataSource(
+            asset_identifier=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+        )
+        await self._do_test_create_thread_with_interpreter(data_sources=[ds], **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_thread_with_interpreter_file_ids(self, **kwargs):
+        """Test Create assistant with code interpreter with file IDs."""
+        await self._do_test_create_thread_with_interpreter(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    async def _do_test_create_thread_with_interpreter(self, **kwargs):
+        """Test create assistant with code interpreter and project asset id"""
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        code_interpreter = CodeInterpreterTool()
+
+        file_id = None
+        if "file_path" in kwargs:
+            file = await ai_client.agents.upload_file_and_poll(
+                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
+            )
+            assert file.id, "The file was not uploaded."
+            file_id = file.id
+
+        cdr = CodeInterpreterToolResource(
+            file_ids=[file_id] if file_id else None,
+            data_sources=kwargs.get("data_sources"),
+        )
+        tr = ToolResources(code_interpreter=cdr)
+        # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="You are helpful assistant",
+            tools=code_interpreter.definitions,
+        )
+        assert agent.id, "Agent was not created"
+
+        thread = await ai_client.agents.create_thread(tool_resources=tr)
+        assert thread.id, "The thread was not created."
+
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?"
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.id, "The run was not created."
+        await self._remove_file_maybe(file_id, ai_client)
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        ai_client.agents.delete_agent(agent.id)
+        messages = await ai_client.agents.list_messages(thread.id)
+        assert len(messages)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_assistant_with_inline_vs_azure(self, **kwargs):
+        """Test creation of asistant with vector store inline."""
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        fs = FileSearchToolResource(
+            vector_stores=[
+                VectorStoreConfigurations(
+                    store_name="my_vector_store",
+                    store_configuration=VectorStoreConfiguration(data_sources=ds),
+                )
+            ]
+        )
+        file_search = FileSearchTool()
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+            tool_resources=ToolResources(file_search=fs),
+        )
+        assert agent.id
+
+        thread = await ai_client.agents.create_thread()
+        assert thread.id
+        # create message
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="What does the attachment say?"
+        )
+        assert message.id, "The message was not created."
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        messages = await ai_client.agents.list_messages(thread.id)
+        assert len(messages)
+        await ai_client.agents.delete_agent(agent.id)
+        await ai_client.close()
+
+    @agentClientPreparer()
+    @pytest.mark.skip("The API is not supported yet.")
+    @recorded_by_proxy_async
+    async def test_create_attachment_in_thread_azure(self, **kwargs):
+        """Create thread with message attachment inline with azure asset IDs."""
+        ds = VectorStoreDataSource(
+            asset_identifier=kwargs["azure_ai_projects_data_path"],
+            asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+        )
+        await self._do_test_create_attachment_in_thread_azure(
+            data_sources=[ds], **kwargs
+        )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_attachment_in_thread_file_ids(self, **kwargs):
+        """Create thread with message attachment inline with azure asset IDs."""
+        await self._do_test_create_attachment_in_thread_azure(
+            file_path=self._get_data_file(), **kwargs
+        )
+
+    async def _do_test_create_attachment_in_thread_azure(self, **kwargs):
+        # create client
+        ai_client = self.create_client(**kwargs)
+        assert isinstance(ai_client, AIProjectClient)
+
+        file_id = await self._get_file_id_maybe(ai_client, **kwargs)
+
+        file_search = FileSearchTool()
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4o",
+            name="my-assistant",
+            instructions="Hello, you are helpful assistant and can search information from uploaded files",
+            tools=file_search.definitions,
+        )
+        assert agent.id
+
+        # create message
+        attachment = MessageAttachment(
+            file_id=file_id,
+            data_sources=kwargs.get("data_sources"),
+            tools=[
+                FileSearchTool().definitions[0],
+                CodeInterpreterTool().definitions[0],
+            ],
+        )
+        message = ThreadMessageOptions(
+            role="user",
+            content="What does the attachment say?",
+            attachments=[attachment],
+        )
+        thread = await ai_client.agents.create_thread(messages=[message])
+        assert thread.id
+
+        run = await ai_client.agents.create_and_process_run(
+            thread_id=thread.id, assistant_id=agent.id
+        )
+        assert run.status == "completed", f"Error in run: {run.last_error}"
+        messages = await ai_client.agents.list_messages(thread.id)
+        assert len(messages)
+        await ai_client.agents.delete_agent(agent.id)
+        await ai_client.close()
+
+    async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
+        """Return file id if kwargs has file path."""
+        if "file_path" in kwargs:
+            file = await ai_client.agents.upload_file_and_poll(
+                file_path=kwargs["file_path"], purpose=FilePurpose.AGENTS
+            )
+            assert file.id, "The file was not uploaded."
+            return file.id
+        return None
+
+    async def _remove_file_maybe(
+        self, file_id: str, ai_client: AIProjectClient
+    ) -> None:
+        """Remove file if we have file ID."""
+        if file_id:
+            await ai_client.agents.delete_file(file_id)
+
 
     # # **********************************************************************************
     # #
@@ -1989,7 +2632,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         # attempt to create agent with bad client
         exception_caught = False
         try:
-            agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+            agent = await client.agents.create_agent(
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent"
+            )
         # check for error (will not have a status code since it failed on request -- no response was recieved)
         except (ServiceRequestError, HttpResponseError) as e:
             exception_caught = True
