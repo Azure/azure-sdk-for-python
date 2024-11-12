@@ -123,10 +123,10 @@ class TestWorkspaceEntity:
         workspace = load_workspace("./tests/test_configs/workspace/ai_workspaces/workspacehub_with_networkacls.yaml")
 
         assert workspace.network_acls is not None
-        assert len(workspace.network_acls.ip_rules) > 2
+        assert len(workspace.network_acls.ip_rules) == 2
         assert workspace.network_acls.default_action == "Deny"
         assert workspace.public_network_access == "Enabled"
         ip_rules = workspace.network_acls.ip_rules
 
         assert ip_rules[0].value == "103.248.19.87"
-        assert ip_rules[0].value == "103.248.19.86/32"
+        assert ip_rules[1].value == "103.248.19.86/32"
