@@ -242,7 +242,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
             query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
-        return query
+        # TODO: Remove this hack later
+        return query.replace("DESC", "").replace("ASC", "")
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,
