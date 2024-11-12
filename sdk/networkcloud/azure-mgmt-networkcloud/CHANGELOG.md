@@ -70,9 +70,9 @@
   - Added model `SecretRotationStatus`
   - Added model `StringKeyValuePair`
   - Added model `UserAssignedIdentity`
-  - Operations `ClustersOperations` added method `begin_continue_update_version`
-  - Operations `ClustersOperations` added method `begin_scan_runtime`
-  - Added operations `KubernetesClusterFeaturesOperations`
+  - Operation group `ClustersOperations` added method `begin_continue_update_version`
+  - Operation group `ClustersOperations` added method `begin_scan_runtime`
+  - Added operation group `KubernetesClusterFeaturesOperations`
 
 ### Breaking Changes
 
