@@ -21,7 +21,7 @@ from devtools_testutils import get_credential
 
 # for pytest.parametrize
 GA = "2024-06-01"
-PREVIEW = "2024-08-01-preview"
+PREVIEW = "2024-10-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
