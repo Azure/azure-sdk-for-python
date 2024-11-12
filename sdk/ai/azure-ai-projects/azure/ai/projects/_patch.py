@@ -25,7 +25,7 @@ from .operations._patch import InferenceOperations
 
 
 class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called,too-many-statements
         self,
         endpoint: str,
         subscription_id: str,
