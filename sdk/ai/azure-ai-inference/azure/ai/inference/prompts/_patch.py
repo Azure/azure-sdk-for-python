@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 from typing_extensions import Self
 from ._core import Prompty
 from ._mustache import render
-from ._parsers import invokeParser
+from ._parsers import invoke_parser
 from ._prompty_utils import load, prepare
 from ._utils import remove_leading_empty_space
 
@@ -109,7 +109,7 @@ class PromptTemplate:
         elif "prompt_template" in self._config:
             prompt_template = remove_leading_empty_space(self._config["prompt_template"])
             system_prompt_str = render(prompt_template, data)
-            parsed = invokeParser(None, system_prompt_str)
+            parsed = invoke_parser(None, system_prompt_str)
             return parsed
         else:
             raise ValueError("Please provide valid prompt template")

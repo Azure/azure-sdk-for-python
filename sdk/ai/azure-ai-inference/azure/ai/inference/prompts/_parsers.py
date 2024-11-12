@@ -7,7 +7,7 @@
 import re
 import base64
 from pathlib import Path
-from typing import Any
+from typing import Any, Union
 from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 
@@ -24,7 +24,7 @@ class PromptyChatParser(Invoker):
         self.path = Path(self.prompty.file).parent
 
     def invoke(self, data: str) -> Any:
-        return invokeParser(self.path, data)
+        return invoke_parser(self.path, data)
 
     async def invoke_async(self, data: str) -> Any:
         """Invoke the Prompty Chat Parser (Async)
@@ -42,7 +42,7 @@ class PromptyChatParser(Invoker):
         return self.invoke(data)
 
 
-def _inline_image(path: Path | None, image_item: str) -> str:
+def _inline_image(path: Union[Path, None], image_item: str) -> str:
     """Inline Image
 
     Parameters
@@ -55,12 +55,13 @@ def _inline_image(path: Path | None, image_item: str) -> str:
     str
         The inlined image
     """
-    # pass through if it's a url or base64 encoded
+    # pass through if it's a url or base64 encoded or the path is None
     if image_item.startswith("http") or image_item.startswith("data") or path == None:
         return image_item
     # otherwise, it's a local file - need to base64 encode it
     else:
-        image_path = path / image_item
+        file_path: Path = path
+        image_path = file_path / image_item
         with open(image_path, "rb") as f:
             base64_image = base64.b64encode(f.read()).decode("utf-8")
 
@@ -76,7 +77,7 @@ def _inline_image(path: Path | None, image_item: str) -> str:
             )
 
 
-def _parse_content(path: Path | None, content: str):
+def _parse_content(path: Union[Path, None], content: str):
     """for parsing inline images
 
     Parameters
@@ -117,7 +118,7 @@ def _parse_content(path: Path | None, content: str):
         return content
 
 
-def invokeParser(path: Path | None, data: str) -> Any:
+def invoke_parser(path: Union[Path, None], data: str) -> Any:
     """Invoke the Prompty Chat Parser
 
     Parameters
