@@ -288,7 +288,7 @@ type_map = {
 }
 
 
-def _map_type(annotation) -> Dict[str, Any]:
+def _map_type(annotation) -> Dict[str, Any]:  # pylint: disable=too-many-return-statements
     if annotation == inspect.Parameter.empty:
         return {"type": "string"}  # Default type if annotation is missing
 
