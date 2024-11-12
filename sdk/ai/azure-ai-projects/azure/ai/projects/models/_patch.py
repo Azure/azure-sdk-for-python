@@ -72,6 +72,8 @@ from ._models import (
 logger = logging.getLogger(__name__)
 
 
+StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
     """
     Remove the parameters, non present in class public fields; return shallow copy of a dictionary.
@@ -94,7 +96,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Any:
+def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Union[str, StreamEventData]:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -104,7 +106,7 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     """
     if not isinstance(parameters, dict):
         return parameters
-    return model_class(**_filter_parameters(model_class, parameters))
+    return cast(StreamEventData, model_class(**_filter_parameters(model_class, parameters)))
 
 
 class ConnectionProperties:
@@ -928,10 +930,7 @@ class AsyncAgentEventHandler:
         """Handle any unhandled event types."""
 
 
-StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
-
-
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -957,7 +956,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> Tuple[str, StreamEventData]:
+    async def __anext__(self) -> Tuple[str, Union[str, StreamEventData]]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -973,9 +972,9 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData], str]:
         event_lines = event_data_str.strip().split("\n")
-        event_type = None
+        event_type: Optional[str] = None
         event_data = ""
         error_string = ""
 
@@ -1001,44 +1000,44 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
 
         # Map to the appropriate class instance
         if event_type in {
-            AgentStreamEvent.THREAD_RUN_CREATED,
-            AgentStreamEvent.THREAD_RUN_QUEUED,
-            AgentStreamEvent.THREAD_RUN_IN_PROGRESS,
-            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION,
-            AgentStreamEvent.THREAD_RUN_COMPLETED,
-            AgentStreamEvent.THREAD_RUN_FAILED,
-            AgentStreamEvent.THREAD_RUN_CANCELLING,
-            AgentStreamEvent.THREAD_RUN_CANCELLED,
-            AgentStreamEvent.THREAD_RUN_EXPIRED,
+            AgentStreamEvent.THREAD_RUN_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_QUEUED.value,
+            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
+            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
         }:
             event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
-            AgentStreamEvent.THREAD_RUN_STEP_CREATED,
-            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
-            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED,
-            AgentStreamEvent.THREAD_RUN_STEP_FAILED,
-            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
-            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
+            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
         }:
             event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
-            AgentStreamEvent.THREAD_MESSAGE_CREATED,
-            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
-            AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
-            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
+            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
+            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
+            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
         }:
             event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
+        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
             event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
+        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
-            event_data_obj = parsed_data
+            event_data_obj = ""
             error_string = str(parsed_data)
 
         return event_type, event_data_obj, error_string
 
-    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+    async def _process_event(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData]]:
         event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
@@ -1082,7 +1081,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, StreamEventData]]):
             pass
 
 
-class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
+class AgentRunStream(Iterator[Tuple[str, Union[str, StreamEventData]]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
@@ -1106,7 +1105,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
     def __iter__(self):
         return self
 
-    def __next__(self) -> Tuple[str, StreamEventData]:
+    def __next__(self) -> Tuple[str, Union[str, StreamEventData]]:
         if self.done:
             raise StopIteration
         while True:
@@ -1124,7 +1123,7 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self._process_event(event_data_str)
 
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData, str]:
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData], str]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
@@ -1150,44 +1149,44 @@ class AgentRunStream(Iterator[Tuple[str, StreamEventData]]):
 
         # Map to the appropriate class instance
         if event_type in {
-            AgentStreamEvent.THREAD_RUN_CREATED,
-            AgentStreamEvent.THREAD_RUN_QUEUED,
-            AgentStreamEvent.THREAD_RUN_IN_PROGRESS,
-            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION,
-            AgentStreamEvent.THREAD_RUN_COMPLETED,
-            AgentStreamEvent.THREAD_RUN_FAILED,
-            AgentStreamEvent.THREAD_RUN_CANCELLING,
-            AgentStreamEvent.THREAD_RUN_CANCELLED,
-            AgentStreamEvent.THREAD_RUN_EXPIRED,
+            AgentStreamEvent.THREAD_RUN_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_QUEUED.value,
+            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
+            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
         }:
             event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
         elif event_type in {
-            AgentStreamEvent.THREAD_RUN_STEP_CREATED,
-            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
-            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED,
-            AgentStreamEvent.THREAD_RUN_STEP_FAILED,
-            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
-            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
+            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
         }:
             event_data_obj = _safe_instantiate(RunStep, parsed_data)
         elif event_type in {
-            AgentStreamEvent.THREAD_MESSAGE_CREATED,
-            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
-            AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
-            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
+            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
+            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
+            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
         }:
             event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
+        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
             event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
+        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
             event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
         else:
-            event_data_obj = parsed_data
+            event_data_obj = ""
             error_string = str(parsed_data)
 
         return event_type, event_data_obj, error_string
 
-    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+    def _process_event(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData]]:
         event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
 
         if (
