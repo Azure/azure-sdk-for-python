@@ -31,7 +31,9 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     print(e)
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
-                connection = await project_client.connections.get(connection_name=aoai_connection, with_credentials=with_credentials)
+                connection = await project_client.connections.get(
+                    connection_name=aoai_connection, with_credentials=with_credentials
+                )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
@@ -51,15 +53,12 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
 
-
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
     async def test_connections_get_default_async(self, **kwargs):
 
         default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        default_serverless_connection = kwargs.pop(
-            "azure_ai_projects_connections_tests_aiservices_connection_name"
-        )
+        default_serverless_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
 
         async with self.get_async_client(**kwargs) as project_client:
 
@@ -95,7 +94,6 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     expected_connection_name=default_serverless_connection,
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
-
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async

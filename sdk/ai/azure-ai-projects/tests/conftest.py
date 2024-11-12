@@ -5,7 +5,13 @@
 import os
 
 import pytest
-from devtools_testutils import remove_batch_sanitizers, get_credential, test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer
+from devtools_testutils import (
+    remove_batch_sanitizers,
+    get_credential,
+    test_proxy,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+)
 from dotenv import load_dotenv, find_dotenv
 from azure.ai.projects import AIProjectClient
 
@@ -88,11 +94,12 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name):
     add_general_regex_sanitizer(
         regex=r"/data/([-\w\._\(\)]+)", value=mock_dataset_name["dataset_name"], group_for_replace="1"
     )
-    
+
     # Sanitize Application Insights connection string from service response (/tests/telemetry)
     add_body_key_sanitizer(
         json_path="properties.ConnectionString",
-        value="InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://region.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/;ApplicationId=00000000-0000-0000-0000-000000000000")
+        value="InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://region.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/;ApplicationId=00000000-0000-0000-0000-000000000000",
+    )
 
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")

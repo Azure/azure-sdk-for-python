@@ -33,7 +33,9 @@ class TestConnections(ConnectionsTestBase):
                     print(e)
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
-                connection = project_client.connections.get(connection_name=aoai_connection, with_credentials=with_credentials)
+                connection = project_client.connections.get(
+                    connection_name=aoai_connection, with_credentials=with_credentials
+                )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
@@ -42,7 +44,9 @@ class TestConnections(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_OPEN_AI,
                 )
 
-                connection = project_client.connections.get(connection_name=aiservices_connection, with_credentials=with_credentials)
+                connection = project_client.connections.get(
+                    connection_name=aiservices_connection, with_credentials=with_credentials
+                )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
@@ -51,16 +55,13 @@ class TestConnections(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
 
-
     @servicePreparerConnectionsTests()
     @recorded_by_proxy
     def test_connections_get_default(self, **kwargs):
 
-        #TODO: Use default connection names
+        # TODO: Use default connection names
         default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        default_serverless_connection = kwargs.pop(
-            "azure_ai_projects_connections_tests_aiservices_connection_name"
-        )
+        default_serverless_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
 
         with self.get_sync_client(**kwargs) as project_client:
 
@@ -96,7 +97,6 @@ class TestConnections(ConnectionsTestBase):
                     expected_connection_name=default_serverless_connection,
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
-
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy
