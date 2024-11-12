@@ -49,20 +49,14 @@ async def main():
             asset_identifier=asset_uri,
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
-        vector_store = await project_client.agents.create_vector_store_and_poll(
-            file_ids=[], name="sample_vector_store"
-        )
+        vector_store = await project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
 
         # add the file to the vector store or you can supply file ids in the vector store creation
-        vector_store_file_batch = (
-            await project_client.agents.create_vector_store_file_batch_and_poll(
-                vector_store_id=vector_store.id, data_sources=[ds]
-            )
+        vector_store_file_batch = await project_client.agents.create_vector_store_file_batch_and_poll(
+            vector_store_id=vector_store.id, data_sources=[ds]
         )
-        print(
-            f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}"
-        )
+        print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
         # create a file search tool
         file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -87,15 +81,11 @@ async def main():
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_and_process_run(
-            thread_id=thread.id, assistant_id=agent.id
-        )
+        run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         print(f"Created run, run ID: {run.id}")
 
         file_search_tool.remove_vector_store(vector_store.id)
-        print(
-            f"Removed vector store from file search, vector store ID: {vector_store.id}"
-        )
+        print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
         await project_client.agents.update_agent(
             assistant_id=agent.id,
@@ -114,9 +104,7 @@ async def main():
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_and_process_run(
-            thread_id=thread.id, assistant_id=agent.id
-        )
+        run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         print(f"Created run, run ID: {run.id}")
 
         await project_client.agents.delete_vector_store(vector_store.id)

@@ -104,7 +104,7 @@ async def sample_connections_async() -> None:
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await aoai_client.chat.completions.create(
+        aoai_response = await aoai_client.chat.completions.create(
             model=model_deployment_name,
             messages=[
                 {
@@ -114,13 +114,12 @@ async def sample_connections_async() -> None:
             ],
         )
         await aoai_client.close()
-        print(response.choices[0].message.content)
+        print(aoai_response.choices[0].message.content)
 
     elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
 
         from azure.ai.inference.aio import ChatCompletionsClient
         from azure.ai.inference.models import UserMessage
-        from azure.core.credentials_async import AsyncTokenCredential
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             print("====> Creating ChatCompletionsClient using API key authentication")
@@ -130,6 +129,8 @@ async def sample_connections_async() -> None:
                 endpoint=connection.endpoint_url, credential=AzureKeyCredential(connection.key or "")
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            from azure.core.credentials_async import AsyncTokenCredential
+
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             inference_client = ChatCompletionsClient(
@@ -138,11 +139,11 @@ async def sample_connections_async() -> None:
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        response = await inference_client.complete(
+        inference_response = await inference_client.complete(
             model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
         )
         await inference_client.close()
-        print(response.choices[0].message.content)
+        print(inference_response.choices[0].message.content)
 
 
 async def main():

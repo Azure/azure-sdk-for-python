@@ -22,29 +22,32 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def geocode_batch():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_geocoding_batch({
-          "batchItems": [
-            {"query": "400 Broad St, Seattle, WA 98109"},
-            {"query": "15127 NE 24th Street, Redmond, WA 98052"},
-          ],
-        },)
+        result = maps_search_client.get_geocoding_batch(
+            {
+                "batchItems": [
+                    {"query": "400 Broad St, Seattle, WA 98109"},
+                    {"query": "15127 NE 24th Street, Redmond, WA 98052"},
+                ],
+            },
+        )
 
-        if not result.get('batchItems', False):
+        if not result.get("batchItems", False):
             print("No batchItems in geocoding")
             return
 
-        for item in result['batchItems']:
-            if not item.get('features', False):
+        for item in result["batchItems"]:
+            if not item.get("features", False):
                 print(f"No features in item: {item}")
                 continue
 
-            coordinates = item['features'][0]['geometry']['coordinates']
+            coordinates = item["features"][0]["geometry"]["coordinates"]
             longitude, latitude = coordinates
             print(longitude, latitude)
 
@@ -53,5 +56,6 @@ def geocode_batch():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     geocode_batch()
