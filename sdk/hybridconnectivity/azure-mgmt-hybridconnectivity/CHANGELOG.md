@@ -84,9 +84,9 @@
   - Deleted or renamed model `ServiceConfigurationResourcePatch`
   - Deleted or renamed model `ServiceName`
   - Deleted or renamed model `Type`
-  - Deleted or renamed model `EndpointsOperations`
-  - Deleted or renamed model `Operations`
-  - Deleted or renamed model `ServiceConfigurationsOperations`
+  - Deleted or renamed operation group `EndpointsOperations`
+  - Deleted or renamed operation group `Operations`
+  - Deleted or renamed operation group `ServiceConfigurationsOperations`
 
 ## 1.0.0 (2023-09-20)
 
