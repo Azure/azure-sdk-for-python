@@ -442,10 +442,10 @@ def _configure_tracing(span_exporter: Any) -> None:
         from opentelemetry import trace
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-    except ModuleNotFoundError as _:
+    except ModuleNotFoundError as e:
         raise ModuleNotFoundError(
             "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
-        )
+        ) from e
 
     # if tracing was not setup before, we need to create a new TracerProvider
     if not isinstance(trace.get_tracer_provider(), TracerProvider):
