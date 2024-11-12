@@ -1220,6 +1220,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def create_and_process_run(
         self,
         thread_id: str,
+        *,
         assistant_id: str,
         model: Optional[str] = None,
         instructions: Optional[str] = None,

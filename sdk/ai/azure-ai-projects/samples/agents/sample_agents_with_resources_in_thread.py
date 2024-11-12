@@ -54,7 +54,6 @@ with project_client:
         instructions="Hello, you are helpful assistant and can search information from uploaded files",
         tools=file_search.definitions,
     )
-    # [END upload_file_create_vector_store_and_agent_with_file_search_tool]
 
     print(f"Created agent, ID: {agent.id}")
 
