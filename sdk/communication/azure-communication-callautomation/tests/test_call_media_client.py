@@ -51,6 +51,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.tones = [DtmfTone.ONE, DtmfTone.TWO, DtmfTone.THREE, DtmfTone.POUND]
         self.operation_context = "test_operation_context"
         self.locale = "en-US"
+        self.operation_callback_url = "https://localhost"
         self.call_media_operations = Mock()
 
         self.call_connection_client = CallConnectionClient(
@@ -69,6 +70,26 @@ class TestCallMediaClient(unittest.TestCase):
 
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
+            play_to=[serialize_identifier(self.target_user)],
+            play_options=PlayOptions(loop=False)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
+        self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
+        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+
+    def test_play_multiple_play_sources(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
+        self.call_connection_client.play_media(play_source=play_sources, play_to=[self.target_user])
+
+        expected_play_request = PlayRequest(
+            play_sources=[play_source._to_generated() for play_source in play_sources],
             play_to=[serialize_identifier(self.target_user)],
             play_options=PlayOptions(loop=False)
         )
@@ -122,7 +143,27 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-            
+
+    def test_play_multiple_source_to_all(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
+        self.call_connection_client.play_media_to_all(play_sources)
+
+        expected_play_request = PlayRequest(
+            play_sources=[play_source._to_generated() for play_source in play_sources],
+            play_to=[],
+            play_options=PlayOptions(loop=False)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
+        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
+        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+
     def test_play_file_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
@@ -187,6 +228,69 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+
+    def test_recognize_dtmf_with_multiple_play_prompts(self):
+        mock_recognize = Mock()
+        self.call_media_operations.recognize = mock_recognize
+
+        test_input_type = "dtmf"
+        test_max_tones_to_collect = 3
+        test_inter_tone_timeout = 10
+        test_stop_dtmf_tones = [DtmfTone.FOUR]
+        test_interrupt_prompt = True
+        test_interrupt_call_media_operation = True
+        test_initial_silence_timeout = 5
+        test_play_sources = [FileSource(url=self.url),  TextSource(text='Testing multiple prompts')]
+
+        self.call_connection_client.start_recognizing_media(
+            target_participant=self.target_user,
+            input_type=test_input_type,
+            dtmf_max_tones_to_collect=test_max_tones_to_collect,
+            dtmf_inter_tone_timeout=test_inter_tone_timeout,
+            dtmf_stop_tones=test_stop_dtmf_tones,
+            interrupt_prompt=test_interrupt_prompt,
+            interrupt_call_media_operation=test_interrupt_call_media_operation,
+            initial_silence_timeout=test_initial_silence_timeout,
+            play_prompt=test_play_sources)
+
+        mock_recognize.assert_called_once()
+
+        actual_recognize_request = mock_recognize.call_args[0][1]
+
+        expected_recognize_request = RecognizeRequest(
+            recognize_input_type=test_input_type,
+            play_prompts=[test_play_source._to_generated() for test_play_source in test_play_sources],
+            interrupt_call_media_operation=test_interrupt_call_media_operation,
+            recognize_options=RecognizeOptions(
+                target_participant=serialize_identifier(
+                    self.target_user),
+                interrupt_prompt=test_interrupt_prompt,
+                initial_silence_timeout_in_seconds=test_initial_silence_timeout,
+                dtmf_options=DtmfOptions(
+                    inter_tone_timeout_in_seconds=test_inter_tone_timeout,
+                    max_tones_to_collect=test_max_tones_to_collect,
+                    stop_tones=test_stop_dtmf_tones
+                )
+            )
+        )
+
+        self.assertEqual(expected_recognize_request.recognize_input_type, actual_recognize_request.recognize_input_type)
+        self.assertEqual(expected_recognize_request.play_prompts, actual_recognize_request.play_prompts)
+        self.assertEqual(expected_recognize_request.interrupt_call_media_operation, actual_recognize_request.interrupt_call_media_operation)
+        self.assertEqual(expected_recognize_request.operation_context, actual_recognize_request.operation_context)
+        self.assertEqual(expected_recognize_request.recognize_options.target_participant, actual_recognize_request.recognize_options.target_participant)
+        self.assertEqual(expected_recognize_request.recognize_options.interrupt_prompt, actual_recognize_request.recognize_options.interrupt_prompt)
+        self.assertEqual(expected_recognize_request.recognize_options.initial_silence_timeout_in_seconds, actual_recognize_request.recognize_options.initial_silence_timeout_in_seconds)
+        self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.inter_tone_timeout_in_seconds, actual_recognize_request.recognize_options.dtmf_options.inter_tone_timeout_in_seconds)
+        self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.max_tones_to_collect, actual_recognize_request.recognize_options.dtmf_options.max_tones_to_collect)
+        self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.stop_tones, actual_recognize_request.recognize_options.dtmf_options.stop_tones)
+
+        with pytest.raises(ValueError) as e:
+            self.call_connection_client.start_recognizing_media(
+                target_participant=self.target_user,
+                input_type="foo"
+            )
+        assert "'foo' is not supported." in str(e.value)
 
     def test_recognize_dtmf(self):
         mock_recognize = Mock()

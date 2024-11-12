@@ -9,7 +9,7 @@ import time
 import os
 import inspect
 from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 import requests
 from azure.servicebus import ServiceBusClient
@@ -170,7 +170,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             time.sleep(1)
         return None
 
-    def establish_callconnection_voip(self, caller, target) -> tuple:
+    def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
         call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
         call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
 
@@ -189,7 +189,11 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             thread.start()
 
         # create a call
-        create_call_result = call_automation_client_caller.create_call(target_participant=target, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+        create_call_result = call_automation_client_caller.create_call(
+            target_participant=target, 
+            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
+            cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
+        )
 
         if create_call_result is None:
             raise ValueError("Invalid create_call_result")
