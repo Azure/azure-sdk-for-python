@@ -1362,10 +1362,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
 
+    @distributed_trace
     def read_feed_ranges(
             self,
             *,
-            force_refresh: Optional[bool] = False,
+            force_refresh: bool = False,
             **kwargs: Any) -> Iterable[Dict[str, Any]]:
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
@@ -1383,14 +1384,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        partition_key_ranges =\
-            self.client_connection._routing_map_provider.get_overlapping_ranges(
-                self.container_link,
-                [Range("", "FF", True, False)], # default to full range
-                **kwargs)
+        def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+            partition_key_ranges = \
+                self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                    self.container_link,
+                    [Range("", "FF", True, False)],  # default to full range
+                    **kwargs)
 
-        return [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                for partitionKeyRange in partition_key_ranges]
+            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+                    for partitionKeyRange in partition_key_ranges]
+
+            return feed_ranges
+
+        def extract_data(feed_ranges_response: List[Dict[str, Any]]):
+            return None, iter(feed_ranges_response)
+
+        return ItemPaged(get_next, extract_data)
 
     def get_latest_session_token(
             self,

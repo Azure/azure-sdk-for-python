@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0 (2024-11-15)
 
 ### Other Changes
 - Renamed SingleDocumentTranslationClient's API from `document_translate` to `translate`
