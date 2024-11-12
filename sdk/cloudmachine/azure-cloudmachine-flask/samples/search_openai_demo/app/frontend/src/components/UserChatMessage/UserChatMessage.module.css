@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.25em;
+    max-width: 80%;
+    margin-left: auto;
+}
+
+.message {
+    padding: 1.25em;
+    background: #e8ebfa;
+    border-radius: 0.5em;
+    box-shadow:
+        0px 0.125em 0.25em rgba(0, 0, 0, 0.14),
+        0px 0px 0.125em rgba(0, 0, 0, 0.12);
+    outline: transparent solid 0.0625em;
+}

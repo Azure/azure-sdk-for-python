@@ -5,90 +5,57 @@
 # --------------------------------------------------------------------------
 
 import os
-from io import BytesIO
 from datetime import datetime
-from queue import Empty
 
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
-from flask_wtf.csrf import CSRFProtect
 
 from azure.cloudmachine.ext.flask import CloudMachine
-from azure.cloudmachine.resources import CloudMachineDeployment
-from azure.cloudmachine._client import FILE_UPLOADED
+from azure.cloudmachine.provisioning import CloudMachineDeployment
+from azure.cloudmachine.provisioning.storage import StorageAccount, Sku, Properties
 
 from models import Restaurant, Review
+
 
 app = Flask( 
     __name__,
     template_folder='templates',
     static_folder='static'
 )
-csrf = CSRFProtect(app)
 
-deployment = CloudMachineDeployment(name="restaurantreviewapp", host="local")
-#deployment.host.site.properties['siteConfig']['publicNetworkAccess'] = 'Enabled'
+deployment = CloudMachineDeployment(
+    name='restaurantreviewapp',
+    events=False,
+    messaging=False
+)
 
-cm = CloudMachine(app, deployment=deployment)
 
+cm = CloudMachine(
+    app=app,
+    deployment=deployment,
+)
 
-@FILE_UPLOADED.connect
-def gotcha(self, event=None):
-    print("Wow a file uploaded")
-    print("Event", event)
-
-@app.route('/hello')
-def hello():
-    print("uploading")
-    cm.session.storage.upload("testblob", BytesIO(b"Hello, World!"))
-    print("done")
-    return 'Hello, World!'
-
-@app.route('/echo')
-def echo():
-    print("receiving")
-    try:
-        message = cm.session.messaging.get(
-            topic="cm_internal_topic",
-            subscription="cm_internal_subscription",
-            timeout=10,
-            lock=True,
-        )
-    except Empty:
-        return "No more messages...."
-    print(message)
-    print(message.content, message.id, "delivery count", message.delivery_count)
-    return str(message)
-
-@app.route('/count')
-def count():
-    print("receiving")
-    length = cm.session.messaging.qsize(
-        topic="cm_internal_topic",
-        subscription="cm_internal_subscription",
-    )
-    return str(length)
 
 @app.route('/', methods=['GET'])
 def index():
-    print('Request for index page received')
-    restaurants = list(cm.session.data.list(Restaurant))
+    restaurants = list(cm.data.list(Restaurant))
     return render_template('index.html', restaurants=restaurants)
+
 
 @app.route('/<id>', methods=['GET'])
 def details(id):
-    restaurant = next(cm.session.data.query(Restaurant, id, '*'), None)
+    restaurant = next(cm.data.query(Restaurant, id, '*'), None)
     if not restaurant:
         return '<h1>404</h1><p>Restaurant not found!</p><img src="https://httpcats.com/404.jpg" alt="cat in box" width=400>', 404
-    reviews = list(cm.session.data.query(Review, '*', id))
+    reviews = list(cm.data.query(Review, '*', id))
     return render_template('details.html', restaurant=restaurant, reviews=reviews)
+
 
 @app.route('/create', methods=['GET'])
 def create_restaurant():
-    print('Request for add restaurant page received')
     return render_template('create_restaurant.html')
 
+
 @app.route('/add', methods=['POST'])
-@csrf.exempt
 def add_restaurant():
     name = request.values.get('restaurant_name')
     street_address = request.values.get('street_address')
@@ -102,19 +69,15 @@ def add_restaurant():
             street_address=street_address,
             description=description
         )
-        cm.session.data.insert(restaurant)
+        cm.data.insert(restaurant)
     return redirect(url_for('details', id=restaurant.id))
 
+
 @app.route('/review/<id>', methods=['POST'])
-@csrf.exempt
 def add_review(id):
     user_name = request.values.get('user_name')
     rating = request.values.get('rating')
     review_text = request.values.get('review_text')
-    # if not user_name or not rating:
-    #     error="Review must include username and rating."
-    #     return render_template('details.html', id=id, error=error)
-    #     return redirect(url_for('details', id=id), error=error)
 
     review = Review(
         restaurant=id,
@@ -123,13 +86,14 @@ def add_review(id):
         review_text=review_text,
         review_date=datetime.now()
     )
-    cm.session.data.upsert(review)
+    cm.data.upsert(review)
     return redirect(url_for('details', id=id))
+
 
 @app.context_processor
 def utility_processor():
     def star_rating(id):
-        reviews = cm.session.data.query(Review, '*', id)
+        reviews = cm.data.query(Review, '*', id)
         ratings = []
         review_count = 0
         for review in reviews:
