@@ -395,8 +395,7 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
                 ) from e
 
             return ConsoleSpanExporter()
-        else:
-            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
@@ -430,8 +429,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
                 # and just warn about them.
                 logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
-        else:
-            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
