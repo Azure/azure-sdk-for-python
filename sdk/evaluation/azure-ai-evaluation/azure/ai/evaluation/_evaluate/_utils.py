@@ -21,7 +21,6 @@ from azure.ai.evaluation._constants import (
     EvaluationRunProperties,
     Prefixes,
 )
-from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
@@ -118,6 +117,8 @@ def _log_metrics_and_instance_results(
     run: Run,
     evaluation_name: Optional[str],
 ) -> Optional[str]:
+    from azure.ai.evaluation._evaluate._eval_run import EvalRun
+
     if trace_destination is None:
         LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
         return None
