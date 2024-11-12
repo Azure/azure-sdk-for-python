@@ -12,6 +12,7 @@ from azure.core.settings import settings  # type: ignore
 try:
     from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
 
+    # pylint: disable=not-callable
     _span_impl_type = settings.tracing_implementation()
 except ModuleNotFoundError:
     _span_impl_type = None

@@ -395,8 +395,7 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
                 ) from e
 
             return ConsoleSpanExporter()
-        else:
-            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
@@ -409,7 +408,9 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             # _logs are considered beta (not internal) in OpenTelemetry Python API/SDK.
             # So it's ok to use it for local development, but we'll swallow
             # any errors in case of any breaking changes on OTel side.
+            # pylint: disable=import-error, no-name-in-module
             from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter  # type: ignore
+        # pylint: disable=broad-exception-caught
         except Exception as ex:
             # since OTel logging is still in beta in Python, we're going to swallow any errors
             # and just warn about them.
@@ -430,8 +431,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
                 # and just warn about them.
                 logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
-        else:
-            raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
@@ -447,7 +447,7 @@ def _configure_tracing(span_exporter: Any) -> None:
     except ModuleNotFoundError as _:
         raise ModuleNotFoundError(
             "OpenTelemetry SDK is not installed. Please install it using 'pip install opentelemetry-sdk'"
-        )
+        ) from _
 
     # if tracing was not setup before, we need to create a new TracerProvider
     if not isinstance(trace.get_tracer_provider(), TracerProvider):
@@ -472,8 +472,11 @@ def _configure_logging(log_exporter: Any) -> None:
         # So it's ok to use them for local development, but we'll swallow
         # any errors in case of any breaking changes on OTel side.
         from opentelemetry import _logs, _events
+        # pylint: disable=import-error, no-name-in-module
         from opentelemetry.sdk._logs import LoggerProvider
+        # pylint: disable=import-error, no-name-in-module
         from opentelemetry.sdk._events import EventLoggerProvider
+        # pylint: disable=import-error, no-name-in-module
         from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor
 
         if not isinstance(_logs.get_logger_provider(), LoggerProvider):
@@ -486,12 +489,14 @@ def _configure_logging(log_exporter: Any) -> None:
         logger_provider = cast(LoggerProvider, _logs.get_logger_provider())
         logger_provider.add_log_record_processor(SimpleLogRecordProcessor(log_exporter))
         _events.set_event_logger_provider(EventLoggerProvider(logger_provider))
+    # pylint: disable=broad-exception-caught
     except Exception as ex:
         # since OTel logging is still in beta in Python, we're going to swallow any errors
         # and just warn about them.
         logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
 
 
+# pylint: disable=unused-argument
 def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
@@ -535,6 +540,7 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
         agents_instrumentor = AIAgentsInstrumentor()
         if not agents_instrumentor.is_instrumented():
             agents_instrumentor.instrument()
+    # pylint: disable=broad-exception-caught
     except Exception as exc:
         logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
@@ -577,6 +583,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
+            # pylint: disable=protected-access
             get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()
 
             if not get_workspace_response.properties.application_insights:
@@ -640,6 +647,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(
         self,
@@ -703,6 +711,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(
         self,
@@ -873,6 +882,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(
         self,
@@ -941,6 +951,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(
         self,
@@ -1167,6 +1178,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_run(
         self,
@@ -1854,6 +1866,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def submit_tool_outputs_to_run(
         self,
@@ -1916,7 +1929,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1931,7 +1943,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2115,6 +2126,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
@@ -2133,6 +2145,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any

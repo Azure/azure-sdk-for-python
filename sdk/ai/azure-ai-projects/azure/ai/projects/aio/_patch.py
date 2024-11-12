@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 
 class AIProjectClient(ClientGenerated):
 
+    # pylint: disable=too-many-instance-attributes, too-many-statements, super-init-not-called, client-accepts-api-version-keyword
     def __init__(
         self,
         endpoint: str,

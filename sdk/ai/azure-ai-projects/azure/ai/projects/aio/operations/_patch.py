@@ -398,6 +398,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
+            # pylint: disable=protected-access
             get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
 
             if not get_workspace_response.properties.application_insights:
@@ -462,6 +463,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def create_agent(
         self,
@@ -525,6 +527,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def create_agent(
         self,
@@ -695,6 +698,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def update_agent(
         self,
@@ -763,6 +767,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def update_agent(
         self,
@@ -989,6 +994,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def create_run(
         self,
@@ -1656,6 +1662,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def submit_tool_outputs_to_run(
         self,
@@ -1718,7 +1725,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1733,7 +1739,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1917,6 +1922,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def upload_file(
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
@@ -1935,6 +1941,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     async def upload_file(
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
