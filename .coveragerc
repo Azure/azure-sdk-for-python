@@ -25,3 +25,4 @@ omit =
 	env*
 	*/_serialization.py
 	*/sms/_shared/*
+	sdk\ml\azure-ai-ml\azure\ai\ml\_restclient
