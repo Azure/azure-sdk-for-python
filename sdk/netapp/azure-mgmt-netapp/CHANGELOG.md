@@ -29,11 +29,11 @@
   - Added model `QuotaReport`
   - Added enum `ReplicationType`
   - Added enum `VolumeLanguage`
-  - Operations `AccountsOperations` added method `begin_change_key_vault`
-  - Operations `AccountsOperations` added method `begin_get_change_key_vault_information`
-  - Operations `AccountsOperations` added method `begin_transition_to_cmk`
-  - Operations `VolumesOperations` added method `begin_list_quota_report`
-  - Operations `VolumesOperations` added method `begin_split_clone_from_parent`
+  - Operation group `AccountsOperations` added method `begin_change_key_vault`
+  - Operation group `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operation group `AccountsOperations` added method `begin_transition_to_cmk`
+  - Operation group `VolumesOperations` added method `begin_list_quota_report`
+  - Operation group `VolumesOperations` added method `begin_split_clone_from_parent`
 
 ## 13.3.0 (2024-10-21)
 
