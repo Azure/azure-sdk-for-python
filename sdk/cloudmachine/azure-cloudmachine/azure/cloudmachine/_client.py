@@ -5,33 +5,64 @@
 # --------------------------------------------------------------------------
 
 import os
-from typing import IO, Any, Dict, Generator, Generic, Literal, Mapping, Optional, Protocol, Type, TypeVar, Union, overload
-from typing_extensions import Self
+from enum import Enum
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    NamedTuple,
+    Literal,
+    Mapping,
+    Optional,
+    Protocol,
+    Type,
+    Callable,
+    Union,
+    Generic,
+    Tuple,
+    overload,
+    TypeVar
+)
 from threading import Thread
 from concurrent.futures import Executor, ThreadPoolExecutor
 
 from dotenv import load_dotenv, dotenv_values
 
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo
+from azure.core.credentials import (
+    AzureNamedKeyCredential,
+    AzureSasCredential,
+    SupportsTokenInfo,
+)
 from azure.core.pipeline.transport import HttpTransport
 from azure.data.tables import TableServiceClient, TableClient
-from azure.identity import DefaultAzureCredential
 
-from .resources._resources import Resources, resources as global_resources
-from .resources._client_settings import ClientSettings, SyncClient
+from ._resources._resources import resources as global_resources
+from ._resources._resource_map import *
+from ._resources._client_settings import (
+    ClientSettings,
+    StorageClientSettings,
+    OpenAiClientSettings,
+    SearchClientSettings,
+    SyncClient,
+    ClientType,
+    TransportInputTypes,
+    CredentialInputTypes
+)
 from .provisioning._deployment import azd_env_name, CloudMachineDeployment
-from ._httpclient._eventlistener import EventListener, cloudmachine_events
+from ._httpclient._eventlistener import EventListener
 from ._httpclient import TransportWrapper
 from ._httpclient._servicebus import CloudMachineServiceBus
 from ._httpclient._config import CloudMachinePipelineConfig
 from ._httpclient._storage import CloudMachineStorage
 from ._httpclient._base import CloudMachineClientlet
+from ._httpclient._documents import CloudMachineDocumentIndex
 
-try:
-    from openai import AzureOpenAI
-except ImportError:
-    AzureOpenAI = 'openai.AzureOpenAI'
+class _CMDefault(str, Enum):
+    token = "0"
 
+
+CloudmachineDefault = _CMDefault.token
+ClientSettingsType = TypeVar("ClientSettingsType", bound=ClientSettings)
 
 def load_dev_environment(name: str) -> Dict[str, str]:
     print("Loading local environment.")
@@ -67,7 +98,7 @@ class DataModel(Protocol):
     
 
 class CloudMachineTableData(CloudMachineClientlet):
-    _id: Literal['Table'] = 'Table'
+    _id: Literal['storage:table'] = 'storage:table'
 
     def __init__(
             self,
@@ -81,21 +112,22 @@ class CloudMachineTableData(CloudMachineClientlet):
             scope: str,
             **kwargs
     ):
-        super().__init__(
+        # super().__init__(
+        #     endpoint=endpoint,
+        #     credential=credential,
+        #     transport=transport,
+        #     api_version=api_version,
+        #     executor=executor,
+        #     config=config,
+        #     scope=scope,
+        #     **kwargs
+        # )
+        self.endpoint = endpoint
+        self._client = TableServiceClient(
             endpoint=endpoint,
+            api_version=api_version,
             credential=credential,
             transport=transport,
-            api_version=api_version,
-            executor=executor,
-            config=config,
-            scope=scope,
-            **kwargs
-        )
-        self._client = TableServiceClient(
-            endpoint=self._endpoint,
-            api_version=self._config.api_version,
-            credential=self._credential,
-            transport=self._config.transport,
             **kwargs
         )
         self._tables: Dict[str, TableClient] = {}
@@ -107,9 +139,6 @@ class CloudMachineTableData(CloudMachineClientlet):
             table_client = self._client.create_table_if_not_exists(tablename)
             self._tables[tablename] = table_client
             return table_client
-
-    def get_client(self) -> TableServiceClient:
-        return self._client
 
     @overload
     def insert(self, table: str, *entities: Mapping[str, Any]) -> None:
@@ -235,33 +264,55 @@ class CloudMachineTableData(CloudMachineClientlet):
             yield from table_client.query_entities(query, parameters=parameters)
 
 
+class ClientWithSettings(NamedTuple, Generic[ClientType, ClientSettingsType]):
+    client: ClientType
+    settings: ClientSettingsType
+
+
 class CloudMachineClient:
+    http_transport: HttpTransport
 
     def __init__(
             self,
             *,
-            resources: Optional[Resources] = None,
             deployment: Optional[CloudMachineDeployment] = None,
+            openai: Optional[Union[ClientSettings, str]] = None,
+            data: Optional[Union[ClientSettings, str]] = None,
+            messaging: Optional[Union[ClientSettings, str]] = None,
+            storage: Optional[Union[ClientSettings, str]] = None,
+            search: Optional[Union[ClientSettings, str]] = None,
+            documentai: Optional[Union[ClientSettings, str]] = None,
             http_transport: Optional[HttpTransport] = None,
             event_listener: bool = True,
+            client_options: Optional[Dict[str, Any]] = None,
             **kwargs
     ):
-        self._http_transport = http_transport or self._build_transport(**kwargs)
-        self._wrapped_transport = TransportWrapper(self._http_transport)
+        self.http_transport = http_transport or self._build_transport()
+        self._resources = global_resources
+        self._client_options = client_options or {}
+        self._settings: Dict[str, Optional[ClientSettings]] = {
+            'openai': openai or (deployment.openai if deployment else None),
+            'storage:blob': storage or (deployment.storage if deployment else None),
+            'storage:table': data or (deployment.data if deployment else None),
+            'servicebus': messaging or (deployment.messaging if deployment else None),
+            'search': search or (deployment.search if deployment else None),
+            'documentai': documentai or (deployment.documentai if deployment else None),
+        }
+        self.deployment = deployment
         if event_listener: # We shouldn't poll till we know someone is listening.
             self._listener = EventListener(
                 cloudmachine=self,
-                transport=self._wrapped_transport
             )
             self._listener_thread = Thread(target=self._listener, daemon=True)
         else:
             self._listener = None
             self._listener_thread = None
 
-        self._executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
-        self._resources = resources or global_resources
+        self._executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers', 10))
+        self._clients: Dict[str, Tuple[SyncClient, ClientSettings]] = {}
 
     def _build_transport(self, **kwargs):
+        # Check transport setting
         import requests
         from azure.core.pipeline.transport import RequestsTransport
         session = requests.Session()
@@ -272,65 +323,402 @@ class CloudMachineClient:
                 kwargs.pop('pool_maxsize', 25)
             )
         )
-        return RequestsTransport(
-            session=session,
-            session_owner=False,
-            **kwargs
+        return TransportWrapper(
+            RequestsTransport(
+                session=session,
+                session_owner=False,
+                **kwargs
+            )
         )
 
-    def storage(self, name: Optional[str] = None) -> ClientSettings[CloudMachineStorage]:
-        if self._listener_thread:
+    @overload
+    def get_client(
+            self,
+            service: Literal['storage:blob'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[BlobServiceClient, StorageClientSettings[BlobServiceClient]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['storage:blob'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_setings: Literal[False] = False
+    ) -> BlobServiceClient:
+        ...
+    @overload
+    def get_client(
+            self, 
+            service: Literal['storage:blob:container'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_setings: Literal[False] = False
+    ) -> ContainerClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['storage:table'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_setings: Literal[False] = False
+    ) -> TableServiceClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['servicebus'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_setings: Literal[False] = False
+    ) -> ServiceBusClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['openai'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> AzureOpenAI:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['openai'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[AzureOpenAI, OpenAiClientSettings[AzureOpenAI]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['openai:embeddings'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> Embeddings:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['openai:embeddings'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[Embeddings, OpenAiClientSettings[AzureOpenAI]]:
+        ...
+    @overload
+    def get_client(
+            self, 
+            service: Literal['openai:chat'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> Chat:
+        ...
+    @overload
+    def get_client(
+            self, 
+            service: Literal['openai:chat'],
+            *,
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[Chat, OpenAiClientSettings[AzureOpenAI]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['documentai'],
+            *,
+            name: Optional[str] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> DocumentIntelligenceClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['search'],
+            *,
+            name: Optional[str] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> SearchIndexClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['search'],
+            *,
+            name: Optional[str] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[SearchIndexClient, SearchClientSettings[SearchIndexClient]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['search:index'],
+            *,
+            settings: Optional[ClientSettings] = None,
+            name: Optional[str] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> SearchClient:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: Literal['search:index'],
+            *,
+            settings: Optional[ClientSettings] = None,
+            name: Optional[str] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[SearchClient, SearchClientSettings[SearchClient]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: str,
+            *,
+            cls: Callable[[], ClientType],
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[True]
+    ) -> ClientWithSettings[ClientType, ClientSettings[ClientType]]:
+        ...
+    @overload
+    def get_client(
+            self,
+            service: str,
+            *,
+            cls: Callable[[], ClientType],
+            name: str = CloudmachineDefault,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: Literal[False] = False
+    ) -> ClientType:
+        ...
+    def get_client(
+            self,
+            service: str,
+            *,
+            name: str = CloudmachineDefault,
+            cls: Optional[Callable[..., ClientType]] = None,
+            api_version: Optional[str] = None,
+            client_options: Optional[Dict[str, Any]] = None,
+            transport: Optional[TransportInputTypes] = None,
+            credential: Optional[CredentialInputTypes] = None,
+            with_settings: bool = False
+    ) -> Union[SyncClient, Tuple[SyncClient, ClientSettings]]:
+        client_options = client_options or {}
+        resource_split = service.lower().split(":", 1)
+        sub_resource = None
+        client_key = service
+        if resource_split[0] == 'openai':
+            service = resource_split[0]
+            try:
+                # Whether to return an "embeddings" or "chat" client.
+                sub_resource = resource_split[1]
+            except IndexError:
+                pass
+        if name and name is not CloudmachineDefault:
+            client_key = f"{name}:{client_key}"
+        try:
+            existing, settings = self._clients[client_key]
+            if ((not cls or (settings.cls() == cls)) and
+                (not api_version or (settings.api_version() == api_version)) and
+                (not client_options or (settings.client_options() == client_options))):
+                if with_settings:
+                    return ClientWithSettings(existing, settings.copy())
+                return existing
+            self._clients[client_key].pop(name)
+            existing.close()
+        except KeyError:
+            pass
+
+        if name is not CloudmachineDefault or service not in self._settings:
+            new_settings = global_resources.get(
+                service,
+                cls=cls,
+                transport=transport,
+                api_version=api_version,
+                client_options=client_options)[name]
+            new_settings.credential.set_value(credential)
+        else:
+            settings = self._settings[service]
+            new_client_options = settings.client_options()
+            new_client_options.update(client_options)
+            new_settings = settings.copy(
+                transport=transport,
+                cls=cls,
+                api_version=api_version,
+                client_options=new_client_options,
+                credential=credential
+            )
+        if service == "openai" and sub_resource:
+            if sub_resource == "embeddings" and 'azure_deployment' not in client_options:
+                new_client = new_settings.client(
+                    client_options={'azure_deployment': new_settings.get('embeddings_deployment')}
+                ).embeddings
+            elif sub_resource == "chat" and 'azure_deployment' not in client_options:
+                new_client = new_settings.client(
+                    client_options={'azure_deployment': new_settings.get('chat_deployment')}
+                ).chat
+            else:
+                raise ValueError(f"Unsupported openai resource: {sub_resource}")
+        else:
+            new_client = new_settings.client()
+        self._clients[client_key] = (new_client, new_settings)
+        if with_settings:
+            return (new_client, new_settings)
+        return new_client
+
+    @property
+    def storage(self) -> CloudMachineStorage:
+        if self._listener_thread:  # TODO: Figure this out - should only start if someone listening
             try:
                 self._listener_thread.start()
             except RuntimeError:
                 pass
-        return self._resources.get(
-            'blobstorage',
-            transport=self._http_transport,
-            cls=CloudMachineStorage,
-            client_options={'executor': self._executor}
-        )[name or 'CLOUDMACHINE']
+        try:
+            return self._clients["cm:storage:blob"][0]
+        except KeyError:
+            settings = self._settings['storage:blob']
+            if settings is None:
+                raise RuntimeError("CloudMachine storage resource has not been configured.")
+            client = settings.client(
+                cls=CloudMachineStorage,
+                transport=self.http_transport,
+                client_options={
+                    'account_name': settings.name()
+                }
+            )
+            self._clients["cm:storage:blob"] = (client, settings)
+            return client
 
-    def messaging(self, name: Optional[str] = None) -> ClientSettings[CloudMachineServiceBus]:
-        return self._resources.get(
-            'servicebus',
-            transport=self._http_transport,
-            cls=CloudMachineStorage,
-            client_options={'executor': self._executor}
-        )[name or 'CLOUDMACHINE']
+    @property
+    def messaging(self) -> CloudMachineServiceBus:
+        try:
+            return self._clients["cm:servicebus"][0]
+        except KeyError:
+            settings = self._settings['servicebus']
+            if settings is None:
+                raise RuntimeError("CloudMachine messaging resource has not been configured.")
+            client = settings.client(
+                cls=CloudMachineServiceBus,
+                transport=self.http_transport,
+            )
+            self._clients["cm:servicebus"] = (client, settings)
+            return client
 
-    def data(self, name: Optional[str] = None) -> ClientSettings[CloudMachineTableData]:
-        return self._resources.get(
-            'servicebus',
-            transport=self._http_transport,
-            cls=CloudMachineStorage,
-            client_options={'executor': self._executor}
-        )[name or 'CLOUDMACHINE']
+    @property
+    def data(self) -> CloudMachineTableData:
+        try:
+            return self._clients["cm:storage:table"][0]
+        except KeyError:
+            settings = self._settings['storage:table']
+            if settings is None:
+                raise RuntimeError("CloudMachine data resource has not been configured.")
+            client = settings.client(
+                cls=CloudMachineTableData,
+                transport=self.http_transport,
+            )
+            self._clients["cm:storage:table"] = (client, settings)
+            return client
 
-    def vault(self, name: Optional[str] = None) -> ClientSettings:
-        return self._resources.get(
-            'keyvault',
-            transport=self._http_transport,
-            #cls=CloudMachineKeyVault,
-            client_options={'executor': self._executor}
-        )[name or 'CLOUDMACHINE']
-
-    def ai(self, name: Optional[str] = None) -> ClientSettings[AzureOpenAI]:
-        return self._resources.get(
-            'openai',
-            transport=self._http_transport,
-            cls=CloudMachineStorage,
-            client_options={'executor': self._executor}
-        )[name or 'CLOUDMACHINE']
+    @property
+    def document_index(self) -> CloudMachineDocumentIndex:
+        try:
+            return self._clients["cm:documentindex"][0]
+        except KeyError:
+            search=self._settings['search']
+            if search is None:
+                raise RuntimeError("CloudMachine search resource has not been configured.")
+            openai=self._settings['openai']
+            # documentai=self._settings['documentai'],
+            new_client = CloudMachineDocumentIndex(
+                search=search,
+                openai=openai,
+            )
+            self._clients["cm:documentindex"] = (new_client, self._settings['search'])
+            return new_client
 
     def close(self):
         self._listener.close()
-        for storage_client in self._storage.values():
-            storage_client.close()
-        for queue_client in self._messaging.values():
-            queue_client.close()
-        for table_client in self._data.values():
-            table_client.close()
         if self._listener_thread.is_alive():
             self._listener_thread.join()
-        self._http_transport.close()
+        for service in self._clients:
+            for client in self._clients[service]:
+                self._clients[service][client].close()
+        self.http_transport.close()

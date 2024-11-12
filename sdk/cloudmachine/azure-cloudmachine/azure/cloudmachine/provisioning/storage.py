@@ -30,6 +30,7 @@ from ._resource import (
 
 class StorageRoleAssignments(Enum):
     BLOB_DATA_CONTRIBUTOR = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    BLOB_DATA_READER = "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1"
     TABLE_DATA_CONTRIBUTOR = "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"
 
 
@@ -257,8 +258,8 @@ class TableServices(Resource):
 
 @dataclass(kw_only=True)
 class StorageAccount(LocatedResource):
-    sku: Sku = field(metadata={'rest': 'sku'})
-    kind: BicepStr = field(metadata={'rest': 'kind'})
+    sku: Sku = field(default=_UNSET, metadata={'rest': 'sku'})
+    kind: BicepStr = field(default=_UNSET, metadata={'rest': 'kind'})
     extended_location : Optional[ExtendedLocation] = field(default=_UNSET, metadata={'rest': 'extendedLocation'})
     identity: Optional[Identity] = field(default=_UNSET, metadata={'rest': 'identity'})
     properties: Optional[Properties] = field(default=_UNSET, metadata={'rest': 'properties'})
@@ -278,7 +279,7 @@ class StorageAccount(LocatedResource):
             self.tables.parent = self
             self._outputs.update(self.tables.write(bicep))
         for role in self.roles:
-            role.name = GuidName(self, PrincipalId(), role.properties.role_definition_id)
+            role.name = GuidName(self, PrincipalId(), role.properties['roleDefinitionId'])
             role.scope = self
             self._outputs.update(role.write(bicep))
 

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, Self, Type
 from typing_extensions import Self
 from concurrent.futures import Executor
 
@@ -21,14 +21,17 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.identity import DefaultAzureCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
+from .._resources._client_settings import ClientSettings
+from .._resources._resource_map import RESOURCE_SDK_MAP, DEFAULT_API_VERSIONS
 from ..provisioning._resource import generate_envvar
 from ._config import CloudMachinePipelineConfig
 from ._auth_policy import BearerTokenChallengePolicy
-from ._api_versions import DEFAULT_API_VERSIONS
 
 
 class CloudMachineClientlet:
     _id: str
+    resource_settings: ClientSettings[Type[Self]]
+    resource_id: Optional[str]
 
     def __init__(
             self,
@@ -39,6 +42,7 @@ class CloudMachineClientlet:
             api_version: Optional[str] = None,
             executor: Optional[Executor] = None,
             config: Optional[CloudMachinePipelineConfig] = None,
+            resource_id: Optional[str] = None,
             scope: str,
             **kwargs
     ):
@@ -47,7 +51,7 @@ class CloudMachineClientlet:
 
         auth_policy = BearerTokenChallengePolicy(
             self._credential,
-            *scope
+            scope
         )
         # TODO: Need to be able to swap out auth policy of existing config
         self._config = config or CloudMachinePipelineConfig(
@@ -64,6 +68,15 @@ class CloudMachineClientlet:
 
     def close(self) -> None:
         self._client.close()
+
+    # def resource_id(self) -> str:
+    #     # TODO Fix this so that it works for any resource ID.
+    #     for envvar in RESOURCE_SDK_MAP[self._id][0]:
+    #         try:
+    #             return os.environ[f"AZURE_CLOUDMACHINE_{envvar.upper()}_ID"]
+    #         except KeyError:
+    #             continue
+    #     raise ValueError(f"No resource ID found for {self._id}")
 
     def _send_request(self, request: HttpRequest, **kwargs) -> HttpResponse:
         path_format_arguments = {

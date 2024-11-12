@@ -4,11 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from io import SEEK_END, SEEK_SET
+from collections.abc import Iterator
+from io import SEEK_END, SEEK_SET, RawIOBase, UnsupportedOperation
+from types import TracebackType
 import logging
 import email
+from itertools import islice
 from datetime import datetime, timezone, timedelta
-from typing import IO, Any, Callable, Dict, Generator, Generic, Optional, Tuple, TypeVar, Union
+from typing import IO, Literal, Any, Callable, Dict, Generator, Generic, Optional, Tuple, TypeVar, Union, NoReturn
 from typing_extensions import Self
 from urllib.parse import quote
 
@@ -16,7 +19,6 @@ from azure.core import MatchConditions
 from azure.core.rest import HttpResponse
 
 PageType = TypeVar('PageType')
-
 
 class Pages(Generic[PageType]):
     continuation: Optional[str] = None
@@ -179,7 +181,7 @@ def get_length(data: Union[bytes, IO[bytes]]) -> int:
     raise ValueError("Unable to determine length of data. Please provide 'content_length'.")
 
 
-class Stream:
+class Stream(RawIOBase):
     content_length: int
     content_range: str
 
@@ -194,13 +196,26 @@ class Stream:
         self._chunk_generator = next_chunks
         self._current_chunk = first_chunk
         self._closed = False
+        self._data: bytes = b""
         self.content_length = content_length
         self.content_range = content_range
 
-    def __next__(self) -> bytes:
-        if self._current_response:
+    def __len__(self) -> int:
+        return self.content_length
+
+    def __enter__(self) -> Self:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return super().__enter__()
+
+    def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> None:
+        self.close()
+        return super().__exit__(exc_type, exc_val, exc_tb)
+
+    def _get_next_chunk(self) -> bytes:
+        if self._current_chunk:
             try:
-                return next(self._current_response)
+                return next(self._current_chunk)
             except StopIteration:
                 pass
         if self._chunk_generator:
@@ -213,12 +228,119 @@ class Stream:
             return next(self._current_chunk)
         raise StopIteration
 
-    def __iter_(self) -> Self:
+    def _get_line(self, size: Optional[int]) -> Optional[bytes]:
+        line_split = self._data.find(b'\n')
+        if line_split >= 0:
+            line_split += 1
+            if size is not None and size < line_split:
+                new_line = self._data[0: size]
+                self._data = self._data[size:]
+                return new_line
+            new_line = self._data[0: line_split]
+            self._data = self._data[line_split:]
+            return new_line
+        elif size is not None and size < len(self._data):
+            new_line = self._data[0: size]
+            self._data = self._data[size:]
+            return new_line
+        return None
+
+    def __next__(self) -> bytes:
+        next_line = self.readline()
+        if next_line == b"":
+            self.close()
+            raise StopIteration()
+
+    def __iter__(self) -> Iterator[bytes]:
         return self
+
+    @property
+    def closed(self) -> bool:
+        return self._closed
 
     def close(self) -> None:
         self._current_chunk.close()
+        self._closed = True
         # TODO: Close down additional iteration.
+
+    def readable(self) -> Literal[True]:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return True
+
+    def writable(self) -> Literal[False]:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return False
+
+    def fileno(self) -> NoReturn:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        raise UnsupportedOperation()
+
+    def flush(self) -> None:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return None
+
+    def isatty(self) -> Literal[False]:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return False
+
+    def readline(self, size: int | None = -1) -> bytes:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        if size < 0:
+            size = None
+        while True:
+            line = self._get_line(size)
+            if line:
+                return line
+            try:
+                self._data += self._get_next_chunk()
+            except StopIteration:
+                line = self._data
+                self._data = b""
+                return line
+
+    def readlines(self, hint: int = -1) -> list[bytes]:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        lines = []
+        if hint == 0:
+            return lines
+        line = self.readline()
+        if hint < 0:
+            while line:
+                lines.append(line)
+                line = self.readline()
+        else:
+            while line and len(lines) < hint:
+                lines.append(line)
+                line = self.readline()
+        return lines
+
+    def read(self, size: int = -1) -> bytes:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        if size >= 0:
+            while len(self._data) < size:
+                try:
+                    self._data += self._get_next_chunk()
+                except StopIteration:
+                    break
+            data = self._data[0: size]
+            self._data = self._data[size:]
+            return data
+        data = b"".join(self.readlines())
+        return data
+
+    def seekable(self) -> Literal[False]:
+        if self._closed:
+            raise ValueError("I/O operation on closed stream.")
+        return False
+
 
 
 class PartialStream:
@@ -228,7 +350,7 @@ class PartialStream:
 
     def __init__(self, *, start: int, end: int, response: HttpResponse) -> None:
         self._response = response
-        self._func = self._response.iter_raw()
+        self._func: Iterable[bytes] = self._response.iter_raw()
         self._data: Optional[bytes] = None
         self._start = start
         self._end = end

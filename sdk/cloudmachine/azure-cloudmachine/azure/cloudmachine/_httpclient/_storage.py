@@ -8,11 +8,11 @@ from base64 import b64encode
 import functools
 from io import BytesIO
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from time import time
 import uuid
 from wsgiref.handlers import format_date_time
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse, quote, urljoin
 from typing import IO, Any, Dict, Generator, Generic, Iterable, List, Mapping, Optional, Tuple, Type, TypeVar, Union, overload, Literal
 from threading import Thread
 from concurrent.futures import Executor, Future
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.core.pipeline.policies import HeadersPolicy
 
 from ._config import CloudMachinePipelineConfig
-from ._eventlistener import cloudmachine_events
+from ..events import cloudmachine_events
 from ._base import CloudMachineClientlet
 from ._utils import (
     Pages,
@@ -46,6 +46,7 @@ from ._utils import (
 _ERROR_CODE = "x-ms-error-code"
 _DEFAULT_CHUNK_SIZE = 32 * 1024 * 1024
 _DEFAULT_BLOCK_SIZE = 256 * 1024 * 1024
+SasPermissions = Literal['read', 'write', 'delete', 'tag', 'create', 'execute']
 
 
 def _format_url(endpoint: str, container: str) -> str:
@@ -87,6 +88,31 @@ class StorageBatchError(HttpResponseError):
 
 T = TypeVar("T")
 
+class DeletedFile:
+    __responsedata__: Dict[str, Any]
+    filename: str
+    container: str
+    endpoint: str
+
+    def __init__(
+            self,
+            *,
+            filename: str,
+            container: str,
+            endpoint: str,
+            responsedata: Dict[str, Any]
+    ) -> None:
+        self.filename = filename
+        self.container = container
+        self.endpoint = endpoint
+        self.__responsedata__ = responsedata
+
+    def __repr__(self) -> str:
+        return f"DeletedStorageFile(filename={self.filename})"
+
+    def __str__(self) -> str:
+        return f"{self.container}/{self.filename}"
+
 class StorageFile(Generic[T]):
     __responsedata__: Dict[str, Any]
     metadata: Dict[str, str]
@@ -95,6 +121,7 @@ class StorageFile(Generic[T]):
     content: T
     filename: str
     container: str
+    endpoint: str
     content_length: int
     content_type: Optional[str]
     content_encoding: Optional[str]
@@ -110,6 +137,7 @@ class StorageFile(Generic[T]):
             content: T,
             content_length: Union[int, str],
             etag: str,
+            endpoint: str,
             **kwargs
     ) -> None:
         self.content = content
@@ -117,6 +145,7 @@ class StorageFile(Generic[T]):
         self.etag = etag
         self.filename = filename
         self.container = container
+        self.endpoint = endpoint
         self.metadata = kwargs.get('metadata') or {}
         self.tags = kwargs.get('tags') or {}
         self.content_type = kwargs.get('content_type')
@@ -134,18 +163,21 @@ class StorageFile(Generic[T]):
 
 
 class CloudMachineStorage(CloudMachineClientlet):
-    _id: Literal['Blob'] = 'Blob'
-    default_container_name: str = "default"
+    _id: Literal['Blob'] = 'storage:blob'
+    default_container_name: str
     
     def __init__(
             self,
             endpoint: str,
+            account_name: str,
             credential: Union[AzureNamedKeyCredential, AzureSasCredential, SupportsTokenInfo],
             *,
+            container_name: str,
             transport: Optional[HttpTransport] = None,
             api_version: Optional[str] = None,
             executor: Optional[Executor] = None,
             config: Optional[CloudMachinePipelineConfig] = None,
+            resource_id: Optional[str] = None,
             scope: str,
             **kwargs
     ):
@@ -159,9 +191,13 @@ class CloudMachineStorage(CloudMachineClientlet):
             scope=scope,
             executor=executor,
             headers_policy=headers_policy,
+            resource_id=resource_id,
             **kwargs
         )
+        self.default_container_name = container_name
+        self._account_name = account_name
         self._containers: Dict[str, PipelineClient] = {}
+        self._user_delegation_key: Optional[str] = None
 
     def _get_container_client(self, container: Optional[str]) -> PipelineClient:
         container = container or self.default_container_name
@@ -195,6 +231,74 @@ class CloudMachineStorage(CloudMachineClientlet):
         if response.status_code not in [202]:
             raise HttpResponseError(response=response)
         return response
+
+    @overload
+    def get_url(
+            self,
+            *,
+            file: StorageFile,
+            permissions: Union[str, List[SasPermissions]] = 'r',
+            expiry: Union[datetime, timedelta, Literal['never']] = 'never',
+            start: Union[datetime, timedelta, Literal['now']] = 'now',
+    ) -> str:
+        ...
+    @overload
+    def get_url(
+            self,
+            *,
+            file: Optional[str] = None,
+            container: Optional[str] = None,
+            permissions: Union[str, List[Union[SasPermissions, Literal['list', 'filter']]]] = 'r',
+            expiry: Union[datetime, timedelta, Literal['never']] = 'never',
+            start: Union[datetime, timedelta, Literal['now']] = 'now',
+    ) -> str:
+        ...
+    def get_url(
+            self,
+            *,
+            file: Optional[Union[str, StorageFile]] = None,
+            container: Optional[str] = None,
+            permissions: Union[str, List[SasPermissions]] = 'r',
+            expiry: Union[datetime, timedelta, int] = 60,
+            start: Union[datetime, timedelta, Literal['now']] = 'now',
+    ) -> str:
+        from azure.storage.blob import generate_blob_sas, generate_container_sas, BlobServiceClient
+        kwargs = {}
+        if isinstance(start, timedelta):
+            kwargs['start'] = datetime.now(timezone.utc) + start
+        elif start != 'now':
+            kwargs['start'] = start
+        if isinstance(expiry, int):
+            expiry = timedelta(minutes=expiry)
+        if isinstance(expiry, timedelta):
+            kwargs['expiry'] = datetime.now(timezone.utc) + expiry
+        else:
+            kwargs['expiry'] = expiry
+        kwargs['permission'] = permissions if isinstance(permissions, str) else "".join(p[0] for p in permissions)
+        if isinstance(self._credential, AzureNamedKeyCredential):
+            named_key = self._credential.named_key
+            kwargs['account_name'] = self._account_name
+            kwargs['account_key'] = named_key.key
+        elif isinstance(self._credential, SupportsTokenInfo):
+            kwargs['account_name'] = self._account_name
+            # if not self._user_delegation_key or self._user_delegation_key.signed_expiry < kwargs['expiry']:
+            service_client = BlobServiceClient(self._endpoint, self._credential)
+            self._user_delegation_key = service_client.get_user_delegation_key(
+                key_start_time=datetime.now(timezone.utc),
+                key_expiry_time=kwargs['expiry']
+            )
+            kwargs['user_delegation_key'] = self._user_delegation_key
+        else:
+            raise NotImplementedError('AzureSasCredential does not support SAS URL generation.')
+        kwargs['container_name'] = file.container if isinstance(file, StorageFile) else container or self.default_container_name
+        if file:
+            kwargs['blob_name'] = file.filename if isinstance(file, StorageFile) else file
+            sas_token = generate_blob_sas(**kwargs)
+            endpoint = urljoin(self._endpoint, f"{kwargs['container_name']}/{kwargs['blob_name']}")
+            return f"{endpoint}?{sas_token}"
+        else:
+            sas_token = generate_container_sas(**kwargs)
+            return f"{urljoin(self._endpoint, kwargs['container_name'])}?{sas_token}"
 
     def list(
             self,
@@ -230,32 +334,40 @@ class CloudMachineStorage(CloudMachineClientlet):
                 kwargs=request_params,
             )
             response = client.send_request(request, **request_params)
+            if response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound':
+                return None
+            if response.status_code != 200:
+                raise HttpResponseError(response=response)
             page = ET.fromstring(response.read().decode('utf-8'))
             for xmlblob in page.find('Blobs'):
                 if xmlblob.tag == 'Blob':
                     if minimal:
                         properties = xmlblob.find('Properties')
+                        filename = xmlblob[0].text
                         yield StorageFile(
-                            filename=xmlblob[0].text,
+                            filename=filename,
                             container=container or self.default_container_name,
                             content=None,
                             content_length=properties.find('Content-Length').text,
                             etag=properties.find('Etag').text,
+                            endpoint=urljoin(client.endpoint, quote(filename))
                         )
                     else:
                         blob = _build_dict(xmlblob)
                         properties = blob['Properties']
+                        filename = blob['Name']
                         tags = None
                         if include_tags:
                             tags = {t['Key']: t['Value'] for t in blob.get('Tags', {}).get('TagSet', [])}
                         yield StorageFile(
-                            filename=blob['Name'],
+                            filename=filename,
                             content=None,
                             container=container or self.default_container_name,
                             content_length=properties['Content-Length'],
                             etag=properties['Etag'],
                             metadata=blob.get('Metadata', {}),
                             tags=tags,
+                            endpoint=urljoin(client.endpoint, quote(filename)),
                             content_type = properties['Content-Type'],
                             content_encoding = properties['Content-Encoding'],
                             content_language = properties['Content-Language'],
@@ -272,7 +384,6 @@ class CloudMachineStorage(CloudMachineClientlet):
             continuation=continue_from,
         )
             
-
     # TODO: Scope batch delete to specific container to prevent accidental delete outside of scope.
     def _delete(self, *files: Union[str, StorageFile], container: Optional[str] = None, **kwargs) -> None:
         if not files:
@@ -291,7 +402,6 @@ class CloudMachineStorage(CloudMachineClientlet):
 
             kwargs['if_match'] = prep_if_match(etag, condition)
             kwargs['if_none_match'] = prep_if_none_match(etag, condition)
-            print(filename, file_container)
             requests.append(
                 build_delete_blob_request(
                     f"/{quote(file_container)}",
@@ -299,12 +409,10 @@ class CloudMachineStorage(CloudMachineClientlet):
                     kwargs
                 )
             )
-            print(requests[-1].headers)
         response = self._batch_send(*requests)
         succeeded = []
         failed = []
         for file, part_response in zip(files, response.parts()):
-            print(part_response.status_code, part_response.headers)
             if ((part_response.status_code == 202) or
                 (part_response.status_code == 404 and part_response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
                 (part_response.status_code == 404 and part_response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
@@ -383,7 +491,7 @@ class CloudMachineStorage(CloudMachineClientlet):
         # TODO: support upload by block list + commit
         # TODO: support content validation
         client = self._get_container_client(container)
-        filename = filename or str(uuid.uuid4())
+        filename = filename or data.filename if hasattr(data, 'filename') else str(uuid.uuid4())
         content_length=content_length or get_length(data)
         kwargs['version'] = self._config.api_version
         kwargs['if_match'] = prep_if_match(etag, condition)
@@ -399,17 +507,19 @@ class CloudMachineStorage(CloudMachineClientlet):
             kwargs['expiry_relative'] = int(expiry.microseconds/1000)
         elif expiry:
             kwargs['expiry_absolute'] = expiry
+        content = data if hasattr(data, 'read') else BytesIO(data)
+        initial_index = content.tell()
         request = build_upload_blob_request(
             client.endpoint + f"/{quote(filename)}",
             content_length=content_length,
-            content=data if hasattr(data, 'read') else BytesIO(data),
+            content=content,
             kwargs=kwargs
         )
         response = client.send_request(request, **kwargs)
         if response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound':
+            # TODO: if this is an authenticated session - set acl
             self._create_container(container, **kwargs)
-            # TODO: Retry the request once we've created the container
-            # Need to confirm whether we need to rewind the payload.
+            content.seek(initial_index)  # TODO: need to test this...
             response = client.send_request(request, **kwargs)
         if response.status_code not in [201]:
             raise HttpResponseError(response=response)
@@ -426,6 +536,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_disposition = content_disposition,
             cache_control = cache_control,
             metadata=metadata,
+            endpoint=urljoin(client.endpoint, quote(filename)),
             tags=tags,
             content=None,
         )
@@ -441,6 +552,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_disposition: Optional[str] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
+            overwrite: bool = False,
             condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
@@ -462,6 +574,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_disposition: Optional[str] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
+            overwrite: bool = False,
             condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
@@ -478,6 +591,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_length: Optional[int] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
+            overwrite: bool = False,
             condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
@@ -485,6 +599,8 @@ class CloudMachineStorage(CloudMachineClientlet):
             wait: bool = True,
             **kwargs
     ) -> Union[Future[StorageFile[None]], StorageFile[None]]:
+        if overwrite:
+            condition = MatchConditions.Unconditionally
         if wait:
             return self._upload(
                 data,
@@ -514,13 +630,13 @@ class CloudMachineStorage(CloudMachineClientlet):
             self,
             filename: str,
             *,
-            range: Optional[Tuple[int, Optional[int]]] = None,
+            content_range: Optional[Tuple[int, Optional[int]]] = None,
             container: Optional[str] = None,
             condition: MatchConditions = MatchConditions.IfPresent,
             etag: Optional[str] = None,
             validate: bool = False,
             **kwargs
-    ) -> StorageFile[Stream]:
+    ) -> StorageFile[IO[bytes]]:
         client = self._get_container_client(container)
         chunk_size = kwargs.pop('chunk_size', None)
         if chunk_size and validate and chunk_size > 4 * 1024 * 1024:
@@ -545,12 +661,12 @@ class CloudMachineStorage(CloudMachineClientlet):
 
         request_builder = functools.partial(
             build_download_blob_request,
-            container.endpoint,
+            client.endpoint,
             filename,
             kwargs
         )
-        request_start = 0 if range is None else range[0]
-        request_end = chunk_size if range is None or range[1] is None or range[1] > chunk_size else range[1]
+        request_start = 0 if content_range is None else content_range[0]
+        request_end = chunk_size if content_range is None or content_range[1] is None or content_range[1] > chunk_size else content_range[1]
         range_header = f'bytes={request_start}-{request_end}'
         request = request_builder(range_header)
         response, response_start, response_end, filelength = _download(request, **kwargs)
@@ -560,22 +676,22 @@ class CloudMachineStorage(CloudMachineClientlet):
             response=response
         )
         downloaded = response_end - response_start
-        if range:
-            if range[1]:
-                expected_length = range[1] - range[0]
+        if content_range:
+            if content_range[1]:
+                expected_length = content_range[1] - content_range[0]
             else:
-                expected_length = filelength - range[0]
+                expected_length = filelength - content_range[0]
         else:
             expected_length = filelength
         if downloaded < expected_length:
-            download_end = filelength if range is None or range[1] is None else range[1]
+            download_end = filelength if content_range is None or content_range[1] is None else content_range[1]
             chunk_iter = range(response_end + 1, download_end, chunk_size)
             request_gen = (request_builder(f'bytes={r}-{r + chunk_size}') for r in chunk_iter)
             response_gen = (_download(r, **kwargs) for r in request_gen)
             stream = Stream(
                 content_length=expected_length,
                 content_range=f'bytes {request_start}-{download_end}/{filelength}',
-                first_chunk=stream,
+                first_chunk=first_chunk,
                 next_chunks=response_gen
             )
         else:
@@ -591,13 +707,14 @@ class CloudMachineStorage(CloudMachineClientlet):
             last_modified = response.headers['Last-Modified'],
             etag = response.headers['ETag'],
             content_type = response.headers['Content-Type'],
-            content_encoding = response.headers['Content-Encoding'],
-            content_language = response.headers['Content-Language'],
-            content_disposition = response.headers['Content-Disposition'],
-            cache_control = response.headers['Cache-Control'],
+            content_encoding = response.headers.get('Content-Encoding'),
+            content_language = response.headers.get('Content-Language'),
+            content_disposition = response.headers.get('Content-Disposition'),
+            cache_control = response.headers.get('Cache-Control'),
             metadata = deserialize_metadata_header(response.headers),
             responsedata=response.headers,
-            content=stream
+            content=stream,
+            endpoint=urljoin(client.endpoint, quote(filename))
         )
     @overload
     def download(
@@ -612,7 +729,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             chunk_size: int = _DEFAULT_CHUNK_SIZE,
             wait: Literal[True] = True,
             **kwargs
-    ) -> StorageFile[Stream]:
+    ) -> StorageFile[IO[bytes]]:
         ...
     @overload
     def download(
@@ -627,7 +744,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             chunk_size: int = _DEFAULT_CHUNK_SIZE,
             wait: Literal[False],
             **kwargs
-    ) -> Future[StorageFile[Stream]]:
+    ) -> Future[StorageFile[IO[bytes]]]:
         ...
     def download(
             self,
@@ -640,11 +757,16 @@ class CloudMachineStorage(CloudMachineClientlet):
             validate: bool = False,
             wait: bool = True,
             **kwargs
-    ) -> Union[StorageFile[Stream], Future[StorageFile[Stream]]]:
+    ) -> Union[StorageFile[IO[bytes]], Future[StorageFile[IO[bytes]]]]:
+        # Remove page number from path, filename-1.txt -> filename.txt
+        # This shouldn't typically be necessary as browsers don't send hash fragments to servers
+        if filename.find("#page=") > 0:
+            path_parts = filename.rsplit("#page=", 1)
+            filename = path_parts[0]
         if wait:
             return self._download(
                 filename=filename,
-                range=range,
+                content_range=range,
                 container=container,
                 condition=condition,
                 etag=etag,
@@ -654,7 +776,7 @@ class CloudMachineStorage(CloudMachineClientlet):
         return self._executor.submit(
             self._download,
             filename=filename,
-            range=range,
+            content_range=range,
             container=container,
             condition=condition,
             etag=etag,
@@ -836,7 +958,7 @@ def build_delete_blob_request(
         _headers["If-None-Match"] = if_none_match
     if if_tags is not None:
         _headers["x-ms-if-tags"] = if_tags
-    if version is not None:
+    if version:
         _headers["x-ms-version"] = version
     _headers["Accept"] = accept
 
@@ -868,11 +990,11 @@ def build_download_blob_request(
     if_match: Optional[str] = kwargs.pop("if_match", None)
     if_none_match: Optional[str] = kwargs.pop("if_none_match", None)
     if_tags: Optional[str] = kwargs.pop("if_tags", None)
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: str = kwargs.pop("version")
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
+    _url = kwargs.pop("template_url", "{url}/{blob}")
     path_format_arguments = {
         "url": url,
         "blob": quote(blob),
@@ -1094,3 +1216,38 @@ def build_list_blob_page_request(
     _headers["Accept"] = str(accept)
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_user_delegation_key_request(
+    url: str, *, content: Any, servicetimeout: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
+    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("servicetimeout", servicetimeout, "int", minimum=0)
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)

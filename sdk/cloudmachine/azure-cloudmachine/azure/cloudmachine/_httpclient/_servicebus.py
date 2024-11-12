@@ -53,7 +53,7 @@ class LockedMessage(Message):
 
 
 class CloudMachineServiceBus(CloudMachineClientlet):
-    _id: Literal["ServiceBus"] = "ServiceBus"
+    _id: Literal["ServiceBus"] = "servicebus"
     default_topic_name: str = "cm_default_topic"
     default_subscription_name: str = "cm_default_subscription"
 
@@ -76,6 +76,8 @@ class CloudMachineServiceBus(CloudMachineClientlet):
             try:
                 self._send_request(request, **kwargs)
             except HttpResponseError as e:
+                if e.status_code == 404:
+                    return
                 # log renewal exception
                 print("Lock renew failed", e)
                 return

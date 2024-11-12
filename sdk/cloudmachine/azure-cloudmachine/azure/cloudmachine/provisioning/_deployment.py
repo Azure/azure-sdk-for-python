@@ -14,9 +14,15 @@ import subprocess
 from typing import Dict, Literal, Optional, List, Union
 
 from .._version import VERSION
+from ..events import cloudmachine_events
+from .._resources import resources
+from .._resources._client_settings import ClientSettings
 from ._resource import (
+    _UNSET,
+    ExistingResource,
     CloudMachineId,
     ResourceGroup,
+    ResourceName,
     SubscriptionResourceId,
     PrincipalId,
     ResourceId,
@@ -25,14 +31,14 @@ from ._resource import (
 )
 from ._roles import RoleAssignment, RoleAssignmentProperties
 from ._identity import ManagedIdentity, UserAssignedIdentities
-from ._servicebus import (
+from .servicebus import (
     ServiceBusNamespace,
     ServiceBusRoleAssignments,
     AuthorizationRule,
     ServiceBusTopic,
     TopicSubsciprtion,
 )
-from ._storage import (
+from .storage import (
     Container,
     StorageAccount,
     BlobServices,
@@ -50,8 +56,8 @@ from ._appservice import (
     AppServiceSite,
     BasicPublishingCredentialsPolicy,
 )
-from ._openai import CognitiveServices, OpenAIRoleAssignments, AiDeployment
-from .._httpclient._eventlistener import cloudmachine_events
+from ._openai import CognitiveServices, AIRoleAssignments, AiDeployment
+from ._search import SearchServices, SearchRoleAssignments
 
 
 def azd_env_name(name: str, host: str, label: Optional[str]) -> str:
@@ -59,17 +65,12 @@ def azd_env_name(name: str, host: str, label: Optional[str]) -> str:
     return f'cloudmachine-{name}' + (f'-{suffix}' if suffix else '')
 
 
-def run_project(deployment: 'CloudMachineDeployment', label: Optional[str], localrun_args: List[str]) -> None:
+def provision_project(deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
     project_name = azd_env_name(deployment.name, deployment.host, label)
     args = ['azd', 'provision', '-e', project_name]
     print("Running: ", args)
     output = subprocess.run(args)
     print("Output: ", output)
-    try:
-        print("Running: ", localrun_args)
-        output = subprocess.run(localrun_args)
-    except KeyboardInterrupt:
-        return
 
 
 def shutdown_project(deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
@@ -169,9 +170,12 @@ class CloudMachineDeployment:
     location: Optional[str]
     host: Union[Literal['local'], AppServicePlan]
     identity: ManagedIdentity
-    storage: Optional[StorageAccount] = None
-    messaging: Optional[ServiceBusNamespace] = None
-    ai: Optional[CognitiveServices] = None
+    storage: Optional[ClientSettings]
+    messaging: Optional[ClientSettings]
+    data: Optional[ClientSettings]
+    openai: Optional[ClientSettings]
+    documentai: Optional[ClientSettings]
+    search: Optional[ClientSettings]
     app_settings: Dict[str, str]
 
     def __init__(
@@ -181,9 +185,11 @@ class CloudMachineDeployment:
         location: Optional[str] = None,
         host: Literal['local', 'appservice', 'containerapp'] = 'local',
         events: bool = True,
-        messaging: bool = True,
-        storage: bool = True,
-        openai: bool = False,
+        messaging: Union[bool, ServiceBusNamespace] = True,
+        storage: Union[bool, StorageAccount] = True,
+        openai: Union[bool, CognitiveServices] = False,
+        documentai: Union[bool, CognitiveServices] = False,
+        search: Union[bool, ClientSettings] = False,
         monitoring: bool = True,
         vault: bool = True,
 
@@ -201,17 +207,71 @@ class CloudMachineDeployment:
         )
         self.identity = ManagedIdentity()
         self._core.add(self.identity)
+        self.storage = None
+        self.data = None
         if storage:
-            self.storage = self._define_storage()
-            self._core.add(self.storage)
+            self._storage_resource = self._define_storage(storage)
+            self._core.add(self._storage_resource)
+            if self._storage_resource.tables:
+                self.data = resources.get('storage:table')
+            self.storage = resources.get('storage:blob')['cloudmachine']
+            self.storage.set('container_name', 'default')
+        self.messaging = None
         if messaging:
-            self.messaging = self._define_messaging()
-            self._core.add(self.messaging)
+            if isinstance(messaging, ClientSettings):
+                self.messaging = messaging
+                if 'default_topic' not in self.messaging:
+                    self.messaging.set('default_topic', 'cm_default_topic')
+                if 'default_subscription' not in self.messaging:
+                    self.messaging.set('default_subscription', 'cm_default_subscription')
+            else:
+                self._messaging_resource = self._define_messaging()
+                self._core.add(self._messaging_resource)
+                self.messaging = resources.get('servicebus')['cloudmachine']
+                self.messaging.set('default_topic', 'cm_default_topic')
+                self.messaging.set('default_subscription', 'cm_default_subscription')
         if events and messaging:
             self._core.add(self._define_events())
+        self.openai = None
         if openai:
-            self.ai = self._define_ai()
-            self._core.add(self.ai)
+            if isinstance(openai, ClientSettings):
+                self.openai = openai
+            else:
+                self._openai_resource = self._define_ai()
+                self._core.add(self._openai_resource)
+                self.openai = resources.get('openai')['cloudmachine']
+                self.openai.set('embeddings_model', 'embedding')
+                self.openai.set('embeddings_deployment', 'text-embedding-ada-002')
+                self.openai.set('embeddings_dimensions', 1536)
+                self.openai.set('chat_model', 'gpt-35-turbo')
+                self.openai.set('chat_deployment', 'chat')
+        self.documentai = None
+        if documentai:
+            if isinstance(documentai, ClientSettings):
+                self.documentai = documentai
+                if not 'default_model' in self.documentai:
+                    self.documentai.set('default_model', 'prebuilt-layout')
+            else:
+                self._docintelli_resource = self._define_docintelligence()
+                self._core.add(self._docintelli_resource)
+                self.documentai = resources.get('documentai')['cloudmachine']
+                self.documentai.set('default_model', 'prebuilt-layout')
+        self.search = None
+        if search:
+            if isinstance(search, ClientSettings):
+                self.search = search
+                if not 'document_embedding_index' in self.search:
+                    self.search.set('document_embedding_index', 'documentembeddingindex')
+            else:
+                self._search_resource = self._define_search()
+                self._core.add(self._search_resource)
+                self.search = resources.get('search')['cloudmachine']
+                self.search.set('document_embedding_index', 'documentembeddingindex')
+                self.search.set('semantic_config', 'default')
+                self.search.set('semantic_ranker', 'free')
+                self.search.set('analyzer_name', 'en.microsoft')
+                self.search.set('query_speller', 'lexicon')
+                self.search.set('query_language', 'en-us')
         self.host = self._define_host(host)
 
     def _define_host(self, host: str) -> Union[str, AppServicePlan]:
@@ -375,47 +435,59 @@ class CloudMachineDeployment:
             ]
         )
 
-    def _define_storage(self) -> StorageAccount:
+    def _define_storage(self, storage: Union[bool, StorageAccount]) -> StorageAccount:
+        sku = {'name': 'Standard_LRS'}
+        containers = [Container(name="default")]
+        blobs = BlobServices()
+        tables = TableServices()
+        properties = {
+            'accessTier': 'Hot',
+            'allowBlobPublicAccess': False,
+            'isHnsEnabled': True
+        }
+        identity = {
+            'type': 'UserAssigned',
+            'userAssignedIdentities': UserAssignedIdentities((self.identity, {}))
+        }
+        roles = [
+            RoleAssignment(
+                properties={
+                    'roleDefinitionId': SubscriptionResourceId(
+                        'Microsoft.Authorization/roleDefinitions',
+                        StorageRoleAssignments.BLOB_DATA_CONTRIBUTOR
+                    ),
+                    'principalId': PrincipalId(),
+                    'principalType': 'User'
+                }
+            ),
+            RoleAssignment(
+                properties={
+                    'roleDefinitionId': SubscriptionResourceId(
+                        'Microsoft.Authorization/roleDefinitions',
+                        StorageRoleAssignments.TABLE_DATA_CONTRIBUTOR
+                    ),
+                    'principalId': PrincipalId(),
+                    'principalType': 'User'
+                }
+            ),
+        ]
+        if isinstance(storage, StorageAccount):
+            sku = storage.sku if storage.sku is not _UNSET else sku
+            blobs = storage.blobs if storage.blobs is not None else blobs
+            blobs.containers = blobs.containers if blobs.containers else containers
+            tables = storage.tables if storage.tables is not None else tables
+            if storage.properties is not _UNSET:
+                properties.update(storage.properties)
+            identity = storage.identity if storage.identity is not _UNSET else identity
+            roles = storage.roles if storage.roles else roles
         return StorageAccount(
             kind='StorageV2',
-            sku={'name': 'Standard_LRS'},
-            blobs=BlobServices(
-                containers=[
-                    Container(name="default")
-                ]
-            ),
-            tables=TableServices(),
-            properties={
-                'accessTier': 'Hot',
-                'allowBlobPublicAccess': False,
-                'isHnsEnabled': True
-            },
-            identity={
-                'type': 'UserAssigned',
-                'userAssignedIdentities': UserAssignedIdentities((self.identity, {}))
-            },
-            roles=[
-                RoleAssignment(
-                    properties={
-                        'roleDefinitionId': SubscriptionResourceId(
-                            'Microsoft.Authorization/roleDefinitions',
-                            StorageRoleAssignments.BLOB_DATA_CONTRIBUTOR
-                        ),
-                        'principal_id': PrincipalId(),
-                        'principalType': 'User'
-                    }
-                ),
-                RoleAssignment(
-                    properties={
-                        'roleDefinitionId': SubscriptionResourceId(
-                            'Microsoft.Authorization/roleDefinitions',
-                            StorageRoleAssignments.TABLE_DATA_CONTRIBUTOR
-                        ),
-                        'principalId': PrincipalId(),
-                        'principalType': 'User'
-                    }
-                )
-            ]
+            sku=sku,
+            blobs=blobs,
+            tables=tables,
+            properties=properties,
+            identity=identity,
+            roles=roles
         )
 
     def _define_events(self) -> ServiceBusNamespace:
@@ -425,7 +497,7 @@ class CloudMachineDeployment:
                 'userAssignedIdentities': UserAssignedIdentities((self.identity, {}))
             },
             properties={
-                'source': ResourceId(self.storage),
+                'source': ResourceId(self._storage_resource),
                 'topicType': 'Microsoft.Storage.StorageAccounts'
             },
             subscriptions=[
@@ -437,8 +509,9 @@ class CloudMachineDeployment:
                                 'userAssignedIdentity': ResourceId(self.identity)
                             },
                             'destination': {
+                                'endpointType': 'ServiceBusTopic',
                                 'properties': {
-                                    'resourceId': ResourceId(self.messaging.topics[0])
+                                    'resourceId': ResourceId(self._messaging_resource.topics[0])
                                 }
                             }
                         },
@@ -452,17 +525,19 @@ class CloudMachineDeployment:
                             'eventTimeToLiveInMinutes': 1440
                         }
                     },
-                    dependson=[self.messaging.roles[1]]
+                    dependson=[self._messaging_resource.roles[1]]
                 )
             ]
         )
 
     def _define_ai(self) -> CognitiveServices:
         return CognitiveServices(
+            name=ResourceName("openai"),
             kind='OpenAI',
             properties={
                 'customSubDomainName': CloudMachineId(),
                 'publicNetworkAccess': 'Enabled',
+                'disableLocalAuth': True
             },
             sku={
                 'name': 'S0'
@@ -472,25 +547,132 @@ class CloudMachineDeployment:
                     properties={
                         'roleDefinitionId': SubscriptionResourceId(
                             'Microsoft.Authorization/roleDefinitions',
-                            OpenAIRoleAssignments.CONTRIBUTOR
+                            AIRoleAssignments.OPENAI_CONTRIBUTOR
                         ),
-                        'principal_id': PrincipalId(),
+                        'principalId': PrincipalId(),
                         'principalType': 'User'
+                    }
+                ),
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            AIRoleAssignments.OPENAI_USER
+                        ),
+                        'principalId': PrincipalId(),
+                        'principalType': 'ServicePrincipal'
                     }
                 )
             ],
             deployments=[
                 AiDeployment(
+                    name='chat',
                     properties={
                         'model': {
                             'format': 'OpenAI',
                             'name': 'gpt-35-turbo',
-                            'version': '0125'
+                            'version': '0125'  # 0613?
                         }
+                    },
+                    sku={
+                        'name': 'Standard',
+                        'capacity': 30
+                    }
+                ),
+                AiDeployment(  # dimensions 1536
+                    name='embedding',
+                    properties={
+                        'model': {
+                            'format': 'OpenAI',
+                            'name': 'text-embedding-ada-002',
+                            'version': '2'
+                        }
+                    },
+                    sku={
+                        'name': 'Standard',
+                        'capacity': 30
                     }
                 )
             ]
 
+        )
+
+    def _define_docintelligence(self) -> CognitiveServices:
+        return CognitiveServices(
+            name=ResourceName('docsai'),
+            kind='FormRecognizer',
+            properties={
+                'customSubDomainName': CloudMachineId(),
+                'publicNetworkAccess': 'Enabled',
+                'disableLocalAuth': True
+            },
+            sku={
+                'name': 'S0'
+            },
+            roles=[
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            AIRoleAssignments.COGNITIVE_SERVICES_USER
+                        ),
+                        'principalId': PrincipalId(),
+                        'principalType': 'User'
+                    }
+                )
+            ],
+            deployments=[
+            ]
+
+        )
+    
+    def _define_search(self) -> SearchServices:
+        return SearchServices(
+            sku={
+                'name': 'basic'
+            },
+            properties={
+                'disableLocalAuth': True,
+                'publicNetworkAccess': 'enabled',
+                'semanticSearch': 'free',
+                'encryptionWithCmk': {
+                    'enforcement': 'Unspecified'
+                },
+                'replicaCount': 1,
+                'hostingMode': 'default'
+            },
+            roles=[
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            SearchRoleAssignments.SERVICE_CONTRIBUTOR
+                        ),
+                        'principalId': PrincipalId(),
+                        'principalType': 'User'
+                    }
+                ),
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            SearchRoleAssignments.INDEX_DATA_CONTRIBUTOR
+                        ),
+                        'principalId': PrincipalId(),
+                        'principalType': 'User'
+                    }
+                ),
+                RoleAssignment(
+                    properties={
+                        'roleDefinitionId': SubscriptionResourceId(
+                            'Microsoft.Authorization/roleDefinitions',
+                            SearchRoleAssignments.INDEX_DATA_READER
+                        ),
+                        'principalId': PrincipalId(),
+                        'principalType': 'User'
+                    }
+                )
+            ]
         )
     
     def write(self, root_path: str):
@@ -530,7 +712,11 @@ class CloudMachineDeployment:
             main.write("}\n\n")
             for output in outputs.keys():
                 main.write(f"output AZURE_CLOUDMACHINE_{generate_envvar(output)} string = cloudmachine.outputs.{output}\n")
-
+            # for resource in self.ai:
+            #     if isinstance(resource, ExistingResource):
+            #         for output, value in resource.write().items():
+            #             main.write(f"output AZURE_CLOUDMACHINE_{generate_envvar(output)} string = '{value}'\n")
+            main.write(f"output AZURE_CLOUDMACHINE_RESOURCE_GROUP string = {self._core._symbolicname}.name")
 
         params_json = os.path.join(infra_dir, "main.parameters.json")
         with open(params_json, 'w') as params:

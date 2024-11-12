@@ -23,6 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._resources import resources, aresources, Resources, AsyncResources
+from ._resources import resources, Resources
 
-__all__ = ['resources', 'aresources', Resources, AsyncResources]
+__all__ = ['resources', 'Resources']

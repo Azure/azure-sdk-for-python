@@ -204,7 +204,7 @@ class ServiceBusNamespace(LocatedResource):
             rule.parent = self
             self._outputs.update(rule.write(bicep))
         for role in self.roles:
-            role.name = GuidName(self, PrincipalId(), role.properties.role_definition_id)
+            role.name = GuidName(self, PrincipalId(), role.properties['roleDefinitionId'])
             role.scope = self
             self._outputs.update(role.write(bicep))
         for topic in self.topics:

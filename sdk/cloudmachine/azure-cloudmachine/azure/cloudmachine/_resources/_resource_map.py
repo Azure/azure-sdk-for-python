@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import Dict, Tuple, Union, Type
+from typing import Dict, Tuple, Union, Type, List, Any
 from azure.core.utils import case_insensitive_dict
 from azure.core import AzureClouds
 
@@ -70,21 +70,37 @@ except ImportError:
 
 try:
     from openai import AzureOpenAI, AsyncAzureOpenAI
+    from openai.resources import Embeddings, Chat
 except ImportError:
-    AzureOpenAI = 'openai.AzureOpenAI'
-    AsyncAzureOpenAI = 'openai.AsyncAzureOpenAI'
+    AzureOpenAI = Any
+    AsyncAzureOpenAI = Any
+
+try:
+    from azure.search.documents import SearchClient
+    from azure.search.documents.indexes import SearchIndexClient
+except ImportError:
+    SearchClient = Any
+    SearchIndexClient = Any
+
+try:
+    from azure.ai.documentintelligence import DocumentIntelligenceClient
+except ImportError:
+    DocumentIntelligenceClient = Any
 
 
-RESOURCE_SDK_MAP: Dict[str, Tuple[str, Union[str, Type]]] = case_insensitive_dict({
-    'storage': ('storage', BlobServiceClient),
-    'blobstorage': ('blob', BlobServiceClient),
-    'blobcontainer': ('container', ContainerClient),
-    'tablestorage': ('table', TableServiceClient),
-    'keyvault': ('keyvault', None),
-    'keyvaultsecrets': ('secrets', SecretClient),
-    'keyvaultkeys': ('keys', KeyClient),
-    'servicebus': ('service_bus', ServiceBusClient),
-    'openai': ('openai', AzureOpenAI)
+RESOURCE_SDK_MAP: Dict[List[str], Tuple[str, Union[str, Type]]] = case_insensitive_dict({
+    'storage': (['storage', 'blob'], BlobServiceClient),
+    'storage:blob': (['storage', 'blob'], BlobServiceClient),
+    'storage:blob:container': (['storage', 'blob', 'container'], ContainerClient),
+    'storage:table': (['table'], TableServiceClient),
+    'keyvault': (['keyvault'], None),
+    'keyvault:secrets': (['secrets'], SecretClient),
+    'keyvault:keys': (['keys'], KeyClient),
+    'servicebus': (['service_bus'], ServiceBusClient),
+    'openai': (['openai', 'open_ai'], AzureOpenAI),
+    'search': (['search'], SearchIndexClient),
+    'search:index': (['search', 'search_index'], SearchClient),
+    'documentai': (['document_intelligence', 'form_recognizer'], DocumentIntelligenceClient),
 })
 
 RESOURCE_SDK_ASYNC_MAP: Dict[str, Tuple[str, str]] = case_insensitive_dict({
@@ -103,13 +119,13 @@ AUDIENCES: Dict[str, Dict[AzureClouds, str]] = case_insensitive_dict({
     'storage': {
         AzureClouds.AZURE_PUBLIC_CLOUD: "https://storage.azure.com/.default",
     },
-    'blobstorage': {
+    'storage:blob': {
         AzureClouds.AZURE_PUBLIC_CLOUD: "https://storage.azure.com/.default",
     },
-    'blobcontainer': {
+    'storage:blob:container': {
         AzureClouds.AZURE_PUBLIC_CLOUD: "https://storage.azure.com/.default",
     },
-    'tablestorage': {
+    'storage:table': {
         AzureClouds.AZURE_PUBLIC_CLOUD: "https://storage.azure.com/.default",
     },
     'servicebus': {
@@ -118,4 +134,32 @@ AUDIENCES: Dict[str, Dict[AzureClouds, str]] = case_insensitive_dict({
     'openai': {
         AzureClouds.AZURE_PUBLIC_CLOUD: "https://cognitiveservices.azure.com/.default",
     },
+    'search': {
+        AzureClouds.AZURE_PUBLIC_CLOUD: "https://search.azure.com/.default",
+    },
+    'search:index': {
+        AzureClouds.AZURE_PUBLIC_CLOUD: "https://search.azure.com/.default",
+    },
+    'documentai': {
+        AzureClouds.AZURE_PUBLIC_CLOUD: "https://cognitiveservices.azure.com/.default",
+    }
 })
+
+RESOURCE_IDS: Dict[str, str] = case_insensitive_dict({
+    'storage': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Storage/storageAccounts/{name}',
+    'storage:blob': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Storage/storageAccounts/{name}',
+    'storage:table': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Storage/storageAccounts/{name}',
+    'servicebus': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.ServiceBus/namespaces/{name}',
+    'openai': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.CognitiveServices/accounts/{name}',
+    'search': '"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Search/searchServices/{name}',
+    'documentai': '/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.CognitiveServices/accounts/{name}'
+})
+
+DEFAULT_API_VERSIONS = {
+    "storage:table": "2019-02-02",
+    "storage:blob": "2020-12-06", # "2025-01-05"
+    "storage": "2020-12-06",
+    "servicebus": "2021-05",
+    "openai": "2023-05-15"
+}
+

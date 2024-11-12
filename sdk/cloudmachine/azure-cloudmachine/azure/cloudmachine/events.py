@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._httpclient._eventlistener import cloudmachine_events
+from blinker import Namespace
+
+
+cloudmachine_events = Namespace()
 
 FILE_UPLOADED = cloudmachine_events.signal('Microsoft.Storage.BlobCreated')
 FILE_DELETED = cloudmachine_events.signal('Microsoft.Storage.BlobDeleted')

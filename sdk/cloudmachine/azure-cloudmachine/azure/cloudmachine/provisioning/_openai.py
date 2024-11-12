@@ -1,38 +1,3 @@
-"""
-esource openai_CognitiveServicesOpenAIContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(openai.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a001fd3d-188f-4b5d-821b-7da978bf7442'))
-  properties: {
-    principalId: principalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a001fd3d-188f-4b5d-821b-7da978bf7442')
-    principalType: 'User'
-  }
-  scope: openai
-}
-
-resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: 'cmeefe07f94c22421'
-  location: location
-  kind: 'OpenAI'
-  properties: {
-    customSubDomainName: 'cmeefe07f94c22421'
-    publicNetworkAccess: 'Enabled'
-  }
-  sku: {
-    name: 'S0'
-  }
-}
-
-resource openai_deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  name: 'cmeefe07f94c22421'
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: 'gpt-35-turbo'
-      version: '0125'
-    }
-  }
-  parent: openai
-}"""
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -65,9 +30,10 @@ from ._resource import (
 )
 
 
-class OpenAIRoleAssignments(Enum):
-    USER = "5e0bd9bd-7b93-4f28-af87-19fc36ad61bd"
-    CONTRIBUTOR = "a001fd3d-188f-4b5d-821b-7da978bf7442"
+class AIRoleAssignments(Enum):
+    OPENAI_USER = "5e0bd9bd-7b93-4f28-af87-19fc36ad61bd"
+    OPENAI_CONTRIBUTOR = "a001fd3d-188f-4b5d-821b-7da978bf7442"
+    COGNITIVE_SERVICES_USER = "a97b65f3-24c7-4388-baec-2e87135dc908"
 
 class Identity(TypedDict, total=False):
     # Required
@@ -75,17 +41,54 @@ class Identity(TypedDict, total=False):
     userAssignedIdentities: UserAssignedIdentities
 
 
+class Sku(TypedDict, total=False):
+    capacity: int
+    family: str
+    # Required
+    name: str
+    size: str
+    tier: Literal['Basic', 'Enterprise', 'Free', 'Premium', 'Standard']
+
+
+class DeploymentScaleSettings(TypedDict, total=False):
+    capacity: int
+    scaleType: Literal['Manual', 'Standard']
+
+
+class DeploymentModel(TypedDict, total=False):
+    format: str
+    name: str
+    source: str
+    version: str
+
+
+class DeploymentProperties(TypedDict, total=False):
+    model: DeploymentModel
+    raiPolicyName: str
+    scaleSettings: DeploymentScaleSettings
+    versionUpgradeOption: Literal['NoAutoUpgrade', 'OnceCurrentVersionExpired', 'OnceNewDefaultVersionAvailable']
+
+
 @dataclass(kw_only=True)
 class AiDeployment(Resource):
     _resource: ClassVar[Literal['Microsoft.CognitiveServices/accounts/deployments']] = 'Microsoft.CognitiveServices/accounts/deployments'
     _version: ClassVar[str] = '2023-05-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("aidep"), init=False, repr=False)
-    properties: Dict[str, Any] = field(metadata={'rest': 'properties'})
-    sku: Optional[Dict[str, Any]] = field(default=_UNSET, metadata={'rest': 'sku'})
+    name: str = field(metadata={'rest': 'name'})
+    properties: DeploymentProperties = field(metadata={'rest': 'properties'})
+    sku: Optional[Sku] = field(default=_UNSET, metadata={'rest': 'sku'})
+
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
+        _serialize_resource(bicep, self)
+        output_prefix = self.parent.kind + self.name.title()
+        self._outputs[output_prefix + "Deployment"] = Output(f"{self._symbolicname}.name")
+        self._outputs[output_prefix + "Model"] = Output(f"{self._symbolicname}.properties.model.name")
+        return self._outputs
 
 
 @dataclass(kw_only=True)
 class CognitiveServices(LocatedResource):
+    name: BicepStr = field(metadata={'rest': 'name'})
     kind: str = field(metadata={'rest': 'kind'})
     properties: Dict[str, Any] = field(metadata={'rest': 'properties'})
     sku: Dict[str, Any] = field(metadata={'rest': 'sku'})
@@ -103,17 +106,17 @@ class CognitiveServices(LocatedResource):
             self._outputs.update(deployment.write(bicep))
 
         for role in self.roles:
-            role.name = GuidName(self, PrincipalId(), role.properties.role_definition_id)
+            role.name = GuidName(self, PrincipalId(), role.properties['roleDefinitionId'])
             role.scope = self
             self._outputs.update(role.write(bicep))
 
         if self._fname:
             output_prefix = self._fname.title()
         else:
-            output_prefix = ""
-        output_prefix = "Ai" + output_prefix
-        self._outputs[output_prefix + "VaultEndpoint"] = Output(f"{self._symbolicname}.properties.vaultUri")
+            output_prefix = self.kind
+        self._outputs[output_prefix + "Endpoint"] = Output(f"{self._symbolicname}.properties.endpoint")
         self._outputs[output_prefix + "Name"] = Output(f"{self._symbolicname}.name")
+        self._outputs[output_prefix + "Id"] = Output(f"{self._symbolicname}.id")
         for key, value in self._outputs.items():
             bicep.write(f"output {key} string = {resolve_value(value)}\n")
         bicep.write("\n")

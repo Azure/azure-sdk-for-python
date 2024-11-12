@@ -4,7 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._deployment import CloudMachineDeployment
+from ._deployment import (
+    CloudMachineDeployment,
+    init_project,
+    provision_project,
+    deploy_project,
+    shutdown_project
+)
 
 __all__ = [
     'CloudMachineDeployment'

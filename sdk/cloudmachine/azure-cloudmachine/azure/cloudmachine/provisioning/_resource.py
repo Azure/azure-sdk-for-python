@@ -104,8 +104,11 @@ class UniqueName(BicepResolver):
 
 
 class ResourceName(BicepResolver):
+    def __init__(self, suffix: Optional[str] = None):
+        self._suffix = suffix or ""
+
     def resolve(self):
-        return f"'{resource_prefix}${{cloudmachineId}}'"
+        return f"'{resource_prefix}${{cloudmachineId}}{self._suffix}'"
 
 
 class GuidName(BicepResolver):
@@ -320,19 +323,24 @@ class ResourceGroup(LocatedResource):
     parent: ClassVar[None] = None
     scope: ClassVar[None] = None
     name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
-    resources: Dict[str, 'LocatedResource'] = field(
+    resources: Dict[str, List['LocatedResource']] = field(
         default_factory=dict, init=False, repr=False, metadata={'rest': _SKIP}
     )
     _symbolicname: str = field(default_factory=lambda: generate_symbol("resourceGroup"), init=False, repr=False)
 
     def add(self, resource: 'Resource') -> None:
-        self.resources[resource._resource] = resource  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        try:
+            self.resources[resource._resource].append(resource)
+        except KeyError:
+            self.resources[resource._resource] = [resource]
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         bicep.write("param location string = resourceGroup().location\n")
         bicep.write("param principalId string\n")
         bicep.write("param cloudmachineId string\n")
         bicep.write("param tags object\n\n")
-        for resource in self.resources.values():
-            self._outputs.update(resource.write(bicep))
+        for resources in self.resources.values():
+            for resource in resources:
+                self._outputs.update(resource.write(bicep))
         return self._outputs

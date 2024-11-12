@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 """Provide access to settings for globally used Azure configuration values.
 """
-from importlib import import_module
 from typing import (
     Any,
     Dict,
@@ -33,7 +32,7 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    Union,
+    Callable,
     overload,
     TYPE_CHECKING
 )
@@ -42,9 +41,10 @@ from azure.core.settings import settings as global_settings, Settings
 
 from ._client_settings import (
     ClientSettings,
-    AsyncClientSettings,
+    StorageClientSettings,
+    OpenAiClientSettings,
+    SearchClientSettings,
     SyncClient,
-    AsyncClient,
     CredentialInputTypes,
     TransportInputTypes,
 )
@@ -56,26 +56,41 @@ ClientType = TypeVar('ClientType', bound=SyncClient)
 
 class Resources:
 
-    def __init__(self) -> None:
-        self._resources: Dict[str, ClientSettings] = {}
-
     @overload
-    def get(self, resource: Literal['blobstorage']) -> ClientSettings['BlobServiceClient']:
+    def get(self, resource: Literal['storage:blob']) -> StorageClientSettings[BlobServiceClient]:
         ...
     @overload
-    def get(self, resource: Literal['blobcontainer']) -> ClientSettings['ContainerClient']:
+    def get(self, resource: Literal['storage:blob:container']) -> StorageClientSettings[ContainerClient]:
         ...
     @overload
-    def get(self, resource: Literal['tablestorage']) -> ClientSettings['TableServiceClient']:
+    def get(self, resource: Literal['storage:table']) -> ClientSettings[TableServiceClient]:
         ...
     @overload
-    def get(self, resource: Literal['servicebus']) -> ClientSettings['ServiceBusClient']:
+    def get(self, resource: Literal['servicebus']) -> ClientSettings[ServiceBusClient]:
         ...
     @overload
-    def get(self, resource: Literal['openai']) -> ClientSettings['AzureOpenAI']:
+    def get(self, resource: Literal['openai']) -> OpenAiClientSettings[AzureOpenAI]:
         ...
     @overload
-    def get(self, resoruce: str, *, cls: Type[ClientType]) -> ClientSettings[ClientType]:
+    def get(self, resource: Literal['documentai']) -> ClientSettings[DocumentIntelligenceClient]:
+        ...
+    @overload
+    def get(self, resource: Literal['search']) -> SearchClientSettings[SearchIndexClient]:
+        ...
+    @overload
+    def get(self, resource: Literal['search:index']) -> SearchClientSettings[SearchClient]:
+        ...
+    @overload
+    def get(self, resource: Literal['keyvault:keys']) -> ClientSettings[KeyClient]:
+        ...
+    @overload
+    def get(self, resource: Literal['keyvault:secrets']) -> ClientSettings[SecretClient]:
+        ...
+    @overload
+    def get(self, resource: str, *, cls: Callable[[], ClientType]) -> ClientSettings[ClientType]:
+        ...
+    @overload
+    def get(self, resource: str) -> ClientSettings:
         ...
     def get(
             self,
@@ -88,19 +103,6 @@ class Resources:
             client_options: Optional[Dict[str, Any]] = None,
     ) -> ClientSettings:
         try:
-            resource_settings = self._resources[resource]
-            if cls:
-                resource_settings.cls.set_value(cls)
-            if transport:
-                resource_settings.transport.set_value(transport)
-            if api_version:
-                resource_settings.api_version.set_value(api_version)
-            if client_options:
-                resource_settings.client_options.set_value(client_options)
-            return resource_settings
-        except KeyError:
-            pass
-        try:
             new_resource_config = RESOURCE_SDK_MAP[resource]
         except KeyError as e:
             raise ValueError(f"Resource type '{resource}' has no matching SDK client.") from e
@@ -109,7 +111,7 @@ class Resources:
         if not cls and not new_resource_config[1]:
             raise ValueError(f"No default client type configured for '{resource}'. Please provide 'cls'.")
         new_resource = ClientSettings(
-            env_prefix="AZURE_" + new_resource_config[0].upper(),
+            env_prefix=new_resource_config[0],
             cls=cls or new_resource_config[1],
             transport=transport,
             api_version=api_version,
@@ -117,50 +119,14 @@ class Resources:
             resource=resource,
             client_options=client_options
         )
-        self._resources[resource] = new_resource
         return new_resource
 
 
-class AsyncResources:
-
-    def __init__(self) -> None:
-        self._resources: Dict[str, AsyncClientSettings] = {}
-
-    def get(self, resource: str) -> AsyncClientSettings:
-        try:
-            return self._resources[resource]
-        except KeyError:
-            pass
-        try:
-            new_resource_config = _RESOURCE_SDK_ASYNC_MAP[resource]
-        except KeyError as e:
-            raise ValueError(f"Unexpected resource type: {resource}") from e
-        new_resource = ClientSettings(
-            globals=self,
-            env_prefix="AZURE_" + new_resource_config[0].upper(),
-            cls=new_resource_config[1]
-        )
-        self._resources[resource] = new_resource
-        return new_resource
-
-    def dump(self) -> Dict[str, Any]:
-        output = {}
-        for key, value in self._resources.items():
-            output[key] = value.dump()
-        return output
-
-    def load(self, intput: Dict[str, Any]) -> None:
-        raise NotImplementedError()
 
 resources: Resources = Resources()
 """The resources unique instance.
 
 :type resources: Resources
-"""
-aresources: AsyncResources = AsyncResources()
-"""The resources unique instance for async configuration.
-
-:type aresources: AsyncResources
 """
 
 __all__ = ('resources', 'Resources')
