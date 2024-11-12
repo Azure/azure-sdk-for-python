@@ -521,9 +521,9 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     try:
         from azure.ai.inference.tracing import AIInferenceInstrumentor  # type: ignore
 
-        instrumentor = AIInferenceInstrumentor()
-        if not instrumentor.is_instrumented():
-            instrumentor.instrument()
+        inference_instrumentor = AIInferenceInstrumentor()
+        if not inference_instrumentor.is_instrumented():
+            inference_instrumentor.instrument()
     except ModuleNotFoundError:
         logger.warning(
             "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
@@ -532,9 +532,9 @@ def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:
     try:
         from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
 
-        instrumentor = AIAgentsInstrumentor()
-        if not instrumentor.is_instrumented():
-            instrumentor.instrument()
+        agents_instrumentor = AIAgentsInstrumentor()
+        if not agents_instrumentor.is_instrumented():
+            agents_instrumentor.instrument()
     except Exception as exc:
         logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
