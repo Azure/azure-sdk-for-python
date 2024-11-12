@@ -575,7 +575,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
-            get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()
+            get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
 
             if not get_workspace_response.properties.application_insights:
                 raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")

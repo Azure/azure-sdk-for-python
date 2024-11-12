@@ -245,7 +245,7 @@ class SASTokenCredential(TokenCredential):
         self._sas_token = ""
         if connection is not None and connection.token_credential is not None:
             sas_credential = cast(SASTokenCredential, connection.token_credential)
-            self._sas_token = sas_credential._sas_token
+            self._sas_token = sas_credential._sas_token  # pylint: disable=protected-access
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
