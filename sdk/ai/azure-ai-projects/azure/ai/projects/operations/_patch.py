@@ -423,13 +423,12 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             # See: https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.ConsoleSpanExporter # pylint: disable=line-too-long
             try:
                 from opentelemetry.sdk._logs.export import ConsoleLogExporter
+
                 return ConsoleLogExporter()
             except ModuleNotFoundError as ex:
                 # since OTel logging is still in beta in Python, we're going to swallow any errors
                 # and just warn about them.
-                logger.warning(
-                    "Failed to configure OpenTelemetry logging.", exc_info=ex
-                )
+                logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
         else:
             raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")

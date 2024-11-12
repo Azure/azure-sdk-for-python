@@ -74,6 +74,7 @@ logger = logging.getLogger(__name__)
 
 StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
 
+
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
     """
     Remove the parameters, non present in class public fields; return shallow copy of a dictionary.

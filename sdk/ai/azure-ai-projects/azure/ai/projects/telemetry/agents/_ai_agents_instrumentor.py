@@ -1645,7 +1645,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             if self.last_run and self.last_run.last_error:
                 self.span.set_status(
                     StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                    self.last_run.last_error.message
+                    self.last_run.last_error.message,
                 )
                 self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
