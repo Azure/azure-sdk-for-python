@@ -10,7 +10,7 @@ from azure.core.polling import LROPoller
 class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
-    def test_create_list(self, **kwargs):
+    def test_list_job_docs_pagination(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         inputPrefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
@@ -29,25 +29,15 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             customizations=JobCustomizationOptions(redaction_format="[{type}]"),
         )
 
-        client.begin_deidentify_documents(jobname, job)
-        jobs = client.list_jobs()
+        lro: LROPoller = client.begin_deidentify_documents(jobname, job)
+        lro.wait(timeout=60)
+        job_documents = client.list_job_documents(job_name=jobname, maxpagesize=2)
 
-        job = None
-        jobsToLookThrough = 10
-        for j in jobs:
-            jobsToLookThrough -= 1
-            if j.name == jobname:
-                job = j
-                break
-            elif jobsToLookThrough <= 0:
-                raise Exception("Job not found in list_jobs")
+        count = 0
+        job_ids = []
+        for j in job_documents:
+            count += 1
+            job_ids.append(j.id)
 
-        assert job is not None
-        assert job.name == jobname
-        assert job.status == JobStatus.NOT_STARTED or job.status == JobStatus.RUNNING
-        assert job.operation == OperationType.REDACT
-        assert job.error is None
-        assert job.created_at is not None
-        assert job.last_updated_at is not None
-        #assert job.customizations is not None
-        #assert job.customizations.redaction_format == "[{type}]"
+        assert count == 3
+        assert len(set(job_ids)) == 3  # Each job ID should be unique

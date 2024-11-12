@@ -39,8 +39,8 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         assert finished_job.name == jobname
         assert finished_job.operation == OperationType.SURROGATE
         assert finished_job.summary is not None
-        assert finished_job.summary.total == 2
-        assert finished_job.summary.successful == 2
+        assert finished_job.summary.total == 3
+        assert finished_job.summary.successful == 3
         assert finished_job.summary.failed == 0
         assert finished_job.started_at is not None
         assert finished_job.started_at > finished_job.created_at
@@ -58,4 +58,4 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
             assert my_file.output is not None
             assert my_file.output.location.startswith(self.OUTPUT_PATH)
             count += 1
-        assert count == 2, f"Expected 2 files, found {count}"
+        assert count == 3, f"Expected 3 files, found {count}"
