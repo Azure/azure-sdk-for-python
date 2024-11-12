@@ -125,10 +125,11 @@ elif connection.connection_type == ConnectionType.SERVERLESS:
         )
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         from azure.core.credentials import TokenCredential
+
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
         inference_client = ChatCompletionsClient(
-            endpoint=connection.endpoint_url, credential= cast(TokenCredential, connection.token_credential)
+            endpoint=connection.endpoint_url, credential=cast(TokenCredential, connection.token_credential)
         )
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")

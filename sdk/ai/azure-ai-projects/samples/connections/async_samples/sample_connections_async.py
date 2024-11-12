@@ -130,6 +130,7 @@ async def sample_connections_async() -> None:
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             from azure.core.credentials_async import AsyncTokenCredential
+
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             inference_client = ChatCompletionsClient(
