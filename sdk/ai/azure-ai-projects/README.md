@@ -54,9 +54,9 @@ Agents are actively being developed. A sign-up form for private preview is comin
     - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
     - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
     - <a href='#create-agent-with-function-call'>Function call</a>
-  - <a href='#create-thread'>Create a thread</a> with
+  - <a href='#create-thread'>Create thread</a> with
      - <a href='#create-thread-with-tool-resource'>Tool resource</a>
-  - <a href='#create-message'>Create a message</a> with:
+  - <a href='#create-message'>Create message</a> with:
     - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
     - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
   - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
