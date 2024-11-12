@@ -24,8 +24,7 @@ from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOper
 from .operations._patch import InferenceOperations
 
 
-class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-
+class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     def __init__(  # pylint: disable=super-init-not-called
         self,
         endpoint: str,
