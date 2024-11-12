@@ -219,6 +219,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         self._iter_contextual_wrapper = functools.partial(self._amqp_transport.iter_contextual_wrapper_async, self)
         self._iter_next = functools.partial(self._amqp_transport.iter_next_async, self)
+        self._async_lock = asyncio.Lock()
 
     async def __aenter__(self) -> "ServiceBusReceiver":
         if self._shutdown.is_set():
@@ -370,58 +371,59 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
-        try:
-            self._receive_context.set()
-            await self._open()
+        async with self._async_lock:
+            try:
+                self._receive_context.set()
+                await self._open()
 
-            amqp_receive_client = self._handler
-            received_messages_queue = amqp_receive_client._received_messages
-            max_message_count = max_message_count or self._prefetch_count
-            timeout_seconds = (
-                self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
-                if (timeout or self._max_wait_time)
-                else 0
-            )
-            abs_timeout = (
-                self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds if timeout_seconds else 0
-            )
+                amqp_receive_client = self._handler
+                received_messages_queue = amqp_receive_client._received_messages
+                max_message_count = max_message_count or self._prefetch_count
+                timeout_seconds = (
+                    self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
+                    if (timeout or self._max_wait_time)
+                    else 0
+                )
+                abs_timeout = (
+                    self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds if timeout_seconds else 0
+                )
 
-            batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
+                batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
-            while not received_messages_queue.empty() and len(batch) < max_message_count:
-                batch.append(received_messages_queue.get())
-                received_messages_queue.task_done()
-            if len(batch) >= max_message_count:
-                return [self._build_received_message(message) for message in batch]
-
-            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
-            if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
-                link_credit_needed = max_message_count - len(batch)
-                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
-
-            first_message_received = expired = False
-            receiving = True
-            while receiving and not expired and len(batch) < max_message_count:
-                while receiving and received_messages_queue.qsize() < max_message_count:
-                    if abs_timeout and self._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
-                        expired = True
-                        break
-                    before = received_messages_queue.qsize()
-                    receiving = await amqp_receive_client.do_work_async()
-                    received = received_messages_queue.qsize() - before
-                    if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
-                        # first message(s) received, continue receiving for some time
-                        first_message_received = True
-                        abs_timeout = (
-                            self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
-                        )
                 while not received_messages_queue.empty() and len(batch) < max_message_count:
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
-            return [self._build_received_message(message) for message in batch]
-        finally:
-            self._receive_context.clear()
+                if len(batch) >= max_message_count:
+                    return [self._build_received_message(message) for message in batch]
+
+                # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
+                if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
+                    link_credit_needed = max_message_count - len(batch)
+                    await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
+
+                first_message_received = expired = False
+                receiving = True
+                while receiving and not expired and len(batch) < max_message_count:
+                    while receiving and received_messages_queue.qsize() < max_message_count:
+                        if abs_timeout and self._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
+                            expired = True
+                            break
+                        before = received_messages_queue.qsize()
+                        receiving = await amqp_receive_client.do_work_async()
+                        received = received_messages_queue.qsize() - before
+                        if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
+                            # first message(s) received, continue receiving for some time
+                            first_message_received = True
+                            abs_timeout = (
+                                self._amqp_transport.get_current_time(amqp_receive_client)
+                                + self._further_pull_receive_timeout
+                            )
+                    while not received_messages_queue.empty() and len(batch) < max_message_count:
+                        batch.append(received_messages_queue.get())
+                        received_messages_queue.task_done()
+                return [self._build_received_message(message) for message in batch]
+            finally:
+                self._receive_context.clear()
 
     async def _settle_message_with_retry(
         self,
