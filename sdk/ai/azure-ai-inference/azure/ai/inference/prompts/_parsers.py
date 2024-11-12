@@ -56,7 +56,7 @@ def _inline_image(path: Union[Path, None], image_item: str) -> str:
         The inlined image
     """
     # pass through if it's a url or base64 encoded or the path is None
-    if image_item.startswith("http") or image_item.startswith("data") or path == None:
+    if image_item.startswith("http") or image_item.startswith("data") or path is None:
         return image_item
     # otherwise, it's a local file - need to base64 encode it
     else:

@@ -13,8 +13,8 @@ from pathlib import Path
 
 try:
     import yaml  # type: ignore
-except ImportError:
-    raise ImportError("Please install pyyaml to use this function. Run `pip install pyyaml`.")
+except ImportError as exc:
+    raise ImportError("Please install pyyaml to use this function. Run `pip install pyyaml`.") from exc
 
 
 _yaml_regex = re.compile(
