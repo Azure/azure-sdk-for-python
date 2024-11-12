@@ -30,6 +30,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _calculate_aggregation,
+    _check_filters,
     _check_metric_filters,
     _create_projections,
     _derive_metrics_from_telemetry_data,
@@ -228,11 +229,12 @@ class TestUtils(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_etag")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._set_quickpulse_derived_metric_infos")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._rename_exception_fields_for_filtering")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._validate_derived_metric_info")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils.DerivedMetricInfo")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._clear_quickpulse_projection_map")
     def test_update_filter_configuration(
-        self, clear_mock, dict_mock, validate_mock, init_projection_mock, set_metric_info_mock, etag_mock
+        self, clear_mock, dict_mock, validate_mock, rename_mock, init_projection_mock, set_metric_info_mock, etag_mock
     ):
         etag = "new-etag"
         test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
@@ -241,6 +243,7 @@ class TestUtils(unittest.TestCase):
         metric_info_mock.telemetry_type = TelemetryType.REQUEST
         dict_mock.from_dict.return_value = metric_info_mock
         validate_mock.return_value = True
+        rename_mock.return_value = None
         _update_filter_configuration(etag, test_config_bytes)
         clear_mock.assert_called_once()
         dict_mock.from_dict.assert_called_once_with(test_config_dict)
@@ -538,3 +541,117 @@ class TestUtils(unittest.TestCase):
     def test_time_stamp_empty_string(self):
         time_stamp = ""
         self.assertIsNone(_filter_time_stamp_to_ms(time_stamp))
+
+    def test_no_filters(self):
+        data = mock.Mock()
+        result = _check_filters([], data)
+        self.assertTrue(result)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_any_field_filter")
+    def test_check_any_filters(self, check_mock):
+        filter_info = mock.Mock()
+        filter_info.field_name = "*"
+        filter_info.predicate = "Equal"
+        filter_info.comparand = "true"
+        data_mock = mock.Mock()
+        check_mock.return_value = True
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+        check_mock.assert_called_once_with(filter_info, data_mock)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._check_custom_dim_field_filter")
+    def test_check_custom_dim_filters(self, check_mock):
+        filter_info = mock.Mock()
+        filter_info.field_name = "CustomDimensions."
+        filter_info.predicate = "Equal"
+        filter_info.comparand = "true"
+        data_mock = mock.Mock()
+        check_mock.return_value = True
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+        check_mock.assert_called_once_with(filter_info, data_mock.custom_dimensions)
+
+    def test_success_filter_equal(self):
+        filter_info = mock.Mock()
+        filter_info.field_name = "Success"
+        filter_info.predicate = "Equal"
+        filter_info.comparand = "true"
+        data_mock = _RequestData(
+            duration=5.0,
+            success=True,
+            name="test",
+            response_code=200,
+            url="",
+            custom_dimensions={},
+        )
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+
+    def test_success_not_equal(self):
+        filter_info = mock.Mock()
+        filter_info.field_name = "Success"
+        filter_info.predicate = "NotEqual"
+        filter_info.comparand = "false"
+        data_mock = _RequestData(
+            duration=5.0,
+            success=True,
+            name="test",
+            response_code=200,
+            url="",
+            custom_dimensions={},
+        )
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+
+    def test_result_code_greater_than(self):
+        filter_info = mock.Mock()
+        filter_info.field_name = "ResponseCode"
+        filter_info.predicate = "GreaterThan"
+        filter_info.comparand = "200"
+        data_mock = _RequestData(
+            duration=5.0,
+            success=True,
+            name="test",
+            response_code=404,
+            url="",
+            custom_dimensions={},
+        )
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._filter_time_stamp_to_ms")
+    def test_duration_less_than(self, timestamp_mock):
+        filter_info = mock.Mock()
+        filter_info.field_name = "Duration"
+        filter_info.predicate = "LessThan"
+        filter_info.comparand = "5000"
+        timestamp_mock.return_value = 5000
+        data_mock = _RequestData(
+            duration=3000,
+            success=True,
+            name="test",
+            response_code=200,
+            url="",
+            custom_dimensions={},
+        )
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._field_string_compare")
+    def test_field_string_compare(self, string_mock):
+        filter_info = mock.Mock()
+        filter_info.field_name = "url"
+        filter_info.predicate = "Contains"
+        filter_info.comparand = "example"
+        string_mock.return_value = True
+        data_mock = _RequestData(
+            duration=3000,
+            success=True,
+            name="test",
+            response_code=200,
+            url="example.com",
+            custom_dimensions={},
+        )
+        result = _check_filters([filter_info], data_mock)
+        self.assertTrue(result)
+        string_mock.assert_called_once_with(str("example.com"), "example", "Contains")

@@ -193,8 +193,8 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
             continue
         if not _validate_derived_metric_info(metric_info):
             continue
+        _rename_exception_fields_for_filtering(metric_info)
         telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
-        # TODO: Rename exception fields
         metric_info_list = metric_infos.get(telemetry_type, [])
         metric_info_list.append(metric_info)
         metric_infos[telemetry_type] = metric_info_list
@@ -204,6 +204,13 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
     _set_quickpulse_derived_metric_infos(metric_infos)
     # Update new etag
     _set_quickpulse_etag(etag)
+
+
+def _rename_exception_fields_for_filtering(metric_info: DerivedMetricInfo):
+    for group in metric_info.filter_groups:
+        for filter in group.filters:
+            if filter.field_name.startswith("Exception."):
+                filter.field_name = filter.field_name.replace("Exception.", "")
 
 
 # Called by record_span/record_log when processing a span/log_record
