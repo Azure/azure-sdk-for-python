@@ -408,7 +408,7 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             # _logs are considered beta (not internal) in OpenTelemetry Python API/SDK.
             # So it's ok to use it for local development, but we'll swallow
             # any errors in case of any breaking changes on OTel side.
-            from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter  # type: ignore
+            from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter  # type: ignore  # pylint: disable=import-error,no-name-in-module
         except Exception as ex:  # pylint: disable=broad-exception-caught
             # since OTel logging is still in beta in Python, we're going to swallow any errors
             # and just warn about them.
@@ -470,9 +470,9 @@ def _configure_logging(log_exporter: Any) -> None:
         # So it's ok to use them for local development, but we'll swallow
         # any errors in case of any breaking changes on OTel side.
         from opentelemetry import _logs, _events
-        from opentelemetry.sdk._logs import LoggerProvider
-        from opentelemetry.sdk._events import EventLoggerProvider
-        from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor
+        from opentelemetry.sdk._logs import LoggerProvider  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._events import EventLoggerProvider  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor  # pylint: disable=import-error,no-name-in-module
 
         if not isinstance(_logs.get_logger_provider(), LoggerProvider):
             logger_provider = LoggerProvider()
