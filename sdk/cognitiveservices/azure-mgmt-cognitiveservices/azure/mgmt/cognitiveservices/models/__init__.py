@@ -17,6 +17,10 @@ from ._models_py3 import AccountSkuListResult
 from ._models_py3 import ApiKeys
 from ._models_py3 import ApiProperties
 from ._models_py3 import AzureEntityResource
+from ._models_py3 import BillingMeterInfo
+from ._models_py3 import CalculateModelCapacityParameter
+from ._models_py3 import CalculateModelCapacityResult
+from ._models_py3 import CalculateModelCapacityResultEstimatedCapacity
 from ._models_py3 import CallRateLimit
 from ._models_py3 import CapacityConfig
 from ._models_py3 import CheckDomainAvailabilityParameter
@@ -32,13 +36,21 @@ from ._models_py3 import CommitmentPlanProperties
 from ._models_py3 import CommitmentQuota
 from ._models_py3 import CommitmentTier
 from ._models_py3 import CommitmentTierListResult
+from ._models_py3 import CustomBlocklistConfig
+from ._models_py3 import DefenderForAISetting
+from ._models_py3 import DefenderForAISettingResult
 from ._models_py3 import Deployment
+from ._models_py3 import DeploymentCapacitySettings
 from ._models_py3 import DeploymentListResult
 from ._models_py3 import DeploymentModel
 from ._models_py3 import DeploymentProperties
 from ._models_py3 import DeploymentScaleSettings
+from ._models_py3 import DeploymentSkuListResult
 from ._models_py3 import DomainAvailability
 from ._models_py3 import Encryption
+from ._models_py3 import EncryptionScope
+from ._models_py3 import EncryptionScopeListResult
+from ._models_py3 import EncryptionScopeProperties
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -47,11 +59,25 @@ from ._models_py3 import IpRule
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import MetricName
 from ._models_py3 import Model
+from ._models_py3 import ModelCapacityCalculatorWorkload
+from ._models_py3 import ModelCapacityCalculatorWorkloadRequestParam
+from ._models_py3 import ModelCapacityListResult
+from ._models_py3 import ModelCapacityListResultValueItem
 from ._models_py3 import ModelDeprecationInfo
 from ._models_py3 import ModelListResult
 from ._models_py3 import ModelSku
+from ._models_py3 import ModelSkuCapacityProperties
 from ._models_py3 import MultiRegionSettings
 from ._models_py3 import NetworkRuleSet
+from ._models_py3 import NetworkSecurityPerimeter
+from ._models_py3 import NetworkSecurityPerimeterAccessRule
+from ._models_py3 import NetworkSecurityPerimeterAccessRuleProperties
+from ._models_py3 import NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem
+from ._models_py3 import NetworkSecurityPerimeterConfiguration
+from ._models_py3 import NetworkSecurityPerimeterConfigurationAssociationInfo
+from ._models_py3 import NetworkSecurityPerimeterConfigurationList
+from ._models_py3 import NetworkSecurityPerimeterConfigurationProperties
+from ._models_py3 import NetworkSecurityPerimeterProfileInfo
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -65,8 +91,26 @@ from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ProvisioningIssue
+from ._models_py3 import ProvisioningIssueProperties
 from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaLimit
+from ._models_py3 import RaiBlockListItemsResult
+from ._models_py3 import RaiBlockListResult
+from ._models_py3 import RaiBlocklist
+from ._models_py3 import RaiBlocklistConfig
+from ._models_py3 import RaiBlocklistItem
+from ._models_py3 import RaiBlocklistItemBulkRequest
+from ._models_py3 import RaiBlocklistItemProperties
+from ._models_py3 import RaiBlocklistProperties
+from ._models_py3 import RaiContentFilter
+from ._models_py3 import RaiContentFilterListResult
+from ._models_py3 import RaiContentFilterProperties
+from ._models_py3 import RaiMonitorConfig
+from ._models_py3 import RaiPolicy
+from ._models_py3 import RaiPolicyContentFilter
+from ._models_py3 import RaiPolicyListResult
+from ._models_py3 import RaiPolicyProperties
 from ._models_py3 import RegenerateKeyParameters
 from ._models_py3 import RegionSetting
 from ._models_py3 import RequestMatchPattern
@@ -80,32 +124,43 @@ from ._models_py3 import SkuAvailability
 from ._models_py3 import SkuAvailabilityListResult
 from ._models_py3 import SkuCapability
 from ._models_py3 import SkuChangeInfo
+from ._models_py3 import SkuResource
 from ._models_py3 import SystemData
 from ._models_py3 import ThrottlingRule
 from ._models_py3 import Usage
 from ._models_py3 import UsageListResult
 from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import UserOwnedAmlWorkspace
 from ._models_py3 import UserOwnedStorage
 from ._models_py3 import VirtualNetworkRule
 
 from ._cognitive_services_management_client_enums import AbusePenaltyAction
 from ._cognitive_services_management_client_enums import ActionType
+from ._cognitive_services_management_client_enums import ByPassSelection
 from ._cognitive_services_management_client_enums import CommitmentPlanProvisioningState
+from ._cognitive_services_management_client_enums import ContentLevel
 from ._cognitive_services_management_client_enums import CreatedByType
+from ._cognitive_services_management_client_enums import DefenderForAISettingState
 from ._cognitive_services_management_client_enums import DeploymentModelVersionUpgradeOption
 from ._cognitive_services_management_client_enums import DeploymentProvisioningState
 from ._cognitive_services_management_client_enums import DeploymentScaleType
+from ._cognitive_services_management_client_enums import EncryptionScopeProvisioningState
+from ._cognitive_services_management_client_enums import EncryptionScopeState
 from ._cognitive_services_management_client_enums import HostingModel
 from ._cognitive_services_management_client_enums import KeyName
 from ._cognitive_services_management_client_enums import KeySource
 from ._cognitive_services_management_client_enums import ModelLifecycleStatus
 from ._cognitive_services_management_client_enums import NetworkRuleAction
+from ._cognitive_services_management_client_enums import NspAccessRuleDirection
 from ._cognitive_services_management_client_enums import Origin
 from ._cognitive_services_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._cognitive_services_management_client_enums import PrivateEndpointServiceConnectionStatus
 from ._cognitive_services_management_client_enums import ProvisioningState
 from ._cognitive_services_management_client_enums import PublicNetworkAccess
 from ._cognitive_services_management_client_enums import QuotaUsageStatus
+from ._cognitive_services_management_client_enums import RaiPolicyContentSource
+from ._cognitive_services_management_client_enums import RaiPolicyMode
+from ._cognitive_services_management_client_enums import RaiPolicyType
 from ._cognitive_services_management_client_enums import ResourceIdentityType
 from ._cognitive_services_management_client_enums import ResourceSkuRestrictionsReasonCode
 from ._cognitive_services_management_client_enums import ResourceSkuRestrictionsType
@@ -128,6 +183,10 @@ __all__ = [
     "ApiKeys",
     "ApiProperties",
     "AzureEntityResource",
+    "BillingMeterInfo",
+    "CalculateModelCapacityParameter",
+    "CalculateModelCapacityResult",
+    "CalculateModelCapacityResultEstimatedCapacity",
     "CallRateLimit",
     "CapacityConfig",
     "CheckDomainAvailabilityParameter",
@@ -143,13 +202,21 @@ __all__ = [
     "CommitmentQuota",
     "CommitmentTier",
     "CommitmentTierListResult",
+    "CustomBlocklistConfig",
+    "DefenderForAISetting",
+    "DefenderForAISettingResult",
     "Deployment",
+    "DeploymentCapacitySettings",
     "DeploymentListResult",
     "DeploymentModel",
     "DeploymentProperties",
     "DeploymentScaleSettings",
+    "DeploymentSkuListResult",
     "DomainAvailability",
     "Encryption",
+    "EncryptionScope",
+    "EncryptionScopeListResult",
+    "EncryptionScopeProperties",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -158,11 +225,25 @@ __all__ = [
     "KeyVaultProperties",
     "MetricName",
     "Model",
+    "ModelCapacityCalculatorWorkload",
+    "ModelCapacityCalculatorWorkloadRequestParam",
+    "ModelCapacityListResult",
+    "ModelCapacityListResultValueItem",
     "ModelDeprecationInfo",
     "ModelListResult",
     "ModelSku",
+    "ModelSkuCapacityProperties",
     "MultiRegionSettings",
     "NetworkRuleSet",
+    "NetworkSecurityPerimeter",
+    "NetworkSecurityPerimeterAccessRule",
+    "NetworkSecurityPerimeterAccessRuleProperties",
+    "NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem",
+    "NetworkSecurityPerimeterConfiguration",
+    "NetworkSecurityPerimeterConfigurationAssociationInfo",
+    "NetworkSecurityPerimeterConfigurationList",
+    "NetworkSecurityPerimeterConfigurationProperties",
+    "NetworkSecurityPerimeterProfileInfo",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -176,8 +257,26 @@ __all__ = [
     "PrivateLinkResourceListResult",
     "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
+    "ProvisioningIssue",
+    "ProvisioningIssueProperties",
     "ProxyResource",
     "QuotaLimit",
+    "RaiBlockListItemsResult",
+    "RaiBlockListResult",
+    "RaiBlocklist",
+    "RaiBlocklistConfig",
+    "RaiBlocklistItem",
+    "RaiBlocklistItemBulkRequest",
+    "RaiBlocklistItemProperties",
+    "RaiBlocklistProperties",
+    "RaiContentFilter",
+    "RaiContentFilterListResult",
+    "RaiContentFilterProperties",
+    "RaiMonitorConfig",
+    "RaiPolicy",
+    "RaiPolicyContentFilter",
+    "RaiPolicyListResult",
+    "RaiPolicyProperties",
     "RegenerateKeyParameters",
     "RegionSetting",
     "RequestMatchPattern",
@@ -191,31 +290,42 @@ __all__ = [
     "SkuAvailabilityListResult",
     "SkuCapability",
     "SkuChangeInfo",
+    "SkuResource",
     "SystemData",
     "ThrottlingRule",
     "Usage",
     "UsageListResult",
     "UserAssignedIdentity",
+    "UserOwnedAmlWorkspace",
     "UserOwnedStorage",
     "VirtualNetworkRule",
     "AbusePenaltyAction",
     "ActionType",
+    "ByPassSelection",
     "CommitmentPlanProvisioningState",
+    "ContentLevel",
     "CreatedByType",
+    "DefenderForAISettingState",
     "DeploymentModelVersionUpgradeOption",
     "DeploymentProvisioningState",
     "DeploymentScaleType",
+    "EncryptionScopeProvisioningState",
+    "EncryptionScopeState",
     "HostingModel",
     "KeyName",
     "KeySource",
     "ModelLifecycleStatus",
     "NetworkRuleAction",
+    "NspAccessRuleDirection",
     "Origin",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",
     "PublicNetworkAccess",
     "QuotaUsageStatus",
+    "RaiPolicyContentSource",
+    "RaiPolicyMode",
+    "RaiPolicyType",
     "ResourceIdentityType",
     "ResourceSkuRestrictionsReasonCode",
     "ResourceSkuRestrictionsType",

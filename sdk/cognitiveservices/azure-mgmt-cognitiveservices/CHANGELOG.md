@@ -1,5 +1,130 @@
 # Release History
 
+## 13.6.0 (2024-12-23)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added method `calculate_model_capacity`
+  - Client `CognitiveServicesManagementClient` added operation group `location_based_model_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `model_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `encryption_scopes`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_policies`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklists`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklist_items`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_content_filters`
+  - Client `CognitiveServicesManagementClient` added operation group `network_security_perimeter_configurations`
+  - Client `CognitiveServicesManagementClient` added operation group `defender_for_ai_settings`
+  - Model `AccountModel` added property `publisher`
+  - Model `AccountModel` added property `source_account`
+  - Model `AccountProperties` added property `aml_workspace`
+  - Model `AccountProperties` added property `rai_monitor_config`
+  - Model `CapacityConfig` added property `allowed_values`
+  - Model `CommitmentPlanAccountAssociation` added property `tags`
+  - Model `Deployment` added property `tags`
+  - Model `DeploymentModel` added property `publisher`
+  - Model `DeploymentModel` added property `source_account`
+  - Model `DeploymentProperties` added property `dynamic_throttling_enabled`
+  - Model `DeploymentProperties` added property `current_capacity`
+  - Model `DeploymentProperties` added property `capacity_settings`
+  - Model `DeploymentProperties` added property `parent_deployment_name`
+  - Model `Model` added property `description`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATED`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATING`
+  - Enum `ModelLifecycleStatus` added member `STABLE`
+  - Model `ModelSku` added property `cost`
+  - Model `NetworkRuleSet` added property `bypass`
+  - Added model `BillingMeterInfo`
+  - Added enum `ByPassSelection`
+  - Added model `CalculateModelCapacityParameter`
+  - Added model `CalculateModelCapacityResult`
+  - Added model `CalculateModelCapacityResultEstimatedCapacity`
+  - Added enum `ContentLevel`
+  - Added model `CustomBlocklistConfig`
+  - Added model `DefenderForAISetting`
+  - Added model `DefenderForAISettingResult`
+  - Added enum `DefenderForAISettingState`
+  - Added model `DeploymentCapacitySettings`
+  - Added model `DeploymentSkuListResult`
+  - Added model `EncryptionScope`
+  - Added model `EncryptionScopeListResult`
+  - Added model `EncryptionScopeProperties`
+  - Added enum `EncryptionScopeProvisioningState`
+  - Added enum `EncryptionScopeState`
+  - Added model `ModelCapacityCalculatorWorkload`
+  - Added model `ModelCapacityCalculatorWorkloadRequestParam`
+  - Added model `ModelCapacityListResult`
+  - Added model `ModelCapacityListResultValueItem`
+  - Added model `ModelSkuCapacityProperties`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterAccessRule`
+  - Added model `NetworkSecurityPerimeterAccessRuleProperties`
+  - Added model `NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationAssociationInfo`
+  - Added model `NetworkSecurityPerimeterConfigurationList`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NetworkSecurityPerimeterProfileInfo`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `RaiBlockListItemsResult`
+  - Added model `RaiBlockListResult`
+  - Added model `RaiBlocklist`
+  - Added model `RaiBlocklistConfig`
+  - Added model `RaiBlocklistItem`
+  - Added model `RaiBlocklistItemBulkRequest`
+  - Added model `RaiBlocklistItemProperties`
+  - Added model `RaiBlocklistProperties`
+  - Added model `RaiContentFilter`
+  - Added model `RaiContentFilterListResult`
+  - Added model `RaiContentFilterProperties`
+  - Added model `RaiMonitorConfig`
+  - Added model `RaiPolicy`
+  - Added model `RaiPolicyContentFilter`
+  - Added enum `RaiPolicyContentSource`
+  - Added model `RaiPolicyListResult`
+  - Added enum `RaiPolicyMode`
+  - Added model `RaiPolicyProperties`
+  - Added enum `RaiPolicyType`
+  - Added model `SkuResource`
+  - Added model `UserOwnedAmlWorkspace`
+  - Model `CognitiveServicesManagementClientOperationsMixin` added method `calculate_model_capacity`
+  - Model `DeploymentsOperations` added method `begin_update`
+  - Model `DeploymentsOperations` added method `list_skus`
+  - Added model `DefenderForAISettingsOperations`
+  - Added model `EncryptionScopesOperations`
+  - Added model `LocationBasedModelCapacitiesOperations`
+  - Added model `ModelCapacitiesOperations`
+  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added model `RaiBlocklistItemsOperations`
+  - Added model `RaiBlocklistsOperations`
+  - Added model `RaiContentFiltersOperations`
+  - Added model `RaiPoliciesOperations`
+  - Method `AccountsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, account_name: str, account: IO[bytes], content_type: str)`
+  - Method `AccountsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, account: IO[bytes], content_type: str)`
+  - Method `CommitmentPlansOperations.begin_create_or_update_association` has a new overload `def begin_create_or_update_association(self: None, resource_group_name: str, commitment_plan_name: str, commitment_plan_association_name: str, association: IO[bytes], content_type: str)`
+  - Method `CommitmentPlansOperations.begin_create_or_update_plan` has a new overload `def begin_create_or_update_plan(self: None, resource_group_name: str, commitment_plan_name: str, commitment_plan: IO[bytes], content_type: str)`
+  - Method `CommitmentPlansOperations.begin_update_plan` has a new overload `def begin_update_plan(self: None, resource_group_name: str, commitment_plan_name: str, commitment_plan: IO[bytes], content_type: str)`
+  - Method `CommitmentPlansOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, commitment_plan_name: str, commitment_plan: IO[bytes], content_type: str)`
+  - Method `DeploymentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, deployment_name: str, deployment: IO[bytes], content_type: str)`
+  - Method `DeploymentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, deployment_name: str, deployment: PatchResourceTagsAndSku, content_type: str)`
+  - Method `DeploymentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, account_name: str, deployment_name: str, deployment: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, private_endpoint_connection_name: str, properties: IO[bytes], content_type: str)`
+  - Method `DefenderForAISettingsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, defender_for_ai_setting_name: str, defender_for_ai_settings: DefenderForAISetting, content_type: str)`
+  - Method `DefenderForAISettingsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, defender_for_ai_setting_name: str, defender_for_ai_settings: IO[bytes], content_type: str)`
+  - Method `DefenderForAISettingsOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, defender_for_ai_setting_name: str, defender_for_ai_settings: DefenderForAISetting, content_type: str)`
+  - Method `DefenderForAISettingsOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, defender_for_ai_setting_name: str, defender_for_ai_settings: IO[bytes], content_type: str)`
+  - Method `EncryptionScopesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, encryption_scope_name: str, encryption_scope: EncryptionScope, content_type: str)`
+  - Method `EncryptionScopesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, encryption_scope_name: str, encryption_scope: IO[bytes], content_type: str)`
+  - Method `RaiBlocklistItemsOperations.batch_add` has a new overload `def batch_add(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist_items: List[RaiBlocklistItemBulkRequest], content_type: str)`
+  - Method `RaiBlocklistItemsOperations.batch_add` has a new overload `def batch_add(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist_items: IO[bytes], content_type: str)`
+  - Method `RaiBlocklistItemsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist_item_name: str, rai_blocklist_item: RaiBlocklistItem, content_type: str)`
+  - Method `RaiBlocklistItemsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist_item_name: str, rai_blocklist_item: IO[bytes], content_type: str)`
+  - Method `RaiBlocklistsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist: RaiBlocklist, content_type: str)`
+  - Method `RaiBlocklistsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_blocklist_name: str, rai_blocklist: IO[bytes], content_type: str)`
+  - Method `RaiPoliciesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_policy_name: str, rai_policy: RaiPolicy, content_type: str)`
+  - Method `RaiPoliciesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, account_name: str, rai_policy_name: str, rai_policy: IO[bytes], content_type: str)`
+
 ## 13.5.0 (2023-07-21)
 
 ### Features Added
