@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         subscription_id: str,
