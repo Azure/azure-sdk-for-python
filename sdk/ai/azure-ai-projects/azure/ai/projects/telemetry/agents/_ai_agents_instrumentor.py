@@ -56,6 +56,7 @@ from azure.ai.projects.telemetry.agents._utils import (
 )
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
+from azure.core.tracing import AbstractSpan
 
 _Unset: Any = object()
 
@@ -63,11 +64,8 @@ try:
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import Span, StatusCode
 
-    from azure.core.tracing import AbstractSpan  # pylint: disable=C0412  # type: ignore
-
     _tracing_library_available = True
 except ModuleNotFoundError:
-
     _tracing_library_available = False
 
 
@@ -491,7 +489,6 @@ class _AIAgentsInstrumentorPreview:
         tool_outputs: Optional[List[ToolOutput]] = None,
         event_handler: Optional[AgentEventHandler] = None,
     ) -> "Optional[AbstractSpan]":
-
         run_span = event_handler.span if isinstance(event_handler, _AgentEventHandlerTraceWrapper) else None
         recorded = self._add_tool_message_events(run_span, tool_outputs)
 
@@ -1297,7 +1294,6 @@ class _AIAgentsInstrumentorPreview:
 
         @functools.wraps(function)
         def inner(*args, **kwargs):  # pylint: disable=R0911
-
             span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
                 return function(*args, **kwargs)
@@ -1357,7 +1353,6 @@ class _AIAgentsInstrumentorPreview:
 
         @functools.wraps(function)
         async def inner(*args, **kwargs):  # pylint: disable=R0911
-
             span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
                 return function(*args, **kwargs)

@@ -465,7 +465,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def create_agent(
+    async def create_agent(  # pylint: disable=arguments-differ
         self,
         *,
         model: str,
@@ -529,7 +529,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def create_agent(
+    async def create_agent(  # pylint: disable=arguments-differ
         self,
         *,
         model: str,
@@ -700,7 +700,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def update_agent(
+    async def update_agent(  # pylint: disable=arguments-differ
         self,
         assistant_id: str,
         *,
@@ -769,7 +769,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def update_agent(
+    async def update_agent(  # pylint: disable=arguments-differ
         self,
         assistant_id: str,
         *,
@@ -996,7 +996,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def create_run(
+    async def create_run(  # pylint: disable=arguments-differ
         self,
         thread_id: str,
         *,
@@ -1664,7 +1664,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def submit_tool_outputs_to_run(
+    async def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
         self,
         thread_id: str,
         run_id: str,
@@ -1924,7 +1924,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def upload_file(
+    async def upload_file(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
@@ -1943,7 +1943,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     # pylint: disable=arguments-differ
     @overload
-    async def upload_file(
+    async def upload_file(  # pylint: disable=arguments-differ
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
