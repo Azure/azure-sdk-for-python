@@ -252,6 +252,10 @@ jobs:
           - pwsh: |
               python -m pip install "./tools/azure-sdk-tools[build]"
             displayName: Install Azure SDK Tools To Detect Install Failure
+          - pwsh: |
+              git --version
+              Get-ChildItem -Recurse -Force | % { Write-Host $_.FullName }
+            displayName: Dump visible package files
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
