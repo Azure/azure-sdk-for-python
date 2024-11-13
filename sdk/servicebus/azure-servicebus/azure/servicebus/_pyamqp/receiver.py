@@ -190,7 +190,7 @@ class ReceiverLink(Link):
     def send_disposition(
         self,
         *,
-        wait: Union[bool, float] = False,
+        wait: Union[bool, float] = False,  # pylint: disable=unused-argument
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
         delivery_tag: bytes,
@@ -201,8 +201,13 @@ class ReceiverLink(Link):
     ):
         self._check_if_closed()
         self._outgoing_disposition(
-            first_delivery_id, last_delivery_id, delivery_tag, settled,
-            delivery_state, batchable, on_disposition=on_disposition
+            first_delivery_id,
+            last_delivery_id,
+            delivery_tag,
+            settled,
+            delivery_state,
+            batchable,
+            on_disposition=on_disposition,
         )
         # if not settled:
         #     self._wait_for_response(wait)

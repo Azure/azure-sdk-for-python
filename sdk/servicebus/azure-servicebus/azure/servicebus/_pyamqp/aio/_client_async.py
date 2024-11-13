@@ -989,11 +989,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ): ...
 
     async def settle_messages_async(
-        self,
-        delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
-        outcome: str,
-        **kwargs
+        self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
         # TODO: timeout is not used, should it be?

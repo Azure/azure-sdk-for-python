@@ -262,7 +262,7 @@ try:
             # whether a disposition succeeds or not and
             # there's no error condition info.
             # (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-            if not handler._session and message._lock_expired: # pylint: disable=protected-access
+            if not handler._session and message._lock_expired:  # pylint: disable=protected-access
                 raise MessageLockLostError(
                     message="The lock on the message lock has expired.",
                     error=message.auto_renew_error,

@@ -201,8 +201,13 @@ class ReceiverLink(Link):
     ):
         self._check_if_closed()
         await self._outgoing_disposition(
-            first_delivery_id, last_delivery_id, delivery_tag, settled,
-            delivery_state, batchable, on_disposition=on_disposition
+            first_delivery_id,
+            last_delivery_id,
+            delivery_tag,
+            settled,
+            delivery_state,
+            batchable,
+            on_disposition=on_disposition,
         )
         if not settled:
             await self._wait_for_response(wait)
