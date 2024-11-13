@@ -73,6 +73,7 @@ from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
+from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
@@ -713,7 +714,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
@@ -730,6 +731,20 @@ class JobOperations(_ScopeDependentOperations):
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
 
+        result = service_client_operation.create_or_update(
+            id=rest_job_resource.name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
+
+        return result
+
+    def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
+        self, rest_job_resource: JobBase, **kwargs: Any
+    ) -> JobBase:
+        service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -1080,6 +1095,8 @@ class JobOperations(_ScopeDependentOperations):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, FineTuningJob):
             self._resolve_finetuning_job_inputs(job)
+        elif isinstance(job, DistillationJob):
+            self._resolve_distillation_job_inputs(job)
         elif isinstance(job, Spark):
             self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
@@ -1121,6 +1138,18 @@ class JobOperations(_ScopeDependentOperations):
         if isinstance(job, FineTuningVertical):
             # self._resolve_job_input(job.model, job._base_path)
             self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data is not None:
+                self._resolve_job_input(job.validation_data, job._base_path)
+
+    def _resolve_distillation_job_inputs(self, job: DistillationJob) -> None:
+        """This method resolves the inputs for Distillation jobs.
+
+        :param job: the job resource entity
+        :type job: DistillationJob
+        """
+        if isinstance(job, DistillationJob):
+            if job.training_data:
+                self._resolve_job_input(job.training_data, job._base_path)
             if job.validation_data is not None:
                 self._resolve_job_input(job.validation_data, job._base_path)
 
@@ -1347,6 +1376,8 @@ class JobOperations(_ScopeDependentOperations):
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
         elif isinstance(job, FineTuningJob):
+            pass
+        elif isinstance(job, DistillationJob):
             pass
         else:
             msg = f"Non supported job type: {type(job)}"

@@ -22,6 +22,7 @@ from ._client import (
 from .._api_versions import DEFAULT_VERSION
 from .._shared.auth_policy_utils import get_authentication_policy
 
+
 class NotificationMessagesClient(NotificationMessagesClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
 
@@ -37,8 +38,9 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         Note that overriding this default value may result in unsupported behavior.
     """
 
-    def __init__(self, endpoint: str,
-                 credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
+    ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -54,11 +56,14 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
 
         self._endpoint = endpoint
         self._credential = credential
-        self._authentication_policy =  get_authentication_policy(endpoint, credential)
+        self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, self._credential,
-            authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint,
+            self._credential,
+            authentication_policy=self._authentication_policy,
+            api_version=self._api_version,
+            **kwargs
         )
 
     @classmethod
@@ -72,6 +77,7 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
+
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -88,8 +94,9 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential,
-                                                        AzureKeyCredential], **kwargs: Any) -> "None":
+    def __init__(
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
+    ) -> "None":
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -105,10 +112,11 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
 
         self._endpoint = endpoint
         self._credential = credential
-        self._authentication_policy =  get_authentication_policy(endpoint, credential)
+        self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, self._credential,
+            self._endpoint,
+            self._credential,
             authentication_policy=self._authentication_policy,
             api_version=self._api_version,
             **kwargs
@@ -126,10 +134,12 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
+
 __all__: List[str] = [
     "NotificationMessagesClient",
     "MessageTemplateClient",
 ]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

@@ -1,5 +1,28 @@
 # Release History
 
+## 1.0.0b33 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b32 (2024-11-04)
+
+### Breaking Changes
+
+- Serialize complex objects provided as log or event bodies to JSON and
+  fall back to string representation if they are not serializable.
+  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+
+### Other Changes
+
+- Refactor trace mapping logic for target and data into trace utils
+    ([#37897](https://github.com/Azure/azure-sdk-for-python/pull/37897))
+
 ## 1.0.0b31 (2024-10-08)
 
 ### Features Added
@@ -473,7 +496,7 @@
   ([#78](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/78))
 - Handle status 439 - Too Many Requests over extended time
   ([#80](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/80))
-- Fix breaking changes from OT release 0.7b.0 
+- Fix breaking changes from OT release 0.7b.0
   ([#86](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/86))
 
 ## 0.2b.0 (2020-03-31)

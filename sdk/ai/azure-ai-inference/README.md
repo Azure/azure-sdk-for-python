@@ -41,7 +41,7 @@ Studio.
   * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure OpenAI Studio.
   * The endpoint URL of your model, in the form `https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
-  * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs). At the time of writing, latest GA version was "2024-06-01".
+  * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions). At the time of writing, latest GA version was "2024-06-01".
 
 ### Install the package
 
@@ -60,10 +60,8 @@ pip install --upgrade azure-ai-inference
 If you want to install Azure AI Inferencing package with support for OpenTelemetry based tracing, use the following command:
 
 ```bash
-pip install azure-ai-inference[trace]
+pip install azure-ai-inference[opentelemetry]
 ```
-
-
 
 ## Key concepts
 
@@ -91,9 +89,8 @@ client = ChatCompletionsClient(
 # For Azure OpenAI endpoint
 client = ChatCompletionsClient(
     endpoint=endpoint,  # Of the form https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
-    credential=AzureKeyCredential(""),  # Pass in an empty value.
-    headers={"api-key": key},
-    api_version="2024-06-01",  # AOAI api-version. Update as needed.
+    credential=AzureKeyCredential(key),
+    api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 )
 ```
 
@@ -146,7 +143,7 @@ client = ChatCompletionsClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
     credential_scopes=["https://cognitiveservices.azure.com/.default"],
-    api_version="2024-06-01",  # AOAI api-version. Update as needed.
+    api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 )
 ```
 
@@ -227,7 +224,7 @@ The `EmbeddingsClient` has a method named `embedding`. The method makes a REST A
 
 See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
-<!-- 
+<!--
 ### Image Embeddings
 
 TODO: Add overview and link to explain image embeddings.
@@ -245,7 +242,7 @@ In the following sections you will find simple examples of:
 * [Text Embeddings](#text-embeddings-example)
 <!-- * [Image Embeddings](#image-embeddings-example) -->
 
-The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client 
+The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client
 construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
 endpoint. Only mandatory input settings are shown for simplicity.
 
@@ -278,7 +275,7 @@ print(response.choices[0].message.content)
 
 The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage`. See also samples:
 
-* [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`. 
+* [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`.
 * [sample_chat_completions_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_url.py) for usage of `UserMessage` that
 includes sending an image URL.
 * [sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that
@@ -304,10 +301,7 @@ response = client.complete(
                 "role": "assistant",
                 "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
             },
-            {
-                "role": "user",
-                "content": "And what was the estimated cost to build it?"
-            },
+            {"role": "user", "content": "And what was the estimated cost to build it?"},
         ]
     }
 )
@@ -538,20 +532,50 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
 
-## Tracing
+## Observability With OpenTelemetry
 
-The Azure AI Inferencing API Tracing library provides tracing for Azure AI Inference client library for Python. Refer to Installation chapter above for installation instructions.
+The Azure AI Inference client library provides experimental support for tracing with OpenTelemetry.
 
-### Setup
+You can capture prompt and completion contents by setting `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment to `true` (case insensitive).
+By default prompts, completions, function name, parameters or outputs are not recorded.
 
-The environment variable AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED controls whether the actual message contents will be recorded in the traces or not. By default, the message contents are not recorded as part of the trace. When message content recording is disabled any function call tool related function names, function parameter names and function parameter values are also not recorded in the trace. Set the value of the environment variable to "true" (case insensitive) for the message contents to be recorded as part of the trace. Any other value will cause the message contents not to be recorded.
+### Setup with Azure Monitor
 
-You also need to configure the tracing implementation in your code by setting `AZURE_SDK_TRACING_IMPLEMENTATION` to `opentelemetry` or configuring it in the code with the following snippet:
+When using Azure AI Inference library with [Azure Monitor OpenTelemetry Distro](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python),
+distributed tracing for Azure AI Inference calls is enabled by default when using latest version of the distro.
+
+### Setup with OpenTelemetry
+
+Check out your observability vendor documentation on how to configure OpenTelemetry or refer to the [official OpenTelemetry documentation](https://opentelemetry.io/docs/languages/python/).
+
+#### Installation
+
+Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
+
+```bash
+pip install opentelemetry
+pip install azure-core-tracing-opentelemetry
+```
+
+You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
+
+To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
+
+```bash
+pip install opentelemetry-exporter-otlp
+```
+
+#### Configuration
+
+To enable Azure SDK tracing set `AZURE_SDK_TRACING_IMPLEMENTATION` environment variable to `opentelemetry`.
+
+Or configure it in the code with the following snippet:
 
 <!-- SNIPPET:sample_chat_completions_with_tracing.trace_setting -->
 
 ```python
 from azure.core.settings import settings
+
 settings.tracing_implementation = "opentelemetry"
 ```
 
@@ -559,21 +583,13 @@ settings.tracing_implementation = "opentelemetry"
 
 Please refer to [azure-core-tracing-documentation](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme) for more information.
 
-### Exporting Traces with OpenTelemetry
-
-Azure AI Inference is instrumented with OpenTelemetry. In order to enable tracing you need to configure OpenTelemetry to export traces to your observability backend. 
-Refer to [Azure SDK tracing in Python](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme?view=azure-python-preview) for more details.
-
-Refer to [Azure Monitor OpenTelemetry documentation](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python) for the details on how to send Azure AI Inference traces to Azure Monitor and create Azure Monitor resource.
-
-### Instrumentation
-
-Use the AIInferenceInstrumentor to instrument the Azure AI Inferencing API for LLM tracing, this will cause the LLM traces to be emitted from Azure AI Inferencing API.
+The final step is to enable Azure AI Inference instrumentation with the following code snippet:
 
 <!-- SNIPPET:sample_chat_completions_with_tracing.instrument_inferencing -->
 
 ```python
 from azure.ai.inference.tracing import AIInferenceInstrumentor
+
 # Instrument AI Inference API
 AIInferenceInstrumentor().instrument()
 ```
@@ -592,17 +608,20 @@ AIInferenceInstrumentor().uninstrument()
 <!-- END SNIPPET -->
 
 ### Tracing Your Own Functions
-The @tracer.start_as_current_span decorator can be used to trace your own functions. This will trace the function parameters and their values. You can also add further attributes to the span in the function implementation as demonstrated below. Note that you will have to setup the tracer in your code before using the decorator. More information is available [here](https://opentelemetry.io/docs/languages/python/).
+
+The `@tracer.start_as_current_span` decorator can be used to trace your own functions. This will trace the function parameters and their values. You can also add further attributes to the span in the function implementation as demonstrated below. Note that you will have to setup the tracer in your code before using the decorator. More information is available [here](https://opentelemetry.io/docs/languages/python/).
 
 <!-- SNIPPET:sample_chat_completions_with_tracing.trace_function -->
 
 ```python
 from opentelemetry.trace import get_tracer
+
 tracer = get_tracer(__name__)
+
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("get_temperature") # type: ignore
+@tracer.start_as_current_span("get_temperature")  # type: ignore
 def get_temperature(city: str) -> str:
 
     # Adding attributes to the current span

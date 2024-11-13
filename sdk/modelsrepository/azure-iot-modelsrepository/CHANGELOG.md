@@ -1,8 +1,10 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2024-10-31)
 
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 2024-02-24.
 
 ## 1.0.0b1 (2021-04-27)
 

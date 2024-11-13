@@ -46,8 +46,6 @@ from io import BytesIO
 import logging
 from threading import Lock
 
-import certifi
-
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
@@ -66,7 +64,8 @@ from .error import AuthenticationException, ErrorCondition
 try:
     import fcntl
 except ImportError:  # pragma: no cover
-    fcntl = None    # type: ignore  # noqa
+    fcntl = None  # type: ignore  # noqa
+
 
 def set_cloexec(fd, cloexec):  # noqa # pylint: disable=inconsistent-return-statements
     """Set flag to close fd after exec.
@@ -171,8 +170,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        use_tls: bool =True,
-        **kwargs
+        use_tls: bool = True,
+        **kwargs,
     ):
         self._quick_recv = None
         self.connected = False
@@ -180,7 +179,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-        self.network_trace_params = kwargs.get('network_trace_params')
+        self.network_trace_params = kwargs.get("network_trace_params")
 
         self.connect_timeout = connect_timeout
         self.socket_timeout = socket_timeout
@@ -278,9 +277,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = socket.getaddrinfo(
-                    host, port, family, socket.SOCK_STREAM, SOL_TCP
-                )
+                entries = socket.getaddrinfo(host, port, family, socket.SOCK_STREAM, SOL_TCP)
                 entries_num = len(entries)
             except socket.gaierror as exc:
                 # we may have depleted all our options
@@ -288,9 +285,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error(
-                        "failed to resolve broker hostname"
-                    ) from exc
+                    raise e if e is not None else socket.error("failed to resolve broker hostname") from exc
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
@@ -399,9 +394,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                     #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
                     _LOGGER.debug(
-                        "Transport endpoint is already disconnected: %r",
-                        exc,
-                        extra=self.network_trace_params
+                        "Transport endpoint is already disconnected: %r", exc, extra=self.network_trace_params
                     )
                 self.sock.close()
                 self.sock = None
@@ -427,11 +420,9 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                         "Received invalid frame type: %r, expected: %r",
                         frame_type,
                         verify_frame_type,
-                        extra=self.network_trace_params
+                        extra=self.network_trace_params,
                     )
-                    raise ValueError(
-                            f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
+                    raise ValueError(f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}")
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
@@ -439,9 +430,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 payload = memoryview(bytearray(payload_size))
                 if size > SIGNED_INT_MAX:
                     read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(
-                        read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
-                    )
+                    read_frame_buffer.write(read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
                 else:
                     read_frame_buffer.write(read(payload_size, buffer=payload))
             except (socket.timeout, TimeoutError):
@@ -500,15 +489,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
 class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
-    def __init__(
-        self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs
-    ):
+    def __init__(self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.sslopts['server_hostname'] = host
+        self.sslopts["server_hostname"] = host
         self._read_buffer = BytesIO()
-        super(SSLTransport, self).__init__(
-            host, port=port, socket_timeout=socket_timeout, **kwargs
-        )
+        super(SSLTransport, self).__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
@@ -516,19 +501,11 @@ class SSLTransport(_AbstractTransport):
             self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
-    def _wrap_socket(self, sock, context=None, **sslopts):
-        if context:
-            return self._wrap_context(sock, sslopts, **context)
+    def _wrap_socket(self, sock, **sslopts):
+        if "context" in sslopts:
+            context = sslopts.pop("context")
+            return context.wrap_socket(sock, **sslopts)
         return self._wrap_socket_sni(sock, **sslopts)
-
-    def _wrap_context(
-        self, sock, sslopts, check_hostname=None, **ctx_options
-    ):
-        ctx = ssl.create_default_context(**ctx_options)
-        ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
-        return ctx.wrap_socket(sock, **sslopts)
 
     def _wrap_socket_sni(
         self,
@@ -734,18 +711,19 @@ class WebSocketTransport(_AbstractTransport):
                 create_connection,
                 WebSocketAddressException,
                 WebSocketTimeoutException,
-                WebSocketConnectionClosedException
+                WebSocketConnectionClosedException,
             )
         except ImportError:
-            raise ImportError(
-                "Please install websocket-client library to use sync websocket transport."
-            ) from None
+            raise ImportError("Please install websocket-client library to use sync websocket transport.") from None
         try:
             self.sock = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self._host) if self._use_tls
-                    else "ws://{}".format(self._custom_endpoint or self._host),
+                url=(
+                    "wss://{}".format(self._custom_endpoint or self._host)
+                    if self._use_tls
+                    else "ws://{}".format(self._custom_endpoint or self._host)
+                ),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self.socket_timeout,    # timeout for read/write operations
+                timeout=self.socket_timeout,  # timeout for read/write operations
                 skip_utf8_validation=True,
                 sslopt=self.sslopts if self._use_tls else None,
                 http_proxy_host=http_proxy_host,
@@ -759,7 +737,7 @@ class WebSocketTransport(_AbstractTransport):
                 error=exc,
             ) from exc
         # TODO: resolve pylance error when type: ignore is removed below, issue #22051
-        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:  # type: ignore
             self.close()
             raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
         except (OSError, IOError, SSLError) as e:
@@ -778,6 +756,7 @@ class WebSocketTransport(_AbstractTransport):
         :rtype: bytearray
         """
         from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
+
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))
@@ -799,9 +778,9 @@ class WebSocketTransport(_AbstractTransport):
             except AttributeError:
                 raise IOError("Websocket connection has already been closed.") from None
             except WebSocketTimeoutException as wte:
-                raise TimeoutError('Websocket receive timed out (%s)' % wte) from wte
+                raise TimeoutError("Websocket receive timed out (%s)" % wte) from wte
             except (WebSocketConnectionClosedException, SSLError) as e:
-                raise ConnectionError('Websocket disconnected: %r' % e) from e
+                raise ConnectionError("Websocket disconnected: %r" % e) from e
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
@@ -827,12 +806,12 @@ class WebSocketTransport(_AbstractTransport):
         :param str s: The string to write.
         """
         from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
+
         try:
             self.sock.send_binary(s)
         except AttributeError:
             raise IOError("Websocket connection has already been closed.") from None
         except WebSocketTimeoutException as e:
-            raise socket.timeout('Websocket send timed out (%s)' % e) from e
+            raise socket.timeout("Websocket send timed out (%s)" % e) from e
         except (WebSocketConnectionClosedException, SSLError) as e:
-            raise ConnectionError('Websocket disconnected: %r' % e) from e
-            
+            raise ConnectionError("Websocket disconnected: %r" % e) from e

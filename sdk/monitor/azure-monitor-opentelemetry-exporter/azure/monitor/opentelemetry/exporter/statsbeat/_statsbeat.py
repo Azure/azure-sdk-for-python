@@ -22,6 +22,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
 _STATSBEAT_METRICS = None
 _STATSBEAT_LOCK = threading.Lock()
 
+
 # pylint: disable=global-statement
 # pylint: disable=protected-access
 def collect_statsbeat_metrics(exporter) -> None:

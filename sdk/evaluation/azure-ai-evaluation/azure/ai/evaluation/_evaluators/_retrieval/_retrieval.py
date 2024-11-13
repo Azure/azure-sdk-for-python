@@ -2,104 +2,31 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import json
 import logging
-import math
 import os
-import re
-from typing import Union
+from typing import Dict, List, Union
+from typing_extensions import overload, override
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-from promptflow.core import AsyncPrompty
-
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-
-from ..._common.math import list_mean_nan_safe
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
 
-try:
-    from .._user_agent import USER_AGENT
-except ImportError:
-    USER_AGENT = "None"
 
-
-class _AsyncRetrievalScoreEvaluator:
-    # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "retrieval.prompty"
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
-
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        prompty_model_config = construct_prompty_model_config(
-            model_config,
-            self.DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
-        )
-
-        current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
-
-    async def __call__(self, *, conversation, **kwargs):
-        # Extract queries, responses and contexts from conversation
-        queries = []
-        responses = []
-        contexts = []
-
-        for each_turn in conversation:
-            role = each_turn["role"]
-            if role == "user":
-                queries.append(each_turn["content"])
-            elif role == "assistant":
-                responses.append(each_turn["content"])
-                if "context" in each_turn and "citations" in each_turn["context"]:
-                    citations = json.dumps(each_turn["context"]["citations"])
-                    contexts.append(citations)
-
-        # Evaluate each turn
-        per_turn_scores = []
-        history = []
-        for turn_num, query in enumerate(queries):
-            try:
-                query = query if turn_num < len(queries) else ""
-                answer = responses[turn_num] if turn_num < len(responses) else ""
-                context = contexts[turn_num] if turn_num < len(contexts) else ""
-
-                history.append({"user": query, "assistant": answer})
-
-                llm_output = await self._flow(
-                    query=query, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
-                )
-                score = math.nan
-                if llm_output:
-                    parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
-                    if len(parsed_score_response) > 0:
-                        score = float(parsed_score_response[0].replace("'", "").strip())
-
-                per_turn_scores.append(score)
-
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
-                )
-
-                per_turn_scores.append(math.nan)
-
-        return {
-            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
-            "evaluation_per_turn": {
-                "gpt_retrieval": {
-                    "score": per_turn_scores,
-                }
-            },
-        }
-
-
-class RetrievalEvaluator:
+class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Initialize an evaluator configured for a specific Azure OpenAI model.
+    Evaluates retrieval score for a given query and context or a multi-turn conversation, including reasoning.
+
+    The retrieval measure assesses the AI system's performance in retrieving information
+    for additional context (e.g. a RAG scenario).
+
+    Retrieval scores range from 1 to 5, with 1 being the worst and 5 being the best.
+
+    High retrieval scores indicate that the AI system has successfully extracted and ranked
+    the most relevant information at the top, without introducing bias from external knowledge
+    and ignoring factual correctness. Conversely, low retrieval scores suggest that the AI system
+    has failed to surface the most relevant context chunks at the top of the list
+    and/or introduced bias and ignored factual correctness.
 
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
@@ -107,48 +34,79 @@ class RetrievalEvaluator:
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START retrieval_evaluator]
+            :end-before: [END retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a RetrievalEvaluator.
 
-        chat_eval = RetrievalScoreEvaluator(model_config)
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
-                }
-            }
-        ]
-        result = chat_eval(conversation=conversation)
+    .. note::
 
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_retrieval": 3.0
-            "evaluation_per_turn": {
-                "gpt_retrieval": {
-                    "score": [1.0, 2.0, 3.0]
-                }
-            }
-        }
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    def __init__(self, model_config: dict):
-        self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
+    _PROMPTY_FILE = "retrieval.prompty"
+    _RESULT_KEY = "retrieval"
 
-    def __call__(self, *, conversation, **kwargs):
-        """Evaluates retrieval score chat scenario.
+    id = "azureml://registries/azureml/models/Retrieval-Evaluator/versions/1"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
+    @override
+    def __init__(self, model_config):  # pylint: disable=super-init-not-called
+        current_dir = os.path.dirname(__file__)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        context: str,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluates retrieval for a given a query and context
+
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: Optional[str]
+        :return: The scores for Chat scenario.
+        :rtype: Dict[str, Union[str, float]]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluates retrieval for a for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
 
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: List[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The scores for Chat scenario.
-        :rtype: dict
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, conversation=conversation, **kwargs)
 
-    def _to_async(self):
-        return self._async_evaluator
+    @override
+    def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
+        """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
+        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
+        the evaluator will aggregate the results of each turn.
+
+        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype query: Optional[str]
+        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
+        :paramtype context: Optional[str]
+        :keyword conversation: The conversation to be evaluated.
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The scores for Chat scenario.
+        :rtype: :rtype: Dict[str, Union[float, Dict[str, List[str, float]]]]
+        """
+        return super().__call__(*args, **kwargs)

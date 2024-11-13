@@ -1,5 +1,20 @@
 # Release History
 
+## 23.2.0 (2024-10-24)
+
+### Features Added
+
+  - Added operation group DataBoundariesOperations
+  - Added operation group PolicyDefinitionVersionsOperations
+  - Added operation group PolicySetDefinitionVersionsOperations
+  - Model ParameterDefinitionsValue has a new parameter schema
+  - Model PolicyAssignment has a new parameter definition_version
+  - Model PolicyDefinition has a new parameter version
+  - Model PolicyDefinition has a new parameter versions
+  - Model PolicyDefinitionReference has a new parameter definition_version
+  - Model PolicySetDefinition has a new parameter version
+  - Model PolicySetDefinition has a new parameter versions
+
 ## 23.1.1 (2024-05-08)
 
 ### Other Changes

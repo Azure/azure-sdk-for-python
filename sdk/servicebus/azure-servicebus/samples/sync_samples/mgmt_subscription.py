@@ -19,10 +19,9 @@ import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 from azure.identity import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
 SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
-
 
 
 def create_subscription(servicebus_mgmt_client):
@@ -63,7 +62,9 @@ def get_and_update_subscription(servicebus_mgmt_client):
 
 def get_subscription_runtime_properties(servicebus_mgmt_client):
     print("-- Get Subscription Runtime Properties")
-    get_subscription_runtime_properties = servicebus_mgmt_client.get_subscription_runtime_properties(TOPIC_NAME, SUBSCRIPTION_NAME)
+    get_subscription_runtime_properties = servicebus_mgmt_client.get_subscription_runtime_properties(
+        TOPIC_NAME, SUBSCRIPTION_NAME
+    )
     print("Subscription Name:", get_subscription_runtime_properties.name)
     print("Please refer to SubscriptionRuntimeProperties from complete available runtime properties.")
     print("")

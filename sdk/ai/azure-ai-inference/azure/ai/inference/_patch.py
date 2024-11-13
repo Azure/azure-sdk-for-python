@@ -14,7 +14,8 @@ Why do we patch auto-generated code?
 4. Add support for get_model_info, while caching the result (all clients)
 5. Add support for chat completion streaming (ChatCompletionsClient client only)
 6. Add support for friendly print of result objects (__str__ method) (all clients)
-7. Add support for load() method in ImageUrl class (see /models/_patch.py).
+7. Add support for load() method in ImageUrl class (see /models/_patch.py)
+8. Add support for sending two auth headers for api-key auth (all clients)
 
 """
 import json
@@ -245,13 +246,26 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._model = model
         self._model_extras = model_extras
 
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
+
         super().__init__(endpoint, credential, **kwargs)
 
     @overload
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Literal[False] = False,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -274,7 +288,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Literal[True],
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -297,7 +311,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -330,7 +344,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage] or list[dict[str, Any]]
         :keyword stream: A value indicating whether chat completions should be streamed for this request.
          Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
          Otherwise the response will be a ChatCompletions.
@@ -459,7 +473,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: List[_models.ChatRequestMessage] = _Unset,
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]] = _Unset,
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -493,7 +507,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage] or list[dict[str, Any]]
         :keyword stream: A value indicating whether chat completions should be streamed for this request.
          Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
          Otherwise the response will be a ChatCompletions.
@@ -723,6 +737,19 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -1006,6 +1033,19 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
