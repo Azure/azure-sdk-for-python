@@ -724,6 +724,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx",
             "Tests - CI",
             "Tests - Live",
+            "Tests - Samples",
             "SLA - Questions",
             "SLA - Bugs",
             "Total customer-reported issues",
@@ -733,6 +734,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx_link",
             "Tests - CI_link",
             "Tests - Live_link",
+            "Tests - Samples_link",
             "SLA - Questions_link",
             "SLA - Bugs_link",
             "Total customer-reported issues_link",
@@ -755,6 +757,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                         details["sphinx"]["status"],
                         details["ci"]["status"],
                         details["tests"]["status"],
+                        details["samples"]["status"],
                         details.get("sla", {}).get("question", {}).get("num", 0),
                         details.get("sla", {}).get("bug", {}).get("num", 0),
                         details.get("customer_issues", {}).get("num", 0),
@@ -764,6 +767,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                         details["sphinx"].get("link", ""),
                         details["ci"].get("link", ""),
                         details["tests"].get("link", ""),
+                        details["samples"].get("link", ""),
                         details.get("sla", {}).get("question", {}).get("link", ""),
                         details.get("sla", {}).get("bug", {}).get("link", ""),
                         details.get("customer_issues", {}).get("link", ""),
@@ -788,6 +792,7 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
         "Sphinx",
         "Tests - CI",
         "Tests - Live",
+        "Tests - Samples",
         "SLA - Questions / Bugs",
         "Total customer-reported issues",
     ]
@@ -832,6 +837,8 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
                 + (f" ([link]({details['ci']['link']}))" if details["ci"]["link"] is not None else ""),
                 details["tests"]["status"]
                 + (f" ([link]({details['tests']['link']}))" if details["tests"]["link"] is not None else ""),
+                details["samples"]["status"]
+                + (f" ([link]({details['samples']['link']}))" if details["samples"]["link"] is not None else ""),
                 sla_str,
                 str(details.get("customer_issues", {}).get("num", 0))
                 + (
