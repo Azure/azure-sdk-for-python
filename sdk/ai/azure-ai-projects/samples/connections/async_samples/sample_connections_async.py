@@ -62,7 +62,7 @@ async def sample_connections_async() -> None:
         # Get the properties of the default connection of a particular "type", with credentials
         connection = await project_client.connections.get_default(
             connection_type=ConnectionType.AZURE_AI_SERVICES,
-            with_credentials=True,  # Optional. Defaults to "False"
+            include_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get default Azure AI Services connection:")
         print(connection)
@@ -70,7 +70,7 @@ async def sample_connections_async() -> None:
         # Get the properties of a connection by connection name:
         connection = await project_client.connections.get(
             connection_name=connection_name,
-            with_credentials=True,  # Optional. Defaults to "False"
+            include_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get connection by name:")
         print(connection)

@@ -58,14 +58,14 @@ with project_client:
     # Get the properties of the default connection of a particular "type", with credentials
     connection = project_client.connections.get_default(
         connection_type=ConnectionType.AZURE_AI_SERVICES,
-        with_credentials=True,  # Optional. Defaults to "False"
+        include_credentials=True,  # Optional. Defaults to "False"
     )
     print("====> Get default Azure AI Services connection:")
     print(connection)
 
     # Get the properties of a connection by connection name:
     connection = project_client.connections.get(
-        connection_name=connection_name, with_credentials=True  # Optional. Defaults to "False"
+        connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
     )
     print("====> Get connection by name:")
     print(connection)

@@ -68,7 +68,7 @@ class ConnectionsTestBase(AzureRecordedTestCase):
     def validate_connection(
         cls,
         connection: ConnectionProperties,
-        with_credentials: bool,
+        include_credentials: bool,
         *,
         expected_connection_type: ConnectionType = None,
         expected_connection_name: str = None,
@@ -91,7 +91,7 @@ class ConnectionsTestBase(AzureRecordedTestCase):
         else:
             assert connection.authentication_type is not None
 
-        if with_credentials:
+        if include_credentials:
             assert (connection.key is not None) ^ (connection.token_credential is not None)
         else:
             assert connection.key == None
