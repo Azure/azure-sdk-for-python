@@ -1188,12 +1188,21 @@ class TestFile(StorageRecordedTestCase):
             content_disposition='inline')
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         file_client = directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
-        file_client.set_file_expiry("Absolute", expires_on=expiry_time)
-        properties = file_client.get_file_properties()
 
-        # Assert
+        # Act / Assert
+        # ---Absolute---
+        file_client.set_file_expiry("Absolute", expires_on=expiry_time)
+
+        properties = file_client.get_file_properties()
         assert properties
         assert properties.expiry_time is not None
+
+        # ---NeverExpire---
+        file_client.set_file_expiry("NeverExpire")
+
+        properties = file_client.get_file_properties()
+        assert properties
+        assert properties.expiry_time is None
 
         return variables
 
