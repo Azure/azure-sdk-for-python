@@ -12,8 +12,9 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
-    test_proxy
+    test_proxy,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

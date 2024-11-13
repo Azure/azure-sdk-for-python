@@ -109,7 +109,10 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
             while idx < len(readme_content):
                 if "```" in readme_content[idx]:
                     break
-                if ".json" in readme_content[idx] and "Microsoft." in readme_content[idx]:
+                if ".json" in readme_content[idx] and (
+                    re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(readme_content[idx])
+                    or "Microsoft." in readme_content[idx]
+                ):
                     result.append(readme_content[idx].strip("\n -"))
                 idx += 1
             break

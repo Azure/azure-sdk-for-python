@@ -23,6 +23,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def geocode_batch_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
@@ -30,23 +31,25 @@ async def geocode_batch_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with maps_search_client:
-            result = await maps_search_client.get_geocoding_batch({
-                "batchItems": [
-                    {"query": "400 Broad St, Seattle, WA 98109"},
-                    {"query": "15127 NE 24th Street, Redmond, WA 98052"},
-                ],
-            }, )
+            result = await maps_search_client.get_geocoding_batch(
+                {
+                    "batchItems": [
+                        {"query": "400 Broad St, Seattle, WA 98109"},
+                        {"query": "15127 NE 24th Street, Redmond, WA 98052"},
+                    ],
+                },
+            )
 
-            if not result.get('batchItems', False):
+            if not result.get("batchItems", False):
                 print("No batchItems in geocoding")
                 return
 
-            for item in result['batchItems']:
-                if not item.get('features', False):
+            for item in result["batchItems"]:
+                if not item.get("features", False):
                     print(f"No features in item: {item}")
                     continue
 
-                coordinates = item['features'][0]['geometry']['coordinates']
+                coordinates = item["features"][0]["geometry"]["coordinates"]
                 longitude, latitude = coordinates
                 print(longitude, latitude)
 
@@ -55,5 +58,6 @@ async def geocode_batch_async():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(geocode_batch_async())

@@ -7,7 +7,8 @@ import functools
 from devtools_testutils import EnvironmentVariableLoader
 
 MapsRenderPreparer = functools.partial(
-    EnvironmentVariableLoader, "maps",
+    EnvironmentVariableLoader,
+    "maps",
     subscription_key="<maps-subscription-key>",
     maps_client_id="fake_client_id",
     maps_client_secret="fake_secret",

@@ -37,7 +37,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_iana_version(self):
-        expected_result = {'Version': '2024a'}
+        expected_result = {"Version": "2024a"}
         result = self.client.get_iana_version()
 
         assert result == expected_result
@@ -60,9 +60,9 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_convert_windows_timezone_to_iana(self):
         expected_result = [
-            {'HasZone1970Location': True, 'Id': 'America/Vancouver', 'IsAlias': False},
-            {'HasZone1970Location': True, 'Id': 'America/Los_Angeles', 'IsAlias': False},
-            {'HasZone1970Location': False, 'Id': 'PST8PDT', 'IsAlias': False}
+            {"HasZone1970Location": True, "Id": "America/Vancouver", "IsAlias": False},
+            {"HasZone1970Location": True, "Id": "America/Los_Angeles", "IsAlias": False},
+            {"HasZone1970Location": False, "Id": "PST8PDT", "IsAlias": False},
         ]
         result = self.client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
 
