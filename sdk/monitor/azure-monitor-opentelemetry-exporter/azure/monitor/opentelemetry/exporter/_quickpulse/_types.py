@@ -195,4 +195,13 @@ _DATA_FIELD_NAMES = {
     _RequestData: _REQUEST_DATA_FIELD_NAMES,
     _TraceData: _TRACE_DATA_FIELD_NAMES,
 }
-_KNOWN_STRING_FIELD_NAMES = ("Url", "Name", "Target", "Type", "Data", "Message", "Exception.Message", "Exception.StackTrace")
+_KNOWN_STRING_FIELD_NAMES = (
+    "Url",
+    "Name",
+    "Target",
+    "Type",
+    "Data",
+    "Message",
+    "Exception.Message",
+    "Exception.StackTrace"
+)

@@ -242,6 +242,7 @@ def _check_metric_filters(metric_infos: List[DerivedMetricInfo], data: _Telemetr
     return match
 
 
+# pylint: disable=R0911
 def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
     if not filters:
         return True
@@ -252,7 +253,7 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
         comparand = filter.comparand
         if name == "*":
             return _check_any_field_filter(filter, data)
-        elif name.startswith("CustomDimensions."):
+        if name.startswith("CustomDimensions."):
             return _check_custom_dim_field_filter(filter, data.custom_dimensions)
         field_names = _DATA_FIELD_NAMES.get(type(data))
         if field_names is None:
@@ -262,12 +263,12 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
         if name == "Success":
             if predicate == PredicateType.EQUAL:
                 return str(val).lower() == comparand.lower()
-            elif predicate == PredicateType.NOT_EQUAL:
+            if predicate == PredicateType.NOT_EQUAL:
                 return str(val).lower() != comparand.lower()
         elif name in ("ResultCode", "ResponseCode", "Duration"):
             try:
                 val = int(val)
-            except Exception:
+            except Exception:  # pylint: disable=broad-excepttion-caught,invalid-name
                 return False
             numerical_val = _filter_time_stamp_to_ms(comparand) if name == "Duration" else int(comparand)
             if numerical_val is None:
@@ -284,6 +285,8 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
                 return val < numerical_val
             elif predicate == PredicateType.LESS_THAN_OR_EQUAL:
                 return val <= numerical_val
+            else:
+                return False
         else:
             # string fields
             return _field_string_compare(str(val), comparand, predicate)
@@ -312,18 +315,17 @@ def _check_custom_dim_field_filter(filter: FilterInfo, custom_dimensions: Dict[s
     value = custom_dimensions.get(field)
     if value is not None:
         return _field_string_compare(str(value), filter.comparand, filter.predicate)
-    else:
-        return False
-    
+    return False
+
 
 def _field_string_compare(value: str, comparand: str, predicate: str) -> bool:
     if predicate == PredicateType.EQUAL:
         return value == comparand
-    elif predicate == PredicateType.NOT_EQUAL:
+    if predicate == PredicateType.NOT_EQUAL:
         return value != comparand
-    elif predicate == PredicateType.CONTAINS:
+    if predicate == PredicateType.CONTAINS:
         return comparand.lower() in value.lower()
-    elif predicate == PredicateType.DOES_NOT_CONTAIN:
+    if predicate == PredicateType.DOES_NOT_CONTAIN:
         return comparand.lower() not in value.lower()
     return False
 
@@ -338,7 +340,12 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
         return False
     # Only REQUEST, DEPENDENCY, EXCEPTION, TRACE are supported
     # No filtering options in UX for PERFORMANCE_COUNTERS
-    if not telemetry_type in (TelemetryType.REQUEST, TelemetryType.DEPENDENCY, TelemetryType.EXCEPTION, TelemetryType.TRACE):
+    if telemetry_type not in (
+        TelemetryType.REQUEST,
+        TelemetryType.DEPENDENCY,
+        TelemetryType.EXCEPTION,
+        TelemetryType.TRACE
+    ):
         return False
     # Check for CustomMetric projection
     if metric_info.projection and metric_info.projection.startswith("CustomMetrics."):
@@ -354,6 +361,7 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
     return True
 
 
+# pylint: disable=R0911
 def _validate_filter_field_name(filter: FilterInfo, telemetry_type: TelemetryType) -> bool:
     name = filter.field_name
     if not name:
@@ -380,6 +388,7 @@ def _validate_filter_field_name(filter: FilterInfo, telemetry_type: TelemetryTyp
     return True
 
 
+# pylint: disable=R0911
 def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
     name = filter.field_name
     comparand = filter.comparand
@@ -416,7 +425,7 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
             return False
     return True
 
-        
+
 def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
     # The service side will return a timestamp in the following format:
     # [days].[hours]:[minutes]:[seconds]
@@ -510,7 +519,7 @@ def _calculate_aggregation(aggregation: AggregationType, id: str, value: float) 
             return (min(prev_value, value), prev_count + 1)
         elif aggregation == AggregationType.MAX:
             return (max(prev_value, value), prev_count + 1)
-        elif aggregation == AggregationType.AVG:
+        else aggregation == AggregationType.AVG:
             return (prev_value + value, prev_count + 1)
     return None
 

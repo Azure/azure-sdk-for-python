@@ -129,7 +129,6 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-              
                 if port != _get_default_port_http(
                     str(attributes.get(SpanAttributes.HTTP_SCHEME))
                 ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):

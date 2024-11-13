@@ -148,6 +148,7 @@ class _QuickpulseExporter(MetricExporter):
         )
         configuration_etag = _get_quickpulse_etag() or ""
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        # pylint: disable=R1702
         try:
             post_response = self._client.publish(  # type: ignore
                 endpoint=self._live_endpoint,
