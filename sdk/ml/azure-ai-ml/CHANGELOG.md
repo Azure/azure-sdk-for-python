@@ -2,13 +2,13 @@
 ## 1.23.0 (unreleased)
 
 ### Features Added
+  - Added support for IP-based access control to default and hub workspaces. 
 
 ### Bugs Fixed
 
 ## 1.22.0 (2024-11-11)
 
 ### Features Added
-  - Added support for IP-based access control to default and hub workspaces. 
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
   AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
   - Update TLS version from 1.0 to 1.2
