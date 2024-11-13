@@ -29,28 +29,27 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
         async with self.client:
             result = await self.client.get_air_quality_daily_forecasts(coordinates=[25.0338053, 121.5640089])
             assert result is not None
-    
+
     @MapsWeatherPreparer()
     @recorded_by_proxy_async
     async def test_get_air_quality_daily_forecasts(self):
         async with self.client:
             result = await self.client.get_air_quality_daily_forecasts(coordinates=[25.0338053, 121.5640089])
             assert result is not None
-    
+
     @MapsWeatherPreparer()
     @recorded_by_proxy_async
     async def test_get_air_quality_hourly_forecasts(self):
         async with self.client:
             result = await self.client.get_air_quality_hourly_forecasts(coordinates=[25.0338053, 121.5640089])
             assert result is not None
-    
+
     @MapsWeatherPreparer()
     @recorded_by_proxy_async
     async def test_get_current_air_quality(self):
         async with self.client:
             result = await self.client.get_current_air_quality(coordinates=[25.0338053, 121.5640089])
             assert result is not None
-    
 
     @MapsWeatherPreparer()
     @recorded_by_proxy_async
@@ -73,7 +72,7 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
             result = await self.client.get_daily_historical_actuals(
                 coordinates=[25.0338053, 121.5640089],
                 start_date=datetime.date(2020, 2, 2),
-                end_date=datetime.date(2020, 2, 8)
+                end_date=datetime.date(2020, 2, 8),
             )
             assert result is not None
 
@@ -84,7 +83,7 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
             result = await self.client.get_daily_historical_normals(
                 coordinates=[25.0338053, 121.5640089],
                 start_date=datetime.date(2020, 2, 2),
-                end_date=datetime.date(2020, 2, 8)
+                end_date=datetime.date(2020, 2, 8),
             )
             assert result is not None
 
@@ -95,7 +94,7 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
             result = await self.client.get_daily_historical_records(
                 coordinates=[25.0338053, 121.5640089],
                 start_date=datetime.date(2020, 2, 2),
-                end_date=datetime.date(2020, 2, 8)
+                end_date=datetime.date(2020, 2, 8),
             )
             assert result is not None
 
@@ -145,22 +144,14 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_tropical_storm_forecast(self):
         async with self.client:
-            result = await self.client.get_tropical_storm_forecast(
-                year=2021,
-                basin_id="NP",
-                government_storm_id=2
-            )
+            result = await self.client.get_tropical_storm_forecast(year=2021, basin_id="NP", government_storm_id=2)
             assert result is not None
 
     @MapsWeatherPreparer()
     @recorded_by_proxy_async
     async def test_get_tropical_storm_locations(self):
         async with self.client:
-            result = await self.client.get_tropical_storm_locations(
-                year=2021,
-                basin_id="NP",
-                government_storm_id=2
-            )
+            result = await self.client.get_tropical_storm_locations(year=2021, basin_id="NP", government_storm_id=2)
             assert result is not None
 
     @MapsWeatherPreparer()
@@ -174,7 +165,5 @@ class TestMapsWeatherClient(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_weather_along_route(self):
         async with self.client:
-            result = await self.client.get_weather_along_route(
-                query='25.033075,121.525694,0:25.0338053,121.5640089,2'
-            )
+            result = await self.client.get_weather_along_route(query="25.033075,121.525694,0:25.0338053,121.5640089,2")
             assert result is not None

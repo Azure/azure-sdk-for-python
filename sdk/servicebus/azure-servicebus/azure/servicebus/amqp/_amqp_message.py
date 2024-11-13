@@ -14,6 +14,7 @@ from ._constants import AmqpMessageBodyType
 if TYPE_CHECKING:
     import uuid
 
+
 class DictMixin(object):
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
@@ -116,7 +117,7 @@ class AmqpAnnotatedMessage(object):
         application_properties: Optional[Dict[str, Any]] = None,
         annotations: Optional[Dict[str, Any]] = None,
         delivery_annotations: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._encoding = kwargs.pop("encoding", "UTF-8")
         self._data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]] = None
@@ -137,7 +138,7 @@ class AmqpAnnotatedMessage(object):
                 "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
-        self._body_type: AmqpMessageBodyType = None # type: ignore
+        self._body_type: AmqpMessageBodyType = None  # type: ignore
         if "data_body" in kwargs:
             self._data_body = normalized_data_body(kwargs.get("data_body"))
             self._body_type = AmqpMessageBodyType.DATA
@@ -158,7 +159,7 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = cast(Optional[Dict[Union[str, bytes], Any]], delivery_annotations)
 
     def __str__(self) -> str:
-        if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+        if self._body_type == AmqpMessageBodyType.DATA:  # pylint:disable=no-else-return
             return "".join(d.decode(self._encoding) for d in cast(Iterable[bytes], self._data_body))
         elif self._body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
@@ -168,9 +169,7 @@ class AmqpAnnotatedMessage(object):
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
-        message_repr = "body={}".format(
-            str(self)
-        )
+        message_repr = "body={}".format(str(self))
         message_repr += ", body_type={}".format(self._body_type.value)
         try:
             message_repr += ", header={}".format(self.header)
@@ -199,28 +198,36 @@ class AmqpAnnotatedMessage(object):
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
-        self._properties = AmqpMessageProperties(
-            message_id=message.properties.message_id,
-            user_id=message.properties.user_id,
-            to=message.properties.to,
-            subject=message.properties.subject,
-            reply_to=message.properties.reply_to,
-            correlation_id=message.properties.correlation_id,
-            content_type=message.properties.content_type,
-            content_encoding=message.properties.content_encoding,
-            absolute_expiry_time=message.properties.absolute_expiry_time,
-            creation_time=message.properties.creation_time,
-            group_id=message.properties.group_id,
-            group_sequence=message.properties.group_sequence,
-            reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
-        self._header = AmqpMessageHeader(
-            delivery_count=message.header.delivery_count,
-            time_to_live=message.header.ttl,
-            first_acquirer=message.header.first_acquirer,
-            durable=message.header.durable,
-            priority=message.header.priority
-        ) if message.header else None
+        self._properties = (
+            AmqpMessageProperties(
+                message_id=message.properties.message_id,
+                user_id=message.properties.user_id,
+                to=message.properties.to,
+                subject=message.properties.subject,
+                reply_to=message.properties.reply_to,
+                correlation_id=message.properties.correlation_id,
+                content_type=message.properties.content_type,
+                content_encoding=message.properties.content_encoding,
+                absolute_expiry_time=message.properties.absolute_expiry_time,
+                creation_time=message.properties.creation_time,
+                group_id=message.properties.group_id,
+                group_sequence=message.properties.group_sequence,
+                reply_to_group_id=message.properties.reply_to_group_id,
+            )
+            if message.properties
+            else None
+        )
+        self._header = (
+            AmqpMessageHeader(
+                delivery_count=message.header.delivery_count,
+                time_to_live=message.header.ttl,
+                first_acquirer=message.header.first_acquirer,
+                durable=message.header.durable,
+                priority=message.header.priority,
+            )
+            if message.header
+            else None
+        )
         self._footer = message.footer
         self._annotations = message.message_annotations
         self._delivery_annotations = message.delivery_annotations
@@ -243,7 +250,7 @@ class AmqpAnnotatedMessage(object):
         For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
-        if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+        if self._body_type == AmqpMessageBodyType.DATA:  # pylint:disable=no-else-return
             return (i for i in cast(Iterable, self._data_body))
         elif self._body_type == AmqpMessageBodyType.SEQUENCE:
             return (i for i in cast(Iterable, self._sequence_body))
@@ -400,6 +407,7 @@ class AmqpMessageHeader(DictMixin):
      priority messages. Messages with higher priorities MAY be delivered before those with lower priorities.
     :vartype priority: Optional[int]
     """
+
     def __init__(
         self,
         *,
@@ -408,7 +416,7 @@ class AmqpMessageHeader(DictMixin):
         durable: Optional[bool] = None,
         first_acquirer: Optional[bool] = None,
         priority: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
@@ -494,6 +502,7 @@ class AmqpMessageProperties(DictMixin):
      to this message to a specific group.
     :vartype reply_to_group_id: Optional[Union[str, bytes]]
     """
+
     def __init__(
         self,
         *,
@@ -510,7 +519,7 @@ class AmqpMessageProperties(DictMixin):
         group_id: Optional[Union[str, bytes]] = None,
         group_sequence: Optional[int] = None,
         reply_to_group_id: Optional[Union[str, bytes]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")

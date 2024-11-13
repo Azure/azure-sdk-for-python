@@ -404,9 +404,7 @@ class SearchOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def get_geocoding_batch(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_geocoding_batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
@@ -461,9 +459,7 @@ class SearchOperations:
         """
 
     @overload
-    def get_geocoding_batch(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_geocoding_batch(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
@@ -818,9 +814,7 @@ class SearchOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def get_reverse_geocoding_batch(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_reverse_geocoding_batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
         </rest/api/maps/search/get-reverse-geocoding>`_ API in a single request.
@@ -936,9 +930,7 @@ class SearchOperations:
         """
 
     @distributed_trace
-    def get_reverse_geocoding_batch(
-        self, body: Union[JSON, IO[bytes]], **kwargs: Any
-    ) -> JSON:
+    def get_reverse_geocoding_batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
         </rest/api/maps/search/get-reverse-geocoding>`_ API in a single request.
