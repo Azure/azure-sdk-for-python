@@ -4,10 +4,7 @@
 ../../core/azure-core-tracing-opentelemetry
 aiohttp
 azure-ai-inference
-# Pipeline has some issues with loading openai dependencies when using Python 3.13. Since we only use openai
-# in live tests without recordings, we don't have pipeline tests that use openai. So we can exclude if from here,
-# or only declare dependency for Python version earlier than 3.13, since we still want to run tests locally.
-openai; python_version <= '3.12'
+openai
 opentelemetry-sdk
 opentelemetry-exporter-otlp-proto-grpc
 azure-ai-ml
