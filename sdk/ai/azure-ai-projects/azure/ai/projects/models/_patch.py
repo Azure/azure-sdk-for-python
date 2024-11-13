@@ -245,7 +245,7 @@ class SASTokenCredential(TokenCredential):
         self._sas_token = ""
         if connection is not None and connection.token_credential is not None:
             sas_credential = cast(SASTokenCredential, connection.token_credential)
-            self._sas_token = sas_credential._sas_token
+            self._sas_token = sas_credential._sas_token  # pylint: disable=protected-access
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
@@ -288,7 +288,7 @@ type_map = {
 }
 
 
-def _map_type(annotation) -> Dict[str, Any]:
+def _map_type(annotation) -> Dict[str, Any]:  # pylint: disable=too-many-return-statements
     if annotation == inspect.Parameter.empty:
         return {"type": "string"}  # Default type if annotation is missing
 
@@ -395,7 +395,7 @@ class BaseFunctionTool(Tool):
             sig = inspect.signature(func)
             params = sig.parameters
             docstring = inspect.getdoc(func) or ""
-            description = docstring.split("\n")[0] if docstring else "No description"
+            description = docstring.split("\n", maxsplit=1)[0] if docstring else "No description"
 
             param_descriptions = {}
             for line in docstring.splitlines():
@@ -490,7 +490,7 @@ class FunctionTool(BaseFunctionTool):
 
 class AsyncFunctionTool(BaseFunctionTool):
 
-    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:  # pylint: disable=invalid-overridden-method
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
@@ -600,17 +600,6 @@ class SharepointTool(ConnectionTool):
         :rtype: List[ToolDefinition]
         """
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
-
-
-"""
-    def updateConnections(self, connection_list: List[Tuple[str, str]]) -> None:
-#        use connection_list to auto-update connections for bing search tool if no pre-existing
-        if self.connection_ids.__len__() == 0:
-            for id, connection_type in connection_list:
-                if connection_type == "ApiKey":
-                    self.connection_ids.append(id)
-                    return
-"""
 
 
 class FileSearchTool(Tool):
@@ -874,7 +863,7 @@ class ToolSet(BaseToolSet):
                         "output": output,
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
@@ -918,7 +907,7 @@ class AsyncToolSet(BaseToolSet):
                         "output": output,
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
 
         return tool_outputs
@@ -1157,7 +1146,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]
                     self.done = True  # Mark the stream as done
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
@@ -1306,7 +1295,7 @@ class AgentRunStream(Iterator[Tuple[str, Union[str, StreamEventData]]]):
                     self.done = True  # Mark the stream as done
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         return event_type, event_data_obj
