@@ -1685,3 +1685,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             'closed_handles_count': total_closed,
             'failed_handles_count': total_failed
         }
+
+    @distributed_trace
+    def create_hard_link(
+        self,
+        *,
+        kwargs: Any
+    ) -> Dict[str, Any]:
+        return cast(Dict[str, Any], self._client.file.create_hard_link(
+            cls=return_response_headers,
+        ))
