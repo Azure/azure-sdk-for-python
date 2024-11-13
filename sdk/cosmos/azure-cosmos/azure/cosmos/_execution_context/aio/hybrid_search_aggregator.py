@@ -223,12 +223,13 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._final_results = drained_results[self.skip:self.skip+self.take]
         self._final_results.reverse()
+        self._final_results = [item["payload"]["payload"] for item in self._final_results]
 
     def _format_singleton_response(self, results):
         # Strip off everything but the payload and emit those documents
-        self._final_results = [{'payload': result['payload']} for result in results]
-        self._final_results = self._final_results[self.skip:self.skip+self.take]
+        self._final_results = results[self.skip:self.skip+self.take]
         self._final_results.reverse()
+        self._final_results = [item["payload"]["payload"] for item in self._final_results]
         return True
 
     def _format_component_query(self, format_string):
