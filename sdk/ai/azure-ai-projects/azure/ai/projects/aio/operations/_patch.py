@@ -399,8 +399,8 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = (
-                await self._outer_instance.connections._get_workspace()
-            )  # pylint: disable=protected-access
+                await self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
+            )
 
             if not get_workspace_response.properties.application_insights:
                 raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
@@ -416,7 +416,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    async def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
+    def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
         """Enables distributed tracing and logging with OpenTelemetry for Azure AI clients and
         popular GenAI libraries.
 

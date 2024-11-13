@@ -611,6 +611,7 @@ class Model(_MyMutableMapping):
                 return v
         return None
 
+    # pylint: disable=no-member
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
         if not hasattr(cls, "__mapping__"):
@@ -635,6 +636,7 @@ class Model(_MyMutableMapping):
             discriminator_value = data.get(discriminator._rest_name)
         mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore
         return mapped_cls._deserialize(data, exist_discriminators)
+    # pylint: enable=no-member
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
         """Return a dict that can be turned into json using json.dump.
