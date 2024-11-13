@@ -108,6 +108,7 @@ class TestsPipelineResult(typing.TypedDict, total=False):
     link: str
     result: DEVOPS_BUILD_STATUS
     tests: CheckStatus
+    samples: CheckStatus
 
 
 class CIPipelineResult(typing.TypedDict, total=False):
@@ -152,6 +153,7 @@ class LibraryStatus(typing.TypedDict, total=False):
     sphinx: Status
     sdk_owned: bool
     tests: Status
+    samples: Status
     ci: Status
 
 
@@ -222,6 +224,18 @@ def skip_package(package_name: str) -> bool:
         or package_name not in FILTER_EXCLUSIONS
         and any(identifier in package_name for identifier in IGNORE_FILTER)
     )
+
+
+def samples_enabled(package_path: pathlib.Path) -> bool:
+    tests_yaml = package_path.parent / "tests.yml"
+    if not tests_yaml.exists():
+        return False
+    with open(tests_yaml, "r") as file:
+        parameters = file.read()
+
+    if "TestSamples=.*/true" in parameters:
+        return True
+    return False
 
 
 def get_dataplane(
@@ -336,6 +350,7 @@ def record_all_pipeline(
                 {
                     "result": status,
                     "tests": CheckStatus(status=status),
+                    "samples": CheckStatus(status=status),
                 }
             )
         )
@@ -367,7 +382,7 @@ def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["sphinx"] = Status(status=status, link=None)
     details["ci"] = Status(status=status, link=None)
     details["tests"] = Status(status=status, link=None)
-
+    details["samples"] = Status(status=status, link=None)
 
 def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
@@ -437,6 +452,8 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
     for task in timeline_result["records"]:
         if "Run Tests" in task["name"]:
             record_test_result(task, "tests", pipelines[service]["tests"])
+        if "Test Samples" in task["name"]:
+            record_test_result(task, "samples", pipelines[service]["tests"])
 
 
 def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
@@ -506,6 +523,25 @@ def report_test_result(
         library_details[test_type] = Status(status="UNKNOWN", link=pipeline[test_type].get("link"))
 
 
+def report_samples_result(
+    check: typing.Literal["samples"],
+    pipeline: PipelineResults,
+    library_details: LibraryStatus, 
+) -> None:
+    enabled = samples_enabled(library_details["path"])
+    if not enabled:
+        library_details[check] = Status(status="DISABLED", link=None)
+        return
+
+    ci_check = pipeline["tests"][check]["status"]
+    if ci_check == "succeeded":
+        library_details[check] = Status(status="PASS", link=pipeline["tests"]["link"])
+    elif ci_check == "failed":
+        library_details[check] = Status(status="FAIL", link=pipeline["tests"]["link"])
+    else:
+        library_details[check] = Status(status="UNKNOWN", link=pipeline["tests"].get("link"))
+
+
 def report_check_result(
     check: CheckTypes,
     pipeline: PipelineResults,
@@ -558,6 +594,7 @@ def report_status(
             details["type_check_samples"] = (
                 "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
             )
+            report_samples_result("samples", pipelines[service_directory], details)
             details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
             report_test_result("tests", pipelines[service_directory], details)
             report_test_result("ci", pipelines[service_directory], details)
