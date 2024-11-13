@@ -21,10 +21,7 @@ SUBSCRIPTION_NAME = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
 credential = DefaultAzureCredential()
 servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 with servicebus_client:
-    receiver = servicebus_client.get_subscription_receiver(
-        topic_name=TOPIC_NAME,
-        subscription_name=SUBSCRIPTION_NAME
-    )
+    receiver = servicebus_client.get_subscription_receiver(topic_name=TOPIC_NAME, subscription_name=SUBSCRIPTION_NAME)
     with receiver:
         received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:

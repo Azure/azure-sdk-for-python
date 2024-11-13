@@ -3156,6 +3156,111 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        storage_resource_group_name = kwargs.pop("storage_resource_group_name")
+        variables = kwargs.pop("variables", {})
+
+        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        container_name = self.get_resource_name('container')
+        if self.is_live:
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name,
+                                               container_name, blob_container=property)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        await blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True)
+        snapshot = await blob.create_snapshot()
+        snapshot_blob = self.bsc.get_blob_client(container_name, blob_name, snapshot=snapshot)
+
+        try:
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(
+                expiry_time=expiry_time,
+                policy_mode=BlobImmutabilityPolicyMode.Unlocked
+            )
+
+            await snapshot_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            props = await snapshot_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] == "unlocked"
+
+            await snapshot_blob.delete_immutability_policy()
+            props = await snapshot_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is None
+            assert props['immutability_policy']['policy_mode'] is None
+
+            await snapshot_blob.set_legal_hold(True)
+            props = await snapshot_blob.get_blob_properties()
+            assert props['has_legal_hold']
+        finally:
+            await snapshot_blob.set_legal_hold(False)
+            await blob.delete_blob(delete_snapshots="include")
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        storage_resource_group_name = kwargs.pop("storage_resource_group_name")
+        variables = kwargs.pop("variables", {})
+
+        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        container_name = self.get_resource_name('container')
+        if self.is_live:
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name,
+                                                     container_name, blob_container=property)
+
+        blob_name = self.get_resource_name('blob')
+        root_blob = self.bsc.get_blob_client(container_name, blob_name)
+        old_version_dict = await root_blob.upload_blob(b"abc", overwrite=True)
+        await root_blob.upload_blob(b"abcdef", overwrite=True)
+
+        try:
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(
+                expiry_time=expiry_time,
+                policy_mode=BlobImmutabilityPolicyMode.Unlocked
+            )
+            old_version_blob = self.bsc.get_blob_client(
+                container_name, blob_name,
+                version_id=old_version_dict['version_id']
+            )
+
+            await old_version_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            props = await old_version_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] == "unlocked"
+
+            await old_version_blob.delete_immutability_policy()
+            props = await old_version_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is None
+            assert props['immutability_policy']['policy_mode'] is None
+
+            await old_version_blob.set_legal_hold(True)
+            props = await old_version_blob.get_blob_properties()
+            assert props['has_legal_hold']
+        finally:
+            await old_version_blob.set_legal_hold(False)
+            await root_blob.delete_blob(delete_snapshots="include")
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_validate_empty_blob(self, **kwargs):
         """Test that we can upload an empty blob with validate=True."""
         storage_account_name = kwargs.pop("storage_account_name")

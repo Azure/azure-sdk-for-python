@@ -1,14 +1,25 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (2024-11-11)
 
 ### Features Added
 
-### Breaking Changes
+* OpenTelemetry tracing:
+  * Method `AIInferenceInstrumentor().instrument()` updated with an input argument `enable_content_recording`.
+  * Calling `AIInferenceInstrumentor().instrument()` twice no longer results in an exception.
+  * Added method `AIInferenceInstrumentor().is_content_recording_enabled()`
+* Support [Prompty](https://github.com/microsoft/prompty) and prompt template from string. PromptTemplate class outputs an array of dictionary with OpenAI compatible message format.
 
 ### Bugs Fixed
 
-### Other Changes
+* Fix tracing for asynchronous streaming.
+
+## 1.0.0b5 (2024-10-16)
+
+### Features Added
+
+* Support for OpenTelemetry tracing. Please find more information in the package [README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md).
+* When constructing clients using input `credential` of type `AzureKeyCredential`, two HTTP request headers are sent simultaneously for authentication: `Authentication: Beater <key>` and `api-key: <key>` (previously only the first one was sent). This is to support different inference services, removing the need for the application to explicitly specify an additional HTTP request header.
 
 ## 1.0.0b4 (2024-08-30)
 

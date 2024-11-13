@@ -12,9 +12,6 @@
         "testApplicationId": {
             "type": "string"
         },
-        "testApplicationSecret": {
-            "type": "string"
-        },
         "testApplicationOid": {
             "type": "string"
         },
@@ -22,10 +19,12 @@
             "type": "string"
         },
         "storageEndpointSuffix": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "core.windows.net"
         },
         "azureCloud": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "AzureCloud"
         }
     },
     "variables": {
@@ -244,10 +243,6 @@
         "AZURE_CLIENT_ID": {
             "type": "string",
             "value": "[parameters('testApplicationId')]"
-        },
-        "AZURE_CLIENT_SECRET": {
-            "type": "string",
-            "value": "[parameters('testApplicationSecret')]"
         },
         "AZURE_CLOUD": {
             "type": "string",

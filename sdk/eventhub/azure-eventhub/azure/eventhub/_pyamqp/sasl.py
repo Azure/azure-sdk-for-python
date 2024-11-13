@@ -71,12 +71,8 @@ class SASLTransportMixin:
             )
 
         _, supported_mechanisms = self.receive_frame(verify_frame_type=1)
-        if (
-            self.credential.mechanism not in supported_mechanisms[1][0]
-        ):  # sasl_server_mechanisms
-            raise ValueError(
-                "Unsupported SASL credential type: {}".format(self.credential.mechanism)
-            )
+        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
+            raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,
             initial_response=self.credential.start(),
@@ -90,9 +86,7 @@ class SASLTransportMixin:
             raise NotImplementedError("Unsupported SASL challenge")
         if fields[0] == SASLCode.Ok:  # code
             return
-        raise ValueError(
-            "SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields)
-        )
+        raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
 
 class SASLTransport(SSLTransport, SASLTransportMixin):

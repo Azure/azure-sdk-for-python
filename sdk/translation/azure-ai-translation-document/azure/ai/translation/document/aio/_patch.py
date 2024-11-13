@@ -366,7 +366,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(
             AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]],
-            await super()._begin_start_translation(
+            await super()._begin_translation(
                 body=inputs,
                 polling=AsyncDocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
@@ -435,7 +435,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             super().list_translation_statuses(
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
-                ids=translation_ids,
+                translation_ids=translation_ids,
                 orderby=order_by,
                 statuses=statuses,
                 top=top,
@@ -503,7 +503,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 translation_id=translation_id,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
-                ids=document_ids,
+                document_ids=document_ids,
                 orderby=order_by,
                 statuses=statuses,
                 top=top,

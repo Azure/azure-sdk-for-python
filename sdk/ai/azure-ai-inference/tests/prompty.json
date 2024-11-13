@@ -1,0 +1,6 @@
+{
+  "default": {
+    "type": "azure",
+    "api_version": "mock-api-version"
+  }
+}
