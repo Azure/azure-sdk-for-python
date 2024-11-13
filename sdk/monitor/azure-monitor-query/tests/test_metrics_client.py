@@ -19,7 +19,7 @@ class TestMetricsClient(MetricsClientTestCase):
     def test_batch_metrics_auth(self, recorded_test, monitor_info):
         client: MetricsClient = self.get_client(MetricsClient, self.get_credential(MetricsClient))
         responses = client.query_resources(
-            resource_ids=[monitor_info['metrics_resource_id']],
+            resource_ids=[monitor_info["metrics_resource_id"]],
             metric_namespace=METRIC_RESOURCE_PROVIDER,
             metric_names=[METRIC_NAME],
             aggregations=[MetricAggregationType.COUNT],
@@ -30,7 +30,7 @@ class TestMetricsClient(MetricsClientTestCase):
     def test_batch_metrics_granularity(self, recorded_test, monitor_info):
         client: MetricsClient = self.get_client(MetricsClient, self.get_credential(MetricsClient))
         responses = client.query_resources(
-            resource_ids=[monitor_info['metrics_resource_id']],
+            resource_ids=[monitor_info["metrics_resource_id"]],
             metric_namespace=METRIC_RESOURCE_PROVIDER,
             metric_names=[METRIC_NAME],
             granularity=timedelta(minutes=5),

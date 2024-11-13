@@ -3,24 +3,23 @@
 # ---------------------------------------------------------
 import inspect
 import json
+import logging
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import MissingAzurePackage, UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
-from azure.ai.evaluation._common.math import list_sum
+from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
-    EvaluationRunProperties,
     Prefixes,
     _InternalEvaluationMetrics,
 )
@@ -35,12 +34,48 @@ from ._utils import (
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
+LOGGER = logging.getLogger(__name__)
+
+# For metrics (aggregates) whose metric names intentionally differ from their
+# originating column name, usually because the aggregation of the original value
+# means something sufficiently different.
+# Note that content safety metrics are handled seprately.
+METRIC_COLUMN_NAME_REPLACEMENTS = {
+    "groundedness_pro_label": "groundedness_pro_passing_rate",
+}
 
 
 class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
     metrics: Dict[str, Any]
     run_summary: Dict[str, Any]
+
+
+def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, float]]:
+    """Identify and average various metrics that need to have the metric name be replaced,
+    instead of having the metric match the originating column name.
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: A tuple; the first element is a list of dataframe columns that were aggregated,
+        and the second element is a dictionary of resultant new metric column names and their values.
+    :rtype: Tuple[List[str], Dict[str, float]]
+    """
+    renamed_cols = []
+    metric_columns = {}
+    for col in df.columns:
+        metric_prefix = col.split(".")[0]
+        metric_name = col.split(".")[1]
+        if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
+            renamed_cols.append(col)
+            new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+            col_with_numeric_values = pd.to_numeric(df[col], errors="coerce")
+            try:
+                metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
+            except EvaluationException:  # only exception that can be cause is all NaN values
+                msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+                LOGGER.warning(msg)
+
+    return renamed_cols, metric_columns
 
 
 # pylint: disable=line-too-long
@@ -85,11 +120,15 @@ def _aggregate_content_safety_metrics(
     for col in content_safety_df.columns:
         defect_rate_name = col.replace("_score", "_defect_rate")
         col_with_numeric_values = pd.to_numeric(content_safety_df[col], errors="coerce")
-        defect_rates[defect_rate_name] = round(
-            list_sum(col_with_numeric_values >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT)
-            / col_with_numeric_values.count(),
-            2,
-        )
+        try:
+            col_with_boolean_values = apply_transform_nan_safe(
+                col_with_numeric_values, lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0
+            )
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
+            msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+            LOGGER.warning(msg)
+
     return content_safety_cols, defect_rates
 
 
@@ -119,10 +158,11 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
         col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
-        defect_rates[defect_rate_name] = round(
-            list_sum(col_with_boolean_values) / col_with_boolean_values.count(),
-            2,
-        )
+        try:
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
+            msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+            LOGGER.warning(msg)
     return label_cols, defect_rates
 
 
@@ -146,8 +186,11 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # Rename certain columns as defect rates if we know that's what their aggregates represent
     # Content safety metrics
     content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(df, evaluators)
+    other_renamed_cols, renamed_cols = _aggregate_other_metrics(df)
     handled_columns.extend(content_safety_cols)
+    handled_columns.extend(other_renamed_cols)
     defect_rates.update(cs_defect_rates)
+    defect_rates.update(renamed_cols)
     # Label-based (true/false) metrics where 'true' means 'something is wrong'
     label_cols, label_defect_rates = _aggregate_label_defect_metrics(df)
     handled_columns.extend(label_cols)
@@ -156,6 +199,9 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
 
+    # NOTE: nan/None values don't count as as booleans, so boolean columns with
+    # nan/None values won't have a mean produced from them.
+    # This is different from label-based known evaluators, which have special handling.
     mean_value = df.mean(numeric_only=True)
     metrics = mean_value.to_dict()
     # Add defect rates back into metrics
@@ -250,7 +296,13 @@ def _validate_columns_for_evaluators(
                 # Ignore the missing fields if "conversation" presents in the input data
                 missing_inputs = []
             else:
-                missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
+                optional_params = (
+                    evaluator._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    if hasattr(evaluator, "_OPTIONAL_PARAMS")
+                    else []
+                )
+                excluded_params = set(new_df.columns).union(optional_params)
+                missing_inputs = [col for col in evaluator_params if col not in excluded_params]
 
                 # If "conversation" is the only parameter and it is missing, keep it in the missing inputs
                 # Otherwise, remove it from the missing inputs
@@ -354,7 +406,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
         output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
-        if not os.path.exists(output_dir):
+        if output_dir and not os.path.exists(output_dir):
             msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
                 message=msg,
@@ -414,33 +466,14 @@ def _apply_target_to_data(
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
     _run_name = kwargs.get("_run_name")
-    upload_target_snaphot = kwargs.get("_upload_target_snapshot", False)
-
-    try:
-        with TargetRunContext(upload_target_snaphot):
-            run: Run = pf_client.run(
-                flow=target,
-                display_name=evaluation_name,
-                data=data,
-                properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-                stream=True,
-                name=_run_name,
-            )
-    except (UserAuthenticationError, UploadInternalError) as ex:
-        if "Failed to upload run" in ex.message:
-            msg = (
-                "Failed to upload the target run to the cloud. "
-                "This may be caused by insufficient permission to access storage or other errors."
-            )
-            raise EvaluationException(
-                message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.FAILED_REMOTE_TRACKING,
-                blame=ErrorBlame.USER_ERROR,
-                tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
-            ) from ex
-
-        raise ex
+    with TargetRunContext():
+        run: Run = pf_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            stream=True,
+            name=_run_name,
+        )
 
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
@@ -564,48 +597,14 @@ def evaluate(
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
-    :Example:
+    .. admonition:: Example:
 
-    Evaluate API can be used as follows:
-
-    .. code-block:: python
-
-            from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
-
-
-            model_config = {
-                "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-                "api_key": os.environ.get("AZURE_OPENAI_KEY"),
-                "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
-            }
-
-            coherence_eval = CoherenceEvaluator(model_config=model_config)
-            relevance_eval = RelevanceEvaluator(model_config=model_config)
-
-            path = "evaluate_test_data.jsonl"
-            result = evaluate(
-                data=path,
-                evaluators={
-                    "coherence": coherence_eval,
-                    "relevance": relevance_eval,
-                },
-                evaluator_config={
-                    "coherence": {
-                        "column_mapping": {
-                            "response": "${data.response}",
-                            "query": "${data.query}",
-                        },
-                    },
-                    "relevance": {
-                        "column_mapping": {
-                            "response": "${data.response}",
-                            "context": "${data.context}",
-                            "query": "${data.query}",
-                        },
-                    },
-                },
-            )
-
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START evaluate_method]
+            :end-before: [END evaluate_method]
+            :language: python
+            :dedent: 8
+            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
     """
     try:
         return _evaluate(
@@ -661,7 +660,7 @@ def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     if output_dict:
         print("======= Combined Run Summary (Per Evaluator) =======\n")
         print(json.dumps(output_dict, indent=4))
-        print("\n====================================================")
+        print("\n====================================================\n")
 
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
@@ -691,36 +690,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
-    # Target Run
-    try:
-        pf_client = PFClient(
-            config=(
-                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
-                if azure_ai_project
-                else None
-            ),
-            user_agent=USER_AGENT,
-        )
-    # pylint: disable=raise-missing-from
-    except MissingAzurePackage:
-        msg = (
-            "The required packages for remote tracking are missing.\n"
-            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
-        )
-
-        raise EvaluationException(  # pylint: disable=raise-missing-from
-            message=msg,
-            target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.MISSING_PACKAGE,
-            blame=ErrorBlame.USER_ERROR,
-        )
-
-    trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
-
-    # Handle the case where the customer manually run "pf config set trace.destination=none"
-    if trace_destination and trace_destination.lower() == "none":
-        trace_destination = None
-
+    pf_client = PFClient(user_agent=USER_AGENT)
     target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
@@ -794,11 +764,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         data = os.path.abspath(data)
-
-        # A user reported intermittent errors when PFClient uploads evaluation runs to the cloud.
-        # The root cause is still unclear, but it seems related to a conflict between the async run uploader
-        # and the async batch run. As a quick mitigation, use a PFClient without a trace destination for batch runs.
-        per_evaluator_results = eval_batch_run(ProxyClient(PFClient(user_agent=USER_AGENT)), data=data)
+        per_evaluator_results = eval_batch_run(ProxyClient(pf_client), data=data)
     else:
         data = input_data_df
         per_evaluator_results = eval_batch_run(CodeClient(), data=input_data_df)
@@ -840,6 +806,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     metrics.update(evaluators_metric)
+
+    # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
+    target_run = None
+    trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = _log_metrics_and_instance_results(
         metrics,
         result_df,
@@ -851,9 +821,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result_df_dict = result_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
+    _print_summary(per_evaluator_results)
+
     if output_path:
         _write_output(output_path, result)
-
-    _print_summary(per_evaluator_results)
 
     return result

@@ -23,6 +23,7 @@ class ErrorCategory(Enum):
     * SERVICE_UNAVAILABLE -> Service is unavailable
     * MISSING_PACKAGE -> Required package is missing
     * FAILED_REMOTE_TRACKING -> Remote tracking failed
+    * PROJECT_ACCESS_ERROR -> Access to project failed
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -35,6 +36,7 @@ class ErrorCategory(Enum):
     SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
     MISSING_PACKAGE = "MISSING PACKAGE"
     FAILED_REMOTE_TRACKING = "FAILED REMOTE TRACKING"
+    PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
 
 
@@ -61,12 +63,15 @@ class ErrorTarget(Enum):
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
+    CONTENT_SAFETY_MULTIMODAL_EVALUATOR = "ContentSafetyMultimodalEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
+    FLUENCY_EVALUATOR = "FluencyEvaluator"
+    RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"

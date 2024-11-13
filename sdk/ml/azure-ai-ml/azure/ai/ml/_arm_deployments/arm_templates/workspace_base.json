@@ -432,6 +432,17 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "provisionNetworkNow": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Set to provision the managed VNet with the default Options when creating a Workspace with the managed VNet enabled"
+            }
+        },
         "allowRoleAssignmentOnRG": {
             "type": "string",
             "defaultValue": "true",
@@ -885,6 +896,7 @@
                 "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
                 "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
+                "provisionNetworkNow": "[parameters('provisionNetworkNow')]",
                 "featureStoreSettings": {
                     "computeruntime": {
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
@@ -1001,6 +1013,7 @@
                                 "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
                                 "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                                 "managedNetwork": "[parameters('managedNetwork')]",
+                                "provisionNetworkNow": "[parameters('provisionNetworkNow')]",
                                 "featureStoreSettings": {
                                     "computeruntime": {
                                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"

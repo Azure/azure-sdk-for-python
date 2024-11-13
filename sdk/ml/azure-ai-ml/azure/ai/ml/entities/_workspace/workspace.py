@@ -8,13 +8,13 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
-    FeatureStoreSettings as RestFeatureStoreSettings,
-    ManagedNetworkSettings as RestManagedNetwork,
-    ManagedServiceIdentity as RestManagedServiceIdentity,
+from azure.ai.ml._restclient.v2024_10_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
-    Workspace as RestWorkspace,
 )
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -81,6 +81,9 @@ class Workspace(Resource):
     :type primary_user_assigned_identity: str
     :param managed_network: workspace's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :param provision_network_now: Set to trigger the provisioning of the managed vnet with the default options when
+        creating a workspace with the managed vnet enable, or else it does nothing
+    :type provision_network_now: Optional[bool]
     :param system_datastores_auth_mode: The authentication mode for system datastores.
     :type system_datastores_auth_mode: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
@@ -104,6 +107,7 @@ class Workspace(Resource):
             :caption: Creating a Workspace object.
     """
 
+    # pylint: disable=too-many-locals
     def __init__(
         self,
         *,
@@ -124,6 +128,7 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        provision_network_now: Optional[bool] = None,
         system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
         allow_roleassignment_on_rg: Optional[bool] = None,
@@ -164,6 +169,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.provision_network_now = provision_network_now
         self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
         self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
@@ -335,9 +341,13 @@ class Workspace(Resource):
 
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             try:
-                from azureml.mlflow import get_mlflow_tracking_uri_v2
+                if v2_service_context:
+                    # v2_service_context is required (not None) in get_mlflow_tracking_uri_v2
+                    from azureml.mlflow import get_mlflow_tracking_uri_v2
 
-                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                    mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                else:
+                    mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
                 error_msg = (
@@ -362,6 +372,11 @@ class Workspace(Resource):
                 managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
                     rest_obj.managed_network
                 )
+
+        # TODO: Remove once it's included in response
+        provision_network_now = None
+        if hasattr(rest_obj, "provision_network_now"):
+            provision_network_now = rest_obj.provision_network_now
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
@@ -407,6 +422,7 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            provision_network_now=provision_network_now,
             system_datastores_auth_mode=system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
@@ -454,6 +470,7 @@ class Workspace(Resource):
                 if self.managed_network
                 else None
             ),  # pylint: disable=protected-access
+            provision_network_now=self.provision_network_now,
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,

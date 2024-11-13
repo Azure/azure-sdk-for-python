@@ -15,17 +15,19 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
-SAS_POLICY = os.environ['SERVICEBUS_SAS_POLICY']
-SERVICEBUS_SAS_KEY = os.environ['SERVICEBUS_SAS_KEY']
+SAS_POLICY = os.environ["SERVICEBUS_SAS_POLICY"]
+SERVICEBUS_SAS_KEY = os.environ["SERVICEBUS_SAS_KEY"]
 
 
 credential = AzureNamedKeyCredential(SAS_POLICY, SERVICEBUS_SAS_KEY)
+
 
 async def send_message():
     async with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
         async with client.get_queue_sender(QUEUE_NAME) as sender:
             await sender.send_messages([ServiceBusMessage("hello")])
+
 
 asyncio.run(send_message())

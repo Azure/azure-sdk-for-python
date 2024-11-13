@@ -42,6 +42,7 @@ async def list_definitions():
             print(err)
     await credential.close()
 
+
 # [END send_metric_definitions_query_async]
 
 if __name__ == "__main__":

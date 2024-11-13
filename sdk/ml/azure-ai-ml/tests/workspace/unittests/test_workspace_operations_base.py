@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Optional
 from unittest.mock import DEFAULT, MagicMock, Mock, patch
 from uuid import UUID, uuid4
@@ -5,11 +6,11 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -136,6 +137,7 @@ class TestWorkspaceOperation:
                     ),
                 ],
             )
+            ws.provision_network_now = True
             ws.system_datastores_auth_mode = "identity"
             ws.allow_roleassignment_on_rg = True
             return ws._to_rest_object()
@@ -162,6 +164,8 @@ class TestWorkspaceOperation:
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
+
+        assert ws.provision_network_now == True
 
     def test_create_get_exception_swallow(
         self,
