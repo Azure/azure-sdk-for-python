@@ -678,7 +678,6 @@ class ContainerProxy:
         :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
-        :param Any args: args
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
