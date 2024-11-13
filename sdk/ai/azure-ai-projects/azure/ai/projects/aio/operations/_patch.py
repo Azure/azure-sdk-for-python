@@ -91,11 +91,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -166,11 +166,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -233,7 +233,7 @@ class InferenceOperations:
         """
         kwargs.setdefault("merge_span", True)
         connection = await self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
+            connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
 
         try:
@@ -279,7 +279,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     @distributed_trace_async
     async def get_default(
-        self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
+        self, *, connection_type: ConnectionType, include_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
@@ -287,9 +287,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
-        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
-        :type with_credentials: bool
+        :type include_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
         :rtype: ~azure.ai.projects.model.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -302,24 +302,24 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         # and return the first one
         connection_properties_list = await self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
-            if with_credentials:
+            if include_credentials:
                 return await self.get(
-                    connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
+                    connection_name=connection_properties_list[0].name, include_credentials=include_credentials, **kwargs
                 )
             return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
-    async def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+    async def get(self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
         :keyword connection_name: Connection Name. Required.
         :type connection_name: str
-        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
-        :type with_credentials: bool
+        :type include_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -328,7 +328,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Endpoint name cannot be empty")
-        if with_credentials:
+        if include_credentials:
             connection: GetConnectionResponse = await self._get_connection_with_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs
             )

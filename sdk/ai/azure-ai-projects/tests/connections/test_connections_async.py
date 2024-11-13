@@ -20,11 +20,11 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
         async with self.get_async_client(**kwargs) as project_client:
 
-            for with_credentials in [True, False]:
+            for include_credentials in [True, False]:
                 try:
                     _ = await project_client.connections.get(
                         connection_name=ConnectionsTestBase.NON_EXISTING_CONNECTION_NAME,
-                        with_credentials=with_credentials,
+                        include_credentials=include_credentials,
                     )
                     assert False
                 except ResourceNotFoundError as e:
@@ -32,23 +32,23 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
                 connection = await project_client.connections.get(
-                    connection_name=aoai_connection, with_credentials=with_credentials
+                    connection_name=aoai_connection, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
-                    with_credentials,
+                    include_credentials,
                     expected_connection_name=aoai_connection,
                     expected_connection_type=ConnectionType.AZURE_OPEN_AI,
                 )
 
                 connection = await project_client.connections.get(
-                    connection_name=aiservices_connection, with_credentials=with_credentials
+                    connection_name=aiservices_connection, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
-                    with_credentials,
+                    include_credentials,
                     expected_connection_name=aiservices_connection,
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
@@ -62,11 +62,11 @@ class TestConnectionsAsync(ConnectionsTestBase):
 
         async with self.get_async_client(**kwargs) as project_client:
 
-            for with_credentials in [True, False]:
+            for include_credentials in [True, False]:
                 try:
                     _ = await project_client.connections.get_default(
                         connection_type=ConnectionsTestBase.NON_EXISTING_CONNECTION_TYPE,
-                        with_credentials=with_credentials,
+                        include_credentials=include_credentials,
                     )
                     assert False
                 except ResourceNotFoundError as e:
@@ -74,23 +74,23 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_TYPE in e.message
 
                 connection = await project_client.connections.get_default(
-                    connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=with_credentials
+                    connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
-                    with_credentials,
+                    include_credentials,
                     expected_connection_name=default_aoai_connection,
                     expected_connection_type=ConnectionType.AZURE_OPEN_AI,
                 )
 
                 connection = await project_client.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=with_credentials
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
-                    with_credentials,
+                    include_credentials,
                     expected_connection_name=default_serverless_connection,
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                 )
