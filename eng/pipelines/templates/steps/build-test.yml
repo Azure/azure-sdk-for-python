@@ -153,7 +153,7 @@ steps:
         AZURE_POD_IDENTITY_AUTHORITY_HOST: 'https://FakeAuthorityHost'
         ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
-        azureSubscription: azure-sdk-tests
+        azureSubscription: azure-sdk-tests-public
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
