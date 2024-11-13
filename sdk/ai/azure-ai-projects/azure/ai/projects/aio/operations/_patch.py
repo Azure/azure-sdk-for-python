@@ -304,13 +304,17 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if len(connection_properties_list) > 0:
             if include_credentials:
                 return await self.get(
-                    connection_name=connection_properties_list[0].name, include_credentials=include_credentials, **kwargs
+                    connection_name=connection_properties_list[0].name,
+                    include_credentials=include_credentials,
+                    **kwargs,
                 )
             return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace_async
-    async def get(self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+    async def get(
+        self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any
+    ) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.

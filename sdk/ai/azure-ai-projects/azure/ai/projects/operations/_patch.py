@@ -295,7 +295,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if len(connection_properties_list) > 0:
             if include_credentials:
                 return self.get(
-                    connection_name=connection_properties_list[0].name, include_credentials=include_credentials, **kwargs
+                    connection_name=connection_properties_list[0].name,
+                    include_credentials=include_credentials,
+                    **kwargs,
                 )
             return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
