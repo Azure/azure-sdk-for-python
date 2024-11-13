@@ -75,7 +75,7 @@ setup(
     ],
     extras_require={
         "remote": [
-            "promptflow-azure<2.0.0,>=1.15.0",
+            "azure-storage-blob>=12.10.0",
         ],
     },
     project_urls={

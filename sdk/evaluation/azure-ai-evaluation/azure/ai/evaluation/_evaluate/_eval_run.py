@@ -22,6 +22,7 @@ from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
 from azure.core.exceptions import HttpResponseError
+from .._promptflow.azure._blob_store_helpers import get_workspace_default_blob_store
 
 LOGGER = logging.getLogger(__name__)
 
@@ -29,9 +30,6 @@ LOGGER = logging.getLogger(__name__)
 # Handle optional import. The azure libraries are only present if
 # promptflow-azure is installed.
 try:
-    from azure.ai.ml import MLClient
-    from azure.ai.ml.entities._credentials import AccountKeyConfiguration  # pylint: disable=ungrouped-imports
-    from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
 except (ModuleNotFoundError, ImportError):
     raise EvaluationException(  # pylint: disable=raise-missing-from
@@ -93,8 +91,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     :type group_name: str
     :param workspace_name: The name of workspace/project used to track run.
     :type workspace_name: str
-    :param ml_client: The ml client used for authentication into Azure.
-    :type ml_client: azure.ai.ml.MLClient
+    :param trace_destination: The trace destination string to parse the AI ML workspace blob store from.
+    :type trace_destination: str
     :param promptflow_run: The promptflow run used by the
     """
 
@@ -112,14 +110,14 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         subscription_id: str,
         group_name: str,
         workspace_name: str,
-        ml_client: "MLClient",
+        trace_destination: str,
         promptflow_run: Optional[Run] = None,
     ) -> None:
         self._tracking_uri: str = tracking_uri
         self._subscription_id: str = subscription_id
         self._resource_group_name: str = group_name
         self._workspace_name: str = workspace_name
-        self._ml_client: Any = ml_client
+        self._trace_destination: str = trace_destination
         self._is_promptflow_run: bool = promptflow_run is not None
         self._run_name = run_name
         self._promptflow_run = promptflow_run
@@ -441,9 +439,10 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 local_paths.append(local_file_path)
 
         # We will write the artifacts to the workspaceblobstore
-        datastore = self._ml_client.datastores.get_default(include_secrets=True)
+        datastore = get_workspace_default_blob_store(self._trace_destination)
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
-        svc_client = BlobServiceClient(account_url=account_url, credential=self._get_datastore_credential(datastore))
+
+        svc_client = BlobServiceClient(account_url=account_url, credential=datastore.credentials)
         try:
             for local, remote in zip(local_paths, remote_paths["paths"]):
                 blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
@@ -514,16 +513,6 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                         self._log_warning("register image artifact", response)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
-
-    def _get_datastore_credential(self, datastore: "Datastore"):
-        # Reference the logic in azure.ai.ml._artifact._artifact_utilities
-        # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ml/azure-ai-ml/azure/ai/ml/_artifacts/_artifact_utilities.py#L103
-        credential = datastore.credentials
-        if isinstance(credential, AccountKeyConfiguration):
-            return credential.account_key
-        if hasattr(credential, "sas_token"):
-            return credential.sas_token
-        return self._ml_client.datastores._credential  # pylint: disable=protected-access
 
     def log_metric(self, key: str, value: float) -> None:
         """
