@@ -171,7 +171,7 @@ class FeatureStore(Workspace):
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj, v2_service_context)
         if workspace_object is not None:
             return FeatureStore(
                 name=str(workspace_object.name),
