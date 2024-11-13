@@ -416,7 +416,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
     # TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
     # TODO: This could be a class method. But we don't have a class property AIProjectClient.telemetry
-    async def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
+    def enable(self, *, destination: Union[TextIO, str, None] = None, **kwargs) -> None:
         """Enables distributed tracing and logging with OpenTelemetry for Azure AI clients and
         popular GenAI libraries.
 

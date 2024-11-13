@@ -54,7 +54,7 @@ async def main() -> None:
     # Enable console tracing
     # or, if you have local OTLP endpoint running, change it to
     # project_client.telemetry.enable(destination="http://localhost:4317")
-    await project_client.telemetry.enable(destination=sys.stdout)
+    project_client.telemetry.enable(destination=sys.stdout)
 
     async with project_client:
         agent = await project_client.agents.create_agent(
