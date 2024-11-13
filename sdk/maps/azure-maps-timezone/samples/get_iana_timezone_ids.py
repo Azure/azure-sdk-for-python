@@ -22,6 +22,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_iana_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.timezone import MapsTimezoneClient
@@ -35,5 +36,6 @@ def get_iana_timezone_ids():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_iana_timezone_ids()

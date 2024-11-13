@@ -268,13 +268,27 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
     }:
-        if not batch_response or len(batch_response[0]) == 0 or metric_name not in batch_response[0]:
+        result = {}
+        if not batch_response or len(batch_response[0]) == 0:
+            return {}
+        if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
+            pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
+            for pm_metric_name in pm_metric_names:
+                response = batch_response[0][pm_metric_name]
+                response = response.replace("false", "False")
+                response = response.replace("true", "True")
+                parsed_response = literal_eval(response)
+                result[pm_metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
+                result[pm_metric_name + "_reason"] = (
+                    parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+                )
+            return result
+        if metric_name not in batch_response[0]:
             return {}
         response = batch_response[0][metric_name]
         response = response.replace("false", "False")
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
-        result = {}
         # Use label instead of score since these are assumed to be boolean results.
         # Use math.nan as null value since it's ignored by aggregations rather than treated as 0.
         result[metric_display_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan

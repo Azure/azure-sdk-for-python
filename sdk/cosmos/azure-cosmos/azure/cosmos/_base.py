@@ -227,8 +227,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
-                pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
+            is_sequence_not_string = (isinstance(options["partitionKey"], Sequence) and
+                                      not isinstance(options["partitionKey"], str))
+
+            if is_sequence_not_string and options["partitionKey"]:
+                pk_val = json.dumps(list(options["partitionKey"]), separators=(',', ':'))
             else:
                 pk_val = json.dumps([options["partitionKey"]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
