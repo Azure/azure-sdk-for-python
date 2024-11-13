@@ -30,7 +30,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AIProjectClient(
+    ClientGenerated
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     def __init__(  # pylint: disable=super-init-not-called,too-many-statements
         self,
         endpoint: str,
