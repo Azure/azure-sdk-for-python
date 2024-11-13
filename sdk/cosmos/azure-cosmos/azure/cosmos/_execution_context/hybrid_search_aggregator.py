@@ -97,11 +97,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._original_query = query
         self._partitioned_query_ex_info = partitioned_query_execution_info
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
         self._final_results = None
         self.skip = hybrid_search_query_info['skip'] or 0
         self.take = hybrid_search_query_info['take']
-        self.original_query = query
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
@@ -244,7 +242,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
         # TODO: Remove this hack later
-        return query.replace("DESC", "").replace("ASC", "")
+        if 'ORDER BY _VectorScore' in query:
+            return query.replace("DESC", "").replace("ASC", "")
+        return query
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,

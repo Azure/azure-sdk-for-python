@@ -245,7 +245,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
         # TODO: Remove this hack later
-        return query.replace("DESC", "").replace("ASC", "")
+        if 'ORDER BY _VectorScore' in query:
+            return query.replace("DESC", "").replace("ASC", "")
+        return query
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,
