@@ -341,9 +341,13 @@ class Workspace(Resource):
 
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             try:
-                from azureml.mlflow import get_mlflow_tracking_uri_v2
+                if v2_service_context:
+                    # v2_service_context is required (not None) in get_mlflow_tracking_uri_v2
+                    from azureml.mlflow import get_mlflow_tracking_uri_v2
 
-                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                    mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                else:
+                    mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
                 error_msg = (

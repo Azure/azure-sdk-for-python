@@ -1,5 +1,15 @@
 # Release History
 
+## 7.13.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.13.0 (2024-11-12)
 
 ### Features Added
@@ -8,8 +18,9 @@
 
 ### Bugs Fixed
 
-- Fixed a broken f-string present in a `ValueError` when using the async client ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
-- Fixed a bug with the incorrect error being raised for larger than allowed batch size ([38260](https://github.com/Azure/azure-sdk-for-python/issues/38260))
+- Fixed a broken f-string present in a `ValueError` when using the async client. ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+- Fixed a bug with the incorrect error being raised for larger than allowed batch size. ([38260](https://github.com/Azure/azure-sdk-for-python/issues/38260))
+- Fixed a bug with an error being raised when the fully-qualified namespace included a port, rather than ignoring the port. ([37547](https://github.com/Azure/azure-sdk-for-python/issues/37547))
 
 ### Other Changes
 
