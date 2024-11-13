@@ -5,3 +5,6 @@
 aiohttp
 azure-ai-inference
 openai
+opentelemetry-sdk
+opentelemetry-exporter-otlp-proto-grpc
+azure-ai-ml

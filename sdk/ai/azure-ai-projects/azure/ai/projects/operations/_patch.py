@@ -472,7 +472,9 @@ def _configure_logging(log_exporter: Any) -> None:
         from opentelemetry import _logs, _events
         from opentelemetry.sdk._logs import LoggerProvider  # pylint: disable=import-error,no-name-in-module
         from opentelemetry.sdk._events import EventLoggerProvider  # pylint: disable=import-error,no-name-in-module
-        from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._logs.export import (
+            SimpleLogRecordProcessor,
+        )  # pylint: disable=import-error,no-name-in-module
 
         if not isinstance(_logs.get_logger_provider(), LoggerProvider):
             logger_provider = LoggerProvider()
@@ -575,7 +577,9 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
-            get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
+            get_workspace_response: GetWorkspaceResponse = (
+                self._outer_instance.connections._get_workspace()
+            )  # pylint: disable=protected-access
 
             if not get_workspace_response.properties.application_insights:
                 raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
