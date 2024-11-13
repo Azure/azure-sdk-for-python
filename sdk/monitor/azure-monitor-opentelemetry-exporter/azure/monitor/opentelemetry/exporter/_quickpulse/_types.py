@@ -181,7 +181,7 @@ class _TraceData(_TelemetryData):
 def _get_field_names(data_type: type):
     field_map = {}
     for field in fields(data_type):
-        field_map[field.name.replace('_', '').lower()] = field.name
+        field_map[field.name.replace("_", "").lower()] = field.name
     return field_map
 
 
@@ -203,5 +203,5 @@ _KNOWN_STRING_FIELD_NAMES = (
     "Data",
     "Message",
     "Exception.Message",
-    "Exception.StackTrace"
+    "Exception.StackTrace",
 )

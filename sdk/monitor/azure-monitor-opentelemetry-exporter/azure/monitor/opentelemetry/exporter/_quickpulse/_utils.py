@@ -332,6 +332,7 @@ def _field_string_compare(value: str, comparand: str, predicate: str) -> bool:
 
 # Validation
 
+
 def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
     # Validate telemetry type
     try:
@@ -344,7 +345,7 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
         TelemetryType.REQUEST,
         TelemetryType.DEPENDENCY,
         TelemetryType.EXCEPTION,
-        TelemetryType.TRACE
+        TelemetryType.TRACE,
     ):
         return False
     # Check for CustomMetric projection
@@ -355,8 +356,9 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
         for filter in filter_group.filters:
             # Validate field names to telemetry type
             # Validate predicate and comparands
-            if not _validate_filter_field_name(filter, telemetry_type) or \
-            not _validate_filter_predicate_and_comparand(filter):
+            if not _validate_filter_field_name(filter, telemetry_type) or not _validate_filter_predicate_and_comparand(
+                filter
+            ):
                 return False
     return True
 
@@ -421,7 +423,12 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
         if comparand not in ("true", "false"):
             return False
     elif name in _KNOWN_STRING_FIELD_NAMES or name.startswith("CustomDimensions."):
-        if predicate in (PredicateType.GREATER_THAN, PredicateType.GREATER_THAN_OR_EQUAL, PredicateType.LESS_THAN, PredicateType.LESS_THAN_OR_EQUAL):
+        if predicate in (
+            PredicateType.GREATER_THAN,
+            PredicateType.GREATER_THAN_OR_EQUAL,
+            PredicateType.LESS_THAN,
+            PredicateType.LESS_THAN_OR_EQUAL,
+        ):
             return False
     return True
 
@@ -433,13 +440,13 @@ def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
     # examples: "14.6:56:7.89" = 1234567890 ms, "0.0:0:0.2" = 200 ms
     total_milliseconds = None
     try:
-        days_hours, minutes, seconds = time_stamp.split(':')
-        days, hours = map(float, days_hours.split('.'))
+        days_hours, minutes, seconds = time_stamp.split(":")
+        days, hours = map(float, days_hours.split("."))
         total_milliseconds = int(
-            days * 24 * 60 * 60 * 1000 +  # days to milliseconds
-            hours * 60 * 60 * 1000 +           # hours to milliseconds
-            float(minutes) * 60 * 1000 +               # minutes to milliseconds
-            float(seconds) * 1000                      # seconds to milliseconds
+            days * 24 * 60 * 60 * 1000  # days to milliseconds
+            + hours * 60 * 60 * 1000  # hours to milliseconds
+            + float(minutes) * 60 * 1000  # minutes to milliseconds
+            + float(seconds) * 1000  # seconds to milliseconds
         )
     except Exception:  # pylint: disable=broad-except,invalid-name
         pass
@@ -519,7 +526,7 @@ def _calculate_aggregation(aggregation: AggregationType, id: str, value: float) 
             return (min(prev_value, value), prev_count + 1)
         elif aggregation == AggregationType.MAX:
             return (max(prev_value, value), prev_count + 1)
-        else aggregation == AggregationType.AVG:
+        else:
             return (prev_value + value, prev_count + 1)
     return None
 

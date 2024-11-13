@@ -77,6 +77,7 @@ def _get_http_scheme(attributes: Attributes) -> Optional[str]:
 
 # Dependency
 
+
 @no_type_check
 def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
     url = None
@@ -227,26 +228,26 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         if scheme and http_target:
             if SpanAttributes.HTTP_HOST in attributes:
                 url = "{}://{}{}".format(
-                        scheme,
-                        attributes[SpanAttributes.HTTP_HOST],
-                        http_target,
-                    )
+                    scheme,
+                    attributes[SpanAttributes.HTTP_HOST],
+                    http_target,
+                )
             elif SpanAttributes.NET_HOST_PORT in attributes:
                 host_port = attributes[SpanAttributes.NET_HOST_PORT]
                 if SpanAttributes.HTTP_SERVER_NAME in attributes:
                     server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
                     url = "{}://{}:{}{}".format(
-                            scheme,
-                            server_name,
-                            host_port,
-                            http_target,
-                        )
+                        scheme,
+                        server_name,
+                        host_port,
+                        http_target,
+                    )
                 elif SpanAttributes.NET_HOST_NAME in attributes:
                     host_name = attributes[SpanAttributes.NET_HOST_NAME]
                     url = "{}://{}:{}{}".format(
-                            scheme,
-                            host_name,
-                            host_port,
-                            http_target,
-                        )
+                        scheme,
+                        host_name,
+                        host_port,
+                        http_target,
+                    )
     return url
