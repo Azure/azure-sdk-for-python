@@ -72,10 +72,7 @@ class MapsWeatherClient(WeatherOperations):  # pylint: disable=client-accepts-ap
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         super().__init__(
-            client=self._client,
-            config=self._config,
-            serializer=self._serialize,
-            deserializer=self._deserialize
+            client=self._client, config=self._config, serializer=self._serialize, deserializer=self._deserialize
         )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

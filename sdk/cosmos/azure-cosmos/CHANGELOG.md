@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.7.1 (Unreleased)
+### 4.8.0 (2024-11-12)
 This version and all future versions will support Python 3.13.
 
 #### Features Added
@@ -24,6 +24,7 @@ For more information on this, see our README section [here](https://github.com/A
 * Added retry handling logic for DatabaseAccountNotFound exceptions. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
 * Fixed SDK regex validation that would not allow for item ids to be longer than 255 characters. See [PR 36569](https://github.com/Azure/azure-sdk-for-python/pull/36569).
 * Fixed issue where 'NoneType' object has no attribute error was raised when a session retry happened during a query. See [PR 37578](https://github.com/Azure/azure-sdk-for-python/pull/37578).
+* Fixed issue where passing subpartition partition key values as a tuple in a query would raise an error. See [PR 38136](https://github.com/Azure/azure-sdk-for-python/pull/38136)
 * Batch requests will now be properly considered as Write operation. See [PR 38365](https://github.com/Azure/azure-sdk-for-python/pull/38365).
 
 #### Other Changes

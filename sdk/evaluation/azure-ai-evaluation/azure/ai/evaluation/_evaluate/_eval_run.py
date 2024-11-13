@@ -413,7 +413,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         if not self._check_state_and_log("log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
             return
-        # Check if artifact dirrectory is empty or does not exist.
+        # Check if artifact directory is empty or does not exist.
         if not os.path.isdir(artifact_folder):
             LOGGER.warning("The path to the artifact is either not a directory or does not exist.")
             return
@@ -469,6 +469,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         # we are rewriting already registered artifact and need to skip this step.
         if self._is_promptflow_run:
             return
+
         url = (
             f"https://{self._url_base}/artifact/v2.0/subscriptions/{self._subscription_id}"
             f"/resourceGroups/{self._resource_group_name}/providers/"
@@ -490,6 +491,29 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         )
         if response.status_code != 200:
             self._log_warning("register artifact", response)
+
+        # register artifacts for images if exists in image folder
+        try:
+            for remote_path in remote_paths["paths"]:
+                remote_file_path = remote_path["path"]
+                if "images" in os.path.normpath(remote_file_path).split(os.sep):
+                    response = self.request_with_retry(
+                        url=url,
+                        method="POST",
+                        json_dict={
+                            "origin": "ExperimentRun",
+                            "container": f"dcid.{self.info.run_id}",
+                            "path": posixpath.join("images", os.path.basename(remote_file_path)),
+                            "dataPath": {
+                                "dataStoreName": datastore.name,
+                                "relativePath": remote_file_path,
+                            },
+                        },
+                    )
+                    if response.status_code != 200:
+                        self._log_warning("register image artifact", response)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
 
     def _get_datastore_credential(self, datastore: "Datastore"):
         # Reference the logic in azure.ai.ml._artifact._artifact_utilities
