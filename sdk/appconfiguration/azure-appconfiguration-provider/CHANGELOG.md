@@ -1,16 +1,10 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
-
-### Features Added
+## 2.0.0b3 (2024-11-13)
 
 ### Breaking Changes
 
 * Allocation Id value changed so other providers can match the value.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 2.0.0b2 (2024-10-11)
 
