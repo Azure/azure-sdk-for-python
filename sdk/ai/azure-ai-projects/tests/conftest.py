@@ -20,7 +20,7 @@ if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override
 
 def pytest_collection_modifyitems(items):
     for item in items: 
-        if 'tests\\agents' in item.fspath.strpath:
+        if 'tests\\agents' in item.fspath.strpath or 'tests/agents' in item.fspath.strpath:
             item.add_marker(pytest.mark.skip(reason="Skip running Agents tests in PR pipeline until test recordings are available"))
 
 class SanitizedValues:
