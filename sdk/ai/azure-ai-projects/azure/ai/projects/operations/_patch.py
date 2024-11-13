@@ -642,6 +642,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(  # pylint: disable=arguments-differ
         self,
@@ -705,6 +706,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(  # pylint: disable=arguments-differ
         self,
@@ -875,6 +877,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(  # pylint: disable=arguments-differ
         self,
@@ -943,6 +946,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(  # pylint: disable=arguments-differ
         self,
@@ -1169,6 +1173,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_run(  # pylint: disable=arguments-differ
         self,
@@ -1856,6 +1861,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
         self,
@@ -1918,7 +1924,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,  # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1933,7 +1938,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2117,6 +2121,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
@@ -2135,6 +2140,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
