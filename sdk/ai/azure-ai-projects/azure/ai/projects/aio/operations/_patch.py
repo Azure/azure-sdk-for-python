@@ -398,7 +398,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
-            get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()
+            get_workspace_response: GetWorkspaceResponse = await self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
 
             if not get_workspace_response.properties.application_insights:
                 raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
@@ -463,7 +463,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def create_agent(
+    async def create_agent(  # pylint: disable=arguments-differ
         self,
         *,
         model: str,
@@ -526,7 +526,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def create_agent(
+    async def create_agent(  # pylint: disable=arguments-differ
         self,
         *,
         model: str,
@@ -696,7 +696,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def update_agent(
+    async def update_agent(  # pylint: disable=arguments-differ
         self,
         assistant_id: str,
         *,
@@ -764,7 +764,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def update_agent(
+    async def update_agent(  # pylint: disable=arguments-differ
         self,
         assistant_id: str,
         *,
@@ -990,7 +990,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def create_run(
+    async def create_run(  # pylint: disable=arguments-differ
         self,
         thread_id: str,
         *,
@@ -1657,7 +1657,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def submit_tool_outputs_to_run(
+    async def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
         self,
         thread_id: str,
         run_id: str,
@@ -1718,7 +1718,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,  # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1918,7 +1918,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def upload_file(
+    async def upload_file(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
@@ -1936,7 +1936,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def upload_file(
+    async def upload_file(  # pylint: disable=arguments-differ
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
