@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Only add OpenTelemetry LoggingHandler if current logger does not have it
+    ([#38371](https://github.com/Azure/azure-sdk-for-python/pull/38371))
+
 ### Breaking Changes
 
 ### Bugs Fixed
