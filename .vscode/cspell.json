@@ -33,6 +33,9 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -1319,6 +1322,15 @@
         "RMSE",
         "azmonitoring",
         "smirnov"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "aiservices",
+        "OTEL",
+        "GENAI",
+        "fspath"
       ]
     },
     {
