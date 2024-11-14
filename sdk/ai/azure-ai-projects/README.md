@@ -740,7 +740,7 @@ To run evaluation in cloud the following are needed:
 
 ##### Evaluators
 
-For running evaluator in cloud, evaluator id is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
+For running evaluator in cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
 
 ```
 # pip install azure-ai-evaluation
