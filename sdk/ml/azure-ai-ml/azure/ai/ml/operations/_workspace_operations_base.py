@@ -360,17 +360,13 @@ class WorkspaceOperationsBase(ABC):
 
         public_network_access = kwargs.get("public_network_access", workspace.public_network_access)
         network_acls = kwargs.get("network_acls", workspace.network_acls)
-        ip_allowlist = None
         if network_acls:
-            # backward compatibility to ip_allowlist
-            ip_allowlist = network_acls._convert_to_ip_allowlist()  # pylint: disable=protected-access
             network_acls = network_acls._to_rest_object()  # pylint: disable=protected-access
 
         if public_network_access == "Disabled" or (
             existing_workspace.public_network_access == "Disabled" and public_network_access is None
         ):
             network_acls = NetworkAcls()._to_rest_object()  # pylint: disable=protected-access
-            ip_allowlist = []  # unset
 
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
@@ -391,7 +387,6 @@ class WorkspaceOperationsBase(ABC):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             network_acls=network_acls,
-            ip_allowlist=ip_allowlist,
         )
         if serverless_compute_settings:
             update_param.serverless_compute_settings = serverless_compute_settings

@@ -78,29 +78,6 @@ class NetworkAcls(RestTranslatableMixin):
             ),
         )
 
-    def _convert_to_ip_allowlist(self) -> List[str]:
-        """Converts the IP rules to an IP allowlist.
-        :return: A list of IP addresses or IP ranges.
-        :rtype: List[str]
-        """
-        return [rule.value for rule in self.ip_rules if rule.value is not None]
-
-    @classmethod
-    def _parse(cls, ip_allowlist: Optional[List[str]]) -> "NetworkAcls":
-        """Parses a list of IP allowlist strings into a NetworkAcls object.
-        :param ip_allowlist: A list of IP addresses or IP ranges in CIDR notation.
-        :type ip_allowlist: Optional[List[str]]
-        :return: A NetworkAcls object.
-        :rtype: NetworkAcls
-        """
-        default_action = (
-            NetworkAcls.DefaultActionType.DENY
-            if ip_allowlist and len(ip_allowlist) > 0
-            else NetworkAcls.DefaultActionType.ALLOW
-        )
-        ip_rules = [NetworkAcls.IPRule(value=ip) for ip in ip_allowlist] if ip_allowlist else []
-        return cls(ip_rules=ip_rules, default_action=default_action)
-
     @classmethod
     def _from_rest_object(cls, obj: RestNetworkAcls) -> "NetworkAcls":
         return cls(
