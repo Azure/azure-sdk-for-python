@@ -39,7 +39,6 @@ def main():
             "location": "westus",
             "properties": {
                 "dbsToMigrate": ["db1", "db2", "db3", "db4"],
-                "migrationInstanceResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBForPostgreSql/flexibleServers/testsourcemigration",
                 "migrationMode": "Offline",
                 "overwriteDbsInTarget": "True",
                 "secretParameters": {
@@ -52,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/Migrations_Create.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2024-11-01-preview/examples/Migrations_Create.json
 if __name__ == "__main__":
     main()

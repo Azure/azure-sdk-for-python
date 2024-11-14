@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # pylint: disable=redefined-builtin, import-error
 
 import struct
@@ -29,26 +29,26 @@ if TYPE_CHECKING:
     from .message import MessageDict
 
 _LOGGER = logging.getLogger(__name__)
-_HEADER_PREFIX = memoryview(b'AMQP')
+_HEADER_PREFIX = memoryview(b"AMQP")
 _COMPOSITES = {
-    35: 'received',
-    36: 'accepted',
-    37: 'rejected',
-    38: 'released',
-    39: 'modified',
+    35: "received",
+    36: "accepted",
+    37: "rejected",
+    38: "released",
+    39: "modified",
 }
 
-c_unsigned_char = struct.Struct('>B')
-c_signed_char = struct.Struct('>b')
-c_unsigned_short = struct.Struct('>H')
-c_signed_short = struct.Struct('>h')
-c_unsigned_int = struct.Struct('>I')
-c_signed_int = struct.Struct('>i')
-c_unsigned_long = struct.Struct('>L')
-c_unsigned_long_long = struct.Struct('>Q')
-c_signed_long_long = struct.Struct('>q')
-c_float = struct.Struct('>f')
-c_double = struct.Struct('>d')
+c_unsigned_char = struct.Struct(">B")
+c_signed_char = struct.Struct(">b")
+c_unsigned_short = struct.Struct(">H")
+c_signed_short = struct.Struct(">h")
+c_unsigned_int = struct.Struct(">I")
+c_signed_int = struct.Struct(">i")
+c_unsigned_long = struct.Struct(">L")
+c_unsigned_long_long = struct.Struct(">Q")
+c_signed_long_long = struct.Struct(">q")
+c_float = struct.Struct(">f")
+c_double = struct.Struct(">d")
 
 
 def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
@@ -72,7 +72,7 @@ def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 
 def _decode_boolean(buffer: memoryview) -> Tuple[memoryview, bool]:
-    return buffer[1:], buffer[:1] == b'\x01'
+    return buffer[1:], buffer[:1] == b"\x01"
 
 
 def _decode_ubyte(buffer: memoryview) -> Tuple[memoryview, int]:
@@ -91,35 +91,35 @@ def _decode_uint_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[4:], c_unsigned_int.unpack(buffer[:4])[0]
 
 
-def _decode_ulong_small(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_ulong_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ulong_large(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_ulong_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[8:], c_unsigned_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_byte(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_byte(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_short(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_short(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[2:], c_signed_short.unpack(buffer[:2])[0]
 
 
-def _decode_int_small(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_int_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_int_large(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_int_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[4:], c_signed_int.unpack(buffer[:4])[0]
 
 
-def _decode_long_small(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_long_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_long_large(buffer: memoryview)-> Tuple[memoryview, int]:
+def _decode_long_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
@@ -149,7 +149,7 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 
-def _decode_list_small(buffer: memoryview)-> Tuple[memoryview, List[Any]]:
+def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
     buffer = buffer[2:]
     values = [None] * count
@@ -158,7 +158,7 @@ def _decode_list_small(buffer: memoryview)-> Tuple[memoryview, List[Any]]:
     return buffer, values
 
 
-def _decode_list_large(buffer: memoryview)-> Tuple[memoryview, List[Any]]:
+def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     buffer = buffer[8:]
     values = [None] * count
@@ -168,10 +168,10 @@ def _decode_list_large(buffer: memoryview)-> Tuple[memoryview, List[Any]]:
 
 
 def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
-    count = int(buffer[1]/2)
+    count = int(buffer[1] / 2)
     buffer = buffer[2:]
     values = {}
-    for  _ in range(count):
+    for _ in range(count):
         buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
         values[key] = value
@@ -179,10 +179,10 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 
 
 def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
-    count = int(c_unsigned_long.unpack(buffer[4:8])[0]/2)
+    count = int(c_unsigned_long.unpack(buffer[4:8])[0] / 2)
     buffer = buffer[8:]
     values = {}
-    for  _ in range(count):
+    for _ in range(count):
         buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
         values[key] = value
@@ -269,7 +269,7 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     # described type then ulong.
     frame_type = data[2]
     compound_list_type = data[3]
-    if compound_list_type == 0xd0:
+    if compound_list_type == 0xD0:
         # list32 0xd0: data[4:8] is size, data[8:12] is count
         count = c_signed_int.unpack(data[8:12])[0]
         buffer = data[12:]

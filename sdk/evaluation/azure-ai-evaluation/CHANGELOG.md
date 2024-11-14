@@ -1,19 +1,112 @@
 # Release History
 
-
-## 1.0.0b5 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2024-11-13)
+
+### Breaking Changes
+- The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
+- Parameters `query_response_generating_prompty_kwargs` and `user_simulator_prompty_kwargs` have been renamed to `query_response_generating_prompty_options` and `user_simulator_prompty_options` in the Simulator's __call__ method.
+
+### Bugs Fixed
+- Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.
+- Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
+- Fixed an issue where during long-running simulations, API token expires causing "Forbidden" error. Instead, users can now set an environment variable `AZURE_TOKEN_REFRESH_INTERVAL` to refresh the token more frequently to prevent expiration and ensure continuous operation of the simulation.
+- Fixed an issue with the `ContentSafetyEvaluator` that caused parallel execution of sub-evaluators to fail. Parallel execution is now enabled by default again, but can still be disabled via the '_parallel' boolean keyword argument during class initialization.
+- Fix `evaluate` function not producing aggregated metrics if ANY values to be aggregated were None, NaN, or
+otherwise difficult to process. Such values are ignored fully, so the aggregated metric of `[1, 2, 3, NaN]`
+would be 2, not 1.5.
+
+### Other Changes
+- Refined error messages for serviced-based evaluators and simulators.
+- Tracing has been disabled due to Cosmos DB initialization issue.
+- Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
+- Changed the randomization pattern for `AdversarialSimulator` such that there is an almost equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex.
+- For the `DirectAttackSimulator`, the prompt templates used to generate simulated outputs for each Adversarial harm category will no longer be in a randomized order by default. To override this behavior, pass `randomize_order=True` when you call the `DirectAttackSimulator`, for example:
+```python
+adversarial_simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+outputs = asyncio.run(
+    adversarial_simulator(
+        scenario=scenario,
+        target=callback,
+        randomize_order=True
+    )
+)
+```
+
+## 1.0.0b5 (2024-10-28)
+
+### Features Added
+- Added `GroundednessProEvaluator`, which is a service-based evaluator for determining response groundedness.
+- Groundedness detection in Non Adversarial Simulator via query/context pairs
+```python
+import importlib.resources as pkg_resources
+package = "azure.ai.evaluation.simulator._data_sources"
+resource_name = "grounding.json"
+custom_simulator = Simulator(model_config=model_config)
+conversation_turns = []
+with pkg_resources.path(package, resource_name) as grounding_file:
+    with open(grounding_file, "r") as file:
+        data = json.load(file)
+for item in data:
+    conversation_turns.append([item])
+outputs = asyncio.run(custom_simulator(
+    target=callback,
+    conversation_turns=conversation_turns,
+    max_conversation_turns=1,
+))
+```
+- Adding evaluator for multimodal use cases
+
+### Breaking Changes
 - Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- `RetrievalEvaluator` now requires a `context` input in addition to `query` in single-turn evaluation.
+- `RelevanceEvaluator` no longer takes `context` as an input. It now only takes `query` and `response` in single-turn evaluation.
+- `FluencyEvaluator` no longer takes `query` as an input. It now only takes `response` in single-turn evaluation.
+- AdversarialScenario enum does not include `ADVERSARIAL_INDIRECT_JAILBREAK`, invoking IndirectJailbreak or XPIA should be done with `IndirectAttackSimulator`
+- Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
+```json
+{"question": <user_message>, "answer": <assistant_message>}
+```
+`to_eval_qr_json_lines` now has:
+```json
+{"query": <user_message>, "response": assistant_message}
+```
 
 ### Bugs Fixed
 - Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+- Fixed an issue where the `evaluate` API would fail with "[WinError 32] The process cannot access the file because it is being used by another process" when venv folder and target function file are in the same directory.
 - Fix evaluate API failure when `trace.destination` is set to `none`
+- Non adversarial simulator now accepts context from the callback
 
 ### Other Changes
 - Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- `GroundednessEvaluator` now supports `query` as an optional input in single-turn evaluation. If `query` is provided, a different prompt template will be used for the evaluation.
+- To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+  - `CoherenceEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `GroundednessEvaluator`
+  - `SimilarityEvaluator`
+  - `RetrievalEvaluator`
+- The following evaluators will now have a new key in their result output including LLM reasoning behind the score. The new key will follow the pattern "<metric_name>_reason". The reasoning is the result of a more detailed prompt template being used to generate the LLM response. Note that this requires the maximum number of tokens used to run these evaluators to be increased.
+
+    | Evaluator | New `max_token` for Generation |
+    | --- | --- |
+    | `CoherenceEvaluator` | 800 |
+    | `RelevanceEvaluator` | 800 |
+    | `FluencyEvaluator` | 800 |
+    | `GroundednessEvaluator` | 800 |
+    | `RetrievalEvaluator` | 1600 |
+- Improved the error message for storage access permission issues to provide clearer guidance for users.
 
 ## 1.0.0b4 (2024-10-16)
 

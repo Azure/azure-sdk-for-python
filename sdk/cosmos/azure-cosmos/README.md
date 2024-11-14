@@ -684,7 +684,7 @@ vector_embedding_policy = {
 ```
 
 Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
-the path to the relevant field to be used, and the type of index from the possible options (flat or quantizedFlat).
+the path to the relevant field to be used, and the type of index from the possible options - flat, quantizedFlat, or diskANN.
 A sample indexing policy with vector indexes would look like this:
 ```python
 indexing_policy = {
@@ -703,10 +703,28 @@ indexing_policy = {
         ],
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
-            {"path": "/vector2", "type": "quantizedFlat"}
+            {"path": "/vector2", "type": "quantizedFlat"},
+            {"path": "/vector3", "type": "diskANN"}
         ]
     }
 ```
+
+For vector index types of diskANN and quantizedFlat, there are additional options available as well. These are:
+
+quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types diskANN and quantizedFlat. The allowed range is between 1 and the minimum between 512 and the vector dimensions. The default value is 64.
+
+indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. This applies only to index type diskANN. The allowed range is between 25 and 500.
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 8},
+            {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
+        ]
+    }
+```
+
 You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
 The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
 ```python

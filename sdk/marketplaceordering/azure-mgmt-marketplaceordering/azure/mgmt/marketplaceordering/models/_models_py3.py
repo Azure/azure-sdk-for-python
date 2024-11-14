@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -42,7 +42,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -119,8 +119,8 @@ class AgreementTerms(Resource):  # pylint: disable=too-many-instance-attributes
         retrieve_datetime: Optional[str] = None,
         signature: Optional[str] = None,
         accepted: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: Publisher identifier string of image being deployed.
         :paramtype publisher: str
@@ -156,7 +156,8 @@ class AgreementTerms(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates Microsoft.MarketplaceOrdering service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates Microsoft.MarketplaceOrdering service is not able to process the
+    incoming request. The reason is provided in the error message.
 
     :ivar error: The details of the error.
     :vartype error: ~azure.mgmt.marketplaceordering.models.ErrorResponseError
@@ -166,7 +167,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponseError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.marketplaceordering.models.ErrorResponseError
@@ -196,11 +197,114 @@ class ErrorResponseError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
+
+
+class OldAgreementTerms(Resource):
+    """Terms properties for provided Publisher/Offer/Plan tuple.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar id_properties_id: A unique identifier of the agreement.
+    :vartype id_properties_id: str
+    :ivar publisher: Publisher identifier string of image being deployed.
+    :vartype publisher: str
+    :ivar offer: Offer identifier string of image being deployed.
+    :vartype offer: str
+    :ivar sign_date: Date and time in UTC of when the terms were accepted. This is empty if state
+     is cancelled.
+    :vartype sign_date: ~datetime.datetime
+    :ivar cancel_date: Date and time in UTC of when the terms were cancelled. This is empty if
+     state is active.
+    :vartype cancel_date: ~datetime.datetime
+    :ivar state: Whether the agreement is active or cancelled. Known values are: "Active" and
+     "Canceled".
+    :vartype state: str or ~azure.mgmt.marketplaceordering.models.State
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "offer": {"key": "properties.offer", "type": "str"},
+        "sign_date": {"key": "properties.signDate", "type": "iso-8601"},
+        "cancel_date": {"key": "properties.cancelDate", "type": "iso-8601"},
+        "state": {"key": "properties.state", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id_properties_id: Optional[str] = None,
+        publisher: Optional[str] = None,
+        offer: Optional[str] = None,
+        sign_date: Optional[datetime.datetime] = None,
+        cancel_date: Optional[datetime.datetime] = None,
+        state: Optional[Union[str, "_models.State"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id_properties_id: A unique identifier of the agreement.
+        :paramtype id_properties_id: str
+        :keyword publisher: Publisher identifier string of image being deployed.
+        :paramtype publisher: str
+        :keyword offer: Offer identifier string of image being deployed.
+        :paramtype offer: str
+        :keyword sign_date: Date and time in UTC of when the terms were accepted. This is empty if
+         state is cancelled.
+        :paramtype sign_date: ~datetime.datetime
+        :keyword cancel_date: Date and time in UTC of when the terms were cancelled. This is empty if
+         state is active.
+        :paramtype cancel_date: ~datetime.datetime
+        :keyword state: Whether the agreement is active or cancelled. Known values are: "Active" and
+         "Canceled".
+        :paramtype state: str or ~azure.mgmt.marketplaceordering.models.State
+        """
+        super().__init__(**kwargs)
+        self.id_properties_id = id_properties_id
+        self.publisher = publisher
+        self.offer = offer
+        self.sign_date = sign_date
+        self.cancel_date = cancel_date
+        self.state = state
+
+
+class OldAgreementTermsList(_serialization.Model):
+    """Agreement Terms definition list.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.marketplaceordering.models.OldAgreementTerms]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[OldAgreementTerms]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.OldAgreementTerms"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.marketplaceordering.models.OldAgreementTerms]
+        """
+        super().__init__(**kwargs)
+        self.value = value
 
 
 class Operation(_serialization.Model):
@@ -217,7 +321,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -256,8 +362,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.MarketplaceOrdering.
         :paramtype provider: str
@@ -277,7 +383,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list MarketplaceOrdering operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list MarketplaceOrdering operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -297,7 +404,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Microsoft.MarketplaceOrdering operations supported by the
          Microsoft.MarketplaceOrdering resource provider.
@@ -345,8 +452,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str

@@ -637,7 +637,7 @@ def use_geospatial_indexing_policy(db):
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a container with vector embedding policy and vector indexes
+        # Create a container with geospatial indexes
         indexing_policy = {
             'includedPaths': [
                 {'path': '/"Location"/?',
@@ -688,16 +688,23 @@ def use_vector_embedding_policy(db):
         # Create a container with vector embedding policy and vector indexes
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/embeddings", "type": "quantizedFlat"},
+                {"path": "/vector", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {
             "vectorEmbeddings": [
                 {
-                    "path": "/embeddings",
+                    "path": "/vector",
                     "dataType": "float32",
-                    "dimensions": 1000,
-                    "distanceFunction": "cosine"
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
                 }
             ]
         }
@@ -751,7 +758,7 @@ def run_sample():
         client = obtain_client()
         fetch_all_databases(client)
 
-        # Create database if doesn't exist already.
+        # Create database if it doesn't exist already.
         created_db = create_database_if_not_exists(client, DATABASE_ID)
         print(created_db)
 

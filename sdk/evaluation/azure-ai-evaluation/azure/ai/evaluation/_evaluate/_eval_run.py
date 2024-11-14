@@ -21,6 +21,7 @@ from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
+from azure.core.exceptions import HttpResponseError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,14 +34,15 @@ try:
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
 except (ModuleNotFoundError, ImportError):
-    # If the above mentioned modules cannot be imported, we are running
-    # in local mode and MLClient in the constructor will be None, so
-    # we will not arrive to Azure-dependent code.
-
-    # We are logging the import failure only if debug logging level is set because:
-    # - If the project configuration was not provided this import is not needed.
-    # - If the project configuration was provided, the error will be raised by PFClient.
-    LOGGER.debug("promptflow.azure is not installed.")
+    raise EvaluationException(  # pylint: disable=raise-missing-from
+        message=(
+            "The required packages for remote tracking are missing.\n"
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
+        ),
+        target=ErrorTarget.EVALUATE,
+        category=ErrorCategory.MISSING_PACKAGE,
+        blame=ErrorBlame.USER_ERROR,
+    )
 
 
 @dataclasses.dataclass
@@ -102,7 +104,6 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     _SCOPE = "https://management.azure.com/.default"
 
     EVALUATION_ARTIFACT = "instance_results.jsonl"
-    EVALUATION_ARTIFACT_DUMMY_RUN = "eval_results.jsonl"
 
     def __init__(
         self,
@@ -412,7 +413,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         if not self._check_state_and_log("log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
             return
-        # Check if artifact dirrectory is empty or does not exist.
+        # Check if artifact directory is empty or does not exist.
         if not os.path.isdir(artifact_folder):
             LOGGER.warning("The path to the artifact is either not a directory or does not exist.")
             return
@@ -443,15 +444,32 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         datastore = self._ml_client.datastores.get_default(include_secrets=True)
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
         svc_client = BlobServiceClient(account_url=account_url, credential=self._get_datastore_credential(datastore))
-        for local, remote in zip(local_paths, remote_paths["paths"]):
-            blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
-            with open(local, "rb") as fp:
-                blob_client.upload_blob(fp, overwrite=True)
+        try:
+            for local, remote in zip(local_paths, remote_paths["paths"]):
+                blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
+                with open(local, "rb") as fp:
+                    blob_client.upload_blob(fp, overwrite=True)
+        except HttpResponseError as ex:
+            if ex.status_code == 403:
+                msg = (
+                    "Failed to upload evaluation run to the cloud due to insufficient permission to access the storage."
+                    " Please ensure that the necessary access rights are granted."
+                )
+                raise EvaluationException(
+                    message=msg,
+                    target=ErrorTarget.EVAL_RUN,
+                    category=ErrorCategory.FAILED_REMOTE_TRACKING,
+                    blame=ErrorBlame.USER_ERROR,
+                    tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
+                ) from ex
+
+            raise ex
 
         # To show artifact in UI we will need to register it. If it is a promptflow run,
         # we are rewriting already registered artifact and need to skip this step.
         if self._is_promptflow_run:
             return
+
         url = (
             f"https://{self._url_base}/artifact/v2.0/subscriptions/{self._subscription_id}"
             f"/resourceGroups/{self._resource_group_name}/providers/"
@@ -473,6 +491,29 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         )
         if response.status_code != 200:
             self._log_warning("register artifact", response)
+
+        # register artifacts for images if exists in image folder
+        try:
+            for remote_path in remote_paths["paths"]:
+                remote_file_path = remote_path["path"]
+                if "images" in os.path.normpath(remote_file_path).split(os.sep):
+                    response = self.request_with_retry(
+                        url=url,
+                        method="POST",
+                        json_dict={
+                            "origin": "ExperimentRun",
+                            "container": f"dcid.{self.info.run_id}",
+                            "path": posixpath.join("images", os.path.basename(remote_file_path)),
+                            "dataPath": {
+                                "dataStoreName": datastore.name,
+                                "relativePath": remote_file_path,
+                            },
+                        },
+                    )
+                    if response.status_code != 200:
+                        self._log_warning("register image artifact", response)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
 
     def _get_datastore_credential(self, datastore: "Datastore"):
         # Reference the logic in azure.ai.ml._artifact._artifact_utilities
