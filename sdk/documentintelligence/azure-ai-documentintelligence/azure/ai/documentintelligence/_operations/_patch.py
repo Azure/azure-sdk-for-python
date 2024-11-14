@@ -32,18 +32,11 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
-_FINISHED = frozenset(["succeeded", "canceled", "failed", "completed"])
 
 
 def _parse_operation_id(operation_location_header):
     regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
-
-
-def _finished(status) -> bool:
-    if hasattr(status, "value"):
-        status = status.value
-    return str(status).lower() in _FINISHED
 
 
 class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
@@ -71,16 +64,6 @@ class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
         ) = polling_method.from_continuation_token(continuation_token, **kwargs)
 
         return cls(client, initial_response, deserialization_callback, polling_method)
-
-
-class AnalyzeBatchDocumentsLROPollingMethod(LROBasePolling):
-    def finished(self) -> bool:
-        """Is this polling finished?
-
-        :return: Whether polling is finished or not.
-        :rtype: bool
-        """
-        return _finished(self.status())
 
 
 class DocumentIntelligenceAdministrationClientOperationsMixin(
@@ -598,6 +581,162 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[_models.AnalyzeBatchDocumentsRequest] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[JSON] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: JSON
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[IO[bytes]] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: IO[bytes]
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def begin_analyze_batch_documents(
         self,
@@ -612,21 +751,119 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeBatchResult]:
+    ) -> AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Is one of the following types:
+         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
+        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
+         or JSON or IO[bytes]
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype:AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.AnalyzeBatchResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        return super().begin_analyze_batch_documents(
-            model_id=model_id,
-            analyze_batch_request=analyze_batch_request,
-            pages=pages,
-            locale=locale,
-            string_index_type=string_index_type,
-            features=features,
-            query_fields=query_fields,
-            output_content_format=output_content_format,
-            output=output,
-            polling=AnalyzeBatchDocumentsLROPollingMethod(timeout=lro_delay),
-            **kwargs,
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._analyze_batch_documents_initial(
+                model_id=model_id,
+                analyze_batch_request=analyze_batch_request,
+                pages=pages,
+                locale=locale,
+                string_index_type=string_index_type,
+                features=features,
+                query_fields=query_fields,
+                output_content_format=output_content_format,
+                output=output,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result"))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+    @distributed_trace
+    async def get_batch_analyze_result(
+        self, continuation_token: str
+    ) -> AnalyzeDocumentLROPoller[_models.AnalyzeBatchResult]:
+        """Gets the result of batch document analysis.
+
+        :param continuation_token: An opaque continuation token. Required.
+        :type model_id: str
+        :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype:AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self.begin_analyze_batch_documents(None, None, continuation_token=continuation_token)
 
 
 __all__: List[str] = [
