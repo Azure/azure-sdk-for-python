@@ -720,17 +720,17 @@ print("Deleted agent")
 
 ### Evaluation
 
-Evaluation in Azure AI Project client library is desinged to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+Evaluation in Azure AI Project client library is designed to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
 
 #### Evaluator
 
 Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
 
-Evaluators are made available via [azure-ai-evalaution][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
+Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
 
 More details on built-in and custom evaluators can be found [here][evaluators].
 
-#### Run Evalaution in cloud:
+#### Run Evaluation in cloud:
 
 To run evaluation in cloud the following are needed:
 
@@ -745,7 +745,7 @@ For running evaluator in cloud, evaluator `ID` is needed. To get it via code you
 ```
 # pip install azure-ai-evaluation
 
-from azure.ai.evaluation import RelevanceEvalautor
+from azure.ai.evaluation import RelevanceEvaluator
 
 evaluator_id = RelevanceEvaluator.id
 ```
