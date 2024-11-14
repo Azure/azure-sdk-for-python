@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.1 (2024-11-14)
 
 ### Bugs Fixed
 - Fixed `[remote]` extra to be needed only when tracking results in Azure AI Studio.
