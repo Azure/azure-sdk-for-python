@@ -800,7 +800,7 @@ Since these queries are relatively expensive, the SDK sets a default limit of 10
 can use the `AZURE_COSMOS_MAX_ITEM_BUFFER_HYBRID_SEARCH` environment variable to do so. However, be advised that queries with too many vector results
 may have additional latencies associated with searching in the service.
 
-You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
+You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well for additional guidance.
 
 ## Troubleshooting
 
