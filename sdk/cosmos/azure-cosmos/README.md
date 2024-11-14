@@ -797,7 +797,7 @@ All of these mentioned queries would look something like this:
 
 These queries must always use a TOP or LIMIT clause within the query since hybrid search queries have to look through a lot of data otherwise and may become too expensive or long-running.
 Since these queries are relatively expensive, the SDK sets a default limit of 1000 max items per query - if you'd like to raise that further, you
-can use the `AZURE_COSMOS_MAX_ITEM_BUFFER_HYBRID_SEARCH` environment variable to do so. However, be advised that queries with too many vector results
+can use the `AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS` environment variable to do so. However, be advised that queries with too many vector results
 may have additional latencies associated with searching in the service.
 
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.

@@ -132,7 +132,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your hybrid search query.")
-            if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_HYBRID_SEARCH', 1000):
+            if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS', 1000):
                 raise ValueError("Executing a hybrid search query with more items than the max is not allowed." +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator = \
