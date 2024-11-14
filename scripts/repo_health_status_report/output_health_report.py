@@ -408,6 +408,9 @@ def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[Service
     pipelines[service]["ci"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -447,6 +450,9 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
     pipelines[service]["tests"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -476,6 +482,9 @@ def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: di
     pipelines[service]["tests_weekly"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
