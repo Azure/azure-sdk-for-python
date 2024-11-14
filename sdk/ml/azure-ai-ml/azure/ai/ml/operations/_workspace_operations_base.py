@@ -364,7 +364,9 @@ class WorkspaceOperationsBase(ABC):
             network_acls = network_acls._to_rest_object()  # pylint: disable=protected-access
 
         if public_network_access == "Disabled" or (
-            existing_workspace.public_network_access == "Disabled" and public_network_access is None
+            existing_workspace
+            and existing_workspace.public_network_access == "Disabled"
+            and public_network_access is None
         ):
             network_acls = NetworkAcls()._to_rest_object()  # pylint: disable=protected-access
 
