@@ -46,7 +46,7 @@
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
+/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit @dargilco @jhakulin
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -250,7 +250,7 @@
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
-/sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
+/sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey @darrenchuang @TFR258
 
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
