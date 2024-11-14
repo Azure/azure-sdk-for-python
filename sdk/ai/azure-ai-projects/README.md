@@ -722,6 +722,119 @@ print("Deleted agent")
 
 <!-- END SNIPPET -->
 
+### Evaluation
+
+Evaluation in Azure AI Project client library is designed to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+
+#### Evaluator
+
+Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
+
+Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
+
+More details on built-in and custom evaluators can be found [here][evaluators].
+
+#### Run Evaluation in cloud:
+
+To run evaluation in cloud the following are needed:
+
+- Evaluators
+- Data to be evaluated
+- [Optional] Azure Open AI model.
+
+##### Evaluators
+
+For running evaluator in cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
+
+```
+# pip install azure-ai-evaluation
+
+from azure.ai.evaluation import RelevanceEvaluator
+
+evaluator_id = RelevanceEvaluator.id
+```
+
+##### Data to be evaluated
+
+Evaluation in the cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
+
+```python
+# Upload data for evaluation and get dataset id
+data_id, _ = project_client.upload_file("<data_file.jsonl>")
+```
+
+##### [Optional] Azure OpenAI Model
+
+Azure AI Studio project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
+
+```python
+default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+```
+
+##### Example Remote Evaluation
+
+```python
+import os
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
+
+
+# Create project client
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
+
+# Upload data for evaluation and get dataset id
+data_id, _ = project_client.upload_file("<data_file.jsonl>")
+
+deployment_name = "<deployment_name>"
+api_version = "<api_version>"
+
+# Create an evaluation
+evaluation = Evaluation(
+    display_name="Remote Evaluation",
+    description="Evaluation of dataset",
+    data=Dataset(id=data_id),
+    evaluators={
+        "f1_score": EvaluatorConfiguration(
+            id=F1ScoreEvaluator.id,
+        ),
+        "relevance": EvaluatorConfiguration(
+            id=RelevanceEvaluator.id,
+            init_params={
+                "model_config": default_connection.to_evaluator_model_config(
+                    deployment_name=deployment_name, api_version=api_version
+                )
+            },
+        ),
+        "violence": EvaluatorConfiguration(
+            id=ViolenceEvaluator.id,
+            init_params={"azure_ai_project": project_client.scope},
+        ),
+    },
+)
+
+
+evaluation_response = project_client.evaluations.create(
+    evaluation=evaluation,
+)
+
+# Get evaluation
+get_evaluation_response = project_client.evaluations.get(evaluation_response.id)
+
+print("----------------------------------------------------------------")
+print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
+print("Evaluation status: ", get_evaluation_response.status)
+if isinstance(get_evaluation_response.properties, dict):
+    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+print("----------------------------------------------------------------")
+```
+
+NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
+
 #### Tracing
 
 You can add an Application Insights Azure resource to your Azure AI Studio project. See the Tracing tab in your studio. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
@@ -877,3 +990,6 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
+[azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme?view=azure-python-preview
+[evaluator_library]: https://learn.microsoft.com/azure/ai-studio/how-to/evaluate-generative-ai-app#view-and-manage-the-evaluators-in-the-evaluator-library
