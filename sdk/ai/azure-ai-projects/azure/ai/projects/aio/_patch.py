@@ -214,10 +214,11 @@ class AIProjectClient(
         In the code below we are going through all credentials in AsyncTokenCredential and close all
         pipelines.
         """
-        for cred in self._credential.credentials:
-            if hasattr(cred, '_credential') and hasattr(
-                cred._credential, '_client'):  # pylint: disable=protected-access
-                await cred._credential._client.close()  # pylint: disable=protected-access
+        if hasattr(self._credential, 'credentials'):
+            for cred in self._credential.credentials:
+                if hasattr(cred, '_credential') and hasattr(
+                    cred._credential, '_client'):  # pylint: disable=protected-access
+                    await cred._credential._client.close()  # pylint: disable=protected-access
 
     async def close(self) -> None:
         await self._client0.close()
