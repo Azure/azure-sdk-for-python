@@ -7,7 +7,7 @@ Use the AI Projects client library (in preview) to:
 For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
 * **Get an already-authenticated Inference client** for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
 * **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in private preview.
-* **TODO: Evaluations**
+* **Run Evaluation tools** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
 * **Enable OpenTelemetry tracing**.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
