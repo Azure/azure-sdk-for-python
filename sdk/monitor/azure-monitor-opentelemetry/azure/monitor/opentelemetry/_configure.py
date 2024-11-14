@@ -174,7 +174,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # This is to prevent most duplicate logging telemetry
     if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
         handler = LoggingHandler(logger_provider=logger_provider)
-        logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
         logger.addHandler(handler)
 
 
