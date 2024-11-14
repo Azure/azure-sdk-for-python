@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
@@ -23,7 +23,6 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
@@ -56,28 +55,31 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, _snake_to_camel
-from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
-from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
 # Note, this import needs to match the restclient that's imported by the
 # Connection class, otherwise some unit tests will start failing
 # Due to the mismatch between expected and received classes in WC rest conversions.
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
-    ConnectionAuthType,
+    AADAuthTypeWorkspaceConnectionProperties,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
+    AccountKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
+    ConnectionAuthType,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-    AccountKeyAuthTypeWorkspaceConnectionProperties,
-    AADAuthTypeWorkspaceConnectionProperties,
 )
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+)
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, snake_to_pascal
+from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
