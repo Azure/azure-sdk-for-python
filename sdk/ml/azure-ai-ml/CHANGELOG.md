@@ -1,5 +1,12 @@
 # Release History
 
+## 1.22.1 (2024-11-13)
+
+### Features Added
+
+### Bugs Fixed
+  - **#38493** - Fix error NoneType object is not subscriptable
+
 ## 1.22.0 (2024-11-11)
 
 ### Features Added
