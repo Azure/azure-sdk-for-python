@@ -640,7 +640,7 @@ class _AIInferenceInstrumentorPreview:
         async def inner(*args, **kwargs):
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
-                return function(*args, **kwargs)
+                return await function(*args, **kwargs)
 
             class_function_name = function.__qualname__
 
