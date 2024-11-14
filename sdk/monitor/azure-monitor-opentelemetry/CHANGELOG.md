@@ -5,7 +5,7 @@
 ### Features Added
 
 - Distro to automatically configure event logger provider
-    ([#38071](https://github.com/Azure/azure-sdk-for-python/pull/38071))
+    ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
 
 ### Breaking Changes
 
