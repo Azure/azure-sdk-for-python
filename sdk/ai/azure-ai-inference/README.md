@@ -301,10 +301,7 @@ response = client.complete(
                 "role": "assistant",
                 "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
             },
-            {
-                "role": "user",
-                "content": "And what was the estimated cost to build it?"
-            },
+            {"role": "user", "content": "And what was the estimated cost to build it?"},
         ]
     }
 )
@@ -578,6 +575,7 @@ Or configure it in the code with the following snippet:
 
 ```python
 from azure.core.settings import settings
+
 settings.tracing_implementation = "opentelemetry"
 ```
 
@@ -591,6 +589,7 @@ The final step is to enable Azure AI Inference instrumentation with the followin
 
 ```python
 from azure.ai.inference.tracing import AIInferenceInstrumentor
+
 # Instrument AI Inference API
 AIInferenceInstrumentor().instrument()
 ```
@@ -616,11 +615,13 @@ The `@tracer.start_as_current_span` decorator can be used to trace your own func
 
 ```python
 from opentelemetry.trace import get_tracer
+
 tracer = get_tracer(__name__)
+
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("get_temperature") # type: ignore
+@tracer.start_as_current_span("get_temperature")  # type: ignore
 def get_temperature(city: str) -> str:
 
     # Adding attributes to the current span
