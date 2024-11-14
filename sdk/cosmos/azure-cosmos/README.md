@@ -775,7 +775,9 @@ full_text_policy = {
     ]
 }
 ```
-Currently, the only supported language is `en-US`.
+Currently, the only supported language is `en-US` - using the relevant ISO-639 language code to ISO-3166 country code.
+Any non-supported language or code will return an exception when trying to use it - which will also include the list of supported languages.
+This list will include more options in the future; for more information on supported languages, please see [here][cosmos_fts].
 
 Full text search indexes have been added to the already existing indexing_policy and only require the path to the
 relevant field to be used.
@@ -795,6 +797,8 @@ indexing_policy = {
         ]
     }
 ```
+Modifying the index in a container is an asynchronous operation that can take a long time to finish. See [here][cosmos_index_policy_change] for more information.
+For more information on using full text policies and full text indexes, see [here][cosmos_fts].
 
 ## Troubleshooting
 
@@ -932,6 +936,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
 [cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
 [cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
+[cosmos_fts]: https://aka.ms/cosmosfulltextsearch
+[cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
 
 ## Contributing
 

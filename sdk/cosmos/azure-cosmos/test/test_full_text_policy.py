@@ -71,7 +71,13 @@ class TestFullTextPolicy(unittest.TestCase):
         self.test_db.delete_container(created_container.id)
 
     def test_replace_full_text_container(self):
-        # Replace a container with a valid full text policy and full text indexing policy
+        # Replace a container without a full text policy and full text indexing policy
+
+        created_container = self.test_db.create_container(
+            id='full_text_container' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id")
+        )
+
         full_text_policy = {
             "defaultLanguage": "en-US",
             "fullTextPaths": [
@@ -86,6 +92,20 @@ class TestFullTextPolicy(unittest.TestCase):
                 {"path": "/abstract"}
             ]
         }
+
+        # Replace the container with new policies
+        replaced_container = self.test_db.replace_container(
+            container=created_container.id,
+            partition_key=PartitionKey(path="/id"),
+            full_text_policy=full_text_policy,
+            indexing_policy=indexing_policy
+        )
+        properties = replaced_container.read()
+        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        self.test_db.delete_container(created_container.id)
+
+        # Replace a container with a valid full text policy and full text indexing policy
         created_container = self.test_db.create_container(
             id='full_text_container' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id"),
@@ -99,8 +119,8 @@ class TestFullTextPolicy(unittest.TestCase):
         # Replace the container with new policies
         full_text_policy['fullTextPaths'][0]['path'] = "/new_path"
         indexing_policy['fullTextIndexes'][0]['path'] = "/new_path"
-        replaced_container = self.test_db.create_container(
-            id=created_container.id,
+        replaced_container = self.test_db.replace_container(
+            container=created_container.id,
             partition_key=PartitionKey(path="/id"),
             full_text_policy=full_text_policy,
             indexing_policy=indexing_policy
