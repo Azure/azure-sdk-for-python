@@ -19,6 +19,7 @@ class TestPrompts:
         prompty_file_path = os.path.join(script_dir, "sample1.prompty")
         prompt_template = PromptTemplate.from_prompty(prompty_file_path)
         assert prompt_template.model_name == "gpt-4o-mini"
+        assert prompt_template.prompty.model.configuration["api_version"] == "mock-api-version"
         assert prompt_template.parameters["temperature"] == 1
         assert prompt_template.parameters["frequency_penalty"] == 0.5
         assert prompt_template.parameters["presence_penalty"] == 0.5
@@ -51,16 +52,17 @@ class TestPrompts:
         assert telemetry_dict["model"]["configuration"]["api_key"] == "********"
         assert telemetry_dict["model"]["configuration"]["api_secret"] == "***********"
 
-    def test_prompt_template_from_message(self, **kwargs):
+    def test_prompt_template_from_string(self, **kwargs):
         prompt_template_str = "system prompt template text\nuser:\n{{input}}"
         prompt_template = PromptTemplate.from_string(api="chat", prompt_template=prompt_template_str)
         input = "user question input text"
         messages = prompt_template.create_messages(input=input)
-        assert len(messages) == 1
+        assert len(messages) == 2
         assert messages[0]["role"] == "system"
-        assert "system prompt template text\nuser:\nuser question input text" == messages[0]["content"]
+        assert "system prompt template text" == messages[0]["content"]
+        assert "user question input text" == messages[1]["content"]
 
-    def test_prompt_template_from_message_with_tags(self, **kwargs):
+    def test_prompt_template_from_string_with_tags(self, **kwargs):
         prompt_template_str = """
             system:
             You are an AI assistant in a hotel. You help guests with their requests and provide information about the hotel and its services.
@@ -90,7 +92,12 @@ class TestPrompts:
             {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
         ]
         messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
-        assert len(messages) == 1
+        assert len(messages) == 4
         assert messages[0]["role"] == "system"
         assert "You are an AI assistant in a hotel." in messages[0]["content"]
-        assert "When I arrived, can I still have breakfast?" in messages[0]["content"]
+        assert messages[1]["role"] == "user"
+        assert "I'll arrive at 2pm. What's the check-in and check-out time?" == messages[1]["content"]
+        assert messages[2]["role"] == "system"
+        assert "The check-in time is 3 PM, and the check-out time is 11 AM." == messages[2]["content"]
+        assert messages[3]["role"] == "user"
+        assert "When I arrived, can I still have breakfast?" == messages[3]["content"]

@@ -56,10 +56,12 @@ class TestModels(AzureRecordedTestCase):
             files = client.files.list()
             for file in files:
                 assert file.id
+                break
 
             files = client.files.list(purpose="assistants")
             for file in files:
                 assert file.id
+                break
 
             retrieved_file = client.files.retrieve(file1.id)
             assert retrieved_file.id

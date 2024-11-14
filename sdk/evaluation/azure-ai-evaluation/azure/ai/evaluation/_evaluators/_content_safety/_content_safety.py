@@ -7,9 +7,9 @@ from typing import Callable, Dict, List, Union
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -40,6 +40,9 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a ContentSafetyEvaluator.
     """
+
+    id = "content_safety"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, **kwargs):

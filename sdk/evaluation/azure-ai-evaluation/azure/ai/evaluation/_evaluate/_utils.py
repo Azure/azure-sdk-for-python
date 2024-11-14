@@ -21,7 +21,6 @@ from azure.ai.evaluation._constants import (
     EvaluationRunProperties,
     Prefixes,
 )
-from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
@@ -118,6 +117,8 @@ def _log_metrics_and_instance_results(
     run: Run,
     evaluation_name: Optional[str],
 ) -> Optional[str]:
+    from azure.ai.evaluation._evaluate._eval_run import EvalRun
+
     if trace_destination is None:
         LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
         return None
@@ -137,7 +138,7 @@ def _log_metrics_and_instance_results(
         ml_client=azure_pf_client.ml_client,
         promptflow_run=run,
     ) as ev_run:
-        artifact_name = EvalRun.EVALUATION_ARTIFACT if run else EvalRun.EVALUATION_ARTIFACT_DUMMY_RUN
+        artifact_name = EvalRun.EVALUATION_ARTIFACT
 
         with tempfile.TemporaryDirectory() as tmpdir:
             # storing multi_modal images if exists
@@ -164,9 +165,8 @@ def _log_metrics_and_instance_results(
                 ev_run.write_properties_to_run_history(
                     properties={
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
-                        EvaluationRunProperties.EVALUATION_RUN: "azure-ai-generative-parent",
+                        EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-                        "isEvaluatorRun": "true",
                     }
                 )
 

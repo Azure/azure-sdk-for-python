@@ -65,6 +65,9 @@ class MeteorScoreEvaluator:
             :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
     """
 
+    id = "azureml://registries/azureml/models/Meteor-Score-Evaluator/versions/3"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
         self._async_evaluator = _AsyncMeteorScoreEvaluator(alpha=alpha, beta=beta, gamma=gamma)
 

@@ -54,6 +54,9 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :caption: Initialize and call an IndirectAttackEvaluator.
     """
 
+    id = "azureml://registries/azureml/models/Indirect-Attack-Evaluator/versions/3"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,

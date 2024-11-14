@@ -47,6 +47,9 @@ class BleuScoreEvaluator:
             :caption: Initialize and call an BleuScoreEvaluator.
     """
 
+    id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(self):
         self._async_evaluator = _AsyncBleuScoreEvaluator()
 
