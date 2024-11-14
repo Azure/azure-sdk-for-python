@@ -632,7 +632,7 @@ async def use_geospatial_indexing_policy(db):
     try:
         await delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a container with vector embedding policy and vector indexes
+        # Create a container with geospatial indexes
         indexing_policy = {
             'includedPaths': [
                 {'path': '/"Location"/?',
@@ -683,7 +683,8 @@ async def use_vector_embedding_policy(db):
         # Create a container with vector embedding policy and vector indexes
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector", "type": "quantizedFlat"},
+                {"path": "/vector", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {
@@ -691,8 +692,14 @@ async def use_vector_embedding_policy(db):
                 {
                     "path": "/vector",
                     "dataType": "float32",
-                    "dimensions": 1000,
-                    "distanceFunction": "cosine"
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
                 }
             ]
         }
@@ -746,7 +753,7 @@ async def run_sample():
         async with obtain_client() as client:
             await fetch_all_databases(client)
 
-            # Create database if doesn't exist already.
+            # Create database if it doesn't exist already.
             created_db = await client.create_database_if_not_exists(DATABASE_ID)
             print(created_db)
 

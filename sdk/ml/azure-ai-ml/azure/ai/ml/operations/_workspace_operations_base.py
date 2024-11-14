@@ -781,6 +781,9 @@ class WorkspaceOperationsBase(ABC):
             if not kwargs.get("grant_materialization_permissions", None):
                 _set_val(param["grant_materialization_permissions"], "false")
 
+        if workspace.provision_network_now:
+            _set_val(param["provisionNetworkNow"], "true")
+
         managed_network = None
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()

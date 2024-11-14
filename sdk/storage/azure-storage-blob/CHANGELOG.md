@@ -4,9 +4,10 @@
 
 ### Features Added
 
-## 12.24.0 (Unreleased)
+## 12.24.0 (2024-11-13)
 
 ### Features Added
+- Stable release of features from 12.24.0b1
 
 ## 12.24.0b1 (2024-10-10)
 
