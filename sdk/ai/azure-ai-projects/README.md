@@ -207,7 +207,9 @@ Here is an example of how to create an agent:
 
 ```python
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
 )
 ```
 
@@ -614,8 +616,13 @@ To retrieve messages from agents, use the following example:
 
 ```python
 messages = project_client.agents.list_messages(thread_id=thread.id)
-last_message_content = messages.data[-1].content[-1].text.value
-print(f"Last message content: {last_message_content}")
+
+# The messages are following in the reverse order,
+# we will iterate them and output only text contents.
+for data_point in reversed(messages.data):
+    last_message_content = data_point.content[-1]
+    if isinstance(last_message_content, MessageTextContent):
+        print(f"{data_point.role}: {last_message_content.text.value}")
 ```
 
 <!-- END SNIPPET -->
