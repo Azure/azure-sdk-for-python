@@ -63,63 +63,11 @@ def build_document_intelligence_analyze_document_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/documentModels/{modelId}:analyze"
-    path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if pages is not None:
-        _params["pages"] = _SERIALIZER.query("pages", pages, "str")
-    if locale is not None:
-        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
-    if string_index_type is not None:
-        _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
-    if features is not None:
-        _params["features"] = _SERIALIZER.query("features", features, "[str]", div=",")
-    if query_fields is not None:
-        _params["queryFields"] = _SERIALIZER.query("query_fields", query_fields, "[str]", div=",")
-    if output_content_format is not None:
-        _params["outputContentFormat"] = _SERIALIZER.query("output_content_format", output_content_format, "str")
-    if output is not None:
-        _params["output"] = _SERIALIZER.query("output", output, "[str]", div=",")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_document_intelligence_analyze_batch_documents_request(  # pylint: disable=name-too-long
-    model_id: str,
-    *,
-    pages: Optional[str] = None,
-    locale: Optional[str] = None,
-    string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-    features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-    query_fields: Optional[List[str]] = None,
-    output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-    output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/documentModels/{modelId}:analyzeBatch"
     path_format_arguments = {
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
@@ -157,7 +105,7 @@ def build_document_intelligence_get_analyze_result_pdf_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/pdf")
 
     # Construct URL
@@ -184,7 +132,7 @@ def build_document_intelligence_get_analyze_result_figure_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "image/png")
 
     # Construct URL
@@ -193,6 +141,165 @@ def build_document_intelligence_get_analyze_result_figure_request(  # pylint: di
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
         "resultId": _SERIALIZER.url("result_id", result_id, "str"),
         "figureId": _SERIALIZER.url("figure_id", figure_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_document_intelligence_delete_analyze_result_request(  # pylint: disable=name-too-long
+    model_id: str, result_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/documentModels/{modelId}/analyzeResults/{resultId}"
+    path_format_arguments = {
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_document_intelligence_analyze_batch_documents_request(  # pylint: disable=name-too-long
+    model_id: str,
+    *,
+    pages: Optional[str] = None,
+    locale: Optional[str] = None,
+    string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+    features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+    query_fields: Optional[List[str]] = None,
+    output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+    output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/documentModels/{modelId}:analyzeBatch"
+    path_format_arguments = {
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if pages is not None:
+        _params["pages"] = _SERIALIZER.query("pages", pages, "str")
+    if locale is not None:
+        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
+    if string_index_type is not None:
+        _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
+    if features is not None:
+        _params["features"] = _SERIALIZER.query("features", features, "[str]", div=",")
+    if query_fields is not None:
+        _params["queryFields"] = _SERIALIZER.query("query_fields", query_fields, "[str]", div=",")
+    if output_content_format is not None:
+        _params["outputContentFormat"] = _SERIALIZER.query("output_content_format", output_content_format, "str")
+    if output is not None:
+        _params["output"] = _SERIALIZER.query("output", output, "[str]", div=",")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_document_intelligence_list_analyze_batch_results_request(  # pylint: disable=name-too-long
+    model_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/documentModels/{modelId}/analyzeBatchResults"
+    path_format_arguments = {
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_document_intelligence_delete_analyze_batch_result_request(  # pylint: disable=name-too-long
+    model_id: str, result_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/documentModels/{modelId}/analyzeBatchResults/{resultId}"
+    path_format_arguments = {
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_document_intelligence_get_analyze_batch_result_request(  # pylint: disable=name-too-long
+    model_id: str, result_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/documentModels/{modelId}/analyzeBatchResults/{resultId}"
+    path_format_arguments = {
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -218,7 +325,7 @@ def build_document_intelligence_classify_document_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -253,7 +360,7 @@ def build_document_intelligence_administration_build_document_model_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +384,7 @@ def build_document_intelligence_administration_compose_model_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -301,7 +408,7 @@ def build_document_intelligence_administration_authorize_model_copy_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -325,7 +432,7 @@ def build_document_intelligence_administration_copy_model_to_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -353,7 +460,7 @@ def build_document_intelligence_administration_get_model_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -379,7 +486,7 @@ def build_document_intelligence_administration_list_models_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -400,7 +507,7 @@ def build_document_intelligence_administration_delete_model_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -426,7 +533,7 @@ def build_document_intelligence_administration_get_resource_info_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -447,7 +554,7 @@ def build_document_intelligence_administration_get_operation_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -473,7 +580,7 @@ def build_document_intelligence_administration_list_operations_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -495,7 +602,7 @@ def build_document_intelligence_administration_build_classifier_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -519,7 +626,7 @@ def build_document_intelligence_administration_authorize_classifier_copy_request
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -543,7 +650,7 @@ def build_document_intelligence_administration_copy_classifier_to_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -571,7 +678,7 @@ def build_document_intelligence_administration_get_classifier_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -597,7 +704,7 @@ def build_document_intelligence_administration_list_classifiers_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -618,7 +725,7 @@ def build_document_intelligence_administration_delete_classifier_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -747,7 +854,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -799,7 +906,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -851,7 +958,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -904,7 +1011,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
          IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
@@ -991,360 +1098,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[_models.AnalyzeResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _analyze_batch_documents_initial(
-        self,
-        model_id: str,
-        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
-        *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
-        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(analyze_batch_request, (IOBase, bytes)):
-            _content = analyze_batch_request
-        else:
-            if analyze_batch_request is not None:
-                _content = json.dumps(analyze_batch_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_document_intelligence_analyze_batch_documents_request(
-            model_id=model_id,
-            pages=pages,
-            locale=locale,
-            string_index_type=string_index_type,
-            features=features,
-            query_fields=query_fields,
-            output_content_format=output_content_format,
-            output=output,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_analyze_batch_documents(
-        self,
-        model_id: str,
-        analyze_batch_request: Optional[_models.AnalyzeBatchDocumentsRequest] = None,
-        *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
-        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeBatchResult]:
-        """Analyzes batch documents with document model.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
-        :paramtype pages: str
-        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
-         only
-         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
-         None.
-        :paramtype locale: str
-        :keyword string_index_type: Method used to compute string offset and length. Known values are:
-         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
-        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
-        :keyword features: List of optional analysis features. Default value is None.
-        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
-        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
-         Default value is None.
-        :paramtype query_fields: list[str]
-        :keyword output_content_format: Format of the analyze result top-level content. Known values
-         are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword output: Additional outputs to generate during analysis. Default value is None.
-        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_analyze_batch_documents(
-        self,
-        model_id: str,
-        analyze_batch_request: Optional[JSON] = None,
-        *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
-        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeBatchResult]:
-        """Analyzes batch documents with document model.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
-        :paramtype pages: str
-        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
-         only
-         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
-         None.
-        :paramtype locale: str
-        :keyword string_index_type: Method used to compute string offset and length. Known values are:
-         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
-        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
-        :keyword features: List of optional analysis features. Default value is None.
-        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
-        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
-         Default value is None.
-        :paramtype query_fields: list[str]
-        :keyword output_content_format: Format of the analyze result top-level content. Known values
-         are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword output: Additional outputs to generate during analysis. Default value is None.
-        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_analyze_batch_documents(
-        self,
-        model_id: str,
-        analyze_batch_request: Optional[IO[bytes]] = None,
-        *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
-        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeBatchResult]:
-        """Analyzes batch documents with document model.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
-        :paramtype pages: str
-        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
-         only
-         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
-         None.
-        :paramtype locale: str
-        :keyword string_index_type: Method used to compute string offset and length. Known values are:
-         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
-        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
-        :keyword features: List of optional analysis features. Default value is None.
-        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
-        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
-         Default value is None.
-        :paramtype query_fields: list[str]
-        :keyword output_content_format: Format of the analyze result top-level content. Known values
-         are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword output: Additional outputs to generate during analysis. Default value is None.
-        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_analyze_batch_documents(
-        self,
-        model_id: str,
-        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
-        *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
-        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
-        **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeBatchResult]:
-        """Analyzes batch documents with document model.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Is one of the following types:
-         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
-        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-         or JSON or IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
-        :paramtype pages: str
-        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
-         only
-         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
-         None.
-        :paramtype locale: str
-        :keyword string_index_type: Method used to compute string offset and length. Known values are:
-         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
-        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
-        :keyword features: List of optional analysis features. Default value is None.
-        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
-        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
-         Default value is None.
-        :paramtype query_fields: list[str]
-        :keyword output_content_format: Format of the analyze result top-level content. Known values
-         are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword output: Additional outputs to generate during analysis. Default value is None.
-        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.AnalyzeBatchResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._analyze_batch_documents_initial(
-                model_id=model_id,
-                analyze_batch_request=analyze_batch_request,
-                pages=pages,
-                locale=locale,
-                string_index_type=string_index_type,
-                features=features,
-                query_fields=query_fields,
-                output_content_format=output_content_format,
-                output=output,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result"))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.AnalyzeBatchResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.AnalyzeBatchResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -1481,6 +1234,624 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         return deserialized  # type: ignore
 
+    @distributed_trace
+    def delete_analyze_result(  # pylint: disable=inconsistent-return-statements
+        self, model_id: str, result_id: str, **kwargs: Any
+    ) -> None:
+        """Mark the result of document analysis for deletion.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze operation result ID. Required.
+        :type result_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_delete_analyze_result_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    def _analyze_batch_documents_initial(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(analyze_batch_request, (IOBase, bytes)):
+            _content = analyze_batch_request
+        else:
+            if analyze_batch_request is not None:
+                _content = json.dumps(analyze_batch_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_document_intelligence_analyze_batch_documents_request(
+            model_id=model_id,
+            pages=pages,
+            locale=locale,
+            string_index_type=string_index_type,
+            features=features,
+            query_fields=query_fields,
+            output_content_format=output_content_format,
+            output=output,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[_models.AnalyzeBatchDocumentsRequest] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[JSON] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: JSON
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[IO[bytes]] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
+        :type analyze_batch_request: IO[bytes]
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_analyze_batch_documents(
+        self,
+        model_id: str,
+        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        *,
+        pages: Optional[str] = None,
+        locale: Optional[str] = None,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
+        query_fields: Optional[List[str]] = None,
+        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeBatchResult]:
+        """Analyzes batch documents with document model.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param analyze_batch_request: Analyze batch request parameters. Is one of the following types:
+         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
+        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
+         or JSON or IO[bytes]
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
+        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
+         only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
+         None.
+        :paramtype locale: str
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword features: List of optional analysis features. Default value is None.
+        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
+        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :paramtype query_fields: list[str]
+        :keyword output_content_format: Format of the analyze result top-level content. Known values
+         are: "text" and "markdown". Default value is None.
+        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
+        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.AnalyzeBatchResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._analyze_batch_documents_initial(
+                model_id=model_id,
+                analyze_batch_request=analyze_batch_request,
+                pages=pages,
+                locale=locale,
+                string_index_type=string_index_type,
+                features=features,
+                query_fields=query_fields,
+                output_content_format=output_content_format,
+                output=output,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result"))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AnalyzeBatchResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AnalyzeBatchResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list_analyze_batch_results(
+        self, model_id: str, **kwargs: Any
+    ) -> Iterable["_models.AnalyzeBatchResultOperation"]:
+        """List batch document analysis results.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :return: An iterator like instance of AnalyzeBatchResultOperation
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.documentintelligence.models.AnalyzeBatchResultOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AnalyzeBatchResultOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_document_intelligence_list_analyze_batch_results_request(
+                    model_id=model_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.AnalyzeBatchResultOperation], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def delete_analyze_batch_result(  # pylint: disable=inconsistent-return-statements
+        self, model_id: str, result_id: str, **kwargs: Any
+    ) -> None:
+        """Mark the batch document analysis result for deletion.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze batch operation result ID. Required.
+        :type result_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_delete_analyze_batch_result_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_analyze_batch_result(
+        self, model_id: str, result_id: str, **kwargs: Any
+    ) -> _models.AnalyzeBatchResultOperation:
+        """Gets the result of batch document analysis.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze batch operation result ID. Required.
+        :type result_id: str
+        :return: AnalyzeBatchResultOperation. The AnalyzeBatchResultOperation is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.AnalyzeBatchResultOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AnalyzeBatchResultOperation] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_get_analyze_batch_result_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AnalyzeBatchResultOperation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     def _classify_document_initial(
         self,
         classifier_id: str,
@@ -1579,7 +1950,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1615,7 +1986,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1651,7 +2022,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1688,7 +2059,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
          None.
         :paramtype pages: str
         :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible

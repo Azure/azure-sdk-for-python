@@ -107,8 +107,6 @@ class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target documents with similar visual templates."""
     NEURAL = "neural"
     """Support documents with diverse visual templates."""
-    GENERATIVE = "generative"
-    """Enable documents of all types using generative AI techniques."""
 
 
 class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -246,10 +244,10 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     SUCCEEDED = "succeeded"
     """The operation has succeeded."""
-    COMPLETED = "completed"
-    """The operation has completed."""
     CANCELED = "canceled"
     """The operation has been canceled."""
+    SKIPPED = "skipped"
+    """The operation has been skipped."""
 
 
 class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
