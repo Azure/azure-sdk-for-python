@@ -669,13 +669,9 @@ Evaluation in Azure AI Project client library is desinged to assess the performa
 #### Evaluator
 Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
 
-Evaluators are made available via [azure-ai-evalaution][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in cloud.
-
-
-
+Evaluators are made available via [azure-ai-evalaution][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
 
 More details on built-in and custom evaluators can be found [here][evaluators].
-
 
 #### Run Evalaution in cloud:
 
@@ -698,7 +694,7 @@ evaluator_id = RelevanceEvaluator.id
 ```
 
 ##### Data to be evaluated
-Evaluation in cloud support data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on project client.
+Evaluation in cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
 
 ```python
 # Creating project client
