@@ -258,8 +258,8 @@ class AIProjectClient(
         if hasattr(self._credential, "credentials"):
             for cred in self._credential.credentials:
                 if hasattr(cred, "_credential") and hasattr(
-                    cred._credential, "_client"
-                ):  # pylint: disable=protected-access
+                    cred._credential, "_client" # pylint: disable=protected-access
+                ):
                     await cred._credential._client.close()  # pylint: disable=protected-access
 
     async def close(self) -> None:
