@@ -87,7 +87,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             id='full_text_container' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
-
+        created_container_properties = await created_container.read()
         full_text_policy = {
             "defaultLanguage": "en-US",
             "fullTextPaths": [
@@ -113,6 +113,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         properties = await replaced_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         await self.test_db.delete_container(created_container.id)
 
         # Replace a container with a valid full text policy and full text indexing policy
@@ -122,9 +123,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             full_text_policy=full_text_policy,
             indexing_policy=indexing_policy
         )
-        properties = await created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
-        assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        created_container_properties = await created_container.read()
+        assert created_container_properties["fullTextPolicy"] == full_text_policy
+        assert created_container_properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
         full_text_policy['fullTextPaths'][0]['path'] = "/new_path"
@@ -138,6 +139,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         properties = replaced_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
+        assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
         self.test_db.delete_container(created_container.id)
 
     async def test_fail_create_full_text_policy_async(self):

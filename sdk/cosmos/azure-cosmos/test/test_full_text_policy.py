@@ -77,7 +77,7 @@ class TestFullTextPolicy(unittest.TestCase):
             id='full_text_container' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
-
+        created_container_properties = created_container.read()
         full_text_policy = {
             "defaultLanguage": "en-US",
             "fullTextPaths": [
@@ -103,6 +103,7 @@ class TestFullTextPolicy(unittest.TestCase):
         properties = replaced_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         self.test_db.delete_container(created_container.id)
 
         # Replace a container with a valid full text policy and full text indexing policy
@@ -112,7 +113,7 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy,
             indexing_policy=indexing_policy
         )
-        properties = created_container.read()
+        created_container_properties = created_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
@@ -128,6 +129,8 @@ class TestFullTextPolicy(unittest.TestCase):
         properties = replaced_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
+        assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
         self.test_db.delete_container(created_container.id)
 
     def test_fail_create_full_text_policy(self):
