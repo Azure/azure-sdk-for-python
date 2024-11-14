@@ -10,7 +10,6 @@ import uuid
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
-
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -224,7 +223,11 @@ class AIProjectClient(
         self._client3.__exit__(*exc_details)
 
     @classmethod
+<<<<<<< HEAD
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> Self:
+=======
     def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AIProjectClient":
+>>>>>>> 9ebd895496b0bf4148152e30db197cb95b029c75
         """
         Create an AIProjectClient from a connection string.
 
