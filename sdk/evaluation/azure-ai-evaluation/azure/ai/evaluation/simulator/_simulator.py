@@ -25,7 +25,7 @@ from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
 
 
-USER_AGENT += " (type=simulator)"
+USER_AGENT += " (type=simulator subtype=Simulator)"
 
 
 @experimental
