@@ -12,7 +12,6 @@ import uuid
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
-
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
@@ -224,7 +223,7 @@ class AIProjectClient(
         await self._client3.__aexit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> "AIProjectClient":
+    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
         """
         Create an asynchronous AIProjectClient from a connection string.
 
