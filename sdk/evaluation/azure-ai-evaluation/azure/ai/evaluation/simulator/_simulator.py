@@ -24,8 +24,8 @@ from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
 
-if len(USER_AGENT) < 24:
-    USER_AGENT += "/simulator"
+
+USER_AGENT += "/simulator"
 
 @experimental
 class Simulator:
