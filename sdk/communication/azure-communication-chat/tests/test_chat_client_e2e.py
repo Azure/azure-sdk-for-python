@@ -10,11 +10,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat import (
-    ChatClient,
-    CommunicationTokenCredential,
-    ChatParticipant
-)
+from azure.communication.chat import ChatClient, CommunicationTokenCredential, ChatParticipant
 from azure.communication.chat._shared.utils import parse_connection_str
 from chat_e2e_helper import get_connection_str
 from _shared.utils import get_http_logging_policy
@@ -35,9 +31,7 @@ class TestChatClient(AzureRecordedTestCase):
 
         # create ChatClient
         self.chat_client = ChatClient(
-            self.endpoint, 
-            CommunicationTokenCredential(self.token), 
-            http_logging_policy=get_http_logging_policy()
+            self.endpoint, CommunicationTokenCredential(self.token), http_logging_policy=get_http_logging_policy()
         )
 
     def teardown_method(self):
@@ -51,14 +45,12 @@ class TestChatClient(AzureRecordedTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=timezone.utc)
-        participants = [ChatParticipant(
-            identifier=self.user,
-            display_name='name',
-            share_history_time=share_history_time
-        )]
-        create_chat_thread_result = self.chat_client.create_chat_thread(topic,
-                                                                        thread_participants=participants,
-                                                                        idempotency_token=idempotency_token)
+        participants = [
+            ChatParticipant(identifier=self.user, display_name="name", share_history_time=share_history_time)
+        ]
+        create_chat_thread_result = self.chat_client.create_chat_thread(
+            topic, thread_participants=participants, idempotency_token=idempotency_token
+        )
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
@@ -71,9 +63,7 @@ class TestChatClient(AzureRecordedTestCase):
 
         # create ChatClient
         chat_client = ChatClient(
-            self.endpoint, 
-            CommunicationTokenCredential(self.token),
-            http_logging_policy=get_http_logging_policy()
+            self.endpoint, CommunicationTokenCredential(self.token), http_logging_policy=get_http_logging_policy()
         )
         raised = False
         try:
@@ -91,7 +81,7 @@ class TestChatClient(AzureRecordedTestCase):
                 for chat_thread_info in chat_threads_info_page:
                     print("ChatThreadInfo: ", chat_thread_info)
         except:
-           raised = True
+            raised = True
 
         assert raised is False
 

@@ -5951,20 +5951,17 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ReclassifyJobResult:
-        ...
+    ) -> _models._models.ReclassifyJobResult: ...
 
     @overload
     def _reclassify_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ReclassifyJobResult:
-        ...
+    ) -> _models._models.ReclassifyJobResult: ...
 
     @overload
     def _reclassify_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ReclassifyJobResult:
-        ...
+    ) -> _models._models.ReclassifyJobResult: ...
 
     @distributed_trace
     def _reclassify_job(  # pylint: disable=protected-access
@@ -6062,20 +6059,17 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CancelJobResult:
-        ...
+    ) -> _models._models.CancelJobResult: ...
 
     @overload
     def _cancel_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CancelJobResult:
-        ...
+    ) -> _models._models.CancelJobResult: ...
 
     @overload
     def _cancel_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CancelJobResult:
-        ...
+    ) -> _models._models.CancelJobResult: ...
 
     @distributed_trace
     def _cancel_job(  # pylint: disable=protected-access
@@ -6178,8 +6172,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CompleteJobResult:
-        ...
+    ) -> _models._models.CompleteJobResult: ...
 
     @overload
     def _complete_job(  # pylint: disable=protected-access
@@ -6190,8 +6183,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CompleteJobResult:
-        ...
+    ) -> _models._models.CompleteJobResult: ...
 
     @overload
     def _complete_job(  # pylint: disable=protected-access
@@ -6202,8 +6194,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CompleteJobResult:
-        ...
+    ) -> _models._models.CompleteJobResult: ...
 
     @distributed_trace
     def _complete_job(  # pylint: disable=protected-access
@@ -6309,8 +6300,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CloseJobResult:
-        ...
+    ) -> _models._models.CloseJobResult: ...
 
     @overload
     def _close_job(  # pylint: disable=protected-access
@@ -6321,8 +6311,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CloseJobResult:
-        ...
+    ) -> _models._models.CloseJobResult: ...
 
     @overload
     def _close_job(  # pylint: disable=protected-access
@@ -6333,8 +6322,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.CloseJobResult:
-        ...
+    ) -> _models._models.CloseJobResult: ...
 
     @distributed_trace
     def _close_job(  # pylint: disable=protected-access
@@ -7062,8 +7050,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.DeclineJobOfferResult:
-        ...
+    ) -> _models._models.DeclineJobOfferResult: ...
 
     @overload
     def _decline_job_offer(  # pylint: disable=protected-access
@@ -7074,8 +7061,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.DeclineJobOfferResult:
-        ...
+    ) -> _models._models.DeclineJobOfferResult: ...
 
     @overload
     def _decline_job_offer(  # pylint: disable=protected-access
@@ -7086,8 +7072,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.DeclineJobOfferResult:
-        ...
+    ) -> _models._models.DeclineJobOfferResult: ...
 
     @distributed_trace
     def _decline_job_offer(  # pylint: disable=protected-access
