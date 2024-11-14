@@ -33,7 +33,7 @@ def get_authentication_policy(
     :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.sms.shared.policy.HMACCredentialsPolicy
+    ~azure.communication.callautomation.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:
@@ -43,9 +43,7 @@ def get_authentication_policy(
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default"  # type: ignore
             )
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default"  # type: ignore
-        )
+        return BearerTokenCredentialPolicy(credential, "https://communication.azure.com//.default")  # type: ignore
     if isinstance(credential, (AzureKeyCredential, str)):
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
