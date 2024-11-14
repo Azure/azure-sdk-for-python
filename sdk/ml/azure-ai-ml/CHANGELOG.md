@@ -2,8 +2,6 @@
 
 ## 1.22.1 (2024-11-13)
 
-### Features Added
-
 ### Bugs Fixed
   - **#38493** - Fix error NoneType object is not subscriptable
 
@@ -22,7 +20,7 @@
 ### Bugs Fixed
 
 - **#37857** - Fix online deployment registry issue
-  
+
 
 ## 1.21.0 (2024-09-30)
 
