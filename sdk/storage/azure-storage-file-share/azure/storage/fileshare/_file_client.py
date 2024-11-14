@@ -1690,8 +1690,37 @@ class ShareFileClient(StorageAccountHostsMixin):
     def create_hard_link(
         self,
         *,
+        target_file: str,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
         kwargs: Any
     ) -> Dict[str, Any]:
-        return cast(Dict[str, Any], self._client.file.create_hard_link(
-            cls=return_response_headers,
-        ))
+        """NFS only. Create a hard link to the file specified by path.
+
+        :keyword str target_file:
+            Specifies the path of the target file to which the link will be created, up to 2 KiB in length.
+            It should be the full path of the target starting from the root. The target file must be in the
+            same share and the same storage account.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], self._client.file.create_hard_link(
+                target_file=target_file,
+                lease_access_conditions=lease,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)
