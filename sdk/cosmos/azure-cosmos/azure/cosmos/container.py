@@ -213,7 +213,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -344,8 +344,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
-        :keyword priority: Priority based execution allows users to set a priority for each
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
@@ -481,7 +481,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -575,7 +575,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Ignored if no query is provided.
         :type parameters: [List[Dict[str, object]]]
         :param partition_key: partition key at which the query request is targeted.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param bool enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
@@ -932,7 +932,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to be patched.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: The partition key of the object to patch.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: List[Dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
@@ -1001,7 +1001,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: List[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1059,7 +1059,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1228,7 +1228,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
@@ -1267,7 +1267,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -1297,7 +1297,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to delete.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -1332,7 +1332,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         this background task.
 
         :param partition_key: Partition key for the items to be deleted.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
