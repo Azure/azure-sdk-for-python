@@ -198,16 +198,33 @@ class AIProjectClient(
         self.telemetry = TelemetryOperations(
             self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self
         )
+        self._credential = credential
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
+
+    async def _close_credential_client(self):
+        """
+        Close credential pipeline clients.
+
+        To authenticate to azure we are using pipeline mechanism. If the credential is async,
+        azure.identity opens new aio session, which is dedicated to renew token. When we exit
+        program, this session is not being appropriately closed, causing thw warning about it.
+        In the code below we are going through all credentials in AsyncTokenCredential and close all
+        pipelines.
+        """
+        for cred in self._credential.credentials:
+            if hasattr(cred, '_credential') and hasattr(
+                cred._credential, '_client'):  # pylint: disable=protected-access
+                await cred._credential._client.close()  # pylint: disable=protected-access
 
     async def close(self) -> None:
         await self._client0.close()
         await self._client1.close()
         await self._client2.close()
         await self._client3.close()
+        await self._close_credential_client()
 
     async def __aenter__(self) -> Self:
         await self._client0.__aenter__()
@@ -221,6 +238,7 @@ class AIProjectClient(
         await self._client1.__aexit__(*exc_details)
         await self._client2.__aexit__(*exc_details)
         await self._client3.__aexit__(*exc_details)
+        await self._close_credential_client()
 
     @classmethod
     def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
