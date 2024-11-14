@@ -215,9 +215,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                 all_text_statistics = self._aggregated_global_statistics["fullTextStatistics"]
                 curr_text_statistics = dp._cur_item['fullTextStatistics']
                 assert len(all_text_statistics) == len(curr_text_statistics)
-                for i in range(len(all_text_statistics)):
-                    assert len(all_text_statistics[i]['hitCounts']) == len(curr_text_statistics[i]['hitCounts'])
-                    all_text_statistics[i]['totalWordCount'] += curr_text_statistics[i]['totalWordCount']
+                for i, all_stats in enumerate(all_text_statistics):
+                    curr_stats = curr_text_statistics[i]
+                    assert len(all_stats['hitCounts']) == len(curr_stats['hitCounts'])
+                    all_stats['totalWordCount'] += curr_stats['totalWordCount']
                     for j in range(len(all_text_statistics[i]['hitCounts'])):
                         all_text_statistics[i]['hitCounts'][j] += curr_text_statistics[i]['hitCounts'][j]
 
@@ -233,14 +234,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             return res
         raise StopAsyncIteration
 
-    def fetch_next_block(self):
+    async def fetch_next_block(self):
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
     async def _repair_document_producer(self, query, target_all_ranges=False):
-        """Repairs the document producer context by using the re-initialized routing map provider in the client,
-        which loads in a refreshed partition key range cache to re-create the partition key ranges.
-        After loading this new cache, the document producers get re-created with the new valid ranges.
-        """
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
         # will be a list of (partition_min, partition_max) tuples
