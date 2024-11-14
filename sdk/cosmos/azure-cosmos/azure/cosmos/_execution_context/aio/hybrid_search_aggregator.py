@@ -5,7 +5,6 @@
 """
 
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, \
     _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
@@ -55,14 +54,13 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
         self._final_results = None
         self.skip = hybrid_search_query_info['skip'] or 0
         self.take = hybrid_search_query_info['take']
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
-    async def _configure_partition_ranges(self):
+    async def _run_hybrid_search(self):
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)

@@ -5,7 +5,6 @@
 """
 
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
@@ -35,12 +34,12 @@ def _retrieve_component_scores(drained_results):
 
 def _compute_rrf_scores(ranks, query_results):
     component_count = len(ranks)
-    for index in range(len(query_results)):
+    for index, result in enumerate(query_results):
         rrf_score = 0.0
         for component_index in range(component_count):
             rrf_score += 1.0 / (RRF_CONSTANT + ranks[component_index][index])
         # Add the score to the item to be returned
-        query_results[index]['Score'] = rrf_score
+        result['Score'] = rrf_score
 
 
 def _compute_ranks(component_scores):
@@ -99,6 +98,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
+    def _run_hybrid_search(self):
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
@@ -261,7 +261,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     curr_stats = curr_text_statistics[i]
                     assert len(all_stats['hitCounts']) == len(curr_stats['hitCounts'])
                     all_stats['totalWordCount'] += curr_stats['totalWordCount']
-                    for j, hit_count in enumerate(all_stats['hitCounts']):
+                    for j in range(len(all_stats['hitCounts'])):
                         all_stats['hitCounts'][j] += curr_stats['hitCounts'][j]
 
     def __next__(self):

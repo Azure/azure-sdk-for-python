@@ -138,7 +138,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._options,
                                                                         query_execution_info,
                                                                         hybrid_search_query_info)
-            await execution_context_aggregator._configure_partition_ranges()
+            await execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
