@@ -137,24 +137,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             self._aggregate_global_statistics(global_statistics_doc_producers)
 
         # re-write the component queries if needed
-        component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
         if self._aggregated_global_statistics:
-            rewritten_query_infos = []
-            for query_info in component_query_infos:
-                assert query_info['orderBy']
-                assert query_info['hasNonStreamingOrderBy']
-                rewritten_order_by_expressions = []
-                for order_by_expression in query_info['orderByExpressions']:
-                    rewritten_order_by_expression = self._format_component_query(order_by_expression)
-                    rewritten_order_by_expressions.append(rewritten_order_by_expression)
-
-                rewritten_query = self._format_component_query(query_info['rewrittenQuery'])
-                new_query_info = query_info.copy()
-                new_query_info['orderByExpressions'] = rewritten_order_by_expressions
-                new_query_info['rewrittenQuery'] = rewritten_query
-                rewritten_query_infos.append(new_query_info)
+            rewritten_query_infos = self._rewrite_query_infos()
         else:
-            rewritten_query_infos = component_query_infos
+            rewritten_query_infos = self._hybrid_search_query_info['componentQueryInfos']
 
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
@@ -219,6 +205,22 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._final_results = drained_results[skip:skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
+
+    def _rewrite_query_infos(self):
+        rewritten_query_infos = []
+        for query_info in self._hybrid_search_query_info['componentQueryInfos']:
+            assert query_info['orderBy']
+            assert query_info['hasNonStreamingOrderBy']
+            rewritten_order_by_expressions = []
+            for order_by_expression in query_info['orderByExpressions']:
+                rewritten_order_by_expressions.append(self._format_component_query(order_by_expression))
+
+            rewritten_query = self._format_component_query(query_info['rewrittenQuery'])
+            new_query_info = query_info.copy()
+            new_query_info['orderByExpressions'] = rewritten_order_by_expressions
+            new_query_info['rewrittenQuery'] = rewritten_query
+            rewritten_query_infos.append(new_query_info)
+        return rewritten_query_infos
 
     def _format_singleton_response(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
