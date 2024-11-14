@@ -719,9 +719,11 @@ print("Deleted agent")
 <!-- END SNIPPET -->
 
 ### Evaluation
-Evaluation in Azure AI Project client library is desinged to assess the performance of generative AI applications in cloud. Generative AI application generations are quantitatively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+
+Evaluation in Azure AI Project client library is desinged to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
 
 #### Evaluator
+
 Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
 
 Evaluators are made available via [azure-ai-evalaution][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
@@ -730,7 +732,7 @@ More details on built-in and custom evaluators can be found [here][evaluators].
 
 #### Run Evalaution in cloud:
 
-To run evaluation in cloud following are needed:
+To run evaluation in cloud the following are needed:
 
 - Evaluators
 - Data to be evaluated
@@ -738,7 +740,7 @@ To run evaluation in cloud following are needed:
 
 ##### Evaluators
 
-For running evaluator in cloud, evaluator id is needed. To get via code you use [azure-ai-evaluation][azure_ai_evaluation]
+For running evaluator in cloud, evaluator id is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
 
 ```
 # pip install azure-ai-evaluation
@@ -749,22 +751,17 @@ evaluator_id = RelevanceEvaluator.id
 ```
 
 ##### Data to be evaluated
-Evaluation in cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
+
+Evaluation in the cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
 
 ```python
-# Creating project client
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-)
-
 # Upload data for evaluation and get dataset id
 data_id, _ = project_client.upload_file("<data_file.jsonl>")
 ```
 
 ##### [Optional] Azure OpenAI Model
 
-Azure AI project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of evaluators need model that supports chat completion.
+Azure AI Studio project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
 
 ```python
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
