@@ -250,7 +250,7 @@
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
-/sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey @darrenchuang @TFR258
+/sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
 
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
