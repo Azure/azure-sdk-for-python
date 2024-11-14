@@ -22,7 +22,7 @@ For example, get the inference endpoint URL and credentials associated with your
 
 - Python 3.8 or later.
 - An [Azure subscription][azure_sub].
-- A [project in Azure AI Studio](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
+- A [project in Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
 - The project connection string. It can be found in your Azure AI Studio project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * The role `Azure AI Developer` assigned to you. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
