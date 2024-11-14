@@ -283,7 +283,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -413,7 +413,7 @@ class ContainerProxy:
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is provided,
             a cross-partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
@@ -521,7 +521,7 @@ class ContainerProxy:
         :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -614,7 +614,6 @@ class ContainerProxy:
     @distributed_trace
     def query_items_change_feed( # pylint: disable=unused-argument
             self,
-            *args: Any,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
 
@@ -624,7 +623,7 @@ class ContainerProxy:
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -636,7 +635,6 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :param Any args: args
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -879,7 +877,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to be patched.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: The partition key of the object to patch.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: List[Dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
@@ -951,7 +949,7 @@ class ContainerProxy:
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1104,7 +1102,7 @@ class ContainerProxy:
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is passed in, a
             cross partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
@@ -1144,7 +1142,7 @@ class ContainerProxy:
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -1174,7 +1172,7 @@ class ContainerProxy:
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
@@ -1207,7 +1205,7 @@ class ContainerProxy:
         this background task.
 
         :param partition_key: Partition key for the items to be deleted.
-        :type partition_key: Any
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1255,7 +1253,7 @@ class ContainerProxy:
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: List[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations.
-        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1292,10 +1290,11 @@ class ContainerProxy:
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
-    async def read_feed_ranges(
+    @distributed_trace
+    def read_feed_ranges(
             self,
             *,
-            force_refresh: Optional[bool] = False,
+            force_refresh: bool = False,
             **kwargs: Any
     ) -> AsyncIterable[Dict[str, Any]]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
@@ -1313,17 +1312,26 @@ class ContainerProxy:
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        partition_key_ranges =\
-            await self.client_connection._routing_map_provider.get_overlapping_ranges(
-                self.container_link,
-                # default to full range
-                [Range("", "FF", True, False)],
-                **kwargs)
+        async def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+            partition_key_ranges = \
+                await self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                    self.container_link,
+                    # default to full range
+                    [Range("", "FF", True, False)],
+                    **kwargs)
 
-        feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                for partitionKeyRange in partition_key_ranges]
+            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+                       for partitionKeyRange in partition_key_ranges]
 
-        return AsyncList(feed_ranges)
+            return feed_ranges
+
+        async def extract_data(feed_ranges_response: List[Dict[str, Any]]):
+            return None, AsyncList(feed_ranges_response)
+
+        return AsyncItemPaged(
+            get_next,
+            extract_data
+        )
 
     async def get_latest_session_token(
             self,
