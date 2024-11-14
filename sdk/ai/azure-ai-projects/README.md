@@ -5,9 +5,9 @@ Use the AI Projects client library (in preview) to:
 
 * **Enumerate connections** in your Azure AI Studio project and get connection properties.
 For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
-* **Get an already-authenticated Inference client** for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
+* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
 * **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in private preview.
-* **Run Evaluation tools** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
+* **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
 * **Enable OpenTelemetry tracing**.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
@@ -25,8 +25,7 @@ For example, get the inference endpoint URL and credentials associated with your
 - A [project in Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
 - The project connection string. It can be found in your Azure AI Studio project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * The role `Azure AI Developer` assigned to you. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
-  * The token must have the scope `https://management.azure.com/.default` or `https://ml.azure.com/.default`, depending on the set of client operation you will execute.
+  * The `Contributor` role. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
   * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
@@ -78,9 +77,9 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Enumerate connections
 
-You Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+Your Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
 
-Below are code examples of some simple connection operations. Additional samples can be found under the "connetions" folder in the [package samples][samples].
+Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
 
 #### Get properties of all connections
 
@@ -113,7 +112,7 @@ with its authentication credentials:
 ```python
 connection = project_client.connections.get_default(
     connection_type=ConnectionType.AZURE_OPEN_AI,
-    include_credentials=True,  # Optional. Defaults to "False"
+    include_credentials=True,  # Optional. Defaults to "False".
 )
 print(connection)
 ```
@@ -123,18 +122,21 @@ will be populated. Otherwise both will be `None`.
 
 #### Get properties of a connection by its connection name
 
-To get the connection properties of a connection with name `connection_name`:
+To get the connection properties of a connection named `connection_name`:
 
 ```python
 connection = project_client.connections.get(
-    connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
+    connection_name=connection_name,
+    include_credentials=True  # Optional. Defaults to "False"
 )
 print(connection)
 ```
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call. First, install the package:
+Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+
+First, install the package:
 
 ```bash
 pip install azure-ai-inference
@@ -157,13 +159,15 @@ See the "inference" folder in the [package samples][samples] for additional samp
 
 ### Get an authenticated AzureOpenAI client
 
-Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call. First, install the package:
+Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+
+First, install the package:
 
 ```bash
 pip install openai
 ```
 
-Then run this code (replace "gpt-4o" with your model deployment name):
+Then run the code below. Replace `gpt-4o` with your model deployment name, and update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
 
 ```python
 aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")

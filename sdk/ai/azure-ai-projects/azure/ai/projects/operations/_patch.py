@@ -211,7 +211,7 @@ class InferenceOperations:
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
-         https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs. If this keyword
+         https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: str
         :return: An authenticated AzureOpenAI client
@@ -253,7 +253,7 @@ class InferenceOperations:
                 auth = "Creating AzureOpenAI using SAS authentication"
             logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
-                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
