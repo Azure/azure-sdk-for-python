@@ -11,7 +11,7 @@ For example, get the inference endpoint URL and credentials associated with your
 * **Enable OpenTelemetry tracing**.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
-| [Samples](https://aka.ms/azsdk/azure-ai-projects/python/samples)
+| [Samples][samples]
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
@@ -80,6 +80,8 @@ project_client = AIProjectClient.from_connection_string(
 
 You Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
 
+Below are code examples of some simple connection operations. Additional samples can be found under the "connetions" folder in the [package samples][samples].
+
 #### Get properties of all connections
 
 To list the properties of all the connections in the Azure AI Studio project:
@@ -138,18 +140,20 @@ Your Azure AI Studio project may have one or more AI models deployed that suppor
 pip install azure-ai-inference
 ```
 
-Then run this code:
+Then run this code (replace "gpt-4o" with your model deployment name):
 
 ```python
 inference_client = project_client.inference.get_chat_completions_client()
 
 response = inference_client.complete(
-    model="gpt-4o",
+    model="gpt-4o", # Model deployment name
     messages=[UserMessage(content="How many feet are in a mile?")]
 )
 
 print(response.choices[0].message.content)
 ```
+
+See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient?view=azure-python-preview).
 
 ### Get an authenticated AzureOpenAI client
 
@@ -159,13 +163,13 @@ Your Azure AI Studio project may have one or more OpenAI models deployed that su
 pip install openai
 ```
 
-Then run this code:
+Then run this code (replace "gpt-4o" with your model deployment name):
 
 ```python
 aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")
 
 response = aoai_client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-4o", # Model deployment name
     messages=[
         {
             "role": "user",
@@ -177,9 +181,11 @@ response = aoai_client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
+See the "inference" folder in the [package samples][samples] for additional samples.
+
 ### Agents (Private Preview)
 
-Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents:
+Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents. See the "agents" folder in the [package samples][samples] for additional Agent samples.
 
 Agents are actively being developed. A sign-up form for private preview is coming soon.
 
@@ -859,6 +865,7 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+[samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
