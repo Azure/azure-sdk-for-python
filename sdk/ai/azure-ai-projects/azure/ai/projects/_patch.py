@@ -223,7 +223,7 @@ class AIProjectClient(
         self._client3.__exit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AIProjectClient":
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> Self:
         """
         Create an AIProjectClient from a connection string.
 
