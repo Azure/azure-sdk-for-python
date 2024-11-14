@@ -214,8 +214,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
-        skip = hybrid_search_query_info['skip'] or 0
-        take = hybrid_search_query_info['take']
+        skip = self._hybrid_search_query_info['skip'] or 0
+        take = self._hybrid_search_query_info['take']
         self._final_results = drained_results[skip:skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
@@ -252,8 +252,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         for dp in global_statistics_doc_producers:
             self._aggregated_global_statistics["documentCount"] += dp._cur_item['documentCount']
             if self._aggregated_global_statistics["fullTextStatistics"] is None:
-                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item[
-                    'fullTextStatistics']
+                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item['fullTextStatistics']
             else:
                 all_text_statistics = self._aggregated_global_statistics["fullTextStatistics"]
                 curr_text_statistics = dp._cur_item['fullTextStatistics']

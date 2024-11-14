@@ -7,6 +7,8 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context.aio import document_producer
+from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, \
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -19,49 +21,6 @@ class _Placeholders:
     formattable_total_word_count = "{{documentdb-formattablehybridsearchquery-totalwordcount-{0}}}"
     formattable_hit_counts_array = "{{documentdb-formattablehybridsearchquery-hitcountsarray-{0}}}"
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
-
-
-def _retrieve_component_scores(drained_results):
-    component_scores_list = []
-    for _ in drained_results[0]['payload']['componentScores']:
-        component_scores_list.append([])
-    for index in range(len(drained_results)):
-        drained_results[index].pop('orderByItems')  # clean out the unneeded orderByItems field
-        component_scores = drained_results[index]['payload']['componentScores']
-        for component_score_index in range(len(component_scores)):
-            score_tuple = (component_scores[component_score_index], index)
-            component_scores_list[component_score_index].append(score_tuple)
-    return component_scores_list
-
-
-def _compute_rrf_scores(ranks, query_results):
-    component_count = len(ranks)
-    for index, result in enumerate(query_results):
-        rrf_score = 0.0
-        for component_index in range(component_count):
-            rrf_score += 1.0 / (RRF_CONSTANT + ranks[component_index][index])
-        # Add the score to the item to be returned
-        query_results[index]['Score'] = rrf_score
-
-
-def _compute_ranks(component_scores):
-    # initialize ranks as an N-D list with zeros
-    ranks = [[0] * len(component_scores[0]) for _ in range(len(component_scores))]
-
-    for component_index, scores in enumerate(component_scores):
-        rank = 1  # ranks are 1-based
-        for index, score_tuple in enumerate(scores):
-            # Identical scores should have the same rank
-            if index > 0 and score_tuple[0] < scores[index - 1][0]:
-                rank += 1
-            ranks[component_index][score_tuple[1]] = rank
-
-    return ranks
-
-
-def _coalesce_duplicate_rids(query_results):
-    unique_rids = {d['_rid']: d for d in query_results}
-    return list(unique_rids.values())
 
 
 async def _drain_and_coalesce_results(document_producers_to_drain):
@@ -86,7 +45,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     by the user.
     """
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_execution_info,
+    def __init__(self, client, resource_link, options, partitioned_query_execution_info,
                  hybrid_search_query_info):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
@@ -100,7 +59,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._final_results = None
         self.skip = hybrid_search_query_info['skip'] or 0
         self.take = hybrid_search_query_info['take']
-        self.original_query = query
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
@@ -133,7 +91,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
                         global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                         target_all_ranges=True)
+                                                                                               target_all_ranges=True)
                     else:
                         raise
                 except StopIteration:
@@ -220,15 +178,19 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
-        self._final_results = drained_results[self.skip:self.skip+self.take]
+        skip = self._hybrid_search_query_info['skip'] or 0
+        take = self._hybrid_search_query_info['take']
+        self._final_results = drained_results[skip:skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
 
     def _format_singleton_response(self, results):
+        skip = self._hybrid_search_query_info['skip'] or 0
+        take = self._hybrid_search_query_info['take']
         # Strip off everything but the payload and emit those documents
-        self._final_results = results[self.skip:self.skip+self.take]
+        self._final_results = results[skip:skip + take]
         self._final_results.reverse()
-        self._final_results = [item["payload"]["payload"] for item in self._final_results]
+        self._final_results = [result["payload"]["payload"] for result in self._final_results]
         return True
 
     def _format_component_query(self, format_string):
@@ -250,7 +212,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,
-                                             "fullTextStatistics": None}
+                                              "fullTextStatistics": None}
         for dp in global_statistics_doc_producers:
             self._aggregated_global_statistics["documentCount"] += dp._cur_item['documentCount']
             if self._aggregated_global_statistics["fullTextStatistics"] is None:
