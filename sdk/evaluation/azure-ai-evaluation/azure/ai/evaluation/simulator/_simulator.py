@@ -27,6 +27,7 @@ from ._utils import JsonLineChatProtocol
 
 USER_AGENT += " (type=simulator)"
 
+
 @experimental
 class Simulator:
     """
