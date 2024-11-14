@@ -1,53 +1,188 @@
 
 # Azure AI Projects client library for Python
-<!-- write necessary description of service -->
+
+Use the AI Projects client library (in preview) to:
+
+* **Enumerate connections** in your Azure AI Studio project and get connection properties.
+For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
+* **Get an already-authenticated Inference client** for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
+* **Develop agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of agents for a wide range of generative AI use cases. The package is currently in private preview.
+* TODO: Evaluations
+* **Enable OpenTelemetry tracing**.
+
+[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+| [Samples](https://aka.ms/azsdk/azure-ai-projects/python/samples)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
+| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-projects/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
 
 ## Getting started
+
+### Prequisites
+
+- Python 3.8 or later.
+- An [Azure subscription][azure_sub].
+- A [project in Azure AI Studio](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
+- The project connection string. It can be found in your Azure AI Studio project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
+- Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+  * The role `Azure AI Developer` assigned to you. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * The token must have the scope `https://management.azure.com/.default` or `https://ml.azure.com/.default`, depending on the set of client operation you will execute.
+  * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
+  * You are logged into your Azure account by running `az login`.
+  * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all you subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
 
 ### Install the package
 
 ```bash
-python -m pip install azure-ai-projects
-```
-
-#### Prequisites
-
-- Python 3.8 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Ai Projects instance.
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
-
-To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
-
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
-
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
-Use the returned token credential to authenticate the client:
-
-```python
->>> from azure.ai.projects import AIProjectClient
->>> from azure.identity import DefaultAzureCredential
->>> client = AIProjectClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+pip install azure-ai-projects
 ```
 
 ## Key concepts
 
-TODO
+### Create and authenticate the client
+
+The class factory method `from_connection_string` is used to construct the client. To construct a synchronous client:
+
+```python
+import os
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
+```
+
+To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+
+```bash
+pip install aiohttp
+```
+
+and update the code above to import `asyncio`, and import `AIProjectClient` from the `azure.ai.projects.aio` namespace:
+
+```python
+import os
+import asyncio
+from azure.ai.projects.aio import AIProjectClient
+from azure.core.credentials import AzureKeyCredential
+
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
+```
 
 ## Examples
 
+### Enumerate connections
+
+You Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+
+#### Get properties of all connections
+
+To list the properties of all the connections in the Azure AI Studio project:
+
+```python
+connections = project_client.connections.list()
+for connection in connections:
+    print(connection)
+```
+
+#### Get properties of all connections of a particular type
+
+To list the properties of connections of a certain type (here Azure OpenAI):
+
+```python
+connections = project_client.connections.list(
+    connection_type=ConnectionType.AZURE_OPEN_AI,
+)
+for connection in connections:
+    print(connection)
+
+```
+
+#### Get properties of a default connection
+
+To get the properties of the default connection of a certain type (here Azure OpenAI),
+with its authentication credentials:
+
+```python
+connection = project_client.connections.get_default(
+    connection_type=ConnectionType.AZURE_OPEN_AI,
+    include_credentials=True,  # Optional. Defaults to "False"
+)
+print(connection)
+```
+
+If the call was made with `include_credentials=True`, depending on the value of `connection.authentication_type`, either `connection.key` or `connection.token_credential`
+will be populated. Otherwise both will be `None`.
+
+#### Get proprties of a connection by its connection name
+
+To get the connection properties of a connection with name `connection_name`:
+
+```python
+connection = project_client.connections.get(
+    connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
+)
+print(connection)
+```
+
+### Get an authenticated ChatCompletionsClient
+
+Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and excute a chat completions call. First, install the package:
+
+```bash
+pip insall azure-ai-inference
+```
+
+Then run this code:
+
+```python
+inference_client = project_client.inference.get_chat_completions_client()
+
+response = inference_client.complete(
+    model="gpt-4o",
+    messages=[UserMessage(content="How many feet are in a mile?")]
+)
+
+print(response.choices[0].message.content)
+```
+
+### Get an authenticated AzureOpenAI client
+
+Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and excute a chat completions call. First, install the package:
+
+```bash
+pip insall openai
+```
+
+Then run this code:
+
+```python
+aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")
+
+response = aoai_client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "user",
+            "content": "How many feet are in a mile?",
+        },
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
 ### Agents (Private Preview)
+
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with agents:
 
 Agents are actively being developed. A sign-up form for private preview is coming soon.
 
-  - <a href='#create-project-client'>Create project client</a>
   - <a href='#create-agent'>Create agent</a> with:
     - <a href='#create-agent-with-file-search'>File Search</a>
     - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
@@ -65,49 +200,9 @@ Agents are actively being developed. A sign-up form for private preview is comin
   - <a href='#teardown'>Tear down by deleting resource</a>
   - <a href='#tracing'>Tracing</a>
 
-
-#### Create Project Client
-
-When you create a project client, you need to make the decision to use synchronous or asynchronous client. Use either:
-
-```python
-from azure.ai.projects import AIProjectClient
-# OR
-from azure.ai.projects.aio import AIProjectClient
-```
-
-Here is an example of creating a project client:
-<!-- SNIPPET:sample_agents_basics.create_project_client -->
-
-```python
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-)
-```
-
-<!-- END SNIPPET -->
-
-Because the client is under resource and context manager, you are required to use `with` or `async with` to consume the client object:
-
-```python
-# For synchronous
-with project_client:
-    agent = project_client.agents.create_agent(
-                model="gpt-4-1106-preview", 
-                name="my-assistant", 
-                instructions="You are helpful assistant"
- )
-
-```
-
-In the sections below, we will only provide code snippets in synchronous functions.
-
 #### Create Agent
 
-Now you should have your project client.  From the project client, you create an agent to serve the end users.  
-
-Here is an example of create an agent:
+Here is an example of how to create an agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
@@ -118,7 +213,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-To allow agents to access your resources or custom functions, you need tools.   You can pass tools to `create_agent` by either `toolset` or combination of `tools` and `tool_resources`.
+To allow agents to access your resources or custom functions, you need tools. You can pass tools to `create_agent` by either `toolset` or combination of `tools` and `tool_resources`.
 
 Here is an example of `toolset`:
 <!-- SNIPPET:sample_agents_run_with_toolset.create_agent_toolset -->
@@ -158,11 +253,11 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-In the following sections, we show you code snips in either `toolset` or combination of `tools` and `tool_resources`.   But you are welcome to use another approach.
+In the following sections, we show you sample code in either `toolset` or combination of `tools` and `tool_resources`.   But you are welcome to use another approach.
 
 #### Create Agent with File Search
-To perform file search by an agent, we first need to upload a file, create a vector store, and associate the file to the vector store.
-Here is an example:
+
+To perform file search by an agent, we first need to upload a file, create a vector store, and associate the file to the vector store. Here is an example:
 
 <!-- SNIPPET:sample_agents_file_search.upload_file_create_vector_store_and_agent_with_file_search_tool -->
 
@@ -186,7 +281,6 @@ agent = project_client.agents.create_agent(
 ```
 
 <!-- END SNIPPET -->
-
 
 #### Create Agent with Code Interpreter
 
@@ -214,8 +308,8 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-
 #### Create Agent with Bing Grounding
+
 To enable your agent to perform search through Bing search API, you use `BingGroundingTool` along with a connection.
 
 Here is an example:
@@ -245,6 +339,7 @@ with project_client:
 <!-- END SNIPPET -->
 
 #### Create Agent with Azure AI Search
+
 Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation
 
 Here is an example to integrate Azure AI Search:
@@ -284,7 +379,7 @@ You can enhance your agents by defining callback functions as function tools. Th
 
 - `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
 - `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
- 
+
 For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
 Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_functions.py) in `toolset`:
@@ -339,7 +434,6 @@ thread = project_client.agents.create_thread()
 
 In some scenarios, you might need to assign specific resources to individual threads. To achieve this, you provide the `tool_resources` argument to `create_thread`. In the following example, you create a vector store and upload a file, enable an agent for file search using the `tools` argument, and then associate the file with the thread using the `tool_resources` argument.
 
-
 <!-- SNIPPET:sample_agents_with_resources_in_thread.create_agent_and_thread_for_file_search -->
 
 ```python
@@ -380,6 +474,7 @@ message = project_client.agents.create_message(thread_id=thread.id, role="user",
 <!-- END SNIPPET -->
 
 #### Create Message with File Search Attachment
+
 To attach a file to a message for content searching, you use `MessageAttachment` and `FileSearchTool`:
 
 <!-- SNIPPET:sample_agents_with_file_search_attachment.create_message_with_attachment -->
@@ -394,7 +489,8 @@ message = project_client.agents.create_message(
 <!-- END SNIPPET -->
 
 #### Create Message with Code Interpreter Attachment
-To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`.  You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
+
+To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
 
 Here is an example to pass `CodeInterpreterTool` as tool:
 
@@ -462,7 +558,7 @@ run = project_client.agents.create_and_process_run(thread_id=thread.id, assistan
 
 <!-- END SNIPPET -->
 
-With streaming, polling also need not be considered.   If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
+With streaming, polling also need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
 
 Here is an example:
 
@@ -509,7 +605,6 @@ class MyEventHandler(AgentEventHandler):
 ```
 
 <!-- END SNIPPET -->
-
 
 #### Retrieve Message
 
@@ -612,7 +707,7 @@ print("Deleted agent")
 
 #### Tracing
 
-As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor.  Typically you might want to start tracing before you create an agent.   
+As part of Azure AI project, you can use the its connection string and observe the full execution path through Azure Monitor. Typically you might want to start tracing before you create an agent.
 
 ##### Installation
 
@@ -631,8 +726,9 @@ To connect to Aspire Dashboard or another OpenTelemetry compatible backend, inst
 pip install opentelemetry-exporter-otlp
 ```
 
-##### Examples
-Here is a code snip to be included above `create_agent`:
+##### Tracing example
+
+Here is a code sample to be included above `create_agent`:
 
 <!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
 
@@ -657,7 +753,7 @@ with tracer.start_as_current_span(scenario):
 
 <!-- END SNIPPET -->
 
-In additional, you might find helpful to see the tracing logs in console.   You can achieve by the following code:
+In additional, you might find helpful to see the tracing logs in console. You can achieve by the following code:
 
 ```python
 project_client.telemetry.enable(destination=sys.stdout)
@@ -675,7 +771,7 @@ from azure.core.exceptions import HttpResponseError
 ...
 
 try:
-    result = client.connections.list()
+    result = project_client.connections.list()
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
     print(e.message)
@@ -717,9 +813,9 @@ logger.addHandler(handler)
 By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable = True` to the client constructor:
 
 ```python
-client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    conn_str=project_connection_string,
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
     logging_enable = True
 )
 ```
@@ -757,7 +853,7 @@ additional questions or comments.
 
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
