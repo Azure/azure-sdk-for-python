@@ -179,7 +179,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         drained_results, is_singleton = _drain_and_coalesce_results(component_query_results)
         # If we only have one component query, we format the response and return with no further work
         if is_singleton:
-            self._format_singleton_response(drained_results)
+            self._format_final_results(drained_results)
             return
 
         # Sort drained results by _rid
@@ -200,9 +200,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        self._format_final_results(drained_results)
+
+    def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
         take = self._hybrid_search_query_info['take']
-        self._final_results = drained_results[skip:skip + take]
+        self._final_results = results[skip:skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
 
@@ -221,15 +224,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             new_query_info['rewrittenQuery'] = rewritten_query
             rewritten_query_infos.append(new_query_info)
         return rewritten_query_infos
-
-    def _format_singleton_response(self, results):
-        skip = self._hybrid_search_query_info['skip'] or 0
-        take = self._hybrid_search_query_info['take']
-        # Strip off everything but the payload and emit those documents
-        self._final_results = results[skip:skip + take]
-        self._final_results.reverse()
-        self._final_results = [result["payload"]["payload"] for result in self._final_results]
-        return True
 
     def _format_component_query(self, format_string):
         format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
