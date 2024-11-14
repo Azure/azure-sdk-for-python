@@ -29,7 +29,6 @@ import time
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
 from azure.mgmt.core.policies._authentication import (
-    _parse_claims_challenge,
     ARMChallengeAuthenticationPolicy,
     AuxiliaryAuthenticationPolicy,
 )
@@ -46,37 +45,6 @@ CLAIM_TOKEN = base64.b64encode(b'{"access_token": {"foo": "bar"}}').decode()
 CLAIM_NBF = base64.b64encode(b'{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}').decode()
 ip_claim = b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}'
 CLAIM_IP = base64.b64encode(ip_claim).decode()[:-2]  # Trim off padding = characters
-
-
-@pytest.mark.parametrize(
-    "challenge,expected_claims",
-    (
-        # CAE - insufficient claims
-        (
-            f'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="{CLAIM_TOKEN}"',
-            '{"access_token": {"foo": "bar"}}',
-        ),
-        # CAE - sessions revoked
-        (
-            f'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims={CLAIM_NBF}',
-            '{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}',
-        ),
-        # CAE - IP policy
-        (
-            f'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="Tenant IP Policy validate failed.", claims={CLAIM_IP}',
-            '{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}',
-        ),
-        # ARM
-        (
-            'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="The authentication failed because of missing \'Authorization\' header."',
-            None,
-        ),
-    ),
-)
-def test_challenge_parsing(challenge, expected_claims):
-    claims = _parse_claims_challenge(challenge)
-    assert claims == expected_claims
-
 
 def test_auxiliary_authentication_policy():
     """The auxiliary authentication policy should add a header containing a token from its credential"""
