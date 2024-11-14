@@ -10,10 +10,11 @@ from azure.ai.ml._restclient.v2024_10_01_preview.models import WorkspaceHubConfi
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import WorkspaceKind
-from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
 from azure.ai.ml.entities._workspace.network_acls import NetworkAcls
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.entities._workspace.workspace import Workspace
 
 
 @experimental
