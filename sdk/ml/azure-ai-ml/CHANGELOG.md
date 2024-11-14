@@ -2,6 +2,7 @@
 ## 1.23.0 (unreleased)
 
 ### Features Added
+  - Add support for additional include in spark component.
 
 ### Bugs Fixed
 
