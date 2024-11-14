@@ -94,7 +94,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._routing_provider = client._routing_map_provider
         self._client = client
         self._resource_link = resource_link
-        self._original_query = query
         self._partitioned_query_ex_info = partitioned_query_execution_info
         self._hybrid_search_query_info = hybrid_search_query_info
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()

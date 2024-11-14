@@ -154,7 +154,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             execution_context_aggregator = \
                 hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
                                                                         self._resource_link,
-                                                                        self._query,
                                                                         self._options,
                                                                         query_execution_info,
                                                                         hybrid_search_query_info)
