@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.storage.fileshare import ShareServiceClient
+from azure.storage.fileshare import ShareServiceClient, ShareDirectoryClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -22,9 +22,13 @@ class TestStorageFileNFS(StorageRecordedTestCase):
     fsc: ShareServiceClient = None
 
     def _setup(self, storage_account_name):
-        account_url = self.account_url(storage_account_name, "file")
+        self.account_url = self.account_url(storage_account_name, 'file')
         self.credential = self.get_credential(ShareServiceClient)
-        self.fsc = ShareServiceClient(account_url=account_url, credential=self.credential, token_intent=TEST_INTENT)
+        self.fsc = ShareServiceClient(
+            account_url=self.account_url,
+            credential=self.credential,
+            token_intent=TEST_INTENT
+        )
         self.share_name = self.get_resource_name('utshare')
         if self.is_live:
             try:
@@ -47,6 +51,46 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         return self.get_resource_name(prefix)
 
     # --Test cases for NFS ----------------------------------------------
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_directory_and_set_directory_properties(self, **kwargs):
+        storage_account_name = kwargs.pop('storage_account_name')
+
+        self._setup(storage_account_name)
+
+        create_owner, create_group, create_file_mode = '345', '123', '7777'
+        set_owner, set_group, set_file_mode = '0', '0', '0755'
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = ShareDirectoryClient(
+            self.account_url,
+            share_client.share_name, 'dir1',
+            credential=self.credential,
+            token_intent=TEST_INTENT
+        )
+
+        directory_client.create_directory(owner=create_owner, group=create_group, file_mode=create_file_mode)
+        props = directory_client.get_directory_properties()
+
+        assert props is not None
+        assert props.owner == create_owner
+        assert props.group == create_group
+        assert props.file_mode == create_file_mode
+        assert props.nfs_file_type == 'Directory'
+        assert props.file_attributes is None
+        assert props.permission_key is None
+
+        directory_client.set_http_headers(owner=set_owner, group=set_group, file_mode=set_file_mode)
+        props = directory_client.get_directory_properties()
+
+        assert props is not None
+        assert props.owner == set_owner
+        assert props.group == set_group
+        assert props.file_mode == set_file_mode
+        assert props.nfs_file_type == 'Directory'
+        assert props.file_attributes is None
+        assert props.permission_key is None
+
     @FileSharePreparer()
     @recorded_by_proxy
     def test_create_hard_link(self, **kwargs):

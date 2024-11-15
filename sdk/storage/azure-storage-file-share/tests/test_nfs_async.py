@@ -7,6 +7,7 @@ import pytest
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareServiceClient
 from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient
+from azure.storage.fileshare.aio import ShareDirectoryClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -23,7 +24,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     fsc: ShareServiceClient = None
 
     async def _setup(self, storage_account_name):
-        self.account_url = self.account_url(storage_account_name, "file")
+        self.account_url = self.account_url(storage_account_name, 'file')
         self.credential = self.get_credential(AsyncShareServiceClient, is_async=True)
         self.fsc = AsyncShareServiceClient(
             account_url=self.account_url,
@@ -63,6 +64,46 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         return self.get_resource_name(prefix)
 
     # --Test cases for NFS ----------------------------------------------
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_directory_and_set_directory_properties(self, **kwargs):
+        storage_account_name = kwargs.pop('storage_account_name')
+
+        await self._setup(storage_account_name)
+
+        create_owner, create_group, create_file_mode = '345', '123', '7777'
+        set_owner, set_group, set_file_mode = '0', '0', '0755'
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = ShareDirectoryClient(
+            self.account_url,
+            share_client.share_name, 'dir1',
+            credential=self.credential,
+            token_intent=TEST_INTENT
+        )
+
+        await directory_client.create_directory(owner=create_owner, group=create_group, file_mode=create_file_mode)
+        props = await directory_client.get_directory_properties()
+
+        assert props is not None
+        assert props.owner == create_owner
+        assert props.group == create_group
+        assert props.file_mode == create_file_mode
+        assert props.nfs_file_type == 'Directory'
+        assert props.file_attributes is None
+        assert props.permission_key is None
+
+        await directory_client.set_http_headers(owner=set_owner, group=set_group, file_mode=set_file_mode)
+        props = await directory_client.get_directory_properties()
+
+        assert props is not None
+        assert props.owner == set_owner
+        assert props.group == set_group
+        assert props.file_mode == set_file_mode
+        assert props.nfs_file_type == 'Directory'
+        assert props.file_attributes is None
+        assert props.permission_key is None
+
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_create_hard_link(self, **kwargs):

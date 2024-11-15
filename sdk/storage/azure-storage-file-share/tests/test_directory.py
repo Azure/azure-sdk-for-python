@@ -29,7 +29,7 @@ TEST_INTENT = "backup"
 
 
 class TestStorageDirectory(StorageRecordedTestCase):
-    def _setup(self, storage_account_name, storage_account_key, protocols=None):
+    def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential)
@@ -37,7 +37,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         if not self.is_playback():
             try:
-                self.fsc.create_share(self.share_name, protocols=protocols)
+                self.fsc.create_share(self.share_name)
             except:
                 pass
 
@@ -1452,49 +1452,6 @@ class TestStorageDirectory(StorageRecordedTestCase):
         assert server_returned_permission == user_given_permission_binary
 
         new_directory_client.delete_directory()
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_directory_and_set_directory_properties_nfs(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key, protocols='NFS')
-
-        create_owner, create_group, create_file_mode = '345', '123', '7777'
-        set_owner, set_group, set_file_mode = '0', '0', '0755'
-
-        share_client = self.fsc.get_share_client(self.share_name)
-        directory_client = ShareDirectoryClient(
-            self.account_url(storage_account_name, 'file'),
-            share_client.share_name, 'dir1',
-            credential=storage_account_key,
-        )
-
-        try:
-            directory_client.create_directory(owner=create_owner, group=create_group, file_mode=create_file_mode)
-            props = directory_client.get_directory_properties()
-
-            assert props is not None
-            assert props.owner == create_owner
-            assert props.group == create_group
-            assert props.file_mode == create_file_mode
-            assert props.nfs_file_type == 'Directory'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-
-            directory_client.set_http_headers(owner=set_owner, group=set_group, file_mode=set_file_mode)
-            props = directory_client.get_directory_properties()
-
-            assert props is not None
-            assert props.owner == set_owner
-            assert props.group == set_group
-            assert props.file_mode == set_file_mode
-            assert props.nfs_file_type == 'Directory'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-        finally:
-            directory_client.delete_directory()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
