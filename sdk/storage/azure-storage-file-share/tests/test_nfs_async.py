@@ -21,7 +21,7 @@ TEST_DIRECTORY_PREFIX = 'directory'
 
 class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
-    fsc: ShareServiceClient = None
+    fsc: AsyncShareServiceClient = None
 
     async def _setup(self, storage_account_name):
         self.account_url = self.account_url(storage_account_name, 'file')
@@ -50,7 +50,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
             credential=self.get_credential(ShareServiceClient),
             token_intent=TEST_INTENT
         )
-        if fsc:
+        if self.fsc:
             try:
                 fsc.delete_share(self.share_name)
             except:

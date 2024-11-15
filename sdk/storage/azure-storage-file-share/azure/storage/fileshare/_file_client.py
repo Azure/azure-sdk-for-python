@@ -1688,16 +1688,15 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_hard_link(
-        self,
+        self, target_file: str,
         *,
-        target_file: str,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """NFS only. Create a hard link to the file specified by path.
 
-        :keyword str target_file:
+        :param str target_file:
             Specifies the path of the target file to which the link will be created, up to 2 KiB in length.
             It should be the full path of the target starting from the root. The target file must be in the
             same share and the same storage account.
