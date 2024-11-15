@@ -90,7 +90,6 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         self._setup(storage_account_name)
 
         share_client = self.fsc.get_share_client(self.share_name)
-
         directory_name = self._get_directory_name()
         directory_client = share_client.create_directory(directory_name)
         source_file_name = self._get_file_name()

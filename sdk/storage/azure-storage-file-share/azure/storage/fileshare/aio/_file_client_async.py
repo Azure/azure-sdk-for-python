@@ -1694,7 +1694,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         target_file: str,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
-        kwargs: Any
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """NFS only. Create a hard link to the file specified by path.
 
