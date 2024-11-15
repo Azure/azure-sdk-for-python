@@ -254,6 +254,7 @@ jobs:
           - "**/version.py"
           - "**/README.md"
           - "**/CHANGELOG.md"
+          - "**/*matrix*.json"
         EnablePRGeneration: true
         PRMatrixSetting: "TargetingString"
         PreGenerationSteps:
