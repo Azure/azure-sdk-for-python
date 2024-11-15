@@ -29,7 +29,6 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         retry_backoff_max: int = 120,
         network_tracing: bool = False,
         http_proxy: Optional[Dict[str, Any]] = None,
-        transport_type: TransportType = TransportType.Amqp,
         auth_timeout: int = 60,
         prefetch: int = 300,
         max_batch_size: int = 300,
@@ -49,6 +48,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.backoff_max = retry_backoff_max
         self.network_tracing = network_tracing
         self.http_proxy = http_proxy
+        transport_type = kwargs.get("transport_type", None) or TransportType.Amqp
         self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy else transport_type
         self.auth_timeout = auth_timeout
         self.prefetch = prefetch
@@ -81,7 +81,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
             if self.custom_endpoint_address.find("//") == -1:
                 self.custom_endpoint_address = "sb://" + self.custom_endpoint_address
             endpoint = urlparse(self.custom_endpoint_address)
-            self.transport_type = kwargs.get("transport_type") or TransportType.AmqpOverWebsocket
+            self.transport_type = kwargs.get("transport_type", None) or TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
             if amqp_transport.KIND == "pyamqp":
                 self.custom_endpoint_address += "/$servicebus/websocket"
