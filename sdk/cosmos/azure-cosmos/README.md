@@ -768,6 +768,56 @@ not being able to recognize the new NonStreamingOrderBy capability that makes ve
 If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
 functionality and continue operating as usual.*
 
+### Public Preview - Full Text Policy and Full Text Indexes
+We have added new capabilities to utilize full text policies and full text indexing for users to leverage full text search
+utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
+before you can use them.
+
+A full text policy allows the user to define the default language to be used for all full text paths, or to set
+a language for each path individually in case the user would like to use full text search on data containing different
+languages in different fields.
+
+A sample full text policy would look like this:
+```python
+full_text_policy = {
+    "defaultLanguage": "en-US",
+    "fullTextPaths": [
+        {
+            "path": "/text1",
+            "language": "en-US"
+        },
+        {
+            "path": "/text2",
+            "language": "en-US"
+        }
+    ]
+}
+```
+Currently, the only supported language is `en-US` - using the relevant ISO-639 language code to ISO-3166 country code.
+Any non-supported language or code will return an exception when trying to use it - which will also include the list of supported languages.
+This list will include more options in the future; for more information on supported languages, please see [here][cosmos_fts].
+
+Full text search indexes have been added to the already existing indexing_policy and only require the path to the
+relevant field to be used.
+A sample indexing policy with full text search indexes would look like this:
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "compositeIndexes": [
+            [
+                {"path": "/numberField", "order": "ascending"},
+                {"path": "/stringField", "order": "descending"}
+            ]
+        ],
+        "fullTextIndexes": [
+            {"path": "/abstract"}
+        ]
+    }
+```
+Modifying the index in a container is an asynchronous operation that can take a long time to finish. See [here][cosmos_index_policy_change] for more information.
+For more information on using full text policies and full text indexes, see [here][cosmos_fts].
+
 ## Troubleshooting
 
 ### General
@@ -904,6 +954,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
 [cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
 [cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
+[cosmos_fts]: https://aka.ms/cosmosfulltextsearch
+[cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
 
 ## Contributing
 
