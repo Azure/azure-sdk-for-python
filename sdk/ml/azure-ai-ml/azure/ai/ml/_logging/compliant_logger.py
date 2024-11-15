@@ -24,18 +24,17 @@ _FORMAT_KEY = None
 _FORMAT_VALUE = None
 
 
-def set_format_key(key_name: str) -> None:
+# pylint: disable=global-statement
+def set_format(key_name: str, value: str) -> None:
     with _LOCK:
+        global _FORMAT_KEY
         _FORMAT_KEY = key_name
+        global _FORMAT_VALUE
+        _FORMAT_VALUE = value
 
 
 def get_format_key() -> Optional[str]:
     return _FORMAT_KEY
-
-
-def set_format_value(value: str) -> None:
-    with _LOCK:
-        _FORMAT_VALUE = value
 
 
 def get_format_value() -> Optional[str]:
@@ -135,7 +134,7 @@ def enable_compliant_logging(
     The default format is `logging.BASIC_FORMAT` (`%(levelname)s:%(name)s:%(message)s`).
     All other kwargs are passed to `logging.basicConfig`. Sets the default
     logger class and root logger to be compliant. This means the format
-    string `%(prefix)` will work.
+    string `%(xxxx)` will work.
 
     :param format_key: key for format
     :type format_key: str
@@ -150,8 +149,7 @@ def enable_compliant_logging(
     The standard implementation of the logging API is a good reference:
     https://github.com/python/cpython/blob/3.9/Lib/logging/__init__.py
     """
-    set_format_key(format_key)
-    set_format_value(format_key_value)
+    set_format(format_key, format_key_value)
 
     if "format" not in kwargs:
         kwargs["format"] = get_default_logging_format()
