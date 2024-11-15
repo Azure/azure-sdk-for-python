@@ -15,6 +15,56 @@ For example, get the inference endpoint URL and credentials associated with your
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
+| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
+
+## Table of contents
+
+- [Getting started](#getting-started)
+  - [Prerequisite](#prerequisite)
+  - [Install the package](#install-the-package)
+- [Key concepts](#key-concepts)
+  - [Create and authenticate the client](#create-and-authenticate-the-client)
+- [Examples](#examples)
+  - [Enumerate connections](#enumerate-connections)
+    - [Get properties of all connections](#get-properties-of-all-connections)
+    - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
+    - [Get properties of a default connection](#get-properties-of-a-default-connection)
+    - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
+  - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
+  - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
+  - [Agents (Private Preview)](#agents-private-preview)
+    - [Create an Agent](#create-agent) with:
+      - [File Search](#create-agent-with-file-search)
+      - [Code interpreter](#create-agent-with-code-interpreter)
+      - [Bing grounding](#create-agent-with-bing-grounding)
+      - [Azure AI Search](#create-agent-with-azure-ai-search)
+      - [Function call](#create-agent-with-function-call)
+    - [Create thread](#create-thread) with
+      - [Tool resource](#create-thread-with-tool-resource)
+    - [Create message](#create-message) with:
+      - [File search attachment](#create-message-with-file-search-attachment)
+      - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
+    - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
+    - [Retrieve message](#retrieve-message)
+    - [Retrieve file](#retrieve-file)
+    - [Tear down by deleting resource](#teardown)
+    - [Tracing](#tracing)
+  - [Evaluation](#evaluation)
+    - [Evaluator](#evaluator)
+    - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
+      - [Evaluators](#evaluators)
+      - [Data to be evaluated](#data-to-be-evaluated)
+        - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
+        - [Example Remote Evaluation](#example-remote-evaluation)
+  - [Tracing](#tracing)
+    - [Installation](#installation)
+    - [Tracing example](#tracing-example)
+- [Troubleshooting](#troubleshooting)
+  - [Exceptions](#exceptions)
+  - [Logging](#logging)
+  - [Reporting issues](#reporting-issues)
+- [Next steps](#next-steps)
+- [Contributing](#contributing)
 
 ## Getting started
 
@@ -74,42 +124,6 @@ project_client = AIProjectClient.from_connection_string(
 ```
 
 ## Examples
-
-- [Enumerate connections](#enumerate-connections)
-  - [Get properties of all connections](#get-properties-of-all-connections)
-  - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
-  - [Get properties of a default connection](#get-properties-of-a-default-connection)
-  - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
-- [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
-- [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-- [Agents (Private Preview)](#agents-private-preview)
-  - [Create an Agent](#create-agent) with:
-    - [File Search](#create-agent-with-file-search)
-    - [Code interpreter](#create-agent-with-code-interpreter)
-    - [Bing grounding](#create-agent-with-bing-grounding)
-    - [Azure AI Search](#create-agent-with-azure-ai-search)
-    - [Function call](#create-agent-with-function-call)
-  - [Create thread](#create-thread) with
-    - [Tool resource](#create-thread-with-tool-resource)
-  - [Create message](#create-message) with:
-    - [File search attachment](#create-message-with-file-search-attachment)
-    - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
-  - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
-  - [Retrieve message](#retrieve-message)
-  - [Retrieve file](#retrieve-file)
-  - [Tear down by deleting resource](#teardown)
-  - [Tracing](#tracing)
-- [Evaluation](#evaluation)
-  - [Evaluator](#evaluator)
-  - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
-    - [Evaluators](#evaluators)
-    - [Data to be evaluated](#data-to-be-evaluated)
-      - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
-      - [Example Remote Evaluation](#example-remote-evaluation)
-- [Tracing](#tracing)
-  - [Installation](#installation)
-  - [Tracing example](#tracing-example)
-
 
 ### Enumerate connections
 
@@ -982,6 +996,8 @@ To report issues with the client library, or request additional features, please
 ## Next steps
 
 Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
+
+Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Studio hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
 
 ## Contributing
 
