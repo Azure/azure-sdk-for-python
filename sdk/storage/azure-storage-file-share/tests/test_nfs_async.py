@@ -24,8 +24,8 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
     async def _setup(self, storage_account_name):
         self.account_url = self.account_url(storage_account_name, "file")
-        self.credential = self.get_credential(ShareServiceClient)
-        self.fsc = ShareServiceClient(
+        self.credential = self.get_credential(AsyncShareServiceClient, is_async=True)
+        self.fsc = AsyncShareServiceClient(
             account_url=self.account_url,
             credential=self.credential,
             token_intent=TEST_INTENT
@@ -34,7 +34,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
         async with AsyncShareServiceClient(
             account_url=self.account_url,
-            credential=self.get_credential(ShareServiceClient, is_async=True),
+            credential=self.credential,
             token_intent=TEST_INTENT
         ) as fsc:
             if self.is_live:
@@ -44,13 +44,18 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
                     pass
 
     def teardown_method(self):
-        if self.fsc:
+        fsc = ShareServiceClient(
+            account_url=self.account_url,
+            credential=self.get_credential(ShareServiceClient),
+            token_intent=TEST_INTENT
+        )
+        if fsc:
             try:
-                self.fsc.delete_share(self.share_name)
+                fsc.delete_share(self.share_name)
             except:
                 pass
 
-    # --Helpers-----------------------------------------------------------------
+    # --Helpers----------------------------------------------------------
     def _get_file_name(self, prefix=TEST_FILE_PREFIX):
         return self.get_resource_name(prefix)
 
@@ -60,7 +65,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     # --Test cases for NFS ----------------------------------------------
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_create_hard_link_playground(self, **kwargs):
+    async def test_create_hard_link(self, **kwargs):
         storage_account_name = kwargs.pop('storage_account_name')
 
         await self._setup(storage_account_name)

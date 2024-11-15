@@ -39,7 +39,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
             except:
                 pass
 
-    # --Helpers-----------------------------------------------------------------
+    # --Helpers----------------------------------------------------------
     def _get_file_name(self, prefix=TEST_FILE_PREFIX):
         return self.get_resource_name(prefix)
 
