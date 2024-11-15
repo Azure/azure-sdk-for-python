@@ -222,7 +222,7 @@ class InferenceOperations:
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
-         https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs. If this keyword
+         https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: str
         :return: An authenticated AsyncAzureOpenAI client
