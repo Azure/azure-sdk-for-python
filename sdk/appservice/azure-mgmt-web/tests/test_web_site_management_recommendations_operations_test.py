@@ -14,22 +14,13 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
+class TestWebSiteManagementRecommendationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(WebSiteManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
-        response = self.client.web_apps.list_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
-        result = [r for r in response]
-        assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_web_apps_list(self, resource_group):
-        response = self.client.web_apps.list()
+    def test_recommendations_list(self, resource_group):
+        response = self.client.recommendations.list()
         result = [r for r in response]
         assert response
