@@ -23,7 +23,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
         response = self.client.private_link_scopes.list(
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.private_link_scopes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
             await self.client.private_link_scopes.begin_delete(
                 resource_group_name=resource_group.name,
                 scope_name="str",
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,7 +60,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
         response = await self.client.private_link_scopes.get(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             scope_name="str",
             private_link_scope_tags={"tags": {"str": "str"}},
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
         response = await self.client.private_link_scopes.get_validation_details(
             location="str",
             private_link_scope_id="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestHybridComputeManagementPrivateLinkScopesOperationsAsync(AzureMgmtRecor
         response = await self.client.private_link_scopes.get_validation_details_for_machine(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
