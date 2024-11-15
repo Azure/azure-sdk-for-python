@@ -1,8 +1,7 @@
 trigger: none
 
-# NOTE: Service live tests are NOT enabled. This file only enables the analyze stage currently.
 extends:
-    template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: ai
       # Temporarily disable test job with pypy3.9 to unblock the first beta
