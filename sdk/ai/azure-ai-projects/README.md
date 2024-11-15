@@ -5,9 +5,9 @@ Use the AI Projects client library (in preview) to:
 
 * **Enumerate connections** in your Azure AI Studio project and get connection properties.
 For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
-* **Get an already-authenticated Inference client** for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
+* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
 * **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in private preview.
-* **Run Evaluation tools** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
+* **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
 * **Enable OpenTelemetry tracing**.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
@@ -15,6 +15,56 @@ For example, get the inference endpoint URL and credentials associated with your
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
+| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
+
+## Table of contents
+
+- [Getting started](#getting-started)
+  - [Prerequisite](#prerequisite)
+  - [Install the package](#install-the-package)
+- [Key concepts](#key-concepts)
+  - [Create and authenticate the client](#create-and-authenticate-the-client)
+- [Examples](#examples)
+  - [Enumerate connections](#enumerate-connections)
+    - [Get properties of all connections](#get-properties-of-all-connections)
+    - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
+    - [Get properties of a default connection](#get-properties-of-a-default-connection)
+    - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
+  - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
+  - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
+  - [Agents (Private Preview)](#agents-private-preview)
+    - [Create an Agent](#create-agent) with:
+      - [File Search](#create-agent-with-file-search)
+      - [Code interpreter](#create-agent-with-code-interpreter)
+      - [Bing grounding](#create-agent-with-bing-grounding)
+      - [Azure AI Search](#create-agent-with-azure-ai-search)
+      - [Function call](#create-agent-with-function-call)
+    - [Create thread](#create-thread) with
+      - [Tool resource](#create-thread-with-tool-resource)
+    - [Create message](#create-message) with:
+      - [File search attachment](#create-message-with-file-search-attachment)
+      - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
+    - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
+    - [Retrieve message](#retrieve-message)
+    - [Retrieve file](#retrieve-file)
+    - [Tear down by deleting resource](#teardown)
+    - [Tracing](#tracing)
+  - [Evaluation](#evaluation)
+    - [Evaluator](#evaluator)
+    - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
+      - [Evaluators](#evaluators)
+      - [Data to be evaluated](#data-to-be-evaluated)
+        - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
+        - [Example Remote Evaluation](#example-remote-evaluation)
+  - [Tracing](#tracing)
+    - [Installation](#installation)
+    - [Tracing example](#tracing-example)
+- [Troubleshooting](#troubleshooting)
+  - [Exceptions](#exceptions)
+  - [Logging](#logging)
+  - [Reporting issues](#reporting-issues)
+- [Next steps](#next-steps)
+- [Contributing](#contributing)
 
 ## Getting started
 
@@ -25,8 +75,7 @@ For example, get the inference endpoint URL and credentials associated with your
 - A [project in Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
 - The project connection string. It can be found in your Azure AI Studio project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * The role `Azure AI Developer` assigned to you. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
-  * The token must have the scope `https://management.azure.com/.default` or `https://ml.azure.com/.default`, depending on the set of client operation you will execute.
+  * The `Contributor` role. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
   * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
@@ -78,9 +127,9 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Enumerate connections
 
-You Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+Your Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
 
-Below are code examples of some simple connection operations. Additional samples can be found under the "connetions" folder in the [package samples][samples].
+Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
 
 #### Get properties of all connections
 
@@ -113,7 +162,7 @@ with its authentication credentials:
 ```python
 connection = project_client.connections.get_default(
     connection_type=ConnectionType.AZURE_OPEN_AI,
-    include_credentials=True,  # Optional. Defaults to "False"
+    include_credentials=True,  # Optional. Defaults to "False".
 )
 print(connection)
 ```
@@ -123,18 +172,21 @@ will be populated. Otherwise both will be `None`.
 
 #### Get properties of a connection by its connection name
 
-To get the connection properties of a connection with name `connection_name`:
+To get the connection properties of a connection named `connection_name`:
 
 ```python
 connection = project_client.connections.get(
-    connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
+    connection_name=connection_name,
+    include_credentials=True  # Optional. Defaults to "False"
 )
 print(connection)
 ```
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call. First, install the package:
+Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+
+First, install the package:
 
 ```bash
 pip install azure-ai-inference
@@ -157,13 +209,15 @@ See the "inference" folder in the [package samples][samples] for additional samp
 
 ### Get an authenticated AzureOpenAI client
 
-Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call. First, install the package:
+Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+
+First, install the package:
 
 ```bash
 pip install openai
 ```
 
-Then run this code (replace "gpt-4o" with your model deployment name):
+Then run the code below. Replace `gpt-4o` with your model deployment name, and update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
 
 ```python
 aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")
@@ -188,23 +242,6 @@ See the "inference" folder in the [package samples][samples] for additional samp
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents. See the "agents" folder in the [package samples][samples] for additional Agent samples.
 
 Agents are actively being developed. A sign-up form for private preview is coming soon.
-
-  - <a href='#create-agent'>Create an Agent</a> with:
-    - <a href='#create-agent-with-file-search'>File Search</a>
-    - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
-    - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
-    - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
-    - <a href='#create-agent-with-function-call'>Function call</a>
-  - <a href='#create-thread'>Create thread</a> with
-     - <a href='#create-thread-with-tool-resource'>Tool resource</a>
-  - <a href='#create-message'>Create message</a> with:
-    - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
-    - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
-  - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
-  - <a href='#retrieve-message'>Retrieve message</a>
-  - <a href='#retrieve-file'>Retrieve file</a>
-  - <a href='#teardown'>Tear down by deleting resource</a>
-  - <a href='#tracing'>Tracing</a>
 
 #### Create Agent
 
@@ -718,11 +755,124 @@ print("Deleted agent")
 
 <!-- END SNIPPET -->
 
-#### Tracing
+### Evaluation
+
+Evaluation in Azure AI Project client library is designed to assess the performance of generative AI applications in the cloud. The output of Generative AI application is quantitively measured with mathematical based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive insights into the application's capabilities and limitations.
+
+#### Evaluator
+
+Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
+
+Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
+
+More details on built-in and custom evaluators can be found [here][evaluators].
+
+#### Run Evaluation in the cloud
+
+To run evaluation in the cloud the following are needed:
+
+- Evaluators
+- Data to be evaluated
+- [Optional] Azure Open AI model.
+
+##### Evaluators
+
+For running evaluator in the cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
+
+```python
+# pip install azure-ai-evaluation
+
+from azure.ai.evaluation import RelevanceEvaluator
+
+evaluator_id = RelevanceEvaluator.id
+```
+
+##### Data to be evaluated
+
+Evaluation in the cloud supports data in form of `jsonl` file. Data can be uploaded via the helper method `upload_file` on the project client.
+
+```python
+# Upload data for evaluation and get dataset id
+data_id, _ = project_client.upload_file("<data_file.jsonl>")
+```
+
+##### [Optional] Azure OpenAI Model
+
+Azure AI Studio project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
+
+```python
+default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+```
+
+##### Example Remote Evaluation
+
+```python
+import os
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
+
+
+# Create project client
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
+
+# Upload data for evaluation and get dataset id
+data_id, _ = project_client.upload_file("<data_file.jsonl>")
+
+deployment_name = "<deployment_name>"
+api_version = "<api_version>"
+
+# Create an evaluation
+evaluation = Evaluation(
+    display_name="Remote Evaluation",
+    description="Evaluation of dataset",
+    data=Dataset(id=data_id),
+    evaluators={
+        "f1_score": EvaluatorConfiguration(
+            id=F1ScoreEvaluator.id,
+        ),
+        "relevance": EvaluatorConfiguration(
+            id=RelevanceEvaluator.id,
+            init_params={
+                "model_config": default_connection.to_evaluator_model_config(
+                    deployment_name=deployment_name, api_version=api_version
+                )
+            },
+        ),
+        "violence": EvaluatorConfiguration(
+            id=ViolenceEvaluator.id,
+            init_params={"azure_ai_project": project_client.scope},
+        ),
+    },
+)
+
+
+evaluation_response = project_client.evaluations.create(
+    evaluation=evaluation,
+)
+
+# Get evaluation
+get_evaluation_response = project_client.evaluations.get(evaluation_response.id)
+
+print("----------------------------------------------------------------")
+print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
+print("Evaluation status: ", get_evaluation_response.status)
+if isinstance(get_evaluation_response.properties, dict):
+    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+print("----------------------------------------------------------------")
+```
+
+NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
+
+### Tracing
 
 You can add an Application Insights Azure resource to your Azure AI Studio project. See the Tracing tab in your studio. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
 
-##### Installation
+#### Installation
 
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
@@ -739,7 +889,7 @@ To connect to Aspire Dashboard or another OpenTelemetry compatible backend, inst
 pip install opentelemetry-exporter-otlp
 ```
 
-##### Tracing example
+#### Tracing example
 
 Here is a code sample to be included above `create_agent`:
 
@@ -847,6 +997,8 @@ To report issues with the client library, or request additional features, please
 
 Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
+Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Studio hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
@@ -873,3 +1025,6 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
+[azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme?view=azure-python-preview
+[evaluator_library]: https://learn.microsoft.com/azure/ai-studio/how-to/evaluate-generative-ai-app#view-and-manage-the-evaluators-in-the-evaluator-library
