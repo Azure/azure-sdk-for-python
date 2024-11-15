@@ -21,7 +21,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_integration_runtimes_list_by_factory(self, resource_group):
         response = self.client.integration_runtimes.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_integration_runtimes_create_or_update(self, resource_group):
         response = await self.client.integration_runtimes.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -53,7 +53,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_integration_runtimes_get(self, resource_group):
         response = await self.client.integration_runtimes.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -66,7 +66,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_integration_runtimes_update(self, resource_group):
         response = await self.client.integration_runtimes.update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -80,7 +80,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_integration_runtimes_delete(self, resource_group):
         response = await self.client.integration_runtimes.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -93,7 +93,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_status(self, resource_group):
+    async def test_integration_runtimes_get_status(self, resource_group):
         response = await self.client.integration_runtimes.get_status(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -106,7 +106,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_outbound_network_dependencies_endpoints(self, resource_group):
+    async def test_integration_runtimes_list_outbound_network_dependencies_endpoints(self, resource_group):
         response = await self.client.integration_runtimes.list_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -119,7 +119,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_connection_info(self, resource_group):
+    async def test_integration_runtimes_get_connection_info(self, resource_group):
         response = await self.client.integration_runtimes.get_connection_info(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -132,7 +132,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_regenerate_auth_key(self, resource_group):
+    async def test_integration_runtimes_regenerate_auth_key(self, resource_group):
         response = await self.client.integration_runtimes.regenerate_auth_key(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -146,7 +146,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_auth_keys(self, resource_group):
+    async def test_integration_runtimes_list_auth_keys(self, resource_group):
         response = await self.client.integration_runtimes.list_auth_keys(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -159,7 +159,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_integration_runtimes_begin_start(self, resource_group):
         response = await (
             await self.client.integration_runtimes.begin_start(
                 resource_group_name=resource_group.name,
@@ -174,7 +174,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_stop(self, resource_group):
+    async def test_integration_runtimes_begin_stop(self, resource_group):
         response = await (
             await self.client.integration_runtimes.begin_stop(
                 resource_group_name=resource_group.name,
@@ -189,7 +189,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sync_credentials(self, resource_group):
+    async def test_integration_runtimes_sync_credentials(self, resource_group):
         response = await self.client.integration_runtimes.sync_credentials(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -202,7 +202,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_monitoring_data(self, resource_group):
+    async def test_integration_runtimes_get_monitoring_data(self, resource_group):
         response = await self.client.integration_runtimes.get_monitoring_data(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -215,7 +215,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_upgrade(self, resource_group):
+    async def test_integration_runtimes_upgrade(self, resource_group):
         response = await self.client.integration_runtimes.upgrade(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -228,7 +228,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_remove_links(self, resource_group):
+    async def test_integration_runtimes_remove_links(self, resource_group):
         response = await self.client.integration_runtimes.remove_links(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -242,7 +242,7 @@ class TestDataFactoryManagementIntegrationRuntimesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_linked_integration_runtime(self, resource_group):
+    async def test_integration_runtimes_create_linked_integration_runtime(self, resource_group):
         response = await self.client.integration_runtimes.create_linked_integration_runtime(
             resource_group_name=resource_group.name,
             factory_name="str",

@@ -20,7 +20,7 @@ class TestDataFactoryManagementTriggerRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_rerun(self, resource_group):
+    def test_trigger_runs_rerun(self, resource_group):
         response = self.client.trigger_runs.rerun(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -34,7 +34,7 @@ class TestDataFactoryManagementTriggerRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_trigger_runs_cancel(self, resource_group):
         response = self.client.trigger_runs.cancel(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -48,7 +48,7 @@ class TestDataFactoryManagementTriggerRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_by_factory(self, resource_group):
+    def test_trigger_runs_query_by_factory(self, resource_group):
         response = self.client.trigger_runs.query_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",

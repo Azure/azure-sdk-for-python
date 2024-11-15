@@ -20,7 +20,7 @@ class TestDataFactoryManagementGlobalParametersOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_factory(self, resource_group):
+    def test_global_parameters_list_by_factory(self, resource_group):
         response = self.client.global_parameters.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -32,7 +32,7 @@ class TestDataFactoryManagementGlobalParametersOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_global_parameters_get(self, resource_group):
         response = self.client.global_parameters.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -45,7 +45,7 @@ class TestDataFactoryManagementGlobalParametersOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_global_parameters_create_or_update(self, resource_group):
         response = self.client.global_parameters.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -65,7 +65,7 @@ class TestDataFactoryManagementGlobalParametersOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_global_parameters_delete(self, resource_group):
         response = self.client.global_parameters.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

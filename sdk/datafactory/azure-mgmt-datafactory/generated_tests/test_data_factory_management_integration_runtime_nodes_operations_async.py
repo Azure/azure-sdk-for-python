@@ -21,7 +21,7 @@ class TestDataFactoryManagementIntegrationRuntimeNodesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_integration_runtime_nodes_get(self, resource_group):
         response = await self.client.integration_runtime_nodes.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -35,7 +35,7 @@ class TestDataFactoryManagementIntegrationRuntimeNodesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_integration_runtime_nodes_delete(self, resource_group):
         response = await self.client.integration_runtime_nodes.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -49,7 +49,7 @@ class TestDataFactoryManagementIntegrationRuntimeNodesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_integration_runtime_nodes_update(self, resource_group):
         response = await self.client.integration_runtime_nodes.update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -64,7 +64,7 @@ class TestDataFactoryManagementIntegrationRuntimeNodesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_ip_address(self, resource_group):
+    async def test_integration_runtime_nodes_get_ip_address(self, resource_group):
         response = await self.client.integration_runtime_nodes.get_ip_address(
             resource_group_name=resource_group.name,
             factory_name="str",

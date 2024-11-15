@@ -1,5 +1,37 @@
 # Release History
 
+## 9.1.0 (2024-12-22)
+
+### Features Added
+
+  - Model `AzurePostgreSqlLinkedService` added property `server`
+  - Model `AzurePostgreSqlLinkedService` added property `port`
+  - Model `AzurePostgreSqlLinkedService` added property `username`
+  - Model `AzurePostgreSqlLinkedService` added property `database`
+  - Model `AzurePostgreSqlLinkedService` added property `ssl_mode`
+  - Model `AzurePostgreSqlLinkedService` added property `timeout`
+  - Model `AzurePostgreSqlLinkedService` added property `command_timeout`
+  - Model `AzurePostgreSqlLinkedService` added property `trust_server_certificate`
+  - Model `AzurePostgreSqlLinkedService` added property `read_buffer_size`
+  - Model `AzurePostgreSqlLinkedService` added property `timezone`
+  - Model `AzurePostgreSqlLinkedService` added property `encoding`
+  - Model `MariaDBLinkedService` added property `ssl_mode`
+  - Model `MariaDBLinkedService` added property `use_system_trust_store`
+  - Model `MySqlLinkedService` added property `allow_zero_date_time`
+  - Model `MySqlLinkedService` added property `connection_timeout`
+  - Model `MySqlLinkedService` added property `convert_zero_date_time`
+  - Model `MySqlLinkedService` added property `guid_format`
+  - Model `MySqlLinkedService` added property `ssl_cert`
+  - Model `MySqlLinkedService` added property `ssl_key`
+  - Model `MySqlLinkedService` added property `treat_tiny_as_boolean`
+  - Model `PostgreSqlV2LinkedService` added property `authentication_type`
+  - Model `SalesforceV2Source` added property `page_size`
+  - Model `ServiceNowV2Source` added property `page_size`
+  - Model `SnowflakeV2LinkedService` added property `host`
+  - Added model `IcebergDataset`
+  - Added model `IcebergSink`
+  - Added model `IcebergWriteSettings`
+
 ## 9.0.0 (2024-08-19)
 
 ### Features Added

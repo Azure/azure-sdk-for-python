@@ -21,7 +21,7 @@ class TestDataFactoryManagementDataFlowsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_data_flows_create_or_update(self, resource_group):
         response = await self.client.data_flows.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -35,7 +35,7 @@ class TestDataFactoryManagementDataFlowsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_data_flows_get(self, resource_group):
         response = await self.client.data_flows.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -48,7 +48,7 @@ class TestDataFactoryManagementDataFlowsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_data_flows_delete(self, resource_group):
         response = await self.client.data_flows.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -61,7 +61,7 @@ class TestDataFactoryManagementDataFlowsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_data_flows_list_by_factory(self, resource_group):
         response = self.client.data_flows.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
