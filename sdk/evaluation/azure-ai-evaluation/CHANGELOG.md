@@ -1,12 +1,10 @@
 # Release History
 
-## 1.0.1 (2024-11-14)
+## 1.0.1 (Unreleased)
 
 ### Bugs Fixed
 - Fixed `[remote]` extra to be needed only when tracking results in Azure AI Studio.
 - Removing `azure-ai-inference` as dependency.
-
-### Other Changes
 
 ## 1.0.0 (2024-11-13)
 
