@@ -25,6 +25,10 @@ pr:
     - sdk/ai/
     - sdk/core/
 
+parameters:
+  MatrixFilters:
+    - PythonVersion=^(?!.*pypy3\.9).*
+
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
