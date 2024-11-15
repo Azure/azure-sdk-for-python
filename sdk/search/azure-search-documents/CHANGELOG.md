@@ -31,6 +31,12 @@
 
 - Updated the API version to "2024-1-01-preview"
 
+11.5.2 (2024-10-31)
+
+### Bugs Fixed
+
+- Fixed the issue that encryptionKey was lost during serialization. #37521
+
 ## 11.6.0b6 (2024-10-08)
 
 ### Bugs Fixed

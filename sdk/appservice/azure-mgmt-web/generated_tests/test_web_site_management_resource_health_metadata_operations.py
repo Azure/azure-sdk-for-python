@@ -20,9 +20,9 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_resource_health_metadata_list(self, resource_group):
         response = self.client.resource_health_metadata.list(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_resource_health_metadata_list_by_resource_group(self, resource_group):
         response = self.client.resource_health_metadata.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_site(self, resource_group):
+    def test_resource_health_metadata_list_by_site(self, resource_group):
         response = self.client.resource_health_metadata.list_by_site(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -53,11 +53,11 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_site(self, resource_group):
+    def test_resource_health_metadata_get_by_site(self, resource_group):
         response = self.client.resource_health_metadata.get_by_site(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -65,12 +65,12 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_site_slot(self, resource_group):
+    def test_resource_health_metadata_list_by_site_slot(self, resource_group):
         response = self.client.resource_health_metadata.list_by_site_slot(
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -78,12 +78,12 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_site_slot(self, resource_group):
+    def test_resource_health_metadata_get_by_site_slot(self, resource_group):
         response = self.client.resource_health_metadata.get_by_site_slot(
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
