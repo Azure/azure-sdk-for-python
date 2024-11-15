@@ -33,6 +33,9 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
+    # Temporarily disable test job with pypy3.9 to unblock the first beta
+    # release of azure-ai-projects. Otherwise, the job "Test ubuntu2004_pypy39" in the "python - ai"
+    # pipeline hangs and eventually times out.
     MatrixFilters:
       - PythonVersion=^(?!.*pypy39).*
     # The below were set before when azure-ai-generative and azure-ai-resources packages were built:
