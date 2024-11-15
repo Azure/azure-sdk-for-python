@@ -26,7 +26,6 @@ from ._constants import (
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
     FEATURE_FLAG_ID_KEY,
-    ALLOCATION_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
