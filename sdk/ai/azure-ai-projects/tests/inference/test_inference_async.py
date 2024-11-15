@@ -18,7 +18,7 @@ class TestInferenceAsync(InferenceTestBase):
         api_version = kwargs.pop("azure_ai_projects_inference_tests_aoai_api_version")
         model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
-            # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+            # See API versions in https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
             async with await project_client.inference.get_azure_openai_client(
                 api_version=api_version
             ) as azure_openai_client:
