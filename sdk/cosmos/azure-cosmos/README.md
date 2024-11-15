@@ -939,7 +939,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
 [cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
 [RRF]: https://learn.microsoft.com/azure/search/hybrid-search-ranking
-[BM25]: https://en.wikipedia.org/wiki/Okapi_BM25
+[BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
 
 ## Contributing
 
