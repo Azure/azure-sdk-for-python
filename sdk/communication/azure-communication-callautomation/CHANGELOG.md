@@ -4,31 +4,31 @@
 
 ### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0b2 (2024-10-28)
+
+### Features Added
+
+- Added CreateCallFailed event to signify when create call API fails to establish a call
+
+## 1.3.0b1 (2024-08-02)
+
+### Features Added
+
 - Support multiple play sources for Play and Recognize
+- Support for PlayStarted event in Play/Recognize
 - Support for the real time transcription
 - Monetization for real-time transcription and audio streaming
 - Hold and Unhold the participant
 - Support to manage the rooms/servercall/group call using connect API
 - Support for the audio streaming
 - Expose original PSTN number target from incoming call event in call connection properties
-- Added CreateCallFailed event to signify when create call API fails to establish a call
-- Added AnswerFailed event to signify when answer call API fails to answer a call
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-## 1.3.0b1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Support for VoIP to PSTN transfer scenario
 
 ## 1.2.0 (2024-04-15)
 

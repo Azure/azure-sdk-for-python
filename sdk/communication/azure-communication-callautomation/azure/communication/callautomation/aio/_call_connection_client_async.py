@@ -598,6 +598,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_single = play_source
 
         audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
+        interrupt_call_media_operation = interrupt_call_media_operation if play_to == "all" else False
         play_request = PlayRequest(
             play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
             [source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
@@ -1183,7 +1184,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         await self._call_media_client.unhold(self._call_connection_id, unhold_request)
-        
+
     @distributed_trace_async
     async def start_media_streaming(
         self,
