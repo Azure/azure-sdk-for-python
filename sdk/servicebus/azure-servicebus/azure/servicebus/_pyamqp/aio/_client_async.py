@@ -733,7 +733,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.current_link_credit <= 0 and flow:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -903,6 +904,34 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             if self._shutdown:
                 await self.close_async()
 
+    async def _on_disposition_received_async(self, message_delivery, reason, state):
+        for state_key in state:
+            state_error = state[state_key]
+        message_delivery.reason = reason
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            if state and (len(state_error) == 0 or state_error[0] is None):
+                message_delivery.state = MessageDeliveryState.Ok
+            else:
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2],
+                    )
+                except TypeError:
+                    self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
+        # TODO: Confirm if the following statements below are needed, do we want a TimeOut to be set?
+        elif reason == LinkDeliverySettleReason.SETTLED:
+            message_delivery.state = MessageDeliveryState.Ok
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
+        else:
+            # NotDelivered and other unknown errors
+            self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
+
     @overload
     async def settle_messages_async(
         self,
@@ -963,6 +992,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
+        # TODO: timeout is not used, should it be?
+        timeout = kwargs.pop("timeout", 0)
+        expire_time = (time.time() + timeout) if timeout else None
+
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -980,12 +1013,43 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         except TypeError:
             first = delivery_id
             last = None
+
+        # Create a Message Delivery object for the Disposition
+        message_delivery = _MessageDelivery(None, MessageDeliveryState.WaitingToBeSent, expire_time)
+        on_disposition_received = partial(self._on_disposition_received_async, message_delivery)
+
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=False,  # True
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            on_disposition=on_disposition_received,
         )
+
+        # Wait for the message to be settled
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            # TODO: Confirm if this is the correct way to handle the do_work call
+            # calling do_work directly triggers Flow() calls which is not what we want
+            running = await self.do_work_async(flow=False)
+
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError, description="Settlement failed - connection not running."
+            )
+
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout,
+        ):
+            try:
+                raise message_delivery.error  # pylint: disable=raising-bad-type
+            except TypeError:
+                # This is a default handler
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError, description="Settlement failed."
+                ) from None

@@ -13,7 +13,6 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import create_authentication
@@ -52,6 +51,7 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
+from .exceptions import ServiceBusConnectionError
 
 if TYPE_CHECKING:
     try:
@@ -440,16 +440,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
 
-        # The following condition check is a hot fix for settling a message received for non-session queue after
-        # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-        if not self._session and message._lock_expired:
-            raise MessageLockLostError(
-                message="The lock on the message lock has expired.",
-                error=message.auto_renew_error,
-            )
         link = get_span_link_from_message(message)
         trace_links = [link] if link else []
         with settle_trace_context_manager(self, settle_operation, links=trace_links):
@@ -472,6 +462,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     ) -> None:
         # pylint: disable=protected-access
         try:
+            # if self._amqp_transport
+            # TODO: If uamqp --- raise the error still, else
             if not message._is_deferred_message:
                 try:
                     self._amqp_transport.settle_message_via_receiver_link(
@@ -482,7 +474,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
