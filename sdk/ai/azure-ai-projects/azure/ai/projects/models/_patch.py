@@ -510,25 +510,15 @@ class AzureAISearchTool(Tool):
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self):
-        self.index_list = []
-
-    def add_index(self, index: str, name: str):
-        """
-        Add an index ID to the list of indices used to search.
-
-        :param str index: The index connection id.
-        :param str name: The index name.
-        """
-        # TODO
-        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
+    def __init__(self, index_connection_id: str, index_name: str):
+        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
 
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Azure AI search tool definitions.
 
-        :rtype: List[ToolDefinition]
+        :return: A list of tool definitions.
         """
         return [AzureAISearchToolDefinition()]
 
@@ -537,13 +527,16 @@ class AzureAISearchTool(Tool):
         """
         Get the Azure AI search resources.
 
-        :rtype: ToolResources
+        :return: ToolResources populated with azure_ai_search associated resources.
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
     def execute(self, tool_call: Any) -> Any:
-        pass
+        """
+        AI Search tool does not execute client-side.
+        """
 
+        pass
 
 class ConnectionTool(Tool):
     """

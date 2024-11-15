@@ -4,16 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_ai_search.py
+FILE: sample_agents_sharepoint.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
-    Azure AI Search tool from the Azure Agents service using a synchronous client.
-    To learn how to set up an Azure AI Search resource,
-    visit https://learn.microsoft.com/azure/search/search-get-started-portal
+    Sharepoint tool from the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_azure_ai_search.py
+    python sample_agents_sharepoint.py
 
     Before running the sample:
 
@@ -26,7 +24,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool
+from azure.ai.projects.models import SharepointTool
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -38,16 +36,16 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id="myconnectionid", index_name="myindexname")
+# Initialize Sharepoint tool with connection id 
+sharepoint = SharepointTool(connection_id="my_connection_id")
 
-# Create agent with AI search tool and process assistant run
+# Create agent with Sharepoint tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4o",
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=ai_search.definitions,
+        tools=sharepoint.definitions,
         headers={"x-ms-enable-preview": "true"},
     )
     print(f"Created agent, ID: {agent.id}")
@@ -60,7 +58,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="What inventory is available currently?",
+        content="Hello, tell me about my health insurance options",
     )
     print(f"Created message, ID: {message.id}")
 
