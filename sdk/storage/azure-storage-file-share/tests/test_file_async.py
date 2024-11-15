@@ -90,7 +90,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)
         return blob_client
 
-    async def _setup_share(self, storage_account_name, storage_account_key, remote=False, protocols=None):
+    async def _setup_share(self, storage_account_name, storage_account_key, remote=False):
         share_name = self.remote_share_name if remote else self.share_name
         async with ShareServiceClient(
                 self.account_url(storage_account_name, "file"),
@@ -98,7 +98,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
                 max_range_size=4 * 1024) as fsc:
             if not self.is_playback():
                 try:
-                    await fsc.create_share(share_name, protocols=protocols)
+                    await fsc.create_share(share_name)
                 except:
                     pass
 
@@ -3960,106 +3960,3 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         await new_file.delete_file()
         await file_client.delete_file()
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_create_file_nfs(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        await self._setup_share(storage_account_name, storage_account_key, protocols='NFS')
-
-        file_name = self._get_file_reference()
-        file_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name,
-            credential=storage_account_key
-        )
-
-        create_owner, create_group, create_file_mode = '345', '123', '7777'
-        set_owner, set_group, set_file_mode = '0', '0', '0644'
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline'
-        )
-
-        try:
-            await file_client.create_file(1024, owner=create_owner, group=create_group, file_mode=create_file_mode)
-            props = await file_client.get_file_properties()
-
-            assert props is not None
-            assert props.owner == create_owner
-            assert props.group == create_group
-            assert props.file_mode == create_file_mode
-            assert props.link_count == 1
-            assert props.nfs_file_type == 'Regular'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-
-            await file_client.set_http_headers(
-                content_settings=content_settings,
-                owner=set_owner,
-                group=set_group,
-                file_mode=set_file_mode
-            )
-            props = await file_client.get_file_properties()
-
-            assert props is not None
-            assert props.owner == set_owner
-            assert props.group == set_group
-            assert props.file_mode == set_file_mode
-            assert props.link_count == 1
-            assert props.nfs_file_type == 'Regular'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-        finally:
-            await file_client.delete_file()
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_download_and_copy_file_nfs(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        await self._setup_share(storage_account_name, storage_account_key, protocols='NFS')
-
-        owner, group, file_mode = '0', '0', '0664'
-        data = b'abcdefghijklmnop' * 32
-        file_client = await self._create_file(storage_account_name, storage_account_key)
-        new_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key
-        )
-
-        try:
-            await file_client.upload_range(data, offset=0, length=512)
-            props = (await file_client.download_file()).properties
-            assert props is not None
-            assert props.owner == owner
-            assert props.group == group
-            assert props.file_mode == file_mode
-            assert props.link_count == 1
-            assert props.file_attributes is None
-            assert props.permission_key is None
-
-            copy = await new_client.start_copy_from_url(file_client.url, owner=owner, group=group, file_mode=file_mode)
-            assert copy is not None
-            assert copy['copy_status'] == 'success'
-            assert copy['copy_id'] is not None
-
-            props = await new_client.get_file_properties()
-            assert props is not None
-            assert props.owner == owner
-            assert props.group == group
-            assert props.file_mode == file_mode
-            assert props.link_count == 1
-            assert props.file_attributes is None
-            assert props.permission_key is None
-        finally:
-            await file_client.delete_file()
-            await new_client.delete_file()

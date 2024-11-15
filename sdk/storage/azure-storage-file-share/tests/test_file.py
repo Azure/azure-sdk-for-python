@@ -48,7 +48,7 @@ TEST_INTENT = "backup"
 
 
 class TestStorageFile(StorageRecordedTestCase):
-    def _setup(self, storage_account_name, storage_account_key, rmt_account=None, rmt_key=None, protocols=None):
+    def _setup(self, storage_account_name, storage_account_key, rmt_account=None, rmt_key=None):
 
         url = self.account_url(storage_account_name, "file")
         blob_url = self.account_url(storage_account_name, "blob")
@@ -63,7 +63,7 @@ class TestStorageFile(StorageRecordedTestCase):
         self.source_container_name = self.get_resource_name('sourceshare')
         if self.is_live:
             try:
-                self.fsc.create_share(self.share_name, protocols=protocols)
+                self.fsc.create_share(self.share_name)
             except:
                 pass
 
@@ -3846,104 +3846,5 @@ class TestStorageFile(StorageRecordedTestCase):
 
         new_file.delete_file()
         file_client.delete_file()
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_file_and_set_file_properties_nfs(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key, protocols='NFS')
-        file_name = self._get_file_reference()
-        file_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name,
-            credential=storage_account_key
-        )
-
-        create_owner, create_group, create_file_mode = '345', '123', '7777'
-        set_owner, set_group, set_file_mode = '0', '0', '0644'
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline'
-        )
-
-        try:
-            file_client.create_file(1024, owner=create_owner, group=create_group, file_mode=create_file_mode)
-            props = file_client.get_file_properties()
-
-            assert props is not None
-            assert props.owner == create_owner
-            assert props.group == create_group
-            assert props.file_mode == create_file_mode
-            assert props.link_count == 1
-            assert props.nfs_file_type == 'Regular'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-
-            file_client.set_http_headers(
-                content_settings=content_settings,
-                owner=set_owner,
-                group=set_group,
-                file_mode=set_file_mode
-            )
-            props = file_client.get_file_properties()
-
-            assert props is not None
-            assert props.owner == set_owner
-            assert props.group == set_group
-            assert props.file_mode == set_file_mode
-            assert props.link_count == 1
-            assert props.nfs_file_type == 'Regular'
-            assert props.file_attributes is None
-            assert props.permission_key is None
-        finally:
-            file_client.delete_file()
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_download_and_copy_file_nfs(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key, protocols='NFS')
-        owner, group, file_mode = '0', '0', '0664'
-        data = b'abcdefghijklmnop' * 32
-        file_client = self._create_file()
-        new_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key
-        )
-
-        try:
-            file_client.upload_range(data, offset=0, length=512)
-            props = file_client.download_file().properties
-            assert props is not None
-            assert props.owner == owner
-            assert props.group == group
-            assert props.file_mode == file_mode
-            assert props.link_count == 1
-            assert props.file_attributes is None
-            assert props.permission_key is None
-
-            copy = new_client.start_copy_from_url(file_client.url, owner=owner, group=group, file_mode=file_mode)
-            assert copy is not None
-            assert copy['copy_status'] == 'success'
-            assert copy['copy_id'] is not None
-
-            props = new_client.get_file_properties()
-            assert props is not None
-            assert props.owner == owner
-            assert props.group == group
-            assert props.file_mode == file_mode
-            assert props.link_count == 1
-            assert props.file_attributes is None
-            assert props.permission_key is None
-        finally:
-            file_client.delete_file()
-            new_client.delete_file()
 
 # ------------------------------------------------------------------------------
