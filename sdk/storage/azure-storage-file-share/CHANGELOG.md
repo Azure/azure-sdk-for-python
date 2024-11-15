@@ -4,15 +4,15 @@
 
 ### Features Added
 - Added support for service version 2025-05-05.
-- Added support for `ShareFileClient` using the `NFS` protocol to `create_hard_link` 
-with an existing file by specifying full path starting from the root.
-- Added support for `ShareFileClient` using the `NFS` protocol to copy an existing file through the 
-`start_copy_from_url` API by specifying optional keywords `owner`, `group`, `file_mode`.
-- The following sync and async APIs no longer send request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, 
-`x-ms-file-creation-time`, and `x-ms-file-last-write-time` by default. These headers have been optional
-in the REST API since the service version 2021-06-08.
-  - `ShareFileClient`: `create_file`, `set_http_headers`, and `get_file_properties` APIs
-  - `ShareDirectoryClient`: `create_directory`, `set_http_headers`, and `get_directory_properties` APIs
+- Added support for `NFS` shares to `ShareFileClient`'s `create_file` and `set_http_headers` APIs,
+and `ShareDirectoryClient`'s `create_directory` and `set_http_headers` APIs. 
+This includes `owner`, `group`, and `file_mode` options and returning `owner`, `group`, and `file_mode` in 
+`DirectoryProperties` and `FileProperties`. Note that the APIs no longer send request headers 
+`x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-creation-time`, and `x-ms-file-last-write-time` 
+by default. The request headers have been optional in the REST API since service version 2021-06-08. 
+The default behavior of these APIs remain the same.
+- Added new `create_hard_link` method to `ShareFileClient` to create hard links to specified
+files and is only supported for the `NFS protocol`.
 
 ## 12.20.0 (2024-11-13)
 
