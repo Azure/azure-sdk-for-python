@@ -17,6 +17,8 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml.entities._job.job_resources import JobResources
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -30,10 +32,14 @@ class FineTuningVertical(FineTuningJob):
         model_provider: str,
         training_data: Input,
         validation_data: Optional[Input] = None,
+        resources: JobResources = None,
+        queue_settings: QueueSettings = None,
         **kwargs: Any,
     ) -> None:
         self._task = task
         self._model = model
+        self._resources = resources
+        self._queue_settings = queue_settings
         self._model_provider = model_provider
         self._training_data = training_data
         self._validation_data = validation_data
@@ -79,13 +85,69 @@ class FineTuningVertical(FineTuningJob):
         """Set the model to be fine-tuned.
 
         :param value: Input object representing the mlflow model to be fine-tuned.
-        :type value: typing.Union[typing.Dict, TabularLimitSettings]
+        :type value: Input
         :raises ValidationException: Expected a mlflow model input.
         """
-        if isinstance(value, Input) and cast(Input, value).type == "mlflow_model":
+        if isinstance(value, Input) and (
+            cast(Input, value).type == "mlflow_model" or cast(Input, value).type == "custom_model"
+        ):
             self._model = value
         else:
-            msg = "Expected a mlflow model input."
+            msg = "Expected a mlflow model input or custom model input."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.FINETUNING,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+    @property
+    def resources(self) -> Optional[JobResources]:
+        """Job resources to use during job execution.
+        :return: Job Resources object.
+        :rtype: JobResources
+        """
+        return self._resources
+
+    @resources.setter
+    def resources(self, value: JobResources) -> None:
+        """Set JobResources.
+
+        :param value: JobResources object.
+        :type value: JobResources
+        :raises ValidationException: Expected a JobResources object.
+        """
+        if isinstance(value, JobResources):
+            self._resources = value
+        else:
+            msg = "Expected an instance of JobResources."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.FINETUNING,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+    @property
+    def queue_settings(self) -> Optional[QueueSettings]:
+        """Queue settings for job execution.
+        :return: QueueSettings object.
+        :rtype: QueueSettings
+        """
+        return self._queue_settings
+
+    @queue_settings.setter
+    def queue_settings(self, value: QueueSettings) -> None:
+        """Set queue settings for job execution.
+
+        :param value: QueueSettings object.
+        :type value: QueueSettings
+        :raises ValidationException: Expected a QueueSettings object.
+        """
+        if isinstance(value, QueueSettings):
+            self._queue_settings = value
+        else:
+            msg = "Expected an instance of QueueSettings."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
@@ -170,7 +232,9 @@ class FineTuningVertical(FineTuningJob):
                 type=AssetTypes.URI_FILE, path=self.validation_data.uri  # pylint: disable=no-member
             )
         if isinstance(self.model, MLFlowModelJobInput):
-            self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)  # pylint: disable=no-member
+            self.model = Input(
+                type=AssetTypes.MLFLOW_MODEL, path=self.model.uri
+            )  # pylint: disable=no-member
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.
@@ -191,6 +255,8 @@ class FineTuningVertical(FineTuningJob):
             super().__eq__(other)
             and self.task == other.task
             and self.model == other.model
+            and self.resources == other.resources
+            and self.queue_settings == other.queue_settings
             and self.model_provider == other.model_provider
             and self.training_data == other.training_data
             and self.validation_data == other.validation_data

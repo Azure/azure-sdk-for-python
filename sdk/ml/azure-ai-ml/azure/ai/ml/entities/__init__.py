@@ -182,9 +182,11 @@ from ._indexes import (
 from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
+from ._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
+from ._job.job_resources import JobResources
 from ._job.job_resource_configuration import JobResourceConfiguration
 from ._job.job_service import (
     JobService,
@@ -320,6 +322,7 @@ __all__ = [
     "ComputeConfiguration",
     "CreatedByType",
     "ResourceConfiguration",
+    "JobResources",
     "JobResourceConfiguration",
     "QueueSettings",
     "JobService",
