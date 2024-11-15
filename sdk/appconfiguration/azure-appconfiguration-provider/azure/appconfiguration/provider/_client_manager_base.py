@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import json
 import time
 import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Mapping, Any
+from typing import Dict, List, Mapping, Any
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
@@ -26,7 +25,6 @@ from ._constants import (
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
     FEATURE_FLAG_ID_KEY,
-    ALLOCATION_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
@@ -38,90 +36,6 @@ JSON = Mapping[str, Any]
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str
-
-    @staticmethod
-    def _generate_allocation_id(feature_flag_value: Dict[str, JSON]) -> Optional[str]:
-        """
-        Generates an allocation ID for the specified feature.
-        seed=123abc\ndefault_when_enabled=Control\npercentiles=0,Control,20;20,Test,100\nvariants=Control,standard;Test,special # pylint:disable=line-too-long
-
-        :param  Dict[str, JSON] feature_flag_value: The feature to generate an allocation ID for.
-        :rtype: str
-        :return: The allocation ID.
-        """
-
-        allocation_id = ""
-        allocated_variants = []
-
-        allocation: Optional[JSON] = feature_flag_value.get("allocation")
-
-        if not allocation:
-            return None
-
-        # Seed
-        allocation_id = f"seed={allocation.get('seed', '')}"
-
-        # DefaultWhenEnabled
-        if "default_when_enabled" in allocation:
-            allocated_variants.append(allocation.get("default_when_enabled"))
-
-        allocation_id += f"\ndefault_when_enabled={allocation.get('default_when_enabled', '')}"
-
-        # Percentile
-        allocation_id += "\npercentiles="
-
-        percentile = allocation.get("percentile")
-
-        if percentile:
-            percentile_allocations = sorted(
-                (x for x in percentile if x.get("from") != x.get("to")),
-                key=lambda x: x.get("from"),
-            )
-
-            for percentile_allocation in percentile_allocations:
-                if "variant" in percentile_allocation:
-                    allocated_variants.append(percentile_allocation.get("variant"))
-
-            allocation_id += ";".join(
-                f"{pa.get('from')}," f"{base64.b64encode(pa.get('variant').encode()).decode()}," f"{pa.get('to')}"
-                for pa in percentile_allocations
-            )
-
-        if not allocated_variants and (not allocation or not allocation.get("seed")):
-            return None
-
-        # Variants
-        allocation_id += "\nvariants="
-
-        variants_value = feature_flag_value.get("variants")
-        if variants_value and (isinstance(variants_value, list) or all(isinstance(v, dict) for v in variants_value)):
-            if (
-                allocated_variants
-                and isinstance(variants_value, list)
-                and all(isinstance(v, dict) for v in variants_value)
-            ):
-                sorted_variants: List[Dict[str, Any]] = sorted(
-                    (v for v in variants_value if v.get("name") in allocated_variants),
-                    key=lambda v: v.get("name"),
-                )
-
-                for v in sorted_variants:
-                    allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
-                    if "configuration_value" in v:
-                        allocation_id += (
-                            f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)}"
-                        )
-                    allocation_id += ";"
-                if sorted_variants:
-                    allocation_id = allocation_id[:-1]
-
-        # Create a sha256 hash of the allocation_id
-        hash_object = hashlib.sha256(allocation_id.encode())
-        hash_digest = hash_object.digest()
-
-        # Encode the first 15 bytes in base64 url
-        allocation_id_hash = base64.urlsafe_b64encode(hash_digest[:15]).decode()
-        return allocation_id_hash
 
     @staticmethod
     def _calculate_feature_id(key, label):
@@ -150,9 +64,6 @@ class _ConfigurationClientWrapperBase:
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
                     feature_flag.key, feature_flag.label
                 )
-                allocation_id = self._generate_allocation_id(feature_flag_value)
-                if allocation_id:
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
