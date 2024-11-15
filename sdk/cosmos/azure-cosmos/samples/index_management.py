@@ -799,15 +799,15 @@ def use_full_text_policy(db):
                                            "vector": [1, 2, 3]})
 
         # Run full text search queries using full text score ranking
-        query = "SELECT TOP 10 c.text1 FROM c ORDER BY RANK FullTextScore(c.text1, ['artist']))"
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK FullTextScore(c.text1, ['artist']))"
         query_documents_with_custom_query(created_container, query)
 
         # Run full text search queries using RRF ranking
-        query = "SELECT TOP 10 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])))"
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])))"
         query_documents_with_custom_query(created_container, query)
 
         # Run hybrid search queries using RRF ranking wth vector distances
-        query = "SELECT TOP 10 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])," \
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])," \
                 " VectorDistance(c.vector, [1, 2, 3]))"
         query_documents_with_custom_query(created_container, query)
 
