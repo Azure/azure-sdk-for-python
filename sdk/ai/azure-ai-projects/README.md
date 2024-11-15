@@ -75,6 +75,42 @@ project_client = AIProjectClient.from_connection_string(
 
 ## Examples
 
+- [Enumerate connections](#enumerate-connections)
+  - [Get properties of all connections](#get-properties-of-all-connections)
+  - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
+  - [Get properties of a default connection](#get-properties-of-a-default-connection)
+  - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
+- [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
+- [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
+- [Agents (Private Preview)](#agents-private-preview)
+  - [Create an Agent](#create-agent) with:
+    - [File Search](#create-agent-with-file-search)
+    - [Code interpreter](#create-agent-with-code-interpreter)
+    - [Bing grounding](#create-agent-with-bing-grounding)
+    - [Azure AI Search](#create-agent-with-azure-ai-search)
+    - [Function call](#create-agent-with-function-call)
+  - [Create thread](#create-thread) with
+    - [Tool resource](#create-thread-with-tool-resource)
+  - [Create message](#create-message) with:
+    - [File search attachment](#create-message-with-file-search-attachment)
+    - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
+  - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
+  - [Retrieve message](#retrieve-message)
+  - [Retrieve file](#retrieve-file)
+  - [Tear down by deleting resource](#teardown)
+  - [Tracing](#tracing)
+- [Evaluation](#evaluation)
+  - [Evaluator](#evaluator)
+  - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
+    - [Evaluators](#evaluators)
+    - [Data to be evaluated](#data-to-be-evaluated)
+      - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
+      - [Example Remote Evaluation](#example-remote-evaluation)
+- [Tracing](#tracing)
+  - [Installation](#installation)
+  - [Tracing example](#tracing-example)
+
+
 ### Enumerate connections
 
 Your Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
@@ -192,23 +228,6 @@ See the "inference" folder in the [package samples][samples] for additional samp
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents. See the "agents" folder in the [package samples][samples] for additional Agent samples.
 
 Agents are actively being developed. A sign-up form for private preview is coming soon.
-
-  - <a href='#create-agent'>Create an Agent</a> with:
-    - <a href='#create-agent-with-file-search'>File Search</a>
-    - <a href='#create-agent-with-code-interpreter'>Code interpreter</a>
-    - <a href='#create-agent-with-bing-grounding'>Bing grounding</a>
-    - <a href='#create-agent-with-azure-ai-search'>Azure AI Search</a>
-    - <a href='#create-agent-with-function-call'>Function call</a>
-  - <a href='#create-thread'>Create thread</a> with
-     - <a href='#create-thread-with-tool-resource'>Tool resource</a>
-  - <a href='#create-message'>Create message</a> with:
-    - <a href='#create-message-with-file-search-attachment'>File search attachment</a>
-    - <a href='#create-message-with-code-interpreter-attachment'>Code interpreter attachment</a>
-  - <a href='#create-run-run_and_process-or-stream'>Execute Run, Run_and_Process, or Stream</a>
-  - <a href='#retrieve-message'>Retrieve message</a>
-  - <a href='#retrieve-file'>Retrieve file</a>
-  - <a href='#teardown'>Tear down by deleting resource</a>
-  - <a href='#tracing'>Tracing</a>
 
 #### Create Agent
 
@@ -734,9 +753,9 @@ Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK
 
 More details on built-in and custom evaluators can be found [here][evaluators].
 
-#### Run Evaluation in cloud:
+#### Run Evaluation in the cloud
 
-To run evaluation in cloud the following are needed:
+To run evaluation in the cloud the following are needed:
 
 - Evaluators
 - Data to be evaluated
@@ -744,9 +763,9 @@ To run evaluation in cloud the following are needed:
 
 ##### Evaluators
 
-For running evaluator in cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
+For running evaluator in the cloud, evaluator `ID` is needed. To get it via code you use [azure-ai-evaluation][azure_ai_evaluation]
 
-```
+```python
 # pip install azure-ai-evaluation
 
 from azure.ai.evaluation import RelevanceEvaluator
@@ -835,11 +854,11 @@ print("----------------------------------------------------------------")
 
 NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
 
-#### Tracing
+### Tracing
 
 You can add an Application Insights Azure resource to your Azure AI Studio project. See the Tracing tab in your studio. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
 
-##### Installation
+#### Installation
 
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
@@ -856,7 +875,7 @@ To connect to Aspire Dashboard or another OpenTelemetry compatible backend, inst
 pip install opentelemetry-exporter-otlp
 ```
 
-##### Tracing example
+#### Tracing example
 
 Here is a code sample to be included above `create_agent`:
 
