@@ -41,6 +41,7 @@ class WorkspaceSchema(PathAwareSchema):
     primary_user_assigned_identity = fields.Str()
     workspace_hub = fields.Str(validate=validate_arm_str)
     managed_network = NestedField(ManagedNetworkSchema, unknown=EXCLUDE)
+    provision_network_now = fields.Bool()
     enable_data_isolation = fields.Bool()
     allow_roleassignment_on_rg = fields.Bool()
     serverless_compute = NestedField(ServerlessComputeSettingsSchema)

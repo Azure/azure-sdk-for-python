@@ -25,6 +25,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_daily_historical_records():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.weather.aio import MapsWeatherClient
@@ -35,7 +36,7 @@ async def get_daily_historical_records():
             result = await maps_weather_client.get_daily_historical_records(
                 coordinates=[40.760139, -73.961968],
                 start_date=datetime.date(2024, 1, 1),
-                end_date=datetime.date(2024, 1, 31)
+                end_date=datetime.date(2024, 1, 31),
             )
             print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
@@ -43,6 +44,6 @@ async def get_daily_historical_records():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
-    asyncio.run(get_daily_historical_records())
 
+if __name__ == "__main__":
+    asyncio.run(get_daily_historical_records())

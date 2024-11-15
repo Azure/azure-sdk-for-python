@@ -22,9 +22,7 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 logger_provider = LoggerProvider()
 set_logger_provider(logger_provider)
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-)
+exporter = AzureMonitorLogExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter, schedule_delay_millis=60000))
 
 # Attach LoggingHandler to namespaced logger

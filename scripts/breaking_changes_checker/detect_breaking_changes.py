@@ -189,7 +189,7 @@ def get_properties(cls: Type) -> Dict:
     analyzer = ClassTreeAnalyzer(cls.__name__)
     analyzer.visit(module)
     cls_node = analyzer.cls_node
-    extract_base_classes = check_base_classes(cls_node)
+    extract_base_classes = True if hasattr(cls_node, "bases") else False
 
     if extract_base_classes:
         base_classes = inspect.getmro(cls)  # includes cls itself
@@ -260,6 +260,8 @@ def get_parameter_type(annotation) -> str:
     if isinstance(annotation, ast.Attribute):
         return annotation.attr
     if isinstance(annotation, ast.Constant):
+        if annotation.value is None:
+            return "None"
         return annotation.value
     if isinstance(annotation, ast.Subscript):
         if isinstance(annotation.slice, tuple):
@@ -396,6 +398,7 @@ def create_class_report(cls: Type) -> Dict:
             m = getattr(cls, method)
         except AttributeError:
             _LOGGER.info(f"Skipping method check for {method} on {cls}.")
+            continue
     
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):

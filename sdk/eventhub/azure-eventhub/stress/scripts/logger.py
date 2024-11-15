@@ -11,11 +11,12 @@ from logging.handlers import TimedRotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-
 def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
-    formatter = log_format or logging.Formatter('%(asctime)s - [%(thread)d.%(threadName)s] - %(name)s - %(levelname)s - %(message)s')
+    formatter = log_format or logging.Formatter(
+        "%(asctime)s - [%(thread)d.%(threadName)s] - %(name)s - %(levelname)s - %(message)s"
+    )
 
     if print_console:
         console_handler = logging.StreamHandler(stream=sys.stdout)
@@ -28,7 +29,7 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             time = 30
         else:
             time = 60
-        file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+        file_handler = TimedRotatingFileHandler(log_filename, when="M", interval=time, utc=True)
         if not logger.handlers:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
@@ -50,14 +51,16 @@ def get_logger(
     uamqp_logger = logging.getLogger("uamqp")
     uamqp_logger.setLevel(level)
 
-    formatter = log_format or logging.Formatter('%(asctime)s - [%(thread)d.%(threadName)s] - %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s')
+    formatter = log_format or logging.Formatter(
+        "%(asctime)s - [%(thread)d.%(threadName)s] - %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s"
+    )
 
     # rotated hourly if small file, o/w rotated bi-hourly
     if level == logging.DEBUG or level == logging.INFO:
         time = 30
     else:
         time = 60
-    file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+    file_handler = TimedRotatingFileHandler(log_filename, when="M", interval=time, utc=True)
     file_handler.setFormatter(formatter)
     eventhub_logger.addHandler(file_handler)
     uamqp_logger.addHandler(file_handler)
