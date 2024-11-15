@@ -55,6 +55,7 @@ from ._models import (
     MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
+    MicrosoftFabricToolDefinition,
     OpenAIPageableListOfThreadMessage,
     RequiredFunctionToolCall,
     RunStep,
@@ -579,6 +580,20 @@ class BingGroundingTool(ConnectionTool):
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
+
+class FabricTool(ConnectionTool):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
 
 class SharepointTool(ConnectionTool):
     """
@@ -1425,6 +1440,7 @@ __all__: List[str] = [
     "FunctionTool",
     "BingGroundingTool",
     "SharepointTool",
+    "FabricTool",
     "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
