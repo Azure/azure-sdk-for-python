@@ -10,10 +10,10 @@ import threading
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
-from ._utils import is_retryable_status_code, get_authentication_policy
+from ._utils import is_retryable_status_code, DEFAULT_AUDIENCE
 from .indexes import SearchIndexClient as SearchServiceClient
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
-from ._generated import SearchIndexClient
+from ._generated import SearchClient as SearchIndexClient
 from ._generated.models import IndexingResult, IndexBatch, IndexAction
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -62,26 +62,20 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         )
         self._index_documents_batch = IndexDocumentsBatch()
         audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
         self._reset_timer()
 
     def _cleanup(self, flush: bool = True) -> None:
@@ -166,11 +160,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             for result in results:
                 try:
                     assert self._index_key is not None  # Hint for mypy
-                    action = next(
-                        x
-                        for x in actions
-                        if x.additional_properties and x.additional_properties.get(self._index_key) == result.key
-                    )
+                    action = next(x for x in actions if x and str(x.get(self._index_key)) == result.key)
                     if result.succeeded:
                         self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -282,7 +272,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = self._client.documents_operations.index(
+                index_name=self._index_name, batch=batch, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
@@ -327,7 +319,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             self._callback_fail(action)
             return
-        key = cast(str, action.additional_properties.get(self._index_key) if action.additional_properties else "")
+        key = cast(str, action.get(self._index_key) if action else "")
         counter = self._retry_counter.get(key)
         if not counter:
             # first time that fails

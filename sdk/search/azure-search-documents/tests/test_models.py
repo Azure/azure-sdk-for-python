@@ -14,7 +14,7 @@ from azure.search.documents.indexes.models import (
 
 
 def test_encryption_key_serialization():
-    from azure.search.documents.indexes._generated.models import (
+    from azure.search.documents._generated.models import (
         SearchResourceEncryptionKey as SearchResourceEncryptionKeyGen,
     )
 

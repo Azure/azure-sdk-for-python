@@ -15,14 +15,14 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 class TestSearchClientAsync:
     @await_prepared_test
     @mock.patch(
-        "azure.search.documents._generated.aio.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search.documents._generated.aio.operations._operations.DocumentsOperationsOperations.search_post"
     )
     async def test_get_count_reset_continuation_token(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = await client.search(search_text="search text")
         assert result._page_iterator_class is AsyncSearchPageIterator
         search_result = SearchDocumentsResult()
-        search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        search_result.results = [SearchResult({"key": "val"})]
         mock_search_post.return_value = search_result
         await result.__anext__()
         result._first_page_iterator_instance.continuation_token = "fake token"

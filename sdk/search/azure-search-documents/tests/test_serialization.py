@@ -47,12 +47,12 @@ def test_serialize_search_index():
     )
     search_index_serialized = index.serialize()
     search_index = SearchIndex.deserialize(search_index_serialized)
-    assert search_index
+    assert search_index is not None
 
 
 def test_serialize_search_indexer_skillset():
-    COGNITIVE_KEY = ...
-    COGNITIVE_DESCRIPTION = ...
+    COGNITIVE_KEY = "KEY"
+    COGNITIVE_DESCRIPTION = "DESCRIPTION"
 
     cognitive_services_account = CognitiveServicesAccountKey(key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION)
 
@@ -76,7 +76,7 @@ def test_serialize_search_indexer_skillset():
 
     serialized_skillset = skillset.serialize()
     skillset = SearchIndexerSkillset.deserialize(serialized_skillset)
-    assert skillset
+    assert skillset is not None
 
 
 def test_serialize_search_index_dict():
@@ -105,4 +105,4 @@ def test_serialize_search_index_dict():
     )
     search_index_serialized_dict = index.as_dict()
     search_index = SearchIndex.from_dict(search_index_serialized_dict)
-    assert search_index
+    assert search_index is not None
