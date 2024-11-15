@@ -223,7 +223,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
+     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -232,7 +232,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -2410,28 +2410,28 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
 
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
-    :ivar microsoft_fabric: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ToolConnectionList
+    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: "_models.ToolConnectionList" = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    fabric_aiskill: "_models.ToolConnectionList" = rest_field()
     """The list of connections used by the Microsoft Fabric tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        microsoft_fabric: "_models.ToolConnectionList",
+        fabric_aiskill: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -2442,7 +2442,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fab
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -2963,7 +2963,7 @@ class RequiredAction(_model_base.Model):
 
 
 class RequiredToolCall(_model_base.Model):
-    """An abstract representation a a tool invocation needed by the model to continue a run.
+    """An abstract representation of a tool invocation needed by the model to continue a run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
@@ -4498,7 +4498,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -4507,17 +4507,17 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: Dict[str, str] = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(name="fabric_aiskill")
     """Reserved for future use. Required."""
 
     @overload
@@ -4536,7 +4536,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -5198,7 +5198,7 @@ class ToolConnection(_model_base.Model):
 
 class ToolConnectionList(_model_base.Model):
     """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
+    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection

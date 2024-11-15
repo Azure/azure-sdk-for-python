@@ -36,7 +36,7 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# Initialize Sharepoint tool with connection id 
+# Initialize Sharepoint tool with connection id
 sharepoint = SharepointTool(connection_id="my_connection_id")
 
 # Create agent with Sharepoint tool and process assistant run
