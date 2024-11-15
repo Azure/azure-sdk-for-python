@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import json
 import time
 import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Mapping, Any
+from typing import Dict, List, Mapping, Any
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
