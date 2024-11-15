@@ -117,8 +117,12 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         custom_endpoint = None
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
-            custom_port = custom_parsed_url.port or WEBSOCKET_PORT
-            custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
+            if transport_type.value == TransportType.Amqp.value:
+                custom_port = custom_parsed_url.port or SECURE_PORT
+                custom_endpoint = f"{custom_parsed_url.hostname}"
+            else:
+                custom_port = custom_parsed_url.port or WEBSOCKET_PORT
+                custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
         self._container_id: str = container_id or str(uuid.uuid4())
         self._network_trace = network_trace
         self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": "", "amqpLink": ""}
@@ -145,6 +149,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 credential=kwargs["sasl_credential"],
                 port=self._port,
                 custom_endpoint=custom_endpoint,
+                custom_port=custom_port,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs,
