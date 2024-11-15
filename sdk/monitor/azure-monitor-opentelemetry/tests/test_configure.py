@@ -375,7 +375,6 @@ class TestConfigure(unittest.TestCase):
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock)
 
-
     @patch(
         "azure.monitor.opentelemetry._configure.getLogger",
     )
@@ -428,7 +427,6 @@ class TestConfigure(unittest.TestCase):
         # logging_handler_mock.assert_not_called()
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_not_called()
-
 
     @patch(
         "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
