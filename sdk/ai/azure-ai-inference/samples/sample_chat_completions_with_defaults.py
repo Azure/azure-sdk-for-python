@@ -43,10 +43,7 @@ def sample_chat_completions_with_defaults():
 
     # Create a client with default chat completions settings
     client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        temperature=0.5,
-        max_tokens=1000
+        endpoint=endpoint, credential=AzureKeyCredential(key), temperature=0.5, max_tokens=1000
     )
 
     # Call the service with the defaults specified above

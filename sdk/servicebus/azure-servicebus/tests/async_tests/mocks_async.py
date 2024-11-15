@@ -3,6 +3,7 @@ from datetime import timedelta
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus import ServiceBusReceivedMessage
 
+
 class MockReceiver:
     def __init__(self):
         self._running = True

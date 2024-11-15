@@ -7,7 +7,7 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
-from ...credentials import AccessToken
+from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result
 from ._base_async import AsyncHTTPPolicy
@@ -38,7 +38,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         self._credential = credential
         self._lock_instance = None
         self._scopes = scopes
-        self._token: Optional["AccessToken"] = None
+        self._token: Optional[AccessTokenInfo] = None
 
     @property
     def _lock(self):
@@ -55,12 +55,12 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
-        if self._token is None or self._need_new_token():
+        if self._token is None or self._need_new_token:
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
-                if self._token is None or self._need_new_token():
-                    self._token = await await_result(self._credential.get_token, *self._scopes)
-        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
+                if self._token is None or self._need_new_token:
+                    self._token = await await_result(self._credential.get_token_info, *self._scopes)
+        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessTokenInfo, self._token).token
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -71,9 +71,15 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        options: TokenRequestOptions = {}
+        # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
+        for key in list(kwargs.keys()):
+            if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                options[key] = kwargs.pop(key)  # type: ignore[literal-required]
+
         async with self._lock:
-            self._token = await await_result(self._credential.get_token, *scopes, **kwargs)
-        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
+            self._token = await await_result(self._credential.get_token_info, *scopes, options=options)
+        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessTokenInfo, self._token).token
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
@@ -149,5 +155,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         # pylint: disable=unused-argument
         return
 
+    @property
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        return (
+            not self._token
+            or (self._token.refresh_on is not None and self._token.refresh_on <= now)
+            or (self._token.expires_on - now < 300)
+        )

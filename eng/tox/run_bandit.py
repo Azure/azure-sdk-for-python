@@ -37,10 +37,8 @@ if __name__ == "__main__":
 
     if in_ci():
         if not is_check_enabled(args.target_package, "bandit"):
-            logging.info(
-                f"Package {package_name} opts-out of bandit check."
-            )
-            exit(0)
+            logging.error("Bandit is disabled.")
+            exit(1)
 
     try:
         check_call(

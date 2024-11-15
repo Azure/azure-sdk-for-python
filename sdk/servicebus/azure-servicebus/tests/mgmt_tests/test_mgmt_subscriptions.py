@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import logging
 import pytest
 import datetime
@@ -12,12 +12,8 @@ from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
-from tests.sb_env_loader import (
-    ServiceBusPreparer
-)
-from tests.servicebus_preparer import (
-    SERVICEBUS_ENDPOINT_SUFFIX
-)
+from tests.sb_env_loader import ServiceBusPreparer
+from tests.servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
 
 from mgmt_test_utilities import clear_topics
 
@@ -30,8 +26,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_create_by_name(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
@@ -42,8 +37,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.create_subscription(topic_name, subscription_name)
             subscription = mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name
-            assert subscription.availability_status == 'Available'
-            assert subscription.status == 'Active'
+            assert subscription.availability_status == "Available"
+            assert subscription.status == "Active"
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
@@ -53,8 +48,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_sub_create_w_sub_desc(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -71,7 +65,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
                 enable_batched_operations=True,
                 lock_duration=datetime.timedelta(seconds=13),
                 max_delivery_count=14,
-                requires_session=True
+                requires_session=True,
             )
             subscription = mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name
@@ -92,7 +86,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
                 enable_batched_operations=True,
                 lock_duration="PT13S",
                 max_delivery_count=14,
-                requires_session=True
+                requires_session=True,
             )
             subscription_2 = mgmt_service.get_subscription(topic_name, subscription_name_2)
             assert subscription_2.name == subscription_name_2
@@ -113,8 +107,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_sub_create_w_fwd_to(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "iweidkforward"
@@ -140,18 +133,16 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.delete_queue(queue_name)
 
-
     @ServiceBusPreparer()
     @recorded_by_proxy
     def test_mgmt_subscription_create_duplicate(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
-        subscription_name = 'kkaqo'
+        subscription_name = "kkaqo"
         try:
             mgmt_service.create_topic(topic_name)
             mgmt_service.create_subscription(topic_name, subscription_name)
@@ -166,8 +157,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_update_success(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "fjrui"
@@ -207,12 +197,14 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             subscription_description.forward_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description.forward_dead_lettered_messages_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_dead_lettered_messages_to = "sb://{}/{}".format(
+                servicebus_fully_qualified_namespace, topic_name
+            )
             mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            #assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
-            #assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            # assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            # assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
 
             # Update forward_to with entity name
             subscription_description.forward_to = queue_name
@@ -220,8 +212,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            #assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
-            #assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            # assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            # assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
 
             # Update forward_to with None
             subscription_description.forward_to = None
@@ -245,13 +237,13 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.update_subscription(
                 topic_description.name,
                 subscription_description,
-                auto_delete_on_idle = datetime.timedelta(minutes=15),
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
                 dead_lettering_on_message_expiration=False,
                 default_message_time_to_live=datetime.timedelta(minutes=16),
                 lock_duration=datetime.timedelta(seconds=17),
                 max_delivery_count=15,
                 forward_to=None,
-                forward_dead_lettered_messages_to=None
+                forward_dead_lettered_messages_to=None,
             )
 
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
@@ -274,8 +266,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_update_invalid(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
@@ -299,7 +290,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             subscription_description.name = subscription_name
 
             # change the name to a topic with an invalid name exist; should fail.
-            subscription_description.name = ''
+            subscription_description.name = ""
             with pytest.raises(HttpResponseError):
                 mgmt_service.update_subscription(topic_name, subscription_description)
             subscription_description.name = topic_name
@@ -318,13 +309,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_delete(self, servicebus_fully_qualified_namespace):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
-        topic_name = 'test_topicgda'
-        subscription_name_1 = 'test_sub1da'
-        subscription_name_2 = 'test_sub2gcv'
+        topic_name = "test_topicgda"
+        subscription_name_1 = "test_sub1da"
+        subscription_name_2 = "test_sub2gcv"
         mgmt_service.create_topic(topic_name)
 
         mgmt_service.create_subscription(topic_name, subscription_name_1)
@@ -352,13 +342,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_list(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
-        topic_name = 'lkoqxc'
-        subscription_name_1 = 'testsub1'
-        subscription_name_2 = 'testsub2'
+        topic_name = "lkoqxc"
+        subscription_name_1 = "testsub1"
+        subscription_name_2 = "testsub2"
 
         mgmt_service.create_topic(topic_name)
         subscriptions = list(mgmt_service.list_subscriptions(topic_name))
@@ -380,12 +369,11 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_sub_list_runtime_props(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
-        topic_name = 'dkoamv'
-        subscription_name = 'cxqplc'
+        topic_name = "dkoamv"
+        subscription_name = "cxqplc"
         mgmt_service.create_topic(topic_name)
 
         subs = list(mgmt_service.list_subscriptions(topic_name))
@@ -423,12 +411,11 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_sub_get_runtime_props_basic(self, servicebus_fully_qualified_namespace):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
-        topic_name = 'dcvxqa'
-        subscription_name = 'xvazzag'
+        topic_name = "dcvxqa"
+        subscription_name = "xvazzag"
 
         mgmt_service.create_topic(topic_name)
         mgmt_service.create_subscription(topic_name, subscription_name)
@@ -455,11 +442,10 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
     def test_mgmt_sub_update_dict_success(self, **kwargs):
-        servicebus_fully_qualified_namespace = kwargs.pop('servicebus_fully_qualified_namespace')
+        servicebus_fully_qualified_namespace = kwargs.pop("servicebus_fully_qualified_namespace")
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "fjruid"
@@ -499,13 +485,19 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             subscription_description_dict = dict(subscription_description)
-            subscription_description_dict["forward_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_to"] = "sb://{}/{}".format(
+                servicebus_fully_qualified_namespace, topic_name
+            )
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}/{}".format(
+                servicebus_fully_qualified_namespace, topic_name
+            )
             mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
-            assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(
+                f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}"
+            )
 
             # updating all settings with keyword arguments.
             mgmt_service.update_subscription(
@@ -517,7 +509,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
                 lock_duration=datetime.timedelta(seconds=17),
                 max_delivery_count=15,
                 forward_to=None,
-                forward_dead_lettered_messages_to=None
+                forward_dead_lettered_messages_to=None,
             )
 
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
@@ -540,8 +532,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     def test_mgmt_subscription_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace,
-            credential=credential
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
         )
         clear_topics(mgmt_service)
         topic_name = "dfjdfj"

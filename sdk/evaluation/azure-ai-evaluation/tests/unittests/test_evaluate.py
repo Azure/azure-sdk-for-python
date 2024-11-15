@@ -2,6 +2,7 @@ import json
 import math
 import os
 import pathlib
+import numpy as np
 from unittest.mock import patch
 
 import pandas as pd
@@ -9,6 +10,13 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from azure.ai.evaluation import (
+    ContentSafetyEvaluator,
+    F1ScoreEvaluator,
+    GroundednessEvaluator,
+    ProtectedMaterialEvaluator,
+    evaluate,
+)
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -16,15 +24,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _rename_columns_conditionally,
 )
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
-from azure.ai.evaluation import (
-    evaluate,
-    ContentSafetyEvaluator,
-    F1ScoreEvaluator,
-    GroundednessEvaluator,
-    ProtectedMaterialEvaluator,
-)
-from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def _get_file(name):
@@ -396,14 +397,18 @@ class TestEvaluate:
 
         assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_pf_client):
-        output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+    @pytest.mark.parametrize("use_relative_path", [True, False])
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+        # output_path is a file
+        if use_relative_path:
+            output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
+        else:
+            output_path = "eval_test_results.jsonl"
+
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
             output_path=output_path,
-            _use_pf_client=use_pf_client,
         )
 
         assert result is not None
@@ -415,6 +420,9 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+        os.remove(output_path)
+
+        # output_path is a directory
         result = evaluate(
             data=evaluate_test_data_jsonl_file,
             evaluators={"g": F1ScoreEvaluator()},
@@ -476,10 +484,10 @@ class TestEvaluate:
     def test_content_safety_aggregation(self):
         data = {
             # 10 zeroes in a list fully written out
-            "content_safety.violence_score": [0, 0, 1, 2, 5, 5, 6, 7, 9, 6],
-            "content_safety.sexual_score": [0, 0, 2, 3, 3, 3, 8, 8, 8, 8],
-            "content_safety.self_harm_score": [0, 0, 0, 0, 1, 1, 1, 1, 7, 7],
-            "content_safety.hate_unfairness_score": [0, 0, 1, 1, 2, 2, 3, 3, 3, 6],
+            "content_safety.violence_score": [0, 0, 1, 2, 5, 5, 6, 7, np.nan, None],
+            "content_safety.sexual_score": [0, 0, 2, 3, 3, 3, 8, 8, np.nan, None],
+            "content_safety.self_harm_score": [0, 0, 0, 0, 1, 1, 1, 1, np.nan, None],
+            "content_safety.hate_unfairness_score": [0, 0, 1, 1, 2, 2, 3, 5, 6, 7],
             "content_safety.violence": [
                 "low",
                 "low",
@@ -507,18 +515,21 @@ class TestEvaluate:
         aggregation = _aggregate_metrics(data_df, evaluators)
 
         assert len(aggregation) == 4
-        assert aggregation["content_safety.violence_defect_rate"] == 0.6
-        assert aggregation["content_safety.sexual_defect_rate"] == 0.4
-        assert aggregation["content_safety.self_harm_defect_rate"] == 0.2
-        assert aggregation["content_safety.hate_unfairness_defect_rate"] == 0.1
+        assert aggregation["content_safety.violence_defect_rate"] == 0.5
+        assert aggregation["content_safety.sexual_defect_rate"] == 0.25
+        assert aggregation["content_safety.self_harm_defect_rate"] == 0.0
+        assert aggregation["content_safety.hate_unfairness_defect_rate"] == 0.3
+
+        no_results = _aggregate_metrics(pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), evaluators)
+        assert len(no_results) == 0
 
     def test_label_based_aggregation(self):
         data = {
-            "eci.eci_label": [True, False, True, False, True],
+            "eci.eci_label": [True, True, True, np.nan, None],
             "eci.eci_reasoning": ["a", "b", "c", "d", "e"],
             "protected_material.protected_material_label": [False, False, False, False, True],
             "protected_material.protected_material_reasoning": ["f", "g", "h", "i", "j"],
-            "unknown.unaccounted_label": [True, False, False, False, True],
+            "unknown.unaccounted_label": [False, False, False, True, True],
             "unknown.unaccounted_reasoning": ["k", "l", "m", "n", "o"],
         }
         data_df = pd.DataFrame(data)
@@ -533,18 +544,37 @@ class TestEvaluate:
         assert "protected_material.protected_material_label" not in aggregation
         assert aggregation["unknown.unaccounted_label"] == 0.4
 
-        assert aggregation["eci.eci_defect_rate"] == 0.6
+        assert aggregation["eci.eci_defect_rate"] == 1.0
         assert aggregation["protected_material.protected_material_defect_rate"] == 0.2
         assert "unaccounted_defect_rate" not in aggregation
 
+        no_results = _aggregate_metrics(pd.DataFrame({"eci.eci_label": [np.nan, None]}), evaluators)
+        assert len(no_results) == 0
+
+    def test_other_aggregation(self):
+        data = {
+            "thing.groundedness_pro_label": [True, False, True, False, np.nan, None],
+        }
+        data_df = pd.DataFrame(data)
+        evaluators = {}
+        aggregation = _aggregate_metrics(data_df, evaluators)
+
+        assert len(aggregation) == 1
+        assert aggregation["thing.groundedness_pro_passing_rate"] == 0.5
+
+        no_results = _aggregate_metrics(pd.DataFrame({"thing.groundedness_pro_label": [np.nan, None]}), {})
+        assert len(no_results) == 0
+
     def test_general_aggregation(self):
         data = {
-            "thing.metric": [1, 2, 3, 4, 5],
-            "thing.reasoning": ["a", "b", "c", "d", "e"],
-            "other_thing.other_meteric": [-1, -2, -3, -4, -5],
-            "other_thing.other_reasoning": ["f", "g", "h", "i", "j"],
-            "final_thing.final_metric": [False, False, False, True, True],
-            "bad_thing.mixed_metric": [0, 1, False, True, True],
+            "thing.metric": [1, 2, 3, 4, 5, np.nan, None],
+            "thing.reasoning": ["a", "b", "c", "d", "e", "f", "g"],
+            "other_thing.other_meteric": [-1, -2, -3, -4, -5, np.nan, None],
+            "other_thing.other_reasoning": ["f", "g", "h", "i", "j", "i", "j"],
+            "final_thing.final_metric": [False, False, False, True, True, True, False],
+            "bad_thing.mixed_metric": [0, 1, False, True, 0.5, True, False],
+            "bad_thing.boolean_with_nan": [True, False, True, False, True, False, np.nan],
+            "bad_thing.boolean_with_none": [True, False, True, False, True, False, None],
         }
         data_df = pd.DataFrame(data)
         evaluators = {}
@@ -553,11 +583,14 @@ class TestEvaluate:
         assert len(aggregation) == 3
         assert aggregation["thing.metric"] == 3
         assert aggregation["other_thing.other_meteric"] == -3
-        assert aggregation["final_thing.final_metric"] == 0.4
+        assert aggregation["final_thing.final_metric"] == 3 / 7.0
+        assert "bad_thing.mixed_metric" not in aggregation
+        assert "bad_thing.boolean_with_nan" not in aggregation
+        assert "bad_thing.boolean_with_none" not in aggregation
 
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
-        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval, NoInputEval
+        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
         # All variants work with both keyworded inputs
         results = evaluate(
@@ -641,3 +674,13 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_missing_inputs(self, questions_file):
+        """Test we are raising exception if required input is missing in data."""
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=questions_file,
+                target=_target_fn,
+                evaluators={"f1": F1ScoreEvaluator()},
+            )
+        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]
