@@ -219,9 +219,9 @@ class AIProjectClient(
 
         To authenticate to azure we are using pipeline mechanism. If the credential is async,
         azure.identity opens new aio session, which is dedicated to renew token. When we exit
-        program, this session is not being appropriately closed, causing thw warning about it.
-        In the code below we are going through all credentials in AsyncTokenCredential and close all
-        pipelines.
+        program, this session is not being appropriately closed, causing the warning about it.
+        In the code below we are going through all credentials in AsyncTokenCredential and closing
+        all pipelines.
         """
         if hasattr(self._credential, "credentials"):
             for cred in self._credential.credentials:
