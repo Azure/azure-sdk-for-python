@@ -47,12 +47,12 @@ def get_default_logging_format() -> str:
 
 class CompliantLogger(logging.getLoggerClass()):
     """
-    Subclass of the default logging class with an explicit `is_record_compliant` parameter
+    Subclass of the default logging class with an explicit `is_compliant` parameter
     on all logging methods. It will pass an `extra` param with `format` key
-    (value depending on whether `is_record_compliant` is True or False) to the
+    (value depending on whether `is_compliant` is True or False) to the
     handlers.
 
-    The default value for data `is_record_compliant` is `False` for all methods.
+    The default value for data `is_compliant` is `False` for all methods.
 
     Implementation is inspired by:
     https://github.com/python/cpython/blob/3.8/Lib/logging/__init__.py
@@ -81,9 +81,9 @@ class CompliantLogger(logging.getLoggerClass()):
         extra=None,
         stack_info=False,
         stacklevel=1,
-        is_record_compliant=False,
+        is_compliant=False,
     ):
-        if is_record_compliant:
+        if is_compliant:
             format_value = self.format_value
         else:
             format_value = ""
