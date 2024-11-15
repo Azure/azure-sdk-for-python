@@ -11,7 +11,7 @@ import pytest
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import test_config
-import vector_test_data
+import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
@@ -48,11 +48,10 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
             full_text_policy=test_config.get_full_text_policy(path="/text"))
-        with open('hybrid_search_data.json', 'r') as file:
-            data = json.load(file)
-            for index, item in enumerate(data.get("items")):
-                item['id'] = str(index)
-                await self.test_container.create_item(item)
+        data = hybrid_search_data.get_full_text_items()
+        for index, item in enumerate(data.get("items")):
+            item['id'] = str(index)
+            await self.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
 
