@@ -3,6 +3,7 @@
 
 ### Features Added
   - Added support for IP-based access control to default and hub workspaces. 
+  - Add support for additional include in spark component.
 
 ### Bugs Fixed
 

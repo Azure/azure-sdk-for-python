@@ -331,7 +331,7 @@
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],\n    **kwargs: Any\n) -\u003e None:\n",
+                    "signature": "async def move(\n    self,\n    resource_group_name: str,\n    move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],\n    **kwargs: Any\n) -\u003e None:\n",
                     "doc": "\"\"\"Move resources between resource groups.\n\nDescription for Move resources between resource groups.\n\n:param resource_group_name: Name of the resource group to which the resource belongs. Required.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move. Is either a\n CsmMoveResourceEnvelope type or a IO[bytes] type. Required.\n:type move_resource_envelope: ~azure.mgmt.web.v2022_09_01.models.CsmMoveResourceEnvelope or\n IO[bytes]\n:return: None or the result of cls(response)\n:rtype: None\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "resource_group_name, move_resource_envelope, **kwargs"
                 }
@@ -357,7 +357,7 @@
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def validate_move(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],\n    **kwargs: Any\n) -\u003e None:\n",
+                    "signature": "async def validate_move(\n    self,\n    resource_group_name: str,\n    move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],\n    **kwargs: Any\n) -\u003e None:\n",
                     "doc": "\"\"\"Validate whether a resource can be moved.\n\nDescription for Validate whether a resource can be moved.\n\n:param resource_group_name: Name of the resource group to which the resource belongs. Required.\n:type resource_group_name: str\n:param move_resource_envelope: Object that represents the resource to move. Is either a\n CsmMoveResourceEnvelope type or a IO[bytes] type. Required.\n:type move_resource_envelope: ~azure.mgmt.web.v2022_09_01.models.CsmMoveResourceEnvelope or\n IO[bytes]\n:return: None or the result of cls(response)\n:rtype: None\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "resource_group_name, move_resource_envelope, **kwargs"
                 }
