@@ -65,8 +65,34 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_wrong_queries_async(self):
-        # TODO: need to add some of these
-        return
+        try:
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, “test”) FROM c"
+            results = self.test_container.query_items(query, enable_cross_partition_query=True)
+            [item async for item in results]
+            pytest.fail("Attempting to project RRF in a query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+            assert "One of the inputs is invalid" in e.message
+
+        try:
+            query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
+                    " ORDER BY RANK FullTextScore(c.title, ['John']) DESC"
+            results = self.test_container.query_items(query, enable_cross_partition_query=True)
+            [item async for item in results]
+            pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+            assert "One of the inputs is invalid" in e.message
+
+        try:
+            query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
+                    " ORDER BY RANK RRF(FullTextScore(c.title, ['John']), VectorDistance(c.vector, [1,2,3])) DESC"
+            results = self.test_container.query_items(query, enable_cross_partition_query=True)
+            [item async for item in results]
+            pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+            assert "One of the inputs is invalid" in e.message
 
     async def test_hybrid_search_queries_async(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
