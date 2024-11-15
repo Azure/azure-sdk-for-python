@@ -4,7 +4,8 @@
 
 ### Bugs Fixed
 
-* Fixed the warning about unclosed session, shown when using asynchronous credentials to create agent. 
+* Fix a bug causing warning about unclosed session, shown when using asynchronous credentials to create agent. 
+* Fix a bug that would cause agent function tool related function names and parameters to be included in traces even when content recording is not enabled
 
 ## 1.0.0b1 (2024-11-15)
 

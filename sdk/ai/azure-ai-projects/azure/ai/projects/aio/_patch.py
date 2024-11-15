@@ -79,7 +79,7 @@ class AIProjectClient(
             project_name=project_name,
             credential=credential,
             api_version="2020-02-02",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs0,
         )
 
@@ -111,7 +111,7 @@ class AIProjectClient(
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -142,7 +142,7 @@ class AIProjectClient(
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],
+            credential_scopes=["https://ml.azure.com/.default"],
             **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -174,7 +174,7 @@ class AIProjectClient(
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
+            credential_scopes=["https://ml.azure.com/.default"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
