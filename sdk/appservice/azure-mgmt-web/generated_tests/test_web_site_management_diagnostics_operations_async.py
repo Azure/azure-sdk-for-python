@@ -21,11 +21,11 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_hosting_environment_detector_responses(self, resource_group):
+    async def test_diagnostics_list_hosting_environment_detector_responses(self, resource_group):
         response = self.client.diagnostics.list_hosting_environment_detector_responses(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_hosting_environment_detector_response(self, resource_group):
+    async def test_diagnostics_get_hosting_environment_detector_response(self, resource_group):
         response = await self.client.diagnostics.get_hosting_environment_detector_response(
             resource_group_name=resource_group.name,
             name="str",
             detector_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -46,11 +46,11 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_detector_responses(self, resource_group):
+    async def test_diagnostics_list_site_detector_responses(self, resource_group):
         response = self.client.diagnostics.list_site_detector_responses(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -58,12 +58,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_detector_response(self, resource_group):
+    async def test_diagnostics_get_site_detector_response(self, resource_group):
         response = await self.client.diagnostics.get_site_detector_response(
             resource_group_name=resource_group.name,
             site_name="str",
             detector_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -71,11 +71,11 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_diagnostic_categories(self, resource_group):
+    async def test_diagnostics_list_site_diagnostic_categories(self, resource_group):
         response = self.client.diagnostics.list_site_diagnostic_categories(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -83,12 +83,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_diagnostic_category(self, resource_group):
+    async def test_diagnostics_get_site_diagnostic_category(self, resource_group):
         response = await self.client.diagnostics.get_site_diagnostic_category(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -96,12 +96,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_analyses(self, resource_group):
+    async def test_diagnostics_list_site_analyses(self, resource_group):
         response = self.client.diagnostics.list_site_analyses(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -109,13 +109,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_analysis(self, resource_group):
+    async def test_diagnostics_get_site_analysis(self, resource_group):
         response = await self.client.diagnostics.get_site_analysis(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -123,13 +123,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execute_site_analysis(self, resource_group):
+    async def test_diagnostics_execute_site_analysis(self, resource_group):
         response = await self.client.diagnostics.execute_site_analysis(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -137,12 +137,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_detectors(self, resource_group):
+    async def test_diagnostics_list_site_detectors(self, resource_group):
         response = self.client.diagnostics.list_site_detectors(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -150,13 +150,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_detector(self, resource_group):
+    async def test_diagnostics_get_site_detector(self, resource_group):
         response = await self.client.diagnostics.get_site_detector(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             detector_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -164,13 +164,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execute_site_detector(self, resource_group):
+    async def test_diagnostics_execute_site_detector(self, resource_group):
         response = await self.client.diagnostics.execute_site_detector(
             resource_group_name=resource_group.name,
             site_name="str",
             detector_name="str",
             diagnostic_category="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -178,12 +178,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_detector_responses_slot(self, resource_group):
+    async def test_diagnostics_list_site_detector_responses_slot(self, resource_group):
         response = self.client.diagnostics.list_site_detector_responses_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -191,13 +191,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_detector_response_slot(self, resource_group):
+    async def test_diagnostics_get_site_detector_response_slot(self, resource_group):
         response = await self.client.diagnostics.get_site_detector_response_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             detector_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -205,12 +205,12 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_diagnostic_categories_slot(self, resource_group):
+    async def test_diagnostics_list_site_diagnostic_categories_slot(self, resource_group):
         response = self.client.diagnostics.list_site_diagnostic_categories_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -218,13 +218,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_diagnostic_category_slot(self, resource_group):
+    async def test_diagnostics_get_site_diagnostic_category_slot(self, resource_group):
         response = await self.client.diagnostics.get_site_diagnostic_category_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -232,13 +232,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_analyses_slot(self, resource_group):
+    async def test_diagnostics_list_site_analyses_slot(self, resource_group):
         response = self.client.diagnostics.list_site_analyses_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -246,14 +246,14 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_analysis_slot(self, resource_group):
+    async def test_diagnostics_get_site_analysis_slot(self, resource_group):
         response = await self.client.diagnostics.get_site_analysis_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -261,14 +261,14 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execute_site_analysis_slot(self, resource_group):
+    async def test_diagnostics_execute_site_analysis_slot(self, resource_group):
         response = await self.client.diagnostics.execute_site_analysis_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -276,13 +276,13 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_site_detectors_slot(self, resource_group):
+    async def test_diagnostics_list_site_detectors_slot(self, resource_group):
         response = self.client.diagnostics.list_site_detectors_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -290,14 +290,14 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_site_detector_slot(self, resource_group):
+    async def test_diagnostics_get_site_detector_slot(self, resource_group):
         response = await self.client.diagnostics.get_site_detector_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
             detector_name="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -305,14 +305,14 @@ class TestWebSiteManagementDiagnosticsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execute_site_detector_slot(self, resource_group):
+    async def test_diagnostics_execute_site_detector_slot(self, resource_group):
         response = await self.client.diagnostics.execute_site_detector_slot(
             resource_group_name=resource_group.name,
             site_name="str",
             detector_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

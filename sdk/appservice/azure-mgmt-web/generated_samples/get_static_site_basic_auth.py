@@ -6,15 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.web import WebSiteManagementClient
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -43,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/GetStaticSiteBasicAuth.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/GetStaticSiteBasicAuth.json
 if __name__ == "__main__":
     main()
