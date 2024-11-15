@@ -17,7 +17,7 @@ class TestInference(InferenceTestBase):
         api_version = kwargs.pop("azure_ai_projects_inference_tests_aoai_api_version")
         model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
-            # See API versions in https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+            # See API versions in https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
             with project_client.inference.get_azure_openai_client(api_version=api_version) as azure_openai_client:
                 if is_live_and_not_recording():
                     response = azure_openai_client.chat.completions.create(
