@@ -14,7 +14,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
     @recorded_by_proxy_async
     async def test_create_wait_finish_async(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
-        inputPrefix = "example_patient_1"
+        input_prefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
         client = self.make_client_async(endpoint)
         assert client is not None
@@ -24,7 +24,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         job = DeidentificationJob(
             source_location=SourceStorageLocation(
                 location=storage_location,
-                prefix=inputPrefix,
+                prefix=input_prefix,
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
@@ -45,17 +45,18 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         assert finished_job.started_at is not None
         assert finished_job.started_at > finished_job.created_at
         assert finished_job.last_updated_at > finished_job.started_at
-        assert finished_job.customizations is None
+        assert finished_job.customizations is not None
+        assert finished_job.customizations.surrogate_locale == "en-US"
         assert finished_job.error is None
-        assert finished_job.source_location.prefix == inputPrefix
+        assert finished_job.source_location.prefix == input_prefix
 
         files = client.list_job_documents(jobname)
         count = 0
         async for my_file in files:
             assert len(my_file.id) == 36  # GUID
-            assert my_file.input.location.startswith(inputPrefix)
+            assert input_prefix in my_file.input.location
             assert my_file.status == OperationState.SUCCEEDED
             assert my_file.output is not None
-            assert my_file.output.location.startswith(self.OUTPUT_PATH)
+            assert self.OUTPUT_PATH in my_file.output.location
             count += 1
         assert count == 3, f"Expected 3 files, found {count}"

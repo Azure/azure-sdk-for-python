@@ -15,6 +15,8 @@ from ._client import DeidentificationClient as DeidentificationClientGenerated
 __all__: List[str] = [
     "DeidentificationClient",
 ]  # Add all objects you want publicly available to users at this package level
+
+
 class DeidentificationClient(DeidentificationClientGenerated):
 
     @distributed_trace
