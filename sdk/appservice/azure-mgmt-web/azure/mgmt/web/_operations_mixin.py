@@ -61,26 +61,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -111,26 +95,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -164,26 +132,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -214,26 +166,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -262,8 +198,6 @@ class WebSiteManagementClientOperationsMixin(object):
         api_version = self._get_api_version('list_ase_regions')
         if api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -298,26 +232,10 @@ class WebSiteManagementClientOperationsMixin(object):
         api_version = self._get_api_version('list_billing_meters')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -347,14 +265,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_custom_host_name_sites')
-        if api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -403,26 +317,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -453,26 +351,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -507,26 +389,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -557,26 +423,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -607,26 +457,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -665,26 +499,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -719,26 +537,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -776,26 +578,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -833,26 +619,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -925,26 +695,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -981,26 +735,10 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2019-08-01':
-            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-06-01':
-            from .v2020_06_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-09-01':
-            from .v2020_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2020-12-01':
-            from .v2020_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-01-15':
-            from .v2021_01_15.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from .v2021_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-01-01':
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2023-12-01':
-            from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2024-04-01':
             from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:

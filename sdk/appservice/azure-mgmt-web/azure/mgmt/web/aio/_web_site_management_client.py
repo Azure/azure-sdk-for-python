@@ -112,75 +112,23 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-04-01: :mod:`v2015_04_01.models<azure.mgmt.web.v2015_04_01.models>`
-           * 2015-08-01: :mod:`v2015_08_01.models<azure.mgmt.web.v2015_08_01.models>`
            * 2016-03-01: :mod:`v2016_03_01.models<azure.mgmt.web.v2016_03_01.models>`
-           * 2016-08-01: :mod:`v2016_08_01.models<azure.mgmt.web.v2016_08_01.models>`
-           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.web.v2016_09_01.models>`
            * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.web.v2018_02_01.models>`
-           * 2018-11-01: :mod:`v2018_11_01.models<azure.mgmt.web.v2018_11_01.models>`
-           * 2019-08-01: :mod:`v2019_08_01.models<azure.mgmt.web.v2019_08_01.models>`
-           * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.web.v2020_06_01.models>`
-           * 2020-09-01: :mod:`v2020_09_01.models<azure.mgmt.web.v2020_09_01.models>`
-           * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.web.v2020_12_01.models>`
-           * 2021-01-01: :mod:`v2021_01_01.models<azure.mgmt.web.v2021_01_01.models>`
-           * 2021-01-15: :mod:`v2021_01_15.models<azure.mgmt.web.v2021_01_15.models>`
-           * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.web.v2021_03_01.models>`
            * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.web.v2022_09_01.models>`
            * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.web.v2023_01_01.models>`
-           * 2023-12-01: :mod:`v2023_12_01.models<azure.mgmt.web.v2023_12_01.models>`
            * 2024-04-01: :mod:`v2024_04_01.models<azure.mgmt.web.v2024_04_01.models>`
         """
-        if api_version == '2015-04-01':
-            from ..v2015_04_01 import models
-            return models
-        elif api_version == '2015-08-01':
-            from ..v2015_08_01 import models
-            return models
-        elif api_version == '2016-03-01':
+        if api_version == '2016-03-01':
             from ..v2016_03_01 import models
-            return models
-        elif api_version == '2016-08-01':
-            from ..v2016_08_01 import models
-            return models
-        elif api_version == '2016-09-01':
-            from ..v2016_09_01 import models
             return models
         elif api_version == '2018-02-01':
             from ..v2018_02_01 import models
-            return models
-        elif api_version == '2018-11-01':
-            from ..v2018_11_01 import models
-            return models
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01 import models
-            return models
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01 import models
-            return models
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01 import models
-            return models
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01 import models
-            return models
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01 import models
-            return models
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15 import models
-            return models
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01 import models
             return models
         elif api_version == '2022-09-01':
             from ..v2022_09_01 import models
             return models
         elif api_version == '2023-01-01':
             from ..v2023_01_01 import models
-            return models
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01 import models
             return models
         elif api_version == '2024-04-01':
             from ..v2024_04_01 import models
@@ -191,45 +139,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def app_service_certificate_orders(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2015_08_01.aio.operations.AppServiceCertificateOrdersOperations>`
            * 2018-02-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2018_02_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2019-08-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2019_08_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2020-06-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2020_06_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2020-09-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2020_09_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2020-12-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2020_12_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2021-01-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2021_01_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2021-01-15: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2021_01_15.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2021-03-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2021_03_01.aio.operations.AppServiceCertificateOrdersOperations>`
            * 2022-09-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2022_09_01.aio.operations.AppServiceCertificateOrdersOperations>`
            * 2023-01-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2023_01_01.aio.operations.AppServiceCertificateOrdersOperations>`
-           * 2023-12-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2023_12_01.aio.operations.AppServiceCertificateOrdersOperations>`
            * 2024-04-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2024_04_01.aio.operations.AppServiceCertificateOrdersOperations>`
         """
         api_version = self._get_api_version('app_service_certificate_orders')
-        if api_version == '2015-08-01':
-            from ..v2015_08_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import AppServiceCertificateOrdersOperations as OperationClass
         else:
@@ -241,45 +162,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def app_service_environments(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2016_09_01.aio.operations.AppServiceEnvironmentsOperations>`
            * 2018-02-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2018_02_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2019-08-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2019_08_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2020-06-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2020_06_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2020-09-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2020_09_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2020-12-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2020_12_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2021-01-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2021_01_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2021-01-15: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2021_01_15.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2021-03-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2021_03_01.aio.operations.AppServiceEnvironmentsOperations>`
            * 2022-09-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2022_09_01.aio.operations.AppServiceEnvironmentsOperations>`
            * 2023-01-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2023_01_01.aio.operations.AppServiceEnvironmentsOperations>`
-           * 2023-12-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2023_12_01.aio.operations.AppServiceEnvironmentsOperations>`
            * 2024-04-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2024_04_01.aio.operations.AppServiceEnvironmentsOperations>`
         """
         api_version = self._get_api_version('app_service_environments')
-        if api_version == '2016-09-01':
-            from ..v2016_09_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import AppServiceEnvironmentsOperations as OperationClass
         else:
@@ -291,45 +185,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def app_service_plans(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2016_09_01.aio.operations.AppServicePlansOperations>`
            * 2018-02-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2018_02_01.aio.operations.AppServicePlansOperations>`
-           * 2019-08-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2019_08_01.aio.operations.AppServicePlansOperations>`
-           * 2020-06-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2020_06_01.aio.operations.AppServicePlansOperations>`
-           * 2020-09-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2020_09_01.aio.operations.AppServicePlansOperations>`
-           * 2020-12-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2020_12_01.aio.operations.AppServicePlansOperations>`
-           * 2021-01-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2021_01_01.aio.operations.AppServicePlansOperations>`
-           * 2021-01-15: :class:`AppServicePlansOperations<azure.mgmt.web.v2021_01_15.aio.operations.AppServicePlansOperations>`
-           * 2021-03-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2021_03_01.aio.operations.AppServicePlansOperations>`
            * 2022-09-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2022_09_01.aio.operations.AppServicePlansOperations>`
            * 2023-01-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2023_01_01.aio.operations.AppServicePlansOperations>`
-           * 2023-12-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2023_12_01.aio.operations.AppServicePlansOperations>`
            * 2024-04-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2024_04_01.aio.operations.AppServicePlansOperations>`
         """
         api_version = self._get_api_version('app_service_plans')
-        if api_version == '2016-09-01':
-            from ..v2016_09_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import AppServicePlansOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import AppServicePlansOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import AppServicePlansOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import AppServicePlansOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import AppServicePlansOperations as OperationClass
         else:
@@ -355,30 +222,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def certificate_orders_diagnostics(self):
         """Instance depends on the API version:
 
-           * 2020-12-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2020_12_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
-           * 2021-01-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2021_01_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
-           * 2021-01-15: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2021_01_15.aio.operations.CertificateOrdersDiagnosticsOperations>`
-           * 2021-03-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2021_03_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
            * 2022-09-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2022_09_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
            * 2023-01-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2023_01_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
-           * 2023-12-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2023_12_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
            * 2024-04-01: :class:`CertificateOrdersDiagnosticsOperations<azure.mgmt.web.v2024_04_01.aio.operations.CertificateOrdersDiagnosticsOperations>`
         """
         api_version = self._get_api_version('certificate_orders_diagnostics')
-        if api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import CertificateOrdersDiagnosticsOperations as OperationClass
         else:
@@ -390,45 +242,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def certificate_registration_provider(self):
         """Instance depends on the API version:
 
-           * 2015-08-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2015_08_01.aio.operations.CertificateRegistrationProviderOperations>`
            * 2018-02-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2018_02_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2019-08-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2019_08_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2020-06-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2020_06_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2020-09-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2020_09_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2020-12-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2020_12_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2021-01-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2021_01_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2021-01-15: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2021_01_15.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2021-03-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2021_03_01.aio.operations.CertificateRegistrationProviderOperations>`
            * 2022-09-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2022_09_01.aio.operations.CertificateRegistrationProviderOperations>`
            * 2023-01-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2023_01_01.aio.operations.CertificateRegistrationProviderOperations>`
-           * 2023-12-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2023_12_01.aio.operations.CertificateRegistrationProviderOperations>`
            * 2024-04-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2024_04_01.aio.operations.CertificateRegistrationProviderOperations>`
         """
         api_version = self._get_api_version('certificate_registration_provider')
-        if api_version == '2015-08-01':
-            from ..v2015_08_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import CertificateRegistrationProviderOperations as OperationClass
         else:
@@ -442,17 +267,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`CertificatesOperations<azure.mgmt.web.v2016_03_01.aio.operations.CertificatesOperations>`
            * 2018-02-01: :class:`CertificatesOperations<azure.mgmt.web.v2018_02_01.aio.operations.CertificatesOperations>`
-           * 2018-11-01: :class:`CertificatesOperations<azure.mgmt.web.v2018_11_01.aio.operations.CertificatesOperations>`
-           * 2019-08-01: :class:`CertificatesOperations<azure.mgmt.web.v2019_08_01.aio.operations.CertificatesOperations>`
-           * 2020-06-01: :class:`CertificatesOperations<azure.mgmt.web.v2020_06_01.aio.operations.CertificatesOperations>`
-           * 2020-09-01: :class:`CertificatesOperations<azure.mgmt.web.v2020_09_01.aio.operations.CertificatesOperations>`
-           * 2020-12-01: :class:`CertificatesOperations<azure.mgmt.web.v2020_12_01.aio.operations.CertificatesOperations>`
-           * 2021-01-01: :class:`CertificatesOperations<azure.mgmt.web.v2021_01_01.aio.operations.CertificatesOperations>`
-           * 2021-01-15: :class:`CertificatesOperations<azure.mgmt.web.v2021_01_15.aio.operations.CertificatesOperations>`
-           * 2021-03-01: :class:`CertificatesOperations<azure.mgmt.web.v2021_03_01.aio.operations.CertificatesOperations>`
            * 2022-09-01: :class:`CertificatesOperations<azure.mgmt.web.v2022_09_01.aio.operations.CertificatesOperations>`
            * 2023-01-01: :class:`CertificatesOperations<azure.mgmt.web.v2023_01_01.aio.operations.CertificatesOperations>`
-           * 2023-12-01: :class:`CertificatesOperations<azure.mgmt.web.v2023_12_01.aio.operations.CertificatesOperations>`
            * 2024-04-01: :class:`CertificatesOperations<azure.mgmt.web.v2024_04_01.aio.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
@@ -460,28 +276,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from ..v2018_11_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import CertificatesOperations as OperationClass
         else:
@@ -493,21 +291,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def container_apps(self):
         """Instance depends on the API version:
 
-           * 2021-03-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2021_03_01.aio.operations.ContainerAppsOperations>`
            * 2022-09-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2022_09_01.aio.operations.ContainerAppsOperations>`
            * 2023-01-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2023_01_01.aio.operations.ContainerAppsOperations>`
-           * 2023-12-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2023_12_01.aio.operations.ContainerAppsOperations>`
            * 2024-04-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2024_04_01.aio.operations.ContainerAppsOperations>`
         """
         api_version = self._get_api_version('container_apps')
-        if api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import ContainerAppsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import ContainerAppsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import ContainerAppsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import ContainerAppsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import ContainerAppsOperations as OperationClass
         else:
@@ -519,21 +311,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def container_apps_revisions(self):
         """Instance depends on the API version:
 
-           * 2021-03-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2021_03_01.aio.operations.ContainerAppsRevisionsOperations>`
            * 2022-09-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.ContainerAppsRevisionsOperations>`
            * 2023-01-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.ContainerAppsRevisionsOperations>`
-           * 2023-12-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2023_12_01.aio.operations.ContainerAppsRevisionsOperations>`
            * 2024-04-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.ContainerAppsRevisionsOperations>`
         """
         api_version = self._get_api_version('container_apps_revisions')
-        if api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
         else:
@@ -547,16 +333,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2016_03_01.aio.operations.DeletedWebAppsOperations>`
            * 2018-02-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2018_02_01.aio.operations.DeletedWebAppsOperations>`
-           * 2019-08-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2019_08_01.aio.operations.DeletedWebAppsOperations>`
-           * 2020-06-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2020_06_01.aio.operations.DeletedWebAppsOperations>`
-           * 2020-09-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2020_09_01.aio.operations.DeletedWebAppsOperations>`
-           * 2020-12-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2020_12_01.aio.operations.DeletedWebAppsOperations>`
-           * 2021-01-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2021_01_01.aio.operations.DeletedWebAppsOperations>`
-           * 2021-01-15: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2021_01_15.aio.operations.DeletedWebAppsOperations>`
-           * 2021-03-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2021_03_01.aio.operations.DeletedWebAppsOperations>`
            * 2022-09-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2022_09_01.aio.operations.DeletedWebAppsOperations>`
            * 2023-01-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2023_01_01.aio.operations.DeletedWebAppsOperations>`
-           * 2023-12-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2023_12_01.aio.operations.DeletedWebAppsOperations>`
            * 2024-04-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2024_04_01.aio.operations.DeletedWebAppsOperations>`
         """
         api_version = self._get_api_version('deleted_web_apps')
@@ -564,26 +342,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import DeletedWebAppsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import DeletedWebAppsOperations as OperationClass
         else:
@@ -597,16 +359,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2016_03_01.aio.operations.DiagnosticsOperations>`
            * 2018-02-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2018_02_01.aio.operations.DiagnosticsOperations>`
-           * 2019-08-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2019_08_01.aio.operations.DiagnosticsOperations>`
-           * 2020-06-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2020_06_01.aio.operations.DiagnosticsOperations>`
-           * 2020-09-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2020_09_01.aio.operations.DiagnosticsOperations>`
-           * 2020-12-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2020_12_01.aio.operations.DiagnosticsOperations>`
-           * 2021-01-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2021_01_01.aio.operations.DiagnosticsOperations>`
-           * 2021-01-15: :class:`DiagnosticsOperations<azure.mgmt.web.v2021_01_15.aio.operations.DiagnosticsOperations>`
-           * 2021-03-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2021_03_01.aio.operations.DiagnosticsOperations>`
            * 2022-09-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2022_09_01.aio.operations.DiagnosticsOperations>`
            * 2023-01-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2023_01_01.aio.operations.DiagnosticsOperations>`
-           * 2023-12-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2023_12_01.aio.operations.DiagnosticsOperations>`
            * 2024-04-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2024_04_01.aio.operations.DiagnosticsOperations>`
         """
         api_version = self._get_api_version('diagnostics')
@@ -614,26 +368,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import DiagnosticsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import DiagnosticsOperations as OperationClass
         else:
@@ -645,45 +383,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def domain_registration_provider(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2015_04_01.aio.operations.DomainRegistrationProviderOperations>`
            * 2018-02-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2018_02_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2019-08-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2019_08_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2020-06-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2020_06_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2020-09-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2020_09_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2020-12-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2020_12_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2021-01-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2021_01_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2021-01-15: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2021_01_15.aio.operations.DomainRegistrationProviderOperations>`
-           * 2021-03-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2021_03_01.aio.operations.DomainRegistrationProviderOperations>`
            * 2022-09-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2022_09_01.aio.operations.DomainRegistrationProviderOperations>`
            * 2023-01-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2023_01_01.aio.operations.DomainRegistrationProviderOperations>`
-           * 2023-12-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2023_12_01.aio.operations.DomainRegistrationProviderOperations>`
            * 2024-04-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2024_04_01.aio.operations.DomainRegistrationProviderOperations>`
         """
         api_version = self._get_api_version('domain_registration_provider')
-        if api_version == '2015-04-01':
-            from ..v2015_04_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import DomainRegistrationProviderOperations as OperationClass
         else:
@@ -695,45 +406,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def domains(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`DomainsOperations<azure.mgmt.web.v2015_04_01.aio.operations.DomainsOperations>`
            * 2018-02-01: :class:`DomainsOperations<azure.mgmt.web.v2018_02_01.aio.operations.DomainsOperations>`
-           * 2019-08-01: :class:`DomainsOperations<azure.mgmt.web.v2019_08_01.aio.operations.DomainsOperations>`
-           * 2020-06-01: :class:`DomainsOperations<azure.mgmt.web.v2020_06_01.aio.operations.DomainsOperations>`
-           * 2020-09-01: :class:`DomainsOperations<azure.mgmt.web.v2020_09_01.aio.operations.DomainsOperations>`
-           * 2020-12-01: :class:`DomainsOperations<azure.mgmt.web.v2020_12_01.aio.operations.DomainsOperations>`
-           * 2021-01-01: :class:`DomainsOperations<azure.mgmt.web.v2021_01_01.aio.operations.DomainsOperations>`
-           * 2021-01-15: :class:`DomainsOperations<azure.mgmt.web.v2021_01_15.aio.operations.DomainsOperations>`
-           * 2021-03-01: :class:`DomainsOperations<azure.mgmt.web.v2021_03_01.aio.operations.DomainsOperations>`
            * 2022-09-01: :class:`DomainsOperations<azure.mgmt.web.v2022_09_01.aio.operations.DomainsOperations>`
            * 2023-01-01: :class:`DomainsOperations<azure.mgmt.web.v2023_01_01.aio.operations.DomainsOperations>`
-           * 2023-12-01: :class:`DomainsOperations<azure.mgmt.web.v2023_12_01.aio.operations.DomainsOperations>`
            * 2024-04-01: :class:`DomainsOperations<azure.mgmt.web.v2024_04_01.aio.operations.DomainsOperations>`
         """
         api_version = self._get_api_version('domains')
-        if api_version == '2015-04-01':
-            from ..v2015_04_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import DomainsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import DomainsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import DomainsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import DomainsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import DomainsOperations as OperationClass
         else:
@@ -746,14 +430,11 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2023-01-01: :class:`GetUsagesInLocationOperations<azure.mgmt.web.v2023_01_01.aio.operations.GetUsagesInLocationOperations>`
-           * 2023-12-01: :class:`GetUsagesInLocationOperations<azure.mgmt.web.v2023_12_01.aio.operations.GetUsagesInLocationOperations>`
            * 2024-04-01: :class:`GetUsagesInLocationOperations<azure.mgmt.web.v2024_04_01.aio.operations.GetUsagesInLocationOperations>`
         """
         api_version = self._get_api_version('get_usages_in_location')
         if api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import GetUsagesInLocationOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import GetUsagesInLocationOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import GetUsagesInLocationOperations as OperationClass
         else:
@@ -765,30 +446,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def global_operations(self):
         """Instance depends on the API version:
 
-           * 2020-12-01: :class:`GlobalOperations<azure.mgmt.web.v2020_12_01.aio.operations.GlobalOperations>`
-           * 2021-01-01: :class:`GlobalOperations<azure.mgmt.web.v2021_01_01.aio.operations.GlobalOperations>`
-           * 2021-01-15: :class:`GlobalOperations<azure.mgmt.web.v2021_01_15.aio.operations.GlobalOperations>`
-           * 2021-03-01: :class:`GlobalOperations<azure.mgmt.web.v2021_03_01.aio.operations.GlobalOperations>`
            * 2022-09-01: :class:`GlobalOperations<azure.mgmt.web.v2022_09_01.aio.operations.GlobalOperations>`
            * 2023-01-01: :class:`GlobalOperations<azure.mgmt.web.v2023_01_01.aio.operations.GlobalOperations>`
-           * 2023-12-01: :class:`GlobalOperations<azure.mgmt.web.v2023_12_01.aio.operations.GlobalOperations>`
            * 2024-04-01: :class:`GlobalOperations<azure.mgmt.web.v2024_04_01.aio.operations.GlobalOperations>`
         """
         api_version = self._get_api_version('global_operations')
-        if api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import GlobalOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import GlobalOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import GlobalOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import GlobalOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import GlobalOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import GlobalOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import GlobalOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import GlobalOperations as OperationClass
         else:
@@ -800,27 +466,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def kube_environments(self):
         """Instance depends on the API version:
 
-           * 2021-01-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2021_01_01.aio.operations.KubeEnvironmentsOperations>`
-           * 2021-01-15: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2021_01_15.aio.operations.KubeEnvironmentsOperations>`
-           * 2021-03-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2021_03_01.aio.operations.KubeEnvironmentsOperations>`
            * 2022-09-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2022_09_01.aio.operations.KubeEnvironmentsOperations>`
            * 2023-01-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2023_01_01.aio.operations.KubeEnvironmentsOperations>`
-           * 2023-12-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2023_12_01.aio.operations.KubeEnvironmentsOperations>`
            * 2024-04-01: :class:`KubeEnvironmentsOperations<azure.mgmt.web.v2024_04_01.aio.operations.KubeEnvironmentsOperations>`
         """
         api_version = self._get_api_version('kube_environments')
-        if api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import KubeEnvironmentsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import KubeEnvironmentsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import KubeEnvironmentsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import KubeEnvironmentsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import KubeEnvironmentsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import KubeEnvironmentsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import KubeEnvironmentsOperations as OperationClass
         else:
@@ -834,16 +488,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`ProviderOperations<azure.mgmt.web.v2016_03_01.aio.operations.ProviderOperations>`
            * 2018-02-01: :class:`ProviderOperations<azure.mgmt.web.v2018_02_01.aio.operations.ProviderOperations>`
-           * 2019-08-01: :class:`ProviderOperations<azure.mgmt.web.v2019_08_01.aio.operations.ProviderOperations>`
-           * 2020-06-01: :class:`ProviderOperations<azure.mgmt.web.v2020_06_01.aio.operations.ProviderOperations>`
-           * 2020-09-01: :class:`ProviderOperations<azure.mgmt.web.v2020_09_01.aio.operations.ProviderOperations>`
-           * 2020-12-01: :class:`ProviderOperations<azure.mgmt.web.v2020_12_01.aio.operations.ProviderOperations>`
-           * 2021-01-01: :class:`ProviderOperations<azure.mgmt.web.v2021_01_01.aio.operations.ProviderOperations>`
-           * 2021-01-15: :class:`ProviderOperations<azure.mgmt.web.v2021_01_15.aio.operations.ProviderOperations>`
-           * 2021-03-01: :class:`ProviderOperations<azure.mgmt.web.v2021_03_01.aio.operations.ProviderOperations>`
            * 2022-09-01: :class:`ProviderOperations<azure.mgmt.web.v2022_09_01.aio.operations.ProviderOperations>`
            * 2023-01-01: :class:`ProviderOperations<azure.mgmt.web.v2023_01_01.aio.operations.ProviderOperations>`
-           * 2023-12-01: :class:`ProviderOperations<azure.mgmt.web.v2023_12_01.aio.operations.ProviderOperations>`
            * 2024-04-01: :class:`ProviderOperations<azure.mgmt.web.v2024_04_01.aio.operations.ProviderOperations>`
         """
         api_version = self._get_api_version('provider')
@@ -851,26 +497,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import ProviderOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import ProviderOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import ProviderOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import ProviderOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import ProviderOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import ProviderOperations as OperationClass
         else:
@@ -884,16 +514,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`RecommendationsOperations<azure.mgmt.web.v2016_03_01.aio.operations.RecommendationsOperations>`
            * 2018-02-01: :class:`RecommendationsOperations<azure.mgmt.web.v2018_02_01.aio.operations.RecommendationsOperations>`
-           * 2019-08-01: :class:`RecommendationsOperations<azure.mgmt.web.v2019_08_01.aio.operations.RecommendationsOperations>`
-           * 2020-06-01: :class:`RecommendationsOperations<azure.mgmt.web.v2020_06_01.aio.operations.RecommendationsOperations>`
-           * 2020-09-01: :class:`RecommendationsOperations<azure.mgmt.web.v2020_09_01.aio.operations.RecommendationsOperations>`
-           * 2020-12-01: :class:`RecommendationsOperations<azure.mgmt.web.v2020_12_01.aio.operations.RecommendationsOperations>`
-           * 2021-01-01: :class:`RecommendationsOperations<azure.mgmt.web.v2021_01_01.aio.operations.RecommendationsOperations>`
-           * 2021-01-15: :class:`RecommendationsOperations<azure.mgmt.web.v2021_01_15.aio.operations.RecommendationsOperations>`
-           * 2021-03-01: :class:`RecommendationsOperations<azure.mgmt.web.v2021_03_01.aio.operations.RecommendationsOperations>`
            * 2022-09-01: :class:`RecommendationsOperations<azure.mgmt.web.v2022_09_01.aio.operations.RecommendationsOperations>`
            * 2023-01-01: :class:`RecommendationsOperations<azure.mgmt.web.v2023_01_01.aio.operations.RecommendationsOperations>`
-           * 2023-12-01: :class:`RecommendationsOperations<azure.mgmt.web.v2023_12_01.aio.operations.RecommendationsOperations>`
            * 2024-04-01: :class:`RecommendationsOperations<azure.mgmt.web.v2024_04_01.aio.operations.RecommendationsOperations>`
         """
         api_version = self._get_api_version('recommendations')
@@ -901,26 +523,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import RecommendationsOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import RecommendationsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import RecommendationsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import RecommendationsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import RecommendationsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import RecommendationsOperations as OperationClass
         else:
@@ -934,16 +540,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2016_03_01.aio.operations.ResourceHealthMetadataOperations>`
            * 2018-02-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2018_02_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2019-08-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2019_08_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2020-06-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2020_06_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2020-09-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2020_09_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2020-12-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2020_12_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2021-01-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2021_01_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2021-01-15: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2021_01_15.aio.operations.ResourceHealthMetadataOperations>`
-           * 2021-03-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2021_03_01.aio.operations.ResourceHealthMetadataOperations>`
            * 2022-09-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2022_09_01.aio.operations.ResourceHealthMetadataOperations>`
            * 2023-01-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2023_01_01.aio.operations.ResourceHealthMetadataOperations>`
-           * 2023-12-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2023_12_01.aio.operations.ResourceHealthMetadataOperations>`
            * 2024-04-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2024_04_01.aio.operations.ResourceHealthMetadataOperations>`
         """
         api_version = self._get_api_version('resource_health_metadata')
@@ -951,26 +549,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2016_03_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import ResourceHealthMetadataOperations as OperationClass
         else:
@@ -982,39 +564,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def static_sites(self):
         """Instance depends on the API version:
 
-           * 2019-08-01: :class:`StaticSitesOperations<azure.mgmt.web.v2019_08_01.aio.operations.StaticSitesOperations>`
-           * 2020-06-01: :class:`StaticSitesOperations<azure.mgmt.web.v2020_06_01.aio.operations.StaticSitesOperations>`
-           * 2020-09-01: :class:`StaticSitesOperations<azure.mgmt.web.v2020_09_01.aio.operations.StaticSitesOperations>`
-           * 2020-12-01: :class:`StaticSitesOperations<azure.mgmt.web.v2020_12_01.aio.operations.StaticSitesOperations>`
-           * 2021-01-01: :class:`StaticSitesOperations<azure.mgmt.web.v2021_01_01.aio.operations.StaticSitesOperations>`
-           * 2021-01-15: :class:`StaticSitesOperations<azure.mgmt.web.v2021_01_15.aio.operations.StaticSitesOperations>`
-           * 2021-03-01: :class:`StaticSitesOperations<azure.mgmt.web.v2021_03_01.aio.operations.StaticSitesOperations>`
            * 2022-09-01: :class:`StaticSitesOperations<azure.mgmt.web.v2022_09_01.aio.operations.StaticSitesOperations>`
            * 2023-01-01: :class:`StaticSitesOperations<azure.mgmt.web.v2023_01_01.aio.operations.StaticSitesOperations>`
-           * 2023-12-01: :class:`StaticSitesOperations<azure.mgmt.web.v2023_12_01.aio.operations.StaticSitesOperations>`
            * 2024-04-01: :class:`StaticSitesOperations<azure.mgmt.web.v2024_04_01.aio.operations.StaticSitesOperations>`
         """
         api_version = self._get_api_version('static_sites')
-        if api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2022-09-01':
+        if api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import StaticSitesOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import StaticSitesOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import StaticSitesOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import StaticSitesOperations as OperationClass
         else:
@@ -1026,45 +584,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def top_level_domains(self):
         """Instance depends on the API version:
 
-           * 2015-04-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2015_04_01.aio.operations.TopLevelDomainsOperations>`
            * 2018-02-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2018_02_01.aio.operations.TopLevelDomainsOperations>`
-           * 2019-08-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2019_08_01.aio.operations.TopLevelDomainsOperations>`
-           * 2020-06-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2020_06_01.aio.operations.TopLevelDomainsOperations>`
-           * 2020-09-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2020_09_01.aio.operations.TopLevelDomainsOperations>`
-           * 2020-12-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2020_12_01.aio.operations.TopLevelDomainsOperations>`
-           * 2021-01-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2021_01_01.aio.operations.TopLevelDomainsOperations>`
-           * 2021-01-15: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2021_01_15.aio.operations.TopLevelDomainsOperations>`
-           * 2021-03-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2021_03_01.aio.operations.TopLevelDomainsOperations>`
            * 2022-09-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2022_09_01.aio.operations.TopLevelDomainsOperations>`
            * 2023-01-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2023_01_01.aio.operations.TopLevelDomainsOperations>`
-           * 2023-12-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2023_12_01.aio.operations.TopLevelDomainsOperations>`
            * 2024-04-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2024_04_01.aio.operations.TopLevelDomainsOperations>`
         """
         api_version = self._get_api_version('top_level_domains')
-        if api_version == '2015-04-01':
-            from ..v2015_04_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import TopLevelDomainsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import TopLevelDomainsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import TopLevelDomainsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import TopLevelDomainsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import TopLevelDomainsOperations as OperationClass
         else:
@@ -1076,45 +607,18 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     def web_apps(self):
         """Instance depends on the API version:
 
-           * 2016-08-01: :class:`WebAppsOperations<azure.mgmt.web.v2016_08_01.aio.operations.WebAppsOperations>`
            * 2018-02-01: :class:`WebAppsOperations<azure.mgmt.web.v2018_02_01.aio.operations.WebAppsOperations>`
-           * 2019-08-01: :class:`WebAppsOperations<azure.mgmt.web.v2019_08_01.aio.operations.WebAppsOperations>`
-           * 2020-06-01: :class:`WebAppsOperations<azure.mgmt.web.v2020_06_01.aio.operations.WebAppsOperations>`
-           * 2020-09-01: :class:`WebAppsOperations<azure.mgmt.web.v2020_09_01.aio.operations.WebAppsOperations>`
-           * 2020-12-01: :class:`WebAppsOperations<azure.mgmt.web.v2020_12_01.aio.operations.WebAppsOperations>`
-           * 2021-01-01: :class:`WebAppsOperations<azure.mgmt.web.v2021_01_01.aio.operations.WebAppsOperations>`
-           * 2021-01-15: :class:`WebAppsOperations<azure.mgmt.web.v2021_01_15.aio.operations.WebAppsOperations>`
-           * 2021-03-01: :class:`WebAppsOperations<azure.mgmt.web.v2021_03_01.aio.operations.WebAppsOperations>`
            * 2022-09-01: :class:`WebAppsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WebAppsOperations>`
            * 2023-01-01: :class:`WebAppsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WebAppsOperations>`
-           * 2023-12-01: :class:`WebAppsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WebAppsOperations>`
            * 2024-04-01: :class:`WebAppsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WebAppsOperations>`
         """
         api_version = self._get_api_version('web_apps')
-        if api_version == '2016-08-01':
-            from ..v2016_08_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2018-02-01':
+        if api_version == '2018-02-01':
             from ..v2018_02_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2019-08-01':
-            from ..v2019_08_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2020-06-01':
-            from ..v2020_06_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2020-09-01':
-            from ..v2020_09_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2020-12-01':
-            from ..v2020_12_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from ..v2021_01_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2021-01-15':
-            from ..v2021_01_15.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebAppsOperations as OperationClass
         elif api_version == '2022-09-01':
             from ..v2022_09_01.aio.operations import WebAppsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WebAppsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WebAppsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WebAppsOperations as OperationClass
         else:
@@ -1128,7 +632,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowRunActionRepetitionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowRunActionRepetitionsOperations>`
            * 2023-01-01: :class:`WorkflowRunActionRepetitionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowRunActionRepetitionsOperations>`
-           * 2023-12-01: :class:`WorkflowRunActionRepetitionsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowRunActionRepetitionsOperations>`
            * 2024-04-01: :class:`WorkflowRunActionRepetitionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowRunActionRepetitionsOperations>`
         """
         api_version = self._get_api_version('workflow_run_action_repetitions')
@@ -1136,8 +639,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowRunActionRepetitionsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowRunActionRepetitionsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowRunActionRepetitionsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowRunActionRepetitionsOperations as OperationClass
         else:
@@ -1151,7 +652,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowRunActionRepetitionsRequestHistoriesOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations>`
            * 2023-01-01: :class:`WorkflowRunActionRepetitionsRequestHistoriesOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations>`
-           * 2023-12-01: :class:`WorkflowRunActionRepetitionsRequestHistoriesOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations>`
            * 2024-04-01: :class:`WorkflowRunActionRepetitionsRequestHistoriesOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations>`
         """
         api_version = self._get_api_version('workflow_run_action_repetitions_request_histories')
@@ -1159,8 +659,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowRunActionRepetitionsRequestHistoriesOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowRunActionRepetitionsRequestHistoriesOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowRunActionRepetitionsRequestHistoriesOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowRunActionRepetitionsRequestHistoriesOperations as OperationClass
         else:
@@ -1174,7 +672,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowRunActionScopeRepetitionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowRunActionScopeRepetitionsOperations>`
            * 2023-01-01: :class:`WorkflowRunActionScopeRepetitionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowRunActionScopeRepetitionsOperations>`
-           * 2023-12-01: :class:`WorkflowRunActionScopeRepetitionsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowRunActionScopeRepetitionsOperations>`
            * 2024-04-01: :class:`WorkflowRunActionScopeRepetitionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowRunActionScopeRepetitionsOperations>`
         """
         api_version = self._get_api_version('workflow_run_action_scope_repetitions')
@@ -1182,8 +679,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowRunActionScopeRepetitionsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowRunActionScopeRepetitionsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowRunActionScopeRepetitionsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowRunActionScopeRepetitionsOperations as OperationClass
         else:
@@ -1197,7 +692,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowRunActionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowRunActionsOperations>`
            * 2023-01-01: :class:`WorkflowRunActionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowRunActionsOperations>`
-           * 2023-12-01: :class:`WorkflowRunActionsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowRunActionsOperations>`
            * 2024-04-01: :class:`WorkflowRunActionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowRunActionsOperations>`
         """
         api_version = self._get_api_version('workflow_run_actions')
@@ -1205,8 +699,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowRunActionsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowRunActionsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowRunActionsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowRunActionsOperations as OperationClass
         else:
@@ -1220,7 +712,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowRunsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowRunsOperations>`
            * 2023-01-01: :class:`WorkflowRunsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowRunsOperations>`
-           * 2023-12-01: :class:`WorkflowRunsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowRunsOperations>`
            * 2024-04-01: :class:`WorkflowRunsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowRunsOperations>`
         """
         api_version = self._get_api_version('workflow_runs')
@@ -1228,8 +719,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowRunsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowRunsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowRunsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowRunsOperations as OperationClass
         else:
@@ -1243,7 +732,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowTriggerHistoriesOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowTriggerHistoriesOperations>`
            * 2023-01-01: :class:`WorkflowTriggerHistoriesOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowTriggerHistoriesOperations>`
-           * 2023-12-01: :class:`WorkflowTriggerHistoriesOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowTriggerHistoriesOperations>`
            * 2024-04-01: :class:`WorkflowTriggerHistoriesOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowTriggerHistoriesOperations>`
         """
         api_version = self._get_api_version('workflow_trigger_histories')
@@ -1251,8 +739,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowTriggerHistoriesOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowTriggerHistoriesOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowTriggerHistoriesOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowTriggerHistoriesOperations as OperationClass
         else:
@@ -1266,7 +752,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowTriggersOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowTriggersOperations>`
            * 2023-01-01: :class:`WorkflowTriggersOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowTriggersOperations>`
-           * 2023-12-01: :class:`WorkflowTriggersOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowTriggersOperations>`
            * 2024-04-01: :class:`WorkflowTriggersOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowTriggersOperations>`
         """
         api_version = self._get_api_version('workflow_triggers')
@@ -1274,8 +759,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowTriggersOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowTriggersOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowTriggersOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowTriggersOperations as OperationClass
         else:
@@ -1289,7 +772,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowVersionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowVersionsOperations>`
            * 2023-01-01: :class:`WorkflowVersionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowVersionsOperations>`
-           * 2023-12-01: :class:`WorkflowVersionsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowVersionsOperations>`
            * 2024-04-01: :class:`WorkflowVersionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowVersionsOperations>`
         """
         api_version = self._get_api_version('workflow_versions')
@@ -1297,8 +779,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowVersionsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowVersionsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowVersionsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowVersionsOperations as OperationClass
         else:
@@ -1312,7 +792,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2022-09-01: :class:`WorkflowsOperations<azure.mgmt.web.v2022_09_01.aio.operations.WorkflowsOperations>`
            * 2023-01-01: :class:`WorkflowsOperations<azure.mgmt.web.v2023_01_01.aio.operations.WorkflowsOperations>`
-           * 2023-12-01: :class:`WorkflowsOperations<azure.mgmt.web.v2023_12_01.aio.operations.WorkflowsOperations>`
            * 2024-04-01: :class:`WorkflowsOperations<azure.mgmt.web.v2024_04_01.aio.operations.WorkflowsOperations>`
         """
         api_version = self._get_api_version('workflows')
@@ -1320,8 +799,6 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from ..v2022_09_01.aio.operations import WorkflowsOperations as OperationClass
         elif api_version == '2023-01-01':
             from ..v2023_01_01.aio.operations import WorkflowsOperations as OperationClass
-        elif api_version == '2023-12-01':
-            from ..v2023_12_01.aio.operations import WorkflowsOperations as OperationClass
         elif api_version == '2024-04-01':
             from ..v2024_04_01.aio.operations import WorkflowsOperations as OperationClass
         else:
