@@ -32,6 +32,8 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
+    MatrixFilters:
+      - PythonVersion=^(?!pypy3).*
     # The below were set before when azure-ai-generative and azure-ai-resources packages were built:
     # This is a short term solution to create API review for python azure-ml package only when running pipeline manually
     # Long term solution should be to have different versions on main branch and release branch for python package so APIView can have different revisions for each version.
@@ -40,7 +42,7 @@ extends:
     # This custom matrix config should be dropped once:
     #  * The Azure SDKs removes Python 3.7 from the test matrix
     #  * Once all of azure-ai-generative's extra packages can be installed on Python3.12
-    # MatrixConfigs: 
+    # MatrixConfigs:
     #  - Name: ai_ci_matrix
     #    Path: eng/pipelines/templates/stages/platform-matrix-ai.json
     #    Selection: sparse
@@ -52,6 +54,6 @@ extends:
       safeName: azureaiinference
     - name: azure-ai-generative
       safeName: azureaigenerative
-    # These packages are deprecated: 
+    # These packages are deprecated:
     #- name: azure-ai-resources
     #  safeName: azureairesources
