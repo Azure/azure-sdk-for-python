@@ -304,6 +304,13 @@ class TestConfigure(unittest.TestCase):
         self.assertEqual(azure_core_mock.tracing_implementation, OpenTelemetrySpan)
 
     @patch(
+        "azure.monitor.opentelemetry._configure.set_event_logger_provider",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.EventLoggerProvider",
+        autospec=True,
+    )
+    @patch(
         "azure.monitor.opentelemetry._configure.getLogger",
     )
     @patch(
@@ -330,10 +337,14 @@ class TestConfigure(unittest.TestCase):
         blrp_mock,
         logging_handler_mock,
         get_logger_mock,
+        elp_mock,
+        set_elp_mock,
     ):
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
         log_exp_init_mock = Mock()
+        elp_init_mock = Mock()
+        elp_mock.return_value = elp_init_mock
         log_exporter_mock.return_value = log_exp_init_mock
         blrp_init_mock = Mock()
         blrp_mock.return_value = blrp_init_mock
@@ -359,6 +370,8 @@ class TestConfigure(unittest.TestCase):
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
+        elp_mock.assert_called_once_with(lp_init_mock)
+        set_elp_mock.assert_called_once_with(elp_init_mock)
 
     @patch(
         "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",

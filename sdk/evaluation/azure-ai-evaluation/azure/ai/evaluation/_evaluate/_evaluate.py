@@ -810,13 +810,15 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
     target_run = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-    studio_url = _log_metrics_and_instance_results(
-        metrics,
-        result_df,
-        trace_destination,
-        target_run,
-        evaluation_name,
-    )
+    studio_url = None
+    if trace_destination:
+        studio_url = _log_metrics_and_instance_results(
+            metrics,
+            result_df,
+            trace_destination,
+            target_run,
+            evaluation_name,
+        )
 
     result_df_dict = result_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore

@@ -412,7 +412,11 @@ class _AIAgentsInstrumentorPreview:
             usage=step.usage,
         )
 
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        if _trace_agents_content:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        else:
+            tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
@@ -502,7 +506,10 @@ class _AIAgentsInstrumentorPreview:
     ) -> bool:
         if span and span.span_instance.is_recording and tool_outputs:
             for tool_output in tool_outputs:
-                body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
+                if _trace_agents_content:
+                    body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
+                else:
+                    body = {"content": "", "id": tool_output["tool_call_id"]}
                 span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body)})
             return True
 
