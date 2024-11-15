@@ -31,7 +31,6 @@ def sample_list_jobs():
     from azure.health.deidentification import DeidentificationClient
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    endpoint = endpoint.replace("https://", "")
 
     credential = DefaultAzureCredential()
 

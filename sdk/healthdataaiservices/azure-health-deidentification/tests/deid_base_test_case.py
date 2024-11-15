@@ -38,10 +38,10 @@ class DeidBaseTestCase(AzureRecordedTestCase):
         client = self.create_client_from_credential(
             DeidentificationClient,
             credential=credential,
-            # Client library expects just hostname
-            endpoint=endpoint.replace("https://", ""),
+            endpoint=endpoint,
             # TODO: test-proxy not playing well with SSL verification
-            # connection_verify=False,
+            connection_verify=False,
+            enforce_https=False,
         )
         return client
 
@@ -50,10 +50,10 @@ class DeidBaseTestCase(AzureRecordedTestCase):
         client = self.create_client_from_credential(
             DeidentificationClientAsync,
             credential=credential,
-            # Client library expects just hostname
-            endpoint=endpoint.replace("https://", ""),
+            endpoint=endpoint,
             # TODO: test-proxy not playing well with SSL verification
             connection_verify=False,
+            enforce_https=False,
         )
         return client
 
@@ -67,4 +67,7 @@ class DeidBaseTestCase(AzureRecordedTestCase):
         storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")
         container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
         storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
+        sas_uri = os.environ.get("HEALTHDATAAISERVICES_SAS_URI", "")
+        if (sas_uri != ""):
+            return sas_uri
         return storage_location

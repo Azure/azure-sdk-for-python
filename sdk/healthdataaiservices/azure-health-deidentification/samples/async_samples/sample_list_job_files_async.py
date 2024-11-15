@@ -36,7 +36,6 @@ async def sample_list_job_documents_async():
     from azure.core.polling import AsyncLROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    endpoint = endpoint.replace("https://", "")
 
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]

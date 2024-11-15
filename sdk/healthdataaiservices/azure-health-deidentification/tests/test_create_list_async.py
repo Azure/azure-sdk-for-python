@@ -49,4 +49,4 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         assert job.error is None
         assert job.created_at is not None
         assert job.last_updated_at is not None
-        assert job.customizations is None
+        assert job.customizations is not None

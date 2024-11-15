@@ -41,6 +41,6 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
 
         assert job.status == JobStatus.FAILED
         assert job.error is not None
-        assert job.error.code == "JobValidationError"
+        assert job.error.code == "EmptyJob"
         assert job.error.message is not None
         assert len(job.error.message) > 10
