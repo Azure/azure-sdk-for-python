@@ -5,3 +5,8 @@ extends:
     template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
     parameters:
       ServiceDirectory: ai
+      # Temporarily disable test job with pypy3.9 to unblock the first beta
+      # release of azure-ai-projects. Otherwise, the job "Test ubuntu2004_pypy39" in the "python - ai"
+      # pipeline hangs and eventually times out.
+      MatrixFilters:
+        - PythonVersion=^(?!.*pypy39).*

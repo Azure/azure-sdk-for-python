@@ -25,12 +25,6 @@ pr:
     - sdk/ai/
     - sdk/core/
 
-parameters:
-  # Temporarily disable test job with pypy3.9 to unblock the first beta
-  # release of azure-ai-projects. Otherwise, the job "Test ubuntu2004_pypy39" in the "python - ai"
-  # pipeline hangs and eventually times out.
-  MatrixFilters:
-    - PythonVersion=^(?!.*pypy39).*
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -39,11 +33,6 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
-    # Temporarily disable test job with pypy3.9 to unblock the first beta
-    # release of azure-ai-projects. Otherwise, the job "Test ubuntu2004_pypy39" in the "python - ai"
-    # pipeline hangs and eventually times out.
-    MatrixFilters:
-      - PythonVersion=^(?!.*pypy39).*
     # The below were set before when azure-ai-generative and azure-ai-resources packages were built:
     # This is a short term solution to create API review for python azure-ml package only when running pipeline manually
     # Long term solution should be to have different versions on main branch and release branch for python package so APIView can have different revisions for each version.
