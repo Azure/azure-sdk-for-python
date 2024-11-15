@@ -108,9 +108,6 @@ def _format_component_query(format_string, global_statistics):
         hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
         query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
-    # TODO: Remove this hack later
-    if 'ORDER BY _VectorScore' in query:
-        return query.replace("DESC", "").replace("ASC", "")
     return query
 
 
@@ -135,8 +132,6 @@ def _format_component_query_workaround(format_string, global_statistics, compone
 
         statistics_index += 1
 
-    if 'ORDER BY _VectorScore' in query:
-        return query.replace("DESC", "").replace("ASC", "")
     return query
 
 
@@ -160,7 +155,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._final_results = None
+        self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
 
