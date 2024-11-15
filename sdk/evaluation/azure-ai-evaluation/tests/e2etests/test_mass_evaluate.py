@@ -24,7 +24,7 @@ from azure.ai.evaluation import (
     ProtectedMaterialEvaluator,
     IndirectAttackEvaluator,
     RetrievalEvaluator,
-    #ContentSafetyMultimodalEvaluator,
+    # ContentSafetyMultimodalEvaluator,
     ProtectedMaterialMultimodalEvaluator,
     RougeType,
     evaluate,
@@ -78,7 +78,7 @@ class TestMassEvaluate:
         # qa and similarity disabled due to being playback-unfriendly due to URL sanitization problems.
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
-            #"gleu": GleuScoreEvaluator(),
+            # "gleu": GleuScoreEvaluator(),
             "bleu": BleuScoreEvaluator(),
             "rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
             "meteor": MeteorScoreEvaluator(),
@@ -110,7 +110,7 @@ class TestMassEvaluate:
         assert len(row_result_df["inputs.response"]) == 3
         assert len(row_result_df["inputs.ground_truth"]) == 3
         assert len(row_result_df["outputs.f1_score.f1_score"]) == 3
-        #assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
+        # assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
         assert len(row_result_df["outputs.bleu.bleu_score"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_precision"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_recall"]) == 3
@@ -171,7 +171,7 @@ class TestMassEvaluate:
 
         assert len(metrics.keys()) == 25  # 39 with gleu, qa, similarity
         assert metrics["f1_score.f1_score"] >= 0
-        #assert metrics["gleu.gleu_score"] >= 0
+        # assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
         assert metrics["rouge.rouge_precision"] >= 0
         assert metrics["rouge.rouge_recall"] >= 0
