@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -26,27 +26,21 @@ import azure.mgmt.network
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
     def create_virtual_network(self, group_name, location, network_name):
-      
+
         result = self.mgmt_client.virtual_networks.begin_create_or_update(
             group_name,
             network_name,
-            {
-                'location': location,
-                'address_space': {
-                    'address_prefixes': ['10.0.0.0/16']
-                }
-            },
+            {"location": location, "address_space": {"address_prefixes": ["10.0.0.0/16"]}},
         )
         return result.result()
 
@@ -64,17 +58,13 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # /IpGroups/put/CreateOrUpdate_IpGroups[put]
         BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "location": "West US",
-          "ip_addresses": [
-            "13.64.39.16/32",
-            "40.74.146.80/31",
-            "40.74.147.32/28"
-          ]
+            "tags": {"key1": "value1"},
+            "location": "West US",
+            "ip_addresses": ["13.64.39.16/32", "40.74.146.80/31", "40.74.147.32/28"],
         }
-        result = self.mgmt_client.ip_groups.begin_create_or_update(resource_group_name=RESOURCE_GROUP, ip_groups_name=IP_GROUPS_NAME, parameters=BODY)
+        result = self.mgmt_client.ip_groups.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP, ip_groups_name=IP_GROUPS_NAME, parameters=BODY
+        )
         result = result.result()
 
         # /IpAllocations/put/Create IpAllocation[put]
@@ -131,10 +121,12 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # /IpGroups/delete/Delete_IpGroups[delete]
-        result = self.mgmt_client.ip_groups.begin_delete(resource_group_name=RESOURCE_GROUP, ip_groups_name=IP_GROUPS_NAME)
+        result = self.mgmt_client.ip_groups.begin_delete(
+            resource_group_name=RESOURCE_GROUP, ip_groups_name=IP_GROUPS_NAME
+        )
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

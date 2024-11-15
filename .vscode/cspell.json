@@ -33,6 +33,9 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -61,6 +64,7 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
+    "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_vendor/**",
     "sdk/evaluation/azure-ai-evaluation/tests/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -90,6 +94,7 @@
     "sdk/synapse/azure-synapse/**",
     "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
+    "sdk/translation/azure-ai-translation-document/doc/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/storage/azure-storage-extensions/**",
@@ -135,9 +140,11 @@
     "conda/conda-recipes/msal-extensions/meta.yaml",
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
-    "conda/conda-releaselogs/azure-mgmt.md"
+    "conda/conda-releaselogs/azure-mgmt.md",
+    ".github/workflows/azure-sdk-tools.yml"
   ],
   "words": [
+    "msedge",
     "spinup",
     "cibuildwheel",
     "aoai",
@@ -183,7 +190,9 @@
     "azurecr",
     "azuremgmtcore",
     "azuremgmtcommunication",
+    "azuremypackage",
     "bdist",
+    "Beddall",
     "bstr",
     "byref",
     "cdll",
@@ -237,8 +246,10 @@
     "fileno",
     "fqdns",
     "fstat",
+    "Ganguly",
     "gbps",
     "GCCH",
+    "Geraghty",
     "getsizeof",
     "graphrbac",
     "gmtime",
@@ -261,6 +272,7 @@
     "iohttp",
     "IOHTTP",
     "IOLRO",
+    "incompat",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -307,6 +319,7 @@
     "mktime",
     "mlindex",
     "msal",
+    "msauth",
     "msrest",
     "msrestazure",
     "MSSQL",
@@ -314,6 +327,8 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "mynewpackage",
+    "mypackage",
     "myvault",
     "mytable",
     "nazsdk",
@@ -332,10 +347,13 @@
     "onmicrosoft",
     "openai",
     "OPENAI",
+    "otlp",
+    "OTLP",
     "owasp",
     "ownerid",
     "PBYTE",
     "PCREDENTIAL",
+    "pepy",
     "perfmon",
     "perfstress",
     "perfstressdebug",
@@ -350,6 +368,7 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pydantic",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
@@ -363,6 +382,9 @@
     "pyversion",
     "RAGRS",
     "rdbms",
+    "rgeraghty",
+    "Rohit",
+    "rohitganguly",
     "reauthenticated",
     "reimage",
     "revascularization",
@@ -401,6 +423,9 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "uninstrument",
+    "uninstrumented",
+    "uninstrumenting",
     "unpad",
     "unpadder",
     "unpartial",
@@ -435,6 +460,7 @@
     "volcz",
     "vsts",
     "wchar",
+    "wesh",
     "westcentralus",
     "westus",
     "wfile",
@@ -467,7 +493,8 @@
     "dicom",
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
-    "MACVMIMAGE"
+    "MACVMIMAGE",
+    "myuseragent"
   ],
   "overrides": [
     {
@@ -953,9 +980,7 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte",
-        "myalias",
-        "mydomain"
+        "Thawte"
       ]
     },
     {
@@ -1300,14 +1325,31 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "aiservices",
+        "OTEL",
+        "GENAI",
+        "fspath"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
-        "ubinary",
-        "mros",
-        "Nify",
         "ctxt",
-        "wday",
-        "dtype"
+        "dels",
+        "dtype",
+        "fmatter",
+        "fspath",
+        "fstring",
+        "ldel",
+        "mros",
+        "nify",
+        "okwargs",
+        "prompty",
+        "rdel",
+        "ubinary",
+        "wday"
       ]
     },
     {
@@ -1884,6 +1926,22 @@
         "healthdataaiservices",
         "deidentify",
         "deidentified"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/utils.py",
+      "words": [
+        "stringized"
+      ]
+    },
+    {
+      "filename": "sdk/maps/azure-maps-route/**",
+      "words": [
+        "uturn",
+        "Einsteinweg",
+        "Hundredkm",
+        "TPEG",
+        "Hundredkm"
       ]
     }
   ],

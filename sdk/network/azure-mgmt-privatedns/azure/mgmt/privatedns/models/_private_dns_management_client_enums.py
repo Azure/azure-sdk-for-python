@@ -36,6 +36,17 @@ class RecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TXT = "TXT"
 
 
+class ResolutionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resolution policy on the virtual network link. Only applicable for virtual network links to
+    privatelink zones, and for A,AAAA,CNAME queries. When set to 'NxDomainRedirect', Azure DNS
+    resolver falls back to public resolution if private dns query resolution results in
+    non-existent domain response.
+    """
+
+    DEFAULT = "Default"
+    NX_DOMAIN_REDIRECT = "NxDomainRedirect"
+
+
 class VirtualNetworkLinkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the virtual network link to the Private DNS zone. Possible values are
     'InProgress' and 'Done'. This is a read-only property and any attempt to set this value will be

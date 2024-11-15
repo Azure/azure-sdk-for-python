@@ -7,6 +7,7 @@ import os
 import time
 import datetime
 import uuid
+from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
@@ -32,7 +33,7 @@ class Document:
 class DocumentTranslationTest(AzureRecordedTestCase):
     @property
     def storage_name(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
+        return os.getenv("DOCUMENT_TRANSLATION_STORAGE_NAME", "redacted")
 
     @property
     def storage_endpoint(self):
@@ -40,7 +41,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
     @property
     def storage_key(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
+        return os.getenv("DOCUMENT_TRANSLATION_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
 
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
@@ -291,6 +292,32 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
         # submit job
         poller = client.begin_translation(translation_inputs)
+        assert poller.id is not None
+        # wait for result
+        if wait_for_operation:
+            result = poller.result()
+            for doc in result:
+                self._validate_doc_status(doc, "es")
+        # validate
+        self._validate_translation_metadata(poller=poller)
+
+        return poller
+
+    def _prepare_and_validate_start_translation_details(self, client, docs_count, **kwargs):
+        # get input params
+        wait_for_operation = kwargs.pop("wait", False)
+        variables = kwargs.get("variables", {})
+        language = kwargs.pop("language", "es")
+
+        # prepare test data
+        blob_data = Document.create_dummy_docs(docs_count=docs_count)
+        source_input = SourceInput(source_url=self.create_source_container(data=blob_data, variables=variables))
+        target = TranslationTarget(target_url=self.create_target_container(variables=variables), language=language)
+        batch_request = DocumentBatch(source=source_input, targets=[target])
+        start_translation_details = StartTranslationDetails(inputs=[batch_request])
+
+        # submit job
+        poller = client.begin_translation(start_translation_details)
         assert poller.id is not None
         # wait for result
         if wait_for_operation:

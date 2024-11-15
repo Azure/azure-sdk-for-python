@@ -83,6 +83,10 @@
                 "description": "Determines whether or not to put the storage account behind VNet"
             }
         },
+        "storageAccountSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
         "storageAccountResourceGroupName": {
             "type": "string",
             "defaultValue": "[parameters('resourceGroupName')]"
@@ -428,6 +432,17 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "provisionNetworkNow": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Set to provision the managed VNet with the default Options when creating a Workspace with the managed VNet enabled"
+            }
+        },
         "allowRoleAssignmentOnRG": {
             "type": "string",
             "defaultValue": "true",
@@ -635,7 +650,7 @@
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
-        "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "storageAccount": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
         "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
         "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
         "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",
@@ -749,7 +764,7 @@
                 "networkAcls": "[if(equals(parameters('associatedResourcePNA'), 'Disabled'), variables('networkAclsForManagedNetworkDependencies'), if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null')))]",
                 "publicNetworkAccess": "[parameters('associatedResourcePNA')]",
                 "isHnsEnabled": "[equals(parameters('kind'), 'featurestore')]",
-                "minimumTlsVersion": "[if(equals(parameters('kind'), 'featurestore'), 'TLS1_2', 'TLS1_0')]"
+                "minimumTlsVersion": "TLS1_2"
             }
         },
         {
@@ -881,6 +896,7 @@
                 "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
                 "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
+                "provisionNetworkNow": "[parameters('provisionNetworkNow')]",
                 "featureStoreSettings": {
                     "computeruntime": {
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
@@ -997,6 +1013,7 @@
                                 "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
                                 "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                                 "managedNetwork": "[parameters('managedNetwork')]",
+                                "provisionNetworkNow": "[parameters('provisionNetworkNow')]",
                                 "featureStoreSettings": {
                                     "computeruntime": {
                                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"

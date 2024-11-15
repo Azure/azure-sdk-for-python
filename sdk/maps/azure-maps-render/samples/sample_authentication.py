@@ -24,6 +24,7 @@ USAGE:
 
 import os
 
+
 def authentication_maps_service_client_with_subscription_key_credential():
     # [START create_maps_render_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
@@ -58,6 +59,6 @@ def authentication_maps_service_client_with_aad_credential():
     print(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     authentication_maps_service_client_with_subscription_key_credential()
     authentication_maps_service_client_with_aad_credential()

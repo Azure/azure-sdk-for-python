@@ -38,13 +38,12 @@ extends:
     BuildTargetingString: "*"
     ValidateFormatting: true
     TestProxy: false
+    TestTimeoutInMinutes: 120
     Artifacts:
     - name: azure-core
       safeName: azurecore
     - name: azure-mgmt-core
       safeName: azuremgmtcore
-    - name: azure-core-tracing-opencensus
-      safeName: azurecorecoretracingopencensus
     - name: azure-core-tracing-opentelemetry
       safeName: azurecorecoretracingtelemetry
     - name: azure-common

@@ -15,7 +15,7 @@ from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 RECEIVE_DURATION = 15
 
 
@@ -31,32 +31,30 @@ def on_partition_initialize(partition_context):
 
 def on_partition_close(partition_context, reason):
     # Put your code here.
-    print("Partition: {} has been closed, reason for closing: {}.".format(
-        partition_context.partition_id,
-        reason
-    ))
+    print("Partition: {} has been closed, reason for closing: {}.".format(partition_context.partition_id, reason))
 
 
 def on_error(partition_context, error):
     # Put your code here. partition_context can be None in the on_error callback.
     if partition_context:
-        print("An exception: {} occurred during receiving from Partition: {}.".format(
-            partition_context.partition_id,
-            error
-        ))
+        print(
+            "An exception: {} occurred during receiving from Partition: {}.".format(
+                partition_context.partition_id, error
+            )
+        )
     else:
         print("An exception: {} occurred during the load balance process.".format(error))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
         credential=DefaultAzureCredential(),
-        consumer_group='$Default',
+        consumer_group="$Default",
     )
 
-    print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
+    print("Consumer will keep receiving for {} seconds, start time is {}.".format(RECEIVE_DURATION, time.time()))
 
     try:
         thread = threading.Thread(
@@ -67,7 +65,7 @@ if __name__ == '__main__':
                 "on_partition_close": on_partition_close,
                 "on_error": on_error,
                 "starting_position": "-1",  # "-1" is from the beginning of the partition.
-            }
+            },
         )
         thread.daemon = True
         thread.start()
@@ -75,6 +73,6 @@ if __name__ == '__main__':
         consumer_client.close()
         thread.join()
     except KeyboardInterrupt:
-        print('Stop receiving.')
+        print("Stop receiving.")
 
-    print('Consumer has stopped receiving, end time is {}.'.format(time.time()))
+    print("Consumer has stopped receiving, end time is {}.".format(time.time()))

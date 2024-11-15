@@ -35,7 +35,7 @@ from azure.core.experimental.transport import (
 # ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
 
 
-from azure.core.experimental.transport import PyodideTransport
+# from azure.core.experimental.transport import PyodideTransport
 
 # ASYNC_TRANSPORTS.append(PyodideTransport)
 

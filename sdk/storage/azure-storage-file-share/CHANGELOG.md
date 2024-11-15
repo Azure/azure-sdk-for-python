@@ -1,9 +1,35 @@
 # Release History
 
-## 12.18.0 (Unreleased)
+## 12.21.0b1 (Unreleased)
 
 ### Features Added
 
+## 12.20.0 (2024-11-13)
+
+### Features Added
+- Stable release of features from 12.20.0b1
+
+## 12.20.0b1 (2024-10-10)
+
+### Features Added
+- Added support for service version 2025-01-05.
+- Added support to specify `Premium` enum value in `access_tier` for `create_share` and `set_share_properties` APIs.
+- Added `file_permission_format` to specify permission format for File's `copy_file` API.
+- Added support for provisioned V2 billing model, including `provisioned_iops` and `provisioned_bandwidth_mibps` for 
+`ShareClient` and `ShareServiceClient`'s `create_share` APIs; `provisioned_max_iops` and `provisioned_max_bandwidth_mibps`
+for `ShareClient`'s `set_share_properties` API; and retrieve `included_burst_iop`, `max_burst_credits_for_iops`, 
+`next_provisioned_iops_downgrade` and `next_provisioned_bandwidth_downgrade` through `get_share_properties` API. 
+`ShareServiceClient`'s `list_shares` API returns the new properties through `get_share_properties` for each share.
+
+## 12.19.0 (2024-10-08)
+
+### Features Added
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.18.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2024-08-07)
 

@@ -6,177 +6,39 @@
 
 import json
 import datetime
-from typing import Any, List, Union, overload, Optional, cast, Tuple, TypeVar
+from typing import Any, List, Union, overload, Optional, cast, IO, MutableMapping
+
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from azure.core.polling import AsyncLROPoller
-from azure.core.polling.base_polling import (
-    OperationFailed,
-    _raise_if_bad_http_status_and_method,
-)
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
-
-from azure.ai.translation.document import (
+from ._operations._patch import AsyncDocumentTranslationLROPoller, AsyncDocumentTranslationLROPollingMethod
+from .._operations._patch import TranslationPolling
+from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
+from ..models import (
+    DocumentStatus,
+    TranslationStatus,
+    StartTranslationDetails,
+    StorageInputType,
+    TranslationGlossary,
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
-    TranslationGlossary,
-    TranslationStatus,
-    DocumentStatus,
-    StorageInputType,
-)
-
-from ..models._models import (
-    TranslationStatus as _TranslationStatus,
-    DocumentStatus as _DocumentStatus,
-    StartTranslationDetails,
 )
 from ...document._patch import (
     get_http_logging_policy,
     get_translation_input,
     convert_datetime,
     convert_order_by,
-    TranslationPolling,
     convert_status,
 )
 
+JSON = MutableMapping[str, Any]
 POLLING_INTERVAL = 1
-PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
-_FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
-_FAILED = frozenset(["validationfailed"])
 
 
-class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
-    """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
-
-    @property
-    def id(self) -> str:
-        """The ID for the translation operation
-
-        :return: The str ID for the translation operation.
-        :rtype: str
-        """
-        if self._polling_method._current_body:  # pylint: disable=protected-access
-            return self._polling_method._current_body.id  # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
-
-    @property
-    def details(self) -> TranslationStatus:
-        """The details for the translation operation
-
-        :return: The details for the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatus
-        """
-        if self._polling_method._current_body:  # pylint: disable=protected-access
-            return TranslationStatus._from_generated(  # pylint: disable=protected-access
-                self._polling_method._current_body  # pylint: disable=protected-access
-            )
-        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # pylint: disable=protected-access
-
-    @classmethod
-    def from_continuation_token(  # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
-        cls, polling_method, continuation_token, **kwargs
-    ):
-        """
-        :meta private:
-        """
-        (
-            client,
-            initial_response,
-            deserialization_callback,
-        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
-
-        return cls(client, initial_response, deserialization_callback, polling_method)
-
-
-class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
-    """A custom polling method implementation for Document Translation."""
-
-    def __init__(self, *args, **kwargs):
-        self._cont_token_response = kwargs.pop("cont_token_response")
-        super().__init__(*args, **kwargs)
-
-    @property
-    def _current_body(self) -> _TranslationStatus:
-        try:
-            return _TranslationStatus(self._pipeline_response.http_response.json())
-        except json.decoder.JSONDecodeError:
-            return _TranslationStatus()  # type: ignore[call-overload]
-
-    def _get_id_from_headers(self) -> str:
-        return (
-            self._initial_response.http_response.headers["Operation-Location"]
-            .split("/batches/")[1]
-            .split("?api-version")[0]
-        )
-
-    def finished(self) -> bool:
-        """Is this polling finished?
-
-        :return: True/False for whether polling is complete.
-        :rtype: bool
-        """
-        return self._finished(self.status())
-
-    @staticmethod
-    def _finished(status) -> bool:
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in _FINISHED
-
-    @staticmethod
-    def _failed(status) -> bool:
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in _FAILED
-
-    def get_continuation_token(self) -> str:
-        if self._current_body:
-            return self._current_body.id
-        return self._get_id_from_headers()
-
-    # pylint: disable=arguments-differ
-    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  # type: ignore[override]
-        try:
-            client = kwargs["client"]
-        except KeyError as exc:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token") from exc
-
-        try:
-            deserialization_callback = kwargs["deserialization_callback"]
-        except KeyError as exc:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from exc
-
-        return client, self._cont_token_response, deserialization_callback
-
-    async def _poll(self) -> None:
-        """Poll status of operation so long as operation is incomplete and
-        we have an endpoint to query.
-
-        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
-        :raises: BadStatus if response status invalid.
-        :raises: BadResponse if response invalid.
-        """
-        while not self.finished():
-            await self.update_status()
-        while not self.finished():
-            await self._delay()
-            await self.update_status()
-
-        if self._failed(self.status()):
-            raise OperationFailed("Operation failed or canceled")
-
-        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
-        if final_get_url:
-            self._pipeline_response = await self.request_status(final_get_url)
-            _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
-
-
-class DocumentTranslationClient:
+class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -237,9 +99,8 @@ class DocumentTranslationClient:
             raise ValueError("Parameter 'endpoint' must be a string.") from exc
         self._credential = credential
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        from ._client import DocumentTranslationClient as _BatchDocumentTranslationClient
 
-        self._client = _BatchDocumentTranslationClient(
+        super().__init__(
             endpoint=self._endpoint,
             credential=credential,
             http_logging_policy=kwargs.pop("http_logging_policy", get_http_logging_policy()),
@@ -274,13 +135,7 @@ class DocumentTranslationClient:
         **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -316,16 +171,110 @@ class DocumentTranslationClient:
 
     @overload
     async def begin_translation(
+        self, inputs: StartTranslationDetails, **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: A StartTranslationDetails including translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple TranslationTargets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: ~azure.ai.translation.document.models.StartTranslationDetails
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_translation(
+        self, inputs: JSON, **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: JSON including translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: JSON
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "inputs": [
+                        {
+                            "source": {
+                                "sourceUrl": "str",
+                                "filter": {
+                                    "prefix": "str",
+                                    "suffix": "str"
+                                },
+                                "language": "str",
+                                "storageSource": "str"
+                            },
+                            "targets": [
+                                {
+                                    "language": "str",
+                                    "targetUrl": "str",
+                                    "category": "str",
+                                    "glossaries": [
+                                        {
+                                            "format": "str",
+                                            "glossaryUrl": "str",
+                                            "storageSource": "str",
+                                            "version": "str"
+                                        }
+                                    ],
+                                    "storageSource": "str"
+                                }
+                            ],
+                            "storageType": "str"
+                        }
+                    ]
+                }
+        """
+
+    @overload
+    async def begin_translation(
+        self, inputs: IO[bytes], **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
+        """Begin translating the document(s) in your source container to your target container
+        in the given language.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: The translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: IO[bytes]
+        :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -342,22 +291,43 @@ class DocumentTranslationClient:
         """
 
     @distributed_trace_async
-    async def begin_translation(  # pylint: disable=docstring-missing-param
-        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+    async def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        self, *args: Union[str, List[DocumentTranslationInput], IO[bytes], JSON], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
-        in the given language. There are two ways to call this method:
-
-        1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
-
-        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
-        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
-        :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
+        :param inputs: The translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple targets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput] or
+            IO[bytes] or JSON or ~azure.ai.translation.document.models.StartTranslationDetails
+        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
+            to be translated. See the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
+            should be written. See the service documentation for the supported SAS permissions for accessing
+            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_language: This is the language code you want your documents to be translated to.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+        :keyword str source_language: Language code for the source documents.
+            If none is specified, the source language will be auto-detected for each document.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+            sub folders for translation.
+        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+            translation. This is most often use for file extensions.
+        :keyword storage_type: Storage type of the input documents source string. Possible values
+            include: "Folder", "File".
+        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :keyword str category_id: Category / custom model ID for using custom translation.
+        :keyword glossaries: Glossaries to apply to translation.
+        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
         :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
@@ -383,12 +353,12 @@ class DocumentTranslationClient:
 
         polling_interval = kwargs.pop(
             "polling_interval",
-            self._client._config.polling_interval,  # pylint: disable=protected-access
+            self._config.polling_interval,  # pylint: disable=protected-access
         )
 
         pipeline_response = None
         if continuation_token:
-            pipeline_response = await self._client.get_translation_status(
+            pipeline_response = await self.get_translation_status(
                 continuation_token,
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
             )
@@ -396,8 +366,8 @@ class DocumentTranslationClient:
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(
             AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]],
-            await self._client.begin_start_translation(
-                body=StartTranslationDetails(inputs=inputs),
+            await super()._begin_translation(
+                body=inputs,
                 polling=AsyncDocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[TranslationPolling()],
@@ -409,40 +379,6 @@ class DocumentTranslationClient:
                 **kwargs
             ),
         )
-
-    @distributed_trace_async
-    async def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
-        """Gets the status of the translation operation.
-
-        Includes the overall status, as well as a summary of
-        the documents that are being translated as part of that translation operation.
-
-        :param str translation_id: The translation operation ID.
-        :return: A TranslationStatus with information on the status of the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatus
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-        """
-
-        translation_status = await self._client.get_translation_status(translation_id, **kwargs)
-        return TranslationStatus._from_generated(  # pylint: disable=protected-access
-            _TranslationStatus(translation_status)  # type: ignore[call-overload]
-        )
-
-    @distributed_trace_async
-    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
-        """Cancel a currently processing or queued translation operation.
-
-        A translation will not be canceled if it is already completed, failed, or canceling.
-        All documents that have completed translation will not be canceled and will be charged.
-        If possible, all pending documents will be canceled.
-
-        :param str translation_id: The translation operation ID.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-        """
-
-        await self._client.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
     def list_translation_statuses(
@@ -494,22 +430,12 @@ class DocumentTranslationClient:
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
-        def _convert_from_generated_model(generated_model):
-            # pylint: disable=protected-access
-            return TranslationStatus._from_generated(_TranslationStatus(generated_model))
-
-        model_conversion_function = kwargs.pop(
-            "cls",
-            lambda translation_statuses: [_convert_from_generated_model(status) for status in translation_statuses],
-        )
-
         return cast(
             AsyncItemPaged[TranslationStatus],
-            self._client.get_translations_status(
-                cls=model_conversion_function,
+            super().list_translation_statuses(
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
-                ids=translation_ids,
+                translation_ids=translation_ids,
                 orderby=order_by,
                 statuses=statuses,
                 top=top,
@@ -518,8 +444,9 @@ class DocumentTranslationClient:
             ),
         )
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
-    def list_document_statuses(
+    def list_document_statuses(  # type: ignore[override]
         self,
         translation_id: str,
         *,
@@ -570,23 +497,13 @@ class DocumentTranslationClient:
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
 
-        def _convert_from_generated_model(generated_model):
-            # pylint: disable=protected-access
-            return DocumentStatus._from_generated(_DocumentStatus(generated_model))
-
-        model_conversion_function = kwargs.pop(
-            "cls",
-            lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses],
-        )
-
         return cast(
             AsyncItemPaged[DocumentStatus],
-            self._client.get_documents_status(
-                id=translation_id,
-                cls=model_conversion_function,
+            super().list_document_statuses(
+                translation_id=translation_id,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
-                ids=document_ids,
+                document_ids=document_ids,
                 orderby=order_by,
                 statuses=statuses,
                 top=top,
@@ -596,20 +513,6 @@ class DocumentTranslationClient:
         )
 
     @distributed_trace_async
-    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
-        """Get the status of an individual document within a translation operation.
-
-        :param str translation_id: The translation operation ID.
-        :param str document_id: The ID for the document.
-        :return: A DocumentStatus with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatus
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-        """
-        document_status = await self._client.get_document_status(translation_id, document_id, **kwargs)
-        # pylint: disable=protected-access
-        return DocumentStatus._from_generated(_DocumentStatus(document_status))  # type: ignore[call-overload]
-
-    @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the glossary formats supported by the Document Translation service.
 
@@ -617,9 +520,8 @@ class DocumentTranslationClient:
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        glossary_formats = await self._client.get_supported_formats(type="glossary", **kwargs)
-        # pylint: disable=protected-access
-        return DocumentTranslationFileFormat._from_generated_list(glossary_formats.value)
+
+        return (await super()._get_supported_formats(type="glossary", **kwargs)).value
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -629,9 +531,8 @@ class DocumentTranslationClient:
         :rtype: List[DocumentTranslationFileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        document_formats = await self._client.get_supported_formats(type="document", **kwargs)
-        # pylint: disable=protected-access
-        return DocumentTranslationFileFormat._from_generated_list(document_formats.value)
+
+        return (await super()._get_supported_formats(type="document", **kwargs)).value
 
 
 __all__: List[str] = [

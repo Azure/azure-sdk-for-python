@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Optional
 from unittest.mock import DEFAULT, MagicMock, Mock, patch
 from uuid import UUID, uuid4
@@ -5,9 +6,11 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -133,6 +136,7 @@ class TestWorkspaceOperation:
                     ),
                 ],
             )
+            ws.provision_network_now = True
             ws.system_datastores_auth_mode = "identity"
             ws.allow_roleassignment_on_rg = True
             return ws._to_rest_object()
@@ -160,6 +164,8 @@ class TestWorkspaceOperation:
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
 
+        assert ws.provision_network_now == True
+
     def test_create_get_exception_swallow(
         self,
         mock_workspace_operation_base: WorkspaceOperationsBase,
@@ -176,6 +182,8 @@ class TestWorkspaceOperation:
     def test_begin_create_existing_ws(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ):
+        mocker.patch("urllib.parse.urlparse")
+
         def outgoing_call(rg, name, params, polling, cls):
             assert name == "name"
             return DEFAULT
@@ -185,7 +193,8 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base.begin_create(workspace=Workspace(name="name"))
         mock_workspace_operation_base._operation.begin_update.assert_called()
 
-    def test_update(self, mock_workspace_operation_base: WorkspaceOperationsBase) -> None:
+    def test_update(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         ws = Workspace(
             name="name",
             tags={"key": "value"},
@@ -242,6 +251,7 @@ class TestWorkspaceOperation:
     def test_update_with_empty_property_values(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
+        mocker.patch("urllib.parse.urlparse")
         ws = Workspace(name="name", description="", display_name="", image_build_compute="")
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=ws)
 
@@ -265,6 +275,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base._operation.begin_update.assert_called()
 
     def test_delete_no_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
@@ -273,6 +284,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base._operation.begin_delete.assert_called_once()
 
     def test_delete_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
@@ -306,6 +318,10 @@ class TestWorkspaceOperation:
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_sub_id_resource_and_group_name",
+            return_value=["random_name", "random_grp", "random_storage"],
+        )
+        mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
         )
         mocker.patch(
@@ -330,6 +346,10 @@ class TestWorkspaceOperation:
     def test_populate_feature_store_arm_parameters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_sub_id_resource_and_group_name",
+            return_value=["random_sub", "random_grp", "random_storage"],
+        )
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
         )
@@ -590,6 +610,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base: WorkspaceOperationsBase,
         mocker: MockFixture,
     ) -> None:
+        mocker.patch("urllib.parse.urlparse")
         ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
         spy = mocker.spy(mock_workspace_operation_base._operation, "begin_update")
         mock_workspace_operation_base.begin_update(ws)

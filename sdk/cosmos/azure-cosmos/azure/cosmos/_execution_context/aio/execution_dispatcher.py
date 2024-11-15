@@ -110,9 +110,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
-            total_item_buffer = query_execution_info.get_top() or\
-                                query_execution_info.get_limit() + query_execution_info.get_offset()
-            if total_item_buffer is None:
+            total_item_buffer = (query_execution_info.get_top() or 0) or \
+                                ((query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0))
+            if total_item_buffer == 0:
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")

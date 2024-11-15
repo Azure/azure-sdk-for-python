@@ -17,6 +17,7 @@ DEPENDENCIES = [
     "PyYAML",
     "urllib3",
     "tomli-w==1.0.0",
+    "azure-core",
     # Perf/Build
     "ConfigArgParse>=0.12.0",
 ]
@@ -49,13 +50,13 @@ setup(
             "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
-            "systemperf=devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd"
+            "systemperf=devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd",
         ],
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
         ":python_version<'3.11'": ["tomli==2.0.1"],
-        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
+        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel", "pkginfo", "build"],
         "conda": ["beautifulsoup4"],
         "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
         "ghtools": ["GitPython", "PyGithub>=1.59.0", "requests>=2.0"],

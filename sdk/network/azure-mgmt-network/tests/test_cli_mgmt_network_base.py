@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -37,30 +37,21 @@ from azure.core.exceptions import HttpResponseError
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
     def create_network_interface(self, group_name, location, nic_name, subnet_id, ipconfig):
 
         async_nic_creation = self.mgmt_client.network_interfaces.begin_create_or_update(
             group_name,
             nic_name,
-            {
-                'location': location,
-                'ip_configurations': [{
-                    'name': ipconfig,
-                    'subnet': {
-                        'id': subnet_id
-                    }
-                }]
-            }
+            {"location": location, "ip_configurations": [{"name": ipconfig, "subnet": {"id": subnet_id}}]},
         )
         nic_info = async_nic_creation.result()
 
@@ -72,16 +63,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def create_public_ip_addresses(self, group_name, location, public_ip_name):
         # Create PublicIP
-        BODY = {
-            'location': location,
-            'public_ip_allocation_method': 'Dynamic',
-            'idle_timeout_in_minutes': 4
-        }
-        result = self.mgmt_client.public_ip_addresses.begin_create_or_update(
-            group_name,
-            public_ip_name,
-            BODY
-        )
+        BODY = {"location": location, "public_ip_allocation_method": "Dynamic", "idle_timeout_in_minutes": 4}
+        result = self.mgmt_client.public_ip_addresses.begin_create_or_update(group_name, public_ip_name, BODY)
         return result.result()
 
     @pytest.mark.skip(reason="fix later")
@@ -92,7 +75,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         SERVICE_NAME = "myapimrndxyz"
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
-        
 
         VIRTUAL_NETWORK_NAME = "virtualnetworkname"
         REMOTE_VIRTUAL_NETWORK_NAME = "rmvirtualnetworkname"
@@ -111,43 +93,35 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         self.create_public_ip_addresses(resource_group.name, AZURE_LOCATION, PUBLIC_IP_ADDRESS_NAME)
 
         # Create virtual network[put]
-        BODY = {
-          "address_space": {
-            "address_prefixes": [
-              "10.0.0.0/16"
-            ]
-          },
-          "location": "eastus"
-        }
-        result = self.mgmt_client.virtual_networks.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, BODY)
+        BODY = {"address_space": {"address_prefixes": ["10.0.0.0/16"]}, "location": "eastus"}
+        result = self.mgmt_client.virtual_networks.begin_create_or_update(
+            resource_group.name, VIRTUAL_NETWORK_NAME, BODY
+        )
         result = result.result()
 
         # Create remote virtual network[put]
-        BODY = {
-          "address_space": {
-            "address_prefixes": [
-              "10.2.0.0/16"
-            ]
-          },
-          "location": "eastus"
-        }
-        result = self.mgmt_client.virtual_networks.begin_create_or_update(resource_group.name, REMOTE_VIRTUAL_NETWORK_NAME, BODY)
+        BODY = {"address_space": {"address_prefixes": ["10.2.0.0/16"]}, "location": "eastus"}
+        result = self.mgmt_client.virtual_networks.begin_create_or_update(
+            resource_group.name, REMOTE_VIRTUAL_NETWORK_NAME, BODY
+        )
         result = result.result()
 
         # Create subnet[put]
-        BODY = {
-          "address_prefix": "10.0.0.0/24"
-        }
-        result = self.mgmt_client.subnets.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME, BODY)
+        BODY = {"address_prefix": "10.0.0.0/24"}
+        result = self.mgmt_client.subnets.begin_create_or_update(
+            resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME, BODY
+        )
         subnet = result.result()
 
-        self.create_network_interface(resource_group.name, AZURE_LOCATION, NETWORK_INTERFACE_NAME, subnet.id, IP_CONFIGURATION_NAME)
+        self.create_network_interface(
+            resource_group.name, AZURE_LOCATION, NETWORK_INTERFACE_NAME, subnet.id, IP_CONFIGURATION_NAME
+        )
 
         # Create gateway subnet[put]
-        BODY = {
-          "address_prefix": "10.0.1.0/24"
-        }
-        result = self.mgmt_client.subnets.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, GATEWAY_SUBNET_NAME, BODY)
+        BODY = {"address_prefix": "10.0.1.0/24"}
+        result = self.mgmt_client.subnets.begin_create_or_update(
+            resource_group.name, VIRTUAL_NETWORK_NAME, GATEWAY_SUBNET_NAME, BODY
+        )
         subnet = result.result()
 
         # TODO: NOT ALLOW
@@ -163,53 +137,56 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # CreateLocalNetworkGateway[put]
         BODY = {
-          "local_network_address_space": {
-            "address_prefixes": [
-              "10.1.0.0/16"
-            ]
-          },
-          "gateway_ip_address": "11.12.13.14",
-          "location": "eastus"
+            "local_network_address_space": {"address_prefixes": ["10.1.0.0/16"]},
+            "gateway_ip_address": "11.12.13.14",
+            "location": "eastus",
         }
-        result = self.mgmt_client.local_network_gateways.begin_create_or_update(resource_group.name, LOCAL_NETWORK_GATEWAY_NAME, BODY)
+        result = self.mgmt_client.local_network_gateways.begin_create_or_update(
+            resource_group.name, LOCAL_NETWORK_GATEWAY_NAME, BODY
+        )
         result = result.result()
 
         # UpdateVirtualNetworkGateway[put]
         BODY = {
-          "ip_configurations": [
-            {
-              "private_ip_allocation_method": "Dynamic",
-              "subnet": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + GATEWAY_SUBNET_NAME + ""
-              },
-              "public_ip_address": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/publicIPAddresses/" + PUBLIC_IP_ADDRESS_NAME + ""
-              },
-              "name": IP_CONFIGURATION_NAME
-            }
-          ],
-          "gateway_type": "Vpn",
-          "vpn_type": "RouteBased",
-          "enable_bgp": False,
-          "active_active": False,
-          "enable_dns_forwarding": False,
-          "sku": {
-            "name": "VpnGw1",
-            "tier": "VpnGw1"
-          },
-          "bgp_settings": {
-            "asn": "65515",
-            "bgp_peering_address": "10.0.1.30",
-            "peer_weight": "0"
-          },
-          "custom_routes": {
-            "address_prefixes": [
-              "101.168.0.6/32"
-            ]
-          },
-          "location": "eastus"
+            "ip_configurations": [
+                {
+                    "private_ip_allocation_method": "Dynamic",
+                    "subnet": {
+                        "id": "/subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Network/virtualNetworks/"
+                        + VIRTUAL_NETWORK_NAME
+                        + "/subnets/"
+                        + GATEWAY_SUBNET_NAME
+                        + ""
+                    },
+                    "public_ip_address": {
+                        "id": "/subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Network/publicIPAddresses/"
+                        + PUBLIC_IP_ADDRESS_NAME
+                        + ""
+                    },
+                    "name": IP_CONFIGURATION_NAME,
+                }
+            ],
+            "gateway_type": "Vpn",
+            "vpn_type": "RouteBased",
+            "enable_bgp": False,
+            "active_active": False,
+            "enable_dns_forwarding": False,
+            "sku": {"name": "VpnGw1", "tier": "VpnGw1"},
+            "bgp_settings": {"asn": "65515", "bgp_peering_address": "10.0.1.30", "peer_weight": "0"},
+            "custom_routes": {"address_prefixes": ["101.168.0.6/32"]},
+            "location": "eastus",
         }
-        result = self.mgmt_client.virtual_network_gateways.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, BODY)
+        result = self.mgmt_client.virtual_network_gateways.begin_create_or_update(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, BODY
+        )
         result = result.result()
 
         # TODO:PutVirtualRouter feature not enabled
@@ -235,7 +212,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # }
         # result = self.mgmt_client.virtual_router_peerings.create_or_update(resource_group.name, VIRTUAL_ROUTER_NAME, PEERING_NAME, BODY)
         # result = result.result()
-
 
         """
         # Create subnet with a delegation[put]
@@ -264,77 +240,110 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # Create peering[put]
         BODY = {
-          "allow_virtual_network_access": True,
-          "allow_forwarded_traffic": True,
-          "allow_gateway_transit": False,
-          "use_remote_gateways": False,
-          "remote_virtual_network": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + REMOTE_VIRTUAL_NETWORK_NAME + ""
-          }
+            "allow_virtual_network_access": True,
+            "allow_forwarded_traffic": True,
+            "allow_gateway_transit": False,
+            "use_remote_gateways": False,
+            "remote_virtual_network": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualNetworks/"
+                + REMOTE_VIRTUAL_NETWORK_NAME
+                + ""
+            },
         }
-        result = self.mgmt_client.virtual_network_peerings.begin_create_or_update(resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME, BODY)
+        result = self.mgmt_client.virtual_network_peerings.begin_create_or_update(
+            resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME, BODY
+        )
         result = result.result()
 
         # CreateVirtualNetworkGatewayConnection_S2S[put]
         BODY = {
-          "virtual_network_gateway1": {
-            "ip_configurations": [
-              {
-                "private_ip_allocation_method": "Dynamic",
-                "subnet": {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + GATEWAY_SUBNET_NAME + ""
-                },
-                "public_ip_address": {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/publicIPAddresses/" + PUBLIC_IP_ADDRESS_NAME + ""
-                },
-                "name": IP_CONFIGURATION_NAME,
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworkGateways/" + VIRTUAL_NETWORK_GATEWAY_NAME + "/ipConfigurations/" + IP_CONFIGURATION_NAME + ""
-              }
-            ],
-            "gateway_type": "Vpn",
-            "vpn_type": "RouteBased",
+            "virtual_network_gateway1": {
+                "ip_configurations": [
+                    {
+                        "private_ip_allocation_method": "Dynamic",
+                        "subnet": {
+                            "id": "/subscriptions/"
+                            + SUBSCRIPTION_ID
+                            + "/resourceGroups/"
+                            + RESOURCE_GROUP
+                            + "/providers/Microsoft.Network/virtualNetworks/"
+                            + VIRTUAL_NETWORK_NAME
+                            + "/subnets/"
+                            + GATEWAY_SUBNET_NAME
+                            + ""
+                        },
+                        "public_ip_address": {
+                            "id": "/subscriptions/"
+                            + SUBSCRIPTION_ID
+                            + "/resourceGroups/"
+                            + RESOURCE_GROUP
+                            + "/providers/Microsoft.Network/publicIPAddresses/"
+                            + PUBLIC_IP_ADDRESS_NAME
+                            + ""
+                        },
+                        "name": IP_CONFIGURATION_NAME,
+                        "id": "/subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Network/virtualNetworkGateways/"
+                        + VIRTUAL_NETWORK_GATEWAY_NAME
+                        + "/ipConfigurations/"
+                        + IP_CONFIGURATION_NAME
+                        + "",
+                    }
+                ],
+                "gateway_type": "Vpn",
+                "vpn_type": "RouteBased",
+                "enable_bgp": False,
+                "active_active": False,
+                "sku": {"name": "VpnGw1", "tier": "VpnGw1"},
+                "bgp_settings": {"asn": "65514", "bgp_peering_address": "10.0.2.30", "peer_weight": "0"},
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualNetworkGateways/"
+                + VIRTUAL_NETWORK_GATEWAY_NAME
+                + "",
+                "location": "eastus",
+            },
+            "local_network_gateway2": {
+                "local_network_address_space": {"address_prefixes": ["10.1.0.0/16"]},
+                "gateway_ip_address": "10.1.0.1",
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/localNetworkGateways/"
+                + LOCAL_NETWORK_GATEWAY_NAME
+                + "",
+                "location": "eastus",
+            },
+            "connection_type": "IPsec",
+            "connection_protocol": "IKEv2",
+            "routing_weight": "0",
+            "shared_key": "Abc123",
             "enable_bgp": False,
-            "active_active": False,
-            "sku": {
-              "name": "VpnGw1",
-              "tier": "VpnGw1"
-            },
-            "bgp_settings": {
-              "asn": "65514",
-              "bgp_peering_address": "10.0.2.30",
-              "peer_weight": "0"
-            },
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworkGateways/" + VIRTUAL_NETWORK_GATEWAY_NAME + "",
-            "location": "eastus"
-          },
-          "local_network_gateway2": {
-            "local_network_address_space": {
-              "address_prefixes": [
-                "10.1.0.0/16"
-              ]
-            },
-            "gateway_ip_address": "10.1.0.1",
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/localNetworkGateways/" + LOCAL_NETWORK_GATEWAY_NAME + "",
-            "location": "eastus"
-          },
-          "connection_type": "IPsec",
-          "connection_protocol": "IKEv2",
-          "routing_weight": "0",
-          "shared_key": "Abc123",
-          "enable_bgp": False,
-          "use_policy_based_traffic_selectors": False,
-          "ipsec_policies": [],
-          "traffic_selector_policies": [],
-          "location": "eastus"
+            "use_policy_based_traffic_selectors": False,
+            "ipsec_policies": [],
+            "traffic_selector_policies": [],
+            "location": "eastus",
         }
-        result = self.mgmt_client.virtual_network_gateway_connections.begin_create_or_update(resource_group.name, CONNECTION_NAME, BODY)
+        result = self.mgmt_client.virtual_network_gateway_connections.begin_create_or_update(
+            resource_group.name, CONNECTION_NAME, BODY
+        )
         result = result.result()
 
         # SetVirtualNetworkGatewayConnectionSharedKey[put]
-        BODY = {
-          "value": "AzureAbc123"
-        }
-        result = self.mgmt_client.virtual_network_gateway_connections.begin_set_shared_key(resource_group.name, CONNECTION_NAME, BODY)
+        BODY = {"value": "AzureAbc123"}
+        result = self.mgmt_client.virtual_network_gateway_connections.begin_set_shared_key(
+            resource_group.name, CONNECTION_NAME, BODY
+        )
         result = result.result()
 
         # Get VirtualRouter[get]
@@ -344,7 +353,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.virtual_router_peerings.get(resource_group.name, VIRTUAL_ROUTER_NAME, PEERING_NAME)
 
         # Get peering[get]
-        result = self.mgmt_client.virtual_network_peerings.get(resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME)
+        result = self.mgmt_client.virtual_network_peerings.get(
+            resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME
+        )
 
         # Get Service Association Links[get]
         result = self.mgmt_client.service_association_links.list(resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
@@ -354,10 +365,14 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # Check IP address availability[get]
         IP_ADDRESS = "10.0.1.4"
-        result = self.mgmt_client.virtual_networks.check_ip_address_availability(resource_group.name, VIRTUAL_NETWORK_NAME, IP_ADDRESS)
+        result = self.mgmt_client.virtual_networks.check_ip_address_availability(
+            resource_group.name, VIRTUAL_NETWORK_NAME, IP_ADDRESS
+        )
 
         # VirtualNetworkGatewaysListConnections[get]
-        result = self.mgmt_client.virtual_network_gateways.list_connections(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
+        result = self.mgmt_client.virtual_network_gateways.list_connections(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME
+        )
 
         # Get subnet[get]
         result = self.mgmt_client.subnets.get(resource_group.name, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
@@ -393,7 +408,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.virtual_networks.list_usage(resource_group.name, VIRTUAL_NETWORK_NAME)
 
         # GetVirtualNetworkGatewayConnectionSharedKey[get]
-        result = self.mgmt_client.virtual_network_gateway_connections.get_shared_key(resource_group.name, CONNECTION_NAME)
+        result = self.mgmt_client.virtual_network_gateway_connections.get_shared_key(
+            resource_group.name, CONNECTION_NAME
+        )
 
         # Get virtual network[get]
         result = self.mgmt_client.virtual_networks.get(resource_group.name, VIRTUAL_NETWORK_NAME)
@@ -505,7 +522,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # GetVirtualNetworkGatewayAdvertisedRoutes[post]
         # PEER = "test"
         PEER = "10.0.0.2"
-        result = self.mgmt_client.virtual_network_gateways.begin_get_advertised_routes(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, PEER)
+        result = self.mgmt_client.virtual_network_gateways.begin_get_advertised_routes(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, PEER
+        )
         result = result.result()
 
         # TODO: NEED VPN CLIENT
@@ -534,22 +553,28 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # GetVirtualNetworkGatewayBGPPeerStatus[post]
-        result = self.mgmt_client.virtual_network_gateways.begin_get_bgp_peer_status(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
+        result = self.mgmt_client.virtual_network_gateways.begin_get_bgp_peer_status(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME
+        )
         result = result.result()
 
         # GetVirtualNetworkGatewayLearnedRoutes[post]
-        result = self.mgmt_client.virtual_network_gateways.begin_get_learned_routes(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
+        result = self.mgmt_client.virtual_network_gateways.begin_get_learned_routes(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME
+        )
         result = result.result()
 
         # ResetVirtualNetworkGatewayConnectionSharedKey[post]
-        BODY = {
-          "key_length": "128"
-        }
-        result = self.mgmt_client.virtual_network_gateway_connections.begin_reset_shared_key(resource_group.name, CONNECTION_NAME, BODY)
+        BODY = {"key_length": "128"}
+        result = self.mgmt_client.virtual_network_gateway_connections.begin_reset_shared_key(
+            resource_group.name, CONNECTION_NAME, BODY
+        )
         result = result.result()
 
         # ResetVirtualNetworkGateway[post]
-        result = self.mgmt_client.virtual_network_gateways.begin_reset(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
+        result = self.mgmt_client.virtual_network_gateways.begin_reset(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME
+        )
         result = result.result()
 
         # TODO: NEED VPN CLIENT
@@ -562,23 +587,17 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.virtual_network_gateways.vpn_device_configuration_script(resource_group.name, CONNECTION_NAME, BODY)
 
         # UpdateVirtualNetworkGatewayTags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        result = self.mgmt_client.virtual_network_gateways.begin_update_tags(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, BODY)
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
+        result = self.mgmt_client.virtual_network_gateways.begin_update_tags(
+            resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME, BODY
+        )
         result = result.result()
 
         # UpdateLocalNetworkGatewayTags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        result = self.mgmt_client.local_network_gateways.update_tags(resource_group.name, LOCAL_NETWORK_GATEWAY_NAME, BODY)
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
+        result = self.mgmt_client.local_network_gateways.update_tags(
+            resource_group.name, LOCAL_NETWORK_GATEWAY_NAME, BODY
+        )
 
         # TODO:(InternalServerError) An error occurred.
         # Start packet capture on virtual network gateway connection without filter[post]
@@ -610,22 +629,14 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.virtual_network_taps.update_tags(resource_group.name, VIRTUAL_NETWORK_TAP_NAME, BODY["tags"])
 
         # Update virtual network tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         result = self.mgmt_client.virtual_networks.update_tags(resource_group.name, VIRTUAL_NETWORK_NAME, BODY)
 
         # UpdateVirtualNetworkGatewayConnectionTags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        result = self.mgmt_client.virtual_network_gateway_connections.begin_update_tags(resource_group.name, CONNECTION_NAME, BODY["tags"])
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
+        result = self.mgmt_client.virtual_network_gateway_connections.begin_update_tags(
+            resource_group.name, CONNECTION_NAME, BODY["tags"]
+        )
         result = result.result()
 
         # DeleteVirtualNetworkGatewayConnection[delete]
@@ -633,7 +644,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = result.result()
 
         # Delete peering[delete]
-        result = self.mgmt_client.virtual_network_peerings.begin_delete(resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME)
+        result = self.mgmt_client.virtual_network_peerings.begin_delete(
+            resource_group.name, VIRTUAL_NETWORK_NAME, VIRTUAL_NETWORK_PEERING_NAME
+        )
         result = result.result()
 
         # # Delete VirtualRouterPeering[delete]
@@ -647,20 +660,22 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # DeleteVirtualNetworkGateway[delete]
         times = 0
         for i in range(4):
-          try:
-              # TODO: not sure why something in progress makes this failed. so try 3 times.
-              result = self.mgmt_client.virtual_network_gateways.begin_delete(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
-              result = result.result()
-          except HttpResponseError:
-              if i >= 3:
-                  raise HttpResponseError()
-              else:
-                  time.sleep(120)
+            try:
+                # TODO: not sure why something in progress makes this failed. so try 3 times.
+                result = self.mgmt_client.virtual_network_gateways.begin_delete(
+                    resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME
+                )
+                result = result.result()
+            except HttpResponseError:
+                if i >= 3:
+                    raise HttpResponseError()
+                else:
+                    time.sleep(120)
 
         # DeleteLocalNetworkGateway[delete]
         result = self.mgmt_client.local_network_gateways.begin_delete(resource_group.name, LOCAL_NETWORK_GATEWAY_NAME)
         result = result.result()
-        
+
         self.delete_network_interface(RESOURCE_GROUP, NETWORK_INTERFACE_NAME)
 
         # Delete subnet[delete]
@@ -677,6 +692,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

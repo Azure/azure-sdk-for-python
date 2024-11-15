@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List, Iterable
@@ -14,10 +14,12 @@ from .performatives import _CAN_ADD_DOCSTRING
 
 if TYPE_CHECKING:
     from uuid import UUID
+
     class MessageDict(TypedDict):  # needed for use with spread operator
         """
         Typing for Message, used with the spread operator.
         """
+
         header: Optional["Header"]
         delivery_annotations: Optional[Dict[Union[str, bytes], Any]]
         message_annotations: Optional[Dict[Union[str, bytes], Any]]
@@ -36,13 +38,14 @@ class Header(NamedTuple):
     first_acquirer: Optional[bool] = None
     delivery_count: Optional[int] = None
 
+
 Header._code = 0x00000070  # type: ignore # pylint:disable=protected-access
-Header._definition = ( # type: ignore # pylint:disable=protected-access
+Header._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("durable", AMQPTypes.boolean, False, None, False),
     FIELD("priority", AMQPTypes.ubyte, False, None, False),
     FIELD("ttl", AMQPTypes.uint, False, None, False),
     FIELD("first_acquirer", AMQPTypes.boolean, False, None, False),
-    FIELD("delivery_count", AMQPTypes.uint, False, None, False)
+    FIELD("delivery_count", AMQPTypes.uint, False, None, False),
 )
 
 if _CAN_ADD_DOCSTRING:
@@ -106,8 +109,9 @@ class Properties(NamedTuple):
     group_sequence: Optional[int] = None
     reply_to_group_id: Optional[Union[str, bytes]] = None
 
-Properties._code = 0x00000073 # type: ignore # pylint:disable=protected-access
-Properties._definition = ( # type: ignore # pylint:disable=protected-access
+
+Properties._code = 0x00000073  # type: ignore # pylint:disable=protected-access
+Properties._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("message_id", FieldDefinition.message_id, False, None, False),
     FIELD("user_id", AMQPTypes.binary, False, None, False),
     FIELD("to", AMQPTypes.string, False, None, False),
@@ -120,7 +124,8 @@ Properties._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("creation_time", AMQPTypes.timestamp, False, None, False),
     FIELD("group_id", AMQPTypes.string, False, None, False),
     FIELD("group_sequence", AMQPTypes.uint, False, None, False),
-    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
+    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False),
+)
 
 if _CAN_ADD_DOCSTRING:
     Properties.__doc__ = """
@@ -178,6 +183,7 @@ if _CAN_ADD_DOCSTRING:
         This is a client-specific id that is used so that client can send replies to this message to a specific group.
     """
 
+
 # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
 class Message(NamedTuple):
     header: Optional[Header] = None
@@ -190,8 +196,9 @@ class Message(NamedTuple):
     value: Optional[Any] = None
     footer: Optional[Dict[Any, Any]] = None
 
-Message._code = 0 # type: ignore # pylint:disable=protected-access
-Message._definition = ( # type: ignore # pylint:disable=protected-access
+
+Message._code = 0  # type: ignore # pylint:disable=protected-access
+Message._definition = (  # type: ignore # pylint:disable=protected-access
     (0x00000070, FIELD("header", Header, False, None, False)),
     (0x00000071, FIELD("delivery_annotations", FieldDefinition.annotations, False, None, False)),
     (0x00000072, FIELD("message_annotations", FieldDefinition.annotations, False, None, False)),
@@ -200,7 +207,8 @@ Message._definition = ( # type: ignore # pylint:disable=protected-access
     (0x00000075, FIELD("data", AMQPTypes.binary, False, None, True)),
     (0x00000076, FIELD("sequence", AMQPTypes.list, False, None, False)),
     (0x00000077, FIELD("value", None, False, None, False)),
-    (0x00000078, FIELD("footer", FieldDefinition.annotations, False, None, False)))
+    (0x00000078, FIELD("footer", FieldDefinition.annotations, False, None, False)),
+)
 if _CAN_ADD_DOCSTRING:
     Message.__doc__ = """
     An annotated message consists of the bare message plus sections for annotation at the head and tail

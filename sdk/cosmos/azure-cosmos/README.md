@@ -31,7 +31,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 3.6+][python]
+* [Python 3.8+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -427,13 +427,13 @@ client = CosmosClient(URL, credential=KEY)
 # Database
 DATABASE_NAME = 'testDatabase'
 database = client.get_database_client(DATABASE_NAME)
-db_offer = database.read_offer()
+db_offer = database.get_throughput()
 print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
 
 # Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
 CONTAINER_NAME = 'testContainer'
 container = database.get_container_client(CONTAINER_NAME)
-container_offer = container.read_offer()
+container_offer = container.get_throughput()
 print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
 ```
 
@@ -466,6 +466,28 @@ print(json.dumps(container_props['defaultTtl']))
 ```
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
+
+### Using item point operation response headers
+
+Response headers include metadata information from the executed operations like `etag`, which allows for optimistic concurrency scenarios, or `x-ms-request-charge` which lets you know how many RUs were consumed by the request.
+This applies to all item point operations in both the sync and async clients - and can be used by referencing the `get_response_headers()` method of any response as such:
+```python
+from azure.cosmos import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+client = CosmosClient(URL, credential=KEY)
+database = client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+operation_response = container.create_item({"id": "test_item", "productName": "test_item"})
+operation_headers = operation_response.get_response_headers()
+etag_value = operation_headers['etag']
+request_charge = operation_headers['x-ms-request-charge']
+```
 
 ### Using the asynchronous client
 
@@ -662,7 +684,7 @@ vector_embedding_policy = {
 ```
 
 Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
-the path to the relevant field to be used, and the type of index from the possible options (flat or quantizedFlat).
+the path to the relevant field to be used, and the type of index from the possible options - flat, quantizedFlat, or diskANN.
 A sample indexing policy with vector indexes would look like this:
 ```python
 indexing_policy = {
@@ -681,10 +703,28 @@ indexing_policy = {
         ],
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
-            {"path": "/vector2", "type": "quantizedFlat"}
+            {"path": "/vector2", "type": "quantizedFlat"},
+            {"path": "/vector3", "type": "diskANN"}
         ]
     }
 ```
+
+For vector index types of diskANN and quantizedFlat, there are additional options available as well. These are:
+
+quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types diskANN and quantizedFlat. The allowed range is between 1 and the minimum between 512 and the vector dimensions. The default value is 64.
+
+indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. This applies only to index type diskANN. The allowed range is between 25 and 500.
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 8},
+            {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
+        ]
+    }
+```
+
 You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
 The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
 ```python

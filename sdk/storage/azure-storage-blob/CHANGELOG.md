@@ -1,9 +1,33 @@
 # Release History
 
-## 12.23.0 (Unreleased)
+## 12.25.0b1 (Unreleased)
 
 ### Features Added
 
+## 12.24.0 (2024-11-13)
+
+### Features Added
+- Stable release of features from 12.24.0b1
+
+## 12.24.0b1 (2024-10-10)
+
+### Features Added
+- Added support for service version 2025-01-05.
+- Added support for passing metadata to `upload_blob_from_url` via the new `metadata` keyword.
+- Added support for `set_immutability_policy`, `delete_immutability_policy` and `set_legal_hold` for Blob snapshots and versions.
+
+## 12.23.1 (2024-09-25)
+
+### Features Added
+- Added support for decryption of Blobs encrypted using client-side encryption version 2.1.
+
+## 12.23.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue with batch APIs when using Azurite.
 
 ## 12.23.0b1 (2024-08-07)
 

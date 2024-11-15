@@ -26,15 +26,15 @@ app = flask.Flask(__name__)
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 @app.route("/")
 def test():
     return "Test flask request"
+
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8080, threaded=True)

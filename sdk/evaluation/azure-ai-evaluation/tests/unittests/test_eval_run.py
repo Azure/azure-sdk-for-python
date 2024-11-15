@@ -4,13 +4,16 @@ import os
 import time
 from unittest.mock import MagicMock, patch
 from uuid import uuid4
-
+import tempfile
 import jwt
+import pandas as pd
+import pathlib
 import pytest
 from promptflow.azure._utils._token_cache import ArmTokenCache
 
-import azure.ai.evaluation.evaluate._utils as ev_utils
-from azure.ai.evaluation.evaluate._eval_run import EvalRun, RunStatus
+import azure.ai.evaluation._evaluate._utils as ev_utils
+from azure.ai.evaluation._evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def generate_mock_token():
@@ -65,7 +68,7 @@ class TestEvalRun:
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
-                    with pytest.raises(ValueError) as cm:
+                    with pytest.raises(EvaluationException) as cm:
                         run._end_run(status)
                     assert status in cm.value.args[0]
                 else:
@@ -260,7 +263,7 @@ class TestEvalRun:
                     kwargs = {"artifact_folder": tmp_path}
                 else:
                     kwargs = {"key": "f1", "value": 0.5}
-                with patch("azure.ai.evaluation.evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
+                with patch("azure.ai.evaluation._evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
                     fn(**kwargs)
         assert len(caplog.records) == 1
         assert mock_response.text() in caplog.records[0].message
@@ -302,6 +305,30 @@ class TestEvalRun:
             assert len(caplog.records) == 1
             assert expected_error in caplog.records[0].message
 
+    def test_store_multi_modal_no_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_qa_chat_conv.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_image_urls(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_image_urls.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_images.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
     def test_log_metrics_and_instance_results_logs_error(self, token_mock, caplog):
         """Test that we are logging the error when there is no trace destination."""
         logger = logging.getLogger(ev_utils.__name__)
@@ -310,7 +337,7 @@ class TestEvalRun:
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
 
-        with caplog.at_level(logging.INFO):
+        with caplog.at_level(logging.DEBUG):
             ev_utils._log_metrics_and_instance_results(
                 metrics=None,
                 instance_results=None,
@@ -319,7 +346,10 @@ class TestEvalRun:
                 evaluation_name=None,
             )
         assert len(caplog.records) == 1
-        assert "Unable to log traces as trace destination was not defined." in caplog.records[0].message
+        assert (
+            "Skip uploading evaluation results to AI Studio since no trace destination was provided."
+            in caplog.records[0].message
+        )
 
     def test_run_broken_if_no_tracking_uri(self, token_mock, caplog):
         """Test that if no tracking URI is provirded, the run is being marked as broken."""
@@ -338,7 +368,7 @@ class TestEvalRun:
         ) as run:
             assert len(caplog.records) == 1
             assert "The results will be saved locally, but will not be logged to Azure." in caplog.records[0].message
-            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
+            with patch("azure.ai.evaluation._evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
                 run.log_artifact("mock_dir")
                 run.log_metric("foo", 42)
                 run.write_properties_to_run_history({"foo": "bar"})
@@ -468,6 +498,6 @@ class TestEvalRun:
             run._start_run()
             if status == RunStatus.TERMINATED:
                 run._end_run("FINISHED")
-        with pytest.raises(RuntimeError) as cm:
+        with pytest.raises(EvaluationException) as cm:
             run._start_run()
         assert f"Unable to start run due to Run status={status}" in cm.value.args[0], cm.value.args[0]

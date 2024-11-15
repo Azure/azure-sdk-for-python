@@ -1,5 +1,231 @@
 # Release History
 
+## 3.2.0b1 (2024-10-28)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added operation group `app_resiliency`
+  - Client `ContainerAppsAPIClient` added operation group `builders`
+  - Client `ContainerAppsAPIClient` added operation group `builds_by_builder_resource`
+  - Client `ContainerAppsAPIClient` added operation group `builds`
+  - Client `ContainerAppsAPIClient` added operation group `build_auth_token`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds_by_container_app`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_patches`
+  - Client `ContainerAppsAPIClient` added operation group `dot_net_components`
+  - Client `ContainerAppsAPIClient` added operation group `functions_extension`
+  - Client `ContainerAppsAPIClient` added operation group `java_components`
+  - Client `ContainerAppsAPIClient` added operation group `logic_apps`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_component_resiliency_policies`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_subscriptions`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_session_pools`
+  - Model `BaseContainer` added property `image_type`
+  - Model `BillingMeter` added property `id`
+  - Model `BillingMeter` added property `name`
+  - Model `BillingMeter` added property `type`
+  - Model `BillingMeter` added property `system_data`
+  - Model `CertificateProperties` added property `certificate_key_vault_properties`
+  - Model `CertificateProperties` added property `certificate_type`
+  - Model `Configuration` added property `runtime`
+  - Model `Configuration` added property `identity_settings`
+  - Model `ConnectedEnvironmentStorageProperties` added property `smb`
+  - Model `Container` added parameter `image_type` in method `__init__`
+  - Model `ContainerApp` added property `kind`
+  - Model `ContainerApp` added property `deployment_errors`
+  - Model `ContainerApp` added property `patching_configuration`
+  - Model `CustomDomainConfiguration` added property `certificate_key_vault_properties`
+  - Model `CustomScaleRule` added property `identity`
+  - Model `DaprComponent` added property `service_component_bind`
+  - Model `GithubActionConfiguration` added property `dockerfile_path`
+  - Model `GithubActionConfiguration` added property `build_environment_variables`
+  - Model `HttpScaleRule` added property `identity`
+  - Model `Ingress` added property `target_port_http_scheme`
+  - Model `InitContainer` added property `image_type`
+  - Model `Job` added property `extended_location`
+  - Model `Job` added property `running_state`
+  - Model `JobConfiguration` added property `identity_settings`
+  - Model `JobExecution` added property `detailed_status`
+  - Model `JobPatchProperties` added property `extended_location`
+  - Model `JobScaleRule` added property `identity`
+  - Model `LogAnalyticsConfiguration` added property `dynamic_json_columns`
+  - Model `ManagedEnvironment` added property `identity`
+  - Model `ManagedEnvironment` added property `app_insights_configuration`
+  - Model `ManagedEnvironment` added property `open_telemetry_configuration`
+  - Model `ManagedEnvironment` added property `private_endpoint_connections`
+  - Model `ManagedEnvironment` added property `public_network_access`
+  - Model `ManagedEnvironmentStorageProperties` added property `nfs_azure_file`
+  - Model `QueueScaleRule` added property `account_name`
+  - Model `QueueScaleRule` added property `identity`
+  - Model `ReplicaContainer` added property `debug_endpoint`
+  - Model `Scale` added property `cooldown_period`
+  - Model `Scale` added property `polling_interval`
+  - Model `ServiceBind` added property `client_type`
+  - Model `ServiceBind` added property `customized_keys`
+  - Enum `StorageType` added member `NFS_AZURE_FILE`
+  - Enum `StorageType` added member `SMB`
+  - Model `TcpScaleRule` added property `identity`
+  - Model `WorkloadProfile` added property `enable_fips`
+  - Added model `AppInsightsConfiguration`
+  - Added model `AppResiliency`
+  - Added model `AppResiliencyCollection`
+  - Added model `BuildCollection`
+  - Added model `BuildConfiguration`
+  - Added enum `BuildProvisioningState`
+  - Added model `BuildResource`
+  - Added enum `BuildStatus`
+  - Added model `BuildToken`
+  - Added model `BuilderCollection`
+  - Added enum `BuilderProvisioningState`
+  - Added model `BuilderResource`
+  - Added model `BuilderResourceUpdate`
+  - Added model `CertificateKeyVaultProperties`
+  - Added enum `CertificateType`
+  - Added model `CircuitBreakerPolicy`
+  - Added model `ContainerAppPropertiesPatchingConfiguration`
+  - Added model `ContainerAppsBuildCollection`
+  - Added model `ContainerAppsBuildConfiguration`
+  - Added model `ContainerAppsBuildResource`
+  - Added model `ContainerAppsPatchResource`
+  - Added model `ContainerExecutionStatus`
+  - Added model `ContainerRegistry`
+  - Added model `ContainerRegistryWithCustomImage`
+  - Added enum `ContainerType`
+  - Added model `CustomContainerTemplate`
+  - Added model `DaprComponentResiliencyPoliciesCollection`
+  - Added model `DaprComponentResiliencyPolicy`
+  - Added model `DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyTimeoutPolicyConfiguration`
+  - Added model `DaprComponentServiceBinding`
+  - Added model `DaprServiceBindMetadata`
+  - Added model `DaprSubscription`
+  - Added model `DaprSubscriptionBulkSubscribeOptions`
+  - Added model `DaprSubscriptionRouteRule`
+  - Added model `DaprSubscriptionRoutes`
+  - Added model `DaprSubscriptionsCollection`
+  - Added model `DataDogConfiguration`
+  - Added model `DestinationsConfiguration`
+  - Added enum `DetectionStatus`
+  - Added model `DotNetComponent`
+  - Added model `DotNetComponentConfigurationProperty`
+  - Added enum `DotNetComponentProvisioningState`
+  - Added model `DotNetComponentServiceBind`
+  - Added enum `DotNetComponentType`
+  - Added model `DotNetComponentsCollection`
+  - Added model `DynamicPoolConfiguration`
+  - Added model `EnvironmentVariable`
+  - Added model `ErrorEntity`
+  - Added model `ExecutionStatus`
+  - Added enum `ExecutionType`
+  - Added model `Header`
+  - Added model `HeaderMatch`
+  - Added model `HttpConnectionPool`
+  - Added model `HttpGet`
+  - Added model `HttpRetryPolicy`
+  - Added model `IdentitySettings`
+  - Added enum `IdentitySettingsLifeCycle`
+  - Added enum `ImageType`
+  - Added enum `IngressTargetPortHttpScheme`
+  - Added model `JavaComponent`
+  - Added model `JavaComponentConfigurationProperty`
+  - Added model `JavaComponentIngress`
+  - Added model `JavaComponentProperties`
+  - Added model `JavaComponentPropertiesScale`
+  - Added enum `JavaComponentProvisioningState`
+  - Added model `JavaComponentServiceBind`
+  - Added enum `JavaComponentType`
+  - Added model `JavaComponentsCollection`
+  - Added enum `JobRunningState`
+  - Added enum `Kind`
+  - Added enum `Level`
+  - Added model `LoggerSetting`
+  - Added model `LogicApp`
+  - Added enum `LogicAppsProxyMethod`
+  - Added model `LogsConfiguration`
+  - Added model `MetricsConfiguration`
+  - Added model `NacosComponent`
+  - Added model `NfsAzureFileProperties`
+  - Added model `OpenTelemetryConfiguration`
+  - Added model `OtlpConfiguration`
+  - Added enum `PatchApplyStatus`
+  - Added model `PatchCollection`
+  - Added model `PatchDetails`
+  - Added model `PatchDetailsNewLayer`
+  - Added model `PatchDetailsOldLayer`
+  - Added model `PatchProperties`
+  - Added model `PatchSkipConfig`
+  - Added enum `PatchType`
+  - Added enum `PatchingMode`
+  - Added enum `PoolManagementType`
+  - Added model `PreBuildStep`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccess`
+  - Added model `ReplicaExecutionStatus`
+  - Added model `Runtime`
+  - Added model `RuntimeDotnet`
+  - Added model `RuntimeJava`
+  - Added model `RuntimeJavaAgent`
+  - Added model `RuntimeJavaAgentLogging`
+  - Added model `ScaleConfiguration`
+  - Added model `ScgRoute`
+  - Added model `SessionContainer`
+  - Added model `SessionContainerResources`
+  - Added model `SessionIngress`
+  - Added model `SessionNetworkConfiguration`
+  - Added enum `SessionNetworkStatus`
+  - Added model `SessionPool`
+  - Added model `SessionPoolCollection`
+  - Added enum `SessionPoolProvisioningState`
+  - Added model `SessionPoolSecret`
+  - Added model `SessionPoolUpdatableProperties`
+  - Added model `SessionRegistryCredentials`
+  - Added model `SmbStorage`
+  - Added model `SpringBootAdminComponent`
+  - Added model `SpringCloudConfigComponent`
+  - Added model `SpringCloudEurekaComponent`
+  - Added model `SpringCloudGatewayComponent`
+  - Added model `TcpConnectionPool`
+  - Added model `TcpRetryPolicy`
+  - Added model `TimeoutPolicy`
+  - Added model `TracesConfiguration`
+  - Added model `WorkflowArtifacts`
+  - Added model `WorkflowEnvelope`
+  - Added model `WorkflowEnvelopeCollection`
+  - Added model `WorkflowEnvelopeProperties`
+  - Added model `WorkflowHealth`
+  - Added enum `WorkflowHealthState`
+  - Added enum `WorkflowState`
+  - Operation group `JobsOperations` added method `begin_resume`
+  - Operation group `JobsOperations` added method `begin_suspend`
+  - Added operation group `AppResiliencyOperations`
+  - Added operation group `BuildAuthTokenOperations`
+  - Added operation group `BuildersOperations`
+  - Added operation group `BuildsByBuilderResourceOperations`
+  - Added operation group `BuildsOperations`
+  - Added operation group `ContainerAppsBuildsByContainerAppOperations`
+  - Added operation group `ContainerAppsBuildsOperations`
+  - Added operation group `ContainerAppsPatchesOperations`
+  - Added operation group `ContainerAppsSessionPoolsOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DaprSubscriptionsOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `JavaComponentsOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
+
 ## 3.1.0 (2024-08-06)
 
 ### Features Added

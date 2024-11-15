@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import sys
 import pytest
 
 from azure.eventhub.aio import (
@@ -26,9 +27,7 @@ async def test_get_properties(auth_credentials_async, uamqp_transport):
     )
     async with client:
         properties = await client.get_eventhub_properties()
-        assert properties["eventhub_name"] == eventhub_name and properties[
-            "partition_ids"
-        ] == ["0", "1"]
+        assert properties["eventhub_name"] == eventhub_name and properties["partition_ids"] == ["0", "1"]
 
 
 @pytest.mark.liveTest
@@ -101,6 +100,10 @@ async def test_get_partition_ids(auth_credentials_async, uamqp_transport):
         assert partition_ids == ["0", "1"]
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("win"),
+    reason="Large negative timestamp to datetime conversion fails on Windows with: https://bugs.python.org/issue36439",
+)
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_get_partition_properties(auth_credentials_async, uamqp_transport):
