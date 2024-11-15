@@ -3,38 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import base64
-import tempfile
-from datetime import datetime, timedelta, timezone
-
 import pytest
-import requests
-from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient
-from azure.storage.fileshare import (
-    AccessPolicy,
-    AccountSasPermissions,
-    ContentSettings,
-    FileSasPermissions,
-    generate_account_sas,
-    generate_file_sas,
-    generate_share_sas,
-    NTFSAttributes,
-    ResourceTypes,
-    ShareFileClient,
-    ShareSasPermissions,
-    ShareServiceClient,
-    ShareDirectoryClient,
-    StorageErrorCode
-)
+from azure.storage.fileshare import ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from test_helpers import ProgressTracker
 
 
 TEST_INTENT = 'backup'
@@ -60,7 +35,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
     def teardown_method(self):
         if self.fsc:
             try:
-                self.fsc.delete_share()
+                self.fsc.delete_share(self.share_name)
             except:
                 pass
 
@@ -80,16 +55,32 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         self._setup(storage_account_name)
 
         share_client = self.fsc.get_share_client(self.share_name)
+
         directory_name = self._get_directory_name()
         directory_client = share_client.create_directory(directory_name)
-        source_file_name = self._get_file_name()
+        source_file_name = self._get_file_name('file1')
         source_file_client = directory_client.get_file_client(source_file_name)
-        hard_link_file_name = self._get_file_name()
+        source_file_client.create_file(size=1024)
+        hard_link_file_name = self._get_file_name('file2')
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
         resp = hard_link_file_client.create_hard_link(target_file=f"{directory_name}/{source_file_name}")
 
         assert resp is not None
+        assert resp['file_file_type'] == 'Regular'
+        assert resp['owner'] == '0'
+        assert resp['group'] == '0'
+        assert resp['mode'] == '0664'
+        assert resp['link_count'] == 2
+
+        assert resp['file_creation_time'] is not None
+        assert resp['file_last_write_time'] is not None
+        assert resp['file_change_time'] is not None
+        assert resp['file_id'] is not None
+        assert resp['file_parent_id'] is not None
+
+        assert 'file_attributes' not in resp
+        assert 'file_response_key' not in resp
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -99,6 +90,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         self._setup(storage_account_name)
 
         share_client = self.fsc.get_share_client(self.share_name)
+
         directory_name = self._get_directory_name()
         directory_client = share_client.create_directory(directory_name)
         source_file_name = self._get_file_name()
