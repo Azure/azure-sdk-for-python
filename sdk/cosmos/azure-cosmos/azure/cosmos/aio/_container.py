@@ -584,7 +584,6 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -597,11 +596,6 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword mode: The change feed mode enum to use when processing change feed items.
-            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
-            or 'continuation' token.
-        :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
         :returns: An AsyncItemPaged of items (dicts).
