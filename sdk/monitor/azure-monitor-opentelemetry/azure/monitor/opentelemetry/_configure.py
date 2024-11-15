@@ -170,9 +170,13 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
-    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    getLogger(logger_name).addHandler(handler)
+    logger = getLogger(logger_name)
+    # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
+    # This is to prevent most duplicate logging telemetry
+    if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
+        handler = LoggingHandler(logger_provider=logger_provider)
+        logger.addHandler(handler)
 
     # Setup EventLoggerProvider
     event_provider = EventLoggerProvider(logger_provider)
