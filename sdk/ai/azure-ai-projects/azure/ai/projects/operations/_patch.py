@@ -628,7 +628,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._toolset: Optional[_models.ToolSet] = None
+        self._toolset: Dict[str, _models.ToolSet] = {}
 
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -843,11 +843,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().create_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
-        return super().create_agent(
+        new_agent = super().create_agent(
             model=model,
             name=name,
             description=description,
@@ -860,6 +859,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
+
+        if toolset is not None:
+            self._toolset[new_agent.id] = toolset        
+        return new_agent
 
     @overload
     def update_agent(
@@ -1108,7 +1111,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
+            self._toolset[assistant_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -1147,15 +1150,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise ValueError(
                 "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
             )
-
-    def _get_toolset(self) -> Optional[_models.ToolSet]:
-        """
-        Get the toolset for the agent.
-
-        :return: The toolset for the agent. If not set, returns None.
-        :rtype: ~azure.ai.projects.models.ToolSet
-        """
-        return self._toolset
 
     @overload
     def create_run(
@@ -1549,7 +1543,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                toolset = self._get_toolset()
+                toolset = self._toolset.get(run.assistant_id)
                 if toolset:
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
@@ -2098,7 +2092,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self._get_toolset()
+            toolset = self._toolset.get(run.assistant_id)
             if toolset:
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
             else:
@@ -2872,6 +2866,20 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file
+
+    @distributed_trace
+    def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+        """Deletes an agent.
+
+        :param assistant_id: Identifier of the agent. Required.
+        :type assistant_id: str
+        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if assistant_id in self._toolset:
+            del self._toolset[assistant_id]
+        return super().delete_agent(assistant_id, **kwargs)
 
 
 __all__: List[str] = [
