@@ -6,8 +6,8 @@
 
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
-from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
+from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _format_component_query_workaround
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -99,7 +99,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         # re-write the component queries if needed
         component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
         if self._aggregated_global_statistics:
-            rewritten_query_infos = self._rewrite_query_infos()
+            rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
+                                                         self._aggregated_global_statistics)
         else:
             rewritten_query_infos = component_query_infos
 
@@ -163,45 +164,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
 
-    def _rewrite_query_infos(self):
-        rewritten_query_infos = []
-        for query_info in self._hybrid_search_query_info['componentQueryInfos']:
-            assert query_info['orderBy']
-            assert query_info['hasNonStreamingOrderBy']
-            rewritten_order_by_expressions = []
-            for order_by_expression in query_info['orderByExpressions']:
-                rewritten_order_by_expressions.append(self._format_component_query(order_by_expression))
-
-            rewritten_query = self._format_component_query(query_info['rewrittenQuery'])
-            new_query_info = query_info.copy()
-            new_query_info['orderByExpressions'] = rewritten_order_by_expressions
-            new_query_info['rewrittenQuery'] = rewritten_query
-            rewritten_query_infos.append(new_query_info)
-        return rewritten_query_infos
-
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
         take = self._hybrid_search_query_info['take']
         self._final_results = results[skip:skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
-
-    def _format_component_query(self, format_string):
-        format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
-        query = format_string.replace(_Placeholders.total_document_count,
-                                      str(self._aggregated_global_statistics['documentCount']))
-
-        for i in range(len(self._aggregated_global_statistics['fullTextStatistics'])):
-            full_text_statistics = self._aggregated_global_statistics['fullTextStatistics'][i]
-            query = query.replace(_Placeholders.formattable_total_word_count.format(i),
-                                  str(full_text_statistics['totalWordCount']))
-            hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
-            query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
-
-        # TODO: Remove this hack later
-        if 'ORDER BY _VectorScore' in query:
-            return query.replace("DESC", "").replace("ASC", "")
-        return query
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,

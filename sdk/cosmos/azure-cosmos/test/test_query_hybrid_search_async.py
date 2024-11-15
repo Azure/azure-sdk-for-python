@@ -53,8 +53,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             for index, item in enumerate(data.get("items")):
                 item['id'] = str(index)
                 await self.test_container.create_item(item)
-        # Need to give the container time to index all the recently added items
-        time.sleep(9 * 60)
+        # Need to give the container time to index all the recently added items - 10 minutes seems to work
+        time.sleep(10 * 60)
 
     async def tearDown(self):
         try:
@@ -71,7 +71,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def test_hybrid_search_queries_async(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 3
         for res in result_list:
@@ -79,7 +79,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 3
         for res in result_list:
@@ -87,7 +87,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John']) OFFSET 1 LIMIT 5"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 2
         for res in result_list:
@@ -96,7 +96,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         query = "SELECT TOP 20 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 15
         for res in result_list:
@@ -106,7 +106,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
                 "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, ['John'])," \
                 " FullTextScore(c.text, ['United States']))"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
@@ -115,7 +115,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') ORDER BY " \
                 "RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) OFFSET 5 LIMIT 10"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
@@ -123,7 +123,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         query = "SELECT TOP 10 c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
@@ -132,17 +132,18 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
                 "OFFSET 0 LIMIT 13"
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 13
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
 
-        item_vector = self.test_container.read_item('50', '50')['vector']
+        read_item = await self.test_container.read_item('50', '50')
+        item_vector = read_item['vector']
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
@@ -152,7 +153,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
                 "OFFSET 0 LIMIT 13"
-        query_iterable = self.test_container.query_items(query, enable_cross_partition_query=True, max_item_count=5)
+        query_iterable = self.test_container.query_items(query, max_item_count=5)
         all_fetched_res = []
         count = 0
         item_pages = query_iterable.by_page()

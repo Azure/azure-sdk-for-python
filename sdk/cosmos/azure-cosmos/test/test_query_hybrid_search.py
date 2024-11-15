@@ -52,8 +52,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             for index, item in enumerate(data.get("items")):
                 item['id'] = str(index)
                 self.test_container.create_item(item)
-        # Need to give the container time to index all the recently added items
-        time.sleep(9 * 60)
+        # Need to give the container time to index all the recently added items - 10 minutes seems to work
+        time.sleep(10 * 60)
 
     def tearDown(self):
         try:
