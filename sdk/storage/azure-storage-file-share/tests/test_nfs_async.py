@@ -45,13 +45,13 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
                     pass
 
     def teardown_method(self):
-        fsc = ShareServiceClient(
-            account_url=self.account_url,
-            credential=self.get_credential(ShareServiceClient),
-            token_intent=TEST_INTENT
-        )
         if self.fsc:
             try:
+                fsc = ShareServiceClient(
+                    account_url=self.account_url,
+                    credential=self.get_credential(ShareServiceClient),
+                    token_intent=TEST_INTENT
+                )
                 fsc.delete_share(self.share_name)
             except:
                 pass
