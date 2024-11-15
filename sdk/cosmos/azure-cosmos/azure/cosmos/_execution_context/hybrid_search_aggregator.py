@@ -151,10 +151,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                 assert query_info['hasNonStreamingOrderBy']
                 rewritten_order_by_expressions = []
                 for order_by_expression in query_info['orderByExpressions']:
-                    rewritten_order_by_expression = self._format_component_query(order_by_expression)
+                    rewritten_order_by_expression = self._format_component_query_workaround(order_by_expression, len(self._hybrid_search_query_info[
+                                                                    'componentQueryInfos']))
                     rewritten_order_by_expressions.append(rewritten_order_by_expression)
 
-                rewritten_query = self._format_component_query(query_info['rewrittenQuery'])
+                rewritten_query = self._format_component_query_workaround(query_info['rewrittenQuery'], len(self._hybrid_search_query_info[
+                                                                    'componentQueryInfos']))
                 new_query_info = query_info.copy()
                 new_query_info['orderByExpressions'] = rewritten_order_by_expressions
                 new_query_info['rewrittenQuery'] = rewritten_query
@@ -230,6 +232,32 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._final_results.reverse()
         self._final_results = [result["payload"]["payload"] for result in self._final_results]
         return True
+
+    def _format_component_query_workaround(self, format_string, component_count):
+        # TODO: remove this method once the fix is live and switch back to one below
+        format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
+        query = format_string.replace(_Placeholders.total_document_count,
+                                      str(self._aggregated_global_statistics['documentCount']))
+
+        statistics_index = 0
+        for component_index in range(component_count):
+            total_word_count_placeholder = _Placeholders.formattable_total_word_count.format(component_index)
+            hit_counts_array_placeholder = _Placeholders.formattable_hit_counts_array.format(component_index)
+
+            if total_word_count_placeholder not in query:
+                continue
+
+            full_text_statistics = self._aggregated_global_statistics['fullTextStatistics'][statistics_index]
+            query = query.replace(total_word_count_placeholder, str(full_text_statistics['totalWordCount']))
+
+            hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
+            query = query.replace(hit_counts_array_placeholder, hit_counts_array)
+
+            statistics_index += 1
+
+        if 'ORDER BY _VectorScore' in query:
+            return query.replace("DESC", "").replace("ASC", "")
+        return query
 
     def _format_component_query(self, format_string):
         format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
