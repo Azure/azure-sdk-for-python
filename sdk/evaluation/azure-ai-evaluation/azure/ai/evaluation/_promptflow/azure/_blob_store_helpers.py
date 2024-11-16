@@ -10,7 +10,7 @@ from azure.ai.evaluation._evaluate._utils import AzureMLWorkspace
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenScope
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureKeyCredential
 from azure.identity import (
     AzureCliCredential, 
     DefaultAzureCredential,
@@ -23,7 +23,7 @@ class BlobStoreInfo(NamedTuple):
     account_name: str
     endpoint: str
     container_name: str
-    credentials: AzureSasCredential
+    credentials: Union[AzureSasCredential, AzureKeyCredential]
 
 
 def _get_workspace_from_trace_string(trace_destination: str) -> AzureMLWorkspace:
@@ -44,7 +44,7 @@ def _get_workspace_from_trace_string(trace_destination: str) -> AzureMLWorkspace
     
     return AzureMLWorkspace(subscription_id, resource_group, workspace_name)
 
-def _get_workspace_credentials() -> Union[AzureCliCredential, ManagedIdentityCredential, ChainedTokenCredential]:
+def get_workspace_credentials() -> Union[AzureCliCredential, ManagedIdentityCredential, ChainedTokenCredential, "AzureMLOnBehalfOfCredential"]: # type: ignore
     """ Returns the Azure credentials for the Azure Machine Learning workspace. """
     
     from promptflow._utils.logger_utils import get_cli_sdk_logger
@@ -53,10 +53,23 @@ def _get_workspace_credentials() -> Union[AzureCliCredential, ManagedIdentityCre
 
     logger = get_cli_sdk_logger()
 
-    # if os.getenv("AZUREML_OBO_ENABLED"):
-    #     logger.debug("User identity is configured, use OBO credential.")
-    #     credential = AzureMLOnBehalfOfCredential()
-    if os.environ.get("PF_USE_AZURE_CLI_CREDENTIAL", "false").lower() == "true":
+    if os.getenv("AZUREML_OBO_ENABLED"):
+        # using Azure on behalf of credentials requires the use of the azure-ai-ml package
+        try:
+            from azure.ai.ml.identity import AzureMLOnBehalfOfCredential
+            logger.debug("User identity is configured, use OBO credential.")
+            credential = AzureMLOnBehalfOfCredential()
+        except (ModuleNotFoundError, ImportError):
+            raise EvaluationException(  # pylint: disable=raise-missing-from
+                message=(
+                    "The required packages for OBO credentials are missing.\n"
+                    'To resolve this, please install them by running "pip install azure-ai-ml".'
+                ),
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.MISSING_PACKAGE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+    elif os.environ.get("PF_USE_AZURE_CLI_CREDENTIAL", "false").lower() == "true":
         logger.debug("Use azure cli credential since specified in environment variable.")
         credential = AzureCliCredential()
     else:
@@ -83,7 +96,7 @@ def get_workspace_default_blob_store(trace_destination: str) -> BlobStoreInfo:
         by parsing the trace destination string. """
 
     API_VERSION_KEY: Final[str] = "api-version"
-    API_VERSION: Final[str] = "2024-10-01"
+    API_VERSION: Final[str] = "2024-04-01"
 
     subscription_id, resource_group, workspace_name = _get_workspace_from_trace_string(trace_destination)
     subscription_id = quote(subscription_id, safe='')
@@ -92,7 +105,7 @@ def get_workspace_default_blob_store(trace_destination: str) -> BlobStoreInfo:
 
     base_url = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/datastores"
 
-    credential = _get_workspace_credentials()
+    credential = get_workspace_credentials()
     # TODO ralphe: use the APITokenManager to cache this token
     access_token = credential.get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT.value)
     headers = {
@@ -134,18 +147,20 @@ def get_workspace_default_blob_store(trace_destination: str) -> BlobStoreInfo:
     secrets_response.raise_for_status() # TODO ralphe: should we raise a different exception here?
 
     secrets_json = secrets_response.json()
-    cred_type = secrets_json["secretsType"]
+    cred_type = secrets_json["secretsType"].lower()
 
-    if cred_type.lower() != "sas":
-        # TODO ralphe: assume this is an AccountKeyConfiguration? or AccountKeyToken?
+    if cred_type == "sas":
+        blob_store_credential = AzureSasCredential(secrets_json["sasToken"])
+    elif cred_type == "accountkey":
+        # Handle account key credential type
+        blob_store_credential = AzureKeyCredential(secrets_json["key"])
+    else:
         raise EvaluationException(
-            message=f"The '{account_name}' blob store does not use a SAS token.",
+            message=f"The '{account_name}' blob store does not use a recognized credential type.",
             internal_message=f"The credential type is '{cred_type}'",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.SYSTEM_ERROR
         )
-    
-    blob_store_credential = AzureSasCredential(secrets_json["sasToken"])
 
     return BlobStoreInfo(account_name, endpoint, container_name, blob_store_credential)
