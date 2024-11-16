@@ -17,12 +17,12 @@ class NetworkAcls(RestTranslatableMixin):
     :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
     :type ip_rules: Optional[List[IPRule]]
 
-    .. literalinclude:: ../samples/ml_samples_workspace.py
-            :start-after: [START workspace_network_access_settings]
-            :end-before: [END workspace_network_access_settings]
-            :language: python
-            :dedent: 8
-            :caption: Examples to choose one of three Public network access settings.
+    # .. literalinclude:: ../samples/ml_samples_workspace.py
+    #     :start-after: [START workspace_network_access_settings]
+    #     :end-before: [END workspace_network_access_settings]
+    #     :language: python
+    #     :dedent: 8
+    #     :caption: Examples to choose one of three Public network access settings.
     """
 
     class IPRule(RestTranslatableMixin):
