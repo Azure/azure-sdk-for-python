@@ -124,6 +124,7 @@ def process_message_content(content, images_folder_path):
         image_file_path = os.path.join(images_folder_path, image_file_name)
         with open(image_file_path, "wb") as f:
             f.write(image_data_binary)
+    return None
 
 
 def _log_metrics_and_instance_results(
