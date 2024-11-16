@@ -326,7 +326,7 @@ class TableTestCase(object):
         self._assert_logging_equal(prop["analytics_logging"], TableAnalyticsLogging())
         self._assert_metrics_equal(prop["hour_metrics"], TableMetrics())
         self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
-        self._assert_cors_equal(prop["cors"], list())
+        self._assert_cors_equal(prop["cors"], [])
 
     def _assert_policy_datetime(self, val1, val2):
         assert isinstance(val2, datetime)
