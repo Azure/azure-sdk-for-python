@@ -7,19 +7,19 @@ from typing import Any, Optional, Dict
 import json
 import os
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    AsyncFunctionTool,
+    AsyncToolSet,
     CodeInterpreterTool,
-    FunctionTool,
     RequiredFunctionToolCall,
     RequiredFunctionToolCallDetails,
     RequiredToolCall,
     RunStatus,
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
-    ToolSet,
 )
 
 
@@ -43,24 +43,24 @@ class TestAgentsOperations:
             subscription_id="00000000-0000-0000-0000-000000000000",
             resource_group_name="non-existing-rg",
             project_name="non-existing-project",
-            credential=MagicMock(),
+            credential=AsyncMock(),
         )
-        client.agents.submit_tool_outputs_to_run = MagicMock()
-        client.agents.submit_tool_outputs_to_stream = MagicMock()
+        client.agents.submit_tool_outputs_to_run = AsyncMock()
+        client.agents.submit_tool_outputs_to_stream = AsyncMock()
         return client
 
-    def get_toolset(self, file_id: Optional[str], function: Optional[str]) -> Optional[ToolSet]:
+    def get_toolset(self, file_id: Optional[str], function: Optional[str]) -> Optional[AsyncToolSet]:
         """Get the tool set with given file id and function"""
         if file_id is None or function is None:
             return None
-        functions = FunctionTool({function})
+        functions = AsyncFunctionTool({function})
         code_interpreter = CodeInterpreterTool(file_ids=[file_id])
-        toolset = ToolSet()
+        toolset = AsyncToolSet()
         toolset.add(functions)
         toolset.add(code_interpreter)
         return toolset
 
-    def _assert_pipeline_and_reset(self, mock_pipeline_run: MagicMock, tool_set: Optional[ToolSet]) -> None:
+    def _assert_pipeline_and_reset(self, mock_pipeline_run: AsyncMock, tool_set: Optional[AsyncToolSet]) -> None:
         """Check that the pipeline has correct values of tools."""
         mock_pipeline_run.assert_called_once()
         data = json.loads(mock_pipeline_run.call_args_list[0].args[0].body)
@@ -90,7 +90,7 @@ class TestAgentsOperations:
             assert "tools" not in data, "tools must not be in data"
         mock_pipeline_run.reset_mock()
 
-    def _get_agent_json(self, name: str, assistant_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
+    def _get_agent_json(self, name: str, assistant_id: str, tool_set: Optional[AsyncToolSet]) -> Dict[str, Any]:
         """Read in the agent JSON, so that we can assume service returnred it."""
         with open(
             os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "agent.json"),
@@ -106,7 +106,7 @@ class TestAgentsOperations:
         return agent_dict
 
     def _get_run(
-        self, thread_id: str, tool_set: Optional[ToolSet], add_azure_fn: bool = False, is_complete: bool = False
+        self, thread_id: str, tool_set: Optional[AsyncToolSet], add_azure_fn: bool = False, is_complete: bool = False
     ) -> Dict[str, Any]:
         """Return JSON as if we have created the run."""
         with open(
@@ -178,7 +178,7 @@ class TestAgentsOperations:
             run_dict["tools"] = definitions
         return run_dict
 
-    def _assert_tool_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
+    def _assert_tool_call(self, submit_tool_mock: AsyncMock, run_id: str, tool_set: Optional[AsyncToolSet]) -> None:
         """Check that submit_tool_outputs_to_run was called with correct parameters or was not called"""
         if tool_set is not None:
             expected_out = TestAgentsOperations.LOCAL_FN[tool_set.definitions[0].function.name]()
@@ -192,14 +192,15 @@ class TestAgentsOperations:
         else:
             submit_tool_mock.assert_not_called()
 
-    def _assert_toolset_dict(self, project_client: AIProjectClient, agent_id: str, toolset: Optional[ToolSet]):
+    def _assert_toolset_dict(self, project_client: AIProjectClient, agent_id: str, toolset: Optional[AsyncToolSet]):
         """Check that the tool set dictionary state is as expected."""
         if toolset is None:
             assert agent_id not in project_client.agents._toolset
         else:
             assert project_client.agents._toolset.get(agent_id) is not None
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
         [
@@ -209,9 +210,9 @@ class TestAgentsOperations:
             (None, None),
         ],
     )
-    def test_multiple_agents_create(
+    async def test_multiple_agents_create(
         self,
-        mock_pipeline_client_gen: MagicMock,
+        mock_pipeline_client_gen: AsyncMock,
         file_agent_1: Optional[str],
         file_agent_2: Optional[str],
     ) -> None:
@@ -233,15 +234,15 @@ class TestAgentsOperations:
             "{}",  # delete agent 1
             "{}",  # delete agent 2
         ]
-        mock_pipeline_response = MagicMock()
+        mock_pipeline_response = AsyncMock()
         mock_pipeline_response.http_response = mock_response
-        mock_pipeline = MagicMock()
+        mock_pipeline = AsyncMock()
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
-        with project_client:
+        async with project_client:
             # Check that pipelines are created as expected.
-            agent1 = project_client.agents.create_agent(
+            agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
                 instructions="You are a helpful assistant",
@@ -249,7 +250,7 @@ class TestAgentsOperations:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
 
-            agent2 = project_client.agents.create_agent(
+            agent2 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="second",
                 instructions="You are a helpful assistant",
@@ -257,23 +258,24 @@ class TestAgentsOperations:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
 
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
+            await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
             # Check the contents of a toolset
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
             self._assert_toolset_dict(project_client, agent2.id, toolset2)
             # Check that we cleanup tools after deleting agent.
-            project_client.agents.delete_agent(agent1.id)
+            await project_client.agents.delete_agent(agent1.id)
             self._assert_toolset_dict(project_client, agent1.id, None)
             self._assert_toolset_dict(project_client, agent2.id, toolset2)
-            project_client.agents.delete_agent(agent2.id)
+            await project_client.agents.delete_agent(agent2.id)
             self._assert_toolset_dict(project_client, agent1.id, None)
             self._assert_toolset_dict(project_client, agent2.id, None)
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
         [
@@ -283,9 +285,9 @@ class TestAgentsOperations:
             (None, None),
         ],
     )
-    def test_update_agent_tools(
+    async def test_update_agent_tools(
         self,
-        mock_pipeline_client_gen: MagicMock,
+        mock_pipeline_client_gen: AsyncMock,
         file_agent_1: Optional[str],
         file_agent_2: Optional[str],
     ) -> None:
@@ -298,28 +300,29 @@ class TestAgentsOperations:
             self._get_agent_json("first", "123", toolset1),
             self._get_agent_json("first", "123", toolset2),
         ]
-        mock_pipeline_response = MagicMock()
+        mock_pipeline_response = AsyncMock()
         mock_pipeline_response.http_response = mock_response
-        mock_pipeline = MagicMock()
+        mock_pipeline = AsyncMock()
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
-        with project_client:
-        # Check that pipelines are created as expected.
-            agent1 = project_client.agents.create_agent(
+        async with project_client:
+            # Check that pipelines are created as expected.
+            agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
                 instructions="You are a helpful assistant",
                 toolset=toolset1,
             )
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
-            project_client.agents.update_agent(agent1.id, toolset=toolset2)
+            await project_client.agents.update_agent(agent1.id, toolset=toolset2)
             if toolset2 is None:
                 self._assert_toolset_dict(project_client, agent1.id, toolset1)
             else:
                 self._assert_toolset_dict(project_client, agent1.id, toolset2)
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
         [
@@ -329,9 +332,9 @@ class TestAgentsOperations:
             (None, None),
         ],
     )
-    def test_create_run_tools_override(
+    async def test_create_run_tools_override(
         self,
-        mock_pipeline_client_gen: MagicMock,
+        mock_pipeline_client_gen: AsyncMock,
         file_agent_1: Optional[str],
         file_agent_2: Optional[str],
     ) -> None:
@@ -353,15 +356,15 @@ class TestAgentsOperations:
                 self._get_run("run123", None, is_complete=True)
             )  # Run must be marked as completed in this case.
         mock_response.json.side_effect = side_effect
-        mock_pipeline_response = MagicMock()
+        mock_pipeline_response = AsyncMock()
         mock_pipeline_response.http_response = mock_response
-        mock_pipeline = MagicMock()
+        mock_pipeline = AsyncMock()
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
-        with project_client:
+        async with project_client:
             # Check that pipelines are created as expected.
-            agent1 = project_client.agents.create_agent(
+            agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
                 instructions="You are a helpful assistant",
@@ -371,7 +374,7 @@ class TestAgentsOperations:
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
             # Create run with new tool set, which also can be none.
-            project_client.agents.create_and_process_run(
+            await project_client.agents.create_and_process_run(
                 thread_id="some_thread_id", assistant_id=agent1.id, toolset=toolset2
             )
             if toolset2 is not None:
@@ -380,7 +383,8 @@ class TestAgentsOperations:
                 self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,add_azure_fn",
         [
@@ -390,9 +394,9 @@ class TestAgentsOperations:
             (None, False),
         ],
     )
-    def test_with_azure_function(
+    async def test_with_azure_function(
         self,
-        mock_pipeline_client_gen: MagicMock,
+        mock_pipeline_client_gen: AsyncMock,
         file_agent_1: Optional[str],
         add_azure_fn: bool,
     ) -> None:
@@ -408,25 +412,25 @@ class TestAgentsOperations:
                 "run123", toolset, add_azure_fn=add_azure_fn, is_complete=True
             ),  # get_run after resubmitting with tool results
         ]
-        mock_pipeline_response = MagicMock()
+        mock_pipeline_response = AsyncMock()
         mock_pipeline_response.http_response = mock_response
-        mock_pipeline = MagicMock()
+        mock_pipeline = AsyncMock()
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
-        with project_client:
+        async with project_client:
             # Check that pipelines are created as expected.
-            agent1 = project_client.agents.create_agent(
+            agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
                 instructions="You are a helpful assistant",
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
 
-    def _assert_stream_call(self, submit_tool_mock:MagicMock, run_id:str, tool_set:Optional[ToolSet])->None:
+    def _assert_stream_call(self, submit_tool_mock:AsyncMock, run_id:str, tool_set:Optional[AsyncToolSet])->None:
         """Assert that stream has received the correct values."""
         if tool_set is not None:
             expected_out = TestAgentsOperations.LOCAL_FN[tool_set.definitions[0].function.name]()
@@ -441,7 +445,8 @@ class TestAgentsOperations:
         else:
             submit_tool_mock.assert_not_called()
 
-    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,add_azure_fn",
         [
@@ -451,9 +456,9 @@ class TestAgentsOperations:
             (None, False),
         ],
     )
-    def test_handle_submit_tool_outputs(
+    async def test_handle_submit_tool_outputs(
         self,
-        mock_pipeline_client_gen: MagicMock,
+        mock_pipeline_client_gen: AsyncMock,
         file_agent_1: Optional[str],
         add_azure_fn: bool,
     ) -> None:
@@ -469,23 +474,22 @@ class TestAgentsOperations:
                 "run123", toolset, add_azure_fn=add_azure_fn, is_complete=True
             ),  # get_run after resubmitting with tool results
         ]
-        mock_pipeline_response = MagicMock()
+        mock_pipeline_response = AsyncMock()
         mock_pipeline_response.http_response = mock_response
-        mock_pipeline = MagicMock()
+        mock_pipeline = AsyncMock()
         mock_pipeline._pipeline.run.return_value = mock_pipeline_response
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
-        with project_client:
+        async with project_client:
             # Check that pipelines are created as expected.
-            agent1 = project_client.agents.create_agent(
+            agent1 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
                 instructions="You are a helpful assistant",
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            run = await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
-            project_client.agents._handle_submit_tool_outputs(run)
+            await project_client.agents._handle_submit_tool_outputs(run)
             self._assert_stream_call(project_client.agents.submit_tool_outputs_to_stream, "run123", toolset)
-        

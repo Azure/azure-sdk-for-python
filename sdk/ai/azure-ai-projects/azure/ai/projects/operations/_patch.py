@@ -2205,22 +2205,25 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self._toolset.get(run.assistant_id)
-            if toolset:
-                tool_outputs = toolset.execute_tool_calls(tool_calls)
-            else:
-                logger.warning("Toolset is not available in the client.")
-                return
-
-            logger.info("Tool outputs: %s", tool_outputs)
-            if tool_outputs:
-                with self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id,
-                    run_id=run.id,
-                    tool_outputs=tool_outputs,
-                    event_handler=event_handler,
-                ) as stream:
-                    stream.until_done()
+            # We need tool set only if we are executing local function. In case if
+            # the tool is azure_function we just need to wait when it will be finished.
+            if any(tool_call.type == "function" for tool_call in tool_calls):
+                toolset = self._toolset.get(run.assistant_id)
+                if toolset:
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+                else:
+                    logger.warning("Toolset is not available in the client.")
+                    return
+    
+                logger.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    with self.submit_tool_outputs_to_stream(
+                        thread_id=run.thread_id,
+                        run_id=run.id,
+                        tool_outputs=tool_outputs,
+                        event_handler=event_handler,
+                    ) as stream:
+                        stream.until_done()
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
