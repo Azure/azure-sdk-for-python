@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -30,12 +30,15 @@ from ...operations._file_operations import (
     build_acquire_lease_request,
     build_break_lease_request,
     build_change_lease_request,
+    build_create_hard_link_request,
     build_create_request,
+    build_create_symbolic_link_request,
     build_delete_request,
     build_download_request,
     build_force_close_handles_request,
     build_get_properties_request,
     build_get_range_list_request,
+    build_get_symbolic_link_request,
     build_list_handles_request,
     build_release_lease_request,
     build_rename_request,
@@ -49,12 +52,12 @@ from ...operations._file_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class FileOperations:
+class FileOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -74,7 +77,7 @@ class FileOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(  # pylint: disable=inconsistent-return-statements
+    async def create(
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
@@ -86,6 +89,10 @@ class FileOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -133,6 +140,17 @@ class FileOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
+        :param nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "Symlink". Default value is None.
+        :type nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -141,7 +159,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -191,6 +209,10 @@ class FileOperations:
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
             lease_id=_lease_id,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            nfs_file_type=nfs_file_type,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
@@ -238,6 +260,10 @@ class FileOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -275,7 +301,7 @@ class FileOperations:
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -380,6 +406,10 @@ class FileOperations:
         response_headers["x-ms-structured-content-length"] = self._deserialize(
             "int", response.headers.get("x-ms-structured-content-length")
         )
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -389,7 +419,7 @@ class FileOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(  # pylint: disable=inconsistent-return-statements
+    async def get_properties(
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -414,7 +444,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -504,12 +534,17 @@ class FileOperations:
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -529,7 +564,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -574,12 +609,13 @@ class FileOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_http_headers(  # pylint: disable=inconsistent-return-statements
+    async def set_http_headers(
         self,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
@@ -590,6 +626,9 @@ class FileOperations:
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -636,6 +675,14 @@ class FileOperations:
         :param file_change_time: Change time for the file/directory. Default value: Now. Default value
          is None.
         :type file_change_time: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -644,7 +691,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -693,6 +740,9 @@ class FileOperations:
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
             lease_id=_lease_id,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
@@ -740,12 +790,16 @@ class FileOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_metadata(  # pylint: disable=inconsistent-return-statements
+    async def set_metadata(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -769,7 +823,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -826,7 +880,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def acquire_lease(  # pylint: disable=inconsistent-return-statements
+    async def acquire_lease(
         self,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
@@ -859,7 +913,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -917,7 +971,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def release_lease(  # pylint: disable=inconsistent-return-statements
+    async def release_lease(
         self, lease_id: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -939,7 +993,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -995,7 +1049,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def change_lease(  # pylint: disable=inconsistent-return-statements
+    async def change_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -1026,7 +1080,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1084,7 +1138,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def break_lease(  # pylint: disable=inconsistent-return-statements
+    async def break_lease(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1110,7 +1164,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1171,7 +1225,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_range(  # pylint: disable=inconsistent-return-statements
+    async def upload_range(
         self,
         range: str,
         content_length: int,
@@ -1233,7 +1287,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1308,7 +1362,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_range_from_url(  # pylint: disable=inconsistent-return-statements
+    async def upload_range_from_url(
         self,
         range: str,
         copy_source: str,
@@ -1364,7 +1418,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1483,7 +1537,7 @@ class FileOperations:
         :rtype: ~azure.storage.fileshare.models.ShareFileRangeList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1546,7 +1600,7 @@ class FileOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def start_copy(  # pylint: disable=inconsistent-return-statements
+    async def start_copy(
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -1554,6 +1608,11 @@ class FileOperations:
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        file_mode_copy_mode: Optional[Union[str, _models.ModeCopyMode]] = None,
+        file_owner_copy_mode: Optional[Union[str, _models.OwnerCopyMode]] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -1594,6 +1653,26 @@ class FileOperations:
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
         :type file_permission_key: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
+         None.
+        :type file_mode: str
+        :param file_mode_copy_mode: NFS only. Applicable only when the copy source is a File.
+         Determines the copy behavior of the mode bits of the file. source: The mode on the destination
+         file is copied from the source file. override: The mode on the destination file is determined
+         via the x-ms-mode header. Known values are: "source" and "override". Default value is None.
+        :type file_mode_copy_mode: str or ~azure.storage.fileshare.models.ModeCopyMode
+        :param file_owner_copy_mode: NFS only. Determines the copy behavior of the owner user
+         identifier (UID) and group identifier (GID) of the file. source: The owner user identifier
+         (UID) and group identifier (GID) on the destination file is copied from the source file.
+         override: The owner user identifier (UID) and group identifier (GID) on the destination file is
+         determined via the x-ms-owner and x-ms-group  headers. Known values are: "source" and
+         "override". Default value is None.
+        :type file_owner_copy_mode: str or ~azure.storage.fileshare.models.OwnerCopyMode
         :param copy_file_smb_info: Parameter group. Default value is None.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1602,7 +1681,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1650,6 +1729,11 @@ class FileOperations:
             file_change_time=_file_change_time,
             set_archive_attribute=_set_archive_attribute,
             lease_id=_lease_id,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            file_mode_copy_mode=file_mode_copy_mode,
+            file_owner_copy_mode=file_owner_copy_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
@@ -1684,7 +1768,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def abort_copy(  # pylint: disable=inconsistent-return-statements
+    async def abort_copy(
         self,
         copy_id: str,
         timeout: Optional[int] = None,
@@ -1709,7 +1793,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1798,7 +1882,7 @@ class FileOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1853,7 +1937,7 @@ class FileOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def force_close_handles(  # pylint: disable=inconsistent-return-statements
+    async def force_close_handles(
         self,
         handle_id: str,
         timeout: Optional[int] = None,
@@ -1884,7 +1968,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1941,7 +2025,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(  # pylint: disable=inconsistent-return-statements
+    async def rename(
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -2014,7 +2098,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2112,6 +2196,320 @@ class FileOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def create_symbolic_link(
+        self,
+        link_text: str,
+        timeout: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        file_creation_time: str = "now",
+        file_last_write_time: str = "now",
+        request_id_parameter: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        # pylint: disable=line-too-long
+        """Creates a symbolic link.
+
+        :param link_text: NFS only. Required. The path to the original file, the symbolic link is
+         pointing to. The path is of type string which is not resolved and is stored as is. The path can
+         be absolute path or the relative path depending on the content stored in the symbolic link
+         file. Required.
+        :type link_text: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
+        :type metadata: dict[str, str]
+        :param file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is "now".
+        :type file_creation_time: str
+        :param file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is "now".
+        :type file_last_write_time: str
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :param owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :type owner: str
+        :param group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :type group: str
+        :param lease_access_conditions: Parameter group. Default value is None.
+        :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _lease_id = None
+        if lease_access_conditions is not None:
+            _lease_id = lease_access_conditions.lease_id
+
+        _request = build_create_symbolic_link_request(
+            url=self._config.url,
+            link_text=link_text,
+            timeout=timeout,
+            metadata=metadata,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            request_id_parameter=request_id_parameter,
+            lease_id=_lease_id,
+            owner=owner,
+            group=group,
+            file_request_intent=self._config.file_request_intent,
+            restype=restype,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_symbolic_link(
+        self,
+        timeout: Optional[int] = None,
+        sharesnapshot: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        # pylint: disable=line-too-long
+        """get_symbolic_link.
+
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the share snapshot to query. Default value is None.
+        :type sharesnapshot: str
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_get_symbolic_link_request(
+            url=self._config.url,
+            timeout=timeout,
+            sharesnapshot=sharesnapshot,
+            request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
+            restype=restype,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-link-text"] = self._deserialize("str", response.headers.get("x-ms-link-text"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def create_hard_link(
+        self,
+        target_file: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        # pylint: disable=line-too-long
+        """Creates a hard link.
+
+        :param target_file: NFS only. Required. Specifies the path of the target file to which the link
+         will be created, up to 2 KiB in length. It should be full path of the target from the root.The
+         target file must be in the same share and hence the same storage account. Required.
+        :type target_file: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :param lease_access_conditions: Parameter group. Default value is None.
+        :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["hardlink"] = kwargs.pop("restype", _params.pop("restype", "hardlink"))
+        file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _lease_id = None
+        if lease_access_conditions is not None:
+            _lease_id = lease_access_conditions.lease_id
+
+        _request = build_create_hard_link_request(
+            url=self._config.url,
+            target_file=target_file,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
+            restype=restype,
+            file_type_constant=file_type_constant,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
