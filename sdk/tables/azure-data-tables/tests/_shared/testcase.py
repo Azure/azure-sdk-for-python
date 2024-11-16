@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import division
 from typing import Callable, Dict, Optional, Union, Any, Mapping, Type, Tuple
 from base64 import b64encode
 from datetime import datetime, timedelta, timezone
