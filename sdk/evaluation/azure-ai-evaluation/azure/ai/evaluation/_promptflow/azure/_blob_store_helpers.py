@@ -96,13 +96,14 @@ def get_workspace_default_blob_store(trace_destination: str) -> BlobStoreInfo:
         by parsing the trace destination string. """
 
     API_VERSION_KEY: Final[str] = "api-version"
-    API_VERSION: Final[str] = "2024-04-01"
+    API_VERSION: Final[str] = "2024-10-01"
 
     subscription_id, resource_group, workspace_name = _get_workspace_from_trace_string(trace_destination)
     subscription_id = quote(subscription_id, safe='')
     resource_group = quote(resource_group, safe='')
     workspace_name = quote(workspace_name, safe='')
 
+    # REST API documentation: https://learn.microsoft.com/rest/api/azureml/datastores/list?view=rest-azureml-2024-10-01
     base_url = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}/datastores"
 
     credential = get_workspace_credentials()
