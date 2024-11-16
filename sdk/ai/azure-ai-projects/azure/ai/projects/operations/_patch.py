@@ -90,9 +90,7 @@ class InferenceOperations:
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection: bool = (
-            os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
-        )
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -120,9 +118,7 @@ class InferenceOperations:
             # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
             # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
             # from the end of the connection id.
-            endpoint = (
-                f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
-            )
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -131,18 +127,14 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
@@ -176,9 +168,7 @@ class InferenceOperations:
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
-        use_serverless_connection: bool = (
-            os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
-        )
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
@@ -206,9 +196,7 @@ class InferenceOperations:
             # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
             # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
             # from the end of the connection id.
-            endpoint = (
-                f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
-            )
+            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -216,33 +204,25 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key)
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.properties.token_credential
-            )
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
             )
-            raise ValueError(
-                "Getting embeddings client from a connection with SAS authentication is not yet supported"
-            )
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
     @distributed_trace
-    def get_azure_openai_client(
-        self, *, api_version: Optional[str] = None, **kwargs
-    ) -> "AzureOpenAI":
+    def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
         Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
@@ -344,9 +324,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             raise ValueError("You must specify an connection type")
         # Since there is no notion of default connection at the moment, list all connections in the category
         # and return the first one
-        connection_properties_list = self.list(
-            connection_type=connection_type, **kwargs
-        )
+        connection_properties_list = self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
             if include_credentials:
                 return self.get(
@@ -358,9 +336,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
-    def get(
-        self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any
-    ) -> ConnectionProperties:
+    def get(self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
@@ -383,15 +359,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
             if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
-                return ConnectionProperties(
-                    connection=connection, token_credential=self._config.credential
-                )
+                return ConnectionProperties(connection=connection, token_credential=self._config.credential)
             if connection.properties.auth_type == AuthenticationType.SAS:
                 from ..models._patch import SASTokenCredential
 
-                cred_prop = cast(
-                    InternalConnectionPropertiesSASAuth, connection.properties
-                )
+                cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
 
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,
@@ -401,9 +373,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                     project_name=self._config.project_name,
                     connection_name=connection_name,
                 )
-                return ConnectionProperties(
-                    connection=connection, token_credential=token_credential
-                )
+                return ConnectionProperties(connection=connection, token_credential=token_credential)
 
             return ConnectionProperties(connection=connection)
         connection = self._get_connection(connection_name=connection_name, **kwargs)
@@ -430,9 +400,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         # Iterate to create the simplified result property
         connection_properties_list: List[ConnectionProperties] = []
         for connection in connections_list.value:
-            connection_properties_list.append(
-                ConnectionProperties(connection=connection)
-            )
+            connection_properties_list.append(ConnectionProperties(connection=connection))
 
         return connection_properties_list
 
@@ -462,9 +430,7 @@ def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
                 ) from e
 
             return ConsoleSpanExporter()
-        raise ValueError(
-            "Only `sys.stdout` is supported at the moment for type `TextIO`"
-        )
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
@@ -496,13 +462,9 @@ def _get_log_exporter(destination: Union[TextIO, str, None]) -> Any:
             except ModuleNotFoundError as ex:
                 # since OTel logging is still in beta in Python, we're going to swallow any errors
                 # and just warn about them.
-                logger.warning(
-                    "Failed to configure OpenTelemetry logging.", exc_info=ex
-                )
+                logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
             return None
-        raise ValueError(
-            "Only `sys.stdout` is supported at the moment for type `TextIO`"
-        )
+        raise ValueError("Only `sys.stdout` is supported at the moment for type `TextIO`")
 
     return None
 
@@ -569,9 +531,7 @@ def _configure_logging(log_exporter: Any) -> None:
         logger.warning("Failed to configure OpenTelemetry logging.", exc_info=ex)
 
 
-def _enable_telemetry(
-    destination: Union[TextIO, str, None], **kwargs
-) -> None:  # pylint: disable=unused-argument
+def _enable_telemetry(destination: Union[TextIO, str, None], **kwargs) -> None:  # pylint: disable=unused-argument
     """Enable tracing and logging to console (sys.stdout), or to an OpenTelemetry Protocol (OTLP) endpoint.
 
     :param destination: `sys.stdout` to print telemetry to console or a string holding the
@@ -615,9 +575,7 @@ def _enable_telemetry(
         if not agents_instrumentor.is_instrumented():
             agents_instrumentor.instrument()
     except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.warning(
-            "Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc
-        )
+        logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
 
     try:
         from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor  # type: ignore
@@ -663,9 +621,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             )
 
             if not get_workspace_response.properties.application_insights:
-                raise ResourceNotFoundError(
-                    "Application Insights resource was not enabled for this Project."
-                )
+                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
 
             # Make a GET call to the Application Insights resource URL to get the connection string
             app_insights_respose: GetAppInsightsResponse = self._get_app_insights(
@@ -712,9 +668,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self._toolset: Dict[str, _models.ToolSet] = {}
 
     @overload
-    def create_agent(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -851,9 +805,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    def create_agent(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
+    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -924,9 +876,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not _Unset:
             if isinstance(body, io.IOBase):
-                return super().create_agent(
-                    body=body, content_type=content_type, **kwargs
-                )
+                return super().create_agent(body=body, content_type=content_type, **kwargs)
             return super().create_agent(body=body, **kwargs)
 
         if toolset is not None:
@@ -1204,9 +1154,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if body is not _Unset:
             if isinstance(body, io.IOBase):
-                return super().update_agent(
-                    body=body, content_type=content_type, **kwargs
-                )
+                return super().update_agent(body=body, content_type=content_type, **kwargs)
             return super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
@@ -1492,9 +1440,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(
-                thread_id, body, content_type=content_type, **kwargs
-            )
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
@@ -1520,9 +1466,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(
-                thread_id, body, content_type=content_type, **kwargs
-            )
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
@@ -1652,8 +1596,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             RunStatus.IN_PROGRESS,
             RunStatus.REQUIRES_ACTION,
         ]:
-            if run.status != RunStatus.REQUIRES_ACTION:
-                time.sleep(sleep_interval)
+            time.sleep(sleep_interval)
             run = self.get_run(thread_id=thread_id, run_id=run.id)
 
             if run.status == RunStatus.REQUIRES_ACTION and isinstance(
@@ -1664,18 +1607,18 @@ class AgentsOperations(AgentsOperationsGenerated):
                     logging.warning("No tool calls provided - cancelling run")
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = toolset or self._toolset.get(run.assistant_id)
+                    if toolset is not None:
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                    else:
+                        raise ValueError("Toolset is not available in the client.")
 
-                toolset = toolset or self._toolset.get(run.assistant_id)
-                if toolset is not None:
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-                else:
-                    raise ValueError("Toolset is not available in the client.")
-
-                logging.info("Tool outputs: %s", tool_outputs)
-                if tool_outputs:
-                    self.submit_tool_outputs_to_run(
-                        thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
-                    )
+                    logging.info("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             logging.info("Current run status: %s", run.status)
 
@@ -1934,9 +1877,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(
-                thread_id, body, content_type=content_type, **kwargs
-            )
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
@@ -1962,18 +1903,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(
-                thread_id, body, content_type=content_type, **kwargs
-            )
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
-        return _models.AgentRunStream(
-            response_iterator, self._handle_submit_tool_outputs, event_handler
-        )
+        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     @overload
     def submit_tool_outputs_to_run(
@@ -2093,9 +2030,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
@@ -2109,9 +2044,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
@@ -2237,9 +2170,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
@@ -2253,9 +2184,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
@@ -2263,9 +2192,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
-        return _models.AgentRunStream(
-            response_iterator, self._handle_submit_tool_outputs, event_handler
-        )
+        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     def _handle_submit_tool_outputs(
         self,
@@ -2385,15 +2312,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             purpose = purpose.value
 
         if file is not None and purpose is not None:
-            return super().upload_file(
-                file=file, purpose=purpose, filename=filename, **kwargs
-            )
+            return super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
 
         if file_path is not None and purpose is not None:
             if not os.path.isfile(file_path):
-                raise FileNotFoundError(
-                    f"The file path provided does not exist: {file_path}"
-                )
+                raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
 
             try:
                 with open(file_path, "rb") as f:
@@ -2407,14 +2330,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             except IOError as e:
                 raise IOError(f"Unable to read file: {file_path}") from e
 
-        raise ValueError(
-            "Invalid parameters for upload_file. Please provide the necessary arguments."
-        )
+        raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    def upload_file_and_poll(
-        self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
@@ -2516,13 +2435,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not None:
             uploaded_file = self.upload_file(body=body, **kwargs)
         elif file is not None and purpose is not None:
-            uploaded_file = self.upload_file(
-                file=file, purpose=purpose, filename=filename, **kwargs
-            )
+            uploaded_file = self.upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
         elif file_path is not None and purpose is not None:
-            uploaded_file = self.upload_file(
-                file_path=file_path, purpose=purpose, **kwargs
-            )
+            uploaded_file = self.upload_file(file_path=file_path, purpose=purpose, **kwargs)
         else:
             raise ValueError(
                 "Invalid parameters for upload_file_and_poll. Please provide either 'body', "
@@ -2672,19 +2587,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
         if body is not None:
-            vector_store = self.create_vector_store(
-                body=body, content_type=content_type, **kwargs
-            )
-        elif (
-            file_ids is not None
-            or data_sources is not None
-            or (name is not None and expires_after is not None)
-        ):
-            store_configuration = (
-                _models.VectorStoreConfiguration(data_sources=data_sources)
-                if data_sources
-                else None
-            )
+            vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
+        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
+            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
             vector_store = self.create_vector_store(
                 content_type=content_type,
                 file_ids=file_ids,
@@ -2961,9 +2866,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     if isinstance(chunk, (bytes, bytearray)):
                         file.write(chunk)
                     else:
-                        raise TypeError(
-                            f"Expected bytes or bytearray, got {type(chunk).__name__}"
-                        )
+                        raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
 
             logger.debug(
                 "File '%s' saved successfully at '%s'.",
@@ -3105,9 +3008,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
         else:
             content_type = kwargs.get("content_type", "application/json")
-            vector_store_file = super().create_vector_store_file(
-                body=body, content_type=content_type, **kwargs
-            )
+            vector_store_file = super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
 
         while vector_store_file.status == "in_progress":
             time.sleep(sleep_interval)
@@ -3118,9 +3019,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         return vector_store_file
 
     @distributed_trace
-    def delete_agent(
-        self, assistant_id: str, **kwargs: Any
-    ) -> _models.AgentDeletionStatus:
+    def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
         :param assistant_id: Identifier of the agent. Required.

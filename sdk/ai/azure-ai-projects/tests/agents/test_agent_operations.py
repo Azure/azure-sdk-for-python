@@ -14,6 +14,7 @@ from azure.ai.projects.models import (
     CodeInterpreterTool,
     FunctionTool,
     RequiredFunctionToolCall,
+    RequiredToolCall,
     RunStatus,
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
@@ -47,9 +48,7 @@ class TestAgentsOperations:
         client.agents.submit_tool_outputs_to_run = MagicMock()
         return client
 
-    def get_toolset(
-        self, file_id: Optional[str], function: Optional[str]
-    ) -> Optional[ToolSet]:
+    def get_toolset(self, file_id: Optional[str], function: Optional[str]) -> Optional[ToolSet]:
         """Get the tool set with given file id and function"""
         if file_id is None or function is None:
             return None
@@ -60,15 +59,11 @@ class TestAgentsOperations:
         toolset.add(code_interpreter)
         return toolset
 
-    def _assert_pipeline_and_reset(
-        self, mock_pipeline_run: MagicMock, tool_set: Optional[ToolSet]
-    ) -> None:
+    def _assert_pipeline_and_reset(self, mock_pipeline_run: MagicMock, tool_set: Optional[ToolSet]) -> None:
         """Check that the pipeline has correct values of tools."""
         mock_pipeline_run.assert_called_once()
         data = json.loads(mock_pipeline_run.call_args_list[0].args[0].body)
-        assert isinstance(
-            data, dict
-        ), f"Wrong body JSON type expected dict, found {type(data)}"
+        assert isinstance(data, dict), f"Wrong body JSON type expected dict, found {type(data)}"
         if tool_set is not None:
             assert "tool_resources" in data, "tool_resources must be in data"
             assert "tools" in data, "tools must be in data"
@@ -77,13 +72,10 @@ class TestAgentsOperations:
             # Check code interpreter file id.
             assert data["tool_resources"], "Tools resources is empty."
             assert "code_interpreter" in data["tool_resources"]
-            assert data["tool_resources"][
-                "code_interpreter"
-            ], "Code interpreter section is empty."
+            assert data["tool_resources"]["code_interpreter"], "Code interpreter section is empty."
             assert "file_ids" in data["tool_resources"]["code_interpreter"]
             assert (
-                data["tool_resources"]["code_interpreter"]["file_ids"][0]
-                == expected_file_id
+                data["tool_resources"]["code_interpreter"]["file_ids"][0] == expected_file_id
             ), f"{expected_file_id[0]=}, but found {data['tool_resources']['code_interpreter']['file_ids']}"
             # Check tools.
             assert data["tools"], "Tools must not be empty"
@@ -97,14 +89,10 @@ class TestAgentsOperations:
             assert "tools" not in data, "tools must not be in data"
         mock_pipeline_run.reset_mock()
 
-    def _get_agent_json(
-        self, name: str, assistant_id: str, tool_set: Optional[ToolSet]
-    ) -> Dict[str, Any]:
+    def _get_agent_json(self, name: str, assistant_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
         """Read in the agent JSON, so that we can assume service returnred it."""
         with open(
-            os.path.join(
-                os.path.dirname(os.path.dirname(__file__)), "test_data", "agent.json"
-            ),
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "agent.json"),
             "r",
         ) as fp:
             agent_dict: Dict[str, Any] = json.load(fp)
@@ -117,7 +105,7 @@ class TestAgentsOperations:
         return agent_dict
 
     def _get_run(
-        self, thread_id: str, tool_set: Optional[ToolSet], is_complete=False
+        self, thread_id: str, tool_set: Optional[ToolSet], add_azure_fn: bool = False, is_complete: bool = False
     ) -> Dict[str, Any]:
         """Return JSON as if we have created the run."""
         with open(
@@ -134,33 +122,65 @@ class TestAgentsOperations:
         assert isinstance(run_dict, dict)
         if is_complete:
             run_dict["status"] = RunStatus.COMPLETED
+        tool_calls = []
+        definitions = []
+        if add_azure_fn:
+            tool_calls.append(RequiredToolCall(id="1", type="azure_function"))
+            definitions.append(
+                {
+                    "type": "azure_function",
+                    "azure_function": {
+                        "function": {
+                            "name": "foo",
+                            "description": "Get answers from the foo bot.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {"type": "string", "description": "The question to ask."},
+                                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                                },
+                                "required": ["query"],
+                            },
+                        },
+                        "input_binding": {
+                            "type": "storage_queue",
+                            "storage_queue": {
+                                "queue_service_uri": "https://example.windows.net",
+                                "queue_name": "azure-function-foo-input",
+                            },
+                        },
+                        "output_binding": {
+                            "type": "storage_queue",
+                            "storage_queue": {
+                                "queue_service_uri": "https://example.queue.core.windows.net",
+                                "queue_name": "azure-function-tool-output",
+                            },
+                        },
+                    },
+                }
+            )
         if tool_set is not None:
-            sb = SubmitToolOutputsAction(
-                submit_tool_outputs=SubmitToolOutputsDetails(
-                    tool_calls=[
-                        RequiredFunctionToolCall(
-                            id="0",
-                            function=RequiredFunctionToolCallDetails(
-                                name=tool_set.definitions[0].function.name,
-                                arguments="{}",
-                            ),
-                        )
-                    ]
+            tool_calls.append(
+                RequiredFunctionToolCall(
+                    id="0",
+                    function=RequiredFunctionToolCallDetails(
+                        name=tool_set.definitions[0].function.name,
+                        arguments="{}",
+                    ),
                 )
             )
+            definitions.extend(tool_set.definitions)
             run_dict["tool_resources"] = tool_set.resources.as_dict()
-            run_dict["tools"] = tool_set.definitions
+        if tool_calls:
+            sb = SubmitToolOutputsAction(submit_tool_outputs=SubmitToolOutputsDetails(tool_calls=tool_calls))
             run_dict["required_action"] = sb.as_dict()
+            run_dict["tools"] = definitions
         return run_dict
 
-    def _assert_tool_call(
-        self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]
-    ) -> None:
+    def _assert_tool_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
         """Check that submit_tool_outputs_to_run was called with correct parameters or was not called"""
         if tool_set is not None:
-            expected_out = TestAgentsOperations.LOCAL_FN[
-                tool_set.definitions[0].function.name
-            ]()
+            expected_out = TestAgentsOperations.LOCAL_FN[tool_set.definitions[0].function.name]()
             submit_tool_mock.assert_called_once()
             submit_tool_mock.assert_called_with(
                 thread_id="some_thread_id",
@@ -171,9 +191,7 @@ class TestAgentsOperations:
         else:
             submit_tool_mock.assert_not_called()
 
-    def _assert_toolset_dict(
-        self, project_client: AIProjectClient, agent_id: str, toolset: Optional[ToolSet]
-    ):
+    def _assert_toolset_dict(self, project_client: AIProjectClient, agent_id: str, toolset: Optional[ToolSet]):
         """Check that the toolset dictionary state is as expected."""
         if toolset is None:
             assert agent_id not in project_client.agents._toolset
@@ -207,14 +225,10 @@ class TestAgentsOperations:
             self._get_agent_json("second", "456", toolset2),
             self._get_run("run123", toolset1),  # create_run
             self._get_run("run123", toolset1),  # get_run
-            self._get_run(
-                "run123", toolset1, is_complete=True
-            ),  # get_run after resubmitting with tool results
+            self._get_run("run123", toolset1, is_complete=True),  # get_run after resubmitting with tool results
             self._get_run("run456", toolset2),  # create_run
             self._get_run("run456", toolset2),  # get_run
-            self._get_run(
-                "run456", toolset2, is_complete=True
-            ),  # get_run after resubmitting with tool results
+            self._get_run("run456", toolset2, is_complete=True),  # get_run after resubmitting with tool results
             "{}",  # delete agent 1
             "{}",  # delete agent 2
         ]
@@ -232,9 +246,7 @@ class TestAgentsOperations:
                 instructions="You are a helpful assistant",
                 toolset=toolset1,
             )
-            self._assert_pipeline_and_reset(
-                mock_pipeline._pipeline.run, tool_set=toolset1
-            )
+            self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
 
             agent2 = project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
@@ -242,23 +254,13 @@ class TestAgentsOperations:
                 instructions="You are a helpful assistant",
                 toolset=toolset2,
             )
-            self._assert_pipeline_and_reset(
-                mock_pipeline._pipeline.run, tool_set=toolset2
-            )
+            self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            project_client.agents.create_and_process_run(
-                thread_id="some_thread_id", assistant_id=agent1.id
-            )
-            self._assert_tool_call(
-                project_client.agents.submit_tool_outputs_to_run, "run123", toolset1
-            )
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
 
-            project_client.agents.create_and_process_run(
-                thread_id="some_thread_id", assistant_id=agent2.id
-            )
-            self._assert_tool_call(
-                project_client.agents.submit_tool_outputs_to_run, "run456", toolset2
-            )
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
+            self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
             # Check the contents of a toolset
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
             self._assert_toolset_dict(project_client, agent2.id, toolset2)
@@ -363,20 +365,61 @@ class TestAgentsOperations:
                 instructions="You are a helpful assistant",
                 toolset=toolset1,
             )
-            self._assert_pipeline_and_reset(
-                mock_pipeline._pipeline.run, tool_set=toolset1
-            )
+            self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
-            # Create run with new toolset, which also can be none.
+            # Create run with new tool set, which also can be none.
             project_client.agents.create_and_process_run(
                 thread_id="some_thread_id", assistant_id=agent1.id, toolset=toolset2
             )
             if toolset2 is not None:
-                self._assert_tool_call(
-                    project_client.agents.submit_tool_outputs_to_run, "run123", toolset2
-                )
+                self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset2)
             else:
-                self._assert_tool_call(
-                    project_client.agents.submit_tool_outputs_to_run, "run123", toolset1
-                )
+                self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
+            self._assert_toolset_dict(project_client, agent1.id, toolset1)
+
+    @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.parametrize(
+        "file_agent_1,add_azure_fn",
+        [
+            ("file_for_agent1", True),
+            (None, True),
+            ("file_for_agent1", False),
+            (None, False),
+        ],
+    )
+    def test_with_azure_function(
+        self,
+        mock_pipeline_client_gen: MagicMock,
+        file_agent_1: Optional[str],
+        add_azure_fn: bool,
+    ) -> None:
+        """Test azure function with toolset."""
+        toolset = self.get_toolset(file_agent_1, function1)
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.side_effect = [
+            self._get_agent_json("first", "123", toolset),
+            self._get_run("run123", toolset, add_azure_fn=add_azure_fn),  # create_run
+            self._get_run("run123", toolset, add_azure_fn=add_azure_fn),  # get_run
+            self._get_run(
+                "run123", toolset, add_azure_fn=add_azure_fn, is_complete=True
+            ),  # get_run after resubmitting with tool results
+        ]
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_response
+        mock_pipeline = MagicMock()
+        mock_pipeline._pipeline.run.return_value = mock_pipeline_response
+        mock_pipeline_client_gen.return_value = mock_pipeline
+        project_client = self.get_mock_client()
+        with project_client:
+            # Check that pipelines are created as expected.
+            agent1 = project_client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="first",
+                instructions="You are a helpful assistant",
+                toolset=toolset,
+            )
+            # Create run with new tool set, which also can be none.
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
