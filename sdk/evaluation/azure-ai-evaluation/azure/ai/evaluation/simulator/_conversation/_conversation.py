@@ -9,7 +9,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
-
+from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
 
@@ -79,6 +79,7 @@ async def simulate_conversation(
     turn_limit: int = 10,
     history_limit: int = 5,
     api_call_delay_sec: float = 0,
+    scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     logger: logging.Logger = logging.getLogger(__name__),
 ) -> Tuple[Optional[str], List[ConversationTurn]]:
     """
@@ -151,6 +152,18 @@ async def simulate_conversation(
                 max_history=history_limit,
                 turn_number=current_turn,
             )
+
+            if scenario == AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING:
+                conversation_history.pop()
+                conversation_history.append(
+                    ConversationTurn(
+                        role=bots[0].role,
+                        name=bots[0].name,
+                        message=request["messages"][0]["content"],
+                        full_response=full_response,
+                        request=request,
+                    )
+                )
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:

@@ -9,12 +9,12 @@ import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
+import re
 import jinja2
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
-
-from .._model_tools import LLMBase, OpenAIChatCompletionsModel
+from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RAIClient
 from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 
@@ -240,12 +240,14 @@ class CallbackConversationBot(ConversationBot):
         callback: Callable,
         user_template: str,
         user_template_parameters: TemplateParameters,
+        rai_client: RAIClient,
         *args,
         **kwargs,
     ) -> None:
         self.callback = callback
         self.user_template = user_template
         self.user_template_parameters = user_template_parameters
+        self.rai_client = rai_client
 
         super().__init__(*args, **kwargs)
 
@@ -256,7 +258,7 @@ class CallbackConversationBot(ConversationBot):
         max_history: int,
         turn_number: int = 0,
     ) -> Tuple[dict, dict, float, dict]:
-        chat_protocol_message = self._to_chat_protocol(
+        chat_protocol_message = await self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
         )
         msg_copy = copy.deepcopy(chat_protocol_message)
@@ -292,20 +294,42 @@ class CallbackConversationBot(ConversationBot):
 
         self.logger.info("Parsed callback response")
 
-        return response, {}, time_taken, result
+        return response, chat_protocol_message, time_taken, result
 
     # Bug 3354264: template is unused in the method - is this intentional?
-    def _to_chat_protocol(self, template, conversation_history, template_parameters):  # pylint: disable=unused-argument
+    async def _to_chat_protocol(
+        self, template, conversation_history, template_parameters
+    ):  # pylint: disable=unused-argument
         messages = []
 
         for _, m in enumerate(conversation_history):
-            messages.append({"content": m.message, "role": m.role.value})
+            if "image:" in m.message:
+                content = await self._to_multi_modal_content(m.message)
+                messages.append({"content": content, "role": m.role.value})
+            else:
+                messages.append({"content": m.message, "role": m.role.value})
 
         return {
             "template_parameters": template_parameters,
             "messages": messages,
             "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
         }
+
+    async def _to_multi_modal_content(self, text: str) -> list:
+        split_text = re.findall(r"[^{}]+|\{[^{}]*\}", text)
+        messages = [
+            text.strip("{}").replace("image:", "").strip() if text.startswith("{") else text for text in split_text
+        ]
+        contents = []
+        for msg in messages:
+            if msg.startswith("image_understanding/"):
+                encoded_image = await self.rai_client.get_image_data(msg)
+                contents.append(
+                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded_image}"}},
+                )
+            else:
+                contents.append({"type": "text", "text": msg})
+        return contents
 
 
 __all__ = [

@@ -16,7 +16,7 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
@@ -231,6 +231,7 @@ class AdversarialSimulator:
                             api_call_delay_sec=api_call_delay_sec,
                             language=language,
                             semaphore=semaphore,
+                            scenario=scenario,
                         )
                     )
                 )
@@ -292,6 +293,7 @@ class AdversarialSimulator:
         api_call_delay_sec: int,
         language: SupportedLanguages,
         semaphore: asyncio.Semaphore,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> List[Dict]:
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
         system_bot = self._setup_bot(
@@ -313,6 +315,7 @@ class AdversarialSimulator:
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
                 language=language,
+                scenario=scenario,
             )
 
         return self._to_chat_protocol(
@@ -378,6 +381,7 @@ class AdversarialSimulator:
                 model=DummyModel(),
                 user_template=str(template),
                 user_template_parameters=parameters,
+                rai_client=self.rai_client,
                 conversation_template="",
                 instantiation_parameters={},
             )
