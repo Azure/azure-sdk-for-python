@@ -42,12 +42,24 @@ def _is_partitioned_execution_info(e):
         e.status_code == StatusCodes.BAD_REQUEST and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
     )
 
+
 def _is_hybrid_search_query(query, e):
     # had to add this logic since error returned from service is different, will need to ask Neil
     if e.status_code == StatusCodes.INTERNAL_SERVER_ERROR:
         if "RRF" in query or "FullTextContains" in query or "FullTextScore" in query:
             return True
     return False
+
+
+def _verify_valid_hybrid_search_query(hybrid_search_query_info):
+    if not hybrid_search_query_info['take']:
+        raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
+                         " RUs very fast and have long runtimes. Please ensure you are using one" +
+                         " of the two filters with your hybrid search query.")
+    if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS', 1000):
+        raise ValueError("Executing a hybrid search query with more items than the max is not allowed." +
+                         "Please ensure you are using a limit smaller than the max, or change the max.")
+
 
 def _get_partitioned_execution_info(e):
     error_msg = json.loads(e.http_error_message)
@@ -125,8 +137,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
             if self._options and ("enableCrossPartitionQuery" in self._options
                                   and self._options["enableCrossPartitionQuery"]):
-                raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
-                                  "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
+                raise CosmosHttpResponseError(
+                    StatusCodes.BAD_REQUEST,
+                    "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
@@ -139,7 +152,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             if total_item_buffer > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
                 raise ValueError("Executing a vector search query with more items than the max is not allowed." +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
-            execution_context_aggregator =\
+            execution_context_aggregator = \
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
                                                                                         self._resource_link,
                                                                                         self._query,
@@ -147,13 +160,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         query_execution_info)
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
-            if not hybrid_search_query_info['take']:
-                raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
-                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                 " of the two filters with your hybrid search query.")
-            if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS', 1000):
-                raise ValueError("Executing a hybrid search query with more items than the max is not allowed." +
-                                 "Please ensure you are using a limit smaller than the max, or change the max.")
+            _verify_valid_hybrid_search_query(hybrid_search_query_info)
             execution_context_aggregator = \
                 hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
                                                                         self._resource_link,
@@ -162,11 +169,12 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         hybrid_search_query_info)
             execution_context_aggregator._run_hybrid_search()
         else:
-            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
-                                                                                                   self._resource_link,
-                                                                                                   self._query,
-                                                                                                   self._options,
-                                                                                                   query_execution_info)
+            execution_context_aggregator = \
+                multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
+                                                                            self._resource_link,
+                                                                            self._query,
+                                                                            self._options,
+                                                                            query_execution_info)
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
