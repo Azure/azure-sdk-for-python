@@ -171,33 +171,6 @@ class WorkspaceConfigurationOptions(object):
         ws = Hub(name="sample-ws", location="eastus", description="a sample workspace hub object")
         # [END workspace_hub]
 
-        # [START workspace_network_access_settings]
-        from azure.ai.ml.entities import NetworkAcls
-
-        # Get existing workspace
-        ws = ml_client.workspaces.get("sample-ws")
-
-        # 1. Enabled from all networks
-        # Note: default_action should be set to 'Allow', allowing all access.
-        ws.public_network_access = "Enabled"
-        ws.network_acls = NetworkAcls(default_action="Allow", ip_rules=[])
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
-
-        # 2. Enabled from selected IP addresses
-        # Note: default_action should be set to 'Deny', allowing only specified IPs/ranges
-        ws.public_network_access = "Enabled"
-        ws.network_acls = NetworkAcls(
-            default_action="Deny",
-            ip_rules=[NetworkAcls.IPRule(value="103.248.19.87/32"), NetworkAcls.IPRule(value="103.248.19.86/32")],
-        )
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
-
-        # 3. Disabled
-        # NetworkAcls IP Rules will reset
-        ws.public_network_access = "Disabled"
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
-        # [END workspace_network_access_settings]
-
     @handle_resource_exists_error
     def ml_workspace_config_sample_snippets_operations(self):
         # [START workspace_list]

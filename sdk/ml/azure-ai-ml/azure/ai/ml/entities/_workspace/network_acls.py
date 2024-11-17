@@ -10,28 +10,8 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NetworkAcls(RestTranslatableMixin):
-    """Network Access Setting for Workspace.
-
-    :param default_action: Specifies the default action when no IP rules are matched.
-    :type default_action: str
-    :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
-    :type ip_rules: Optional[List[IPRule]]
-
-    .. literalinclude:: ../samples/ml_samples_workspace.py
-        :start-after: [START workspace_network_access_settings]
-        :end-before: [END workspace_network_access_settings]
-        :language: python
-        :dedent: 8
-        :caption: Examples to choose one of three Public network access settings.
-    """
 
     class IPRule(RestTranslatableMixin):
-        """Represents an IP rule with a value.
-
-        :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
-        or '124.56.78.0/24' (all addresses that start with 124.56.78). Value could be 'Allow' or 'Deny'.
-        :type value: str
-        """
 
         def __init__(self, value: Optional[str]):
             self.value = value
@@ -47,10 +27,6 @@ class NetworkAcls(RestTranslatableMixin):
             return cls(value=obj.value)
 
     class DefaultActionType:
-        """Specifies the default action when no IP rules are matched.
-        'Deny' if IP rules are non-empty, allowing only specified IPs/ranges;
-        'Allow' if no IP rules are defined, allowing all access.
-        """
 
         DENY = "Deny"
         ALLOW = "Allow"

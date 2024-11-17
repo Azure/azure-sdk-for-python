@@ -9,7 +9,6 @@ from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKeySchema
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
-from azure.ai.ml._schema.workspace.network_acls import NetworkAclsSchema
 from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 from azure.ai.ml._schema.workspace.serverless_compute import ServerlessComputeSettingsSchema
 from azure.ai.ml._utils.utils import snake_to_pascal
@@ -37,7 +36,6 @@ class WorkspaceSchema(PathAwareSchema):
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
         casing_transform=snake_to_pascal,
     )
-    network_acls = NestedField(NetworkAclsSchema)
     system_datastores_auth_mode = fields.Str()
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
