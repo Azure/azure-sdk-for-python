@@ -34,9 +34,9 @@ def serialize_identifier(identifier):
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError(
+        raise TypeError(  # pylint: disable=raise-missing-from
             "Unsupported identifier type " + identifier.__class__.__name__
-        )  # pylint: disable=raise-missing-from
+        )
 
 
 def deserialize_identifier(identifier_model):

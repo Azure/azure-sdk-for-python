@@ -155,8 +155,10 @@ class ChatMessage:  # pylint: disable=too-many-instance-attributes
         except ValueError:
             message_type = chat_message.type
         content = (
-            ChatMessageContent._from_generated(chat_message.content) if chat_message.content else None
-        )  # pylint:disable=protected-access
+            ChatMessageContent._from_generated(chat_message.content)  # pylint:disable=protected-access
+            if chat_message.content
+            else None
+        )
         return cls(
             id=chat_message.id,
             type=message_type,
@@ -201,8 +203,8 @@ class ChatMessageContent:
         participants_list = chat_message_content.participants
         if participants_list:
             participants = [
-                ChatParticipant._from_generated(participant)
-                for participant in participants_list  # pylint:disable=protected-access
+                ChatParticipant._from_generated(participant)  # pylint:disable=protected-access
+                for participant in participants_list
             ]
         else:
             participants = []
@@ -210,8 +212,8 @@ class ChatMessageContent:
         attachments_list = chat_message_content.attachments
         if attachments_list:
             attachments = [
-                ChatAttachment._from_generated(attachment)
-                for attachment in attachments_list  # pylint:disable=protected-access
+                ChatAttachment._from_generated(attachment)  # pylint:disable=protected-access
+                for attachment in attachments_list
             ]
         else:
             attachments = []

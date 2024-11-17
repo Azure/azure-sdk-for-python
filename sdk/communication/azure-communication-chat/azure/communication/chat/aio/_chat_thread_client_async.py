@@ -201,8 +201,8 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
             max_page_size=results_per_page,
             skip=skip,
             cls=lambda objs: [
-                ChatMessageReadReceipt._from_generated(x) for x in objs
-            ],  # pylint:disable=protected-access
+                ChatMessageReadReceipt._from_generated(x) for x in objs  # pylint:disable=protected-access
+            ],
             **kwargs
         )
 
