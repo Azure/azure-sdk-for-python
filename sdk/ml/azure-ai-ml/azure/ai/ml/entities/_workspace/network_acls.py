@@ -26,27 +26,15 @@ class NetworkAcls(RestTranslatableMixin):
         def _from_rest_object(cls, obj: RestIPRule) -> "NetworkAcls.IPRule":
             return cls(value=obj.value)
 
-    class DefaultActionType:
-
-        DENY = "Deny"
-        ALLOW = "Allow"
-
     def __init__(
         self,
         *,
-        default_action: str = DefaultActionType.ALLOW,
         ip_rules: Optional[List[IPRule]] = None,
     ):
-        self.default_action = default_action
         self.ip_rules = ip_rules if ip_rules is not None else []
-
-    def __repr__(self):
-        ip_rules_repr = ", ".join(repr(ip_rule) for ip_rule in self.ip_rules)
-        return f"NetworkAcls(default_action={self.default_action}, ip_rules=[{ip_rules_repr}])"
 
     def _to_rest_object(self) -> RestNetworkAcls:
         return RestNetworkAcls(
-            default_action=self.default_action,
             ip_rules=(
                 [ip_rule._to_rest_object() for ip_rule in self.ip_rules]  # pylint: disable=protected-access
                 if self.ip_rules
@@ -57,7 +45,6 @@ class NetworkAcls(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestNetworkAcls) -> "NetworkAcls":
         return cls(
-            default_action=obj.default_action,
             ip_rules=(
                 [
                     NetworkAcls.IPRule._from_rest_object(ip_rule)  # pylint: disable=protected-access
