@@ -10,19 +10,19 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NetworkAcls(RestTranslatableMixin):
-    """Network Access Setting for Workspace
+    """Network Access Setting for Workspace.
 
     :param default_action: Specifies the default action when no IP rules are matched.
     :type default_action: str
     :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
     :type ip_rules: Optional[List[IPRule]]
 
-    # .. literalinclude:: ../samples/ml_samples_workspace.py
-    #     :start-after: [START workspace_network_access_settings]
-    #     :end-before: [END workspace_network_access_settings]
-    #     :language: python
-    #     :dedent: 8
-    #     :caption: Examples to choose one of three Public network access settings.
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+        :start-after: [START workspace_network_access_settings]
+        :end-before: [END workspace_network_access_settings]
+        :language: python
+        :dedent: 8
+        :caption: Examples to choose one of three Public network access settings.
     """
 
     class IPRule(RestTranslatableMixin):
@@ -61,12 +61,12 @@ class NetworkAcls(RestTranslatableMixin):
         default_action: str = DefaultActionType.ALLOW,
         ip_rules: Optional[List[IPRule]] = None,
     ):
-        self.ip_rules = ip_rules if ip_rules is not None else []
         self.default_action = default_action
+        self.ip_rules = ip_rules if ip_rules is not None else []
 
     def __repr__(self):
         ip_rules_repr = ", ".join(repr(ip_rule) for ip_rule in self.ip_rules)
-        return f"NetworkAcls(default_action={self.default_action}, " f"ip_rules=[{ip_rules_repr}])"
+        return f"NetworkAcls(default_action={self.default_action}, ip_rules=[{ip_rules_repr}])"
 
     def _to_rest_object(self) -> RestNetworkAcls:
         return RestNetworkAcls(
@@ -81,6 +81,7 @@ class NetworkAcls(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestNetworkAcls) -> "NetworkAcls":
         return cls(
+            default_action=obj.default_action,
             ip_rules=(
                 [
                     NetworkAcls.IPRule._from_rest_object(ip_rule)  # pylint: disable=protected-access
@@ -89,5 +90,4 @@ class NetworkAcls(RestTranslatableMixin):
                 if obj.ip_rules
                 else []
             ),
-            default_action=obj.default_action,
         )
