@@ -7,6 +7,7 @@ from functools import cached_property
 from logging import getLogger
 from typing import Dict, List, cast
 
+from opentelemetry._events import set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -15,6 +16,7 @@ from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk._events import EventLoggerProvider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -168,9 +170,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
-    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    getLogger(logger_name).addHandler(handler)
+    logger = getLogger(logger_name)
+    # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
+    # This is to prevent most duplicate logging telemetry
+    if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
+        handler = LoggingHandler(logger_provider=logger_provider)
+        logger.addHandler(handler)
+
+    # Setup EventLoggerProvider
+    event_provider = EventLoggerProvider(logger_provider)
+    set_event_logger_provider(event_provider)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):

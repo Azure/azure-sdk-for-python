@@ -24,7 +24,7 @@ class TestCosmosDBManagementRestorableSqlResourcesOperations(AzureMgmtRecordedTe
         response = self.client.restorable_sql_resources.list(
             location="str",
             instance_id="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
