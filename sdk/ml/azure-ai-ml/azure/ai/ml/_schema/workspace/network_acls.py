@@ -5,7 +5,7 @@
 from marshmallow import ValidationError, fields, post_load, validates_schema
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml.entities._workspace.network_acls import NetworkAcls
+from azure.ai.ml.entities._workspace.network_acls import DefaultActionType, IPRule, NetworkAcls
 
 
 class IPRuleSchema(PathAwareSchema):
@@ -22,7 +22,7 @@ class IPRuleSchema(PathAwareSchema):
         :returns: An IPRule object.
         :rtype: azure.ai.ml.entities._workspace.network_acls.NetworkAcls.IPRule
         """
-        return NetworkAcls.IPRule(**data)
+        return IPRule(**data)
 
 
 class NetworkAclsSchema(PathAwareSchema):
@@ -56,8 +56,8 @@ class NetworkAclsSchema(PathAwareSchema):
         :type data: OrderedDict[str, Any]
         :raises ValidationError: If the schema is invalid.
         """
-        if data["default_action"] not in [NetworkAcls.DefaultActionType.DENY, NetworkAcls.DefaultActionType.ALLOW]:
+        if data["default_action"] not in set([DefaultActionType.DENY, DefaultActionType.ALLOW]):
             raise ValidationError("Invalid value for default_action. Must be 'Deny' or 'Allow'.")
 
-        if data["default_action"] == NetworkAcls.DefaultActionType.DENY and not data.get("ip_rules"):
+        if data["default_action"] == DefaultActionType.DENY and not data.get("ip_rules"):
             raise ValidationError("ip_rules must be provided when default_action is 'Deny'.")
