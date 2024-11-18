@@ -45,7 +45,7 @@ def get_default_logging_format() -> str:
     return f"%({get_format_key()})s{logging.BASIC_FORMAT}"
 
 
-class CompliantLogger(logging.getLoggerClass()):
+class CompliantLogger(logging.getLoggerClass()):  # type: ignore
     """
     Subclass of the default logging class with an explicit `is_compliant` parameter
     on all logging methods. It will pass an `extra` param with `format` key
