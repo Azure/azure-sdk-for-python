@@ -24,8 +24,12 @@ def _retrieve_component_scores(drained_results):
     component_scores_list = []
     for _ in drained_results[0]['payload']['componentScores']:
         component_scores_list.append([])
+    undefined_components = [-999999] * len(component_scores_list)
     for index, result in enumerate(drained_results):
         component_scores = result['payload']['componentScores']
+        # Another small fix while backend changes are released to deal with empty component score scenarios
+        if len(component_scores) == 0:
+            component_scores = undefined_components
         for component_score_index, component_score in enumerate(component_scores):
             score_tuple = (component_score, index)
             component_scores_list[component_score_index].append(score_tuple)
