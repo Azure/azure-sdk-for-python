@@ -430,7 +430,7 @@ class TestAgentsOperations:
             await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
 
-    def _assert_stream_call(self, submit_tool_mock:AsyncMock, run_id:str, tool_set:Optional[AsyncToolSet])->None:
+    def _assert_stream_call(self, submit_tool_mock: AsyncMock, run_id: str, tool_set: Optional[AsyncToolSet]) -> None:
         """Assert that stream has received the correct values."""
         if tool_set is not None:
             expected_out = TestAgentsOperations.LOCAL_FN[tool_set.definitions[0].function.name]()
@@ -439,7 +439,7 @@ class TestAgentsOperations:
                 thread_id="some_thread_id",
                 run_id=run_id,
                 tool_outputs=[{"tool_call_id": "0", "output": expected_out}],
-                event_handler=None
+                event_handler=None,
             )
             submit_tool_mock.reset_mock()
         else:

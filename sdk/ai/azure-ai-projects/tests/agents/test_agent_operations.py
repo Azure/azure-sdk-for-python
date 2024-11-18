@@ -305,7 +305,7 @@ class TestAgentsOperations:
         mock_pipeline_client_gen.return_value = mock_pipeline
         project_client = self.get_mock_client()
         with project_client:
-        # Check that pipelines are created as expected.
+            # Check that pipelines are created as expected.
             agent1 = project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="first",
@@ -426,7 +426,7 @@ class TestAgentsOperations:
             project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
 
-    def _assert_stream_call(self, submit_tool_mock:MagicMock, run_id:str, tool_set:Optional[ToolSet])->None:
+    def _assert_stream_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
         """Assert that stream has received the correct values."""
         if tool_set is not None:
             expected_out = TestAgentsOperations.LOCAL_FN[tool_set.definitions[0].function.name]()
@@ -435,7 +435,7 @@ class TestAgentsOperations:
                 thread_id="some_thread_id",
                 run_id=run_id,
                 tool_outputs=[{"tool_call_id": "0", "output": expected_out}],
-                event_handler=None
+                event_handler=None,
             )
             submit_tool_mock.reset_mock()
         else:
@@ -488,4 +488,3 @@ class TestAgentsOperations:
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
             project_client.agents._handle_submit_tool_outputs(run)
             self._assert_stream_call(project_client.agents.submit_tool_outputs_to_stream, "run123", toolset)
-        

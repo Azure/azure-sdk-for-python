@@ -663,7 +663,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
 class AgentsOperations(AgentsOperationsGenerated):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._toolset: Dict[str, _models.ToolSet] = {}
 
@@ -2214,7 +2214,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 else:
                     logger.warning("Toolset is not available in the client.")
                     return
-    
+
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     with self.submit_tool_outputs_to_stream(

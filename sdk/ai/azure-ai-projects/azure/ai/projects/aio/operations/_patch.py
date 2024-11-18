@@ -452,7 +452,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Dict[str, _models.ToolSet] = {}
+        self._toolset: Dict[str, _models.AsyncToolSet] = {}
 
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -564,7 +564,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -811,7 +811,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -901,7 +901,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -1248,7 +1248,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -1281,7 +1281,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and
          `tool_resources`). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1378,10 +1378,12 @@ class AgentsOperations(AgentsOperationsGenerated):
                         tool_outputs = await toolset.execute_tool_calls(tool_calls)
                     else:
                         raise ValueError("Toolset is not available in the client.")
-    
+
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        await self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        await self.submit_tool_outputs_to_run(
+                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
 
             logging.info("Current run status: %s", run.status)
 
@@ -1911,7 +1913,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 else:
                     logger.warning("Toolset is not available in the client.")
                     return
-    
+
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     async with await self.submit_tool_outputs_to_stream(
@@ -2698,7 +2700,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
         if assistant_id in self._toolset:
             del self._toolset[assistant_id]
-        return super().delete_agent(assistant_id, **kwargs)
+        return await super().delete_agent(assistant_id, **kwargs)
 
 
 __all__: List[str] = [
