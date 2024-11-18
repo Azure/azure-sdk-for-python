@@ -72,7 +72,7 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
     return user_text.replace("'", '\\"')
 
 
-def get_common_headers(token: str, evaluator_name: str=None) -> Dict:
+def get_common_headers(token: str, evaluator_name: str = None) -> Dict:
     """Get common headers for the HTTP request
 
     :param token: The Azure authentication token.
@@ -175,7 +175,9 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     )
 
 
-async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str, evaluator_name: str) -> str:
+async def submit_request(
+    data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str, evaluator_name: str
+) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
     :param data: The data to evaluate.
