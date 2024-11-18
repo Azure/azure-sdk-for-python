@@ -231,7 +231,7 @@ from ._workspace.diagnose import (
     DiagnoseWorkspaceParameters,
 )
 from ._workspace.feature_store_settings import FeatureStoreSettings
-from ._workspace.network_acls import NetworkAcls
+from ._workspace.network_acls import DefaultActionType, IPRule, NetworkAcls
 from ._workspace.networking import (
     FqdnDestination,
     IsolationMode,
@@ -297,6 +297,8 @@ __all__ = [
     "Model",
     "ModelBatchDeployment",
     "ModelBatchDeploymentSettings",
+    "IPRule",
+    "DefaultActionType",
     "NetworkAcls",
     "Workspace",
     "WorkspaceKeys",

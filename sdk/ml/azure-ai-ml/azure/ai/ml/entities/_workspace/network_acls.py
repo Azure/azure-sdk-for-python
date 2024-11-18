@@ -9,6 +9,38 @@ from azure.ai.ml._restclient.v2024_10_01_preview.models import NetworkAcls as Re
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
+class IPRule(RestTranslatableMixin):
+    """Represents an IP rule with a value.
+
+    :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
+    or '124.56.78.0/24' (all addresses that start with 124.56.78). Value could be 'Allow' or 'Deny'.
+    :type value: str
+    """
+
+    def __init__(self, value: Optional[str]):
+        self.value = value
+
+    def __repr__(self):
+        return f"IPRule(value={self.value})"
+
+    def _to_rest_object(self) -> RestIPRule:
+        return RestIPRule(value=self.value)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestIPRule) -> "IPRule":
+        return cls(value=obj.value)
+
+
+class DefaultActionType:
+    """Specifies the default action when no IP rules are matched.
+    'Deny' if IP rules are non-empty, allowing only specified IPs/ranges;
+    'Allow' if no IP rules are defined, allowing all access.
+    """
+
+    DENY = "Deny"
+    ALLOW = "Allow"
+
+
 class NetworkAcls(RestTranslatableMixin):
     """Network Access Setting for Workspace.
 
@@ -24,36 +56,6 @@ class NetworkAcls(RestTranslatableMixin):
         :dedent: 8
         :caption: Examples to choose one of three Public network access settings.
     """
-
-    class IPRule(RestTranslatableMixin):
-        """Represents an IP rule with a value.
-
-        :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
-        or '124.56.78.0/24' (all addresses that start with 124.56.78). Value could be 'Allow' or 'Deny'.
-        :type value: str
-        """
-
-        def __init__(self, value: Optional[str]):
-            self.value = value
-
-        def __repr__(self):
-            return f"IPRule(value={self.value})"
-
-        def _to_rest_object(self) -> RestIPRule:
-            return RestIPRule(value=self.value)
-
-        @classmethod
-        def _from_rest_object(cls, obj: RestIPRule) -> "NetworkAcls.IPRule":
-            return cls(value=obj.value)
-
-    class DefaultActionType:
-        """Specifies the default action when no IP rules are matched.
-        'Deny' if IP rules are non-empty, allowing only specified IPs/ranges;
-        'Allow' if no IP rules are defined, allowing all access.
-        """
-
-        DENY = "Deny"
-        ALLOW = "Allow"
 
     def __init__(
         self,
@@ -83,10 +85,7 @@ class NetworkAcls(RestTranslatableMixin):
         return cls(
             default_action=obj.default_action,
             ip_rules=(
-                [
-                    NetworkAcls.IPRule._from_rest_object(ip_rule)  # pylint: disable=protected-access
-                    for ip_rule in obj.ip_rules
-                ]
+                [IPRule._from_rest_object(ip_rule) for ip_rule in obj.ip_rules]  # pylint: disable=protected-access
                 if obj.ip_rules
                 else []
             ),
