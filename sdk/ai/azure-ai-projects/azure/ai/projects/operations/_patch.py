@@ -13,20 +13,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import (
-    IO,
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    TextIO,
-    Union,
-    cast,
-    overload,
-)
+from typing import IO, TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, TextIO, Union, cast, overload
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -94,15 +81,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS,
-                include_credentials=True,
-                **kwargs,
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES,
-                include_credentials=True,
-                **kwargs,
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -172,15 +155,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS,
-                include_credentials=True,
-                **kwargs,
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES,
-                include_credentials=True,
-                **kwargs,
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -244,9 +223,7 @@ class InferenceOperations:
 
         kwargs.setdefault("merge_span", True)
         connection = self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI,
-            include_credentials=True,
-            **kwargs,
+            connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
 
         try:
@@ -261,14 +238,9 @@ class InferenceOperations:
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AzureOpenAI(
-                api_key=connection.key,
-                azure_endpoint=connection.endpoint_url,
-                api_version=api_version,
+                api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == {
-            AuthenticationType.ENTRA_ID,
-            AuthenticationType.SAS,
-        }:
+        elif connection.authentication_type == {AuthenticationType.ENTRA_ID, AuthenticationType.SAS}:
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as e:
@@ -283,8 +255,7 @@ class InferenceOperations:
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
-                    connection.token_credential,
-                    "https://cognitiveservices.azure.com/.default",
+                    connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=connection.endpoint_url,
                 api_version=api_version,
@@ -299,11 +270,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     @distributed_trace
     def get_default(
-        self,
-        *,
-        connection_type: ConnectionType,
-        include_credentials: bool = False,
-        **kwargs: Any,
+        self, *, connection_type: ConnectionType, include_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
@@ -505,12 +472,8 @@ def _configure_logging(log_exporter: Any) -> None:
         # So it's ok to use them for local development, but we'll swallow
         # any errors in case of any breaking changes on OTel side.
         from opentelemetry import _logs, _events
-        from opentelemetry.sdk._logs import (
-            LoggerProvider,
-        )  # pylint: disable=import-error,no-name-in-module
-        from opentelemetry.sdk._events import (
-            EventLoggerProvider,
-        )  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._logs import LoggerProvider  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._events import EventLoggerProvider  # pylint: disable=import-error,no-name-in-module
         from opentelemetry.sdk._logs.export import (
             SimpleLogRecordProcessor,
         )  # pylint: disable=import-error,no-name-in-module
@@ -903,12 +866,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def update_agent(
-        self,
-        assistant_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
@@ -1178,9 +1136,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         )
 
     def _validate_tools_and_tool_resources(
-        self,
-        tools: Optional[List[_models.ToolDefinition]],
-        tool_resources: Optional[_models.ToolResources],
+        self, tools: Optional[List[_models.ToolDefinition]], tool_resources: Optional[_models.ToolResources]
     ):
         if tool_resources is None:
             return
@@ -1202,12 +1158,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_run(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -1322,12 +1273,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_run(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -1626,12 +1572,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_stream(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
         """Creates a new stream for an agent thread.
 
@@ -1751,12 +1692,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_stream(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
         """Creates a new run for an agent thread.
 
@@ -1914,13 +1850,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -1975,13 +1905,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -2053,13 +1977,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -2113,13 +2031,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -2174,12 +2086,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id,
-                run_id,
-                tool_outputs=tool_outputs,
-                stream_parameter=True,
-                stream=True,
-                **kwargs,
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
@@ -2195,9 +2102,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     def _handle_submit_tool_outputs(
-        self,
-        run: _models.ThreadRun,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None
     ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
@@ -2239,12 +2144,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
-        self,
-        *,
-        file: FileType,
-        purpose: Union[str, _models.FilePurpose],
-        filename: Optional[str] = None,
-        **kwargs: Any,
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -2351,13 +2251,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file_and_poll(
-        self,
-        *,
-        file: FileType,
-        purpose: Union[str, _models.FilePurpose],
-        filename: Optional[str] = None,
-        sleep_interval: float = 1,
-        **kwargs: Any,
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -2455,12 +2349,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_and_poll(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        sleep_interval: float = 1,
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -2523,12 +2412,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_vector_store_and_poll(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        sleep_interval: float = 1,
-        **kwargs: Any,
+        self, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -2813,23 +2697,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.ThreadMessages
         """
         messages = super().list_messages(
-            thread_id,
-            run_id=run_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            **kwargs,
+            thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs
         )
         return _models.ThreadMessages(pageable_list=messages)
 
     @distributed_trace
-    def save_file(
-        self,
-        file_id: str,
-        file_name: str,
-        target_dir: Optional[Union[str, Path]] = None,
-    ) -> None:
+    def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Synchronously saves file content retrieved using a file identifier to the specified local directory.
 
@@ -2871,11 +2744,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     else:
                         raise TypeError(f"Expected bytes or bytearray, got {type(chunk).__name__}")
 
-            logger.debug(
-                "File '%s' saved successfully at '%s'.",
-                sanitized_file_name,
-                target_file_path,
-            )
+            logger.debug("File '%s' saved successfully at '%s'.", sanitized_file_name, target_file_path)
 
         except (ValueError, RuntimeError, TypeError, IOError) as e:
             logger.error("An error occurred in save_file: %s", e)
