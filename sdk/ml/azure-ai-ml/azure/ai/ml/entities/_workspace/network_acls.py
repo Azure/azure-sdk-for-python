@@ -53,7 +53,7 @@ class NetworkAcls(RestTranslatableMixin):
                 :end-before: [END workspace_network_access_settings]
                 :language: python
                 :dedent: 8
-                :caption: Configuring one of three Public network access settings.
+                :caption: Configuring one of the three public network access settings.
     """
 
     def __init__(
