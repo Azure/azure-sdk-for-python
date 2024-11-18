@@ -50,13 +50,13 @@ class NetworkAclsSchema(PathAwareSchema):
 
     @validates_schema
     def validate_schema(self, data, **kwargs):  # pylint: disable=unused-argument
-        """Validates the NetworkAcls schema.
+        """Validate the NetworkAcls schema.
 
         :param data: The data to validate.
         :type data: OrderedDict[str, Any]
         :raises ValidationError: If the schema is invalid.
         """
-        if data["default_action"] not in set([DefaultActionType.DENY, DefaultActionType.ALLOW]):
+        if data["default_action"] not in [DefaultActionType.DENY, DefaultActionType.ALLOW]:
             raise ValidationError("Invalid value for default_action. Must be 'Deny' or 'Allow'.")
 
         if data["default_action"] == DefaultActionType.DENY and not data.get("ip_rules"):

@@ -181,7 +181,7 @@ class WorkspaceConfigurationOptions(object):
         # Note: default_action should be set to 'Allow', allowing all access.
         ws.public_network_access = "Enabled"
         ws.network_acls = NetworkAcls(default_action=DefaultActionType.ALLOW, ip_rules=[])
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
+        updated_ws = ml_client.workspaces.begin_update(workspace=ws).result()
 
         # 2. Enabled from selected IP addresses
         # Note: default_action should be set to 'Deny', allowing only specified IPs/ranges
@@ -190,12 +190,12 @@ class WorkspaceConfigurationOptions(object):
             default_action=DefaultActionType.DENY,
             ip_rules=[IPRule(value="103.248.19.87/32"), IPRule(value="103.248.19.86/32")],
         )
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
+        updated_ws = ml_client.workspaces.begin_update(workspace=ws).result()
 
         # 3. Disabled
         # NetworkAcls IP Rules will reset
         ws.public_network_access = "Disabled"
-        updated_ws = ml_client.workspaces.begin_update(ws).result()
+        updated_ws = ml_client.workspaces.begin_update(workspace=ws).result()
         # [END workspace_network_access_settings]
 
     @handle_resource_exists_error
