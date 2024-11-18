@@ -11,6 +11,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 class IPRule(RestTranslatableMixin):
     """Represents an IP rule with a value.
+
     :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
     or '124.56.78.0/24' (all addresses that start with 124.56.78).
     :type value: str
@@ -45,12 +46,14 @@ class NetworkAcls(RestTranslatableMixin):
     :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
     :type ip_rules: Optional[List[IPRule]]
 
-    .. literalinclude:: ../samples/ml_samples_workspace.py
-            :start-after: [START workspace_network_access_settings]
-            :end-before: [END workspace_network_access_settings]
-            :language: python
-            :dedent: 8
-            :caption: Examples to choose one of three Public network access settings.
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+                :start-after: [START workspace_network_access_settings]
+                :end-before: [END workspace_network_access_settings]
+                :language: python
+                :dedent: 8
+                :caption: Configuring one of three Public network access settings.
     """
 
     def __init__(
