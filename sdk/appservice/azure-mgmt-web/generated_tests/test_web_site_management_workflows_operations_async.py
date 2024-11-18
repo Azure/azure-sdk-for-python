@@ -21,13 +21,13 @@ class TestWebSiteManagementWorkflowsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_regenerate_access_key(self, resource_group):
+    async def test_workflows_regenerate_access_key(self, resource_group):
         response = await self.client.workflows.regenerate_access_key(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             key_type={"keyType": "str"},
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestWebSiteManagementWorkflowsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate(self, resource_group):
+    async def test_workflows_validate(self, resource_group):
         response = await self.client.workflows.validate(
             resource_group_name=resource_group.name,
             name="str",
@@ -101,7 +101,7 @@ class TestWebSiteManagementWorkflowsOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
