@@ -4,8 +4,6 @@
 
 ### Features Added
 
-  - Enum `ManagedServiceIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
-  - Enum `OsDiskStorageAccountType` added member `STANDARD_SSD`
   - Model `Quota` added property `unit`
   - Model `Quota` added property `current_value`
   - Model `Quota` added property `limit`
@@ -13,8 +11,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed enum value `ManagedServiceIdentityType.SYSTEM_AND_USER_ASSIGNED`
-  - Deleted or renamed enum value `OsDiskStorageAccountType.STANDARD_S_S_D`
+  - Enum `ManagedServiceIdentityType` renamed its value `SYSTEM_AND_USER_ASSIGNED` to `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Enum `OsDiskStorageAccountType` renamed its value `STANDARD_S_S_D` to `STANDARD_SSD`
   - Model `Quota` deleted or renamed its instance variable `properties`
   - Model `Quota` deleted or renamed its instance variable `type`
   - Model `Quota` deleted or renamed its instance variable `system_data`
