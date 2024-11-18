@@ -115,6 +115,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         # Custom Endpoint
         custom_endpoint_address = kwargs.get("custom_endpoint_address")
         custom_endpoint = None
+        custom_port = None
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
             if transport_type.value == TransportType.Amqp.value:
