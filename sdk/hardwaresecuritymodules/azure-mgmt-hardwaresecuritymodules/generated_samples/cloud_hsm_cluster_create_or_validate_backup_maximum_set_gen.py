@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = HardwareSecurityModulesMgmtClient(
         credential=DefaultAzureCredential(),
@@ -28,13 +31,12 @@ def main():
     )
 
     response = client.cloud_hsm_clusters.begin_backup(
-        resource_group_name='rgcloudhsm',
-        cloud_hsm_cluster_name='chsm1',
+        resource_group_name="rgcloudhsm",
+        cloud_hsm_cluster_name="chsm1",
     ).result()
     print(response)
 
+
 # x-ms-original-file: specification/hardwaresecuritymodules/resource-manager/Microsoft.HardwareSecurityModules/preview/2024-06-30-preview/examples/CloudHsmCluster_CreateOrValidate_Backup_MaximumSet_Gen.json
 if __name__ == "__main__":
-    main()
-main__":
     main()
