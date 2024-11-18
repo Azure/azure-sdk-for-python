@@ -25,7 +25,6 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.cluster_managers.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestNetworkCloudMgmtClusterManagersOperationsAsync(AzureMgmtRecordedTestCa
         )
         result = [r async for r in response]
         assert result == []
-        

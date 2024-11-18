@@ -24,7 +24,6 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.list_by_subscription()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-   

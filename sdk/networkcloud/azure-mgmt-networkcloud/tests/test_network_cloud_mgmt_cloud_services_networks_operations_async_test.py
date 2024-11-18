@@ -25,7 +25,6 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
         response = self.client.cloud_services_networks.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
         )
         result = [r async for r in response]
         assert result == []
-    
