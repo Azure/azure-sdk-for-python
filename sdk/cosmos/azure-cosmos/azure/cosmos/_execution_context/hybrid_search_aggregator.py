@@ -141,8 +141,8 @@ def _format_component_query_workaround(format_string, global_statistics, compone
 
 class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     """This class is a subclass of the query execution context base and serves for
-    non-streaming order by queries. It is very similar to the existing MultiExecutionContextAggregator,
-    but is needed since we're dealing with items and not document producers.
+    full text search and hybrid search queries. It is very similar to the existing MultiExecutionContextAggregator,
+    but is needed since we have a lot more additional client-side logic to take care of.
 
     This class builds upon the multi-execution aggregator, building a document producer per partition
     and draining their results entirely in order to create the result set relevant to the filters passed
