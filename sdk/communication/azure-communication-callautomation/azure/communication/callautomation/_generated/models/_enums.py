@@ -160,7 +160,7 @@ class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the sub-type of the recognize operation.
-    In case of cancel operation this field is not set and is returned empty.
+    In case of cancel operation the this field is not set and is returned empty.
     """
 
     DTMF = "dtmf"

@@ -49,15 +49,14 @@ from ...operations._operations import (
     build_call_dialog_update_dialog_request,
     build_call_media_cancel_all_media_operations_request,
     build_call_media_hold_request,
+    build_call_media_interrupt_audio_and_announce_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
     build_call_media_send_dtmf_tones_request,
     build_call_media_start_continuous_dtmf_recognition_request,
-    build_call_media_start_hold_music_request,
     build_call_media_start_media_streaming_request,
     build_call_media_start_transcription_request,
     build_call_media_stop_continuous_dtmf_recognition_request,
-    build_call_media_stop_hold_music_request,
     build_call_media_stop_media_streaming_request,
     build_call_media_stop_transcription_request,
     build_call_media_unhold_request,
@@ -1019,7 +1018,7 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Required.
+        :param add_participant_request: The add participants request. Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1044,7 +1043,7 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Required.
+        :param add_participant_request: The add participants request. Required.
         :type add_participant_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1067,8 +1066,8 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Is either a AddParticipantRequest type or a IO[bytes] type.
-         Required.
+        :param add_participant_request: The add participants request. Is either a AddParticipantRequest
+         type or a IO[bytes] type. Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
          or IO[bytes]
         :return: AddParticipantResponse
@@ -2974,251 +2973,6 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def start_hold_music(
-        self,
-        call_connection_id: str,
-        start_hold_music_request: _models.StartHoldMusicRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Required.
-        :type start_hold_music_request:
-         ~azure.communication.callautomation.models.StartHoldMusicRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_hold_music(
-        self,
-        call_connection_id: str,
-        start_hold_music_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Required.
-        :type start_hold_music_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def start_hold_music(
-        self,
-        call_connection_id: str,
-        start_hold_music_request: Union[_models.StartHoldMusicRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Hold participant from the call using identifier.
-
-        Hold participant from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param start_hold_music_request: The participants to be hold from the call. Is either a
-         StartHoldMusicRequest type or a IO[bytes] type. Required.
-        :type start_hold_music_request:
-         ~azure.communication.callautomation.models.StartHoldMusicRequest or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(start_hold_music_request, (IOBase, bytes)):
-            _content = start_hold_music_request
-        else:
-            _json = self._serialize.body(start_hold_music_request, "StartHoldMusicRequest")
-
-        _request = build_call_media_start_hold_music_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def stop_hold_music(
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: _models.StopHoldMusicRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Required.
-        :type stop_hold_music_request: ~azure.communication.callautomation.models.StopHoldMusicRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def stop_hold_music(
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Required.
-        :type stop_hold_music_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def stop_hold_music(
-        self,
-        call_connection_id: str,
-        stop_hold_music_request: Union[_models.StopHoldMusicRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
-        """Unhold participants from the call using identifier.
-
-        Unhold participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param stop_hold_music_request: The participants to be hold from the call. Is either a
-         StopHoldMusicRequest type or a IO[bytes] type. Required.
-        :type stop_hold_music_request: ~azure.communication.callautomation.models.StopHoldMusicRequest
-         or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(stop_hold_music_request, (IOBase, bytes)):
-            _content = stop_hold_music_request
-        else:
-            _json = self._serialize.body(stop_hold_music_request, "StopHoldMusicRequest")
-
-        _request = build_call_media_stop_hold_music_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
     async def start_media_streaming(
         self,
         call_connection_id: str,
@@ -3436,6 +3190,129 @@ class CallMediaOperations:
             _json = self._serialize.body(stop_media_streaming_request, "StopMediaStreamingRequest")
 
         _request = build_call_media_stop_media_streaming_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def interrupt_audio_and_announce(
+        self,
+        call_connection_id: str,
+        interrupt_request: _models.InterruptAudioAndAnnounceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Plays audio to participants in the call.
+
+        Plays audio to participants in the call.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param interrupt_request: play request payload. Required.
+        :type interrupt_request:
+         ~azure.communication.callautomation.models.InterruptAudioAndAnnounceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def interrupt_audio_and_announce(
+        self,
+        call_connection_id: str,
+        interrupt_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Plays audio to participants in the call.
+
+        Plays audio to participants in the call.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param interrupt_request: play request payload. Required.
+        :type interrupt_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def interrupt_audio_and_announce(
+        self,
+        call_connection_id: str,
+        interrupt_request: Union[_models.InterruptAudioAndAnnounceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> None:
+        """Plays audio to participants in the call.
+
+        Plays audio to participants in the call.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param interrupt_request: play request payload. Is either a InterruptAudioAndAnnounceRequest
+         type or a IO[bytes] type. Required.
+        :type interrupt_request:
+         ~azure.communication.callautomation.models.InterruptAudioAndAnnounceRequest or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(interrupt_request, (IOBase, bytes)):
+            _content = interrupt_request
+        else:
+            _json = self._serialize.body(interrupt_request, "InterruptAudioAndAnnounceRequest")
+
+        _request = build_call_media_interrupt_audio_and_announce_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
