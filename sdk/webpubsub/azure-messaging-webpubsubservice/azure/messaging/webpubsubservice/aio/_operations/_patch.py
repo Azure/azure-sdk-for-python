@@ -87,7 +87,11 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
+        path = "/client/hubs/"
+        if client_protocol.lower() == "mqtt":
+            path = "/clients/mqtt/hubs/" 
+        elif client_protocol.lower() == "socketio":
+            path = "/clients/socketio/hubs/"
         client_url = client_endpoint + path + hub
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(
