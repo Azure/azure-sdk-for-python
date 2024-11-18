@@ -72,18 +72,21 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
     return user_text.replace("'", '\\"')
 
 
-def get_common_headers(token: str, evaluator_name: str = None) -> Dict:
+def get_common_headers(token: str, evaluator_name: Optional[str] = None) -> Dict:
     """Get common headers for the HTTP request
 
     :param token: The Azure authentication token.
     :type token: str
+    :param evaluator_name: The evaluator name. Default is None.
+    :type evaluator_name: str
     :return: The common headers.
     :rtype: Dict
     """
+    user_agent = f"{USER_AGENT} (type=evaluator; subtype={evaluator_name})" if evaluator_name else USER_AGENT
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "User-Agent": f"{USER_AGENT} (type=evaluator; subtype={evaluator_name})" if evaluator_name else USER_AGENT,
+        "User-Agent": user_agent,
         # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
         # https://github.com/encode/httpx/discussions/2959
         "Connection": "close",
