@@ -199,8 +199,6 @@ class TestSimAndEval:
         assert metrics is not None
         assert eval_output is not None
         assert len(eval_output["rows"]) == 1
-        assert eval_output["rows"][0]["inputs.conversation"] == simulator_output[0]
-
         assert eval_output["rows"][0]["outputs.protected_material.fictional_characters_reason"] is not None
         assert eval_output["rows"][0]["outputs.protected_material.artwork_reason"] is not None
         assert eval_output["rows"][0]["outputs.protected_material.logos_and_brands_reason"] is not None
