@@ -33,6 +33,7 @@ from ._models_py3 import DelegatedSubnetUsage
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import FeatureProperty
 from ._models_py3 import FirewallRule
 from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import FullBackupStoreDetails
@@ -157,6 +158,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "FeatureProperty",
     "FirewallRule",
     "FirewallRuleListResult",
     "FullBackupStoreDetails",
