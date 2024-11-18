@@ -58,8 +58,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
-         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
-         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
+         PubSub for Socket.IO, "SocketIO" type is supported. For Web PubSub, the valid values are
+         'Default', 'MQTT'. Known values are: "Default", "MQTT" and "SocketIO". Default value is "Default".
         :paramtype client_type: str
         :return: JSON object
         :rtype: JSON
