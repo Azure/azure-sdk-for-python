@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.netapp import NetAppManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-netapp
 # USAGE
-    python cosmos_db_sql_container_partition_merge.py
+    python accounts_transition_encryption_key.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,21 +25,17 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.sql_resources.begin_list_sql_container_partition_merge(
-        resource_group_name="rgName",
-        account_name="ddb1",
-        database_name="databaseName",
-        container_name="containerName",
-        merge_parameters={"isDryRun": False},
+    client.accounts.begin_transition_to_cmk(
+        resource_group_name="myRG",
+        account_name="account1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBSqlContainerPartitionMerge.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Accounts_TransitionEncryptionKey.json
 if __name__ == "__main__":
     main()

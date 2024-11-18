@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.netapp import NetAppManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-netapp
 # USAGE
-    python cosmos_db_data_transfer_job_create.py
+    python accounts_change_key_vault.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,29 +25,17 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.data_transfer_jobs.create(
-        resource_group_name="rg1",
-        account_name="ddb1",
-        job_name="j1",
-        job_create_parameters={
-            "properties": {
-                "destination": {
-                    "component": "AzureBlobStorage",
-                    "containerName": "blob_container",
-                    "endpointUrl": "https://blob.windows.net",
-                },
-                "source": {"component": "CosmosDBCassandra", "keyspaceName": "keyspace", "tableName": "table"},
-            }
-        },
-    )
-    print(response)
+    client.accounts.begin_change_key_vault(
+        resource_group_name="myRG",
+        account_name="account1",
+    ).result()
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/data-transfer-service/CosmosDBDataTransferJobCreate.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Accounts_ChangeKeyVault.json
 if __name__ == "__main__":
     main()

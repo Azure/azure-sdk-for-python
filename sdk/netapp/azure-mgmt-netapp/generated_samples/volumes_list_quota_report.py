@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.netapp import NetAppManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-netapp
 # USAGE
-    python network_security_perimeter_configuration_reconcile.py
+    python volumes_list_quota_report.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,18 +25,20 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    client.network_security_perimeter_configurations.begin_reconcile(
-        resource_group_name="res4410",
-        account_name="sto8607",
-        network_security_perimeter_configuration_name="dbedb4e0-40e6-4145-81f3-f1314c150774.resourceAssociation1",
+    response = client.volumes.begin_list_quota_report(
+        resource_group_name="myRG",
+        account_name="account1",
+        pool_name="pool1",
+        volume_name="volume1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/NetworkSecurityPerimeterConfigurationReconcile.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Volumes_ListQuotaReport.json
 if __name__ == "__main__":
     main()
