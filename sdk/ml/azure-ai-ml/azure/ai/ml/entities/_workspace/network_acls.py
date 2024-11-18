@@ -10,6 +10,11 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class IPRule(RestTranslatableMixin):
+    """Represents an IP rule with a value.
+    :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
+    or '124.56.78.0/24' (all addresses that start with 124.56.78).
+    :type value: str
+    """
 
     def __init__(self, value: Optional[str]):
         self.value = value
@@ -26,12 +31,20 @@ class IPRule(RestTranslatableMixin):
 
 
 class DefaultActionType:
+    """Specifies the default action when no IP rules are matched."""
 
     DENY = "Deny"
     ALLOW = "Allow"
 
 
 class NetworkAcls(RestTranslatableMixin):
+    """Network Access Setting for Workspace
+
+    :param default_action: Specifies the default action when no IP rules are matched.
+    :type default_action: str
+    :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
+    :type ip_rules: Optional[List[IPRule]]
+    """
 
     def __init__(
         self,
