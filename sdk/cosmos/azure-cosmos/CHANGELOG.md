@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.0 (Unreleased)
+### 4.9.0 (2024-11-18)
 
 #### Features Added
 * Added full text policy and full text indexing policy. See [PR 37891](https://github.com/Azure/azure-sdk-for-python/pull/37891).
