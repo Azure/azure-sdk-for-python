@@ -20,7 +20,7 @@ from devtools_testutils import get_credential
 
 
 # for pytest.parametrize
-GA = "2024-06-01"
+GA = "2024-10-21"
 PREVIEW = "2024-10-01-preview"
 LATEST = PREVIEW
 
@@ -67,8 +67,8 @@ def skip_openai_test(api_type) -> bool:
 
 @pytest.fixture
 def client(api_type, api_version):
-    if skip_openai_test(api_type):
-        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+    # if skip_openai_test(api_type):
+    #     pytest.skip("Skipping openai tests - they only run on tests-weekly.")
 
     if api_type == "azure":
         client = openai.AzureOpenAI(
