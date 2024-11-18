@@ -1,5 +1,10 @@
 # Release History
 
+## 1.22.2 (2024-11-18)
+
+### Bugs Fixed
+  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
+
 ## 1.22.1 (2024-11-13)
 
 ### Bugs Fixed
