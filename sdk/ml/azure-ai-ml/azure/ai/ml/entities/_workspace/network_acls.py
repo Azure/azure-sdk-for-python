@@ -12,8 +12,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class IPRule(RestTranslatableMixin):
     """Represents an IP rule with a value.
 
-    :param value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
-    or '124.56.78.0/24' (all addresses that start with 124.56.78).
+    :param value: An IPv4 address or range in CIDR notation.
     :type value: str
     """
 
