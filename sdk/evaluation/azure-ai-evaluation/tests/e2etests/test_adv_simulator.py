@@ -144,6 +144,7 @@ class TestAdvSimulator:
         assert len(outputs) == 1
         assert len(outputs[0]["messages"]) == 4
 
+    @pytest.mark.skip(reason="Skip as RAI service doesn't handle image size over 1mb")
     def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
