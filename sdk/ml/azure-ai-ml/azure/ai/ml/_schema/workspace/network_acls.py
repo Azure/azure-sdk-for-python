@@ -56,7 +56,7 @@ class NetworkAclsSchema(PathAwareSchema):
         :type data: OrderedDict[str, Any]
         :raises ValidationError: If the schema is invalid.
         """
-        if data["default_action"] not in [DefaultActionType.DENY, DefaultActionType.ALLOW]:
+        if data["default_action"] not in set([DefaultActionType.DENY, DefaultActionType.ALLOW]):
             raise ValidationError("Invalid value for default_action. Must be 'Deny' or 'Allow'.")
 
         if data["default_action"] == DefaultActionType.DENY and not data.get("ip_rules"):
