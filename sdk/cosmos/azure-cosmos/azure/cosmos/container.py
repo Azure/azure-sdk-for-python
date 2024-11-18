@@ -349,7 +349,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
@@ -387,7 +387,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
@@ -410,7 +410,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :paramtype continuation: str
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :paramtype max_item_count: Optional[int]
@@ -450,7 +450,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Optional[Literal["High", "Low"]]
-        :keyword mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
@@ -471,7 +471,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
@@ -486,7 +486,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword mode: The change feed mode enum to use when processing change feed items.
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
