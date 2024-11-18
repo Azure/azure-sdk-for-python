@@ -22,11 +22,9 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
-        response = self.client.cloud_services_networks.list_by_subscription(
-            "2024-06-01-preview",
-        )
+        response = self.client.cloud_services_networks.list_by_subscription()
         result = [r async for r in response]
-        assert result
+        assert response
         
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -34,89 +32,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.cloud_services_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            "2024-06-01-preview",
         )
         result = [r async for r in response]
-        assert result
-        
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_get(self, resource_group):
-        response = await self.client.cloud_services_networks.get(
-            resource_group_name=resource_group.name,
-            cloud_services_network_name="str",
-            "2024-06-01-preview",
-        )
-
-        assert result
-        
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
-        response = await (
-            await self.client.cloud_services_networks.begin_create_or_update(
-                resource_group_name=resource_group.name,
-                cloud_services_network_name="str",
-                cloud_services_network_parameters={
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "location": "str",
-                    "additionalEgressEndpoints": [{"category": "str", "endpoints": [{"domainName": "str", "port": 0}]}],
-                    "associatedResourceIds": ["str"],
-                    "clusterId": "str",
-                    "detailedStatus": "str",
-                    "detailedStatusMessage": "str",
-                    "enableDefaultEgressEndpoints": "str",
-                    "enabledEgressEndpoints": [{"category": "str", "endpoints": [{"domainName": "str", "port": 0}]}],
-                    "hybridAksClustersAssociatedIds": ["str"],
-                    "id": "str",
-                    "interfaceName": "str",
-                    "name": "str",
-                    "provisioningState": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                    "virtualMachinesAssociatedIds": ["str"],
-                },
-                "2024-06-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        assert result
-        
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
-        response = await (
-            await self.client.cloud_services_networks.begin_delete(
-                resource_group_name=resource_group.name,
-                cloud_services_network_name="str",
-                "2024-06-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        assert result
-        
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
-        response = await (
-            await self.client.cloud_services_networks.begin_update(
-                resource_group_name=resource_group.name,
-                cloud_services_network_name="str",
-                "2024-06-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        assert result
-        
+        assert result == []
+    

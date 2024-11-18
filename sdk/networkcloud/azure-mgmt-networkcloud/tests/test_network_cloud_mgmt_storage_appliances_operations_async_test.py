@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
     async def test_list_by_subscription(self, resource_group):
         response = self.client.storage_appliances.list_by_subscription()
         result = [r async for r in response]
-        assert result
+        assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async

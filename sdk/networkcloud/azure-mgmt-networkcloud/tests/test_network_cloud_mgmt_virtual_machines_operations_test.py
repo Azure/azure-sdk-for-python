@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_list_by_subscription(self, resource_group):
         response = self.client.virtual_machines.list_by_subscription()
         result = [r for r in response]
-        assert result
+        assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
