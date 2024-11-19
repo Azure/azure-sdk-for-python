@@ -183,7 +183,7 @@ extends:
                     - 311
                   checkout:
                     - package: uamqp
-                      download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
+                      download_uri: https://files.pythonhosted.org/packages/2e/99/e5fbdd1964f2b7f04fcfacd9c8252a998725af2c2b186d5436ff0499a886/uamqp-1.6.11.tar.gz
 
       - stage: Build_Universal_Dependencies
         displayName: Build Universal Conda Packages
