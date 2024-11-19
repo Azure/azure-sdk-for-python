@@ -10,6 +10,7 @@ from azure.mgmt.workloadssapvirtualinstance.models import SAPConfiguration
 from azure.identity import DefaultAzureCredential
 import pytest
 
+
 @pytest.mark.live_test_only
 def test_unittest_model():
     client = WorkloadsSapVirtualInstanceMgmtClient(DefaultAzureCredential(), "12345")

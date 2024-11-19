@@ -19,7 +19,6 @@ class TestWorkloadsSapVirtualInstanceMgmtSAPVirtualInstancesOperationsAsync(Azur
     def setup_method(self, method):
         self.client = self.create_mgmt_client(WorkloadsSapVirtualInstanceMgmtClient, is_async=True)
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_sap_virtual_instances_list_by_resource_group(self, resource_group):
@@ -28,7 +27,6 @@ class TestWorkloadsSapVirtualInstanceMgmtSAPVirtualInstancesOperationsAsync(Azur
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -36,4 +34,3 @@ class TestWorkloadsSapVirtualInstanceMgmtSAPVirtualInstancesOperationsAsync(Azur
         response = self.client.sap_virtual_instances.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
