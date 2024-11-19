@@ -49,9 +49,6 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
-  - name: ValidateFormatting
-    type: boolean
-    default: false
   - name: UnsupportedToxEnvironments
     type: string
     default: ''
@@ -229,7 +226,6 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
