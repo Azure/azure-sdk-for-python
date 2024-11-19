@@ -25,10 +25,11 @@ Cosmos database service.
 
 import os
 from azure.cosmos._execution_context.aio import endpoint_component, multi_execution_aggregator
-from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator
+from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator, hybrid_search_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
+from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info,\
+    _is_hybrid_search_query, _verify_valid_hybrid_search_query
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -89,7 +90,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         try:
             return await self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e): #cross partition query not servable
+            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
                 query_to_use = self._query if self._query is not None else "Select * from root r"
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
@@ -110,9 +111,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
-            total_item_buffer = query_execution_info.get_top() or\
-                                query_execution_info.get_limit() + query_execution_info.get_offset()
-            if total_item_buffer is None:
+            total_item_buffer = (query_execution_info.get_top() or 0) or \
+                                ((query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0))
+            if total_item_buffer == 0:
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")
@@ -126,6 +127,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._options,
                                                                                         query_execution_info)
             await execution_context_aggregator._configure_partition_ranges()
+        elif query_execution_info.has_hybrid_search_query_info():
+            hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            _verify_valid_hybrid_search_query(hybrid_search_query_info)
+            execution_context_aggregator = \
+                hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
+                                                                        self._resource_link,
+                                                                        self._options,
+                                                                        query_execution_info,
+                                                                        hybrid_search_query_info)
+            await execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,

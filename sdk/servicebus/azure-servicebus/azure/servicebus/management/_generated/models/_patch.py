@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 __all__: List[str] = [
     "CorrelationFilter",
-    "KeyObjectValue"
+    "KeyObjectValue",
 ]  # Add all objects you want publicly available to users at this package level
 
 
@@ -34,10 +34,7 @@ class KeyObjectValue(_serialization.Model):
         "key": {
             "key": "key",
             "type": "str",
-            "xml": {
-                "name": "Key",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "Key", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "value": {"key": "value", "type": "object"},
     }
@@ -47,11 +44,7 @@ class KeyObjectValue(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        key: str,
-        value: Union[str, int, float, bool, "datetime", "timedelta"],
-        **kwargs: Any
+        self, *, key: str, value: Union[str, int, float, bool, "datetime", "timedelta"], **kwargs: Any
     ) -> None:
         """
         :keyword key:
@@ -99,11 +92,7 @@ class CorrelationFilter(RuleFilter):
         "type": {
             "key": "type",
             "type": "str",
-            "xml": {
-                "attr": True,
-                "prefix": "xsi",
-                "ns": "http://www.w3.org/2001/XMLSchema-instance"
-            },
+            "xml": {"attr": True, "prefix": "xsi", "ns": "http://www.w3.org/2001/XMLSchema-instance"},
         },
         "correlation_id": {
             "key": "correlationId",
@@ -116,42 +105,27 @@ class CorrelationFilter(RuleFilter):
         "message_id": {
             "key": "messageId",
             "type": "str",
-            "xml": {
-                "name": "MessageId",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "MessageId", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "to": {
             "key": "to",
             "type": "str",
-            "xml": {
-                "name": "To",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "To", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "reply_to": {
             "key": "replyTo",
             "type": "str",
-            "xml": {
-                "name": "ReplyTo",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "ReplyTo", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "label": {
             "key": "label",
             "type": "str",
-            "xml": {
-                "name": "Label",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "Label", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "session_id": {
             "key": "sessionId",
             "type": "str",
-            "xml": {
-                "name": "SessionId",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "SessionId", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "reply_to_session_id": {
             "key": "replyToSessionId",
@@ -164,10 +138,7 @@ class CorrelationFilter(RuleFilter):
         "content_type": {
             "key": "contentType",
             "type": "str",
-            "xml": {
-                "name": "ContentType",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-            },
+            "xml": {"name": "ContentType", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
         },
         "properties": {
             "key": "properties",

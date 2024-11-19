@@ -18,7 +18,7 @@ USAGE:
 """
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 
 def get_route_directions():
@@ -29,14 +29,15 @@ def get_route_directions():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_route_client.get_route_directions(
-        route_points=[(52.50931,13.42936), (52.50274,13.43872)],
-        avoid_vignette=["AUS", "CHE"]
+        route_points=[(52.50931, 13.42936), (52.50274, 13.43872)], avoid_vignette=["AUS", "CHE"]
     )
 
-    print("Get Route Directions with list of coordinates:")
-    print(result.routes[0].summary)
-    print(result.routes[0].sections[0])
+    if result.routes is not None:
+        print("Get Route Directions with list of coordinates:")
+        print(result.routes[0].summary)
+        print(result.routes[0].sections[0])
     # [END get_route_directions]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_route_directions()

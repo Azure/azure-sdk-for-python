@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -37,18 +37,16 @@ from azure.core.exceptions import HttpResponseError
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
-    @unittest.skip('skip test')
+    @unittest.skip("skip test")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_network(self, resource_group):
@@ -84,43 +82,39 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # /ExpressRouteCircuits/put/Create ExpressRouteCircuit[put]
         BODY = {
-          "sku": {
-            "name": "Standard_MeteredData",
-            "tier": "Standard",
-            "family": "MeteredData"
-          },
-          "location": AZURE_LOCATION,
-          # "authorizations": [],
-          # "peerings": [],
-          # "allow_classic_operations": False,
-          "service_provider_properties": {
-            "service_provider_name": "Equinix",
-            "peering_location": "Silicon Valley",
-            "bandwidth_in_mbps": "200"
-          }
+            "sku": {"name": "Standard_MeteredData", "tier": "Standard", "family": "MeteredData"},
+            "location": AZURE_LOCATION,
+            # "authorizations": [],
+            # "peerings": [],
+            # "allow_classic_operations": False,
+            "service_provider_properties": {
+                "service_provider_name": "Equinix",
+                "peering_location": "Silicon Valley",
+                "bandwidth_in_mbps": "200",
+            },
         }
-        result = self.mgmt_client.express_route_circuits.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, parameters=BODY)
+        result = self.mgmt_client.express_route_circuits.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, parameters=BODY
+        )
         result = result.result()
 
         SERVICE_KEY = result.service_key
 
         BODY = {
-          "sku": {
-            "name": "Standard_MeteredData",
-            "tier": "Standard",
-            "family": "MeteredData"
-          },
-          "location": AZURE_LOCATION,
-          # "authorizations": [],
-          # "peerings": [],
-          # "allow_classic_operations": False,
-          "service_provider_properties": {
-            "service_provider_name": "Equinix",
-            "peering_location": "Silicon Valley",
-            "bandwidth_in_mbps": "200"
-          }
+            "sku": {"name": "Standard_MeteredData", "tier": "Standard", "family": "MeteredData"},
+            "location": AZURE_LOCATION,
+            # "authorizations": [],
+            # "peerings": [],
+            # "allow_classic_operations": False,
+            "service_provider_properties": {
+                "service_provider_name": "Equinix",
+                "peering_location": "Silicon Valley",
+                "bandwidth_in_mbps": "200",
+            },
         }
-        result = self.mgmt_client.express_route_circuits.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, parameters=BODY)
+        result = self.mgmt_client.express_route_circuits.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, parameters=BODY
+        )
         result = result.result()
 
         # # /ExpressRoutePorts/put/ExpressRoutePortCreate[put]
@@ -160,27 +154,42 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # /ExpressRouteCircuitPeerings/put/Create ExpressRouteCircuit Peerings[put]
         BODY = {
-          "peer_asn": "10001",
-          "primary_peer_address_prefix": "102.0.0.0/30",
-          "secondary_peer_address_prefix": "103.0.0.0/30",
-          "vlan_id": "101"
+            "peer_asn": "10001",
+            "primary_peer_address_prefix": "102.0.0.0/30",
+            "secondary_peer_address_prefix": "103.0.0.0/30",
+            "vlan_id": "101",
         }
-        result = self.mgmt_client.express_route_circuit_peerings.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME, peering_parameters=BODY)
+        result = self.mgmt_client.express_route_circuit_peerings.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP,
+            circuit_name=CIRCUIT_NAME,
+            peering_name=PEERING_NAME,
+            peering_parameters=BODY,
+        )
         result = result.result()
 
         # /ExpressRouteCircuitPeerings/put/Create ExpressRouteCircuit Peerings[put]
         BODY = {
-          "peer_asn": "10002",
-          "primary_peer_address_prefix": "104.0.0.0/30",
-          "secondary_peer_address_prefix": "105.0.0.0/30",
-          "vlan_id": "102"
+            "peer_asn": "10002",
+            "primary_peer_address_prefix": "104.0.0.0/30",
+            "secondary_peer_address_prefix": "105.0.0.0/30",
+            "vlan_id": "102",
         }
-        result = self.mgmt_client.express_route_circuit_peerings.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, peering_name=PEERING_NAME, peering_parameters=BODY)
+        result = self.mgmt_client.express_route_circuit_peerings.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP,
+            circuit_name=CIRCUIT_NAME_2,
+            peering_name=PEERING_NAME,
+            peering_parameters=BODY,
+        )
         result = result.result()
 
         # /ExpressRouteCircuitAuthorizations/put/Create ExpressRouteCircuit Authorization[put]
         BODY = {}
-        result = self.mgmt_client.express_route_circuit_authorizations.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, authorization_name=AUTHORIZATION_NAME, authorization_parameters=BODY)
+        result = self.mgmt_client.express_route_circuit_authorizations.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP,
+            circuit_name=CIRCUIT_NAME,
+            authorization_name=AUTHORIZATION_NAME,
+            authorization_parameters=BODY,
+        )
         result = result.result()
 
         # /ExpressRouteCrossConnectionPeerings/put/ExpressRouteCrossConnectionBgpPeeringCreate[put]
@@ -199,52 +208,92 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # These commands won't succeed because circuit creation requires a manual step from the service.
         with pytest.raises(HttpResponseError):
-          # /ExpressRouteCircuitConnections/put/ExpressRouteCircuitConnectionCreate[put]
-          BODY = {
-            "express_route_circuit_peering": {
-              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/expressRouteCircuits/" + CIRCUIT_NAME + "/peerings/" + PEERING_NAME
-            },
-            "peer_express_route_circuit_peering": {
-              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/expressRouteCircuits/" + CIRCUIT_NAME_2 + "/peerings/" + PEERING_NAME 
-            },
-            # "authorization_key": "946a1918-b7a2-4917-b43c-8c4cdaee006a",
-            # "authorization_key": SERVICE_KEY,
-            "address_prefix": "104.0.0.0/29",
-            # "ipv6circuit_connection_config": {
-            #   "address_prefix": "aa:bb::/125"
-            # }
-          }
-          result = self.mgmt_client.express_route_circuit_connections.begin_create_or_update(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME, express_route_circuit_connection_parameters=BODY)
-          result = result.result()
+            # /ExpressRouteCircuitConnections/put/ExpressRouteCircuitConnectionCreate[put]
+            BODY = {
+                "express_route_circuit_peering": {
+                    "id": "/subscriptions/"
+                    + SUBSCRIPTION_ID
+                    + "/resourceGroups/"
+                    + RESOURCE_GROUP
+                    + "/providers/Microsoft.Network/expressRouteCircuits/"
+                    + CIRCUIT_NAME
+                    + "/peerings/"
+                    + PEERING_NAME
+                },
+                "peer_express_route_circuit_peering": {
+                    "id": "/subscriptions/"
+                    + SUBSCRIPTION_ID
+                    + "/resourceGroups/"
+                    + RESOURCE_GROUP
+                    + "/providers/Microsoft.Network/expressRouteCircuits/"
+                    + CIRCUIT_NAME_2
+                    + "/peerings/"
+                    + PEERING_NAME
+                },
+                # "authorization_key": "946a1918-b7a2-4917-b43c-8c4cdaee006a",
+                # "authorization_key": SERVICE_KEY,
+                "address_prefix": "104.0.0.0/29",
+                # "ipv6circuit_connection_config": {
+                #   "address_prefix": "aa:bb::/125"
+                # }
+            }
+            result = self.mgmt_client.express_route_circuit_connections.begin_create_or_update(
+                resource_group_name=RESOURCE_GROUP,
+                circuit_name=CIRCUIT_NAME,
+                peering_name=PEERING_NAME,
+                connection_name=CONNECTION_NAME,
+                express_route_circuit_connection_parameters=BODY,
+            )
+            result = result.result()
 
         # TODO: # cannot create it, so this test will fail due to resource is not found.
         # /PeerExpressRouteCircuitConnections/get/PeerExpressRouteCircuitConnectionGet[get]
         with pytest.raises(HttpResponseError):
-            result = self.mgmt_client.peer_express_route_circuit_connections.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME)
+            result = self.mgmt_client.peer_express_route_circuit_connections.get(
+                resource_group_name=RESOURCE_GROUP,
+                circuit_name=CIRCUIT_NAME_2,
+                peering_name=PEERING_NAME,
+                connection_name=CONNECTION_NAME,
+            )
 
         # /ExpressRouteCircuitConnections/get/ExpressRouteCircuitConnectionGet[get]
-        result = self.mgmt_client.express_route_circuit_connections.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME)
+        result = self.mgmt_client.express_route_circuit_connections.get(
+            resource_group_name=RESOURCE_GROUP,
+            circuit_name=CIRCUIT_NAME,
+            peering_name=PEERING_NAME,
+            connection_name=CONNECTION_NAME,
+        )
 
         # /ExpressRouteCrossConnectionPeerings/get/GetExpressRouteCrossConnectionBgpPeering[get]
         # result = self.mgmt_client.express_route_cross_connection_peerings.get(resource_group_name=RESOURCE_GROUP, cross_connection_name=CROSS_CONNECTION_NAME, peering_name=PEERING_NAME)
 
         # /PeerExpressRouteCircuitConnections/get/List Peer ExpressRouteCircuit Connection[get]
-        result = self.mgmt_client.peer_express_route_circuit_connections.list(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, peering_name=PEERING_NAME)
+        result = self.mgmt_client.peer_express_route_circuit_connections.list(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, peering_name=PEERING_NAME
+        )
 
         # /ExpressRouteCircuitConnections/get/List ExpressRouteCircuit Connection[get]
-        result = self.mgmt_client.express_route_circuit_connections.list(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME)
+        result = self.mgmt_client.express_route_circuit_connections.list(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME
+        )
 
         # /ExpressRouteCircuitAuthorizations/get/Get ExpressRouteCircuit Authorization[get]
-        result = self.mgmt_client.express_route_circuit_authorizations.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, authorization_name=AUTHORIZATION_NAME)
+        result = self.mgmt_client.express_route_circuit_authorizations.get(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, authorization_name=AUTHORIZATION_NAME
+        )
 
         # /ExpressRouteCircuits/get/Get ExpressRoute Circuit Peering Traffic Stats[get]
-        result = self.mgmt_client.express_route_circuits.get_peering_stats(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME)
+        result = self.mgmt_client.express_route_circuits.get_peering_stats(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME
+        )
 
         # /ExpressRouteLinks/get/ExpressRouteLinkGet[get]
         # result = self.mgmt_client.express_route_links.get(resource_group_name=RESOURCE_GROUP, express_route_port_name=EXPRESS_ROUTE_PORT_NAME, link_name=LINK_NAME)
 
         # /ExpressRouteCircuitPeerings/get/Get ExpressRouteCircuit Peering[get]
-        result = self.mgmt_client.express_route_circuit_peerings.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME)
+        result = self.mgmt_client.express_route_circuit_peerings.get(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME
+        )
 
         # /ExpressRouteCrossConnectionPeerings/get/ExpressRouteCrossConnectionBgpPeeringList[get]
         # result = self.mgmt_client.express_route_cross_connection_peerings.list(resource_group_name=RESOURCE_GROUP, cross_connection_name=CROSS_CONNECTION_NAME)
@@ -253,22 +302,30 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.express_route_cross_connections.get(resource_group_name=RESOURCE_GROUP, cross_connection_name=CROSS_CONNECTION_NAME)
 
         # /ExpressRouteCircuitAuthorizations/get/List ExpressRouteCircuit Authorization[get]
-        result = self.mgmt_client.express_route_circuit_authorizations.list(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME)
+        result = self.mgmt_client.express_route_circuit_authorizations.list(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME
+        )
 
         # /ExpressRouteLinks/get/ExpressRouteLinkGet[get]
         # result = self.mgmt_client.express_route_links.get(resource_group_name=RESOURCE_GROUP, express_route_port_name=EXPRESS_ROUTE_PORT_NAME, link_name=LINK_NAME)
 
         # /ExpressRouteCircuitPeerings/get/List ExpressRouteCircuit Peerings[get]
-        result = self.mgmt_client.express_route_circuit_peerings.list(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME)
+        result = self.mgmt_client.express_route_circuit_peerings.list(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME
+        )
 
         # /ExpressRoutePorts/get/ExpressRoutePortGet[get]
         # result = self.mgmt_client.express_route_ports.get(resource_group_name=RESOURCE_GROUP, express_route_port_name=EXPRESS_ROUTE_PORT_NAME)
 
         # /ExpressRouteCircuits/get/Get ExpressRoute Circuit Traffic Stats[get]
-        result = self.mgmt_client.express_route_circuits.get_stats(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME)
+        result = self.mgmt_client.express_route_circuits.get_stats(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME
+        )
 
         # /ExpressRouteCircuits/get/Get ExpressRouteCircuit[get]
-        result = self.mgmt_client.express_route_circuits.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME)
+        result = self.mgmt_client.express_route_circuits.get(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME
+        )
 
         # /ExpressRouteCrossConnections/get/ExpressRouteCrossConnectionListByResourceGroup[get]
         # result = self.mgmt_client.express_route_cross_connections.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
@@ -340,16 +397,16 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.express_route_ports.update_tags(resource_group_name=RESOURCE_GROUP, express_route_port_name=EXPRESS_ROUTE_PORT_NAME, parameters=BODY)
 
         # /ExpressRouteCircuits/patch/Update Express Route Circuit Tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         # result = self.mgmt_client.express_route_circuits.update_tags(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, parameters=BODY)
 
         # /ExpressRouteCircuitConnections/delete/Delete ExpressRouteCircuit[delete]
-        result = self.mgmt_client.express_route_circuit_connections.begin_delete(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME)
+        result = self.mgmt_client.express_route_circuit_connections.begin_delete(
+            resource_group_name=RESOURCE_GROUP,
+            circuit_name=CIRCUIT_NAME,
+            peering_name=PEERING_NAME,
+            connection_name=CONNECTION_NAME,
+        )
         result = result.result()
 
         # /ExpressRouteCrossConnectionPeerings/delete/DeleteExpressRouteCrossConnectionBgpPeering[delete]
@@ -357,11 +414,15 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # /ExpressRouteCircuitAuthorizations/delete/Delete ExpressRouteCircuit Authorization[delete]
-        result = self.mgmt_client.express_route_circuit_authorizations.begin_delete(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, authorization_name=AUTHORIZATION_NAME)
+        result = self.mgmt_client.express_route_circuit_authorizations.begin_delete(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, authorization_name=AUTHORIZATION_NAME
+        )
         result = result.result()
 
         # /ExpressRouteCircuitPeerings/delete/Delete ExpressRouteCircuit Peerings[delete]
-        result = self.mgmt_client.express_route_circuit_peerings.begin_delete(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME)
+        result = self.mgmt_client.express_route_circuit_peerings.begin_delete(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME
+        )
         result = result.result()
 
         # /ExpressRoutePorts/delete/ExpressRoutePortDelete[delete]
@@ -369,10 +430,12 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # /ExpressRouteCircuits/delete/Delete ExpressRouteCircuit[delete]
-        result = self.mgmt_client.express_route_circuits.begin_delete(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME)
+        result = self.mgmt_client.express_route_circuits.begin_delete(
+            resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME
+        )
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

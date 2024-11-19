@@ -16,7 +16,7 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
@@ -30,7 +30,7 @@ async def main():
         async with sender:
             await sender.send_messages(messages)
 
-        print('dead lettering messages')
+        print("dead lettering messages")
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
         async with receiver:
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
@@ -38,10 +38,10 @@ async def main():
                 print(str(msg))
                 await receiver.dead_letter_message(msg)
 
-        print('receiving deadlettered messages')
-        dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                            sub_queue=ServiceBusSubQueue.DEAD_LETTER,
-                                                            prefetch_count=10)
+        print("receiving deadlettered messages")
+        dlq_receiver = servicebus_client.get_queue_receiver(
+            queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER, prefetch_count=10
+        )
         async with dlq_receiver:
             received_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:

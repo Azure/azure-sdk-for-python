@@ -8,7 +8,7 @@ import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List, Mapping, Any
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
@@ -30,6 +30,8 @@ from ._constants import (
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
+JSON = Mapping[str, Any]
+
 
 @dataclass
 class _ConfigurationClientWrapperBase:
@@ -41,8 +43,7 @@ class _ConfigurationClientWrapperBase:
         if label and not label.isspace():
             basic_value += f"{label}"
         feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
-        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
-        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        encoded_flag = base64.urlsafe_b64encode(feature_flag_id_hash_bytes)
         return encoded_flag[: encoded_flag.find(b"=")]
 
     def _feature_flag_telemetry(
@@ -58,10 +59,11 @@ class _ConfigurationClientWrapperBase:
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
-                feature_flag.key, feature_flag.label
-            )
+            if feature_flag_value[TELEMETRY_KEY].get("enabled"):
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                    feature_flag.key, feature_flag.label
+                )
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
@@ -119,5 +121,5 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
             calculated_milliseconds = max_backoff_milliseconds
 
         return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )

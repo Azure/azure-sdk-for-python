@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json
+name: wordcount_spark_component
+type: spark
+version: 3
+display_name: Spark word count
+description: Spark word count
+
+
+inputs:
+  file_input:
+    type: uri_file
+    mode: direct
+
+entry:
+  file: wordcount.py
+
+args: >-
+  --input1 ${{inputs.file_input}}
+
+conf:
+  spark.driver.cores: 1
+  spark.driver.memory: "2g"
+  spark.executor.cores: 2
+  spark.executor.memory: "2g"
+  spark.executor.instances: 4
+additional_includes:
+    - common_src

@@ -6,20 +6,23 @@
 import asyncio
 import logging
 import random
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
+from itertools import zip_longest
 
 from tqdm import tqdm
 
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-from azure.identity import DefaultAzureCredential
 
 from ._constants import SupportedLanguages
-from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
+from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
     AdversarialTemplateHandler,
@@ -28,11 +31,13 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
+from ._model_tools._template_handler import AdversarialTemplate, TemplateParameters
 from ._utils import JsonLineList
 
 logger = logging.getLogger(__name__)
 
 
+@experimental
 class AdversarialSimulator:
     """
     Initializes the adversarial simulator with a project scope.
@@ -42,43 +47,40 @@ class AdversarialSimulator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with
+                2 conversation turns each (4 messages per result).
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
-        # check if azure_ai_project has the keys: subscription_id, resource_group_name and project_name
-        if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
-            msg = "azure_ai_project must contain keys: subscription_id, resource_group_name, project_name"
+
+        try:
+            self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
+        except EvaluationException as e:
             raise EvaluationException(
-                message=msg,
-                internal_message=msg,
+                message=e.message,
+                internal_message=e.internal_message,
                 target=ErrorTarget.ADVERSARIAL_SIMULATOR,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
-            )
-        # check the value of the keys in azure_ai_project is not none
-        if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
-            msg = "subscription_id, resource_group_name and project_name cannot be None"
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
-            )
-        if "credential" not in azure_ai_project and not credential:
-            credential = DefaultAzureCredential()
-        elif "credential" in azure_ai_project:
-            credential = azure_ai_project["credential"]
-        self.azure_ai_project = azure_ai_project
+                category=e.category,
+                blame=e.blame,
+            ) from e
+
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
             logger=logging.getLogger("AdversarialSimulator"),
-            credential=credential,
+            credential=cast(TokenCredential, credential),
         )
-        self.rai_client = RAIClient(azure_ai_project=azure_ai_project, token_manager=self.token_manager)
+        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
         self.adversarial_template_handler = AdversarialTemplateHandler(
-            azure_ai_project=azure_ai_project, rai_client=self.rai_client
+            azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
 
     def _ensure_service_dependencies(self):
@@ -92,7 +94,7 @@ class AdversarialSimulator:
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    # @monitor_adversarial_scenario
+    # pylint: disable=too-many-locals
     async def __call__(
         self,
         *,
@@ -106,10 +108,10 @@ class AdversarialSimulator:
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
-        _jailbreak_type: Optional[str] = None,
         language: SupportedLanguages = SupportedLanguages.English,
         randomize_order: bool = True,
         randomization_seed: Optional[int] = None,
+        **kwargs,
     ):
         """
         Executes the adversarial simulation against a specified target function asynchronously.
@@ -159,28 +161,6 @@ class AdversarialSimulator:
 
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
         :rtype: List[Dict[str, Any]]
-
-        **Output format**
-
-        .. code-block:: python
-
-            return_value = [
-                {
-                    'template_parameters': {},
-                    'messages': [
-                        {
-                            'content': '<jailbreak prompt> <adversarial query>',
-                            'role': 'user'
-                        },
-                        {
-                            'content': "<response from endpoint>",
-                            'role': 'assistant',
-                            'context': None
-                        }
-                    ],
-                    '$schema': 'http://azureml/sdk-2-0/ChatConversation.json'
-                }
-            ]
         """
 
         # validate the inputs
@@ -216,6 +196,7 @@ class AdversarialSimulator:
                 total_tasks,
             )
         total_tasks = min(total_tasks, max_simulation_results)
+        _jailbreak_type = kwargs.get("_jailbreak_type", None)
         if _jailbreak_type:
             jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(type=_jailbreak_type)
         progress_bar = tqdm(
@@ -224,17 +205,18 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-        for template in templates:
-            parameter_order = list(range(len(template.template_parameters)))
-            if randomize_order:
-                # The template parameter lists are persistent across sim runs within a session,
-                # So randomize a the selection instead of the parameter list directly,
-                # or a potentially large deep copy.
-                if randomization_seed is not None:
-                    random.seed(randomization_seed)
-                random.shuffle(parameter_order)
-            for index in parameter_order:
-                parameter = template.template_parameters[index].copy()
+
+        if randomize_order:
+            # The template parameter lists are persistent across sim runs within a session,
+            # So randomize a the selection instead of the parameter list directly,
+            # or a potentially large deep copy.
+            if randomization_seed is not None:
+                random.seed(randomization_seed)
+            random.shuffle(templates)
+        parameter_lists = [t.template_parameters for t in templates]
+        zipped_parameters = list(zip_longest(*parameter_lists))
+        for param_group in zipped_parameters:
+            for template, parameter in zip(templates, param_group):
                 if _jailbreak_type == "upia":
                     parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
                 tasks.append(
@@ -263,16 +245,21 @@ class AdversarialSimulator:
 
         return JsonLineList(sim_results)
 
-    def _to_chat_protocol(self, *, conversation_history, template_parameters: Dict = None):
+    def _to_chat_protocol(
+        self,
+        *,
+        conversation_history: List[ConversationTurn],
+        template_parameters: Optional[Dict[str, Union[str, Dict[str, str]]]] = None,
+    ):
         if template_parameters is None:
             template_parameters = {}
         messages = []
         for _, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
-            if "context" in m.full_response:
+            if m.full_response is not None and "context" in m.full_response:
                 message["context"] = m.full_response["context"]
             messages.append(message)
-        conversation_category = template_parameters.pop("metadata", {}).get("Category")
+        conversation_category = cast(Dict[str, str], template_parameters.pop("metadata", {})).get("Category")
         template_parameters["metadata"] = {}
         for key in (
             "conversation_starter",
@@ -280,6 +267,9 @@ class AdversarialSimulator:
             "target_population",
             "topic",
             "ch_template_placeholder",
+            "chatbot_name",
+            "name",
+            "group",
         ):
             template_parameters.pop(key, None)
         if conversation_category:
@@ -294,14 +284,14 @@ class AdversarialSimulator:
         self,
         *,
         target: Callable,
-        template,
-        parameters,
-        max_conversation_turns,
-        api_call_retry_limit,
-        api_call_retry_sleep_sec,
-        api_call_delay_sec,
-        language,
-        semaphore,
+        template: AdversarialTemplate,
+        parameters: TemplateParameters,
+        max_conversation_turns: int,
+        api_call_retry_limit: int,
+        api_call_retry_sleep_sec: int,
+        api_call_delay_sec: int,
+        language: SupportedLanguages,
+        semaphore: asyncio.Semaphore,
     ) -> List[Dict]:
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
         system_bot = self._setup_bot(
@@ -324,9 +314,15 @@ class AdversarialSimulator:
                 api_call_delay_sec=api_call_delay_sec,
                 language=language,
             )
-        return self._to_chat_protocol(conversation_history=conversation_history, template_parameters=parameters)
 
-    def _get_user_proxy_completion_model(self, template_key, template_parameters):
+        return self._to_chat_protocol(
+            conversation_history=conversation_history,
+            template_parameters=cast(Dict[str, Union[str, Dict[str, str]]], parameters),
+        )
+
+    def _get_user_proxy_completion_model(
+        self, template_key: str, template_parameters: TemplateParameters
+    ) -> ProxyChatCompletionsModel:
         return ProxyChatCompletionsModel(
             name="raisvc_proxy_model",
             template_key=template_key,
@@ -338,8 +334,15 @@ class AdversarialSimulator:
             temperature=0.0,
         )
 
-    def _setup_bot(self, *, role, template, parameters, target: Callable = None):
-        if role == ConversationRole.USER:
+    def _setup_bot(
+        self,
+        *,
+        role: ConversationRole,
+        template: AdversarialTemplate,
+        parameters: TemplateParameters,
+        target: Optional[Callable] = None,
+    ) -> ConversationBot:
+        if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
                 template_key=template.template_name, template_parameters=parameters
             )
@@ -350,30 +353,46 @@ class AdversarialSimulator:
                 instantiation_parameters=parameters,
             )
 
-        if role == ConversationRole.ASSISTANT:
+        if role is ConversationRole.ASSISTANT:
+            if target is None:
+                msg = "Cannot setup system bot. Target is None"
 
-            def dummy_model() -> None:
-                return None
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                    error_category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                )
 
-            dummy_model.name = "dummy_model"
+            class DummyModel:
+                def __init__(self):
+                    self.name = "dummy_model"
+
+                def __call__(self) -> None:
+                    pass
+
             return CallbackConversationBot(
                 callback=target,
                 role=role,
-                model=dummy_model,
+                model=DummyModel(),
                 user_template=str(template),
                 user_template_parameters=parameters,
                 conversation_template="",
                 instantiation_parameters={},
             )
-        return ConversationBot(
-            role=role,
-            model=model,
-            conversation_template=template,
-            instantiation_parameters=parameters,
+
+        msg = "Invalid value for enum ConversationRole. This should never happen."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.SYSTEM_ERROR,
         )
 
-    def _join_conversation_starter(self, parameters, to_join):
-        key = "conversation_starter"
+    def _join_conversation_starter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
+        key: Literal["conversation_starter"] = "conversation_starter"
         if key in parameters.keys():
             parameters[key] = f"{to_join} {parameters[key]}"
         else:

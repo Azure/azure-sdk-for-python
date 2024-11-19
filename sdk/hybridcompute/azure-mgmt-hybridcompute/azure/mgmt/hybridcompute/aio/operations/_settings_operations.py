@@ -26,7 +26,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ...operations._settings_operations import build_get_request, build_patch_request, build_update_request
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -281,11 +280,7 @@ class SettingsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Settings", pipeline_response.http_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("Settings", pipeline_response.http_response)
+        deserialized = self._deserialize("Settings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

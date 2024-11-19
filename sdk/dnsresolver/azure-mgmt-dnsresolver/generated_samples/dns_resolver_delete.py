@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="abdd4249-9f34-4cc6-8e42-c2e32110603e",
     )
 
-    response = client.dns_resolvers.begin_delete(
+    client.dns_resolvers.begin_delete(
         resource_group_name="sampleResourceGroup",
         dns_resolver_name="sampleDnsResolver",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsResolver_Delete.json
+# x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/preview/2023-07-01-preview/examples/DnsResolver_Delete.json
 if __name__ == "__main__":
     main()

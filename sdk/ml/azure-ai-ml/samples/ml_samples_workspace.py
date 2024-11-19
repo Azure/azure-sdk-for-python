@@ -16,9 +16,11 @@ USAGE:
 """
 
 import os
+
+from ml_samples_compute import handle_resource_exists_error
+
 from azure.ai.ml import MLClient
 from azure.identity import DefaultAzureCredential
-from ml_samples_compute import handle_resource_exists_error
 
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["RESOURCE_GROUP_NAME"]
@@ -37,15 +39,6 @@ class WorkspaceConfigurationOptions(object):
             params_override=[{"description": "loaded from workspace_min.yaml"}],
         )
         # [END load_workspace]
-
-        # [START load_hub]
-        from azure.ai.ml import load_hub
-
-        hub = load_hub(
-            "../tests/test_configs/workspace/workspacehub_min.yaml",
-            params_override=[{"description": "loaded from workspacehub_min.yaml"}],
-        )
-        # [END load_hub]
 
         # [START load_workspace_connection]
         from azure.ai.ml import load_connection
@@ -74,13 +67,14 @@ class WorkspaceConfigurationOptions(object):
         # [END customermanagedkey]
 
         # [START workspace_managed_network]
+        from azure.ai.ml.constants._workspace import FirewallSku
         from azure.ai.ml.entities import (
-            Workspace,
-            ManagedNetwork,
-            IsolationMode,
-            ServiceTagDestination,
-            PrivateEndpointDestination,
             FqdnDestination,
+            IsolationMode,
+            ManagedNetwork,
+            PrivateEndpointDestination,
+            ServiceTagDestination,
+            Workspace,
         )
 
         # Example private endpoint outbound to a blob
@@ -99,14 +93,26 @@ class WorkspaceConfigurationOptions(object):
         # Example FQDN rule
         pypirule = FqdnDestination(name="pypirule", destination="pypi.org")
 
+        # Example FirewallSku
+        # FirewallSku is an optional parameter, when unspecified this will default to FirewallSku.Standard
+        firewallSku = FirewallSku.BASIC
+
         network = ManagedNetwork(
             isolation_mode=IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
             outbound_rules=[blobrule, datafactoryrule, pypirule],
+            firewall_sku=firewallSku,
         )
 
         # Workspace configuration
         ws = Workspace(name="ws-name", location="eastus", managed_network=network)
         # [END workspace_managed_network]
+
+        # [START workspace_managed_network_provision_now]
+        from azure.ai.ml.entities import IsolationMode, ManagedNetwork, Workspace
+
+        managed_net = ManagedNetwork(isolation_mode=IsolationMode.ALLOW_INTERNET_OUTBOUND)
+        ws = Workspace(name="ws-name", location="eastus", managed_network=managed_net, provision_network_now=True)
+        # [END workspace_managed_network_provision_now]
 
         # [START fqdn_outboundrule]
         from azure.ai.ml.entities import FqdnDestination
@@ -230,8 +236,7 @@ class WorkspaceConfigurationOptions(object):
 
         # [START create_or_update_connection]
         from azure.ai.ml import MLClient
-        from azure.ai.ml.entities import WorkspaceConnection
-        from azure.ai.ml.entities import UsernamePasswordConfiguration
+        from azure.ai.ml.entities import UsernamePasswordConfiguration, WorkspaceConnection
 
         ml_client_ws = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws")
         wps_connection = WorkspaceConnection(
