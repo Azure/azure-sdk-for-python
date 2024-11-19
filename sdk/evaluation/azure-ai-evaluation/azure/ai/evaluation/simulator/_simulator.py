@@ -25,20 +25,29 @@ from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
 
 
+USER_AGENT += " (type=simulator subtype=Simulator)"
+
+
 @experimental
 class Simulator:
     """
     Simulator for generating synthetic conversations.
+
+    :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :raises ValueError: If the model_config does not contain the required keys or any value is None.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START nonadversarial_simulator]
+            :end-before: [END nonadversarial_simulator]
+            :language: python
+            :dedent: 8
+            :caption: Run a Simulator for 2 queries and 4 conversation turns.
     """
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        """
-        Initializes the task simulator with the model configuration.
-
-        :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
-        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
-        :raises ValueError: If the model_config does not contain the required keys or any value is None.
-        """
         self._validate_model_config(model_config)
         self.model_config = model_config
         if "api_version" not in self.model_config:
@@ -90,8 +99,8 @@ class Simulator:
         query_response_generating_prompty: Optional[str] = None,
         user_simulator_prompty: Optional[str] = None,
         api_call_delay_sec: float = 1,
-        query_response_generating_prompty_kwargs: Dict[str, Any] = {},
-        user_simulator_prompty_kwargs: Dict[str, Any] = {},
+        query_response_generating_prompty_options: Dict[str, Any] = {},
+        user_simulator_prompty_options: Dict[str, Any] = {},
         conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         concurrent_async_tasks: int = 5,
         **kwargs,
@@ -115,10 +124,10 @@ class Simulator:
         :paramtype user_simulator_prompty: Optional[str]
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
-        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
-        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword query_response_generating_prompty_options: Additional keyword arguments for the query response generating prompty.
+        :paramtype query_response_generating_prompty_options: Dict[str, Any]
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any]
         :keyword conversation_turns: Predefined conversation turns to simulate.
         :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
@@ -158,7 +167,7 @@ class Simulator:
                 max_conversation_turns=max_conversation_turns,
                 conversation_turns=conversation_turns,
                 user_simulator_prompty=user_simulator_prompty,
-                user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+                user_simulator_prompty_options=user_simulator_prompty_options,
                 api_call_delay_sec=api_call_delay_sec,
                 prompty_model_config=prompty_model_config,
                 concurrent_async_tasks=concurrent_async_tasks,
@@ -168,7 +177,7 @@ class Simulator:
             text=text,
             num_queries=num_queries,
             query_response_generating_prompty=query_response_generating_prompty,
-            query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
+            query_response_generating_prompty_options=query_response_generating_prompty_options,
             prompty_model_config=prompty_model_config,
             **kwargs,
         )
@@ -177,7 +186,7 @@ class Simulator:
             max_conversation_turns=max_conversation_turns,
             tasks=tasks,
             user_simulator_prompty=user_simulator_prompty,
-            user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+            user_simulator_prompty_options=user_simulator_prompty_options,
             target=target,
             api_call_delay_sec=api_call_delay_sec,
             text=text,
@@ -190,7 +199,7 @@ class Simulator:
         max_conversation_turns: int,
         conversation_turns: List[List[Union[str, Dict[str, Any]]]],
         user_simulator_prompty: Optional[str],
-        user_simulator_prompty_kwargs: Dict[str, Any],
+        user_simulator_prompty_options: Dict[str, Any],
         api_call_delay_sec: float,
         prompty_model_config: Any,
         concurrent_async_tasks: int,
@@ -206,8 +215,8 @@ class Simulator:
         :paramtype conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any]
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
         :keyword prompty_model_config: The configuration for the prompty model.
@@ -258,7 +267,7 @@ class Simulator:
                         current_simulation=current_simulation,
                         max_conversation_turns=max_conversation_turns,
                         user_simulator_prompty=user_simulator_prompty,
-                        user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+                        user_simulator_prompty_options=user_simulator_prompty_options,
                         api_call_delay_sec=api_call_delay_sec,
                         prompty_model_config=prompty_model_config,
                         target=target,
@@ -285,7 +294,7 @@ class Simulator:
         current_simulation: ConversationHistory,
         max_conversation_turns: int,
         user_simulator_prompty: Optional[str],
-        user_simulator_prompty_kwargs: Dict[str, Any],
+        user_simulator_prompty_options: Dict[str, Any],
         api_call_delay_sec: float,
         prompty_model_config: Dict[str, Any],
         target: Callable,
@@ -301,8 +310,8 @@ class Simulator:
         :paramtype max_conversation_turns: int,
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str],
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any],
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any],
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float,
         :keyword prompty_model_config: The configuration for the prompty model.
@@ -317,14 +326,14 @@ class Simulator:
         user_flow = self._load_user_simulation_flow(
             user_simulator_prompty=user_simulator_prompty,  # type: ignore
             prompty_model_config=prompty_model_config,
-            user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+            user_simulator_prompty_options=user_simulator_prompty_options,
         )
 
         while len(current_simulation) < max_conversation_turns:
             user_response_content = await user_flow(
                 task="Continue the conversation",
                 conversation_history=current_simulation.to_context_free_list(),
-                **user_simulator_prompty_kwargs,
+                **user_simulator_prompty_options,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
@@ -345,7 +354,7 @@ class Simulator:
         *,
         user_simulator_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
-        user_simulator_prompty_kwargs: Dict[str, Any],
+        user_simulator_prompty_options: Dict[str, Any],
     ) -> "AsyncPrompty":  # type: ignore
         """
         Loads the flow for simulating user interactions.
@@ -354,8 +363,8 @@ class Simulator:
         :paramtype user_simulator_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any]
         :return: The loaded flow for simulating user interactions.
         :rtype: AsyncPrompty
         """
@@ -388,7 +397,7 @@ class Simulator:
         return AsyncPrompty.load(
             source=user_simulator_prompty,
             model=prompty_model_config,
-            **user_simulator_prompty_kwargs,
+            **user_simulator_prompty_options,
         )  # type: ignore
 
     def _parse_prompty_response(self, *, response: str) -> Dict[str, Any]:
@@ -436,7 +445,7 @@ class Simulator:
         text: str,
         num_queries: int,
         query_response_generating_prompty: Optional[str],
-        query_response_generating_prompty_kwargs: Dict[str, Any],
+        query_response_generating_prompty_options: Dict[str, Any],
         prompty_model_config: Any,
         **kwargs,
     ) -> List[Dict[str, str]]:
@@ -449,8 +458,8 @@ class Simulator:
         :paramtype num_queries: int
         :keyword query_response_generating_prompty: Path to the query response generating prompty file.
         :paramtype query_response_generating_prompty: Optional[str]
-        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
-        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
+        :keyword query_response_generating_prompty_options: Additional keyword arguments for the query response generating prompty.
+        :paramtype query_response_generating_prompty_options: Dict[str, Any]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Any
         :return: A list of query-response dictionaries.
@@ -460,7 +469,7 @@ class Simulator:
         query_flow = self._load_query_generation_flow(
             query_response_generating_prompty=query_response_generating_prompty,  # type: ignore
             prompty_model_config=prompty_model_config,
-            query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
+            query_response_generating_prompty_options=query_response_generating_prompty_options,
         )
         try:
             query_responses = await query_flow(text=text, num_queries=num_queries)
@@ -484,7 +493,7 @@ class Simulator:
         *,
         query_response_generating_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
-        query_response_generating_prompty_kwargs: Dict[str, Any],
+        query_response_generating_prompty_options: Dict[str, Any],
     ) -> "AsyncPrompty":
         """
         Loads the flow for generating query responses.
@@ -493,8 +502,8 @@ class Simulator:
         :paramtype query_response_generating_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
-        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
-        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
+        :keyword query_response_generating_prompty_options: Additional keyword arguments for the flow.
+        :paramtype query_response_generating_prompty_options: Dict[str, Any]
         :return: The loaded flow for generating query responses.
         :rtype: AsyncPrompty
         """
@@ -527,7 +536,7 @@ class Simulator:
         return AsyncPrompty.load(
             source=query_response_generating_prompty,
             model=prompty_model_config,
-            **query_response_generating_prompty_kwargs,
+            **query_response_generating_prompty_options,
         )  # type: ignore
 
     async def _create_conversations_from_query_responses(
@@ -537,7 +546,7 @@ class Simulator:
         max_conversation_turns: int,
         tasks: List[str],
         user_simulator_prompty: Optional[str],
-        user_simulator_prompty_kwargs: Dict[str, Any],
+        user_simulator_prompty_options: Dict[str, Any],
         target: Callable,
         api_call_delay_sec: float,
         text: str,
@@ -553,8 +562,8 @@ class Simulator:
         :paramtype tasks: List[str]
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any]
         :keyword target: The target function to call for responses.
         :paramtype target: Callable
         :keyword api_call_delay_sec: Delay in seconds between API calls.
@@ -584,7 +593,7 @@ class Simulator:
                 max_conversation_turns=max_conversation_turns,
                 task=task,  # type: ignore
                 user_simulator_prompty=user_simulator_prompty,
-                user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+                user_simulator_prompty_options=user_simulator_prompty_options,
                 target=target,
                 api_call_delay_sec=api_call_delay_sec,
                 progress_bar=progress_bar,
@@ -614,7 +623,7 @@ class Simulator:
         max_conversation_turns: int,
         task: str,
         user_simulator_prompty: Optional[str],
-        user_simulator_prompty_kwargs: Dict[str, Any],
+        user_simulator_prompty_options: Dict[str, Any],
         target: Callable,
         api_call_delay_sec: float,
         progress_bar: tqdm,
@@ -630,8 +639,8 @@ class Simulator:
         :paramtype task: str
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
-        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword user_simulator_prompty_options: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_options: Dict[str, Any]
         :keyword target: The target function to call for responses.
         :paramtype target: Callable
         :keyword api_call_delay_sec: Delay in seconds between API calls.
@@ -647,7 +656,7 @@ class Simulator:
             user_flow = self._load_user_simulation_flow(
                 user_simulator_prompty=user_simulator_prompty,  # type: ignore
                 prompty_model_config=self.model_config,  # type: ignore
-                user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+                user_simulator_prompty_options=user_simulator_prompty_options,
             )
             if len(conversation_history) == 0:
                 conversation_starter_from_simulated_user = await user_flow(

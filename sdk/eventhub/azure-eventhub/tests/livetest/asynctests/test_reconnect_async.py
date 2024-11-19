@@ -34,16 +34,12 @@ from azure.eventhub.exceptions import OperationTimeoutError
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_long_interval_async(
-    live_eventhub, sleep, uamqp_transport, timeout_factor
-):
+async def test_send_with_long_interval_async(live_eventhub, sleep, uamqp_transport, timeout_factor):
     test_partition = "0"
     sender = EventHubProducerClient(
         live_eventhub["hostname"],
         live_eventhub["event_hub"],
-        EventHubSharedKeyCredential(
-            live_eventhub["key_name"], live_eventhub["access_key"]
-        ),
+        EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"]),
         uamqp_transport=uamqp_transport,
     )
     async with sender:
@@ -55,9 +51,7 @@ async def test_send_with_long_interval_async(
             await asyncio.sleep(250)  # EH server side idle timeout is 240 second
         else:
             if uamqp_transport:
-                await sender._producers[
-                    test_partition
-                ]._handler._connection._conn.destroy()
+                await sender._producers[test_partition]._handler._connection._conn.destroy()
             else:
                 await sender._producers[test_partition]._handler._connection.close()
         batch = await sender.create_batch(partition_id=test_partition)
@@ -80,9 +74,7 @@ async def test_send_with_long_interval_async(
             source, auth=sas_auth, debug=False, timeout=5000, prefetch=500
         )
     else:
-        sas_auth = SASTokenAuthAsync(
-            uri, uri, live_eventhub["key_name"], live_eventhub["access_key"]
-        )
+        sas_auth = SASTokenAuthAsync(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
         receiver = ReceiveClientAsync(
             live_eventhub["hostname"],
             source,
@@ -99,21 +91,13 @@ async def test_send_with_long_interval_async(
         received.extend(
             [
                 EventData._from_message(x)
-                for x in (
-                    await receiver.receive_message_batch_async(
-                        max_batch_size=1, timeout=5 * timeout_factor
-                    )
-                )
+                for x in (await receiver.receive_message_batch_async(max_batch_size=1, timeout=5 * timeout_factor))
             ]
         )
         received.extend(
             [
                 EventData._from_message(x)
-                for x in (
-                    await receiver.receive_message_batch_async(
-                        max_batch_size=1, timeout=5 * timeout_factor
-                    )
-                )
+                for x in (await receiver.receive_message_batch_async(max_batch_size=1, timeout=5 * timeout_factor))
             ]
         )
     finally:
@@ -151,9 +135,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
         async with sender:
             await sender._open_with_retry()
             await asyncio.sleep(11)
-            ed = transform_outbound_single_message(
-                ed, EventData, amqp_transport.to_outgoing_amqp_message
-            )
+            ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
             sender._unsent_events = [ed._message]
             if uamqp_transport:
                 sender._unsent_events[0].on_send_complete = sender._on_outcome
@@ -177,7 +159,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential(),
-            idle_timeout=10
+            idle_timeout=10,
         )
         async with client:
             ed = EventData("data")
@@ -185,18 +167,14 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
         async with sender:
             await sender._open_with_retry()
             await asyncio.sleep(11)
-            ed = transform_outbound_single_message(
-                ed, EventData, amqp_transport.to_outgoing_amqp_message
-            )
+            ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
             sender._unsent_events = [ed._message]
             await sender._send_event_data()
 
     retry = 0
     while retry < 3:
         try:
-            messages = receivers[0].receive_message_batch(
-                max_batch_size=10, timeout=10 * timeout_factor
-            )
+            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10 * timeout_factor)
             if messages:
                 received_ed1 = EventData._from_message(messages[0])
                 assert received_ed1.body_as_str() == "data"
@@ -207,9 +185,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_connection_idle_timeout_and_reconnect_async(
-    auth_credential_senders_async, uamqp_transport
-):
+async def test_receive_connection_idle_timeout_and_reconnect_async(auth_credential_senders_async, uamqp_transport):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -237,17 +213,12 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(
 
             if uamqp_transport:
                 await consumer._handler.do_work_async()
-                assert (
-                    consumer._handler._connection._state
-                    == uamqp.c_uamqp.ConnectionState.DISCARDING
-                )
+                assert consumer._handler._connection._state == uamqp.c_uamqp.ConnectionState.DISCARDING
                 await consumer.receive(batch=False, max_batch_size=1, max_wait_time=10)
             else:
                 with pytest.raises(error.AMQPConnectionError):
                     await consumer._handler.do_work_async()
-                assert (
-                    consumer._handler._connection.state == constants.ConnectionState.END
-                )
+                assert consumer._handler._connection.state == constants.ConnectionState.END
                 try:
                     await asyncio.wait_for(consumer.receive(), timeout=10)
                 except asyncio.TimeoutError:

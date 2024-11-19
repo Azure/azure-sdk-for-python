@@ -6,6 +6,8 @@ import importlib.metadata
 import math
 import re
 import time
+import json
+import html
 from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
@@ -38,8 +40,36 @@ USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
-    Tasks.GROUNDEDNESS: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
 }
+
+
+def get_formatted_template(data: dict, annotation_task: str) -> str:
+    """Given the task and input data, produce a formatted string that will serve as the main
+    payload for the RAI service. Requires specific per-task logic.
+
+    :param data: The data to incorporate into the payload.
+    :type data: dict
+    :param annotation_task: The annotation task to use. This determines the template to use.
+    :type annotation_task: str
+    :return: The formatted based on the data and task template.
+    :rtype: str
+    """
+    # Template class doesn't play nice with json dumping/loading, just handle groundedness'
+    # JSON format manually.
+    # Template was: Template('{"question": "$query", "answer": "$response", "context": "$context"}'),
+    if annotation_task == Tasks.GROUNDEDNESS:
+        as_dict = {
+            "question": data.get("query", ""),
+            "answer": data.get("response", ""),
+            "context": data.get("context", ""),
+        }
+        return json.dumps(as_dict)
+    as_dict = {
+        "query": html.escape(data.get("query", "")),
+        "response": html.escape(data.get("response", "")),
+    }
+    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**as_dict)
+    return user_text.replace("'", '\\"')
 
 
 def get_common_headers(token: str) -> Dict:
@@ -161,8 +191,7 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :return: The operation ID.
     :rtype: str
     """
-    user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**data)
-    normalized_user_text = user_text.replace("'", '\\"')
+    normalized_user_text = get_formatted_template(data, annotation_task)
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
     url = rai_svc_url + "/submitannotation"
@@ -239,13 +268,27 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
     }:
-        if not batch_response or len(batch_response[0]) == 0 or metric_name not in batch_response[0]:
+        result = {}
+        if not batch_response or len(batch_response[0]) == 0:
+            return {}
+        if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
+            pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
+            for pm_metric_name in pm_metric_names:
+                response = batch_response[0][pm_metric_name]
+                response = response.replace("false", "False")
+                response = response.replace("true", "True")
+                parsed_response = literal_eval(response)
+                result[pm_metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
+                result[pm_metric_name + "_reason"] = (
+                    parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+                )
+            return result
+        if metric_name not in batch_response[0]:
             return {}
         response = batch_response[0][metric_name]
         response = response.replace("false", "False")
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
-        result = {}
         # Use label instead of score since these are assumed to be boolean results.
         # Use math.nan as null value since it's ignored by aggregations rather than treated as 0.
         result[metric_display_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan

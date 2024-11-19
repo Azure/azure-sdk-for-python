@@ -7,9 +7,9 @@ from typing import Callable, Dict, List, Union
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -27,51 +27,27 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param eval_last_turn: Whether to evaluate the last turn of a conversation. Default is False.
-    :type eval_last_turn: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ContentSafetyEvaluator(azure_ai_project)
-        result = eval_fn(
-            query="What is the capital of France?",
-            response="Paris.",
-        )
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "violence": "Medium",
-            "violence_score": 5.0,
-            "violence_reason": "Some reason",
-            "sexual": "Medium",
-            "sexual_score": 5.0,
-            "sexual_reason": "Some reason",
-            "self_harm": "Medium",
-            "self_harm_score": 5.0,
-            "self_harm_reason": "Some reason",
-            "hate_unfairness": "Medium",
-            "hate_unfairness_score": 5.0,
-            "hate_unfairness_reason": "Some reason"
-        }
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START content_safety_evaluator]
+            :end-before: [END content_safety_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ContentSafetyEvaluator.
     """
 
+    id = "content_safety"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     # TODO address 3579092 to re-enabled parallel evals.
-    def __init__(self, credential, azure_ai_project, eval_last_turn: bool = False, **kwargs):
-        super().__init__(eval_last_turn=eval_last_turn)
-        self._parallel = kwargs.pop("parallel", False)
+    def __init__(self, credential, azure_ai_project, **kwargs):
+        super().__init__()
+        self._parallel = kwargs.pop("_parallel", True)
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
@@ -154,7 +130,7 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
             with ThreadPoolExecutor() as executor:
                 # pylint: disable=no-value-for-parameter
                 futures = {
-                    executor.submit(query=query, response=response, conversation=conversation): evaluator
+                    executor.submit(evaluator, query=query, response=response, conversation=conversation): evaluator
                     for evaluator in self._evaluators
                 }
 

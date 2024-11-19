@@ -5,7 +5,17 @@ from enum import Enum
 
 
 class SupportedLanguages(Enum):
-    """Supported languages for evaluation, using ISO standard language codes."""
+    """Supported languages for evaluation, using ISO standard language codes.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START supported_languages]
+            :end-before: [END supported_languages]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with Simplified Chinese language support for evaluation.
+    """
 
     Spanish = "es"
     Italian = "it"

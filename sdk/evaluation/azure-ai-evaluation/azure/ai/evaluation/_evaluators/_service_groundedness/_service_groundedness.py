@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List, Optional, Union, Dict
+from typing import List, Union, Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
@@ -13,11 +13,14 @@ from azure.ai.evaluation._model_configurations import Conversation
 @experimental
 class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Initialize a Groundedness Pro evaluator for determine if the response is grounded
-    in the query and context.
+    Evaluates service-based groundedness score for a given response, context, and query or a multi-turn conversation,
+    including reasoning.
 
-    If this evaluator is supplied to the `evaluate` function, the aggregated metric
-    for the groundedness pro label will be "groundedness_pro_passing_rate".
+    The groundedness measure calls Azure AI Evaluation service to assess how well the AI-generated answer is grounded
+    in the source context. Even if the responses from LLM are factually correct, they'll be considered ungrounded if
+    they can't be verified against the provided sources (such as your input source or your database).
+
+    Service-based groundedness scores are boolean values, where True indicates that the response is grounded.
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
@@ -27,63 +30,23 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START groundedness_pro_evaluator]
+            :end-before: [END groundedness_pro_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a GroundednessProEvaluator with a query, response, and context.
 
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        credential = DefaultAzureCredential()
+    .. note::
 
-        eval_fn = GroundednessProEvaluator(azure_ai_project, credential)
-        result = eval_fn(query="What's the capital of France", response="Paris", context="Paris.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "groundedness_pro_label": True,
-            "reason": "'All Contents are grounded"
-        }
-
-    **Usage with conversation input**
-
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        credential = DefaultAzureCredential()
-
-        eval_fn = GroundednessProEvaluator(azure_ai_project, credential)
-        conversation = {
-            "messages": [
-                {"role": "user", "content": "What is the capital of France?"},
-                {"role": "assistant", "content": "Paris.", "context": "Paris."}
-                {"role": "user", "content": "What is the capital of Germany?"},
-                {"role": "assistant", "content": "Berlin.", "context": "Berlin."}
-            ]
-        }
-        result = eval_fn(conversation=conversation)
-
-    **Output format**
-
-    .. code-block:: python
-
-            {
-                "groundedness_pro_label": 1.0,
-                "evaluation_per_turn": {
-                    "groundedness_pro_label": [True, True],
-                    "groundedness_pro_reason": ["All contents are grounded", "All contents are grounded"]
-                }
-            }
+        If this evaluator is supplied to the `evaluate` function, the aggregated metric
+        for the groundedness pro label will be "groundedness_pro_passing_rate".
     """
+
+    id = "azureml://registries/azureml/models/Groundedness-Pro-Evaluator/versions/1"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(
@@ -92,7 +55,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
         **kwargs,
     ):
-        self._passing_score = 3  # TODO update once the binarization PR is merged
+        self._passing_score = 5  # TODO update once the binarization PR is merged
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
@@ -105,18 +68,18 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     def __call__(
         self,
         *,
-        query: Optional[str] = None,
-        response: Optional[str] = None,
-        context: Optional[str] = None,
+        response: str,
+        context: str,
+        query: str,
     ) -> Dict[str, Union[str, bool]]:
         """Evaluate groundedness for a given query/response/context
 
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
         :keyword query: The query to be evaluated.
         :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword context: The context to be evaluated.
-        :paramtype context: Optional[str]
         :return: The relevance score.
         :rtype: Dict[str, Union[str, bool]]
         """

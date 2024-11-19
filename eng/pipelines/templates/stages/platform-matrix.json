@@ -6,15 +6,25 @@
   },
   "matrix": {
     "Agent": {
-      "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" },
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
-      "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
+      "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
     },
-    "PythonVersion": [ "3.8", "3.11", "3.10", "3.12" ],
+    "PythonVersion": [ "3.8", "3.10", "3.12" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
   "include": [
+    {
+      "MacTestConfig": {
+        "macos311": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.11",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
     {
       "PyPyConfig": {
         "ubuntu2004_pypy39": {

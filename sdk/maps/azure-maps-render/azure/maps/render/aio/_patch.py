@@ -28,14 +28,13 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="subscription-key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
@@ -46,11 +45,7 @@ def _authentication_policy(credential):
 
 # pylint: disable=C4748
 class MapsRenderClient(MapsRenderClientGenerated):
-    def __init__(
-        self,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
 
         super().__init__(
             credential=credential,  # type: ignore
