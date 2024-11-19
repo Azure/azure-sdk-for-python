@@ -20,10 +20,10 @@ class MemoryTraceExporter(SpanExporter):
 
     def span_to_string(self, span: Span) -> str:
         span_info = {
-            'name': span.name,
-            'context': str(span.get_span_context()),
-            'attributes': span.attributes,
-            'status': span.status,
+            "name": span.name,
+            "context": str(span.get_span_context()),
+            "attributes": span.attributes,
+            "status": span.status,
         }
         return str(span_info)
 

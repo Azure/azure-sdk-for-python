@@ -60,8 +60,10 @@ agentClientPreparer = functools.partial(
 CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
 content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
+
 class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     """Tests for AI agents instrumentor."""
+
     @classmethod
     def teardown_class(cls):
         if content_tracing_initial_value is not None:
@@ -96,7 +98,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             (AgentsApiResponseFormat(type="test"), "test"),
         ],
     )
-
     def test_convert_api_response_format(self, fmt, expected):
         """Test conversion of AgentsApiResponseFormatOption to string"""
         actual = _AIAgentsInstrumentorPreview.agent_api_response_to_str(fmt)
@@ -269,13 +270,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         AIAgentsInstrumentor().instrument()
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-        )
+        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = client.agents.create_thread()
-        message = client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
@@ -404,7 +401,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.id": "*",
                     "gen_ai.event.content": '{"content": {"text": {"value": "Hello, tell me a joke"}}, "role": "user"}',
                 },
-            }
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
@@ -426,20 +423,16 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         AIAgentsInstrumentor().instrument()
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent"
-        )
+        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = client.agents.create_thread()
-        message = client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
             run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            print("Run status:", run.status) 
+            print("Run status:", run.status)
         print("Run completed with status:", run.status)
 
         # delete agent and close client
@@ -468,7 +461,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "name": "gen_ai.system.message",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             }
         ]
@@ -561,7 +554,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.id": "*",
                     "gen_ai.event.content": '{"role": "user"}',
                 },
-            }
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
@@ -723,9 +716,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         expected_events = [
             {
                 "name": "gen_ai.tool.message",
-                "attributes": {
-                    "gen_ai.event.content": '{"content": "{\\"weather\\": \\"Sunny\\"}", "id": "*"}'
-                },
+                "attributes": {"gen_ai.event.content": '{"content": "{\\"weather\\": \\"Sunny\\"}", "id": "*"}'},
             },
             {
                 "name": "gen_ai.assistant.message",
@@ -737,7 +728,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.status": "completed",
                     "gen_ai.usage.input_tokens": "+",
                     "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}'
+                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 },
             },
             {
@@ -751,7 +742,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.status": "completed",
                     "gen_ai.usage.input_tokens": "+",
                     "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+                    "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
                 },
             },
         ]
@@ -780,7 +771,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+                    "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
                 },
             },
             {
@@ -789,9 +780,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.event.content": '{"content": {"text": {"value": "What is the weather in New York?"}}, "role": "user"}'
+                    "gen_ai.event.content": '{"content": {"text": {"value": "What is the weather in New York?"}}, "role": "user"}',
                 },
-            }
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
@@ -875,7 +866,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "name": "gen_ai.system.message",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             }
         ]
@@ -953,9 +944,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         expected_events = [
             {
                 "name": "gen_ai.tool.message",
-                "attributes": {
-                    "gen_ai.event.content": '{"content": "", "id": "*"}'
-                },
+                "attributes": {"gen_ai.event.content": '{"content": "", "id": "*"}'},
             },
             {
                 "name": "gen_ai.assistant.message",
@@ -967,7 +956,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.status": "completed",
                     "gen_ai.usage.input_tokens": "+",
                     "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}'
+                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 },
             },
             {
@@ -981,7 +970,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.message.status": "completed",
                     "gen_ai.usage.input_tokens": "+",
                     "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": '{"role": "assistant"}'
+                    "gen_ai.event.content": '{"role": "assistant"}',
                 },
             },
         ]
@@ -1010,7 +999,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.event.content": '{"role": "assistant"}'
+                    "gen_ai.event.content": '{"role": "assistant"}',
                 },
             },
             {
@@ -1019,9 +1008,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.event.content": '{"role": "user"}'
+                    "gen_ai.event.content": '{"role": "user"}',
                 },
-            }
+            },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True

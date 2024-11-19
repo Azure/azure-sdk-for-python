@@ -23,12 +23,22 @@ class GenAiTraceVerifier:
             if isinstance(attribute_value, list):
                 # Check if the attribute value in the span matches the provided list
                 if span.attributes[attribute_name] != attribute_value:
-                    print("Attribute value list " + span.attributes[attribute_name] + " does not match with " + attribute_value)
+                    print(
+                        "Attribute value list "
+                        + span.attributes[attribute_name]
+                        + " does not match with "
+                        + attribute_value
+                    )
                     return False
             elif isinstance(attribute_value, tuple):
                 # Check if the attribute value in the span matches the provided list
                 if span.attributes[attribute_name] != attribute_value:
-                    print("Attribute value tuple " + span.attributes[attribute_name] + " does not match with " + attribute_value)
+                    print(
+                        "Attribute value tuple "
+                        + span.attributes[attribute_name]
+                        + " does not match with "
+                        + attribute_value
+                    )
                     return False
             else:
                 # Check if the attribute value matches the provided value
@@ -40,7 +50,9 @@ class GenAiTraceVerifier:
                         print("Attribute value " + span.attributes[attribute_name] + " is negative")
                         return False
                 elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
-                    print("Attribute value " + span.attributes[attribute_name] + " does not match with " + attribute_value)
+                    print(
+                        "Attribute value " + span.attributes[attribute_name] + " does not match with " + attribute_value
+                    )
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span.attributes[attribute_name]:
@@ -113,9 +125,9 @@ class GenAiTraceVerifier:
                     return False
             elif isinstance(expected_val, str) and expected_val == "+":
                 if not isinstance(actual_val, numbers.Number):
-                        return False
+                    return False
                 if actual_val < 0:
-                        return False
+                    return False
             elif expected_val != actual_val:
                 if isinstance(expected_val, dict):
                     expected_val = json.dumps(expected_val)
