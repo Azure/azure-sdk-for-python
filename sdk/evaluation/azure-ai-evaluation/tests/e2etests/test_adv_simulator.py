@@ -198,11 +198,15 @@ class TestAdvSimulator:
 
         assert any(
             [
-                has_image_url_with_url(
-                    outputs[0]["messages"][0]["content"] if len(outputs[0]["messages"]) > 0 else True
+                (
+                    has_image_url_with_url(outputs[0]["messages"][0]["content"])
+                    if len(outputs[0]["messages"]) > 0
+                    else False
                 ),
-                has_image_url_with_url(
-                    outputs[0]["messages"][1]["content"] if len(outputs[0]["messages"]) > 1 else True
+                (
+                    has_image_url_with_url(outputs[0]["messages"][1]["content"])
+                    if len(outputs[0]["messages"]) > 1
+                    else False
                 ),
             ]
         )
@@ -267,11 +271,15 @@ class TestAdvSimulator:
 
         assert any(
             [
-                has_image_url_with_url(
-                    outputs[0]["messages"][0]["content"] if len(outputs[0]["messages"]) > 0 else True
+                (
+                    has_image_url_with_url(outputs[0]["messages"][0]["content"])
+                    if len(outputs[0]["messages"]) > 0
+                    else False
                 ),
-                has_image_url_with_url(
-                    outputs[0]["messages"][1]["content"] if len(outputs[0]["messages"]) > 1 else True
+                (
+                    has_image_url_with_url(outputs[0]["messages"][1]["content"])
+                    if len(outputs[0]["messages"]) > 1
+                    else False
                 ),
             ]
         )

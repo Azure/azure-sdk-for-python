@@ -323,7 +323,6 @@ class AdversarialSimulator:
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
                 language=language,
-                scenario=scenario,
             )
 
         return self._to_chat_protocol(
