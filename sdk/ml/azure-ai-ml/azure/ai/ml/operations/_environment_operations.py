@@ -212,7 +212,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self, next_version: str, latest_version: str, environment: Environment
     ) -> Environment:
         env = None
-        if self._registry_name and isinstance(environment, WorkspaceAssetReference):
+        if self._registry_name:
             environment.version = next_version
             env = self.create_or_update(environment)
         else:
