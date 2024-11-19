@@ -45,3 +45,8 @@ class OutboundRuleType:
     FQDN = "FQDN"
     PRIVATE_ENDPOINT = "PrivateEndpoint"
     SERVICE_TAG = "ServiceTag"
+
+class CapabilityHostKind:
+    """Capabilityhost kind."""
+
+    AGENTS = "Agents"

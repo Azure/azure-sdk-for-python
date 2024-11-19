@@ -256,6 +256,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
+    CAPABILITY_HOST = "capability_hosts"
+    """Capability_Host resource type."""
     CONNECTION = "connections"
     """connection resource type."""
     COMPONENT = "components"
