@@ -115,6 +115,10 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
+    # Setup live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
+
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -126,10 +130,6 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Setup metrics pipeline
     if not disable_metrics:
         _setup_metrics(configurations)
-
-    # Setup live metrics
-    if enable_live_metrics_config:
-        _setup_live_metrics(configurations)
 
     # Setup instrumentations
     # Instrumentations need to be setup last so to use the global providers

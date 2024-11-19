@@ -813,7 +813,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
         self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1)
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False 
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
     def test_get_feature_metric_distro(self):
