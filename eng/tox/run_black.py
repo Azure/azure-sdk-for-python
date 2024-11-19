@@ -8,7 +8,7 @@
 # This script is used to execute pylint within a tox environment. Depending on which package is being executed against,
 # a failure may be suppressed.
 
-from subprocess import check_call, CalledProcessError
+import subprocess
 import argparse
 import os
 import logging
@@ -49,19 +49,27 @@ if __name__ == "__main__":
             exit(0)
 
     try:
-        check_call(
+        run_result = subprocess.run(
             [
                 sys.executable,
                 "-m",
                 "black",
                 f"--config={configFileLocation}",
                 args.target_package,
-            ]
-        )
-    except CalledProcessError as e:
-        logging.error(
-            f"{pkg_details.name} exited with black error {e.returncode}." +
-             "This package is explicitly enabled for black within the package's pyproject.toml."
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
 
-        exit(1)
+        if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
+            if in_ci():
+                logging.info(f"The package {pkg_details.name} needs reformat. Run the `black` tox env locally to reformat.")
+                exit(1)
+            else:
+                logging.info(f"The package {pkg_details.name} was reformatted.")
+
+    except subprocess.CalledProcessError as e:
+        logging.error(
+            f"Unable to invoke black for {pkg_details.name}. Ran into exception {e}."
+        )
+
