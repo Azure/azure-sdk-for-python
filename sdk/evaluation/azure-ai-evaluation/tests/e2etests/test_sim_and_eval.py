@@ -318,7 +318,6 @@ class TestSimAndEval:
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
-        # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
                 scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
@@ -346,7 +345,7 @@ class TestSimAndEval:
         result = evaluate(
             data=file_name,
             evaluation_name="sim_image_gen_content_safety_eval",
-            # azure_ai_project=project_scope,
+            azure_ai_project=project_scope,
             evaluators={"content_safety": content_safety_val},
         )
 

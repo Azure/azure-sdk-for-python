@@ -346,7 +346,20 @@ class MultiModalConversationBot(ConversationBot):
         max_history: int,
         turn_number: int = 0,
     ) -> Tuple[dict, dict, float, dict]:
+        previous_prompt = conversation_history[-1]
         chat_protocol_message = await self._to_chat_protocol(conversation_history, self.user_template_parameters)
+
+        # replace prompt with {image.jpg} tags with image content data.
+        conversation_history.pop()
+        conversation_history.append(
+            ConversationTurn(
+                role=previous_prompt.role,
+                name=previous_prompt.name,
+                message=chat_protocol_message["messages"][0]["content"],
+                full_response=previous_prompt.full_response,
+                request=chat_protocol_message,
+            )
+        )
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
         start_time = time.time()

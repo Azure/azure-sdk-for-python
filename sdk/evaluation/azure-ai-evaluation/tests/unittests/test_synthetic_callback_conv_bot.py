@@ -6,7 +6,6 @@ from azure.ai.evaluation.simulator._conversation import (
     CallbackConversationBot,
     ConversationRole,
     OpenAIChatCompletionsModel,
-    RAIClient,
 )
 
 

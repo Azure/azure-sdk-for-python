@@ -153,18 +153,6 @@ async def simulate_conversation(
                 turn_number=current_turn,
             )
 
-            if scenario == AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING:
-                conversation_history.pop()
-                conversation_history.append(
-                    ConversationTurn(
-                        role=bots[0].role,
-                        name=bots[0].name,
-                        message=request["messages"][0]["content"],
-                        full_response=full_response,
-                        request=request,
-                    )
-                )
-
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:
                 conversation_id = response["id"]
