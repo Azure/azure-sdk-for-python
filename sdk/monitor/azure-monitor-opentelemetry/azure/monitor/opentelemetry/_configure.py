@@ -7,7 +7,7 @@ from functools import cached_property
 from logging import getLogger
 from typing import Dict, List, cast
 
-from opentelemetry._events import set_event_logger_provider
+from opentelemetry._events import _set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -180,7 +180,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
     # Setup EventLoggerProvider
     event_provider = EventLoggerProvider(logger_provider)
-    set_event_logger_provider(event_provider)
+    _set_event_logger_provider(event_provider, False)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
