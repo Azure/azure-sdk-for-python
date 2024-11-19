@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridconnectivity
 # USAGE
-    python endpoints_post_list_managed_proxy_details.py
+    python public_cloud_connectors_list_by_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +27,16 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 def main():
     client = HybridConnectivityMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="5ACC4579-DB34-4C2F-8F8C-25061168F342",
     )
 
-    response = client.endpoints.list_managed_proxy_details(
-        resource_uri="subscriptions/f5bcc1d9-23af-4ae9-aca1-041d0f593a63/resourceGroups/arcGroup/providers/Microsoft.Compute/virtualMachines/vm00006",
-        endpoint_name="default",
-        managed_proxy_request={"hostname": "r.proxy.arc.com", "service": "127.0.0.1:65035", "serviceName": "WAC"},
+    response = client.public_cloud_connectors.list_by_resource_group(
+        resource_group_name="rgpublicCloud",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2023-03-15/examples/EndpointsPostListManagedProxyDetails.json
+# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/PublicCloud/stable/2024-12-01/examples/PublicCloudConnectors_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 
 """
@@ -26,6 +27,7 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 def main():
     client = HybridConnectivityMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.service_configurations.list_by_endpoint_resource(
@@ -36,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2023-03-15/examples/ServiceConfigurationsList.json
+# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2024-12-01/examples/ServiceConfigurationsList.json
 if __name__ == "__main__":
     main()

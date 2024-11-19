@@ -1,11 +1,11 @@
 {
-  "commit": "95c0363e4cae8756c6a33b58add67776db427bbc",
+  "commit": "14f4f6b25fe74f90f4ee74fdac5cd7e05d419245",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.26.4",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/hybridconnectivity/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/hybridconnectivity/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.26.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/hybridconnectivity/resource-manager/readme.md"
 }

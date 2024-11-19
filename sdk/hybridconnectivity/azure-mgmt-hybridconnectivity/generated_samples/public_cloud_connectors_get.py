@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridconnectivity
 # USAGE
-    python endpoints_put_custom.py
+    python public_cloud_connectors_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,21 +27,16 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 def main():
     client = HybridConnectivityMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="5ACC4579-DB34-4C2F-8F8C-25061168F342",
     )
 
-    response = client.endpoints.create_or_update(
-        resource_uri="subscriptions/f5bcc1d9-23af-4ae9-aca1-041d0f593a63/resourceGroups/hybridRG/providers/Microsoft.HybridCompute/machines/testMachine",
-        endpoint_name="custom",
-        endpoint_resource={
-            "properties": {
-                "resourceId": "/subscriptions/f5bcc1d9-23af-4ae9-aca1-041d0f593a63/resourceGroups/hybridRG/providers/Microsoft.Relay/namespaces/custom-relay-namespace",
-                "type": "custom",
-            }
-        },
+    response = client.public_cloud_connectors.get(
+        resource_group_name="rgpublicCloud",
+        public_cloud_connector="rzygvnpsnrdylwzdbsscjazvamyxmh",
     )
     print(response)
 
 
-# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2023-03-15/examples/EndpointsPutCustom.json
+# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/PublicCloud/stable/2024-12-01/examples/PublicCloudConnectors_Get.json
 if __name__ == "__main__":
     main()

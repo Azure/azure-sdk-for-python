@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
 import urllib.parse
 
@@ -20,16 +20,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,7 +43,7 @@ def build_list_by_endpoint_resource_request(resource_uri: str, endpoint_name: st
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +73,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +106,7 @@ def build_create_orupdate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -140,7 +142,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -176,7 +178,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,7 +237,6 @@ class ServiceConfigurationsOperations:
         :type resource_uri: str
         :param endpoint_name: The endpoint name. Required.
         :type endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServiceConfigurationResource or the result of
          cls(response)
         :rtype:
@@ -248,7 +249,7 @@ class ServiceConfigurationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ServiceConfigurationList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -259,16 +260,14 @@ class ServiceConfigurationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_endpoint_resource_request(
+                _request = build_list_by_endpoint_resource_request(
                     resource_uri=resource_uri,
                     endpoint_name=endpoint_name,
                     api_version=api_version,
-                    template_url=self.list_by_endpoint_resource.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -280,13 +279,12 @@ class ServiceConfigurationsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ServiceConfigurationList", pipeline_response)
@@ -296,11 +294,11 @@ class ServiceConfigurationsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -312,10 +310,6 @@ class ServiceConfigurationsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_endpoint_resource.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.HybridConnectivity/endpoints/{endpointName}/serviceConfigurations"
-    }
 
     @distributed_trace
     def get(
@@ -330,12 +324,11 @@ class ServiceConfigurationsOperations:
         :type endpoint_name: str
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -349,21 +342,19 @@ class ServiceConfigurationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ServiceConfigurationResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_uri=resource_uri,
             endpoint_name=endpoint_name,
             service_configuration_name=service_configuration_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -373,16 +364,12 @@ class ServiceConfigurationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response)
+        deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.HybridConnectivity/endpoints/{endpointName}/serviceConfigurations/{serviceConfigurationName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_orupdate(
@@ -410,7 +397,6 @@ class ServiceConfigurationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -422,7 +408,7 @@ class ServiceConfigurationsOperations:
         resource_uri: str,
         endpoint_name: str,
         service_configuration_name: str,
-        service_configuration_resource: IO,
+        service_configuration_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -437,11 +423,10 @@ class ServiceConfigurationsOperations:
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
         :param service_configuration_resource: Service details. Required.
-        :type service_configuration_resource: IO
+        :type service_configuration_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -453,7 +438,7 @@ class ServiceConfigurationsOperations:
         resource_uri: str,
         endpoint_name: str,
         service_configuration_name: str,
-        service_configuration_resource: Union[_models.ServiceConfigurationResource, IO],
+        service_configuration_resource: Union[_models.ServiceConfigurationResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServiceConfigurationResource:
         """Create or update a service in serviceConfiguration for the endpoint resource.
@@ -466,18 +451,14 @@ class ServiceConfigurationsOperations:
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
         :param service_configuration_resource: Service details. Is either a
-         ServiceConfigurationResource type or a IO type. Required.
+         ServiceConfigurationResource type or a IO[bytes] type. Required.
         :type service_configuration_resource:
-         ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource or IO[bytes]
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -500,7 +481,7 @@ class ServiceConfigurationsOperations:
         else:
             _json = self._serialize.body(service_configuration_resource, "ServiceConfigurationResource")
 
-        request = build_create_orupdate_request(
+        _request = build_create_orupdate_request(
             resource_uri=resource_uri,
             endpoint_name=endpoint_name,
             service_configuration_name=service_configuration_name,
@@ -508,16 +489,14 @@ class ServiceConfigurationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_orupdate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -527,20 +506,12 @@ class ServiceConfigurationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response)
+        deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_orupdate.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.HybridConnectivity/endpoints/{endpointName}/serviceConfigurations/{serviceConfigurationName}"
-    }
 
     @overload
     def update(
@@ -568,7 +539,6 @@ class ServiceConfigurationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -580,7 +550,7 @@ class ServiceConfigurationsOperations:
         resource_uri: str,
         endpoint_name: str,
         service_configuration_name: str,
-        service_configuration_resource: IO,
+        service_configuration_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -595,11 +565,10 @@ class ServiceConfigurationsOperations:
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
         :param service_configuration_resource: Service details. Required.
-        :type service_configuration_resource: IO
+        :type service_configuration_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -611,7 +580,7 @@ class ServiceConfigurationsOperations:
         resource_uri: str,
         endpoint_name: str,
         service_configuration_name: str,
-        service_configuration_resource: Union[_models.ServiceConfigurationResourcePatch, IO],
+        service_configuration_resource: Union[_models.ServiceConfigurationResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServiceConfigurationResource:
         """Update the service details in the service configurations of the target resource.
@@ -624,18 +593,14 @@ class ServiceConfigurationsOperations:
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
         :param service_configuration_resource: Service details. Is either a
-         ServiceConfigurationResourcePatch type or a IO type. Required.
+         ServiceConfigurationResourcePatch type or a IO[bytes] type. Required.
         :type service_configuration_resource:
-         ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResourcePatch or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResourcePatch or IO[bytes]
         :return: ServiceConfigurationResource or the result of cls(response)
         :rtype: ~azure.mgmt.hybridconnectivity.models.ServiceConfigurationResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -658,7 +623,7 @@ class ServiceConfigurationsOperations:
         else:
             _json = self._serialize.body(service_configuration_resource, "ServiceConfigurationResourcePatch")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_uri=resource_uri,
             endpoint_name=endpoint_name,
             service_configuration_name=service_configuration_name,
@@ -666,16 +631,14 @@ class ServiceConfigurationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -685,16 +648,12 @@ class ServiceConfigurationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response)
+        deserialized = self._deserialize("ServiceConfigurationResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.HybridConnectivity/endpoints/{endpointName}/serviceConfigurations/{serviceConfigurationName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -709,12 +668,11 @@ class ServiceConfigurationsOperations:
         :type endpoint_name: str
         :param service_configuration_name: The service name. Required.
         :type service_configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -728,21 +686,19 @@ class ServiceConfigurationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_uri=resource_uri,
             endpoint_name=endpoint_name,
             service_configuration_name=service_configuration_name,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -753,8 +709,4 @@ class ServiceConfigurationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.HybridConnectivity/endpoints/{endpointName}/serviceConfigurations/{serviceConfigurationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

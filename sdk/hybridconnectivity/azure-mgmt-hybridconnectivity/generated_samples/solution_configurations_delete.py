@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridconnectivity
 # USAGE
-    python endpoints_put_default.py
+    python solution_configurations_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +27,15 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 def main():
     client = HybridConnectivityMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.endpoints.create_or_update(
-        resource_uri="subscriptions/f5bcc1d9-23af-4ae9-aca1-041d0f593a63/resourceGroups/hybridRG/providers/Microsoft.HybridCompute/machines/testMachine",
-        endpoint_name="default",
-        endpoint_resource={"properties": {"type": "default"}},
+    client.solution_configurations.delete(
+        resource_uri="ymuj",
+        solution_configuration="stu",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2023-03-15/examples/EndpointsPutDefault.json
+# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/PublicCloud/stable/2024-12-01/examples/SolutionConfigurations_Delete.json
 if __name__ == "__main__":
     main()

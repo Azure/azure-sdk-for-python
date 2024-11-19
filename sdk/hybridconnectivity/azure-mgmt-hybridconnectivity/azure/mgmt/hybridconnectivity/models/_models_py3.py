@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,13 +8,167 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+
+
+class AwsCloudProfile(_serialization.Model):
+    """cloud profile for AWS.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar account_id: Account id for the AWS account. Required.
+    :vartype account_id: str
+    :ivar excluded_accounts: List of AWS accounts which need to be excluded.
+    :vartype excluded_accounts: list[str]
+    :ivar is_organizational_account: Boolean value that indicates whether the account is
+     organizational or not. True represents organization account, whereas false represents a single
+     account.
+    :vartype is_organizational_account: bool
+    """
+
+    _validation = {
+        "account_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "account_id": {"key": "accountId", "type": "str"},
+        "excluded_accounts": {"key": "excludedAccounts", "type": "[str]"},
+        "is_organizational_account": {"key": "isOrganizationalAccount", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        account_id: str,
+        excluded_accounts: Optional[List[str]] = None,
+        is_organizational_account: bool = False,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword account_id: Account id for the AWS account. Required.
+        :paramtype account_id: str
+        :keyword excluded_accounts: List of AWS accounts which need to be excluded.
+        :paramtype excluded_accounts: list[str]
+        :keyword is_organizational_account: Boolean value that indicates whether the account is
+         organizational or not. True represents organization account, whereas false represents a single
+         account.
+        :paramtype is_organizational_account: bool
+        """
+        super().__init__(**kwargs)
+        self.account_id = account_id
+        self.excluded_accounts = excluded_accounts
+        self.is_organizational_account = is_organizational_account
+
+
+class AwsCloudProfileUpdate(_serialization.Model):
+    """cloud profile for AWS.
+
+    :ivar excluded_accounts: List of AWS accounts which need to be excluded.
+    :vartype excluded_accounts: list[str]
+    """
+
+    _attribute_map = {
+        "excluded_accounts": {"key": "excludedAccounts", "type": "[str]"},
+    }
+
+    def __init__(self, *, excluded_accounts: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword excluded_accounts: List of AWS accounts which need to be excluded.
+        :paramtype excluded_accounts: list[str]
+        """
+        super().__init__(**kwargs)
+        self.excluded_accounts = excluded_accounts
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class AzureResourceManagerCommonTypesTrackedResourceUpdate(Resource):  # pylint: disable=name-too-long
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
 
 
 class EndpointAccessResource(_serialization.Model):
@@ -87,7 +241,7 @@ class EndpointProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of endpoint. Required. Known values are: "default" and "custom".
     :vartype type: str or ~azure.mgmt.hybridconnectivity.models.Type
@@ -121,47 +275,6 @@ class EndpointProperties(_serialization.Model):
         self.provisioning_state = None
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
 class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
@@ -169,7 +282,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -180,24 +293,6 @@ class ProxyResource(Resource):
      information.
     :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class EndpointResource(ProxyResource):
@@ -206,7 +301,7 @@ class EndpointResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -368,6 +463,40 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
+class GenerateAwsTemplateRequest(_serialization.Model):
+    """ConnectorId and SolutionTypes and their properties to Generate AWS CFT Template.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar connector_id: The name of public cloud connector. Required.
+    :vartype connector_id: str
+    :ivar solution_types: The list of solution types and their settings.
+    :vartype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettings]
+    """
+
+    _validation = {
+        "connector_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "connector_id": {"key": "connectorId", "type": "str"},
+        "solution_types": {"key": "solutionTypes", "type": "[SolutionTypeSettings]"},
+    }
+
+    def __init__(
+        self, *, connector_id: str, solution_types: Optional[List["_models.SolutionTypeSettings"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword connector_id: The name of public cloud connector. Required.
+        :paramtype connector_id: str
+        :keyword solution_types: The list of solution types and their settings.
+        :paramtype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettings]
+        """
+        super().__init__(**kwargs)
+        self.connector_id = connector_id
+        self.solution_types = solution_types
+
+
 class IngressGatewayResource(_serialization.Model):
     """The ingress gateway access credentials.
 
@@ -454,6 +583,152 @@ class IngressGatewayResource(_serialization.Model):
         self.service_configuration_token = service_configuration_token
 
 
+class InventoryProperties(_serialization.Model):
+    """Definition of inventory.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar cloud_native_type: Gets or sets the cloud native resource type. "ec2"
+    :vartype cloud_native_type: str or ~azure.mgmt.hybridconnectivity.models.CloudNativeType
+    :ivar cloud_native_resource_id: Gets or sets the cloud native resource name.
+    :vartype cloud_native_resource_id: str
+    :ivar azure_resource_id: Gets or sets the mapped azure resource id.
+    :vartype azure_resource_id: str
+    :ivar status: Gets or sets the status of the inventory. Known values are: "New", "InProgress",
+     "Completed", and "Failed".
+    :vartype status: str or ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationStatus
+    :ivar status_details: Gets or sets the status details.
+    :vartype status_details: str
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridconnectivity.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "cloud_native_type": {"key": "cloudNativeType", "type": "str"},
+        "cloud_native_resource_id": {"key": "cloudNativeResourceId", "type": "str"},
+        "azure_resource_id": {"key": "azureResourceId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_native_type: Optional[Union[str, "_models.CloudNativeType"]] = None,
+        cloud_native_resource_id: Optional[str] = None,
+        azure_resource_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.SolutionConfigurationStatus"]] = None,
+        status_details: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cloud_native_type: Gets or sets the cloud native resource type. "ec2"
+        :paramtype cloud_native_type: str or ~azure.mgmt.hybridconnectivity.models.CloudNativeType
+        :keyword cloud_native_resource_id: Gets or sets the cloud native resource name.
+        :paramtype cloud_native_resource_id: str
+        :keyword azure_resource_id: Gets or sets the mapped azure resource id.
+        :paramtype azure_resource_id: str
+        :keyword status: Gets or sets the status of the inventory. Known values are: "New",
+         "InProgress", "Completed", and "Failed".
+        :paramtype status: str or ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationStatus
+        :keyword status_details: Gets or sets the status details.
+        :paramtype status_details: str
+        """
+        super().__init__(**kwargs)
+        self.cloud_native_type = cloud_native_type
+        self.cloud_native_resource_id = cloud_native_resource_id
+        self.azure_resource_id = azure_resource_id
+        self.status = status
+        self.status_details = status_details
+        self.provisioning_state = None
+
+
+class InventoryResource(ProxyResource):
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.InventoryProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "InventoryProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.InventoryProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.hybridconnectivity.models.InventoryProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class InventoryResourceListResult(_serialization.Model):
+    """The response of a InventoryResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The InventoryResource items on this page. Required.
+    :vartype value: list[~azure.mgmt.hybridconnectivity.models.InventoryResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[InventoryResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.InventoryResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The InventoryResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.hybridconnectivity.models.InventoryResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class ListCredentialsRequest(_serialization.Model):
     """The details of the service for which credentials needs to be returned.
 
@@ -499,7 +774,7 @@ class ListIngressGatewayCredentialsRequest(_serialization.Model):
 class ManagedProxyRequest(_serialization.Model):
     """Represent ManageProxy Request object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service: The name of the service. Required.
     :vartype service: str
@@ -546,7 +821,7 @@ class ManagedProxyRequest(_serialization.Model):
 class ManagedProxyResource(_serialization.Model):
     """Managed Proxy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar proxy: The short lived proxy name. Required.
     :vartype proxy: str
@@ -697,6 +972,372 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class OperationStatusResult(_serialization.Model):
+    """The current status of an async operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.hybridconnectivity.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.hybridconnectivity.models.ErrorDetail
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations: list[~azure.mgmt.hybridconnectivity.models.OperationStatusResult]
+        :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.hybridconnectivity.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.resource_id = None
+        self.name = name
+        self.status = status
+        self.percent_complete = percent_complete
+        self.start_time = start_time
+        self.end_time = end_time
+        self.operations = operations
+        self.error = error
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class PublicCloudConnector(TrackedResource):
+    """Public Cloud Connector.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "PublicCloudConnectorProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.PublicCloudConnectorProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class PublicCloudConnectorListResult(_serialization.Model):
+    """The response of a PublicCloudConnector list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The PublicCloudConnector items on this page. Required.
+    :vartype value: list[~azure.mgmt.hybridconnectivity.models.PublicCloudConnector]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PublicCloudConnector]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.PublicCloudConnector"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The PublicCloudConnector items on this page. Required.
+        :paramtype value: list[~azure.mgmt.hybridconnectivity.models.PublicCloudConnector]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PublicCloudConnectorProperties(_serialization.Model):
+    """Properties of public cloud connectors.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar aws_cloud_profile: Cloud profile for AWS. Required.
+    :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfile
+    :ivar host_type: Host cloud the public cloud connector. Required. "AWS"
+    :vartype host_type: str or ~azure.mgmt.hybridconnectivity.models.HostType
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridconnectivity.models.ResourceProvisioningState
+    :ivar connector_primary_identifier: Connector primary identifier.
+    :vartype connector_primary_identifier: str
+    """
+
+    _validation = {
+        "aws_cloud_profile": {"required": True},
+        "host_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "connector_primary_identifier": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "aws_cloud_profile": {"key": "awsCloudProfile", "type": "AwsCloudProfile"},
+        "host_type": {"key": "hostType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "connector_primary_identifier": {"key": "connectorPrimaryIdentifier", "type": "str"},
+    }
+
+    def __init__(
+        self, *, aws_cloud_profile: "_models.AwsCloudProfile", host_type: Union[str, "_models.HostType"], **kwargs: Any
+    ) -> None:
+        """
+        :keyword aws_cloud_profile: Cloud profile for AWS. Required.
+        :paramtype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfile
+        :keyword host_type: Host cloud the public cloud connector. Required. "AWS"
+        :paramtype host_type: str or ~azure.mgmt.hybridconnectivity.models.HostType
+        """
+        super().__init__(**kwargs)
+        self.aws_cloud_profile = aws_cloud_profile
+        self.host_type = host_type
+        self.provisioning_state = None
+        self.connector_primary_identifier = None
+
+
+class PublicCloudConnectorPropertiesUpdate(_serialization.Model):
+    """Properties of public cloud connectors.
+
+    :ivar aws_cloud_profile: Cloud profile for AWS.
+    :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfileUpdate
+    """
+
+    _attribute_map = {
+        "aws_cloud_profile": {"key": "awsCloudProfile", "type": "AwsCloudProfileUpdate"},
+    }
+
+    def __init__(self, *, aws_cloud_profile: Optional["_models.AwsCloudProfileUpdate"] = None, **kwargs: Any) -> None:
+        """
+        :keyword aws_cloud_profile: Cloud profile for AWS.
+        :paramtype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfileUpdate
+        """
+        super().__init__(**kwargs)
+        self.aws_cloud_profile = aws_cloud_profile
+
+
+class PublicCloudConnectorUpdate(AzureResourceManagerCommonTypesTrackedResourceUpdate):
+    """Public Cloud Connector.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorPropertiesUpdate
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "PublicCloudConnectorPropertiesUpdate"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.PublicCloudConnectorPropertiesUpdate"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties:
+         ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorPropertiesUpdate
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.properties = properties
+
+
 class ServiceConfigurationList(_serialization.Model):
     """The paginated list of serviceConfigurations.
 
@@ -735,7 +1376,7 @@ class ServiceConfigurationResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -818,6 +1459,504 @@ class ServiceConfigurationResourcePatch(_serialization.Model):
         self.port = port
 
 
+class SolutionConfiguration(ProxyResource):
+    """Solution Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "SolutionConfigurationProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.SolutionConfigurationProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SolutionConfigurationListResult(_serialization.Model):
+    """The response of a SolutionConfiguration list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The SolutionConfiguration items on this page. Required.
+    :vartype value: list[~azure.mgmt.hybridconnectivity.models.SolutionConfiguration]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SolutionConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.SolutionConfiguration"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The SolutionConfiguration items on this page. Required.
+        :paramtype value: list[~azure.mgmt.hybridconnectivity.models.SolutionConfiguration]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SolutionConfigurationProperties(_serialization.Model):
+    """Solution configuration resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hybridconnectivity.models.ResourceProvisioningState
+    :ivar solution_type: The type of the solution. Required.
+    :vartype solution_type: str
+    :ivar solution_settings: Solution settings.
+    :vartype solution_settings: dict[str, str]
+    :ivar status: The status of solution configurations. Known values are: "New", "InProgress",
+     "Completed", and "Failed".
+    :vartype status: str or ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationStatus
+    :ivar status_details: The detailed message of status details.
+    :vartype status_details: str
+    :ivar last_sync_time: The last time resources were inventoried.
+    :vartype last_sync_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "solution_type": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "last_sync_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "solution_type": {"key": "solutionType", "type": "str"},
+        "solution_settings": {"key": "solutionSettings", "type": "{str}"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "last_sync_time": {"key": "lastSyncTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self, *, solution_type: str, solution_settings: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_type: The type of the solution. Required.
+        :paramtype solution_type: str
+        :keyword solution_settings: Solution settings.
+        :paramtype solution_settings: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.solution_type = solution_type
+        self.solution_settings = solution_settings
+        self.status = None
+        self.status_details = None
+        self.last_sync_time = None
+
+
+class SolutionConfigurationPropertiesUpdate(_serialization.Model):
+    """Solution configuration resource.
+
+    :ivar solution_type: The type of the solution.
+    :vartype solution_type: str
+    :ivar solution_settings: Solution settings.
+    :vartype solution_settings: dict[str, str]
+    """
+
+    _attribute_map = {
+        "solution_type": {"key": "solutionType", "type": "str"},
+        "solution_settings": {"key": "solutionSettings", "type": "{str}"},
+    }
+
+    def __init__(
+        self, *, solution_type: Optional[str] = None, solution_settings: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_type: The type of the solution.
+        :paramtype solution_type: str
+        :keyword solution_settings: Solution settings.
+        :paramtype solution_settings: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.solution_type = solution_type
+        self.solution_settings = solution_settings
+
+
+class SolutionConfigurationUpdate(ProxyResource):
+    """Solution Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationPropertiesUpdate
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "SolutionConfigurationPropertiesUpdate"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.SolutionConfigurationPropertiesUpdate"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties:
+         ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationPropertiesUpdate
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SolutionTypePermissions(_serialization.Model):
+    """Solution type permissions.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar solution_type: The name of solution Type. Required. Known values are:
+     "Microsoft.AssetManagement", "Microsoft.HybridCompute.Onboard", and
+     "Microsoft.HybridNetwork.VWan.Provision".
+    :vartype solution_type: str or ~azure.mgmt.hybridconnectivity.models.SolutionTypeEnum
+    :ivar status: The status. Required. Known values are: "Connected" and "Disconnected".
+    :vartype status: str or ~azure.mgmt.hybridconnectivity.models.Status
+    :ivar status_details: The details of the status. Required.
+    :vartype status_details: str
+    """
+
+    _validation = {
+        "solution_type": {"required": True},
+        "status": {"required": True},
+        "status_details": {"required": True},
+    }
+
+    _attribute_map = {
+        "solution_type": {"key": "solutionType", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        solution_type: Union[str, "_models.SolutionTypeEnum"],
+        status: Union[str, "_models.Status"],
+        status_details: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_type: The name of solution Type. Required. Known values are:
+         "Microsoft.AssetManagement", "Microsoft.HybridCompute.Onboard", and
+         "Microsoft.HybridNetwork.VWan.Provision".
+        :paramtype solution_type: str or ~azure.mgmt.hybridconnectivity.models.SolutionTypeEnum
+        :keyword status: The status. Required. Known values are: "Connected" and "Disconnected".
+        :paramtype status: str or ~azure.mgmt.hybridconnectivity.models.Status
+        :keyword status_details: The details of the status. Required.
+        :paramtype status_details: str
+        """
+        super().__init__(**kwargs)
+        self.solution_type = solution_type
+        self.status = status
+        self.status_details = status_details
+
+
+class SolutionTypeProperties(_serialization.Model):
+    """Definition of Solution type resource.
+
+    :ivar solution_type: The name of the solution type.
+    :vartype solution_type: str
+    :ivar description: Short description of solution type.
+    :vartype description: str
+    :ivar supported_azure_regions: The locations this solution is supported in.
+    :vartype supported_azure_regions: list[str]
+    :ivar solution_settings: Array of solution settings and its description.
+    :vartype solution_settings:
+     list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettingsProperties]
+    """
+
+    _attribute_map = {
+        "solution_type": {"key": "solutionType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "supported_azure_regions": {"key": "supportedAzureRegions", "type": "[str]"},
+        "solution_settings": {"key": "solutionSettings", "type": "[SolutionTypeSettingsProperties]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        solution_type: Optional[str] = None,
+        description: Optional[str] = None,
+        supported_azure_regions: Optional[List[str]] = None,
+        solution_settings: Optional[List["_models.SolutionTypeSettingsProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_type: The name of the solution type.
+        :paramtype solution_type: str
+        :keyword description: Short description of solution type.
+        :paramtype description: str
+        :keyword supported_azure_regions: The locations this solution is supported in.
+        :paramtype supported_azure_regions: list[str]
+        :keyword solution_settings: Array of solution settings and its description.
+        :paramtype solution_settings:
+         list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettingsProperties]
+        """
+        super().__init__(**kwargs)
+        self.solution_type = solution_type
+        self.description = description
+        self.supported_azure_regions = supported_azure_regions
+        self.solution_settings = solution_settings
+
+
+class SolutionTypeResource(ProxyResource):
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.SolutionTypeProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "SolutionTypeProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.SolutionTypeProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.hybridconnectivity.models.SolutionTypeProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SolutionTypeResourceListResult(_serialization.Model):
+    """The response of a SolutionTypeResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The SolutionTypeResource items on this page. Required.
+    :vartype value: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SolutionTypeResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.SolutionTypeResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The SolutionTypeResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SolutionTypeSettings(_serialization.Model):
+    """The properties of Solution Type.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar solution_type: The type of the solution. Required.
+    :vartype solution_type: str
+    :ivar solution_settings: Solution settings.
+    :vartype solution_settings: dict[str, str]
+    """
+
+    _validation = {
+        "solution_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "solution_type": {"key": "solutionType", "type": "str"},
+        "solution_settings": {"key": "solutionSettings", "type": "{str}"},
+    }
+
+    def __init__(
+        self, *, solution_type: str, solution_settings: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword solution_type: The type of the solution. Required.
+        :paramtype solution_type: str
+        :keyword solution_settings: Solution settings.
+        :paramtype solution_settings: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.solution_type = solution_type
+        self.solution_settings = solution_settings
+
+
+class SolutionTypeSettingsProperties(_serialization.Model):
+    """Represent Solution settings properties description array.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the solution setting property. Required.
+    :vartype name: str
+    :ivar display_name: The UI friendly name of the solution setting property. Required.
+    :vartype display_name: str
+    :ivar type: Type of the solution setting property, represented as a string. Required.
+    :vartype type: str
+    :ivar description: Description of solution setting property. Required.
+    :vartype description: str
+    :ivar allowed_values: Array of allowed values for this solution settings property. Required.
+    :vartype allowed_values: list[str]
+    :ivar default_value: Default value for this solution settings property. Required.
+    :vartype default_value: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "display_name": {"required": True},
+        "type": {"required": True},
+        "description": {"required": True},
+        "allowed_values": {"required": True},
+        "default_value": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "allowed_values": {"key": "allowedValues", "type": "[str]"},
+        "default_value": {"key": "defaultValue", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        display_name: str,
+        type: str,
+        description: str,
+        allowed_values: List[str],
+        default_value: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the solution setting property. Required.
+        :paramtype name: str
+        :keyword display_name: The UI friendly name of the solution setting property. Required.
+        :paramtype display_name: str
+        :keyword type: Type of the solution setting property, represented as a string. Required.
+        :paramtype type: str
+        :keyword description: Description of solution setting property. Required.
+        :paramtype description: str
+        :keyword allowed_values: Array of allowed values for this solution settings property. Required.
+        :paramtype allowed_values: list[str]
+        :keyword default_value: Default value for this solution settings property. Required.
+        :paramtype default_value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.type = type
+        self.description = description
+        self.allowed_values = allowed_values
+        self.default_value = default_value
+
+
 class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -880,3 +2019,29 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class TestPermissionResult(_serialization.Model):
+    """Public connector permissions.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar solution_types: Solution type permissions. Required.
+    :vartype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypePermissions]
+    """
+
+    _validation = {
+        "solution_types": {"required": True},
+    }
+
+    _attribute_map = {
+        "solution_types": {"key": "solutionTypes", "type": "[SolutionTypePermissions]"},
+    }
+
+    def __init__(self, *, solution_types: List["_models.SolutionTypePermissions"], **kwargs: Any) -> None:
+        """
+        :keyword solution_types: Solution type permissions. Required.
+        :paramtype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypePermissions]
+        """
+        super().__init__(**kwargs)
+        self.solution_types = solution_types

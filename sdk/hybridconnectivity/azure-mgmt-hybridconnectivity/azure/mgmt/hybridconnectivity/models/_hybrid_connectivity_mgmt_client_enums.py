@@ -16,6 +16,13 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class CloudNativeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cloud Native Type enum."""
+
+    EC2 = "ec2"
+    """ec2 enum."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -23,6 +30,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of host cloud the public cloud connector is referencing."""
+
+    AWS = "AWS"
+    """AWS state"""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,11 +59,55 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
 class ServiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the service."""
 
     SSH = "SSH"
     WAC = "WAC"
+
+
+class SolutionConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Solution Configuration Status."""
+
+    NEW = "New"
+    """New status"""
+    IN_PROGRESS = "InProgress"
+    """InProgress status"""
+    COMPLETED = "Completed"
+    """Canceled status"""
+    FAILED = "Failed"
+    """Failed status"""
+
+
+class SolutionTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Solution types."""
+
+    MICROSOFT_ASSET_MANAGEMENT = "Microsoft.AssetManagement"
+    """Asset Management solution type"""
+    MICROSOFT_HYBRID_COMPUTE_ONBOARD = "Microsoft.HybridCompute.Onboard"
+    """Hybrid Compute Onboard solution type"""
+    MICROSOFT_HYBRID_NETWORK_V_WAN_PROVISION = "Microsoft.HybridNetwork.VWan.Provision"
+    """VWan Provisioning solution type"""
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Connection status."""
+
+    CONNECTED = "Connected"
+    """Connected status"""
+    DISCONNECTED = "Disconnected"
+    """Disconnected status"""
 
 
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):

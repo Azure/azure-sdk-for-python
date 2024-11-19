@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridconnectivity
 # USAGE
-    python service_configurations_patch_ssh.py
+    python solution_configurations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +27,16 @@ from azure.mgmt.hybridconnectivity import HybridConnectivityMgmtClient
 def main():
     client = HybridConnectivityMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.service_configurations.update(
-        resource_uri="subscriptions/f5bcc1d9-23af-4ae9-aca1-041d0f593a63/resourceGroups/hybridRG/providers/Microsoft.HybridCompute/machines/testMachine/providers/Microsoft.HybridConnectivity/endpoints/default",
-        endpoint_name="default",
-        service_configuration_name="SSH",
-        service_configuration_resource={"properties": {"port": 22}},
+    response = client.solution_configurations.list(
+        resource_uri="ymuj",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/stable/2023-03-15/examples/ServiceConfigurationsPatchSSH.json
+# x-ms-original-file: specification/hybridconnectivity/resource-manager/Microsoft.HybridConnectivity/PublicCloud/stable/2024-12-01/examples/SolutionConfigurations_List.json
 if __name__ == "__main__":
     main()
