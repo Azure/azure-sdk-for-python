@@ -427,7 +427,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     :vartype resource_id: str
     :ivar query: Query to fetch the data. Required.
     :vartype query: str
-    :ivar service_name: Service name. Required.
+    :ivar service_name: Service name.
     :vartype service_name: str
     :ivar connection_string: Connection String to connect to ApplicationInsights.
     :vartype connection_string: str
@@ -439,8 +439,8 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """LogAnalytic Workspace resourceID associated with ApplicationInsights. Required."""
     query: str = rest_field()
     """Query to fetch the data. Required."""
-    service_name: str = rest_field(name="serviceName")
-    """Service name. Required."""
+    service_name: Optional[str] = rest_field(name="serviceName")
+    """Service name."""
     connection_string: Optional[str] = rest_field(name="connectionString")
     """Connection String to connect to ApplicationInsights."""
 
@@ -450,7 +450,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
         *,
         resource_id: str,
         query: str,
-        service_name: str,
+        service_name: Optional[str] = None,
         connection_string: Optional[str] = None,
     ) -> None: ...
 
