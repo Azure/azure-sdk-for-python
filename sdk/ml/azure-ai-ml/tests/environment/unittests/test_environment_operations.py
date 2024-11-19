@@ -108,7 +108,8 @@ class TestEnvironmentOperations:
         with patch(
             "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
         ), patch(
-            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version"
+            "azure.ai.ml.operations._environment_operations._get_next_latest_versions_from_container",
+            return_value=("version", "latest"),
         ) as mock_nextver:
             mock_environment_operation.create_or_update(env)
             mock_nextver.assert_called_once()
@@ -116,7 +117,7 @@ class TestEnvironmentOperations:
             mock_environment_operation._version_operations.create_or_update.assert_called_once_with(
                 body=env._to_rest_object(),
                 name=env.name,
-                version=mock_nextver.return_value,
+                version="latest",
                 resource_group_name=mock_workspace_scope.resource_group_name,
                 workspace_name=mock_workspace_scope.workspace_name,
             )
