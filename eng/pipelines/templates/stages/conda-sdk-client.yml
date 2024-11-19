@@ -162,7 +162,6 @@ extends:
     stages:
       - stage: Build_Universal_Dependencies
         displayName: Build Universal Conda Packages
-        dependsOn: Build_Dependencies
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
 
