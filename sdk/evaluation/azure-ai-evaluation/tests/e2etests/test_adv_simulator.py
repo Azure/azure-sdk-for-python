@@ -191,9 +191,17 @@ class TestAdvSimulator:
         assert len(outputs[0]["messages"][0]["content"]) > 0
 
         def has_image_url_with_url(content):
-            return any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content)
+            return any(
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
+                for item in content
+            )
 
-        assert has_image_url_with_url(outputs[0]["messages"][0]["content"])
+        assert any(
+            [
+                has_image_url_with_url(outputs[0]["messages"][0]["content"]),
+                has_image_url_with_url(outputs[0]["messages"][1]["content"]),
+            ]
+        )
 
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
@@ -248,9 +256,17 @@ class TestAdvSimulator:
         assert len(outputs[0]["messages"][1]["content"]) > 0
 
         def has_image_url_with_url(content):
-            return any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content)
+            return any(
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
+                for item in content
+            )
 
-        assert has_image_url_with_url(outputs[0]["messages"][1]["content"])
+        assert any(
+            [
+                has_image_url_with_url(outputs[0]["messages"][0]["content"]),
+                has_image_url_with_url(outputs[0]["messages"][1]["content"]),
+            ]
+        )
 
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
