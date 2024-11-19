@@ -83,7 +83,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_streamed_chat_completions(self, client_async, api_type, api_version, **kwargs):
         messages = [
@@ -91,7 +91,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             {"role": "user", "content": "How do I bake a chocolate cake?"}
         ]
 
-        response = await client_async.chat.completions.create(messages=messages, stream=True, **kwargs)
+        response = await client_async.chat.completions.create(messages=messages, stream=True, stream_options={"include_usage": True}, **kwargs)
 
         async for completion in response:
             # API versions after 2023-05-15 send an empty first completion with RAI
@@ -103,6 +103,10 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 for c in completion.choices:
                     assert c.index is not None
                     assert c.delta is not None
+            if completion.usage:
+                assert completion.usage.completion_tokens is not None
+                assert completion.usage.prompt_tokens is not None
+                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
 
     @configure_async
     @pytest.mark.asyncio
@@ -1191,7 +1195,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
     async def test_chat_completion_structured_outputs(self, client_async, api_type, api_version, **kwargs):
 
         class Step(BaseModel):
@@ -1228,3 +1232,51 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 assert step.explanation
                 assert step.output
             assert completion.choices[0].message.parsed.final_answer
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_parallel_tool_calls_disable(self, client_async, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
+        ]
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "Get the current weather in a given location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                        },
+                        "required": ["location"],
+                    },
+                }
+            }
+        ]
+
+        completion = await client_async.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            parallel_tool_calls=False,
+            **kwargs
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.role
+        assert len(completion.choices[0].message.tool_calls) == 1

@@ -20,7 +20,7 @@ from devtools_testutils import get_credential
 
 
 # for pytest.parametrize
-GA = "2024-06-01"
+GA = "2024-10-21"
 PREVIEW = "2024-10-01-preview"
 LATEST = PREVIEW
 
