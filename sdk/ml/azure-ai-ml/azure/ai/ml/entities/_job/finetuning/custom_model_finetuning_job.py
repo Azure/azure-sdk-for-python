@@ -48,6 +48,8 @@ class CustomModelFineTuningJob(FineTuningVertical):
             model_provider=RestModelProvider.CUSTOM,
             training_data=training_data,
             validation_data=validation_data,
+            resources=resources,
+            queue_settings=queue_settings,
             **kwargs,
         )
 
@@ -68,9 +70,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :type hyperparameters: Dict[str,str]
         """
         self._hyperparameters = hyperparameters
-
-    @property
-    def resources(self)->
 
     def _to_rest_object(self) -> "RestFineTuningJob":
         """Convert CustomFineTuningVertical object to a RestFineTuningJob object.
@@ -171,6 +170,8 @@ class CustomModelFineTuningJob(FineTuningVertical):
             "status": properties.status,
             "creation_context": obj.system_data,
             "display_name": properties.display_name,
+            "resources": properties.resources,
+            "queue_settings": properties.queue_settings,
             "outputs": from_rest_data_outputs(properties.outputs),
         }
 

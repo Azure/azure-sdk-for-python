@@ -27,6 +27,8 @@ class FineTuningJob(Job, JobIOMixin):
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.FINE_TUNING
+        self.resources = kwargs.pop("resources", None)
+        self.queue_settings = kwargs.pop("queue_settings", None)
         self.outputs = kwargs.pop("outputs", None)
         super().__init__(**kwargs)
 
@@ -90,7 +92,9 @@ class FineTuningJob(Job, JobIOMixin):
         if class_type:
             res: FineTuningJob = class_type._from_rest_object(obj)
             return res
-        msg = f"Unsupported model provider type: {obj.properties.fine_tuning_details.model_provider}"
+        msg = (
+            f"Unsupported model provider type: {obj.properties.fine_tuning_details.model_provider}"
+        )
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
