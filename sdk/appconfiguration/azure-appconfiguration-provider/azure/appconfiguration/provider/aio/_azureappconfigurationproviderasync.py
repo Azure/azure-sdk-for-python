@@ -337,7 +337,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
             load_balance=self._uses_load_balancing,
-            **kwargs
+            **kwargs,
         )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}

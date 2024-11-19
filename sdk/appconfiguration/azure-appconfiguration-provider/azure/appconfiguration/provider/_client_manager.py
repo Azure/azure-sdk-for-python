@@ -373,7 +373,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
-
         self._active_clients = active_clients
         if not self._load_balance or len(self._last_active_client_name) == 0:
             return

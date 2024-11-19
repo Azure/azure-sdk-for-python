@@ -558,7 +558,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._uses_load_balancing,
                     is_failover_request,
                 )
-                            
+
                 client = self._replica_client_manager.get_next_client()
                 if not client:
                     return
