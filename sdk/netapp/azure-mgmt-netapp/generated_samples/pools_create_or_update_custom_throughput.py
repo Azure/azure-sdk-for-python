@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.netapp import NetAppManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-netapp
 # USAGE
-    python cosmos_db_managed_cassandra_list_command.py
+    python pools_create_or_update_custom_throughput.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,28 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.cassandra_clusters.list_command(
-        resource_group_name="cassandra-prod-rg",
-        cluster_name="cassandra-prod",
-    )
-    for item in response:
-        print(item)
+    response = client.pools.begin_create_or_update(
+        resource_group_name="myRG",
+        account_name="account1",
+        pool_name="customPool1",
+        body={
+            "location": "eastus",
+            "properties": {
+                "customThroughputMibps": 128,
+                "qosType": "Manual",
+                "serviceLevel": "Flexible",
+                "size": 4398046511104,
+            },
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBManagedCassandraListCommand.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Pools_CreateOrUpdate_CustomThroughput.json
 if __name__ == "__main__":
     main()
