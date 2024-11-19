@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.netapp import NetAppManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-netapp
 # USAGE
-    python cosmos_db_throughput_pool_account_create.py
+    python accounts_get_change_key_vault_information.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,25 +25,17 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.throughput_pool_account.begin_create(
-        resource_group_name="rg1",
-        throughput_pool_name="tp1",
-        throughput_pool_account_name="db1",
-        body={
-            "properties": {
-                "accountLocation": "West US",
-                "accountResourceIdentifier": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/providers/Microsoft.DocumentDB/resourceGroup/rg1/databaseAccounts/db1/",
-            }
-        },
+    client.accounts.begin_get_change_key_vault_information(
+        resource_group_name="myRG",
+        account_name="account1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/throughputPool/CosmosDBThroughputPoolAccountCreate.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Accounts_GetChangeKeyVaultInformation.json
 if __name__ == "__main__":
     main()
