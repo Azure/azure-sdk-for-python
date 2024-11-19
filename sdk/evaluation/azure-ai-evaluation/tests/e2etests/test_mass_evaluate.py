@@ -73,7 +73,6 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
 
-    # @pytest.mark.skipif(True, reason="test see if this fixes CI cleanup bug")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa and similarity disabled due to being playback-unfriendly due to URL sanitization problems.
         evaluators = {
@@ -210,7 +209,13 @@ class TestMassEvaluate:
         # assert metrics['qa.similarity'] >= 0
         # assert metrics['qa.gpt_similarity'] >= 0
 
-    # @pytest.mark.skipif(True, reason="test see if this fixes CI cleanup bug")
+    @pytest.mark.parametrize(
+        "multi_modal_input_type",
+        [
+            "imageurls",
+            "imageurls_with_target",
+        ],
+    )
     def test_evaluate_multimodal(self, multi_modal_input_type, multimodal_input_selector, azure_cred, project_scope):
         # Content safety is removed due to being unstable in playback mode
         evaluators = {
