@@ -300,7 +300,6 @@ class TestMassEvaluate:
             "b64_images",
         ],
     )
-    @pytest.mark.skip(reason="test see if this fixes CI cleanup bug")
     def test_evaluate_multimodal(self, multi_modal_input_type, multimodal_input_selector, azure_cred, project_scope):
         # Content safety is removed due to being unstable in playback mode
         evaluators = {
