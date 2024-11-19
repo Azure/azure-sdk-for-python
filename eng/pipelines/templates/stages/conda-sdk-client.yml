@@ -339,7 +339,7 @@ extends:
                           version: 1.0.1
                     - name: azure-ai-vision
                       common_root: azure/vision
-                      in_batch: ${{ parameters.release_azure_vision }}
+                      in_batch: ${{ parameters.release_azure_ai_vision }}
                       service: vision
                       checkout:
                         - package: azure-ai-vision-imageanalysis
