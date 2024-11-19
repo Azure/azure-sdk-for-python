@@ -22,7 +22,13 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._constants import SupportedLanguages
-from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
+from ._conversation import (
+    CallbackConversationBot,
+    MultiModalConversationBot,
+    ConversationBot,
+    ConversationRole,
+    ConversationTurn,
+)
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
     AdversarialTemplateHandler,
@@ -295,9 +301,11 @@ class AdversarialSimulator:
         semaphore: asyncio.Semaphore,
         scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> List[Dict]:
-        user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
+        user_bot = self._setup_bot(
+            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario
+        )
         system_bot = self._setup_bot(
-            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters
+            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
         )
         bots = [user_bot, system_bot]
         session = get_async_http_client().with_policies(
@@ -344,6 +352,7 @@ class AdversarialSimulator:
         template: AdversarialTemplate,
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
@@ -375,13 +384,27 @@ class AdversarialSimulator:
                 def __call__(self) -> None:
                     pass
 
+            if scenario in [
+                AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+            ]:
+                return MultiModalConversationBot(
+                    callback=target,
+                    role=role,
+                    model=DummyModel(),
+                    user_template=str(template),
+                    user_template_parameters=parameters,
+                    rai_client=self.rai_client,
+                    conversation_template="",
+                    instantiation_parameters={},
+                )
+
             return CallbackConversationBot(
                 callback=target,
                 role=role,
                 model=DummyModel(),
                 user_template=str(template),
                 user_template_parameters=parameters,
-                rai_client=self.rai_client,
                 conversation_template="",
                 instantiation_parameters={},
             )

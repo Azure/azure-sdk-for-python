@@ -133,7 +133,6 @@ class TestSimAndEval:
         os.remove(file_name)
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Skip as RAI service doesn't handle image size over 1mb")
     def test_protected_material_sim_image_understanding(self, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -189,7 +188,7 @@ class TestSimAndEval:
         eval_output = evaluate(
             data=file_name,
             evaluation_name="sim_image_understanding_protected_material_eval",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluators={"protected_material": protected_material_eval},
         )
 
@@ -267,7 +266,7 @@ class TestSimAndEval:
         eval_output = evaluate(
             data=file_name,
             evaluation_name="sim_image_gen_protected_material_eval",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluators={"protected_material": protected_material_eval},
         )
 
@@ -347,7 +346,7 @@ class TestSimAndEval:
         result = evaluate(
             data=file_name,
             evaluation_name="sim_image_gen_content_safety_eval",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluators={"content_safety": content_safety_val},
         )
 
