@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 from typing import Dict, MutableMapping, Optional
 from urllib import parse
 
@@ -18,7 +19,13 @@ class HttpChallenge(object):
     def __init__(
         self, request_uri: str, challenge: str, response_headers: "Optional[MutableMapping[str, str]]" = None
     ) -> None:
-        """Parses an HTTP WWW-Authentication Bearer challenge from a server."""
+        """Parses an HTTP WWW-Authentication Bearer challenge from a server.
+
+        Example challenge with claims:
+            Bearer authorization="https://login.windows-ppe.net/", error="invalid_token",
+            error_description="User session has been revoked",
+            claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="
+        """
         self.source_authority = self._validate_request_uri(request_uri)
         self.source_uri = request_uri
         self._parameters: "Dict[str, str]" = {}
@@ -29,16 +36,27 @@ class HttpChallenge(object):
         self.scheme = split_challenge[0]
         trimmed_challenge = split_challenge[1]
 
+        self.claims = None
         # split trimmed challenge into comma-separated name=value pairs. Values are expected
         # to be surrounded by quotes which are stripped here.
         for item in trimmed_challenge.split(","):
+            # Special case for claims, which can contain = symbols as padding. Assume at most one claim per challenge
+            if "claims=" in item:
+                encoded_claims = item[item.index("=") + 1 :].strip(" \"'")
+                padding_needed = -len(encoded_claims) % 4
+                try:
+                    decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
+                    self.claims = decoded_claims
+                except Exception:  # pylint:disable=broad-except
+                    continue
             # process name=value pairs
-            comps = item.split("=")
-            if len(comps) == 2:
-                key = comps[0].strip(' "')
-                value = comps[1].strip(' "')
-                if key:
-                    self._parameters[key] = value
+            else:
+                comps = item.split("=")
+                if len(comps) == 2:
+                    key = comps[0].strip(' "')
+                    value = comps[1].strip(' "')
+                    if key:
+                        self._parameters[key] = value
 
         # minimum set of parameters
         if not self._parameters:

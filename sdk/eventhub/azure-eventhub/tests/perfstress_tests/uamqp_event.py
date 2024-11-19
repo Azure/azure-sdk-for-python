@@ -14,45 +14,42 @@ class UamqpReceiveEventTest(EventPerfTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         live_eventhub_config = self._get_eh_connection_config()
-        uri = "{}{}".format(live_eventhub_config['hostname'], live_eventhub_config['event_hub'])
+        uri = "{}{}".format(live_eventhub_config["hostname"], live_eventhub_config["event_hub"])
         source = "{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            live_eventhub_config['hostname'],
-            live_eventhub_config['event_hub'],
-            live_eventhub_config['consumer_group'],
-            live_eventhub_config['partition']).replace("sb://", "amqps://")
+            live_eventhub_config["hostname"],
+            live_eventhub_config["event_hub"],
+            live_eventhub_config["consumer_group"],
+            live_eventhub_config["partition"],
+        ).replace("sb://", "amqps://")
 
         # Setup service clients
         self.receive_client = ReceiveClient(
             source,
             auth=authentication.SASTokenAuth.from_shared_access_key(
-                uri,
-                live_eventhub_config['key_name'],
-                live_eventhub_config['access_key']
+                uri, live_eventhub_config["key_name"], live_eventhub_config["access_key"]
             ),
             timeout=0,
-            debug=False
+            debug=False,
         )
         self.async_receive_client = ReceiveClientAsync(
             source,
             auth=authentication.SASTokenAsync.from_shared_access_key(
-                uri,
-                live_eventhub_config['key_name'],
-                live_eventhub_config['access_key']
+                uri, live_eventhub_config["key_name"], live_eventhub_config["access_key"]
             ),
             timeout=0,
-            debug=False
+            debug=False,
         )
 
     def _get_eh_connection_config(self):
         connection_string = self.get_from_env("AZURE_EVENTHUB_CONNECTION_STRING")
         auth_info = parse_connection_string(connection_string)
         config = {}
-        config['hostname'] = auth_info['endpoint']
-        config['event_hub'] = self.get_from_env("AZURE_EVENTHUB_NAME")
-        config['key_name'] = auth_info['sharedaccesskeyname']
-        config['access_key'] = auth_info['sharedaccesskey']
-        config['consumer_group'] = "$Default"
-        config['partition'] = "0"
+        config["hostname"] = auth_info["endpoint"]
+        config["event_hub"] = self.get_from_env("AZURE_EVENTHUB_NAME")
+        config["key_name"] = auth_info["sharedaccesskeyname"]
+        config["access_key"] = auth_info["sharedaccesskey"]
+        config["consumer_group"] = "$Default"
+        config["partition"] = "0"
         return config
 
     def process_event_sync(self, message):

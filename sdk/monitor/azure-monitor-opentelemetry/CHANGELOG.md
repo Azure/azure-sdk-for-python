@@ -1,12 +1,33 @@
 # Release History
 
-## 1.6.3 (Unreleased)
+## 1.6.5 (Unreleased)
 
 ### Features Added
+
+- Only add OpenTelemetry LoggingHandler if current logger does not have it
+    ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
+- Distro to automatically configure event logger provider
+    ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.6.4 (2024-11-06)
+
+### Bugs Fixed
+
+- Fixed bug caused by migration from pkg_resources to importlib-metadata
+    ([#38371](https://github.com/Azure/azure-sdk-for-python/pull/38371))
+
+## 1.6.3 (2024-11-04)
+
+### Features Added
+
+- Enable Azure AI Inference instrumentation
+    ([#38071](https://github.com/Azure/azure-sdk-for-python/pull/38071))
 
 ### Other Changes
 

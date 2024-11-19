@@ -60,7 +60,8 @@ _COMMON_OPTIONS = {
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
-    'priority': 'priorityLevel'
+    'priority': 'priorityLevel',
+    'no_response': 'responsePayloadOnWriteDisabled'
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -226,8 +227,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
-                pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
+            is_sequence_not_string = (isinstance(options["partitionKey"], Sequence) and
+                                      not isinstance(options["partitionKey"], str))
+
+            if is_sequence_not_string and options["partitionKey"]:
+                pk_val = json.dumps(list(options["partitionKey"]), separators=(',', ':'))
             else:
                 pk_val = json.dumps([options["partitionKey"]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
@@ -283,23 +287,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("disableRUPerMinuteUsage"):
         headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options["disableRUPerMinuteUsage"]
 
-    if options.get("changeFeed") is True:
-        # On REST level, change feed is using IfNoneMatch/ETag instead of continuation.
-        if_none_match_value = None
-        if options.get("continuation"):
-            if_none_match_value = options["continuation"]
-        elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
-            if_none_match_value = "*"
-        elif options.get("startTime"):
-            start_time = options.get("startTime")
-            headers[http_constants.HttpHeaders.IfModified_since] = start_time
-        if if_none_match_value:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
-
-        headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
-    else:
-        if options.get("continuation"):
-            headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
+    if options.get("continuation"):
+        headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
 
     if options.get("populatePartitionKeyRangeStatistics"):
         headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
@@ -317,6 +306,15 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
+    if resource_type == "docs" and verb != "get":
+        if "responsePayloadOnWriteDisabled" in options:
+            responsePayloadOnWriteDisabled = options["responsePayloadOnWriteDisabled"]
+        else:
+            responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
+
+        if responsePayloadOnWriteDisabled:
+            headers[http_constants.HttpHeaders.Prefer] = "return=minimal"
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.

@@ -114,7 +114,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name: str, account_key: str, path: str):  # pylint: disable=arguments-differ
+    def add_resource_signature(self, account_name: str, account_key: str, path: str):
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ''
             return return_value + '\n'

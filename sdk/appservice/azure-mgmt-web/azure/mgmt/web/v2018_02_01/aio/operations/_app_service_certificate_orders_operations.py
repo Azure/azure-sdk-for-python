@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,21 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -68,12 +54,11 @@ from ...operations._app_service_certificate_orders_operations import (
     build_validate_purchase_information_request,
     build_verify_domain_ownership_request,
 )
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -116,7 +101,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.AppServiceCertificateOrderCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -178,7 +163,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
+    async def validate_purchase_information(
         self,
         app_service_certificate_order: _models.AppServiceCertificateOrder,
         *,
@@ -201,7 +186,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @overload
-    async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
+    async def validate_purchase_information(
         self, app_service_certificate_order: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Validate information for a certificate order.
@@ -219,7 +204,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @distributed_trace_async
-    async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
+    async def validate_purchase_information(
         self, app_service_certificate_order: Union[_models.AppServiceCertificateOrder, IO[bytes]], **kwargs: Any
     ) -> None:
         """Validate information for a certificate order.
@@ -234,7 +219,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -304,7 +289,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.AppServiceCertificateOrderCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -382,7 +367,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -432,7 +417,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         certificate_distinguished_name: Union[_models.AppServiceCertificateOrder, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -629,9 +614,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         )
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, certificate_order_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, certificate_order_name: str, **kwargs: Any) -> None:
         """Delete an existing certificate order.
 
         Delete an existing certificate order.
@@ -644,7 +627,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -765,7 +748,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -844,7 +827,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.AppServiceCertificateCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -925,7 +908,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -977,7 +960,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         key_vault_certificate: Union[_models.AppServiceCertificateResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1182,7 +1165,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         )
 
     @distributed_trace_async
-    async def delete_certificate(  # pylint: disable=inconsistent-return-statements
+    async def delete_certificate(
         self, resource_group_name: str, certificate_order_name: str, name: str, **kwargs: Any
     ) -> None:
         """Delete the certificate associated with a certificate order.
@@ -1199,7 +1182,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1328,7 +1311,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1385,7 +1368,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         return deserialized  # type: ignore
 
     @overload
-    async def reissue(  # pylint: disable=inconsistent-return-statements
+    async def reissue(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1414,7 +1397,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @overload
-    async def reissue(  # pylint: disable=inconsistent-return-statements
+    async def reissue(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1442,7 +1425,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @distributed_trace_async
-    async def reissue(  # pylint: disable=inconsistent-return-statements
+    async def reissue(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1465,7 +1448,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1516,7 +1499,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def renew(  # pylint: disable=inconsistent-return-statements
+    async def renew(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1545,7 +1528,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @overload
-    async def renew(  # pylint: disable=inconsistent-return-statements
+    async def renew(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1573,7 +1556,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @distributed_trace_async
-    async def renew(  # pylint: disable=inconsistent-return-statements
+    async def renew(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1596,7 +1579,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1647,9 +1630,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def resend_email(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, certificate_order_name: str, **kwargs: Any
-    ) -> None:
+    async def resend_email(self, resource_group_name: str, certificate_order_name: str, **kwargs: Any) -> None:
         """Resend certificate email.
 
         Resend certificate email.
@@ -1662,7 +1643,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1701,7 +1682,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def resend_request_emails(  # pylint: disable=inconsistent-return-statements
+    async def resend_request_emails(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1729,7 +1710,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @overload
-    async def resend_request_emails(  # pylint: disable=inconsistent-return-statements
+    async def resend_request_emails(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1757,7 +1738,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         """
 
     @distributed_trace_async
-    async def resend_request_emails(  # pylint: disable=inconsistent-return-statements
+    async def resend_request_emails(
         self,
         resource_group_name: str,
         certificate_order_name: str,
@@ -1779,7 +1760,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1908,7 +1889,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSeal
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1964,7 +1945,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def verify_domain_ownership(  # pylint: disable=inconsistent-return-statements
+    async def verify_domain_ownership(
         self, resource_group_name: str, certificate_order_name: str, **kwargs: Any
     ) -> None:
         """Verify domain ownership for this certificate order.
@@ -1979,7 +1960,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2033,7 +2014,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateOrderAction]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2092,7 +2073,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateEmail]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

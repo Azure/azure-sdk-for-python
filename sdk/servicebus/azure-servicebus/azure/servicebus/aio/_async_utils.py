@@ -24,9 +24,7 @@ def get_running_loop():
         try:
             loop = asyncio._get_running_loop()  # pylint: disable=protected-access
         except AttributeError:
-            _log.warning(
-                "This version of Python is deprecated, please upgrade to >= v3.5.3"
-            )
+            _log.warning("This version of Python is deprecated, please upgrade to >= v3.5.3")
         if loop is None:
             _log.warning("No running event loop")
             loop = asyncio.get_event_loop()
@@ -45,20 +43,20 @@ async def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        return (await client._amqp_transport.create_token_auth_async(
+        return await client._amqp_transport.create_token_auth_async(
             client._auth_uri,
             get_token=functools.partial(client._credential.get_token, client._auth_uri),
             token_type=token_type,
             config=client._config,
-            update_token=True
-        ))
-    return (await client._amqp_transport.create_token_auth_async(
-            client._auth_uri,
-            get_token=functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
-            token_type=token_type,
-            config=client._config,
-            update_token=False,
-        ))
+            update_token=True,
+        )
+    return await client._amqp_transport.create_token_auth_async(
+        client._auth_uri,
+        get_token=functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+        token_type=token_type,
+        config=client._config,
+        update_token=False,
+    )
 
 
 def get_dict_with_loop_if_needed(loop):
@@ -66,5 +64,5 @@ def get_dict_with_loop_if_needed(loop):
         if loop:
             raise ValueError("Starting Python 3.10, asyncio no longer supports loop as a parameter.")
     elif loop:
-        return {'loop': loop}
+        return {"loop": loop}
     return {}

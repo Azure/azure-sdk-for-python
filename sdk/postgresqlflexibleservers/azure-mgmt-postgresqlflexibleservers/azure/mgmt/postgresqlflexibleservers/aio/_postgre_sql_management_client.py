@@ -42,6 +42,7 @@ from .operations import (
     ServerCapabilitiesOperations,
     ServerThreatProtectionSettingsOperations,
     ServersOperations,
+    TuningOptionsOperations,
     VirtualEndpointsOperations,
     VirtualNetworkSubnetUsageOperations,
 )
@@ -118,6 +119,9 @@ class PostgreSQLManagementClient(
     :ivar server_threat_protection_settings: ServerThreatProtectionSettingsOperations operations
     :vartype server_threat_protection_settings:
      azure.mgmt.postgresqlflexibleservers.aio.operations.ServerThreatProtectionSettingsOperations
+    :ivar tuning_options: TuningOptionsOperations operations
+    :vartype tuning_options:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.TuningOptionsOperations
     :ivar virtual_endpoints: VirtualEndpointsOperations operations
     :vartype virtual_endpoints:
      azure.mgmt.postgresqlflexibleservers.aio.operations.VirtualEndpointsOperations
@@ -130,7 +134,7 @@ class PostgreSQLManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-12-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -213,6 +217,7 @@ class PostgreSQLManagementClient(
         self.server_threat_protection_settings = ServerThreatProtectionSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.tuning_options = TuningOptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_endpoints = VirtualEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
