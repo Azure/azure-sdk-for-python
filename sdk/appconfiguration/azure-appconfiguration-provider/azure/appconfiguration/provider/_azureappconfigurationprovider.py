@@ -259,7 +259,7 @@ def _get_headers(
     feature_filters_used,
     uses_key_vault,
     uses_load_balancing,
-    failover_request,
+    is_failover_request,
 ) -> Dict[str, str]:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
@@ -298,11 +298,11 @@ def _get_headers(
     if replica_count > 0:
         correlation_context += ",ReplicaCount=" + str(replica_count)
 
-    if uses_load_balancing:
-        correlation_context += ",UsesLoadBalancing"
+    if is_failover_request:
+        correlation_context += ",Failover"
 
-    if failover_request:
-        correlation_context += ",FailoverRequest"
+    if uses_load_balancing:
+        correlation_context += "Features=LB"
 
     headers["Correlation-Context"] = correlation_context
     return headers
@@ -542,23 +542,23 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
-        has_failed = False
+        is_failover_request = False
         try:
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
 
-            headers = _get_headers(
-                kwargs.pop("headers", {}),
-                "Watch",
-                self._replica_client_manager.get_client_count() - 1,
-                self._feature_flag_enabled,
-                self._feature_filter_usage,
-                self._uses_key_vault,
-                self._uses_load_balancing,
-                has_failed,
-            )
-
             while self._replica_client_manager.has_next_client():
+                headers = _get_headers(
+                    kwargs.pop("headers", {}),
+                    "Watch",
+                    self._replica_client_manager.get_client_count() - 1,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
+                            
                 client = self._replica_client_manager.get_next_client()
                 if not client:
                     return
@@ -598,7 +598,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 except AzureError as e:
                     exception = e
                     self._replica_client_manager.backoff(client)
-                    has_failed = True
+                    is_failover_request = True
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
@@ -612,7 +612,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def _load_all(self, **kwargs):
         self._replica_client_manager.find_active_clients()
-        has_failed = False
+        is_failover_request = False
 
         while self._replica_client_manager.has_next_client():
             client = self._replica_client_manager.get_next_client()
@@ -627,9 +627,20 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     key = self._process_key_name(config)
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
+
+                headers = _get_headers(
+                    kwargs.pop("headers", {}),
+                    "Startup",
+                    self._replica_client_manager.get_client_count() - 1,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -638,16 +649,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            headers = _get_headers(
-                                kwargs.pop("headers", {}),
-                                "Startup",
-                                self._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-                                self._feature_flag_enabled,  # pylint:disable=protected-access
-                                self._feature_filter_usage,  # pylint:disable=protected-access
-                                self._uses_key_vault,  # pylint:disable=protected-access
-                                self._uses_load_balancing,  # pylint:disable=protected-access
-                                has_failed,
-                            )
                             sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                             self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
@@ -670,7 +671,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             except AzureError:
                 self._replica_client_manager.backoff(client)
-                has_failed = True
+                is_failover_request = True
         raise RuntimeError(
             "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
         )

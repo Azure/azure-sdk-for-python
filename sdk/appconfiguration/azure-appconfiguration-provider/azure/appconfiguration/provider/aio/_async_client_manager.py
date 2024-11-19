@@ -348,6 +348,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         :return: The next client to be used for the request.
         """
         if not self._active_clients:
+            self._last_active_client_name = ""
             return None
         if not self._load_balance:
             return self._active_clients[0]

@@ -348,6 +348,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         :return: The next client to be used for the request.
         """
         if not self._active_clients:
+            self._last_active_client_name = ""
             return None
         if not self._load_balance:
             return self._active_clients[0]
@@ -371,6 +372,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         the last active client used.
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
+
 
         self._active_clients = active_clients
         if not self._load_balance or len(self._last_active_client_name) == 0:

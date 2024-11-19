@@ -323,6 +323,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
         self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
 
         self._replica_client_manager = AsyncConfigurationClientManager(
@@ -336,7 +337,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
             load_balance=self._uses_load_balancing,
-            **kwargs,
+            **kwargs
         )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
@@ -387,7 +388,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
-        has_failed = False
+        is_failover_request = False
         try:
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
@@ -400,7 +401,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._feature_filter_usage,
                 self._uses_key_vault,
                 self._uses_load_balancing,
-                has_failed,
+                is_failover_request,
             )
 
             while self._replica_client_manager.has_next_client():
@@ -445,8 +446,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 except AzureError as e:
                     exception = e
                     self._replica_client_manager.backoff(client)
-                    has_failed = True
-
+                    is_failover_request = True
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
@@ -460,7 +460,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     async def _load_all(self, **kwargs):
         self._replica_client_manager.find_active_clients()
-        has_failed = False
+        is_failover_request = False
+
         while self._replica_client_manager.has_next_client():
             client = self._replica_client_manager.get_next_client()
             if not client:
@@ -474,9 +475,20 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     key = self._process_key_name(config)
                     value = await self._process_key_value(config)
                     configuration_settings_processed[key] = value
+
+                headers = _get_headers(
+                    kwargs.pop("headers", {}),
+                    "Startup",
+                    self._replica_client_manager.get_client_count() - 1,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -485,16 +497,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            headers = _get_headers(
-                                kwargs.pop("headers", {}),
-                                "Startup",
-                                self._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-                                self._feature_flag_enabled,  # pylint:disable=protected-access
-                                self._feature_filter_usage,  # pylint:disable=protected-access
-                                self._uses_key_vault,  # pylint:disable=protected-access
-                                self._uses_load_balancing,  # pylint:disable=protected-access
-                                has_failed,
-                            )
                             sentinel = await client.get_configuration_setting(
                                 key, label, headers=headers
                             )  # type:ignore
@@ -519,7 +521,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             except AzureError:
                 self._replica_client_manager.backoff(client)
-                has_failed = True
+                is_failover_request = True
         raise RuntimeError(
             "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
         )
