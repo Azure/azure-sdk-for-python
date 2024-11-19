@@ -239,16 +239,16 @@ fail if docstring are invalid, helping to ensure the resulting documentation wil
 
 #### Opt-in to formatting validation
 
-Make the following change to your projects `ci.yml`:
+Ensure that `black = true` is present within your `pyproject.toml`:
 
 ```yml
-extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
-    parameters:
-        ...
-        ValidateFormatting: true
-        ...
+[tool.azure-sdk-build]
+...other checks enabled/disabled
+black = true
+...other checks enabled/disabled
 ```
+
+to opt into the black invocation.
 
 #### Running locally
 
