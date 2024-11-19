@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2023-12-01/examples/ListAppServiceCertificateOrdersByResourceGroup.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2024-04-01/examples/ListAppServiceCertificateOrdersByResourceGroup.json
 if __name__ == "__main__":
     main()

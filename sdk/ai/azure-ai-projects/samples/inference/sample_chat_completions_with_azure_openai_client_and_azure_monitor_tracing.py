@@ -24,7 +24,7 @@ USAGE:
       messages, which may contain personal data. False by default.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
 """
 import os
 from azure.ai.projects import AIProjectClient
