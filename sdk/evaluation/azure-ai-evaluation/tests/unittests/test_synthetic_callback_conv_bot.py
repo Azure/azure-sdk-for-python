@@ -18,24 +18,6 @@ class MockOpenAIChatCompletionsModel(OpenAIChatCompletionsModel):
         return {"response": {}, "request": {}, "time_taken": 0, "full_response": {}}
 
 
-class MockRAIClient(RAIClient):
-    def __init__(self):
-        super().__init__(
-            azure_ai_project={
-                "subscription_id": "fake-id",
-                "project_name": "fake-name",
-                "resource_group_name": "fake-group",
-            },
-            token_manager="token_manager",
-        )
-
-    async def get_image_data(self, path: str):
-        return "image"
-
-    def _get_service_discovery_url(self):
-        return "localhost"
-
-
 @pytest.mark.unittest
 class TestCallbackConversationBot:
     @pytest.mark.asyncio
@@ -53,7 +35,6 @@ class TestCallbackConversationBot:
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
-            rai_client=MockRAIClient(),
             user_template="",
             user_template_parameters={},
             role=ConversationRole.ASSISTANT,
@@ -83,7 +64,6 @@ class TestCallbackConversationBot:
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
-            rai_client=MockRAIClient(),
             user_template="",
             user_template_parameters={},
             role=ConversationRole.ASSISTANT,
@@ -113,7 +93,6 @@ class TestCallbackConversationBot:
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
-            rai_client=MockRAIClient(),
             user_template="",
             user_template_parameters={},
             role=ConversationRole.ASSISTANT,
