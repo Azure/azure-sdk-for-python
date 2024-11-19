@@ -6,7 +6,6 @@
 
 from typing import Any, Optional, cast
 
-from azure.ai.ml import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ModelProvider as RestModelProvider,
@@ -16,6 +15,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.job_resources import JobResources
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
