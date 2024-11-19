@@ -41,28 +41,11 @@
   - Added enum `Status`
   - Added model `TestPermissionResult`
   - Added model `TrackedResource`
-  - Added model `GenerateAwsTemplateOperations`
-  - Added model `InventoryOperations`
-  - Added model `PublicCloudConnectorsOperations`
-  - Added model `SolutionConfigurationsOperations`
-  - Added model `SolutionTypesOperations`
-  - Method `EndpointsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_uri: str, endpoint_name: str, endpoint_resource: IO[bytes], content_type: str)`
-  - Method `EndpointsOperations.list_credentials` has a new overload `def list_credentials(self: None, resource_uri: str, endpoint_name: str, expiresin: int, list_credentials_request: Optional[IO[bytes]], content_type: str)`
-  - Method `EndpointsOperations.list_ingress_gateway_credentials` has a new overload `def list_ingress_gateway_credentials(self: None, resource_uri: str, endpoint_name: str, expiresin: int, list_ingress_gateway_credentials_request: Optional[IO[bytes]], content_type: str)`
-  - Method `EndpointsOperations.list_managed_proxy_details` has a new overload `def list_managed_proxy_details(self: None, resource_uri: str, endpoint_name: str, managed_proxy_request: IO[bytes], content_type: str)`
-  - Method `EndpointsOperations.update` has a new overload `def update(self: None, resource_uri: str, endpoint_name: str, endpoint_resource: IO[bytes], content_type: str)`
-  - Method `ServiceConfigurationsOperations.create_orupdate` has a new overload `def create_orupdate(self: None, resource_uri: str, endpoint_name: str, service_configuration_name: str, service_configuration_resource: IO[bytes], content_type: str)`
-  - Method `ServiceConfigurationsOperations.update` has a new overload `def update(self: None, resource_uri: str, endpoint_name: str, service_configuration_name: str, service_configuration_resource: IO[bytes], content_type: str)`
-  - Method `GenerateAwsTemplateOperations.post` has a new overload `def post(self: None, generate_aws_template_request: GenerateAwsTemplateRequest, content_type: str)`
-  - Method `GenerateAwsTemplateOperations.post` has a new overload `def post(self: None, generate_aws_template_request: IO[bytes], content_type: str)`
-  - Method `PublicCloudConnectorsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, public_cloud_connector: str, resource: PublicCloudConnector, content_type: str)`
-  - Method `PublicCloudConnectorsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, public_cloud_connector: str, resource: IO[bytes], content_type: str)`
-  - Method `PublicCloudConnectorsOperations.update` has a new overload `def update(self: None, resource_group_name: str, public_cloud_connector: str, properties: PublicCloudConnectorUpdate, content_type: str)`
-  - Method `PublicCloudConnectorsOperations.update` has a new overload `def update(self: None, resource_group_name: str, public_cloud_connector: str, properties: IO[bytes], content_type: str)`
-  - Method `SolutionConfigurationsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_uri: str, solution_configuration: str, resource: SolutionConfiguration, content_type: str)`
-  - Method `SolutionConfigurationsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_uri: str, solution_configuration: str, resource: IO[bytes], content_type: str)`
-  - Method `SolutionConfigurationsOperations.update` has a new overload `def update(self: None, resource_uri: str, solution_configuration: str, properties: SolutionConfigurationUpdate, content_type: str)`
-  - Method `SolutionConfigurationsOperations.update` has a new overload `def update(self: None, resource_uri: str, solution_configuration: str, properties: IO[bytes], content_type: str)`
+  - Added operation group `GenerateAwsTemplateOperations`
+  - Added operation group `InventoryOperations`
+  - Added operation group `PublicCloudConnectorsOperations`
+  - Added operation group `SolutionConfigurationsOperations`
+  - Added operation group `SolutionTypesOperations`
 
 ### Breaking Changes
 
