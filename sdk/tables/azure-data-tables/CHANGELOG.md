@@ -6,6 +6,7 @@
 * Added to support custom encoder in entity CRUD operations.
 * Added to support custom Entity type.
 * Added to support Entity property in Tuple and Enum types.
+* Added support for Microsoft Entra auth with Azure Cosmos DB for Table's OAuth scope (`https://cosmos.azure.com/.default`).
 
 ### Bugs Fixed
 * Fixed a bug in encoder when Entity property has "@odata.type" provided.
