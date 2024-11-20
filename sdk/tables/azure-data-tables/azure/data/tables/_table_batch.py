@@ -3,16 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Mapping, Optional, List, Tuple, TypeVar, Dict
+from typing import Union, Any, Mapping, Optional, List, Tuple
 
 from azure.core import MatchConditions
 from azure.core.rest import HttpRequest
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
-from ._serialize import _get_match_condition
+from ._serialize import _add_entity_properties, _prepare_key, _get_match_condition
 from ._entity import TableEntity
-from ._encoder import TableEntityEncoderABC
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
     build_table_merge_entity_request,
@@ -23,18 +22,9 @@ from ._generated._configuration import AzureTableConfiguration
 from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
 
-T = TypeVar("T")
-
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
-TransactionOperationType = Union[
-    Tuple[OperationType, EntityType],
-    Tuple[OperationType, EntityType, Mapping[str, Any]],
-]
-CustomEntityTransactionOperationType = Union[
-    Tuple[OperationType, T],
-    Tuple[OperationType, T, Mapping[str, Any]],
-]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableBatchOperations(object):
@@ -57,7 +47,6 @@ class TableBatchOperations(object):
         config: Union[AzureTableConfiguration, AsyncAzureTableConfiguration],
         endpoint: str,
         table_name: str,
-        encoder: TableEntityEncoderABC[Union[EntityType, T]],
         is_cosmos_endpoint: bool = False,
     ) -> None:
         """Create TableClient from a Credential.
@@ -68,15 +57,12 @@ class TableBatchOperations(object):
         :type endpoint: str
         :param table_name: The name of the Table to perform operations on.
         :type table_name: str
-        :param encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
         :type is_cosmos_endpoint: bool
         """
         self._config = config
         self._base_url = endpoint
         self._is_cosmos_endpoint = is_cosmos_endpoint
-        self._encoder = encoder
         self.table_name = table_name
 
         self._partition_key: Optional[str] = None
@@ -85,15 +71,15 @@ class TableBatchOperations(object):
     def __len__(self) -> int:
         return len(self.requests)
 
-    def _verify_partition_key(self, entity_json: Dict[Any, Any]) -> None:
-        if "PartitionKey" not in entity_json or "RowKey" not in entity_json:
+    def _verify_partition_key(self, entity: EntityType) -> None:
+        if "PartitionKey" not in entity or "RowKey" not in entity:
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         if self._partition_key is None:
-            self._partition_key = entity_json["PartitionKey"]
-        elif entity_json["PartitionKey"] != self._partition_key:
+            self._partition_key = entity["PartitionKey"]
+        elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys in the batch must all be the same.")
 
-    def add_operation(self, operation: Union[TransactionOperationType, CustomEntityTransactionOperationType]) -> None:
+    def add_operation(self, operation: TransactionOperationType) -> None:
         """Add a single operation to a batch.
 
         :param operation: An operation include operation type and entity, may with kwargs.
@@ -112,11 +98,11 @@ class TableBatchOperations(object):
         except AttributeError as exc:
             raise ValueError(f"Unrecognized operation: {operation_type}") from exc
 
-    def create(self, entity: Union[EntityType, T], **kwargs) -> None:
+    def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or dict[str, Any] or a custom entity type
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :return: None
         :raises ValueError:
 
@@ -129,17 +115,17 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self._encoder.encode_entity(entity)
-        self._verify_partition_key(entity_json)
+        self._verify_partition_key(entity)
+        entity = _add_entity_properties(entity)
         request = build_table_insert_entity_request(
-            table=self.table_name, json=entity_json, version=self._config.version, **kwargs
+            table=self.table_name, json=entity, version=self._config.version, **kwargs
         )
         request.url = self._base_url + request.url
         self.requests.append(request)
 
     def update(
         self,
-        entity: Union[EntityType, T],
+        entity: EntityType,
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         etag: Optional[str] = None,
@@ -149,7 +135,7 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or dict[str, Any] or a custom entity type
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword etag: Etag of the entity.
@@ -168,35 +154,36 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
+        self._verify_partition_key(entity)
+        entity = _add_entity_properties(entity)
+        partition_key = _prepare_key(entity["PartitionKey"])
+        row_key = _prepare_key(entity["RowKey"])
+
         if match_condition and not etag and isinstance(entity, TableEntity):
             if hasattr(entity, "metadata"):
                 etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = self._encoder.encode_entity(entity)
-        self._verify_partition_key(entity_json)
-        partition_key = entity_json.get("PartitionKey")
-        row_key = entity_json.get("RowKey")
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=partition_key,
+                row_key=row_key,
                 etag=etag,
                 match_condition=match_condition,
-                json=entity_json,
+                json=entity,
                 version=self._config.version,
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
+                partition_key=partition_key,
+                row_key=row_key,
                 etag=etag,
                 match_condition=match_condition,
-                json=entity_json,
+                json=entity,
                 version=self._config.version,
                 **kwargs,
             )
@@ -210,7 +197,7 @@ class TableBatchOperations(object):
 
     def delete(
         self,
-        entity: Union[EntityType, T],
+        entity: EntityType,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -219,7 +206,7 @@ class TableBatchOperations(object):
         """Adds a delete operation to the current branch.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or dict[str, Any] or a custom entity type
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword etag: Etag of the entity.
         :paramtype etag: str or None
         :keyword match_condition: The match condition to use upon the etag.
@@ -236,17 +223,14 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
+        self._verify_partition_key(entity)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        entity_json = self._encoder.encode_entity(entity)
-        self._verify_partition_key(entity_json)
-        partition_key = entity_json.get("PartitionKey")
-        row_key = entity_json.get("RowKey")
         request = build_table_delete_entity_request(
             table=self.table_name,
-            partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-            row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
-            etag=etag or "*",
+            partition_key=_prepare_key(entity["PartitionKey"]),
+            row_key=_prepare_key(entity["RowKey"]),
+            etag=etag,  # type: ignore[arg-type] # Set None to skip checking etag.
             match_condition=_get_match_condition(
                 etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
             ),
@@ -256,7 +240,7 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def upsert(self, entity: Union[EntityType, T], mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
+    def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (merge or replace) operation to the batch.
 
         :param entity: The properties for the table entity.
@@ -275,26 +259,28 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self._encoder.encode_entity(entity)
-        self._verify_partition_key(entity_json)
-        partition_key = entity_json.get("PartitionKey")
-        row_key = entity_json.get("RowKey")
+        self._verify_partition_key(entity)
+
+        # TODO: This ordering is backwards. Tracked as part of issue #26318
+        partition_key = _prepare_key(entity["PartitionKey"])
+        row_key = _prepare_key(entity["RowKey"])
+        entity = _add_entity_properties(entity)
 
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
-                json=entity_json,
+                partition_key=partition_key,
+                row_key=row_key,
+                json=entity,
                 version=self._config.version,
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
-                partition_key=self._encoder.prepare_key(partition_key),  # type: ignore[arg-type]
-                row_key=self._encoder.prepare_key(row_key),  # type: ignore[arg-type]
-                json=entity_json,
+                partition_key=partition_key,
+                row_key=row_key,
+                json=entity,
                 version=self._config.version,
                 **kwargs,
             )
