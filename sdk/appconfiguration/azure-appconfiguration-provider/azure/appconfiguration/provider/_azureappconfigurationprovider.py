@@ -528,13 +528,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
-            logging.debug("Refresh called but no refresh enabled.")
+            logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_timer.needs_refresh():
-            logging.debug("Refresh called but refresh interval not elapsed.")
+            logger.debug("Refresh called but refresh interval not elapsed.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
-            logging.debug("Refresh called but refresh already in progress.")
+            logger.debug("Refresh called but refresh already in progress.")
             return
         success = False
         need_refresh = False
@@ -598,6 +598,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     break
                 except AzureError as e:
                     exception = e
+                    logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                     self._replica_client_manager.backoff(client)
                     is_failover_request = True
             if not success:
@@ -658,7 +659,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
-                                logging.debug(
+                                logger.debug(
                                     """
                                     WatchKey key: %s label %s was configured but not found. Refresh will be triggered
                                     if created.
@@ -674,6 +675,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._dict = configuration_settings_processed
                 return
             except AzureError:
+                logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
         raise RuntimeError(
