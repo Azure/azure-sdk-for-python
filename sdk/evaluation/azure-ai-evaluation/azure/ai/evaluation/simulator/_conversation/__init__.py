@@ -271,8 +271,6 @@ class CallbackConversationBot(ConversationBot):
                 "id": None,
                 "template_parameters": {},
             }
-        self.logger.info("Using user provided callback returning response.")
-
         time_taken = end_time - start_time
         try:
             response = {
@@ -289,8 +287,6 @@ class CallbackConversationBot(ConversationBot):
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             ) from exc
-
-        self.logger.info("Parsed callback response")
 
         return response, {}, time_taken, result
 
@@ -372,7 +368,6 @@ class MultiModalConversationBot(ConversationBot):
                 "id": None,
                 "template_parameters": {},
             }
-        self.logger.info("Using user provided callback returning response.")
 
         time_taken = end_time - start_time
         try:
@@ -390,8 +385,6 @@ class MultiModalConversationBot(ConversationBot):
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             ) from exc
-
-        self.logger.info("Parsed callback response")
 
         return response, chat_protocol_message, time_taken, result
 
