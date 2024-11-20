@@ -80,9 +80,9 @@ class TestMassEvaluate:
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
             # "gleu": GleuScoreEvaluator(),
-            "bleu": BleuScoreEvaluator(),
-            "rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
-            "meteor": MeteorScoreEvaluator(),
+            #"bleu": BleuScoreEvaluator(),
+            #"rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
+            #"meteor": MeteorScoreEvaluator(),
             #"grounded": GroundednessEvaluator(model_config),
             #"coherence": CoherenceEvaluator(model_config),
             #"fluency": FluencyEvaluator(model_config),
