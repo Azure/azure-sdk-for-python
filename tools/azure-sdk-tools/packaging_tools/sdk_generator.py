@@ -109,7 +109,10 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
             while idx < len(readme_content):
                 if "```" in readme_content[idx]:
                     break
-                if ".json" in readme_content[idx] and "Microsoft." in readme_content[idx]:
+                if ".json" in readme_content[idx] and (
+                    re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(readme_content[idx])
+                    or "Microsoft." in readme_content[idx]
+                ):
                     result.append(readme_content[idx].strip("\n -"))
                 idx += 1
             break
@@ -236,7 +239,8 @@ def main(generate_input, generate_output):
         try:
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
-                update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
+                # we begin to trim package size so don't need opimization to speed SDK generation for now
+                # update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
                 del_outdated_files(relative_path_readme)
                 config = generate(
                     CONFIG_FILE,

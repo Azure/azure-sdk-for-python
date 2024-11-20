@@ -29,6 +29,8 @@ extends:
     ServiceDirectory: maps
     TestProxy: true
     Artifacts:
+    - name: azure-maps-geolocation
+      safeName: azuremapsgeolocation
     - name: azure-maps-search
       safeName: azuremapssearch
     - name: azure-maps-render

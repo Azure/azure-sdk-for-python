@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,12 +28,11 @@ from ...operations._global_operations_operations import (
     build_get_deleted_web_app_snapshots_request,
     build_get_subscription_operation_with_async_response_request,
 )
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,7 +69,7 @@ class GlobalOperations:
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DeletedSite
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -125,7 +123,7 @@ class GlobalOperations:
         :rtype: list[~azure.mgmt.web.v2023_01_01.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -168,7 +166,7 @@ class GlobalOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_subscription_operation_with_async_response(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def get_subscription_operation_with_async_response(  # pylint: disable=name-too-long
         self, location: str, operation_id: str, **kwargs: Any
     ) -> None:
         """Gets an operation in a subscription and given region.
@@ -183,7 +181,7 @@ class GlobalOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

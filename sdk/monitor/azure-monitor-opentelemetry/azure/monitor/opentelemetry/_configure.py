@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from functools import cached_property
 from logging import getLogger
 from typing import Dict, List, cast
 
+from opentelemetry._events import set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -14,6 +16,7 @@ from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk._events import EventLoggerProvider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -23,7 +26,11 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from pkg_resources import iter_entry_points  # type: ignore
+from opentelemetry.util._importlib_metadata import (
+    EntryPoint,
+    distributions,
+    entry_points,
+)
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
@@ -163,9 +170,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
-    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    getLogger(logger_name).addHandler(handler)
+    logger = getLogger(logger_name)
+    # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
+    # This is to prevent most duplicate logging telemetry
+    if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
+        handler = LoggingHandler(logger_provider=logger_provider)
+        logger.addHandler(handler)
+
+    # Setup EventLoggerProvider
+    event_provider = EventLoggerProvider(logger_provider)
+    set_event_logger_provider(event_provider)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
@@ -185,9 +200,27 @@ def _setup_live_metrics(configurations):
     enable_live_metrics(**configurations)
 
 
+class _EntryPointDistFinder:
+    @cached_property
+    def _mapping(self):
+        return {self._key_for(ep): dist for dist in distributions() for ep in dist.entry_points}
+
+    def dist_for(self, entry_point: EntryPoint):
+        dist = getattr(entry_point, "dist", None)
+        if dist:
+            return dist
+
+        return self._mapping.get(self._key_for(entry_point))
+
+    @staticmethod
+    def _key_for(entry_point: EntryPoint):
+        return f"{entry_point.group}:{entry_point.name}:{entry_point.value}"
+
+
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
+    entry_point_finder = _EntryPointDistFinder()
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
-    for entry_point in iter_entry_points("opentelemetry_instrumentor"):
+    for entry_point in entry_points(group="opentelemetry_instrumentor"):
         lib_name = entry_point.name
         if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
@@ -196,7 +229,8 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             continue
         try:
             # Check if dependent libraries/version are installed
-            conflict = get_dist_dependency_conflicts(entry_point.dist)  # type: ignore
+            entry_point_dist = entry_point_finder.dist_for(entry_point)  # type: ignore
+            conflict = get_dist_dependency_conflicts(entry_point_dist)  # type: ignore
             if conflict:
                 _logger.debug(
                     "Skipping instrumentation %s: %s",
