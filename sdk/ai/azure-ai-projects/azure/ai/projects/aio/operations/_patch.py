@@ -1004,7 +1004,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1118,7 +1118,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1150,7 +1150,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1247,7 +1247,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1278,7 +1278,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and
          `tool_resources`). Default value is None.
         :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
@@ -1399,7 +1399,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1433,7 +1433,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1519,7 +1519,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1554,7 +1554,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
