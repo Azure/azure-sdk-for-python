@@ -351,7 +351,10 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             self._last_active_client_name = ""
             return None
         if not self._load_balance:
-            return self._active_clients[0]
+            for client in self._active_clients:
+                if client.is_active():
+                    return client
+            return None
         next_client = self._active_clients.pop(0)
         self._last_active_client_name = next_client.endpoint
         return next_client
