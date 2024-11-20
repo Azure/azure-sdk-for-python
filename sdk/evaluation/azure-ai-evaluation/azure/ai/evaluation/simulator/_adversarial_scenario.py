@@ -28,6 +28,8 @@ class AdversarialScenario(Enum):
     ADVERSARIAL_CONTENT_GEN_UNGROUNDED = "adv_content_gen_ungrounded"
     ADVERSARIAL_CONTENT_GEN_GROUNDED = "adv_content_gen_grounded"
     ADVERSARIAL_CONTENT_PROTECTED_MATERIAL = "adv_content_protected_material"
+    ADVERSARIAL_IMAGE_GEN = "adv_image_gen"
+    ADVERSARIAL_IMAGE_UNDERSTANDING = "adv_image_understanding"
 
 
 @experimental
